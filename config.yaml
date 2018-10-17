@@ -1,0 +1,75 @@
+# RESTBase config for small wiki installs
+#
+# - sqlite backend
+# - parsoid at http://localhost:8142
+# - wiki at http://localhost/w/api.php
+# 
+# Quick setup:
+# - npm install
+#   If you see errors about sqlite, you might have to `apt-get install
+#   libsqlite3-dev`.
+# - cp config.example.yaml config.yaml
+# - double-check and possibly modify lines marked with XXX, then start restbase with
+#
+#   node server
+#
+# - If all went well, http://localhost:7231/localhost/v1/page/html/Main_Page
+# should show your wiki's [[Main Page]].
+
+services:
+  - name: restbase
+    module: hyperswitch
+    conf: 
+      port: 7231
+      salt: secret
+      default_page_size: 125
+      user_agent: RESTBase
+      ui_name: RESTBase
+      ui_url: https://www.mediawiki.org/wiki/RESTBase
+      ui_title: RESTBase docs
+      spec:
+        x-request-filters:
+          - path: lib/security_response_header_filter.js
+          - path: lib/normalize_headers_filter.js
+        x-sub-request-filters:
+          - type: default
+            name: http
+            options:
+              allow:
+                - pattern: http://localhost/w/api.php
+                  forward_headers: true
+                - pattern: http://localhost:8142
+                  forward_headers: true
+                - pattern: /^https?:\/\//
+        paths:
+          /{domain:localhost}:
+            x-modules:
+              - path: projects/example.yaml
+                options:
+                  action:
+                    # XXX Check API URL!
+                    apiUriTemplate: http://localhost/w/api.php
+                    # XXX Check the base RESTBase URI
+                    baseUriTemplate: "{{'http://{domain}:7231/{domain}/v1'}}"
+                  parsoid:
+                    # XXX Check Parsoid URL!
+                    host: http://localhost:8142
+                  table:
+                    backend: sqlite
+                    dbname: db.sqlite3
+                    pool_idle_timeout: 20000
+                    retry_delay: 250
+                    retry_limit: 10
+                    show_sql: false
+                  mobileapps:
+                    host: https://appservice.wmflabs.org
+                  purged_cache_control: s-maxage=0, max-age=86400
+                  purged_cache_control_client_cache: s-maxage=0, max-age=300
+
+# Finally, a standard service-runner config.
+info:
+  name: restbase
+
+logging:
+  name: restbase
+  level: info

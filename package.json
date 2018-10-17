@@ -1,0 +1,24 @@
+{
+  "name": "aletheia",
+  "version": "1.0.0",
+  "description": "Project open source",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "keywords": [
+    "aletheia",
+    "REST",
+    "API"
+  ],
+  "author": "open tesseract",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "mongoose": "^5.3.4",
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  }
+}
