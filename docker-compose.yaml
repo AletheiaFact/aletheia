@@ -1,0 +1,11 @@
+version: "2"
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    restart: unless-stopped
+    volumes:
+    - "<YourPath>/mongodb:/data"
+    - "<YourPath>/mongodb/db:/data/db"
+    ports:
+    - "27017:27017"
