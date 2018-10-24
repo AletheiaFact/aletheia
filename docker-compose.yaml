@@ -5,7 +5,7 @@ services:
     image: mongo:latest
     restart: unless-stopped
     volumes:
-    - "<YourPath>/mongodb:/data"
-    - "<YourPath>/mongodb/db:/data/db"
+    - "/mnt/data/opentesseract/data/mongodb:/data"
+    - "/mnt/data/opentesseract/data/mongodb/db:/data/db"
     ports:
     - "27017:27017"
