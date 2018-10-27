@@ -4,7 +4,8 @@
   "description": "Project open source",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "lint": "eslint --cache --max-warnings 0 --ext .js --ext .json ."
   },
   "keywords": [
     "aletheia",
@@ -14,11 +15,16 @@
   "author": "open tesseract",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
     "express": "^4.16.4",
-    "mongoose": "^5.3.4",
-    "axios": "^0.18.0"
+    "mongoose": "^5.3.4"
   },
   "devDependencies": {
+    "eslint": "^5.7.0",
+    "eslint-config-node-services": "^2.2.5",
+    "eslint-config-wikimedia": "^0.8.1",
+    "eslint-plugin-jsdoc": "^3.9.1",
+    "eslint-plugin-json": "^1.2.1",
     "nodemon": "^1.18.4"
   }
 }
