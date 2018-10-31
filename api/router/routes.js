@@ -1,8 +1,9 @@
-'use strict'
-const candidate = require('./candidateRoute')
+'use strict';
 
-const routes = server => {
-  candidate(server)
-}
+const candidate = require('./candidateRoute');
 
-module.exports = routes
+const routes = (server) => {
+    candidate(server);
+};
+
+module.exports = routes;
