@@ -1,8 +1,0 @@
-dist: stretch
-language: node_js
-node_js:
-  - "7"
-install:
-  - npm install
-script: 
-  - npm run lint
