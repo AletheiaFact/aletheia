@@ -1,8 +1,6 @@
 'use strict';
 
-const mongoose = require('mongoose');
-
-const Personality = mongoose.model('Personality');
+const Personality = require('../model/personalityModel');
 
 exports.listAll = function(req, res) {
     Personality.find({}, (err, personality) => {
@@ -27,10 +25,14 @@ exports.getPersonalityId = function(req, res) {
 };
 
 exports.update = function(req, res) {
-    Personality.findOneAndUpdate({ _id: req.params.personalityId }, req.body, { new: true }, (err, personality) => {
-        if (err) { res.send(err); }
-        res.json(personality);
-    });
+    Personality.findOneAndUpdate(
+        { _id: req.params.personalityId },
+        req.body,
+        { new: true },
+        (err, personality) => {
+            if (err) { res.send(err); }
+            res.json(personality);
+        });
 };
 
 exports.delete = function(req, res) {
