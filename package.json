@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
-    "lint": "eslint --cache --max-warnings 0 --ext .js --ext .json ."
+    "lint": "eslint --cache --max-warnings 0 --ext .js --ext .json .",
+    "fix": "eslint --fix --ext .js --ext .json ."
   },
   "keywords": [
     "aletheia",

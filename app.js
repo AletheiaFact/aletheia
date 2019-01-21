@@ -41,11 +41,12 @@ function loadRoutes(dir, app) {
 }
 
 function createServer(app, options) {
-    app.use(function(req, res, next) {
-      res.setHeader("Access-Control-Allow-Origin", "*");
+    app.use((req, res, next) => {
+        res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-      res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      next();
+        res.setHeader("Access-Control-Allow-Headers",
+            "Origin, X-Requested-With, Content-Type, Accept");
+        next();
     });
     app.listen(options.conf.port);
     // eslint-disable-next-line no-console

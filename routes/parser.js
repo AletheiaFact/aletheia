@@ -1,6 +1,6 @@
 'use strict';
 
-const parser = require('../lib/parser');
+const Parser = require('../lib/parser');
 
 /**
  * The main router object
@@ -11,12 +11,12 @@ const router = require('../lib/util').router();
  * GET {domain}/candidate
  */
 router.get('/', (req, res, next) => {
-    
+
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    let p = new parser();
-    let result = p.parse()
+    const p = new Parser();
+    const result = p.parse();
     res.json(result.object);
 });
 
