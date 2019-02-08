@@ -1,15 +1,11 @@
 'use strict';
 
 const personality = require('../api/controller/personalityController');
-const bodyParser = require("body-parser");
 
 /**
  * The main router object
  */
 const router = require('../lib/util').router();
-
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
 
 /**
  * GET {domain}/personality
