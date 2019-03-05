@@ -5,14 +5,18 @@ const Schema = mongoose.Schema;
 
 
 const candidateSchema = new Schema({
-    name: {
+    title: {
         type: String,
         required: true
     },
-    speech: {
-        type: String,
+    content: {
+        type: Object,
+        required: true
+    },
+    personality_id: {
+        type: ObjectId,
         required: true
     }
 });
 
-module.exports = mongoose.model('Candidate', candidateSchema);
+module.exports = mongoose.model('Speech', candidateSchema);

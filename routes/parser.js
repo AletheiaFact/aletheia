@@ -1,23 +1,49 @@
 'use strict';
 
 const Parser = require('../lib/parser');
+const fs = require('fs');
+const path = require('path');
+const Speech = require('../api/controller/speechController');
 
 /**
  * The main router object
  */
 const router = require('../lib/util').router();
 
+const mockParser = () => {
+    return fs.readFileSync(path.resolve('tests/parser', 'speech.html'), 'utf8');
+}
+
+/**
+ * Handle CORS
+ */
+router.options("*",function(req,res,next){
+
+    res.status(200).end();
+});
+
 /**
  * GET {domain}/candidate
  */
 router.get('/', (req, res, next) => {
-
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    const p = new Parser();
+    
+    const html = mockParser();
+    const p = new Parser(html);
     const result = p.parse();
     res.json(result.object);
+});
+
+router.post('/', (req, res, next) => {
+    
+    const html = req.body.html;
+    const p = new Parser(html);
+    const content = p.parse();
+
+    req.body = {
+        content,
+    };
+
+    Speech.create(req,res,next);
 });
 
 module.exports = function(appObj) {
