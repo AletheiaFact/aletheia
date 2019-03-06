@@ -12,6 +12,7 @@ exports.listAll = function(req, res) {
 };
 
 exports.create = function(req, res) {
+    console.log(req.body);
     const newTask = new Personality(req.body);
     newTask.save((err, task) => {
         if (err) { res.send(err); }
@@ -20,14 +21,14 @@ exports.create = function(req, res) {
 };
 
 exports.getPersonalityId = function(req, res) {
-    Personality.findById(req.params.taskId, (err, task) => {
+    Personality.findById(req.params.id, (err, task) => {
         if (err) { res.send(err); }
         res.json(task);
     });
 };
 
 exports.update = function(req, res) {
-    Personality.findOneAndUpdate({ _id: req.params.taskId }, req.body, { new: true }, (err, task) => {
+    Personality.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, task) => {
         if (err) { res.send(err); }
         res.json(task);
     });
@@ -36,7 +37,7 @@ exports.update = function(req, res) {
 exports.delete = function(req, res) {
 
     Personality.remove({
-        _id: req.params.taskId
+        _id: req.params.id
     }, (err, task) => {
         if (err) { res.send(err); }
         res.json({ message: 'Task successfully deleted' });

@@ -14,7 +14,7 @@ const candidateSchema = new Schema({
         required: true
     },
     personality_id: {
-        type: ObjectId,
+        type: String,
         required: true
     }
 });

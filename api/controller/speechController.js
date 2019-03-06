@@ -13,7 +13,6 @@ exports.listAll = function(req, res) {
 };
 
 exports.create = function(req, res) {
-    console.log(req.body.html);
     const p = new Parser(req.body.html);
     req.body.content = p.parse();
     const newSpeech = new Speech(req.body);
