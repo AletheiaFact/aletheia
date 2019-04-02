@@ -18,14 +18,7 @@ function createRouter(opts) {
         Object.assign(options, opts);
     }
 
-    const router = new express.Router(options);
-
-    // Manipulate router after creating it
-    router.use(bodyParser.urlencoded({ extended: false }));
-    router.use(bodyParser.json());
-
-    return router;
-
+    return new express.Router(options);
 }
 
 module.exports = {
