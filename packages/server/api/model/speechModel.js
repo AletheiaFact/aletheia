@@ -13,8 +13,9 @@ const candidateSchema = new Schema({
         type: Object,
         required: true
     },
-    personality_id: {
-        type: String,
+    personality: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Personality',
         required: true
     }
 });

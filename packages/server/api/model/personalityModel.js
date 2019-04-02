@@ -12,7 +12,12 @@ const personalitySchema = new Schema({
     bio: {
         type: String,
         required: true
-    }
+    },
+    speechs: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Speech',
+        required: true
+    }]
 });
 
 module.exports = mongoose.model('Personality', personalitySchema);

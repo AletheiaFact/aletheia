@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 
 const Personality = mongoose.model('Personality');
+// Personality.relationship({ path: 'speechs', ref: 'Speech', refPath: 'personality' });
 
 exports.listAll = function(req, res) {
     Personality.find({}, (err, task) => {
@@ -21,10 +22,14 @@ exports.create = function(req, res) {
 };
 
 exports.getPersonalityId = function(req, res) {
-    Personality.findById(req.params.id, (err, task) => {
+    Personality
+    .findOne({"_id": req.params.id})
+    .populate('speechs', '_id title')
+    .exec((err, personality) => {
         if (err) { res.send(err); }
-        res.json(task);
-    });
+        console.log(personality);
+        res.json(personality);
+    })
 };
 
 exports.update = function(req, res) {
