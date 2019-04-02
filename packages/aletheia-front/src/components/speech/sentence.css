@@ -1,0 +1,8 @@
+a.sentence {
+    background-color: #eee;
+}
+
+a.sentence:hover {
+    background-color: #00eeee;
+    cursor: pointer;
+}
