@@ -1,23 +1,21 @@
 'use strict';
 
 const mongoose = require('mongoose');
-
 const Personality = mongoose.model('Personality');
-// Personality.relationship({ path: 'speechs', ref: 'Speech', refPath: 'personality' });
 
 exports.listAll = function(req, res) {
-    Personality.find({}, (err, task) => {
+    Personality.find({}, (err, personality) => {
         if (err) { res.send(err); }
-        res.json(task);
+        res.json(personality);
     });
 };
 
 exports.create = function(req, res) {
     console.log(req.body);
     const newTask = new Personality(req.body);
-    newTask.save((err, task) => {
+    newTask.save((err, personality) => {
         if (err) { res.send(err); }
-        res.json(task);
+        res.json(personality);
     });
 };
 
@@ -33,9 +31,9 @@ exports.getPersonalityId = function(req, res) {
 };
 
 exports.update = function(req, res) {
-    Personality.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, task) => {
+    Personality.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, personality) => {
         if (err) { res.send(err); }
-        res.json(task);
+        res.json(personality);
     });
 };
 
@@ -43,8 +41,8 @@ exports.delete = function(req, res) {
 
     Personality.remove({
         _id: req.params.id
-    }, (err, task) => {
+    }, (err, personality) => {
         if (err) { res.send(err); }
-        res.json({ message: 'Task successfully deleted' });
+        res.json({ message: 'Personality successfully deleted' });
     });
 };

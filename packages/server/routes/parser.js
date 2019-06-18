@@ -26,7 +26,7 @@ router.options("*",function(req,res,next){
  * GET {domain}/candidate
  */
 router.get('/', (req, res, next) => {
-    
+
     const html = mockParser();
     const p = new Parser(html);
     const result = p.parse();
@@ -34,7 +34,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    
+
     const html = req.body.html;
     const p = new Parser(html);
     const content = p.parse();

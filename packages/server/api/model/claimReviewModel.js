@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const annotationSchema = new Schema({
+const claimReviewSchema = new Schema({
     classification: {
         type: String,
         validate: {
@@ -20,7 +20,7 @@ const annotationSchema = new Schema({
                     'unverifiable'
                 ].indexOf() !== -1;
             }
-        }
+        },
         message: tag => `${tag} is not a valid classification.`
     },
     speech: {
@@ -28,7 +28,7 @@ const annotationSchema = new Schema({
         ref: 'Speech',
         required: true
     },
-    sentence_hash: { // sentence hash 
+    sentence_hash: {
         type: String,
         required: true
     },
@@ -41,4 +41,4 @@ const annotationSchema = new Schema({
     // TODO: revision_id
 });
 
-module.exports = mongoose.model('Annotation', annotationSchema);
+module.exports = mongoose.model('ClaimReview', claimReviewSchema);
