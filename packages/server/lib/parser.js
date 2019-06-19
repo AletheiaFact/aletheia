@@ -11,7 +11,7 @@ class Parser {
     }
 
     parse() {
-        let document = dom.createDocument(this.html);
+        const document = dom.createDocument(this.html);
         const result = [];
         const paragraphs = document.querySelectorAll('p');
 
@@ -31,7 +31,7 @@ class Parser {
                 'content': [],
             };
 
-            if (sentences){
+            if (sentences) {
                 sentences.forEach((sentence) => {
                     result[i].content.push(this.parseSentence(document, sentence, newParagraph));
                 });

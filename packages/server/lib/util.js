@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require('express');
-const bodyParser = require("body-parser");
 
 /**
  * Creates a new router with some default options.

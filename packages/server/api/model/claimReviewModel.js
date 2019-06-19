@@ -7,7 +7,7 @@ const claimReviewSchema = new Schema({
     classification: {
         type: String,
         validate: {
-            validator: function() {
+            validator() {
                 return [
                     'not-fact',
                     'true',

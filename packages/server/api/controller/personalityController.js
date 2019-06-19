@@ -11,7 +11,6 @@ exports.listAll = function(req, res) {
 };
 
 exports.create = function(req, res) {
-    console.log(req.body);
     const newTask = new Personality(req.body);
     newTask.save((err, personality) => {
         if (err) { res.send(err); }
@@ -21,20 +20,23 @@ exports.create = function(req, res) {
 
 exports.getPersonalityId = function(req, res) {
     Personality
-    .findOne({"_id": req.params.id})
+    .findOne({ "_id": req.params.id })
     .populate('speechs', '_id title')
     .exec((err, personality) => {
         if (err) { res.send(err); }
-        console.log(personality);
         res.json(personality);
-    })
+    });
 };
 
 exports.update = function(req, res) {
-    Personality.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, personality) => {
-        if (err) { res.send(err); }
-        res.json(personality);
-    });
+    Personality.findOneAndUpdate(
+        { _id: req.params.id },
+        req.body,
+        { new: true },
+        (err, personality) => {
+            if (err) { res.send(err); }
+            res.json(personality);
+        });
 };
 
 exports.delete = function(req, res) {

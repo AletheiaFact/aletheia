@@ -12,12 +12,12 @@ const router = require('../lib/util').router();
 
 const mockParser = () => {
     return fs.readFileSync(path.resolve('tests/parser', 'speech.html'), 'utf8');
-}
+};
 
 /**
  * Handle CORS
  */
-router.options("*",function(req,res,next){
+router.options("*",(req,res,next) => {
 
     res.status(200).end();
 });
