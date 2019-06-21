@@ -2,7 +2,6 @@
 
 const mongoose = require('mongoose');
 const Parser = require('../../lib/parser');
-
 const Speech = mongoose.model('Speech');
 const Personality = mongoose.model('Personality');
 
@@ -20,10 +19,13 @@ exports.create = function(req, res) {
 
     newSpeech.save((err, speech) => {
         if (err) { res.send(err); }
-        Personality.findOneAndUpdate({ _id: req.body.personality }, { "$push": {speechs: speech} }, { new: true },
+        Personality.findOneAndUpdate(
+            { _id: req.body.personality },
+            { "$push": { speechs: speech } },
+            { new: true },
             (err, personality) => {
                 if (err) { res.send(err); }
-        });
+            });
         res.json(speech);
     });
 };

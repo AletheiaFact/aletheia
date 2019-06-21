@@ -7,7 +7,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 function loadModels(app, dir) {
-    console.log("loadModels", typeof app);
     fs.readdirSync(dir).map((fname) => {
         const resolvedPath = path.resolve(dir, fname);
         const isDirectory = fs.statSync(resolvedPath).isDirectory();
@@ -21,19 +20,17 @@ function loadModels(app, dir) {
 }
 
 function loadDB(app) {
-    console.log("loadDB", typeof app);
     return new Promise((resolve, reject) => {
         loadModels(app, './api/model');
         // mongoose instance connection url connection
         mongoose.Promise = global.Promise;
         mongoose.connect('mongodb://localhost/Aletheia')
-        .then(() => resolve(app));      
+        .then(() => resolve(app));
     });
 }
 
 function loadRoutes(app, dir) {
-    console.log("loadRoutes", typeof app);
-    
+
     return new Promise((resolve, reject) => {
         fs.readdirSync(dir).map((fname) => {
             const resolvedPath = path.resolve(dir, fname);
@@ -56,16 +53,15 @@ function loadRoutes(app, dir) {
 }
 
 function createServer(app) {
-    console.log("createServer", typeof app);
     return new Promise((resolve, reject) => {
         app.listen(app.conf.port);
-        console.log(`${app.opt_name} running at http://localhost:${app.conf.port}`);
+        // log(`${app.opt_name} running at http://localhost:${app.conf.port}`);
         resolve(app);
     });
 }
 
 function initApp(options) {
-    
+
     const app = express();
 
     app.opt_name = options.name;      // this app's config options
@@ -76,7 +72,7 @@ function initApp(options) {
     }
 
     // CORS
-    app.all('*', ( req, res, next) => {
+    app.all('*', (req, res, next) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
         res.setHeader("Access-Control-Allow-Headers",
@@ -95,5 +91,5 @@ module.exports = (options) => {
     initApp(options)
     .then(loadDB)
     .then(app => loadRoutes(app, './routes'))
-    .then(createServer)
+    .then(createServer);
 };
