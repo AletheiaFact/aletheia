@@ -1,50 +1,64 @@
 'use strict';
 
-const mongoose = require('mongoose');
+const PersonalityRepository = require('../repository/personality');
 
-const Personality = mongoose.model('Personality');
-// Personality.relationship({ path: 'speechs', ref: 'Speech', refPath: 'personality' });
-
+// I think controllers files can be a class and not exporting functions
 exports.listAll = function(req, res) {
-    Personality.find({}, (err, task) => {
-        if (err) { res.send(err); }
-        res.json(task);
+    return new Promise((resolve, reject) => {
+        PersonalityRepository.listAll()
+            .then((personality) => {
+                resolve(res.json(personality));
+            })
+            .catch((error) => {
+                reject(res.send(error));
+            });
     });
 };
 
 exports.create = function(req, res) {
-    console.log(req.body);
-    const newTask = new Personality(req.body);
-    newTask.save((err, task) => {
-        if (err) { res.send(err); }
-        res.json(task);
+    return new Promise((resolve, reject) => {
+        PersonalityRepository.create(req.body)
+            .then((personality) => {
+                resolve(res.json(personality));
+            })
+            .catch((error) => {
+                reject(res.send(error));
+            });
     });
 };
 
 exports.getPersonalityId = function(req, res) {
-    Personality
-    .findOne({"_id": req.params.id})
-    .populate('speechs', '_id title')
-    .exec((err, personality) => {
-        if (err) { res.send(err); }
-        console.log(personality);
-        res.json(personality);
-    })
+    return new Promise((resolve, reject) => {
+        PersonalityRepository.getPersonalityId(req.params.id)
+            .then((personality) => {
+                resolve(res.json(personality));
+            })
+            .catch((error) => {
+                reject(res.send(error));
+            });
+    });
 };
 
 exports.update = function(req, res) {
-    Personality.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, task) => {
-        if (err) { res.send(err); }
-        res.json(task);
+    return new Promise((resolve, reject) => {
+        PersonalityRepository.update(req.params.id, req.body)
+            .then((personality) => {
+                resolve(res.json(personality));
+            })
+            .catch((error) => {
+                reject(res.send(error));
+            });
     });
 };
 
 exports.delete = function(req, res) {
-
-    Personality.remove({
-        _id: req.params.id
-    }, (err, task) => {
-        if (err) { res.send(err); }
-        res.json({ message: 'Task successfully deleted' });
+    return new Promise((resolve, reject) => {
+        PersonalityRepository.delete(req.params.id)
+            .then((personality) => {
+                resolve(res.json({ message: 'Personality successfully deleted' }));
+            })
+            .catch((error) => {
+                reject(res.send(error));
+            });
     });
 };
