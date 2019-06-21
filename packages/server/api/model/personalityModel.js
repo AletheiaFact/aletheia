@@ -13,9 +13,9 @@ const personalitySchema = new Schema({
         type: String,
         required: true
     },
-    speechs: [{
+    claims: [{
         type: mongoose.Schema.ObjectId,
-        ref: 'Speech',
+        ref: 'Claim',
         required: true
     }]
 });

@@ -5,7 +5,7 @@ import { Editor, EditorState } from 'draft-js'
 import { stateToHTML } from 'draft-js-export-html'
 import 'draft-js/dist/Draft.css';
 
-class SpeechCreate extends Component {
+class ClaimCreate extends Component {
     constructor(props) {
         super(props);
 
@@ -13,18 +13,18 @@ class SpeechCreate extends Component {
             editorState: EditorState.createEmpty(),
         }
 
-        this.saveSpeech = this.saveSpeech.bind(this);
+        this.saveClaim = this.saveClaim.bind(this);
         this.onChange = (editorState) => this.setState({editorState});
       }
 
-    saveSpeech(e) {
+    saveClaim(e) {
         e.preventDefault();
 
         const html = stateToHTML(this.state.editorState.getCurrentContent());
         const title = this.state.title;
         const personality = this.props.match.params.personalityId;
         console.log({ title, html, personality });
-        axios.post('http://localhost:3000/speech', { title, html, personality })
+        axios.post('http://localhost:3000/claim', { title, html, personality })
         .then(response => {
             console.log(response.data)
         })
@@ -34,8 +34,8 @@ class SpeechCreate extends Component {
     render() {
       return (
         <Container>
-              <h2><center>Create Speech</center></h2>
-              <Form onSubmit={this.saveSpeech}>
+              <h2><center>Create Claim</center></h2>
+              <Form onSubmit={this.saveClaim}>
                 <FormGroup>
                     <Label>Title</Label>
                     <Input
@@ -44,7 +44,7 @@ class SpeechCreate extends Component {
                         placeholder={'Some Title'}/>
                 </FormGroup>
                 <FormGroup>
-                    <Label>Speech</Label>
+                    <Label>Claim</Label>
                     <Editor editorState={this.state.editorState} onChange={this.onChange} />
                   
                 </FormGroup>
@@ -56,4 +56,4 @@ class SpeechCreate extends Component {
     }
 }
 
-export default SpeechCreate;
+export default ClaimCreate;

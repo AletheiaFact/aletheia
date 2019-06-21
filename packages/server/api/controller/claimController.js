@@ -2,54 +2,54 @@
 
 const mongoose = require('mongoose');
 const Parser = require('../../lib/parser');
-const Speech = mongoose.model('Speech');
+const Claim = mongoose.model('Claim');
 const Personality = mongoose.model('Personality');
 
 exports.listAll = function(req, res) {
-    Speech.find({}, (err, speech) => {
+    Claim.find({}, (err, claim) => {
         if (err) { res.send(err); }
-        res.json(speech);
+        res.json(claim);
     });
 };
 
 exports.create = function(req, res) {
     const p = new Parser(req.body.html);
     req.body.content = p.parse();
-    const newSpeech = new Speech(req.body);
+    const newClaim = new Claim(req.body);
 
-    newSpeech.save((err, speech) => {
+    newClaim.save((err, claim) => {
         if (err) { res.send(err); }
         Personality.findOneAndUpdate(
             { _id: req.body.personality },
-            { "$push": { speechs: speech } },
+            { "$push": { claims: claim } },
             { new: true },
             (err, personality) => {
                 if (err) { res.send(err); }
             });
-        res.json(speech);
+        res.json(claim);
     });
 };
 
-exports.getSpeechId = function(req, res) {
-    Speech.findById(req.params.id, (err, speech) => {
+exports.getclaimId = function(req, res) {
+    Claim.findById(req.params.id, (err, claim) => {
         if (err) { res.send(err); }
-        res.json(speech);
+        res.json(claim);
     });
 };
 
 exports.update = function(req, res) {
-    Speech.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, speech) => {
+    Claim.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, claim) => {
         if (err) { res.send(err); }
-        res.json(speech);
+        res.json(claim);
     });
 };
 
 exports.delete = function(req, res) {
 
-    Speech.remove({
+    Claim.remove({
         _id: req.params.id
-    }, (err, speech) => {
+    }, (err, claim) => {
         if (err) { res.send(err); }
-        res.json({ message: 'speech successfully deleted' });
+        res.json({ message: 'claim successfully deleted' });
     });
 };

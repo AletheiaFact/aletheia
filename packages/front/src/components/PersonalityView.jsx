@@ -7,8 +7,8 @@ class PersonalityView extends Component {
 
     constructor(props){
         super(props);
-        this.createSpeech = this.createSpeech.bind(this);
-        this.viewSpeech = this.viewSpeech.bind(this);
+        this.createClaim = this.createClaim.bind(this);
+        this.viewClaim = this.viewClaim.bind(this);
         this.state = {};
     }
 
@@ -26,13 +26,13 @@ class PersonalityView extends Component {
         .catch(() => { console.log('Error while fetching Personality'); })
     }
 
-    createSpeech() {
-        let path = `../speech/create/${this.props.match.params.id}`;
+    createClaim() {
+        let path = `../claim/create/${this.props.match.params.id}`;
         this.props.history.push(path);
     }
 
-    viewSpeech(id) {
-        let path = `../speech/${id}`;
+    viewClaim(id) {
+        let path = `../claim/${id}`;
         this.props.history.push(path);
     }
 
@@ -49,22 +49,22 @@ class PersonalityView extends Component {
                     <Table>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell>Speech Title</Table.HeaderCell>
+                                <Table.HeaderCell>Claim Title</Table.HeaderCell>
                                 <Table.HeaderCell />
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {personality.speechs.map(speech => (
+                            {personality.claims.map(claim => (
                                 <Table.Row>
-                                    <Table.Cell>{speech.title}</Table.Cell>
-                                    <Table.Cell><Button onClick={() => this.viewSpeech(speech._id)}>View</Button></Table.Cell>
+                                    <Table.Cell>{claim.title}</Table.Cell>
+                                    <Table.Cell><Button onClick={() => this.viewClaim(claim._id)}>View</Button></Table.Cell>
                                 </Table.Row>
                             ))}
                         </Table.Body>
                         <Table.Footer>
                             <Table.Row>
                                 <Table.HeaderCell>
-                                    <Button onClick={() => this.createSpeech()}>Add Speech</Button>
+                                    <Button onClick={() => this.createClaim()}>Add Claim</Button>
                                 </Table.HeaderCell>
                             </Table.Row>
                         </Table.Footer>

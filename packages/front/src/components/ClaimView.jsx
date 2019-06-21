@@ -1,24 +1,24 @@
 import React, { Component } from 'react'
-import Paragraph from './speech/paragraph'
-import CheckingForm from './speech/checking'
+import Paragraph from './claim/paragraph'
+import CheckingForm from './claim/checking'
 import axios from 'axios'
 import { Container, Row, Col } from 'reactstrap'
 import createStore from 'redux'
 
-class Speech extends Component {
+class Claim extends Component {
 
     componentDidMount() {
         const self = this;
-        self.getSpeech();
+        self.getClaim();
     }
 
-    getSpeech() {
-      axios.get(`http://localhost:3000/speech/${this.props.match.params.id}`)
+    getClaim() {
+      axios.get(`http://localhost:3000/claim/${this.props.match.params.id}`)
         .then(response => {
             const content = response.data.content.object;
             this.setState({ body: content, highlight: {} });
         })
-        .catch(() => { console.log('Error while fetching speech'); })
+        .catch(() => { console.log('Error while fetching claim'); })
     }
 
     handleCheckingForm = (data) => {
@@ -59,4 +59,4 @@ class Speech extends Component {
     }
 }
  
-export default Speech;
+export default Claim;

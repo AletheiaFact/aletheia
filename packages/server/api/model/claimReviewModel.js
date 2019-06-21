@@ -23,9 +23,9 @@ const claimReviewSchema = new Schema({
         },
         message: tag => `${tag} is not a valid classification.`
     },
-    speech: {
+    claims: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Speech',
+        ref: 'Claim',
         required: true
     },
     sentence_hash: {
