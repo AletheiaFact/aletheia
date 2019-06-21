@@ -17,7 +17,7 @@ const mockParser = () => {
 /**
  * Handle CORS
  */
-router.options("*", (req,res) => {
+router.options("*",(req,res,next) => {
     res.status(200).end();
 });
 

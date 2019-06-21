@@ -7,7 +7,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 function loadModels(app, dir) {
-    console.log("loadModels", typeof app);
     fs.readdirSync(dir).map((fname) => {
         const resolvedPath = path.resolve(dir, fname);
         const isDirectory = fs.statSync(resolvedPath).isDirectory();
@@ -21,7 +20,6 @@ function loadModels(app, dir) {
 }
 
 function loadDB(app) {
-    console.log("loadDB", typeof app);
     return new Promise((resolve, reject) => {
         loadModels(app, './api/model');
         // mongoose instance connection url connection
@@ -32,7 +30,6 @@ function loadDB(app) {
 }
 
 function loadRoutes(app, dir) {
-    console.log("loadRoutes", typeof app);
     return new Promise((resolve, reject) => {
         fs.readdirSync(dir).map((fname) => {
             const resolvedPath = path.resolve(dir, fname);
@@ -55,10 +52,9 @@ function loadRoutes(app, dir) {
 }
 
 function createServer(app) {
-    console.log("createServer", typeof app);
     return new Promise((resolve, reject) => {
         app.listen(app.conf.port);
-        console.log(`${app.opt_name} running at http://localhost:${app.conf.port}`);
+        // log(`${app.opt_name} running at http://localhost:${app.conf.port}`);
         resolve(app);
     });
 }

@@ -1,7 +1,28 @@
 {
   "name": "root",
   "private": false,
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "lint": "lerna run lint",
+    "dev": "lerna run start",
+    "lint:fix": "lerna run lint:fix",
+    "test": "lerna run test",
+    "clean": "./clean_node_modules.sh"
+  },
+  "contributors": [
+    {
+      "name": "Mateus Santos",
+      "email": "mateusbatistasantos@gmail.com",
+      "url": "https://github.com/mateusbs17"
+    }
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint"
+    }
+  },
   "devDependencies": {
+    "husky": "^2.4.1",
     "lerna": "^3.13.1"
   }
 }

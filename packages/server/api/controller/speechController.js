@@ -2,7 +2,6 @@
 
 const mongoose = require('mongoose');
 const Parser = require('../../lib/parser');
-
 const Speech = mongoose.model('Speech');
 const Personality = mongoose.model('Personality');
 
