@@ -1,50 +1,50 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const Personality = mongoose.model('Personality');
+const ClaimReview = mongoose.model('ClaimReview');
 
 exports.listAll = function(req, res) {
-    Personality.find({}, (err, personality) => {
+    ClaimReview.find({}, (err, claimReview) => {
         if (err) { res.send(err); }
-        res.json(personality);
+        res.json(claimReview);
     });
 };
 
 exports.create = function(req, res) {
-    const newTask = new Personality(req.body);
-    newTask.save((err, personality) => {
+    const newTask = new ClaimReview(req.body);
+    newTask.save((err, claimReview) => {
         if (err) { res.send(err); }
-        res.json(personality);
+        res.json(claimReview);
     });
 };
 
-exports.getPersonalityId = function(req, res) {
-    Personality
+exports.getClaimReviewId = function(req, res) {
+    ClaimReview
     .findOne({ "_id": req.params.id })
     .populate('claims', '_id title')
-    .exec((err, personality) => {
+    .exec((err, claimReview) => {
         if (err) { res.send(err); }
-        res.json(personality);
+        res.json(claimReview);
     });
 };
 
 exports.update = function(req, res) {
-    Personality.findOneAndUpdate(
+    ClaimReview.findOneAndUpdate(
         { _id: req.params.id },
         req.body,
         { new: true },
-        (err, personality) => {
+        (err, claimReview) => {
             if (err) { res.send(err); }
-            res.json(personality);
+            res.json(claimReview);
         });
 };
 
 exports.delete = function(req, res) {
 
-    Personality.remove({
+    ClaimReview.remove({
         _id: req.params.id
-    }, (err, personality) => {
+    }, (err, claimReview) => {
         if (err) { res.send(err); }
-        res.json({ message: 'Personality successfully deleted' });
+        res.json({ message: 'ClaimReview successfully deleted' });
     });
 };

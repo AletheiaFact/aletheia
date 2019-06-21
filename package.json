@@ -4,7 +4,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "lint": "lerna run lint",
-    "dev": "lerna run start",
+    "start": "lerna run start",
     "lint:fix": "lerna run lint:fix",
     "test": "lerna run test",
     "clean": "./clean_node_modules.sh"

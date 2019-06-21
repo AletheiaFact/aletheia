@@ -1,55 +1,50 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const Parser = require('../../lib/parser');
-const Claim = mongoose.model('Claim');
 const Personality = mongoose.model('Personality');
 
 exports.listAll = function(req, res) {
-    Claim.find({}, (err, claim) => {
+    Personality.find({}, (err, personality) => {
         if (err) { res.send(err); }
-        res.json(claim);
+        res.json(personality);
     });
 };
 
 exports.create = function(req, res) {
-    const p = new Parser(req.body.html);
-    req.body.content = p.parse();
-    const newClaim = new Claim(req.body);
-
-    newClaim.save((err, claim) => {
+    const newTask = new Personality(req.body);
+    newTask.save((err, personality) => {
         if (err) { res.send(err); }
-        Personality.findOneAndUpdate(
-            { _id: req.body.personality },
-            { "$push": { claims: claim } },
-            { new: true },
-            (err, personality) => {
-                if (err) { res.send(err); }
-            });
-        res.json(claim);
+        res.json(personality);
     });
 };
 
-exports.getclaimId = function(req, res) {
-    Claim.findById(req.params.id, (err, claim) => {
+exports.getPersonalityId = function(req, res) {
+    Personality
+    .findOne({ "_id": req.params.id })
+    .populate('speechs', '_id title')
+    .exec((err, personality) => {
         if (err) { res.send(err); }
-        res.json(claim);
+        res.json(personality);
     });
 };
 
 exports.update = function(req, res) {
-    Claim.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, claim) => {
-        if (err) { res.send(err); }
-        res.json(claim);
-    });
+    Personality.findOneAndUpdate(
+        { _id: req.params.id },
+        req.body,
+        { new: true },
+        (err, personality) => {
+            if (err) { res.send(err); }
+            res.json(personality);
+        });
 };
 
 exports.delete = function(req, res) {
 
-    Claim.remove({
+    Personality.remove({
         _id: req.params.id
-    }, (err, claim) => {
+    }, (err, personality) => {
         if (err) { res.send(err); }
-        res.json({ message: 'claim successfully deleted' });
+        res.json({ message: 'Personality successfully deleted' });
     });
 };
