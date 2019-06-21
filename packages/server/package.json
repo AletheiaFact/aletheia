@@ -7,7 +7,7 @@
     "start": "nodemon server.js",
     "lint": "eslint --cache --max-warnings 0 --ext .js --ext .json .",
     "fix": "eslint --fix --ext .js --ext .json .",
-    "test": "mocha"
+    "test": "jest"
   },
   "keywords": [
     "aletheia",
@@ -22,17 +22,15 @@
     "express": "^4.16.4",
     "js-yaml": "^3.12.0",
     "md5": "^2.2.1",
-    "mongoose": "^5.3.4",
-    "sinon": "^7.3.2"
+    "mongoose": "^5.3.4"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
     "eslint": "^5.7.0",
     "eslint-config-node-services": "^2.2.5",
     "eslint-config-wikimedia": "^0.8.1",
     "eslint-plugin-jsdoc": "^3.9.1",
     "eslint-plugin-json": "^1.2.1",
-    "mocha": "^6.1.4",
+    "jest": "^24.8.0",
     "nodemon": "^1.18.4"
   }
 }

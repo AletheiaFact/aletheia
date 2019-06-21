@@ -27,13 +27,12 @@ function loadDB(app) {
         // mongoose instance connection url connection
         mongoose.Promise = global.Promise;
         mongoose.connect('mongodb://localhost/Aletheia')
-        .then(() => resolve(app));      
+        .then(() => resolve(app));
     });
 }
 
 function loadRoutes(app, dir) {
     console.log("loadRoutes", typeof app);
-    
     return new Promise((resolve, reject) => {
         fs.readdirSync(dir).map((fname) => {
             const resolvedPath = path.resolve(dir, fname);
@@ -65,7 +64,6 @@ function createServer(app) {
 }
 
 function initApp(options) {
-    
     const app = express();
 
     app.opt_name = options.name;      // this app's config options
@@ -76,7 +74,7 @@ function initApp(options) {
     }
 
     // CORS
-    app.all('*', ( req, res, next) => {
+    app.all('*', (req, res, next) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
         res.setHeader("Access-Control-Allow-Headers",
@@ -95,5 +93,5 @@ module.exports = (options) => {
     initApp(options)
     .then(loadDB)
     .then(app => loadRoutes(app, './routes'))
-    .then(createServer)
+    .then(createServer);
 };

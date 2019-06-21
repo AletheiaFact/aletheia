@@ -1,7 +1,6 @@
 'use strict';
 
-const mongoose = require('mongoose');
-const Personality = mongoose.model('Personality');
+const Personality = require('../model/personalityModel');
 
 /**
  * @class PersonalityRepository
