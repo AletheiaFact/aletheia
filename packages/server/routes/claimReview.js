@@ -36,7 +36,7 @@ router.delete('/:id', claimReview.delete);
 
 module.exports = function(appObj) {
     return {
-        path: '/claimReview',
+        path: '/claimreview',
         api_version: 1,
         router
     };

@@ -24,7 +24,9 @@ function loadDB(app) {
         loadModels(app, './api/model');
         // mongoose instance connection url connection
         mongoose.Promise = global.Promise;
-        mongoose.connect('mongodb://localhost/Aletheia')
+        mongoose.connect(app.conf.db && app.conf.db.path
+            || 'mongodb://localhost/Aletheia',
+            app.conf.db && app.conf.db.callback || {})
         .then(() => resolve(app));
     });
 }
@@ -53,6 +55,9 @@ function loadRoutes(app, dir) {
 }
 
 function createServer(app) {
+    // if (app.env && app.env === 'test') {
+    //     return app;
+    // }
     return new Promise((resolve, reject) => {
         app.listen(app.conf.port);
         // log(`${app.opt_name} running at http://localhost:${app.conf.port}`);
@@ -88,7 +93,7 @@ function initApp(options) {
 
 module.exports = (options) => {
     // TODO: Promisify it all
-    initApp(options)
+    return initApp(options)
     .then(loadDB)
     .then(app => loadRoutes(app, './routes'))
     .then(createServer);
