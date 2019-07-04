@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Paragraph from './claim/paragraph'
-import CheckingForm from './claim/checking'
+import ClaimReviewForm from './claim/claimReview'
 import axios from 'axios'
 import { Container, Row, Col } from 'reactstrap'
 import createStore from 'redux'
@@ -21,9 +21,12 @@ class Claim extends Component {
         .catch(() => { console.log('Error while fetching claim'); })
     }
 
-    handleCheckingForm = (data) => {
+    handleClaimReviewForm = (data) => {
         let body = this.state.body;
-        let highlight = data;
+        let highlight = {
+            ...data,
+            claim: this.props.match.params.id,
+        };
         this.setState({ body, highlight });
     }
 
@@ -40,13 +43,13 @@ class Claim extends Component {
                                     <Paragraph 
                                         key={p.props.id}
                                         paragraph={p} 
-                                        onCheckingForm={this.handleCheckingForm}
+                                        onClaimReviewForm={this.handleClaimReviewForm}
                                     />
                                 ))}
                             </div>
                         </Col>
                         <Col sm={{ size:2 }}>
-                            <CheckingForm 
+                            <ClaimReviewForm 
                                 highlight={this.state.highlight}
                             />
                         </Col>

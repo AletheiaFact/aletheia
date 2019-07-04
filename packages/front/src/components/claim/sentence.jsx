@@ -8,7 +8,7 @@ class Sentence extends Component {
                 id={this.props.sentence.props['id']}
                 data-hash={this.props.sentence.props['data-hash']}
                 className="sentence"
-                onClick={ () => this.props.onCheckingForm(this.props.sentence) }
+                onClick={ () => this.props.onClaimReviewForm(this.props.sentence) }
             >
                 {this.props.sentence.content}
             </a>

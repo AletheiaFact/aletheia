@@ -21,7 +21,7 @@ exports.create = function(req, res) {
 exports.getPersonalityId = function(req, res) {
     Personality
     .findOne({ "_id": req.params.id })
-    .populate('speechs', '_id title')
+    .populate('claims', '_id title')
     .exec((err, personality) => {
         if (err) { res.send(err); }
         res.json(personality);
