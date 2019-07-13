@@ -25,19 +25,59 @@ describe('Personality Controller', () => {
     });
 
     test('Get By Id', () => {
+        const mockGetById = jest.spyOn(PersonalityRepository, 'getById');
+        mockGetById.mockImplementation(() => {
+            return {};
+        });
 
+        personality.getPersonalityId('objectId')
+            .then(
+                expect(personality).toMatchObject({})
+            );
+
+        mockGetById.mockRestore();
     });
 
     test('Create', () => {
+        const mockCreate = jest.spyOn(PersonalityRepository, 'create');
+        mockCreate.mockImplementation(() => {
+            return {};
+        });
 
+        personality.create({})
+            .then(
+                expect(personality).toMatchObject({})
+            );
+
+        mockCreate.mockRestore();
     });
 
     test('Update', () => {
+        const mockUpdate = jest.spyOn(PersonalityRepository, 'update');
+        mockUpdate.mockImplementation(() => {
+            return {};
+        });
 
+        personality.update('objectId', {})
+            .then(
+                expect(personality).toMatchObject({})
+            );
+
+        mockUpdate.mockRestore();
     });
 
     test('Delete', () => {
+        const mockUpdate = jest.spyOn(PersonalityRepository, 'delete');
+        mockUpdate.mockImplementation(() => {
+            return {};
+        });
 
+        personality.update('objectId')
+            .then(
+                expect(personality).toMatchObject({})
+            );
+
+        mockUpdate.mockRestore();
     });
 
     afterEach(() => {
