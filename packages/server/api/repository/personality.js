@@ -15,18 +15,28 @@ module.exports = class PersonalityRepository {
         return newPersonality.save();
     }
 
-    static getPersonalityId(personalityId) {
+    static getById(personalityId) {
         return Personality.findById(personalityId).populate('speechs', '_id title');
     }
 
-    static async update(personalityId, personalityBody) {
-        const personality = await this.getPersonalityId(personalityId);
-        const newPersonality = Object.assign(personality, personalityBody);
-        return Personality.findByIdAndUpdate(personalityId, newPersonality, { new: true });
+    static update(personalityId, personalityBody) {
+        return new Promise((resolve, reject) => {
+            Promise.all([
+                this.getById(personalityId)
+            ])
+            .then((personality) => {
+                const newPersonality = Object.assign(personality, personalityBody);
+                resolve(
+                    Personality.findByIdAndUpdate(personalityId, newPersonality, { new: true })
+                );
+            })
+            .catch((error) => {
+                throw new Error(error);
+            });
+        });
     }
 
     static delete(personalityId) {
         return Personality.findByIdAndRemove(personalityId);
     }
-   
 };

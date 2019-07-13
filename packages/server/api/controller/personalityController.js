@@ -21,7 +21,7 @@ module.exports = class PersonalityController {
 
     getPersonalityId(id) {
         return new Promise((resolve, reject) => {
-            PersonalityRepository.getPersonalityId(id)
+            PersonalityRepository.getById(id)
                 .then(resolve)
                 .catch(reject);
         });
