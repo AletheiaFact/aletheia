@@ -1,50 +1,47 @@
 'use strict';
 
-const mongoose = require('mongoose');
-const Personality = mongoose.model('Personality');
+const PersonalityRepository = require('../repository/personality');
 
-exports.listAll = function(req, res) {
-    Personality.find({}, (err, personality) => {
-        if (err) { res.send(err); }
-        res.json(personality);
-    });
-};
-
-exports.create = function(req, res) {
-    const newTask = new Personality(req.body);
-    newTask.save((err, personality) => {
-        if (err) { res.send(err); }
-        res.json(personality);
-    });
-};
-
-exports.getPersonalityId = function(req, res) {
-    Personality
-    .findOne({ "_id": req.params.id })
-    .populate('speechs', '_id title')
-    .exec((err, personality) => {
-        if (err) { res.send(err); }
-        res.json(personality);
-    });
-};
-
-exports.update = function(req, res) {
-    Personality.findOneAndUpdate(
-        { _id: req.params.id },
-        req.body,
-        { new: true },
-        (err, personality) => {
-            if (err) { res.send(err); }
-            res.json(personality);
+module.exports = class PersonalityController {
+    listAll() {
+        return new Promise((resolve, reject) => {
+            PersonalityRepository.listAll()
+                .then(resolve)
+                .catch(reject);
         });
-};
+    }
 
-exports.delete = function(req, res) {
+    create(body) {
+        return new Promise((resolve, reject) => {
+            PersonalityRepository.create(body)
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 
-    Personality.remove({
-        _id: req.params.id
-    }, (err, personality) => {
-        if (err) { res.send(err); }
-        res.json({ message: 'Personality successfully deleted' });
-    });
+    getPersonalityId(id) {
+        return new Promise((resolve, reject) => {
+            PersonalityRepository.getById(id)
+                .then(resolve)
+                .catch(reject);
+        });
+    }
+
+    update(id, body) {
+        return new Promise((resolve, reject) => {
+            PersonalityRepository.update(id, body)
+                .then(resolve)
+                .catch(reject);
+        });
+    }
+
+    delete(id) {
+        return new Promise((resolve, reject) => {
+            PersonalityRepository.delete(id)
+                .then(() => {
+                    resolve({ message: 'Personality successfully deleted' });
+                })
+                .catch(reject);
+        });
+    }
 };

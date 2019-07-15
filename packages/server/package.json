@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon server.js",
     "lint": "eslint --cache --max-warnings 0 --ext .js --ext .json .",
-    "lint:fix": "eslint --fix --ext .js --ext .json ."
+    "lint:fix": "eslint --fix --ext .js --ext .json .",
+    "test": "jest"
   },
   "keywords": [
     "aletheia",
@@ -29,6 +30,7 @@
     "eslint-config-wikimedia": "^0.8.1",
     "eslint-plugin-jsdoc": "^3.9.1",
     "eslint-plugin-json": "^1.2.1",
+    "jest": "^24.8.0",
     "nodemon": "^1.18.4"
   }
 }
