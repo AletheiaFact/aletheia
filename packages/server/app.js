@@ -32,7 +32,6 @@ function loadDB(app) {
 }
 
 function loadRoutes(app, dir) {
-
     return new Promise((resolve, reject) => {
         fs.readdirSync(dir).map((fname) => {
             const resolvedPath = path.resolve(dir, fname);
@@ -66,7 +65,6 @@ function createServer(app) {
 }
 
 function initApp(options) {
-
     const app = express();
 
     app.opt_name = options.name;      // this app's config options
