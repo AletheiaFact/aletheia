@@ -2,6 +2,11 @@
 
 const Personality = require('../model/personalityModel');
 
+const optionsToUpdate = {
+    new: true,
+    upsert: true
+}
+
 /**
  * @class PersonalityRepository
  */
@@ -19,21 +24,19 @@ module.exports = class PersonalityRepository {
         return Personality.findById(personalityId).populate('speechs', '_id title');
     }
 
-    static update(personalityId, personalityBody) {
-        return new Promise((resolve, reject) => {
-            Promise.all([
-                this.getById(personalityId)
-            ])
-            .then((personality) => {
-                const newPersonality = Object.assign(personality, personalityBody);
-                resolve(
-                    Personality.findByIdAndUpdate(personalityId, newPersonality, { new: true })
-                );
-            })
-            .catch((error) => {
-                throw new Error(error);
-            });
-        });
+    static async update(personalityId, personalityBody) {
+        try {
+            const personality = await this.getById(personalityId)
+            const newPersonality = Object.assign(personality, personalityBody)
+            const personalityUpdate = await Personality.findByIdAndUpdate(
+                id,
+                newPersonality,
+                optionsToUpdate
+            )
+            return personalityUpdate
+        } catch (error) {
+            throw error
+        }
     }
 
     static delete(personalityId) {

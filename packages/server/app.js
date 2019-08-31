@@ -24,7 +24,7 @@ function loadDB(app) {
         loadModels(app, './api/model');
         // mongoose instance connection url connection
         mongoose.Promise = global.Promise;
-        mongoose.connect('mongodb://localhost/Aletheia')
+        mongoose.connect('mongodb://localhost/Aletheia', { useNewUrlParser: true })
         .then(() => resolve(app));
     });
 }

@@ -27,12 +27,12 @@ module.exports = class PersonalityController {
         });
     }
 
-    update(id, body) {
-        return new Promise((resolve, reject) => {
-            PersonalityRepository.update(id, body)
-                .then(resolve)
-                .catch(reject);
-        });
+    async update(id, body) {
+        try {
+            return PersonalityRepository.update(id, body)
+        } catch (error) {
+            return error
+        }
     }
 
     delete(id) {

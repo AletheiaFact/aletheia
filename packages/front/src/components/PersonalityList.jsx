@@ -27,8 +27,9 @@ class SpeechCreate extends Component {
       const personalities = this.state.personalities;
       return (
         <Card.Group>
-            {personalities.map(p => (
+            {personalities.map((p, i) => (
               <Card
+                  key={i}
                   href={`personality/${p._id}`}
                   header={p.name}
                   description={p.bio}
