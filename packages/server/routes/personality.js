@@ -52,8 +52,7 @@ router.put('/:id', (req, res, next) => {
     personality.update(req.params.id, req.body)
     .then(result => res.send(result))
     .catch((error) => {
-        console.log(error.message)
-        next(res.send(error));
+        next(res.send(error.message));
     });
 });
 

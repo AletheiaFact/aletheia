@@ -5,7 +5,7 @@ const Personality = require('../model/personalityModel');
 const optionsToUpdate = {
     new: true,
     upsert: true
-}
+};
 
 /**
  * @class PersonalityRepository
@@ -26,16 +26,16 @@ module.exports = class PersonalityRepository {
 
     static async update(personalityId, personalityBody) {
         try {
-            const personality = await this.getById(personalityId)
-            const newPersonality = Object.assign(personality, personalityBody)
+            const personality = await this.getById(personalityId);
+            const newPersonality = Object.assign(personality, personalityBody);
             const personalityUpdate = await Personality.findByIdAndUpdate(
-                id,
+                personalityId,
                 newPersonality,
                 optionsToUpdate
-            )
-            return personalityUpdate
+            );
+            return personalityUpdate;
         } catch (error) {
-            throw error
+            throw error;
         }
     }
 

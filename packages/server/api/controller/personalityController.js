@@ -29,9 +29,9 @@ module.exports = class PersonalityController {
 
     async update(id, body) {
         try {
-            return PersonalityRepository.update(id, body)
+            return PersonalityRepository.update(id, body);
         } catch (error) {
-            return error
+            return error;
         }
     }
 
