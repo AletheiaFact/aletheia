@@ -26,7 +26,7 @@ function loadDB(app) {
         mongoose.Promise = global.Promise;
         mongoose.connect(app.conf.db && app.conf.db.path
             || 'mongodb://localhost/Aletheia',
-            app.conf.db && app.conf.db.callback || {})
+        app.conf.db && app.conf.db.callback || {})
         .then(() => resolve(app));
     });
 }
