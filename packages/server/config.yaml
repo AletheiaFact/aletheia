@@ -3,5 +3,5 @@ services:
   - name: service-aletheia
     # path relative to the __dirname variable
     module: app.js
-    conf: 
+    conf:
       port: 3000

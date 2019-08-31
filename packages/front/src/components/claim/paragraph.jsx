@@ -10,7 +10,7 @@ class Paragraph extends Component {
                 <Sentence 
                   key={p.props.id}
                   sentence={p} 
-                  onCheckingForm={this.props.onCheckingForm}
+                  onClaimReviewForm={this.props.onClaimReviewForm}
                 />
             ))}
         </p>

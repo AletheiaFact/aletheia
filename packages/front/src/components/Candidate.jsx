@@ -9,7 +9,7 @@ class Candidate extends Component {
 
       this.state = {
         name: '',
-        speech: ''
+        claim: ''
       }
       this.saveCandidate = this.saveCandidate.bind(this);
     }
@@ -51,8 +51,8 @@ class Candidate extends Component {
                   <Input
                     rows="4"
                     type="textarea"
-                    value={this.state.speech}
-                    onChange={e => this.setState({speech: e.target.value}) }
+                    value={this.state.claim}
+                    onChange={e => this.setState({claim: e.target.value}) }
                     placeholder={'Eu com toda honra...'}/>
                 </FormGroup>
                 <Button type="submit" value="Submit">Salvar</Button>

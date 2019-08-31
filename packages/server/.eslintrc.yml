@@ -1,1 +1,5 @@
 extends: 'eslint-config-node-services'
+parserOptions:
+  ecmaVersion: 10
+env:
+  jest: true

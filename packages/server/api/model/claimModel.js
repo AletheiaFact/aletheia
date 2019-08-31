@@ -20,4 +20,4 @@ const candidateSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model('Speech', candidateSchema);
+module.exports = mongoose.model('Claim', candidateSchema);
