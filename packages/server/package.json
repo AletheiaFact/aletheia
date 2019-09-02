@@ -4,7 +4,8 @@
   "description": "Project open source",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
     "lint": "eslint --cache --max-warnings 0 --ext .js --ext .json .",
     "lint:fix": "eslint --fix --ext .js --ext .json .",
     "test": "jest"
