@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import { Card, Image } from 'semantic-ui-react'
 
-class SpeechCreate extends Component {
+class ClaimCreate extends Component {
     constructor(props) {
       super(props);
       this.state = { personalities: [] };
@@ -40,4 +40,4 @@ class SpeechCreate extends Component {
     }
 }
 
-export default SpeechCreate;
+export default ClaimCreate;

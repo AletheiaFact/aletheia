@@ -3,7 +3,7 @@
 const Parser = require('../lib/parser');
 const fs = require('fs');
 const path = require('path');
-const Speech = require('../api/controller/speechController');
+const Claim = require('../api/controller/claimController');
 
 /**
  * The main router object
@@ -11,7 +11,7 @@ const Speech = require('../api/controller/speechController');
 const router = require('../lib/util').router();
 
 const mockParser = () => {
-    return fs.readFileSync(path.resolve('tests/parser', 'speech.html'), 'utf8');
+    return fs.readFileSync(path.resolve('tests/parser', 'claim.html'), 'utf8');
 };
 
 /**
@@ -40,7 +40,7 @@ router.post('/', (req, res, next) => {
         content,
     };
 
-    Speech.create(req,res,next);
+    Claim.create(req,res,next);
 });
 
 module.exports = function(appObj) {

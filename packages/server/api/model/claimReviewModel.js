@@ -6,8 +6,9 @@ const Schema = mongoose.Schema;
 const claimReviewSchema = new Schema({
     classification: {
         type: String,
+        required: true,
         validate: {
-            validator() {
+            validator: (v) => {
                 return [
                     'not-fact',
                     'true',
@@ -18,14 +19,14 @@ const claimReviewSchema = new Schema({
                     'unsustainable',
                     'exaggerated',
                     'unverifiable'
-                ].indexOf() !== -1;
+                ].indexOf(v) !== -1;
             }
         },
         message: tag => `${tag} is not a valid classification.`
     },
-    speech: {
+    claim: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Speech',
+        ref: 'Claim',
         required: true
     },
     sentence_hash: {

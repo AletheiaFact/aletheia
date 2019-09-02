@@ -1,29 +1,32 @@
 import React, { Component } from 'react'
-import Paragraph from './speech/paragraph'
-import CheckingForm from './speech/checking'
+import Paragraph from './claim/paragraph'
+import ClaimReviewForm from './claim/claimReview'
 import axios from 'axios'
 import { Container, Row, Col } from 'reactstrap'
 import createStore from 'redux'
 
-class Speech extends Component {
+class Claim extends Component {
 
     componentDidMount() {
         const self = this;
-        self.getSpeech();
+        self.getClaim();
     }
 
-    getSpeech() {
-      axios.get(`http://localhost:3000/speech/${this.props.match.params.id}`)
+    getClaim() {
+      axios.get(`http://localhost:3000/claim/${this.props.match.params.id}`)
         .then(response => {
             const content = response.data.content.object;
             this.setState({ body: content, highlight: {} });
         })
-        .catch(() => { console.log('Error while fetching speech'); })
+        .catch(() => { console.log('Error while fetching claim'); })
     }
 
-    handleCheckingForm = (data) => {
+    handleClaimReviewForm = (data) => {
         let body = this.state.body;
-        let highlight = data;
+        let highlight = {
+            ...data,
+            claim: this.props.match.params.id,
+        };
         this.setState({ body, highlight });
     }
 
@@ -40,13 +43,13 @@ class Speech extends Component {
                                     <Paragraph 
                                         key={p.props.id}
                                         paragraph={p} 
-                                        onCheckingForm={this.handleCheckingForm}
+                                        onClaimReviewForm={this.handleClaimReviewForm}
                                     />
                                 ))}
                             </div>
                         </Col>
                         <Col sm={{ size:2 }}>
-                            <CheckingForm 
+                            <ClaimReviewForm 
                                 highlight={this.state.highlight}
                             />
                         </Col>
@@ -59,4 +62,4 @@ class Speech extends Component {
     }
 }
  
-export default Speech;
+export default Claim;
