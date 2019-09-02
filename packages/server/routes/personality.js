@@ -2,6 +2,7 @@
 
 /* eslint-disable no-use-before-define */
 const Personality = require('../api/controller/personalityController');
+const Requester = require('../infra/interceptor/requester');
 
 /**
  * The main router object
@@ -16,7 +17,7 @@ router.get('/', (req, res, next) => {
     personality.listAll()
     .then(result => res.send(result))
     .catch((error) => {
-        next(res.send(error));
+        next(Requester.internalError(res, error.message));
     });
 });
 
@@ -28,7 +29,7 @@ router.post('/', (req, res, next) => {
     personality.create(req.body)
     .then(result => res.send(result))
     .catch((error) => {
-        next(res.send(error));
+        next(Requester.internalError(res, error.message));
     });
 });
 
@@ -40,7 +41,7 @@ router.get('/:id', (req, res, next) => {
     personality.getPersonalityId(req.params.id)
     .then(result => res.send(result))
     .catch((error) => {
-        next(res.send(error));
+        next(Requester.internalError(res, error.message));
     });
 });
 
@@ -52,7 +53,7 @@ router.put('/:id', (req, res, next) => {
     personality.update(req.params.id, req.body)
     .then(result => res.send(result))
     .catch((error) => {
-        next(res.send(error.message));
+        next(Requester.internalError(res, error.message));
     });
 });
 
@@ -64,7 +65,7 @@ router.delete('/:id', (req, res, next) => {
     personality.delete(req.params.id)
     .then(result => res.send(result))
     .catch((error) => {
-        next(res.send(error));
+        next(Requester.internalError(res, error.message));
     });
 });
 
