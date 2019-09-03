@@ -1,50 +1,47 @@
 'use strict';
 
-const mongoose = require('mongoose');
-const ClaimReview = mongoose.model('ClaimReview');
+const ClaimReviewRespository = require('../repository/claimReview');
 
-exports.listAll = function(req, res) {
-    ClaimReview.find({}, (err, claimReview) => {
-        if (err) { res.status(400).send(err).end(); }
-        res.json(claimReview).end();
-    });
-};
-
-exports.create = function(req, res) {
-    const newTask = new ClaimReview(req.body);
-    newTask.save((err, claimReview) => {
-        if (err) { res.status(400).send(err).end(); }
-        res.json(claimReview).end();
-    });
-};
-
-exports.getClaimReviewId = function(req, res) {
-    ClaimReview
-    .findOne({ "_id": req.params.id })
-    .populate('claims', '_id title')
-    .exec((err, claimReview) => {
-        if (err) { res.status(400).send(err).end(); }
-        res.json(claimReview).end();
-    });
-};
-
-exports.update = function(req, res) {
-    ClaimReview.findOneAndUpdate(
-        { _id: req.params.id },
-        req.body,
-        { new: true },
-        (err, claimReview) => {
-            if (err) { res.status(400).send(err).end(); }
-            res.json(claimReview).end();
+module.exports = class ClaimReviewController {
+    listAll() {
+        return new Promise((resolve, reject) => {
+            ClaimReviewRespository.listAll()
+                .then(resolve)
+                .catch(reject);
         });
-};
+    }
 
-exports.delete = function(req, res) {
+    create(body) {
+        return new Promise((resolve, reject) => {
+            ClaimReviewRespository.create(body)
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 
-    ClaimReview.remove({
-        _id: req.params.id
-    }, (err, claimReview) => {
-        if (err) { res.status(400).send(err).end(); }
-        res.json({ message: 'ClaimReview successfully deleted' }).end();
-    });
+    getClaimReviewId(id) {
+        return new Promise((resolve, reject) => {
+            ClaimReviewRespository.getById(id)
+                .then(resolve)
+                .catch(reject);
+        });
+    }
+
+    async update(id, body) {
+        try {
+            return ClaimReviewRespository.update(id, body);
+        } catch (error) {
+            return error;
+        }
+    }
+
+    delete(id) {
+        return new Promise((resolve, reject) => {
+            ClaimReviewRespository.delete(id)
+                .then(() => {
+                    resolve({ message: 'ClaimReview successfully deleted' });
+                })
+                .catch(reject);
+        });
+    }
 };

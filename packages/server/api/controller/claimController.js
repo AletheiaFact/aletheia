@@ -1,55 +1,47 @@
 'use strict';
 
-const mongoose = require('mongoose');
-const Parser = require('../../lib/parser');
-const Claim = mongoose.model('Claim');
-const Personality = mongoose.model('Personality');
+const ClaimRespository = require('../repository/claim');
 
-exports.listAll = function(req, res) {
-    Claim.find({}, (err, claim) => {
-        if (err) { res.send(err); }
-        res.json(claim);
-    });
-};
+module.exports = class ClaimController {
+    listAll() {
+        return new Promise((resolve, reject) => {
+            ClaimRespository.listAll()
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 
-exports.create = function(req, res) {
-    const p = new Parser(req.body.html);
-    req.body.content = p.parse();
-    const newClaim = new Claim(req.body);
+    create(body) {
+        return new Promise((resolve, reject) => {
+            ClaimRespository.create(body)
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 
-    newClaim.save((err, claim) => {
-        if (err) { res.send(err); }
-        Personality.findOneAndUpdate(
-            { _id: req.body.personality },
-            { "$push": { claims: claim } },
-            { new: true },
-            (err, personality) => {
-                if (err) { res.send(err); }
-            });
-        res.json(claim);
-    });
-};
+    getClaimId(id) {
+        return new Promise((resolve, reject) => {
+            ClaimRespository.getById(id)
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 
-exports.getclaimId = function(req, res) {
-    Claim.findById(req.params.id, (err, claim) => {
-        if (err) { res.send(err); }
-        res.json(claim);
-    });
-};
+    async update(id, body) {
+        try {
+            return ClaimRespository.update(id, body);
+        } catch (error) {
+            return error;
+        }
+    }
 
-exports.update = function(req, res) {
-    Claim.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, claim) => {
-        if (err) { res.send(err); }
-        res.json(claim);
-    });
-};
-
-exports.delete = function(req, res) {
-
-    Claim.remove({
-        _id: req.params.id
-    }, (err, claim) => {
-        if (err) { res.send(err); }
-        res.json({ message: 'claim successfully deleted' });
-    });
+    delete(id) {
+        return new Promise((resolve, reject) => {
+            ClaimRespository.delete(id)
+                .then(() => {
+                    resolve({ message: 'claim successfully deleted' });
+                })
+                .catch(reject);
+        });
+    }
 };
