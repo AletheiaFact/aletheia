@@ -5,25 +5,25 @@ const ClaimRespository = require('../repository/claim');
 module.exports = class ClaimController {
     listAll() {
         try {
-            return ClaimRespository.listAll()
+            return ClaimRespository.listAll();
         } catch (error) {
-            return error
+            return error;
         }
     }
 
     create(body) {
         try {
-            return ClaimRespository.create(body)
+            return ClaimRespository.create(body);
         } catch (error) {
-            return error
+            return error;
         }
     }
 
     getClaimId(id) {
         try {
-            return ClaimRespository.getById(id)
+            return ClaimRespository.getById(id);
         } catch (error) {
-            return error
+            return error;
         }
     }
 
@@ -38,7 +38,7 @@ module.exports = class ClaimController {
     async delete(id) {
         try {
             await ClaimRespository.delete(id);
-            return { message: 'Claim successfully deleted' }
+            return { message: 'Claim successfully deleted' };
         } catch (error) {
             return error;
         }

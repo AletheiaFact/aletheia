@@ -5,25 +5,25 @@ const PersonalityRepository = require('../repository/personality');
 module.exports = class PersonalityController {
     listAll() {
         try {
-            return PersonalityRepository.listAll()
+            return PersonalityRepository.listAll();
         } catch (error) {
-            return error
+            return error;
         }
     }
 
     create(body) {
         try {
-            return PersonalityRepository.create(body)
+            return PersonalityRepository.create(body);
         } catch (error) {
-            return error
+            return error;
         }
     }
 
     getPersonalityId(id) {
         try {
-            return PersonalityRepository.getById(id)
+            return PersonalityRepository.getById(id);
         } catch (error) {
-            return error
+            return error;
         }
     }
 
@@ -38,7 +38,7 @@ module.exports = class PersonalityController {
     async delete(id) {
         try {
             await PersonalityRepository.delete(id);
-            return { message: 'Personality successfully deleted' }
+            return { message: 'Personality successfully deleted' };
         } catch (error) {
             return error;
         }
