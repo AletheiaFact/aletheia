@@ -1,6 +1,6 @@
 'use strict';
 
-const Claim = require('../api/controller/claimController');
+const ClaimController = require('../api/controller/claimController');
 const Requester = require('../infra/interceptor/requester');
 
 /**
@@ -12,7 +12,7 @@ const router = require('../lib/util').router();
  * GET {domain}/claim
  */
 router.get('/', (req, res, next) => {
-    const claim = new Claim();
+    const claim = new ClaimController();
     claim.listAll()
     .then(result => res.send(result))
     .catch((error) => {
@@ -24,7 +24,7 @@ router.get('/', (req, res, next) => {
  * POST {domain}/claim
  */
 router.post('/', (req, res, next) => {
-    const claim = new Claim();
+    const claim = new ClaimController();
     claim.create(req.body)
     .then(result => res.send(result))
     .catch((error) => {
@@ -36,7 +36,7 @@ router.post('/', (req, res, next) => {
  * GET {domain}/claim{/id}
  */
 router.get('/:id', (req, res, next) => {
-    const claim = new Claim();
+    const claim = new ClaimController();
     claim.getClaimId(req.params.id)
     .then(result => res.send(result))
     .catch((error) => {
@@ -48,7 +48,7 @@ router.get('/:id', (req, res, next) => {
  * PUT {domain}/claim{/id}
  */
 router.put('/:id', (req, res, next) => {
-    const claim = new Claim();
+    const claim = new ClaimController();
     claim.update(req.params.id, req.body)
     .then(result => res.send(result))
     .catch((error) => {
@@ -60,7 +60,7 @@ router.put('/:id', (req, res, next) => {
  * DELETE {domain}/claim{/id}
  */
 router.delete('/:id', (req, res, next) => {
-    const claim = new Claim();
+    const claim = new ClaimController();
     claim.delete(req.params.id)
     .then(result => res.send(result))
     .catch((error) => {

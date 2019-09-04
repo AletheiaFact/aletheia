@@ -4,27 +4,27 @@ const PersonalityRepository = require('../repository/personality');
 
 module.exports = class PersonalityController {
     listAll() {
-        return new Promise((resolve, reject) => {
-            PersonalityRepository.listAll()
-                .then(resolve)
-                .catch(reject);
-        });
+        try {
+            return PersonalityRepository.listAll()
+        } catch (error) {
+            return error
+        }
     }
 
     create(body) {
-        return new Promise((resolve, reject) => {
-            PersonalityRepository.create(body)
-                .then(resolve)
-                .catch(reject);
-        });
+        try {
+            return PersonalityRepository.create(body)
+        } catch (error) {
+            return error
+        }
     }
 
     getPersonalityId(id) {
-        return new Promise((resolve, reject) => {
-            PersonalityRepository.getById(id)
-                .then(resolve)
-                .catch(reject);
-        });
+        try {
+            return PersonalityRepository.getById(id)
+        } catch (error) {
+            return error
+        }
     }
 
     async update(id, body) {
@@ -35,13 +35,12 @@ module.exports = class PersonalityController {
         }
     }
 
-    delete(id) {
-        return new Promise((resolve, reject) => {
-            PersonalityRepository.delete(id)
-                .then(() => {
-                    resolve({ message: 'Personality successfully deleted' });
-                })
-                .catch(reject);
-        });
+    async delete(id) {
+        try {
+            await PersonalityRepository.delete(id);
+            return { message: 'Personality successfully deleted' }
+        } catch (error) {
+            return error;
+        }
     }
 };

@@ -21,7 +21,7 @@ module.exports = class ClaimReviewRepository {
     }
 
     static getById(claimReviewId) {
-        return ClaimReview.findById(claimReviewId);
+        return ClaimReview.findById(claimReviewId).populate('claims', '_id title');
     }
 
     static async update(claimReviewId, claimReviewBody) {

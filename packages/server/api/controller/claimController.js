@@ -4,27 +4,27 @@ const ClaimRespository = require('../repository/claim');
 
 module.exports = class ClaimController {
     listAll() {
-        return new Promise((resolve, reject) => {
-            ClaimRespository.listAll()
-                .then(resolve)
-                .catch(reject);
-        });
+        try {
+            return ClaimRespository.listAll()
+        } catch (error) {
+            return error
+        }
     }
 
     create(body) {
-        return new Promise((resolve, reject) => {
-            ClaimRespository.create(body)
-                .then(resolve)
-                .catch(reject);
-        });
+        try {
+            return ClaimRespository.create(body)
+        } catch (error) {
+            return error
+        }
     }
 
     getClaimId(id) {
-        return new Promise((resolve, reject) => {
-            ClaimRespository.getById(id)
-                .then(resolve)
-                .catch(reject);
-        });
+        try {
+            return ClaimRespository.getById(id)
+        } catch (error) {
+            return error
+        }
     }
 
     async update(id, body) {
@@ -35,13 +35,12 @@ module.exports = class ClaimController {
         }
     }
 
-    delete(id) {
-        return new Promise((resolve, reject) => {
-            ClaimRespository.delete(id)
-                .then(() => {
-                    resolve({ message: 'claim successfully deleted' });
-                })
-                .catch(reject);
-        });
+    async delete(id) {
+        try {
+            await ClaimRespository.delete(id);
+            return { message: 'Claim successfully deleted' }
+        } catch (error) {
+            return error;
+        }
     }
 };

@@ -1,6 +1,6 @@
 'use strict';
 
-const ClaimReview = require('../api/controller/claimReviewController');
+const ClaimReviewController = require('../api/controller/claimReviewController');
 const Requester = require('../infra/interceptor/requester');
 
 /**
@@ -12,7 +12,7 @@ const router = require('../lib/util').router();
  * GET {domain}/claim
  */
 router.get('/', (req, res, next) => {
-    const claimReview = new ClaimReview();
+    const claimReview = new ClaimReviewController();
     claimReview.listAll()
     .then(result => res.send(result))
     .catch((error) => {
@@ -24,7 +24,7 @@ router.get('/', (req, res, next) => {
  * POST {domain}/claim
  */
 router.post('/', (req, res, next) => {
-    const claimReview = new ClaimReview();
+    const claimReview = new ClaimReviewController();
     claimReview.create(req.body)
     .then(result => res.send(result))
     .catch((error) => {
@@ -36,7 +36,7 @@ router.post('/', (req, res, next) => {
  * GET {domain}/claim{/id}
  */
 router.get('/:id', (req, res, next) => {
-    const claimReview = new ClaimReview();
+    const claimReview = new ClaimReviewController();
     claimReview.getClaimReviewId(req.params.id)
     .then(result => res.send(result))
     .catch((error) => {
@@ -55,7 +55,7 @@ router.get('/:id', (req, res, next) => {
  * DELETE {domain}/claim{/id}
  */
 router.delete('/:id', (req, res, next) => {
-    const claimReview = new ClaimReview();
+    const claimReview = new ClaimReviewController();
     claimReview.delete(req.params.id)
     .then(result => res.send(result))
     .catch((error) => {
