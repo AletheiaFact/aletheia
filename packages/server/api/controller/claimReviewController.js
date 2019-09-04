@@ -1,50 +1,46 @@
 'use strict';
 
-const mongoose = require('mongoose');
-const ClaimReview = mongoose.model('ClaimReview');
+const ClaimReviewRespository = require('../repository/claimReview');
 
-exports.listAll = function(req, res) {
-    ClaimReview.find({}, (err, claimReview) => {
-        if (err) { res.status(400).send(err).end(); }
-        res.json(claimReview).end();
-    });
-};
+module.exports = class ClaimReviewController {
+    listAll() {
+        try {
+            return ClaimReviewRespository.listAll();
+        } catch (error) {
+            return error;
+        }
+    }
 
-exports.create = function(req, res) {
-    const newTask = new ClaimReview(req.body);
-    newTask.save((err, claimReview) => {
-        if (err) { res.status(400).send(err).end(); }
-        res.json(claimReview).end();
-    });
-};
+    create(body) {
+        try {
+            return ClaimReviewRespository.create(body);
+        } catch (error) {
+            return error;
+        }
+    }
 
-exports.getClaimReviewId = function(req, res) {
-    ClaimReview
-    .findOne({ "_id": req.params.id })
-    .populate('claims', '_id title')
-    .exec((err, claimReview) => {
-        if (err) { res.status(400).send(err).end(); }
-        res.json(claimReview).end();
-    });
-};
+    getClaimReviewId(id) {
+        try {
+            return ClaimReviewRespository.getById(id);
+        } catch (error) {
+            return error;
+        }
+    }
 
-exports.update = function(req, res) {
-    ClaimReview.findOneAndUpdate(
-        { _id: req.params.id },
-        req.body,
-        { new: true },
-        (err, claimReview) => {
-            if (err) { res.status(400).send(err).end(); }
-            res.json(claimReview).end();
-        });
-};
+    async update(id, body) {
+        try {
+            return ClaimReviewRespository.update(id, body);
+        } catch (error) {
+            return error;
+        }
+    }
 
-exports.delete = function(req, res) {
-
-    ClaimReview.remove({
-        _id: req.params.id
-    }, (err, claimReview) => {
-        if (err) { res.status(400).send(err).end(); }
-        res.json({ message: 'ClaimReview successfully deleted' }).end();
-    });
+    async delete(id) {
+        try {
+            await ClaimReviewRespository.delete(id);
+            return { message: 'Claim Review successfully deleted' };
+        } catch (error) {
+            return error;
+        }
+    }
 };

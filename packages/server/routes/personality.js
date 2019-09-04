@@ -1,7 +1,6 @@
 'use strict';
 
-/* eslint-disable no-use-before-define */
-const Personality = require('../api/controller/personalityController');
+const PersonalityController = require('../api/controller/personalityController');
 const Requester = require('../infra/interceptor/requester');
 
 /**
@@ -13,7 +12,7 @@ const router = require('../lib/util').router();
  * GET {domain}/personality
  */
 router.get('/', (req, res, next) => {
-    const personality = new Personality();
+    const personality = new PersonalityController();
     personality.listAll()
     .then(result => res.send(result))
     .catch((error) => {
@@ -25,7 +24,7 @@ router.get('/', (req, res, next) => {
  * POST {domain}/personality
  */
 router.post('/', (req, res, next) => {
-    const personality = new Personality();
+    const personality = new PersonalityController();
     personality.create(req.body)
     .then(result => res.send(result))
     .catch((error) => {
@@ -37,7 +36,7 @@ router.post('/', (req, res, next) => {
  * GET {domain}/personality{/id}
  */
 router.get('/:id', (req, res, next) => {
-    const personality = new Personality();
+    const personality = new PersonalityController();
     personality.getPersonalityId(req.params.id)
     .then(result => res.send(result))
     .catch((error) => {
@@ -49,7 +48,7 @@ router.get('/:id', (req, res, next) => {
  * PUT {domain}/personality{/id}
  */
 router.put('/:id', (req, res, next) => {
-    const personality = new Personality();
+    const personality = new PersonalityController();
     personality.update(req.params.id, req.body)
     .then(result => res.send(result))
     .catch((error) => {
@@ -61,7 +60,7 @@ router.put('/:id', (req, res, next) => {
  * DELETE {domain}/personality{/id}
  */
 router.delete('/:id', (req, res, next) => {
-    const personality = new Personality();
+    const personality = new PersonalityController();
     personality.delete(req.params.id)
     .then(result => res.send(result))
     .catch((error) => {

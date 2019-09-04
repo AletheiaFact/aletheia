@@ -1,6 +1,7 @@
 'use strict';
 
-const claimReview = require('../api/controller/claimReviewController');
+const ClaimReviewController = require('../api/controller/claimReviewController');
+const Requester = require('../infra/interceptor/requester');
 
 /**
  * The main router object
@@ -10,17 +11,38 @@ const router = require('../lib/util').router();
 /**
  * GET {domain}/claim
  */
-router.get('/', claimReview.listAll);
+router.get('/', (req, res, next) => {
+    const claimReview = new ClaimReviewController();
+    claimReview.listAll()
+    .then(result => res.send(result))
+    .catch((error) => {
+        next(Requester.internalError(res, error.message));
+    });
+});
 
 /**
  * POST {domain}/claim
  */
-router.post('/', claimReview.create);
+router.post('/', (req, res, next) => {
+    const claimReview = new ClaimReviewController();
+    claimReview.create(req.body)
+    .then(result => res.send(result))
+    .catch((error) => {
+        next(Requester.internalError(res, error.message));
+    });
+});
 
 /**
  * GET {domain}/claim{/id}
  */
-router.get('/:id', claimReview.getClaimReviewId);
+router.get('/:id', (req, res, next) => {
+    const claimReview = new ClaimReviewController();
+    claimReview.getClaimReviewId(req.params.id)
+    .then(result => res.send(result))
+    .catch((error) => {
+        next(Requester.internalError(res, error.message));
+    });
+});
 
 /**
  * PUT {domain}/claim{/id}
@@ -32,7 +54,14 @@ router.get('/:id', claimReview.getClaimReviewId);
 /**
  * DELETE {domain}/claim{/id}
  */
-router.delete('/:id', claimReview.delete);
+router.delete('/:id', (req, res, next) => {
+    const claimReview = new ClaimReviewController();
+    claimReview.delete(req.params.id)
+    .then(result => res.send(result))
+    .catch((error) => {
+        next(Requester.internalError(res, error.message));
+    });
+});
 
 module.exports = function(appObj) {
     return {
