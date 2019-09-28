@@ -1,0 +1,14 @@
+[
+    {
+        "classification": "true",
+        "claim": "5d8f9ebbb0496a274219174e",
+        "sentence_hash": "HASH_GENERATED",
+        "sentence_content": "created by seeders"
+    },
+    {
+        "classification": "false",
+        "claim": "5d8f9ebbb0496a274219174f",
+        "sentence_hash": "HASH_GENERATED",
+        "sentence_content": "created by seeders"
+    }
+]
