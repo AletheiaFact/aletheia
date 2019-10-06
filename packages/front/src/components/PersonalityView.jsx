@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import { Header, Icon, Button, Table } from 'semantic-ui-react'
 import { withRouter } from 'react-router-dom';
+import { Container, Row, Col } from 'reactstrap'
 
 class PersonalityView extends Component {
 
@@ -17,7 +18,7 @@ class PersonalityView extends Component {
         self.getPersonality();
     }
 
-    getPersonality () {
+    getPersonality() {
         axios.get(`http://localhost:3000/personality/${this.props.match.params.id}`)
         .then(response => {
             const personality = response.data;
@@ -27,24 +28,37 @@ class PersonalityView extends Component {
     }
 
     createClaim() {
-        let path = `../claim/create/${this.props.match.params.id}`;
+        let path = `./${this.props.match.params.id}/claim/create`;
         this.props.history.push(path);
     }
 
     viewClaim(id) {
-        let path = `../claim/${id}`;
+        let path = `./${this.props.match.params.id}/claim/${id}`;
         this.props.history.push(path);
     }
 
     render() {
         let personality = this.state.personality
         if (personality) {
+            const review = personality.stats.reviews.map( review => (
+                <li>{review._id}: {review.percentage}</li>)
+            )
             return (
                 <div>
-                    <Header as='h2' icon textAlign='center'>
-                        <Icon name='user' circular />
-                        <Header.Content>{personality.name}</Header.Content>
-                        <Header.Subheader>{personality.bio}</Header.Subheader>
+                    <Header icon textAlign='center'>
+                        <Row>
+                            <Col as='h2' sm={{ size:6, offset:2 }}>
+                                <Icon name='user' circular />
+                                <Header.Content>{personality.name}</Header.Content>
+                                <Header.Subheader>{personality.bio}</Header.Subheader>
+                            </Col>
+                            <Col>
+                                # of reviews {personality.stats.total}
+                                <ul>
+                                    {review}
+                                </ul>
+                            </Col>
+                        </Row>
                     </Header>
                     <Table>
                         <Table.Header>

@@ -17,7 +17,12 @@ const candidateSchema = new Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Personality',
         required: true
-    }
+    },
+    claimReviews: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'ClaimReview',
+        required: true
+    }]
 });
 
 module.exports = mongoose.model('Claim', candidateSchema);

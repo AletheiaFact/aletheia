@@ -1,6 +1,7 @@
 'use strict';
 
 const Personality = require('../model/personalityModel');
+const ClaimReview = require('../model/claimReviewModel');
 
 const optionsToUpdate = {
     new: true,
@@ -20,8 +21,48 @@ module.exports = class PersonalityRepository {
         return newPersonality.save();
     }
 
-    static getById(personalityId) {
-        return Personality.findById(personalityId).populate('speechs', '_id title');
+    static async getById(personalityId) {
+        let personality = await Personality.findById(personalityId).populate('claims', '_id title');
+        if (personality) {
+            console.log('lalala')
+            const stats = await this.getReviewStats(personalityId);
+            console.log(stats)
+            return Object.assign(personality.toObject(), { stats } )
+        }
+        return personality;
+    }
+
+    static async getReviewStatsByClaims(id){
+        const personality =  await Personality.findById(id);
+        return Promise.all(
+            personality.claims.map(async (claimId) => {
+                const reviews = await ClaimReview.aggregate([
+                    { $match: { claim: claimId } },
+                    { $group: { _id: "$classification", count: { $sum: 1 } } },
+                ]);
+                
+                return { claimId, reviews };
+            })
+        ).then(result => {
+            return result;
+        });
+    }
+
+    static async getReviewStats(id){
+        const personality =  await Personality.findById(id);
+         const reviews = await ClaimReview.aggregate([
+            { $match: { personality: personality._id } },
+            { $group: { _id: "$classification", count: { $sum: 1 } } },
+        ])
+        let total = reviews.reduce((agg, review) => {
+            return agg += review.count;
+        }, 0);
+        const result = reviews.map(review => {
+            const percentage = review.count/total * 100;
+            console.log(percentage)
+            return { _id: review._id, percentage }
+        })
+        return { total, reviews: result }
     }
 
     static async update(personalityId, personalityBody) {
