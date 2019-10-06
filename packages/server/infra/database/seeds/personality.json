@@ -1,0 +1,18 @@
+[
+    {
+        "_id": "5d8f9e006188ed268a1e8e1f",
+        "name": "First Personality",
+        "bio": "This is first personality created by seeders aletheia",
+        "claims": [
+            "5d8f9e6d8e407726f404fbaf"
+        ]
+    },
+    {
+        "_id": "5d8f9e006188ed268a1e8e20",
+        "name": "Secound Personality",
+        "bio": "This is secound personality created by seeders aletheia",
+        "claims": [
+            "5d8f9e6d8e407726f404fbb0"
+        ]
+    }
+]

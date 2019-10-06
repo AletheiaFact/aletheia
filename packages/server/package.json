@@ -8,7 +8,8 @@
     "dev": "nodemon server.js",
     "lint": "eslint --cache --max-warnings 0 --ext .js --ext .json .",
     "lint:fix": "eslint --fix --ext .js --ext .json .",
-    "test": "jest"
+    "test": "jest",
+    "seeds": "node ./infra/database/seeds/generateSeeds.js"
   },
   "keywords": [
     "aletheia",
@@ -24,7 +25,8 @@
     "express": "^4.16.4",
     "js-yaml": "^3.12.0",
     "md5": "^2.2.1",
-    "mongoose": "^5.3.4"
+    "mongoose": "^5.3.4",
+    "mongoose-seed": "^0.6.0"
   },
   "devDependencies": {
     "eslint": "^5.7.0",
