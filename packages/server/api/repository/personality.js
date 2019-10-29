@@ -22,47 +22,46 @@ module.exports = class PersonalityRepository {
     }
 
     static async getById(personalityId) {
-        let personality = await Personality.findById(personalityId).populate('claims', '_id title');
+        const personality = await Personality.findById(personalityId)
+            .populate('claims', '_id title');
         if (personality) {
-            console.log('lalala')
             const stats = await this.getReviewStats(personalityId);
-            console.log(stats)
-            return Object.assign(personality.toObject(), { stats } )
+            return Object.assign(personality.toObject(), { stats });
         }
         return personality;
     }
 
-    static async getReviewStatsByClaims(id){
+    static async getReviewStatsByClaims(id) {
         const personality =  await Personality.findById(id);
         return Promise.all(
-            personality.claims.map(async (claimId) => {
+            personality.claims.map(async(claimId) => {
                 const reviews = await ClaimReview.aggregate([
                     { $match: { claim: claimId } },
                     { $group: { _id: "$classification", count: { $sum: 1 } } },
                 ]);
-                
+
                 return { claimId, reviews };
             })
-        ).then(result => {
+        ).then((result) => {
             return result;
         });
     }
 
-    static async getReviewStats(id){
+    static async getReviewStats(id) {
         const personality =  await Personality.findById(id);
-         const reviews = await ClaimReview.aggregate([
+        const reviews = await ClaimReview.aggregate([
             { $match: { personality: personality._id } },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
-        ])
-        let total = reviews.reduce((agg, review) => {
-            return agg += review.count;
+        ]);
+        const total = reviews.reduce((agg, review) => {
+            agg += review.countç;
+            return agg;
         }, 0);
-        const result = reviews.map(review => {
-            const percentage = review.count/total * 100;
-            console.log(percentage)
-            return { _id: review._id, percentage }
-        })
-        return { total, reviews: result }
+        const result = reviews.map((review) => {
+            const percentage = review.count / total * 100;
+            return { _id: review._id, percentage };
+        });
+        return { total, reviews: result };
     }
 
     static async update(personalityId, personalityBody) {

@@ -1,5 +1,6 @@
 'use strict';
-const mongoose = require(`mongoose`);
+
+const ClaimReview = require('../model/claimReviewModel');
 
 /**
  * The main router object
@@ -7,16 +8,16 @@ const mongoose = require(`mongoose`);
 const router = require('../lib/util').router();
 
 /**
- * GET {domain}/claim{/id}
+ * GET {domain}/sentencehash
  */
-router.get('/:sentence_hash', (req, res) => {
-    const { sentence_hash } = req.params;
+router.get('/:sentenceHash', (req, res) => {
+    const { sentenceHash } = req.params;
     ClaimReview.aggregate([
-        { $match: { sentence_hash }},
+        { $match: { sentenceHash } },
         { $group: { _id: "$classification", count: { $sum: 1 } } },
     ])
     .then((review) => {
-        res.json(review)
+        res.json(review);
     });
 });
 
