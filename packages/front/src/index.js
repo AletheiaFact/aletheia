@@ -1,22 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {BrowserRouter, Switch, Route} from 'react-router-dom'
-import App from './App'
-import Claim from './components/Claim'
-import Personality from './components/Personality'
+import React from 'react';
+import ReactDOM from 'react-dom';
 
+import App from './App';
 import 'bootstrap/dist/css/bootstrap.css'
 import "semantic-ui-css/semantic.min.css";
 
 
-const AppRouter = (
-    <BrowserRouter>
-        <Switch>
-            <Route path="/claim" component={Claim} />
-            <Route path="/personality" component={Personality} />
-            <Route path="/" exact={true} component={App} />
-        </Switch>
-    </BrowserRouter>
+const AppStartup = (
+    <App />
 );
 
-ReactDOM.render(AppRouter, document.getElementById('root'))
+ReactDOM.render(AppStartup, document.getElementById('root'))

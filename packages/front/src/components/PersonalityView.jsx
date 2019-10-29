@@ -41,7 +41,7 @@ class PersonalityView extends Component {
         let personality = this.state.personality
         if (personality) {
             const review = personality.stats.reviews.map( review => (
-                <li>{review._id}: {review.percentage}</li>)
+                <li key={review._id}>{review._id}: {review.percentage}</li>)
             )
             return (
                 <div>
