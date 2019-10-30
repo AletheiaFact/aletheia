@@ -27,6 +27,14 @@ module.exports = class PersonalityController {
         }
     }
 
+    getReviewStats(id) {
+        try {
+            return PersonalityRepository.getReviewStats(id);
+        } catch (error) {
+            return error;
+        }
+    }
+
     async update(id, body) {
         try {
             return PersonalityRepository.update(id, body);
@@ -35,7 +43,6 @@ module.exports = class PersonalityController {
         }
     }
 
-<<<<<<< HEAD
     async delete(id) {
         try {
             await PersonalityRepository.delete(id);
@@ -43,23 +50,5 @@ module.exports = class PersonalityController {
         } catch (error) {
             return error;
         }
-=======
-    getReviewStats(id) {
-        return new Promise((resolve, reject) => {
-            PersonalityRepository.getReviewStats(id)
-                .then(resolve)
-                .catch(reject);
-        });
-    }
-
-    delete(id) {
-        return new Promise((resolve, reject) => {
-            PersonalityRepository.delete(id)
-                .then(() => {
-                    resolve({ message: 'Personality successfully deleted' });
-                })
-                .catch(reject);
-        });
->>>>>>> Run fix lint
     }
 };

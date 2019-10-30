@@ -47,7 +47,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.get('/:id/reviews', (req, res, next) => {
-    const personality = new Personality();
+    const personality = new PersonalityController();
 
     personality.getReviewStats(req.params.id)
         .then((result) => {
