@@ -11,8 +11,12 @@ const optionsToUpdate = {
  * @class PersonalityRepository
  */
 module.exports = class PersonalityRepository {
-    static listAll() {
-        return Personality.find({}).lean();
+    static async listAll(page, pageSize, order, query) {
+        return Personality.find(query)
+          .skip(page * pageSize)
+          .limit(pageSize)
+          .sort({ createdAt: order })
+          .lean();
     }
 
     static create(personality) {
@@ -41,5 +45,10 @@ module.exports = class PersonalityRepository {
 
     static delete(personalityId) {
         return Personality.findByIdAndRemove(personalityId);
+    }
+
+    static count(query) {
+        return Personality.countDocuments()
+          .where(query);
     }
 };
