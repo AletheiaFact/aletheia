@@ -54,7 +54,7 @@ module.exports = class PersonalityRepository {
             { $group: { _id: "$classification", count: { $sum: 1 } } },
         ]);
         const total = reviews.reduce((agg, review) => {
-            agg += review.countç;
+            agg += review.count;
             return agg;
         }, 0);
         const result = reviews.map((review) => {
