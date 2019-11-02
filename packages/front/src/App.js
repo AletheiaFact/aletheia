@@ -1,6 +1,4 @@
-import React, { Component, Fragment } from 'react'
-
-import Candidate from './components/Candidate'
+import React, { Component } from 'react'
 
 import './index.css'
 

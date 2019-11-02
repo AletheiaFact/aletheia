@@ -29,6 +29,11 @@ const claimReviewSchema = new Schema({
         ref: 'Claim',
         required: true
     },
+    personality: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Personality',
+        required: true
+    },
     sentence_hash: {
         type: String,
         required: true

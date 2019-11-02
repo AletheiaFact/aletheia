@@ -27,6 +27,14 @@ module.exports = class PersonalityController {
         }
     }
 
+    getReviewStats(id) {
+        try {
+            return PersonalityRepository.getReviewStats(id);
+        } catch (error) {
+            return error;
+        }
+    }
+
     async update(id, body) {
         try {
             return PersonalityRepository.update(id, body);

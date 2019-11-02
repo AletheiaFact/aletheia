@@ -38,10 +38,24 @@ router.post('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
     const personality = new PersonalityController();
     personality.getPersonalityId(req.params.id)
-    .then(result => res.send(result))
+    .then((result) => {
+        res.send(result);
+    })
     .catch((error) => {
         next(Requester.internalError(res, error.message));
     });
+});
+
+router.get('/:id/reviews', (req, res, next) => {
+    const personality = new PersonalityController();
+
+    personality.getReviewStats(req.params.id)
+        .then((result) => {
+            res.send(result);
+        })
+        .catch((error) => {
+            next(res.send(error));
+        });
 });
 
 /**

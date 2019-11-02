@@ -1,13 +1,11 @@
-import Sentence from './sentence'
 import axios from 'axios'
-import { Container, Form, FormGroup, Input, Label, Button } from 'reactstrap'
+import { Container, Form, FormGroup, Input, Button } from 'reactstrap'
 import _ from 'underscore'
 import React, { Component } from 'react'
 
 class ClaimReviewForm extends Component {
     constructor(props) {
       super(props);
-
       this.state = {
         classification: '',
         claim: '',
@@ -19,9 +17,11 @@ class ClaimReviewForm extends Component {
 
     submitClaimReview(e) {
       e.preventDefault();
+      console.log(this.props);
 
       this.setState({
         claim: this.props.highlight.claim,
+        personality: this.props.highlight.personality,
         sentence_hash: this.props.highlight.props['data-hash'],
         sentence_content: this.props.highlight.content,
       }, () => {

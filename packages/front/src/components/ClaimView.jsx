@@ -3,7 +3,6 @@ import Paragraph from './claim/paragraph'
 import ClaimReviewForm from './claim/claimReview'
 import axios from 'axios'
 import { Container, Row, Col } from 'reactstrap'
-import createStore from 'redux'
 
 class Claim extends Component {
 
@@ -13,8 +12,9 @@ class Claim extends Component {
     }
 
     getClaim() {
-      axios.get(`http://localhost:3000/claim/${this.props.match.params.id}`)
-        .then(response => {
+        console.log(this.props);
+      axios.get(`http://localhost:3000/claim/${this.props.match.params.claimId}`)
+      .then(response => {
             const content = response.data.content.object;
             this.setState({ body: content, highlight: {} });
         })
@@ -25,7 +25,8 @@ class Claim extends Component {
         let body = this.state.body;
         let highlight = {
             ...data,
-            claim: this.props.match.params.id,
+            claim: this.props.match.params.claimId,
+            personality: this.props.match.params.id,
         };
         this.setState({ body, highlight });
     }

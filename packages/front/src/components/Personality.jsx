@@ -1,6 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
 import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import PersonalityView from './PersonalityView'
+import ClaimView from './ClaimView'
+import ClaimCreate from './ClaimCreate'
 import PersonalityList from './PersonalityList'
 
 const Personality = ({match}) => {
@@ -8,7 +10,9 @@ const Personality = ({match}) => {
         <BrowserRouter>
             <Switch>
                 <Route exact path={`${match.url}`} component={PersonalityList} />
-                <Route path={`${match.url}/:id`} component={PersonalityView} />
+                <Route exact path={`${match.url}/:id`} component={PersonalityView} />
+                <Route exact path={`${match.url}/:id/claim/:claimId`} component={ClaimView} />
+                <Route exact path={`${match.url}/:id/claim/create`} component={ClaimCreate} />
             </Switch>
         </BrowserRouter>
     );

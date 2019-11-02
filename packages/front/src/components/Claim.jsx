@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import ClaimView from './ClaimView'
 import ClaimCreate from './ClaimCreate'
@@ -8,7 +8,7 @@ const Claim = ({match}) => {
     return ( 
         <BrowserRouter>
             <Switch>
-                <Route exact path={`${match.url}/:id`} component={ClaimView} />
+                <Route exact path={`${match.url}/:claimId`} component={ClaimView} />
                 <Route path={`${match.url}/create/:personalityId`} component={ClaimCreate} />
             </Switch>
         </BrowserRouter>
