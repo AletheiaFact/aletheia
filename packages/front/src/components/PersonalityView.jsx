@@ -1,8 +1,22 @@
 import React, { Component } from 'react'
-import axios from 'axios'
-import { Header, Icon, Button, Table } from 'semantic-ui-react'
 import { withRouter } from 'react-router-dom';
-import { Container, Row, Col } from 'reactstrap'
+import axios from 'axios'
+import { 
+    Box,
+    Grid,
+    Text,
+    Table,
+    TableHeader,
+    TableFooter,
+    TableBody,
+    TableCell,
+    TableRow,
+    Button,
+    DataTable,
+    Heading,
+    Meter
+} from 'grommet';
+import * as Icons from 'grommet-icons';
 
 class PersonalityView extends Component {
 
@@ -40,50 +54,91 @@ class PersonalityView extends Component {
     render() {
         let personality = this.state.personality
         if (personality) {
-            const review = personality.stats.reviews.map( review => (
-                <li>{review._id}: {review.percentage}</li>)
-            )
+            const reviews = personality.stats.reviews;
             return (
-                <div>
-                    <Header icon textAlign='center'>
-                        <Row>
-                            <Col as='h2' sm={{ size:6, offset:2 }}>
-                                <Icon name='user' circular />
-                                <Header.Content>{personality.name}</Header.Content>
-                                <Header.Subheader>{personality.bio}</Header.Subheader>
-                            </Col>
-                            <Col>
-                                # of reviews {personality.stats.total}
-                                <ul>
-                                    {review}
-                                </ul>
-                            </Col>
-                        </Row>
-                    </Header>
-                    <Table>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Claim Title</Table.HeaderCell>
-                                <Table.HeaderCell />
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {personality.claims.map(claim => (
-                                <Table.Row>
-                                    <Table.Cell>{claim.title}</Table.Cell>
-                                    <Table.Cell><Button onClick={() => this.viewClaim(claim._id)}>View</Button></Table.Cell>
-                                </Table.Row>
-                            ))}
-                        </Table.Body>
-                        <Table.Footer>
-                            <Table.Row>
-                                <Table.HeaderCell>
-                                    <Button onClick={() => this.createClaim()}>Add Claim</Button>
-                                </Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Footer>
-                    </Table>
-                </div>
+                <Grid
+                rows={['xsmall', 'full']}
+                columns={['small', 'medium']}
+                gap="small"
+                areas={[
+                    { name: 'header', start: [0,0], end: [1,0] },
+                    { name: 'info', start: [0,1], end: [0,1] },
+                    { name: 'table', start: [1,1], end: [1,1] },
+                ]}
+                >
+                    <Box gridArea="header">
+                        <Heading>{personality.name}</Heading>
+                    </Box>
+                    <Box gridArea="info">
+                        <Box as='h2' sm={{ size:6, offset:2 }}>
+                            <Icons.User color='plain' size='xlarge' /> 
+                            <Text>{personality.bio}</Text>
+                        </Box>
+                        <Box>
+                            <Text><Icons.Checkmark color='plain' size='small'/> Number of reviewed claims {personality.stats.total}</Text>
+                            <DataTable
+                                columns={[
+                                    {
+                                        property: '_id',
+                                        header: 'Review',
+                                        primary: true,
+                                    },
+                                    {
+                                        property: 'percent',
+                                        header: 'Stats',
+                                        render: datum => (
+                                            <Box pad={{ vertical: 'xsmall'}}>
+                                                <Meter
+                                                    values={[{ value: datum.percentage }]}
+                                                    thickness="small"
+                                                    size="small"
+                                                    background={{opacity: 'false'}}
+                                                />
+                                            </Box>
+                                        ),
+                                    },
+                                ]}
+                                data={reviews}
+                            />
+                        </Box>
+                    </Box>
+                    <Box gridArea="table">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableCell>Claim Title</TableCell>
+                                    <TableCell />
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {personality.claims.map(claim => (
+                                    <TableRow>
+                                        <TableCell>{claim.title}</TableCell>
+                                        <TableCell>
+                                            <Button 
+                                                icon={<Icons.View/>}
+                                                label="View"
+                                                onClick={() => this.viewClaim(claim._id)}>
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TableCell>
+                                        <Button
+                                            icon={<Icons.FormAdd/>}
+                                            label="Add Claim"
+                                            primary
+                                            onClick={() => this.createClaim()}
+                                        ></Button>
+                                    </TableCell>
+                                </TableRow>
+                            </TableFooter>
+                        </Table>
+                    </Box>
+                </Grid>
             );
         } else {
             return ('loading');

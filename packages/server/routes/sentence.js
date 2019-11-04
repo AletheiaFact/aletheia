@@ -1,6 +1,6 @@
 'use strict';
 
-const ClaimReview = require('../model/claimReviewModel');
+const ClaimReview = require('../api/model/claimReviewModel');
 
 /**
  * The main router object
