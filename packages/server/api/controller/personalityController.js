@@ -3,12 +3,32 @@
 const PersonalityRepository = require('../repository/personality');
 
 module.exports = class PersonalityController {
-    listAll() {
-        try {
-            return PersonalityRepository.listAll();
-        } catch (error) {
-            return error;
+    async listAll(query) {
+        const { page = 0, pageSize = 10, order = 'desc' } = query;
+        const queryInputs = await this.verifyInputsQuery(query);
+
+        return Promise.all([
+            PersonalityRepository.listAll(page, pageSize, order, queryInputs),
+            PersonalityRepository.count(queryInputs)
+        ])
+            .then(([personalities, totalPersonalities]) => {
+                return {
+                    personalities,
+                    totalPersonalities,
+                    totalPages: Math.ceil(totalPersonalities / pageSize),
+                    page,
+                    pageSize
+                };
+            })
+            .catch(error => error);
+    }
+
+    verifyInputsQuery(query) {
+        const queryInputs = {};
+        if (query.name) {
+            queryInputs.name = { '$regex': query.name, '$options': 'i' };
         }
+        return queryInputs;
     }
 
     create(body) {

@@ -13,7 +13,7 @@ const router = require('../lib/util').router();
  */
 router.get('/', (req, res, next) => {
     const personality = new PersonalityController();
-    personality.listAll()
+    personality.listAll(req.query)
     .then(result => res.send(result))
     .catch((error) => {
         next(Requester.internalError(res, error.message));
