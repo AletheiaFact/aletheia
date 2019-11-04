@@ -44,6 +44,7 @@ const claimReviewSchema = new Schema({
     }
     // TODO: user_id
     // TODO: user_agent
+    // TODO: reference
     // TODO: revision_id
 });
 
