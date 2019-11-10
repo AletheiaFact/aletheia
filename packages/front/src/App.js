@@ -65,7 +65,10 @@ class App extends Component {
                                 </AppBar>
                                 <Box direction='row' flex pad='small'>
                                     <Box flex align='stretch' justify='center'>
-                                        <Route exact path="/personality" component={PersonalityList} />
+                                        <Route exact 
+                                            path="/personality"
+                                            render={(props) => <PersonalityList  {...props } pageSize={1} />}
+                                        />
                                         <Route exact path="/personality/:id" component={PersonalityView} />
                                         <Route exact path="/personality/:id/claim/:claimId" component={ClaimView} />
                                         <Route exact path="/personality/:id/claim/create" component={ClaimCreate} />

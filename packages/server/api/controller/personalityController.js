@@ -8,14 +8,14 @@ module.exports = class PersonalityController {
         const queryInputs = await this.verifyInputsQuery(query);
 
         return Promise.all([
-            PersonalityRepository.listAll(page, pageSize, order, queryInputs),
+            PersonalityRepository.listAll(page, parseInt(pageSize), order, queryInputs),
             PersonalityRepository.count(queryInputs)
         ])
             .then(([personalities, totalPersonalities]) => {
                 return {
                     personalities,
                     totalPersonalities,
-                    totalPages: Math.ceil(totalPersonalities / pageSize),
+                    totalPages: Math.ceil(totalPersonalities / parseInt(pageSize)),
                     page,
                     pageSize
                 };
