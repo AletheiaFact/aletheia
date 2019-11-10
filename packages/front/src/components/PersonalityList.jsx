@@ -17,7 +17,7 @@ class PersonalityList extends Component {
         personalities: [],
         page: 0,
         searchName: null,
-        pageSize: this.props.pageSize
+        pageSize: 10
       };
     }
 
