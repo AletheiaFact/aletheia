@@ -69,55 +69,44 @@ class PersonalityView extends Component {
                     ]}
                 >
                     <Box gridArea="header" direction='row' flex pad='small' background='light-1'>
-                        <Grid
-                            rows={['full']}
-                            columns={['small', 'full', 'small']}
-                            gap="small"
-                            areas={[
-                                { name: 'avatar', start: [0,0], end: [0,0] },
-                                { name: 'personality_info', start: [1,0], end: [1,0] },
-                                { name: 'reviews_info', start: [2,0], end: [2,0] },
-                            ]}
-                        >
+                        <Box direction='row' basis='full' gap='large'>
                             <Box as='h2' sm={{ size:6, offset:2 }}>
                                 <Icons.User color='plain' size='xlarge' /> 
                             </Box>
                             <Box>
-                                <Box>
-                                    <Heading>{personality.name}</Heading>
-                                    <Text>{personality.bio}</Text>
-                                </Box>
-                                {/* <Box align='start'>
-                                    <Value value={personality.stats.total} label='Number of reviewed claims'/>
-                                </Box> */}
+                                <Heading>{personality.name}</Heading>
+                                <Text>{personality.bio}</Text>
                             </Box>
-                            <Box>
-                                <DataTable
-                                    columns={[
-                                        {
-                                            property: '_id',
-                                            header: 'Review',
-                                            primary: true,
-                                        },
-                                        {
-                                            property: 'percent',
-                                            header: 'Stats',
-                                            render: datum => (
-                                                <Box pad={{ vertical: 'xsmall'}}>
-                                                    <Meter
-                                                        values={[{ value: datum.percentage }]}
-                                                        thickness="small"
-                                                        size="small"
-                                                        background={{opacity: 'false'}}
-                                                    />
-                                                </Box>
-                                            ),
-                                        },
-                                    ]}
-                                    data={reviews}
-                                />
-                            </Box>
-                        </Grid>
+                            {/* <Box align='start'>
+                                <Value value={personality.stats.total} label='Number of reviewed claims'/>
+                            </Box> */}
+                        </Box>
+                        <Box alignContent='end'>
+                            <DataTable
+                                columns={[
+                                    {
+                                        property: '_id',
+                                        header: 'Review',
+                                        primary: true,
+                                    },
+                                    {
+                                        property: 'percent',
+                                        header: 'Stats',
+                                        render: datum => (
+                                            <Box pad={{ vertical: 'xsmall'}}>
+                                                <Meter
+                                                    values={[{ value: datum.percentage }]}
+                                                    thickness="small"
+                                                    size="small"
+                                                    background={{opacity: 'false'}}
+                                                />
+                                            </Box>
+                                        ),
+                                    },
+                                ]}
+                                data={reviews}
+                            />
+                        </Box>
                     </Box>
                     <Box gridArea="table">
                         <Table>
