@@ -30,10 +30,10 @@ module.exports = class ClaimRepository {
                     { new: true },
                     (err) => {
                         if (err) { reject(err); }
-                });
+                    });
             });
             resolve(newClaim);
-        })
+        });
     }
 
     static getById(claimId) {

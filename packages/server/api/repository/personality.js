@@ -30,7 +30,7 @@ module.exports = class PersonalityRepository {
             .populate({
                 path: 'claims',
                 select: '_id title'
-            })
+            });
         if (personality) {
             const stats = await this.getReviewStats(personalityId);
             return Object.assign(personality.toObject(), { stats });
