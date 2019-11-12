@@ -53,7 +53,7 @@ class App extends Component {
         const { showSidebar } = this.state;
         return (
             <Router>
-                <Grommet theme={theme} full>
+                <Grommet theme={theme}>
                     <ResponsiveContext.Consumer>
                         {size => (
                             <Box fill>
@@ -63,8 +63,8 @@ class App extends Component {
                                         this.setState(prevState => ({ showSidebar: ! prevState.showSidebar}))
                                     }} />
                                 </AppBar>
-                                <Box direction='row' flex overflow={{ horizontal: 'hidden' }}>
-                                    <Box flex align='center' justify='center'>
+                                <Box direction='row' flex pad='small'>
+                                    <Box flex align='stretch' justify='center'>
                                         <Route exact path="/personality" component={PersonalityList} />
                                         <Route exact path="/personality/:id" component={PersonalityView} />
                                         <Route exact path="/personality/:id/claim/:claimId" component={ClaimView} />
