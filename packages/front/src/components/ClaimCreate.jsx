@@ -12,23 +12,20 @@ class ClaimCreate extends Component {
         this.state = {
             editorState: EditorState.createEmpty(),
         }
-
         this.saveClaim = this.saveClaim.bind(this);
         this.onChange = (editorState) => this.setState({editorState});
       }
 
     saveClaim(e) {
         e.preventDefault();
-
-        const html = stateToHTML(this.state.editorState.getCurrentContent());
+        const content = stateToHTML(this.state.editorState.getCurrentContent());
         const title = this.state.title;
-        const personality = this.props.match.params.personalityId;
-        console.log({ title, html, personality });
-        axios.post('http://localhost:3000/claim', { title, html, personality })
+        const personality = this.props.match.params.id;
+        axios.post('http://localhost:3000/claim', { title, content, personality })
         .then(response => {
             console.log(response.data)
         })
-        .catch(() => { console.log('Erro ao recuperar os dados'); })
+        .catch(() => { console.log('Error while saving claim'); })
     }
   
     render() {
@@ -39,7 +36,7 @@ class ClaimCreate extends Component {
                 <FormGroup>
                     <Label>Title</Label>
                     <Input
-                        value={this.state.title}
+                        value={this.state.title || ''}
                         onChange={e => this.setState({title: e.target.value}) }
                         placeholder={'Some Title'}/>
                 </FormGroup>
