@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Card } from 'semantic-ui-react';
-import InputSearch from './InputSearch';
+import InputSearch from '../Form/InputSearch';
 import ReactPaginate from 'react-paginate';
 import './PersonalityList.css';
 import { 

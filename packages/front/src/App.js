@@ -12,10 +12,10 @@ import { FormClose, Notification } from 'grommet-icons';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
-import PersonalityView from './components/PersonalityView'
-import ClaimView from './components/ClaimView'
-import ClaimCreate from './components/ClaimCreate'
-import PersonalityList from './components/PersonalityList'
+import ClaimCreate from './components/Claim/ClaimCreate'
+import ClaimView from './components/Claim/ClaimView'
+import PersonalityList from './components/Personality/PersonalityList'
+import PersonalityView from './components/Personality/PersonalityView'
 
 const theme = {
     global: {
