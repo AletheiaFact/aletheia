@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom';
-import axios from 'axios'
+import axios from 'axios';
+
+import { Value } from 'grommet-controls';
+
 import { 
     Box,
     Grid,
@@ -57,50 +60,64 @@ class PersonalityView extends Component {
             const reviews = personality.stats.reviews;
             return (
                 <Grid
-                rows={['xsmall', 'full']}
-                columns={['small', 'medium']}
-                gap="small"
-                areas={[
-                    { name: 'header', start: [0,0], end: [1,0] },
-                    { name: 'info', start: [0,1], end: [0,1] },
-                    { name: 'table', start: [1,1], end: [1,1] },
-                ]}
+                    rows={['small', 'full']}
+                    columns={['full']}
+                    gap="small"
+                    areas={[
+                        { name: 'header', start: [0,0], end: [0,0] },
+                        { name: 'table', start: [0,1], end: [0,1] },
+                    ]}
                 >
-                    <Box gridArea="header">
-                        <Heading>{personality.name}</Heading>
-                    </Box>
-                    <Box gridArea="info">
-                        <Box as='h2' sm={{ size:6, offset:2 }}>
-                            <Icons.User color='plain' size='xlarge' /> 
-                            <Text>{personality.bio}</Text>
-                        </Box>
-                        <Box>
-                            <Text><Icons.Checkmark color='plain' size='small'/> Number of reviewed claims {personality.stats.total}</Text>
-                            <DataTable
-                                columns={[
-                                    {
-                                        property: '_id',
-                                        header: 'Review',
-                                        primary: true,
-                                    },
-                                    {
-                                        property: 'percent',
-                                        header: 'Stats',
-                                        render: datum => (
-                                            <Box pad={{ vertical: 'xsmall'}}>
-                                                <Meter
-                                                    values={[{ value: datum.percentage }]}
-                                                    thickness="small"
-                                                    size="small"
-                                                    background={{opacity: 'false'}}
-                                                />
-                                            </Box>
-                                        ),
-                                    },
-                                ]}
-                                data={reviews}
-                            />
-                        </Box>
+                    <Box gridArea="header" direction='row' flex pad='small' background='light-1'>
+                        <Grid
+                            rows={['full']}
+                            columns={['small', 'full', 'small']}
+                            gap="small"
+                            areas={[
+                                { name: 'avatar', start: [0,0], end: [0,0] },
+                                { name: 'personality_info', start: [1,0], end: [1,0] },
+                                { name: 'reviews_info', start: [2,0], end: [2,0] },
+                            ]}
+                        >
+                            <Box as='h2' sm={{ size:6, offset:2 }}>
+                                <Icons.User color='plain' size='xlarge' /> 
+                            </Box>
+                            <Box>
+                                <Box>
+                                    <Heading>{personality.name}</Heading>
+                                    <Text>{personality.bio}</Text>
+                                </Box>
+                                {/* <Box align='start'>
+                                    <Value value={personality.stats.total} label='Number of reviewed claims'/>
+                                </Box> */}
+                            </Box>
+                            <Box>
+                                <DataTable
+                                    columns={[
+                                        {
+                                            property: '_id',
+                                            header: 'Review',
+                                            primary: true,
+                                        },
+                                        {
+                                            property: 'percent',
+                                            header: 'Stats',
+                                            render: datum => (
+                                                <Box pad={{ vertical: 'xsmall'}}>
+                                                    <Meter
+                                                        values={[{ value: datum.percentage }]}
+                                                        thickness="small"
+                                                        size="small"
+                                                        background={{opacity: 'false'}}
+                                                    />
+                                                </Box>
+                                            ),
+                                        },
+                                    ]}
+                                    data={reviews}
+                                />
+                            </Box>
+                        </Grid>
                     </Box>
                     <Box gridArea="table">
                         <Table>
@@ -113,8 +130,8 @@ class PersonalityView extends Component {
                             <TableBody>
                                 {personality.claims.map(claim => (
                                     <TableRow>
-                                        <TableCell>{claim.title}</TableCell>
-                                        <TableCell>
+                                        <TableCell size='3/4'>{claim.title}</TableCell>
+                                        <TableCell alignSelf='end'>
                                             <Button 
                                                 icon={<Icons.View/>}
                                                 label="View"
@@ -126,7 +143,8 @@ class PersonalityView extends Component {
                             </TableBody>
                             <TableFooter>
                                 <TableRow>
-                                    <TableCell>
+                                    <TableCell></TableCell>
+                                    <TableCell size='1/4' alignSelf='end'>
                                         <Button
                                             icon={<Icons.FormAdd/>}
                                             label="Add Claim"
