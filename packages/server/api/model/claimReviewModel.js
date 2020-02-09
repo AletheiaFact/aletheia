@@ -1,6 +1,4 @@
-'use strict';
-
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const claimReviewSchema = new Schema({
@@ -8,30 +6,32 @@ const claimReviewSchema = new Schema({
         type: String,
         required: true,
         validate: {
-            validator: (v) => {
-                return [
-                    'not-fact',
-                    'true',
-                    'true-but',
-                    'arguable',
-                    'misleading',
-                    'false',
-                    'unsustainable',
-                    'exaggerated',
-                    'unverifiable'
-                ].indexOf(v) !== -1;
+            validator: v => {
+                return (
+                    [
+                        "not-fact",
+                        "true",
+                        "true-but",
+                        "arguable",
+                        "misleading",
+                        "false",
+                        "unsustainable",
+                        "exaggerated",
+                        "unverifiable"
+                    ].indexOf(v) !== -1
+                );
             }
         },
         message: tag => `${tag} is not a valid classification.`
     },
     claim: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Claim',
+        ref: "Claim",
         required: true
     },
     personality: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Personality',
+        ref: "Personality",
         required: true
     },
     sentence_hash: {
@@ -48,4 +48,4 @@ const claimReviewSchema = new Schema({
     // TODO: revision_id
 });
 
-module.exports = mongoose.model('ClaimReview', claimReviewSchema);
+module.exports = mongoose.model("ClaimReview", claimReviewSchema);

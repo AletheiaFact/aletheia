@@ -1,6 +1,4 @@
-'use strict';
-
-const ClaimReviewRespository = require('../repository/claimReview');
+const ClaimReviewRespository = require("../repository/claimReview");
 
 module.exports = class ClaimReviewController {
     listAll() {
@@ -38,7 +36,7 @@ module.exports = class ClaimReviewController {
     async delete(id) {
         try {
             await ClaimReviewRespository.delete(id);
-            return { message: 'Claim Review successfully deleted' };
+            return { message: "Claim Review successfully deleted" };
         } catch (error) {
             return error;
         }

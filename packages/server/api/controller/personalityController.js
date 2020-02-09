@@ -1,21 +1,26 @@
-'use strict';
-
-const PersonalityRepository = require('../repository/personality');
+const PersonalityRepository = require("../repository/personality");
 
 module.exports = class PersonalityController {
     async listAll(query) {
-        const { page = 0, pageSize = 10, order = 'desc' } = query;
+        const { page = 0, pageSize = 10, order = "desc" } = query;
         const queryInputs = await this.verifyInputsQuery(query);
 
         return Promise.all([
-            PersonalityRepository.listAll(page, parseInt(pageSize, 10), order, queryInputs),
+            PersonalityRepository.listAll(
+                page,
+                parseInt(pageSize, 10),
+                order,
+                queryInputs
+            ),
             PersonalityRepository.count(queryInputs)
         ])
             .then(([personalities, totalPersonalities]) => {
                 return {
                     personalities,
                     totalPersonalities,
-                    totalPages: Math.ceil(totalPersonalities / parseInt(pageSize, 10)),
+                    totalPages: Math.ceil(
+                        totalPersonalities / parseInt(pageSize, 10)
+                    ),
                     page,
                     pageSize
                 };
@@ -26,7 +31,7 @@ module.exports = class PersonalityController {
     verifyInputsQuery(query) {
         const queryInputs = {};
         if (query.name) {
-            queryInputs.name = { '$regex': query.name, '$options': 'i' };
+            queryInputs.name = { $regex: query.name, $options: "i" };
         }
         return queryInputs;
     }
@@ -66,7 +71,7 @@ module.exports = class PersonalityController {
     async delete(id) {
         try {
             await PersonalityRepository.delete(id);
-            return { message: 'Personality successfully deleted' };
+            return { message: "Personality successfully deleted" };
         } catch (error) {
             return error;
         }

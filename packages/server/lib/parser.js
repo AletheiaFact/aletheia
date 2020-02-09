@@ -1,7 +1,5 @@
-'use strict';
-
-const dom = require('domino');
-const md5 = require('md5');
+const dom = require("domino");
+const md5 = require("md5");
 
 class Parser {
     constructor(html) {
@@ -13,52 +11,55 @@ class Parser {
     parse() {
         const document = dom.createDocument(this.html);
         const result = [];
-        const paragraphs = document.querySelectorAll('p');
+        const paragraphs = document.querySelectorAll("p");
 
         for (let i = 0; i < paragraphs.length; i++) {
             const paragraphId = this.createParagraphId();
             const paragraphContent = paragraphs[i].innerHTML;
-            const newParagraph = document.createElement('p');
+            const newParagraph = document.createElement("p");
             // eslint-disable-next-line no-useless-escape
             const sentences = paragraphContent.match(/[^\.\!\?]*[\.\!\?]/g);
 
-            paragraphs[i].setAttribute('id', paragraphId);
+            paragraphs[i].setAttribute("id", paragraphId);
             result[i] = {
-                'element': 'p',
-                'props': {
-                    'id' : paragraphId,
+                element: "p",
+                props: {
+                    id: paragraphId
                 },
-                'content': [],
+                content: []
             };
 
             if (sentences) {
-                sentences.forEach((sentence) => {
-                    result[i].content.push(this.parseSentence(document, sentence, newParagraph));
+                sentences.forEach(sentence => {
+                    result[i].content.push(
+                        this.parseSentence(document, sentence, newParagraph)
+                    );
                 });
             }
 
             paragraphs[i].innerHTML = newParagraph.innerHTML;
         }
-        return { 'html': document.innerHTML, 'object': result };
+        return { html: document.innerHTML, object: result };
     }
 
     parseSentence(document, sentenceContent, newParagraph) {
-        const span = document.createElement('span');
+        const span = document.createElement("span");
         const sentenceId = this.createSentenceId();
-        span.setAttribute('id', sentenceId);
-        const sentenceDataHash =
-            md5(`${this.paragraphSequence}${this.sentenceSequence}${sentenceContent}`);
-        span.setAttribute('data-hash', sentenceDataHash);
+        span.setAttribute("id", sentenceId);
+        const sentenceDataHash = md5(
+            `${this.paragraphSequence}${this.sentenceSequence}${sentenceContent}`
+        );
+        span.setAttribute("data-hash", sentenceDataHash);
         span.innerHTML = sentenceContent;
 
         newParagraph.appendChild(span);
         return {
-            'element': 'span',
-            'props': {
-                'id': sentenceId,
-                'data-hash': sentenceDataHash,
+            element: "span",
+            props: {
+                id: sentenceId,
+                "data-hash": sentenceDataHash
             },
-            'content': sentenceContent,
+            content: sentenceContent
         };
     }
 

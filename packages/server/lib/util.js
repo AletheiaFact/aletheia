@@ -1,6 +1,4 @@
-'use strict';
-
-const express = require('express');
+const express = require("express");
 
 /**
  * Creates a new router with some default options.
@@ -8,7 +6,6 @@ const express = require('express');
  * @return {!Router} a new router object
  */
 function createRouter(opts) {
-
     const options = {
         mergeParams: true
     };

@@ -1,4 +1,4 @@
-import { Alert } from 'react';
+import { Alert } from "react";
 
 // const server = () => {
 //   if (process.env.LOCAL === 'local') {
@@ -7,11 +7,10 @@ import { Alert } from 'react';
 //   return 'https://www.routely-api.com/api/v1';
 // };
 
-
 function showError(err) {
-  Alert.alert('Opps! I found an error.', `Message: ${err}`);
+    Alert.alert("Opps! I found an error.", `Message: ${err}`);
 }
 
-const server = 'https://www.routely-api.com/api/v1';
+const server = "https://www.routely-api.com/api/v1";
 
 export { server, showError };
