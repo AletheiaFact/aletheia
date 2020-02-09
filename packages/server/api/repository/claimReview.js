@@ -1,6 +1,4 @@
-'use strict';
-
-const ClaimReview = require('../model/claimReviewModel');
+const ClaimReview = require("../model/claimReviewModel");
 
 const optionsToUpdate = {
     new: true,
@@ -21,10 +19,14 @@ module.exports = class ClaimReviewRepository {
     }
 
     static getById(claimReviewId) {
-        return ClaimReview.findById(claimReviewId).populate('claims', '_id title');
+        return ClaimReview.findById(claimReviewId).populate(
+            "claims",
+            "_id title"
+        );
     }
 
     static async update(claimReviewId, claimReviewBody) {
+        // eslint-disable-next-line no-useless-catch
         try {
             const claimReview = await this.getById(claimReviewId);
             const newClaimReview = Object.assign(claimReview, claimReviewBody);
@@ -35,6 +37,7 @@ module.exports = class ClaimReviewRepository {
             );
             return claimReviewUpdate;
         } catch (error) {
+            // TODO: log to service-runner
             throw error;
         }
     }

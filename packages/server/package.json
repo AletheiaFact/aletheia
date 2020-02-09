@@ -6,8 +6,6 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "lint": "eslint --cache --max-warnings 0 --ext .js --ext .json .",
-    "lint:fix": "eslint --fix --ext .js --ext .json .",
     "test": "jest",
     "seeds": "node ./infra/database/seeds/generateSeeds.js"
   },
@@ -29,11 +27,6 @@
     "mongoose-seed": "^0.6.0"
   },
   "devDependencies": {
-    "eslint": "^5.7.0",
-    "eslint-config-node-services": "^2.2.5",
-    "eslint-config-wikimedia": "^0.8.1",
-    "eslint-plugin-jsdoc": "^3.9.1",
-    "eslint-plugin-json": "^1.2.1",
     "jest": "^24.8.0",
     "nodemon": "^1.18.4",
     "supertest": "^4.0.2"

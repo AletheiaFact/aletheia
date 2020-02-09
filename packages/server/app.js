@@ -1,13 +1,11 @@
-'use strict';
-
-const express = require('express');
-const fs = require('fs');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const path = require('path');
+const express = require("express");
+const fs = require("fs");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const path = require("path");
 
 function loadModels(app, dir) {
-    fs.readdirSync(dir).map((fname) => {
+    fs.readdirSync(dir).map(fname => {
         const resolvedPath = path.resolve(dir, fname);
         const isDirectory = fs.statSync(resolvedPath).isDirectory();
         if (isDirectory) {
@@ -21,19 +19,22 @@ function loadModels(app, dir) {
 
 function loadDB(app) {
     return new Promise((resolve, reject) => {
-        loadModels(app, './api/model');
+        loadModels(app, "./api/model");
         // mongoose instance connection url connection
         mongoose.Promise = global.Promise;
-        mongoose.connect(app.conf.db && app.conf.db.path
-            || 'mongodb://localhost/Aletheia',
-        app.conf.db && app.conf.db.callback || {})
-        .then(() => resolve(app));
+        mongoose
+            .connect(
+                (app.conf.db && app.conf.db.path) ||
+                    "mongodb://localhost/Aletheia",
+                (app.conf.db && app.conf.db.callback) || {}
+            )
+            .then(() => resolve(app));
     });
 }
 
 function loadRoutes(app, dir) {
     return new Promise((resolve, reject) => {
-        fs.readdirSync(dir).map((fname) => {
+        fs.readdirSync(dir).map(fname => {
             const resolvedPath = path.resolve(dir, fname);
             const isDirectory = fs.statSync(resolvedPath).isDirectory();
             if (isDirectory) {
@@ -67,19 +68,24 @@ function createServer(app) {
 function initApp(options) {
     const app = express();
 
-    app.opt_name = options.name;      // this app's config options
-    app.conf = options.conf;      // this app's config options
+    app.opt_name = options.name; // this app's config options
+    app.conf = options.conf; // this app's config options
 
     if (!app.conf.port) {
         app.conf.port = 8888;
     }
 
     // CORS
-    app.all('*', (req, res, next) => {
+    app.all("*", (req, res, next) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-        res.setHeader("Access-Control-Allow-Headers",
-            "Origin, X-Requested-With, Content-Type, Accept");
+        res.setHeader(
+            "Access-Control-Allow-Methods",
+            "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+        );
+        res.setHeader(
+            "Access-Control-Allow-Headers",
+            "Origin, X-Requested-With, Content-Type, Accept"
+        );
         next();
     });
 
@@ -89,10 +95,10 @@ function initApp(options) {
     return Promise.resolve(app);
 }
 
-module.exports = (options) => {
+module.exports = options => {
     // TODO: Promisify it all
     return initApp(options)
-    .then(loadDB)
-    .then(app => loadRoutes(app, './routes'))
-    .then(createServer);
+        .then(loadDB)
+        .then(app => loadRoutes(app, "./routes"))
+        .then(createServer);
 };

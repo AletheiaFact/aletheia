@@ -1,8 +1,6 @@
-'use strict';
-
-const Claim = require('../model/claimModel');
-const Personality = require('../model/personalityModel');
-const Parser = require('../../lib/parser');
+const Claim = require("../model/claimModel");
+const Personality = require("../model/personalityModel");
+const Parser = require("../../lib/parser");
 
 const optionsToUpdate = {
     new: true,
@@ -23,24 +21,30 @@ module.exports = class ClaimRepository {
             claim.content = p.parse();
             const newClaim = new Claim(claim);
             newClaim.save((err, claim) => {
-                if (err) { reject(err); }
+                if (err) {
+                    reject(err);
+                }
                 Personality.findOneAndUpdate(
                     { _id: claim.personality },
-                    { "$push": { claims: claim } },
+                    { $push: { claims: claim } },
                     { new: true },
-                    (err) => {
-                        if (err) { reject(err); }
-                    });
+                    err => {
+                        if (err) {
+                            reject(err);
+                        }
+                    }
+                );
             });
             resolve(newClaim);
         });
     }
 
     static getById(claimId) {
-        return Claim.findById(claimId).populate('personality', '_id name');
+        return Claim.findById(claimId).populate("personality", "_id name");
     }
 
     static async update(claimId, claimBody) {
+        // eslint-disable-next-line no-useless-catch
         try {
             const claim = await this.getById(claimId);
             const newClaim = Object.assign(claim, claimBody);
@@ -51,6 +55,7 @@ module.exports = class ClaimRepository {
             );
             return claimUpdate;
         } catch (error) {
+            // TODO: log to service-runner
             throw error;
         }
     }

@@ -6,5 +6,4 @@
 **/node_modules/**
 **/public/**
 **/report/**
-**/server/**
 **/webpack.config*.js

@@ -1,6 +1,4 @@
-'use strict';
-
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const personalitySchema = new Schema({
@@ -12,10 +10,12 @@ const personalitySchema = new Schema({
         type: String,
         required: true
     },
-    claims: [{
-        type: mongoose.Schema.ObjectId,
-        ref: 'Claim'
-    }]
+    claims: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "Claim"
+        }
+    ]
 });
 
-module.exports = mongoose.model('Personality', personalitySchema);
+module.exports = mongoose.model("Personality", personalitySchema);

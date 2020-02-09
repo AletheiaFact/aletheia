@@ -1,5 +1,3 @@
-'use strict';
-
 class Requester {
     static internalError(res, message) {
         res.status(500);

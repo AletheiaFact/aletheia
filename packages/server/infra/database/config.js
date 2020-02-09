@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
-    mongodb: 'mongodb://localhost/Aletheia',
+    mongodb: "mongodb://localhost/Aletheia"
 };
