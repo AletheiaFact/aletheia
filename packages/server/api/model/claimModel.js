@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 
-const candidateSchema = new Schema({
+const claimSchema = new Schema({
     title: {
         type: String,
         required: true
@@ -21,8 +21,7 @@ const candidateSchema = new Schema({
     claimReviews: [{
         type: mongoose.Schema.ObjectId,
         ref: 'ClaimReview',
-        required: true
     }]
 });
 
-module.exports = mongoose.model('Claim', candidateSchema);
+module.exports = mongoose.model('Claim', claimSchema);

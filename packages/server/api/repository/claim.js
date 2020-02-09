@@ -1,6 +1,8 @@
 'use strict';
 
 const Claim = require('../model/claimModel');
+const Personality = require('../model/personalityModel');
+const Parser = require('../../lib/parser');
 
 const optionsToUpdate = {
     new: true,
@@ -16,8 +18,22 @@ module.exports = class ClaimRepository {
     }
 
     static create(claim) {
-        const newClaim = new Claim(claim);
-        return newClaim.save();
+        return new Promise((resolve, reject) => {
+            const p = new Parser(claim.content);
+            claim.content = p.parse();
+            const newClaim = new Claim(claim);
+            newClaim.save((err, claim) => {
+                if (err) { reject(err); }
+                Personality.findOneAndUpdate(
+                    { _id: claim.personality },
+                    { "$push": { claims: claim } },
+                    { new: true },
+                    (err) => {
+                        if (err) { reject(err); }
+                    });
+            });
+            resolve(newClaim);
+        });
     }
 
     static getById(claimId) {

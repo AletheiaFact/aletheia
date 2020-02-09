@@ -10,12 +10,12 @@ import {
 } from 'grommet';
 import { FormClose, Notification } from 'grommet-icons';
 
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
-import PersonalityView from './components/PersonalityView'
-import ClaimView from './components/ClaimView'
-import ClaimCreate from './components/ClaimCreate'
-import PersonalityList from './components/PersonalityList'
+import ClaimCreate from './components/Claim/ClaimCreate'
+import ClaimView from './components/Claim/ClaimView'
+import PersonalityList from './components/Personality/PersonalityList'
+import PersonalityView from './components/Personality/PersonalityView'
 
 const theme = {
     global: {
@@ -65,10 +65,12 @@ class App extends Component {
                                 </AppBar>
                                 <Box direction='row' flex pad='small'>
                                     <Box flex align='stretch' justify='center'>
-                                        <Route exact path="/personality" component={PersonalityList} />
-                                        <Route exact path="/personality/:id" component={PersonalityView} />
-                                        <Route exact path="/personality/:id/claim/:claimId" component={ClaimView} />
-                                        <Route exact path="/personality/:id/claim/create" component={ClaimCreate} />
+                                        <Switch>
+                                            <Route exact path="/personality" component={PersonalityList} />
+                                            <Route exact path="/personality/:id" component={PersonalityView} />
+                                            <Route exact path="/personality/:id/claim/create" component={ClaimCreate} />
+                                            <Route exact path="/personality/:id/claim/:claimId" component={ClaimView} />
+                                        </Switch>
                                     </Box>
                                     {(!showSidebar || size !== 'small') ? (
                                         <Collapsible direction="horizontal" open={showSidebar}>

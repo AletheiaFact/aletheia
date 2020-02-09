@@ -27,7 +27,10 @@ module.exports = class PersonalityRepository {
 
     static async getById(personalityId) {
         const personality = await Personality.findById(personalityId)
-            .populate('claims', '_id title');
+            .populate({
+                path: 'claims',
+                select: '_id title'
+            });
         if (personality) {
             const stats = await this.getReviewStats(personalityId);
             return Object.assign(personality.toObject(), { stats });

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import Paragraph from './claim/paragraph'
-import ClaimReviewForm from './claim/claimReview'
+import ClaimParagraph from './ClaimParagraph'
+import ClaimReviewForm from './ClaimReview'
 import axios from 'axios'
 import { Container, Row, Col } from 'reactstrap'
 
@@ -41,7 +41,7 @@ class Claim extends Component {
                         <Col sm={{ size:8 }}>
                             <div>
                                 {body.map(p => (
-                                    <Paragraph 
+                                    <ClaimParagraph 
                                         key={p.props.id}
                                         paragraph={p} 
                                         onClaimReviewForm={this.handleClaimReviewForm}
