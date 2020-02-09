@@ -4,6 +4,10 @@ import ClaimReviewForm from './ClaimReview'
 import axios from 'axios'
 import { Container, Row, Col } from 'reactstrap'
 
+import {
+    Heading,
+} from 'grommet';
+
 class Claim extends Component {
 
     componentDidMount() {
@@ -15,8 +19,9 @@ class Claim extends Component {
         console.log(this.props);
       axios.get(`http://localhost:3000/claim/${this.props.match.params.claimId}`)
       .then(response => {
-            const content = response.data.content.object;
-            this.setState({ body: content, highlight: {} });
+          console.log(response.data)
+            const { content, title } = response.data;
+            this.setState({ title, body: content.object, highlight: {} });
         })
         .catch(() => { console.log('Error while fetching claim'); })
     }
@@ -35,8 +40,10 @@ class Claim extends Component {
         if (this.state && this.state.body)
         {   
             const body = this.state.body
+            const title = this.state.title
             return (
                 <Container>
+                    <Heading>{title}</Heading>
                     <Row>
                         <Col sm={{ size:8 }}>
                             <div>
