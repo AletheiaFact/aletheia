@@ -1,10 +1,10 @@
-import React, { Component, Fragment } from 'react';
+// // import React, { Component, Fragment } from 'react';
 
-class CandidateService extends Component {
+// class CandidateService extends Component {
 
-    savePost(data) {
+//     savePost(data) {
 
-    }
-}
+//     }
+// }
 
-export default CandidateService
+// export default CandidateService
