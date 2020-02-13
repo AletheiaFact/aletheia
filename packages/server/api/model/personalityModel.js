@@ -10,6 +10,9 @@ const personalitySchema = new Schema({
         type: String,
         required: true
     },
+    wikidata: {
+        type: String
+    },
     claims: [
         {
             type: mongoose.Schema.ObjectId,
