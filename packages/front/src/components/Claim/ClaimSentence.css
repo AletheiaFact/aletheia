@@ -1,15 +1,7 @@
-button.sentence {
+a.sentence {
     background-color: #eee;
-    border: none;
-    cursor: pointer;
-    display: inline;
-    margin: 0;
-    padding: 0;
 }
 
-button.sentence:hover,
-button.sentence:focus {
+a.sentence:hover {
     background-color: #00eeee;
-    cursor: pointer;
-    text-decoration: none;
 }
