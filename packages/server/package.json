@@ -2,6 +2,7 @@
   "name": "aletheia",
   "version": "0.0.1",
   "description": "Project open source",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
@@ -15,7 +16,6 @@
     "API"
   ],
   "author": "open tesseract",
-  "license": "ISC",
   "dependencies": {
     "@shelf/jest-mongodb": "^1.0.1",
     "axios": "^0.18.1",
