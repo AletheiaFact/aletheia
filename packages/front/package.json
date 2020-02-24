@@ -39,5 +39,11 @@
   ],
   "devDependencies": {
     "@types/underscore": "^1.8.13"
+  },
+  "resolutions": {
+    "**/**/serialize-javascript": ">=2.1.1",
+    "**/**/@hapi/hoek": ">=9.0.3",
+    "**/**/set-value": ">=3.0.1",
+    "**/**/lodash": ">=4.17.12"
   }
 }

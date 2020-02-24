@@ -30,5 +30,9 @@
     "jest": "^24.8.0",
     "nodemon": "^1.18.4",
     "supertest": "^4.0.2"
+  },
+  "resolutions": {
+    "**/**/https-proxy-agent": ">=2.2.3",
+    "**/**/set-value": ">=3.0.1"
   }
 }
