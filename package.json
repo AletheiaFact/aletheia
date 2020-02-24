@@ -3,11 +3,11 @@
   "private": false,
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "lint": "eslint --cache --max-warnings 0 --ext .js --ext .jsx .",
     "start": "lerna run start",
-    "lint:fix": "eslint --fix --ext .js --ext .jsx .",
     "test": "lerna run test",
-    "clean": "./clean_node_modules.sh"
+    "lint": "eslint --cache --max-warnings 0 --ext .js --ext .jsx .",
+    "lint:fix": "eslint --fix --ext .js --ext .jsx .",
+    "clean": "rimraf **/{node_modules,package-lock.json}"
   },
   "contributors": [
     {
@@ -40,6 +40,7 @@
     "husky": "^2.4.1",
     "lerna": "^3.13.1",
     "prettier": "^1.19.1",
+    "rimraf": "3.0.2",
     "typescript": "^3.7.5"
   },
   "resolutions": {
