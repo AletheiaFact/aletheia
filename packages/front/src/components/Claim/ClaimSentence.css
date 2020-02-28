@@ -1,7 +1,7 @@
-a.sentence {
+.claim-sentence {
     background-color: #eee;
 }
 
-a.sentence:hover {
+.claim-sentence:hover {
     background-color: #00eeee;
 }
