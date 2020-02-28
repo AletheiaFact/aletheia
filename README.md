@@ -8,22 +8,29 @@
 
 ## Instalação
 
-- Executar um fork deste repositório e clonar localmente:
+- Fork this repo and clone it locally:
   ``` sh
   git clone https://github.com/<your-username>/aletheia
   cd aletheia
   ```
-- Executar o Mongo DB via Docker:
+- Startup Mongo DB via Docker:
   ``` sh
   docker-compose up -d
   ```
-- Instalar os pacotes do projeto:
+- Install packages:
   ``` sh
-  yarn
   yarn bootstrap
   ```
-- Iniciar o ambiente de desenvolvimento:
+- Run in dev mode:
   ``` sh
-  yarn start
+  yarn dev
   ```
-- Acessar a URL http://localhost:3001 no navegador.
+- Access http://localhost:1234 in your browser.
+
+## Setup for development
+
+- Go to the server package and run seed:
+  ``` sh
+  cd packages/server
+  yarn seed
+  ```

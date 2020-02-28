@@ -75,6 +75,11 @@ class App extends Component {
                                         <Switch>
                                             <Route
                                                 exact
+                                                path="/"
+                                                component={PersonalityList}
+                                            />
+                                            <Route
+                                                exact
                                                 path="/personality"
                                                 component={PersonalityList}
                                             />
