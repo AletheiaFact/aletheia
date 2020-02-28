@@ -1,6 +1,7 @@
 {
   "name": "root",
   "private": false,
+  "license": "MIT",
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "start": "lerna run start",

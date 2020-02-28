@@ -22,7 +22,7 @@ class ClaimCreate extends Component {
         const title = this.state.title;
         const personality = this.props.match.params.id;
         axios
-            .post("http://localhost:3000/claim", {
+            .post(`${process.env.API_URL}/claim`, {
                 title,
                 content,
                 personality

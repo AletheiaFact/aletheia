@@ -35,7 +35,7 @@ class PersonalityView extends Component {
     getPersonality() {
         axios
             .get(
-                `http://localhost:3000/personality/${this.props.match.params.id}`
+                `${process.env.API_URL}/personality/${this.props.match.params.id}`
             )
             .then(response => {
                 const personality = response.data;

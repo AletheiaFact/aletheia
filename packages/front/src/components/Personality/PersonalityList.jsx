@@ -31,7 +31,7 @@ class PersonalityList extends Component {
         };
 
         axios
-            .get("http://localhost:3000/personality", { params })
+            .get(`${process.env.API_URL}/personality`, { params })
             .then(response => {
                 const { personalities, totalPages } = response.data;
                 this.setState({

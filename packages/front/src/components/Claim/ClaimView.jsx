@@ -16,7 +16,7 @@ class Claim extends Component {
         console.log(this.props);
         axios
             .get(
-                `http://localhost:3000/claim/${this.props.match.params.claimId}`
+                `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
             )
             .then(response => {
                 console.log(response.data);

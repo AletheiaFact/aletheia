@@ -65,7 +65,7 @@ class ClaimReviewForm extends Component {
             },
             () => {
                 axios
-                    .post(`http://localhost:3000/claimreview`, this.state)
+                    .post(`${process.env.API_URL}/claimreview`, this.state)
                     .then(response => {
                         console.log("Classification Succeed");
                     });
