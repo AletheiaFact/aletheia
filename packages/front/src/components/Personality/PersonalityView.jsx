@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
+import "./PersonalityView.css";
 
 import {
     Box,
@@ -59,6 +60,9 @@ class PersonalityView extends Component {
     render() {
         const personality = this.state.personality;
         if (personality) {
+            const imageStyle = {
+                backgroundImage: `url(${personality.image})`
+            };
             const reviews = personality.stats.reviews;
             return (
                 <Grid
@@ -78,9 +82,20 @@ class PersonalityView extends Component {
                         background="light-1"
                     >
                         <Box direction="row" basis="full" gap="large">
-                            <Box as="h2" sm={{ size: 6, offset: 2 }}>
-                                <Icons.User color="plain" size="xlarge" />
-                            </Box>
+                            {personality.image ? (
+                                <div className="thumbnail">
+                                    <div className="thumbnail__container">
+                                        <div
+                                            className="thumbnail__img"
+                                            style={imageStyle}
+                                        ></div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <Box as="h2" sm={{ size: 6, offset: 2 }}>
+                                    <Icons.User color="plain" size="xlarge" />
+                                </Box>
+                            )}
                             <Box>
                                 <Heading>{personality.name}</Heading>
                                 <Text>{personality.bio}</Text>
@@ -111,9 +126,6 @@ class PersonalityView extends Component {
                                                     ]}
                                                     thickness="small"
                                                     size="small"
-                                                    background={{
-                                                        opacity: "false"
-                                                    }}
                                                 />
                                             </Box>
                                         )
@@ -133,7 +145,7 @@ class PersonalityView extends Component {
                             </TableHeader>
                             <TableBody>
                                 {personality.claims.map(claim => (
-                                    <TableRow>
+                                    <TableRow key={claim._id}>
                                         <TableCell size="3/4">
                                             {claim.title}
                                         </TableCell>

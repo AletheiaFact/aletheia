@@ -1,18 +1,26 @@
 [
     {
-        "_id": "5d8f9e006188ed268a1e8e1f",
-        "name": "First Personality",
-        "bio": "This is first personality created by seeders aletheia",
-        "claims": [
-            "5d8f9e6d8e407726f404fbaf"
-        ]
+        "name": "Barack Obama",
+        "bio": "Former President of the USA",
+        "wikidata": "Q76",
+        "claims": []
     },
     {
-        "_id": "5d8f9e006188ed268a1e8e20",
-        "name": "Secound Personality",
-        "bio": "This is secound personality created by seeders aletheia",
-        "claims": [
-            "5d8f9e6d8e407726f404fbb0"
-        ]
+        "name": "Donald Trump",
+        "bio": "Current President of USA",
+        "wikidata": "Q22686",
+        "claims": []
+    },
+    {
+        "name": "Luís Inácio Lula da Silva",
+        "bio": "Former President of Brasil",
+        "wikidata": "Q37181",
+        "claims": []
+    },
+    {
+        "name": "Jair Bolsonaro",
+        "bio": "Current President of Brasil",
+        "wikidata": "Q10304982",
+        "claims": []
     }
 ]

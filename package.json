@@ -5,6 +5,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "start": "lerna run start",
+    "dev": "lerna run dev",
     "test": "lerna run test",
     "lint": "eslint --cache --max-warnings 0 --ext .js --ext .jsx .",
     "lint:fix": "eslint --fix --ext .js --ext .jsx .",

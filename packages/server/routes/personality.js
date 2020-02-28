@@ -1,5 +1,6 @@
 const PersonalityController = require("../api/controller/personalityController");
 const Requester = require("../infra/interceptor/requester");
+const WikidataResolver = require("../lib/wikidataResolver");
 
 /**
  * The main router object
@@ -37,10 +38,13 @@ router.post("/", (req, res, next) => {
  */
 router.get("/:id", (req, res, next) => {
     const personality = new PersonalityController();
+    const wikidata = new WikidataResolver();
     personality
         .getPersonalityId(req.params.id)
-        .then(result => {
-            res.send(result);
+        .then(async result => {
+            const wikidataId = result && result.wikidata;
+            const extract = await wikidata.fetchProperties(wikidataId);
+            res.send({ ...result, ...extract });
         })
         .catch(error => {
             next(Requester.internalError(res, error.message));
