@@ -16,6 +16,7 @@ import ClaimCreate from "./components/Claim/ClaimCreate";
 import ClaimView from "./components/Claim/ClaimView";
 import PersonalityList from "./components/Personality/PersonalityList";
 import PersonalityView from "./components/Personality/PersonalityView";
+import PersonalityCreate from "./components/Personality/PersonalityCreate";
 
 const theme = {
     global: {
@@ -82,6 +83,11 @@ class App extends Component {
                                                 exact
                                                 path="/personality"
                                                 component={PersonalityList}
+                                            />
+                                            <Route
+                                                exact
+                                                path="/personality/create"
+                                                component={PersonalityCreate}
                                             />
                                             <Route
                                                 exact
