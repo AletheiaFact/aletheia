@@ -1,23 +1,21 @@
 import React, { Component } from "react";
-import { FormGroup, Input, Label } from "reactstrap";
-import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import "react-bootstrap-typeahead/css/Typeahead.css";
 import axios from "axios";
+import { Input, Form, Button, Row, Col, Avatar, AutoComplete } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 
-import { Box, Grid, TextArea, Form, Button } from "grommet";
-import * as Icons from "grommet-icons";
+const { TextArea } = Input;
+const { Option } = AutoComplete;
+
 class PersonalityCreate extends Component {
     constructor(props) {
         super(props);
 
         this.savePersonality = this.savePersonality.bind(this);
-        this.onNameChange = this.onNameChange.bind(this);
+        this.onSelect = this.onSelect.bind(this);
     }
+
     state = {
-        allowNew: false,
-        isLoading: false,
-        multiple: false,
-        options: [],
+        children: [],
         personality: {},
         inputsDisabled: false
     };
@@ -37,11 +35,18 @@ class PersonalityCreate extends Component {
         axios
             .get(`https://www.wikidata.org/w/api.php`, { params })
             .then(response => {
-                const { data } = response;
-                console.log(data);
+                const { search } = response && response.data;
+                const children = search.map(option => (
+                    <Option key={option.id} value={option.id}>
+                        <span>{option.label}</span>
+                        <small>{option.description}</small>
+                    </Option>
+                ));
+
                 this.setState({
                     isLoading: false,
-                    options: data.search
+                    children,
+                    search
                 });
             })
             .catch(e => {
@@ -54,17 +59,20 @@ class PersonalityCreate extends Component {
         this.wikidataSearch(query);
     };
 
-    onNameChange(selected) {
-        if (Array.isArray(selected) && selected.length > 0) {
-            selected = selected[0];
+    onSelect(wikidataId) {
+        const wbEntities = this.state.search.filter(
+            child => child.id === wikidataId
+        );
+        console.log("wbEntities", wbEntities);
+        if (Array.isArray(wbEntities) && wbEntities.length > 0) {
+            const wbEntity = wbEntities[0];
             axios
-                .get(`${process.env.API_URL}/wikidata/${selected.id}`)
+                .get(`${process.env.API_URL}/wikidata/${wbEntity.id}`)
                 .then(response => {
                     const personality = {
                         ...response.data,
-                        wikidata: selected.id
+                        wikidata: wbEntity.id
                     };
-                    console.log(personality.image);
                     this.setState({
                         personality,
                         inputsDisabled: true
@@ -97,86 +105,73 @@ class PersonalityCreate extends Component {
                 console.log("Error while saving claim");
             });
     }
+
     render() {
         const { personality } = this.state;
         const imageStyle = {
             backgroundImage: `url(${personality.image})`
         };
         return (
-            <Grid
-                rows={["full"]}
-                columns={["full"]}
-                areas={[{ name: "header", start: [0, 0], end: [0, 0] }]}
-            >
-                <Box gridArea="header" direction="row" flex pad="small">
-                    <Box direction="row" basis="full" gap="large">
-                        {personality.image ? (
-                            <div className="thumbnail">
-                                <div className="thumbnail__container">
-                                    <div
-                                        className="thumbnail__img"
-                                        style={imageStyle || ""}
-                                    ></div>
-                                </div>
+            <Row gutter={[32, 0]}>
+                <Col span={6}>
+                    {personality.image ? (
+                        <div className="thumbnail">
+                            <div className="thumbnail__container">
+                                <div
+                                    className="thumbnail__img"
+                                    style={imageStyle || ""}
+                                ></div>
                             </div>
-                        ) : (
-                            <Box
-                                as="h2"
-                                sm={{ size: 6, offset: 2 }}
-                                style={{ width: "200px" }}
+                        </div>
+                    ) : (
+                        <Avatar
+                            shape="square"
+                            size={200}
+                            icon={<UserOutlined />}
+                        />
+                    )}
+                </Col>
+                <Col span={18}>
+                    <Form onSubmit={this.savePersonality}>
+                        <Form.Item
+                            label="Warning"
+                            hasFeedback
+                            validateStatus="warning"
+                        >
+                            <AutoComplete
+                                style={{
+                                    width: 200
+                                }}
+                                onSearch={this._handleSearch}
+                                onSelect={this.onSelect}
+                                // TODO: onChange
+                                // TODO: selected value should be label
+                                placeholder="Name of the personality"
                             >
-                                <Icons.User color="plain" size="xlarge" />
-                            </Box>
-                        )}
-                        <Box basis="full">
-                            <Form onSubmit={this.savePersonality}>
-                                <FormGroup>
-                                    <AsyncTypeahead
-                                        {...this.state}
-                                        filterBy={["label"]}
-                                        labelKey="label"
-                                        minLength={3}
-                                        id="typeahead"
-                                        onSearch={this._handleSearch}
-                                        onChange={this.onNameChange}
-                                        placeholder="Name of the personality"
-                                        renderMenuItemChildren={(
-                                            option,
-                                            props
-                                        ) => {
-                                            return (
-                                                <div>
-                                                    <span key={option.id}>
-                                                        {option.label}
-                                                    </span>
-                                                    <small>
-                                                        {option.description}
-                                                    </small>
-                                                </div>
-                                            );
-                                        }}
-                                    />
-                                    <TextArea
-                                        placeholder="Bio"
-                                        name="bio"
-                                        defaultValue={
-                                            this.state.personality.bio || ""
-                                        }
-                                        id="bio"
-                                        disabled={this.state.inputsDisabled}
-                                    />
-                                </FormGroup>
-                                <Button
-                                    icon={<Icons.FormAdd />}
-                                    label="Save Personality"
-                                    primary
-                                    type="submit"
-                                ></Button>
-                            </Form>
-                        </Box>
-                    </Box>
-                </Box>
-            </Grid>
+                                {this.state.children}
+                            </AutoComplete>
+                            {/* <Complete /> */}
+                        </Form.Item>
+                        <Form.Item
+                            label="Warning"
+                            hasFeedback
+                            validateStatus="warning"
+                        >
+                            <TextArea
+                                placeholder="Bio"
+                                rows={4}
+                                name="bio"
+                                value={this.state.personality.bio || ""}
+                                id="bio"
+                                disabled={this.state.inputsDisabled}
+                            />
+                        </Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Save Personality
+                        </Button>
+                    </Form>
+                </Col>
+            </Row>
         );
     }
 }

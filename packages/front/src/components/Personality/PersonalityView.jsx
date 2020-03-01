@@ -62,7 +62,7 @@ class PersonalityView extends Component {
                                     <div className="thumbnail__container">
                                         <div
                                             className="thumbnail__img"
-                                            style={imageStyle}
+                                            style={imageStyle || ""}
                                         ></div>
                                     </div>
                                 </div>
