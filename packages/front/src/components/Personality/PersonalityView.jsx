@@ -1,24 +1,13 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
+import { Spin, Table, Avatar, Button, Col, Row, Typography } from "antd";
 import "./PersonalityView.css";
+import { UserOutlined } from "@ant-design/icons";
+import ReviewStats from "../ReviewStats";
 
-import {
-    Box,
-    Grid,
-    Text,
-    Table,
-    TableHeader,
-    TableFooter,
-    TableBody,
-    TableCell,
-    TableRow,
-    Button,
-    DataTable,
-    Heading,
-    Meter
-} from "grommet";
-import * as Icons from "grommet-icons";
+const { Title, Text } = Typography;
+const { Column } = Table;
 
 class PersonalityView extends Component {
     constructor(props) {
@@ -63,25 +52,11 @@ class PersonalityView extends Component {
             const imageStyle = {
                 backgroundImage: `url(${personality.image})`
             };
-            const reviews = personality.stats.reviews;
+            const { reviews } = personality.stats;
             return (
-                <Grid
-                    rows={["small", "full"]}
-                    columns={["full"]}
-                    gap="small"
-                    areas={[
-                        { name: "header", start: [0, 0], end: [0, 0] },
-                        { name: "table", start: [0, 1], end: [0, 1] }
-                    ]}
-                >
-                    <Box
-                        gridArea="header"
-                        direction="row"
-                        flex
-                        pad="small"
-                        background="light-1"
-                    >
-                        <Box direction="row" basis="full" gap="large">
+                <>
+                    <Row gutter={[32, 0]}>
+                        <Col span={6}>
                             {personality.image ? (
                                 <div className="thumbnail">
                                     <div className="thumbnail__container">
@@ -92,94 +67,80 @@ class PersonalityView extends Component {
                                     </div>
                                 </div>
                             ) : (
-                                <Box as="h2" sm={{ size: 6, offset: 2 }}>
-                                    <Icons.User color="plain" size="xlarge" />
-                                </Box>
+                                <Avatar
+                                    shape="square"
+                                    size={200}
+                                    icon={<UserOutlined />}
+                                />
                             )}
-                            <Box>
-                                <Heading>{personality.name}</Heading>
-                                <Text>{personality.bio}</Text>
-                            </Box>
-                            {/* <Box align='start'>
-                                <Value value={personality.stats.total} label='Number of reviewed claims'/>
-                            </Box> */}
-                        </Box>
-                        <Box alignContent="end">
-                            <DataTable
-                                columns={[
-                                    {
-                                        property: "_id",
-                                        header: "Review",
-                                        primary: true
-                                    },
-                                    {
-                                        property: "percent",
-                                        header: "Stats",
-                                        render: datum => (
-                                            <Box pad={{ vertical: "xsmall" }}>
-                                                <Meter
-                                                    values={[
-                                                        {
-                                                            value:
-                                                                datum.percentage
-                                                        }
-                                                    ]}
-                                                    thickness="small"
-                                                    size="small"
-                                                />
-                                            </Box>
-                                        )
-                                    }
-                                ]}
-                                data={reviews}
-                            />
-                        </Box>
-                    </Box>
-                    <Box gridArea="table">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableCell>Claim Title</TableCell>
-                                    <TableCell />
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {personality.claims.map(claim => (
-                                    <TableRow key={claim._id}>
-                                        <TableCell size="3/4">
-                                            {claim.title}
-                                        </TableCell>
-                                        <TableCell alignSelf="end">
-                                            <Button
-                                                icon={<Icons.View />}
-                                                label="View"
-                                                onClick={() =>
-                                                    this.viewClaim(claim._id)
-                                                }
-                                            ></Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                            <TableFooter>
-                                <TableRow>
-                                    <TableCell></TableCell>
-                                    <TableCell size="1/4" alignSelf="end">
+                        </Col>
+                        <Col span={12}>
+                            <Row>
+                                <Typography>
+                                    <Title>{personality.name}</Title>
+                                    <Text>{personality.bio}</Text>
+                                </Typography>
+                            </Row>
+                        </Col>
+                        <Col span={6}>
+                            <Row justify="end">
+                                <Col span={24} flex="column">
+                                    <ReviewStats dataSource={reviews} />
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <div style={{ width: "100%", padding: "15px" }}>
+                            <Button
+                                onClick={this.createClaim}
+                                type="primary"
+                                style={{ marginBottom: 16 }}
+                            >
+                                Add Claim
+                            </Button>
+                            <Table
+                                dataSource={personality.claims}
+                                rowKey={record => record._id}
+                            >
+                                <Column
+                                    width="70%"
+                                    title="Title"
+                                    dataIndex="title"
+                                    key="title"
+                                />
+
+                                <Column
+                                    title="Action"
+                                    key="action"
+                                    render={record => (
                                         <Button
-                                            icon={<Icons.FormAdd />}
-                                            label="Add Claim"
-                                            primary
-                                            onClick={() => this.createClaim()}
-                                        ></Button>
-                                    </TableCell>
-                                </TableRow>
-                            </TableFooter>
-                        </Table>
-                    </Box>
-                </Grid>
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                this.viewClaim(record._id);
+                                            }}
+                                        >
+                                            View Claim
+                                        </Button>
+                                    )}
+                                />
+                            </Table>
+                        </div>
+                    </Row>
+                </>
             );
         } else {
-            return "loading";
+            return (
+                <Spin
+                    tip="Loading..."
+                    style={{
+                        textAlign: "center",
+                        position: "absolute",
+                        top: "50%",
+                        width: "100%"
+                    }}
+                ></Spin>
+            );
         }
     }
 }
