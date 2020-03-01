@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
-const ServiceRunner = require("./lib/service-runner");
+const ServiceRunner = require("service-runner");
 new ServiceRunner().start();

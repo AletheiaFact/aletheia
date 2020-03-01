@@ -2,7 +2,6 @@ const axios = require("axios");
 
 module.exports = class WikidataResolver {
     async fetchProperties(wikidataId) {
-        console.log(wikidataId);
         const { data } = await axios.get("https://www.wikidata.org/w/api.php", {
             params: {
                 action: "wbgetentities",
@@ -12,7 +11,6 @@ module.exports = class WikidataResolver {
             }
         });
         const entities = data && data.entities;
-        console.log(entities);
         return this.extractProperties(entities && entities[wikidataId]);
     }
 
@@ -57,7 +55,6 @@ module.exports = class WikidataResolver {
         }
         const imageinfo =
             pages[0] && pages[0].imageinfo && pages[0].imageinfo[0];
-        console.log(imageinfo.url);
         return imageinfo.url;
     }
 };

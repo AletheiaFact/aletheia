@@ -4,12 +4,12 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
 
-function loadModels(app, dir) {
+function loadModels(dir) {
     fs.readdirSync(dir).map(fname => {
         const resolvedPath = path.resolve(dir, fname);
         const isDirectory = fs.statSync(resolvedPath).isDirectory();
         if (isDirectory) {
-            loadModels(app, resolvedPath);
+            loadModels(resolvedPath);
         } else if (/\.js$/.test(fname)) {
             return require(`${dir}/${fname}`);
         }
@@ -19,14 +19,14 @@ function loadModels(app, dir) {
 
 function loadDB(app) {
     return new Promise((resolve, reject) => {
-        loadModels(app, "./api/model");
+        loadModels("./api/model");
         // mongoose instance connection url connection
         mongoose.Promise = global.Promise;
         mongoose
             .connect(
-                (app.conf.db && app.conf.db.path) ||
+                (app.config.db && app.config.db.path) ||
                     "mongodb://localhost/Aletheia",
-                (app.conf.db && app.conf.db.callback) || {}
+                (app.config.db && app.config.db.callback) || {}
             )
             .then(() => resolve(app));
     });
@@ -55,12 +55,15 @@ function loadRoutes(app, dir) {
 }
 
 function createServer(app) {
-    // if (app.env && app.env === 'test') {
-    //     return app;
-    // }
+    if (app.env && app.env === "test") {
+        return app;
+    }
     return new Promise((resolve, reject) => {
-        app.listen(app.conf.port);
-        // log(`${app.opt_name} running at http://localhost:${app.conf.port}`);
+        app.listen(app.config.port);
+        app.logger.log(
+            `${app.serviceName} with PID ${process.pid} listening on ${app
+                .config.interface || "*"}:${app.config.port}`
+        );
         resolve(app);
     });
 }
@@ -68,11 +71,13 @@ function createServer(app) {
 function initApp(options) {
     const app = express();
 
-    app.opt_name = options.name; // this app's config options
-    app.conf = options.conf; // this app's config options
+    app.serviceName = options.name; // this app's config options
+    app.config = options.config; // this app's config options
+    app.logger = options.logger; // the logging device
+    app.metrics = options.metrics; // the metrics
 
-    if (!app.conf.port) {
-        app.conf.port = 8888;
+    if (!app.config && !app.config.port) {
+        app.config.port = 8888;
     }
 
     // CORS
