@@ -1,0 +1,112 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: Aletheia Node.js service
+  description: Crowd-sourced fact checking platform.
+  contact:
+    name: the OpenTesseract team
+    url: https://github.com/orgs/OpenTesseract/people
+  license:
+    name: Apache2
+    url: http://www.apache.org/licenses/LICENSE-2.0
+
+paths:
+  # from routes/root.js
+  /robots.txt:
+    get:
+      tags:
+        - Root
+        - Robots
+      description: Gets robots.txt
+      responses:
+        200:
+          description: Success
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problem'
+      x-amples:
+        - title: robots.txt check
+          request: {}
+          response:
+            status: 200
+  /:
+    get:
+      tags:
+        - Root
+      description: The root service end-point
+      responses:
+        200:
+          description: Success
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problem'
+      x-amples:
+        - title: root with no query params
+          request: {}
+          response:
+            status: 404
+        - title: spec from root
+          request:
+            query:
+              spec: true
+          response:
+            status: 200
+        - title: doc from root
+          request:
+            query:
+              doc: true
+          response:
+            status: 200
+        - title: root with wrong query param
+          request:
+            query:
+              fooo: true
+          response:
+            status: 404
+  # from routes/info.js
+  /_info:
+    get:
+      tags:
+        - Service information
+      description: Gets information about the service
+      responses:
+        200:
+          description: OK
+      x-amples:
+        - title: retrieve service info
+          request: {}
+          response:
+            status: 200
+            headers:
+              content-type: application/json
+            body:
+              name: /.+/
+              description: /.+/
+              version: /.+/
+              home: /.+/
+
+components:
+  schemas:
+    # A https://tools.ietf.org/html/draft-nottingham-http-problem
+    problem:
+      required:
+        - type
+      properties:
+        status:
+          type: integer
+        type:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+        method:
+          type: string
+        uri:
+          type: string

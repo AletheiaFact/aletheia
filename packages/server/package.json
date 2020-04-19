@@ -25,7 +25,8 @@
     "md5": "^2.2.1",
     "mongoose": "^5.7.5",
     "mongoose-seed": "^0.6.0",
-    "service-runner": "^2.7.6"
+    "swagger-ui-dist": "^3.22.3",
+    "service-runner": "^2.7.7"
   },
   "devDependencies": {
     "jest": "^24.8.0",

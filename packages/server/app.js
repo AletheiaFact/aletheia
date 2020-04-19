@@ -1,8 +1,10 @@
 const express = require("express");
 const fs = require("fs");
+const yaml = require("js-yaml");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
+const packageInfo = require("./package.json");
 
 function loadModels(dir) {
     fs.readdirSync(dir).map(fname => {
@@ -75,6 +77,35 @@ function initApp(options) {
     app.config = options.config; // this app's config options
     app.logger = options.logger; // the logging device
     app.metrics = options.metrics; // the metrics
+    app.info = packageInfo; // this app's package info
+
+    // set up the spec
+    if (!app.config.spec) {
+        app.config.spec = `${__dirname}/spec.yaml`;
+    }
+
+    if (app.config.spec.constructor !== Object) {
+        try {
+            app.config.spec = yaml.safeLoad(fs.readFileSync(app.config.spec));
+        } catch (e) {
+            app.logger.log("warn/spec", `Could not load the spec: ${e}`);
+            app.config.spec = {};
+        }
+    }
+    if (!app.config.spec.openapi) {
+        app.config.spec.openapi = "3.0.0";
+    }
+    if (!app.config.spec.info) {
+        app.config.spec.info = {
+            version: app.info.version,
+            title: app.info.name,
+            description: app.info.description
+        };
+    }
+    app.config.spec.info.version = app.info.version;
+    if (!app.config.spec.paths) {
+        app.config.spec.paths = {};
+    }
 
     if (!app.config && !app.config.port) {
         app.config.port = 8888;

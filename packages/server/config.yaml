@@ -5,3 +5,5 @@ services:
     module: app.js
     conf:
       port: 3000
+      spec: ./spec.yaml
+      cors: '*'
