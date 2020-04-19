@@ -1,10 +1,10 @@
+import axios from "axios";
 import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
 import ClaimReviewForm from "./ClaimReview";
-import axios from "axios";
-import { Container, Row, Col } from "reactstrap";
+import { Row, Col, Typography } from "antd";
 
-import { Heading } from "grommet";
+const { Title } = Typography;
 
 class Claim extends Component {
     componentDidMount() {
@@ -13,7 +13,6 @@ class Claim extends Component {
     }
 
     getClaim() {
-        console.log(this.props);
         axios
             .get(
                 `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
@@ -43,10 +42,10 @@ class Claim extends Component {
             const body = this.state.body;
             const title = this.state.title;
             return (
-                <Container>
-                    <Heading>{title}</Heading>
+                <>
+                    <Title>{title}</Title>
                     <Row>
-                        <Col sm={{ size: 8 }}>
+                        <Col span={16}>
                             <div>
                                 {body.map(p => (
                                     <ClaimParagraph
@@ -59,11 +58,11 @@ class Claim extends Component {
                                 ))}
                             </div>
                         </Col>
-                        <Col sm={{ size: 2 }}>
+                        <Col span={4}>
                             <ClaimReviewForm highlight={this.state.highlight} />
                         </Col>
                     </Row>
-                </Container>
+                </>
             );
         } else {
             return "Loading";

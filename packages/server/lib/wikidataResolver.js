@@ -23,8 +23,8 @@ module.exports = class WikidataResolver {
         // Get label for the personality name
         wikidataProps.name = wikidata.labels[lang].value;
 
-        // Get description for the personality bio
-        wikidataProps.bio = wikidata.descriptions[lang].value;
+        // Get description for the personality description
+        wikidataProps.description = wikidata.descriptions[lang].value;
 
         // Extract image if it exists
         if (wikidata.claims.P18) {

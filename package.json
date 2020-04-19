@@ -3,13 +3,15 @@
   "private": false,
   "license": "MIT",
   "scripts": {
+    "postinstall": "yarn bootstrap",
     "bootstrap": "lerna bootstrap",
     "start": "lerna run start",
     "dev": "lerna run dev",
+    "build": "lerna run build",
     "test": "lerna run test",
     "lint": "eslint --cache --max-warnings 0 --ext .js --ext .jsx .",
     "lint:fix": "eslint --fix --ext .js --ext .jsx .",
-    "clean": "rimraf **/{node_modules,package-lock.json}"
+    "clean": "rimraf **/{node_modules}"
   },
   "contributors": [
     {

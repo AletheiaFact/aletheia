@@ -1,19 +1,21 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Card } from "semantic-ui-react";
+import { Link } from "react-router-dom";
+
+import { Card, Row, Col, Pagination } from "antd";
 import InputSearch from "../Form/InputSearch";
-import ReactPaginate from "react-paginate";
 import "./PersonalityList.css";
-import { Box, Grid, Heading } from "grommet";
+const { Meta } = Card;
 
 class PersonalityList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             personalities: [],
-            page: 0,
+            page: 1,
             searchName: null,
-            pageSize: 10
+            pageSize: 10,
+            totalPages: 1
         };
     }
 
@@ -25,7 +27,7 @@ class PersonalityList extends Component {
     getPersonalities() {
         const { page, searchName, pageSize } = this.state;
         const params = {
-            page,
+            page: page - 1,
             name: searchName,
             pageSize
         };
@@ -49,8 +51,8 @@ class PersonalityList extends Component {
         this.getPersonalities();
     }
 
-    handlePagination(data) {
-        this.setState({ page: data.selected }, () => {
+    handlePagination(page) {
+        this.setState({ page }, () => {
             this.getPersonalities();
         });
     }
@@ -59,55 +61,55 @@ class PersonalityList extends Component {
         const { personalities } = this.state;
 
         return (
-            <Grid
-                rows={["xxsmall", "xxsmall", "small", "xxsmall"]}
-                columns={["full"]}
-                gap="small"
-                areas={[
-                    { name: "title", start: [0, 0], end: [0, 0] },
-                    { name: "search", start: [0, 1], end: [0, 1] },
-                    { name: "card", start: [0, 2], end: [0, 2] },
-                    { name: "pagination", start: [0, 3], end: [0, 3] }
-                ]}
-            >
-                <Heading gridArea="title" level="2" margin="none">
+            <>
+                <h1 id="title" level="2" margin="none">
                     Choose a personality
-                </Heading>
-                <Box gridArea="search">
-                    <InputSearch callback={this.handleInputSearch.bind(this)} />
-                </Box>
-                <Box gridArea="card">
+                </h1>
+                <Row id="search">
+                    <Col span={24}>
+                        <InputSearch
+                            callback={this.handleInputSearch.bind(this)}
+                        />
+                    </Col>
+                </Row>
+                <Row id="card" gutter="16   ">
                     {personalities ? (
-                        <Card.Group>
+                        <>
                             {personalities.map((p, i) => (
-                                <Card
-                                    key={i}
-                                    href={`personality/${p._id}`}
-                                    header={p.name}
-                                    description={p.bio}
-                                />
+                                <Col span={8}>
+                                    <Link to={`personality/${p._id}`}>
+                                        <Card
+                                            hoverable
+                                            style={{
+                                                width: "100%",
+                                                margin: "8px 0"
+                                            }}
+                                            key={i}
+                                        >
+                                            <Meta
+                                                title={p.name}
+                                                description={p.description}
+                                            />
+                                        </Card>
+                                    </Link>
+                                </Col>
                             ))}
-                        </Card.Group>
+                        </>
                     ) : (
                         <span>No results found</span>
                     )}
-                </Box>
-                <Box id="pagination">
-                    <ReactPaginate
-                        previousLabel={"previous"}
-                        nextLabel={"next"}
-                        breakLabel={"..."}
-                        breakClassName={"break-me"}
-                        pageCount={this.state.totalPages}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={this.handlePagination.bind(this)}
-                        containerClassName={"pagination"}
-                        subContainerClassName={"pages pagination"}
-                        activeClassName={"active"}
-                    />
-                </Box>
-            </Grid>
+                </Row>
+                <Row id="pagination">
+                    <Col span={24}>
+                        <Pagination
+                            total={this.state.totalPages * this.state.pageSize}
+                            pageSize={this.state.pageSize}
+                            onChange={this.handlePagination.bind(this)}
+                            current={this.state.page}
+                        />
+                    </Col>
+                </Row>
+            </>
         );
     }
 }

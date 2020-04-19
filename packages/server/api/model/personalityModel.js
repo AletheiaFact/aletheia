@@ -6,7 +6,7 @@ const personalitySchema = new Schema({
         type: String,
         required: true
     },
-    bio: {
+    description: {
         type: String,
         required: true
     },

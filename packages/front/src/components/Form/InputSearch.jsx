@@ -1,44 +1,33 @@
 import React, { Component } from "react";
+import { Input } from "antd";
 
-import { Box, TextInput } from "grommet";
-
-import * as Icon from "grommet-icons";
+const { Search } = Input;
 
 class InputSearch extends Component {
     constructor(props) {
         super(props);
         this.timeout = 0;
+        this.loading = false;
     }
 
     doSearch(e) {
         const searchText = e.target.value;
         if (this.timeout) clearTimeout(this.timeout);
         this.timeout = setTimeout(() => {
+            this.loading = true;
             this.props.callback(searchText);
+            this.loading = false;
         }, 300);
     }
 
     render() {
         return (
-            <Box
-                direction="row"
-                align="center"
-                pad={{ horizontal: "small", vertical: "xsmall" }}
-                round="small"
-                border={{
-                    side: "all",
-                    color: "border"
-                }}
-            >
-                <Icon.Search color="brand" />
-                <TextInput
-                    type="search"
-                    ref="searchInput"
-                    plain
-                    placeholder="Type a name..."
-                    onChange={e => this.doSearch(e)}
-                />
-            </Box>
+            <Search
+                placeholder="Type a name..."
+                size="large"
+                loading={this.loading}
+                onChange={e => this.doSearch(e)}
+            />
         );
     }
 }

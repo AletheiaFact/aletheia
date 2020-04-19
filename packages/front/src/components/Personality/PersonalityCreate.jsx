@@ -1,182 +1,103 @@
 import React, { Component } from "react";
-import { FormGroup, Input, Label } from "reactstrap";
-import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import "react-bootstrap-typeahead/css/Typeahead.css";
 import axios from "axios";
+import { Input, Form, Button, Row, Col } from "antd";
 
-import { Box, Grid, TextArea, Form, Button } from "grommet";
-import * as Icons from "grommet-icons";
+import ProfilePic from "../Personality/ProfilePic";
+import WikidataTypeAhead from "../Personality/WikidataTypeAhead";
+
+const { TextArea } = Input;
+
 class PersonalityCreate extends Component {
+    formRef = React.createRef();
+
     constructor(props) {
         super(props);
-
-        this.savePersonality = this.savePersonality.bind(this);
-        this.onNameChange = this.onNameChange.bind(this);
-    }
-    state = {
-        allowNew: false,
-        isLoading: false,
-        multiple: false,
-        options: [],
-        personality: {},
-        inputsDisabled: false
-    };
-
-    wikidataSearch(query, lang = "en") {
-        const params = {
-            action: "wbsearchentities",
-            search: query,
-            format: "json",
-            errorformat: "plaintext",
-            language: lang,
-            uselang: lang,
-            type: "item",
-            origin: "*"
+        this.state = {
+            personality: {},
+            inputsDisabled: false
         };
-
-        axios
-            .get(`https://www.wikidata.org/w/api.php`, { params })
-            .then(response => {
-                const { data } = response;
-                console.log(data);
-                this.setState({
-                    isLoading: false,
-                    options: data.search
-                });
-            })
-            .catch(e => {
-                throw e;
-            });
+        this.savePersonality = this.savePersonality.bind(this);
     }
 
-    _handleSearch = query => {
-        this.setState({ isLoading: true });
-        this.wikidataSearch(query);
-    };
+    updatePersonalityState(state) {
+        this.setState({ ...state });
+    }
 
-    onNameChange(selected) {
-        if (Array.isArray(selected) && selected.length > 0) {
-            selected = selected[0];
+    savePersonality() {
+        console.log(this.formRef);
+        this.formRef.current.validateFields().then(values => {
+            console.log("Received values of form: ", values);
+            // TODO: Check if personality already exists
             axios
-                .get(`${process.env.API_URL}/wikidata/${selected.id}`)
+                .post(
+                    `${process.env.API_URL}/personality`,
+                    this.state.personality
+                )
                 .then(response => {
-                    const personality = {
-                        ...response.data,
-                        wikidata: selected.id
-                    };
-                    console.log(personality.image);
-                    this.setState({
-                        personality,
-                        inputsDisabled: true
-                    });
+                    console.log(response.data);
                 })
                 .catch(() => {
-                    console.log(
-                        "Error while fetching Wikdiata metadata of Personality "
-                    );
+                    console.log("Error while saving claim");
                 });
-        } else {
-            this.setState({
-                personality: {
-                    bio: ""
-                },
-                inputsDisabled: false
-            });
-        }
+        });
     }
 
-    savePersonality(e) {
-        e.preventDefault();
-        // TODO: Check if personality already exists
-        axios
-            .post(`${process.env.API_URL}/personality`, this.state.personality)
-            .then(response => {
-                console.log(response.data);
-            })
-            .catch(() => {
-                console.log("Error while saving claim");
-            });
-    }
     render() {
         const { personality } = this.state;
-        const imageStyle = {
-            backgroundImage: `url(${personality.image})`
-        };
         return (
-            <Grid
-                rows={["full"]}
-                columns={["full"]}
-                areas={[{ name: "header", start: [0, 0], end: [0, 0] }]}
-            >
-                <Box gridArea="header" direction="row" flex pad="small">
-                    <Box direction="row" basis="full" gap="large">
-                        {personality.image ? (
-                            <div className="thumbnail">
-                                <div className="thumbnail__container">
-                                    <div
-                                        className="thumbnail__img"
-                                        style={imageStyle || ""}
-                                    ></div>
-                                </div>
-                            </div>
-                        ) : (
-                            <Box
-                                as="h2"
-                                sm={{ size: 6, offset: 2 }}
-                                style={{ width: "200px" }}
-                            >
-                                <Icons.User color="plain" size="xlarge" />
-                            </Box>
-                        )}
-                        <Box basis="full">
-                            <Form onSubmit={this.savePersonality}>
-                                <FormGroup>
-                                    <AsyncTypeahead
-                                        {...this.state}
-                                        filterBy={["label"]}
-                                        labelKey="label"
-                                        minLength={3}
-                                        id="typeahead"
-                                        onSearch={this._handleSearch}
-                                        onChange={this.onNameChange}
-                                        placeholder="Name of the personality"
-                                        renderMenuItemChildren={(
-                                            option,
-                                            props
-                                        ) => {
-                                            return (
-                                                <div>
-                                                    <span key={option.id}>
-                                                        {option.label}
-                                                    </span>
-                                                    <small>
-                                                        {option.description}
-                                                    </small>
-                                                </div>
-                                            );
-                                        }}
-                                    />
-                                    <TextArea
-                                        placeholder="Bio"
-                                        name="bio"
-                                        defaultValue={
-                                            this.state.personality.bio || ""
-                                        }
-                                        id="bio"
-                                        disabled={this.state.inputsDisabled}
-                                    />
-                                </FormGroup>
-                                <Button
-                                    icon={<Icons.FormAdd />}
-                                    label="Save Personality"
-                                    primary
-                                    type="submit"
-                                ></Button>
-                            </Form>
-                        </Box>
-                    </Box>
-                </Box>
-            </Grid>
+            <Row gutter={[32, 0]}>
+                <Col span={6}>
+                    <ProfilePic image={personality.image} />
+                </Col>
+                <Col span={18}>
+                    <Form
+                        ref={this.formRef}
+                        id="createPersonality"
+                        onFinish={this.savePersonality}
+                    >
+                        <WikidataTypeAhead
+                            style={{
+                                width: "100%"
+                            }}
+                            callback={this.updatePersonalityState.bind(this)}
+                        />
+                        <Form.Item
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input your password!"
+                                }
+                            ]}
+                            hasFeedback
+                        >
+                            <TextArea
+                                style={{
+                                    width: "100%"
+                                }}
+                                placeholder="Description"
+                                rows={4}
+                                value={this.state.personality.description}
+                                disabled={this.state.inputsDisabled}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input your password!"
+                                }
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Save Personality
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
         );
     }
 }
