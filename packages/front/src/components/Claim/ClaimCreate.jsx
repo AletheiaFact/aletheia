@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Container, Form, FormGroup, Input, Label, Button } from "reactstrap";
 import { Editor, EditorState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import "draft-js/dist/Draft.css";
+import { Typography, Form, Input, Button } from "antd";
 
+const { Title } = Typography;
 class ClaimCreate extends Component {
     constructor(props) {
         super(props);
@@ -16,8 +17,8 @@ class ClaimCreate extends Component {
         this.onChange = editorState => this.setState({ editorState });
     }
 
-    saveClaim(e) {
-        e.preventDefault();
+    saveClaim(values) {
+        console.log(values);
         const content = stateToHTML(this.state.editorState.getCurrentContent());
         const title = this.state.title;
         const personality = this.props.match.params.id;
@@ -35,15 +36,21 @@ class ClaimCreate extends Component {
             });
     }
 
+    onFinishFailed(errorInfo) {
+        console.log("Failed:", errorInfo);
+    }
+
     render() {
         return (
-            <Container>
-                <h2>
+            <>
+                <Title level={2}>
                     <center>Create Claim</center>
-                </h2>
-                <Form onSubmit={this.saveClaim}>
-                    <FormGroup>
-                        <Label>Title</Label>
+                </Title>
+                <Form
+                    onFinish={this.saveClaim}
+                    onFinishFailed={this.onFinishFailed}
+                >
+                    <Form.Item>
                         <Input
                             value={this.state.title || ""}
                             onChange={e =>
@@ -51,19 +58,21 @@ class ClaimCreate extends Component {
                             }
                             placeholder={"Some Title"}
                         />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label>Claim</Label>
+                    </Form.Item>
+                    <Form.Item>
                         <Editor
+                            placeholder="Claim"
                             editorState={this.state.editorState}
                             onChange={this.onChange}
                         />
-                    </FormGroup>
-                    <Button type="submit" value="Submit">
-                        Save
-                    </Button>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Save
+                        </Button>
+                    </Form.Item>
                 </Form>
-            </Container>
+            </>
         );
     }
 }
