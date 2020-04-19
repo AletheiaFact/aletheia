@@ -1,9 +1,11 @@
 import axios from "axios";
-import { Container, Form, FormGroup, Input, Button } from "reactstrap";
 import _ from "underscore";
 import React, { Component } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
+import { Typography, Form, Select, Button } from "antd";
 
+const { Option } = Select;
+const { Title } = Typography;
 const recaptchaRef = React.createRef();
 
 class ClaimReviewForm extends Component {
@@ -83,35 +85,35 @@ class ClaimReviewForm extends Component {
 
     render() {
         if (_.isEmpty(this.props.highlight)) {
-            return <h1> Choose a sentence to Fact Check! </h1>;
+            return <Title level={2}> Choose a sentence to Fact Check! </Title>;
         } else {
             return (
-                <Container>
-                    <h1> Classify Sentence </h1>
+                <>
+                    <Title level={2}> Classify Sentence </Title>
                     <Form onSubmit={this.onSubmit}>
-                        <FormGroup>
-                            <Input
+                        <Form.Item>
+                            <Select
                                 type="select"
                                 onChange={this.onChangeClassification}
                                 defaultValue=""
                             >
-                                <option value="" disabled>
+                                <Option value="" disabled>
                                     Select classification
-                                </option>
-                                <option value="not-fact">Not fact</option>
-                                <option value="true">True</option>
-                                <option value="true-but">True, but</option>
-                                <option value="arguable">Arguable</option>
-                                <option value="misleading">Misleading</option>
-                                <option value="false">False</option>
-                                <option value="unsustainable">
+                                </Option>
+                                <Option value="not-fact">Not fact</Option>
+                                <Option value="true">True</Option>
+                                <Option value="true-but">True, but</Option>
+                                <Option value="arguable">Arguable</Option>
+                                <Option value="misleading">Misleading</Option>
+                                <Option value="false">False</Option>
+                                <Option value="unsustainable">
                                     Unsustainable
-                                </option>
-                                <option value="exaggerated">Exaggerated</option>
-                                <option value="unverifiable">
+                                </Option>
+                                <Option value="exaggerated">Exaggerated</Option>
+                                <Option value="unverifiable">
                                     Unverifiable
-                                </option>
-                            </Input>
+                                </Option>
+                            </Select>
                             <ReCAPTCHA
                                 ref={recaptchaRef}
                                 sitekey="6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh"
@@ -125,9 +127,9 @@ class ClaimReviewForm extends Component {
                             >
                                 Submit
                             </Button>
-                        </FormGroup>
+                        </Form.Item>
                     </Form>
-                </Container>
+                </>
             );
         }
     }
