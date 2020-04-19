@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
-import { Spin, Table, Avatar, Button, Col, Row, Typography } from "antd";
+import { Spin, Table, Button, Col, Row, Typography } from "antd";
 import "./PersonalityView.css";
-import { UserOutlined } from "@ant-design/icons";
 import ReviewStats from "../ReviewStats";
+import ProfilePic from "./ProfilePic";
 
 const { Title, Text } = Typography;
 const { Column } = Table;
@@ -57,28 +57,13 @@ class PersonalityView extends Component {
                 <>
                     <Row gutter={[32, 0]}>
                         <Col span={6}>
-                            {personality.image ? (
-                                <div className="thumbnail">
-                                    <div className="thumbnail__container">
-                                        <div
-                                            className="thumbnail__img"
-                                            style={imageStyle || ""}
-                                        ></div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <Avatar
-                                    shape="square"
-                                    size={200}
-                                    icon={<UserOutlined />}
-                                />
-                            )}
+                            <ProfilePic image={personality.image} />
                         </Col>
                         <Col span={12}>
                             <Row>
                                 <Typography>
                                     <Title>{personality.name}</Title>
-                                    <Text>{personality.bio}</Text>
+                                    <Text>{personality.description}</Text>
                                 </Typography>
                             </Row>
                         </Col>

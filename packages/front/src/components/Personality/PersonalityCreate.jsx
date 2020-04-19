@@ -1,174 +1,100 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Input, Form, Button, Row, Col, Avatar, AutoComplete } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { Input, Form, Button, Row, Col } from "antd";
+
+import ProfilePic from "../Personality/ProfilePic";
+import WikidataTypeAhead from "../Personality/WikidataTypeAhead";
 
 const { TextArea } = Input;
-const { Option } = AutoComplete;
 
 class PersonalityCreate extends Component {
+    formRef = React.createRef();
+
     constructor(props) {
         super(props);
-
-        this.savePersonality = this.savePersonality.bind(this);
-        this.onSelect = this.onSelect.bind(this);
-    }
-
-    state = {
-        children: [],
-        personality: {},
-        inputsDisabled: false
-    };
-
-    wikidataSearch(query, lang = "en") {
-        const params = {
-            action: "wbsearchentities",
-            search: query,
-            format: "json",
-            errorformat: "plaintext",
-            language: lang,
-            uselang: lang,
-            type: "item",
-            origin: "*"
+        this.state = {
+            personality: {},
+            inputsDisabled: false
         };
-
-        axios
-            .get(`https://www.wikidata.org/w/api.php`, { params })
-            .then(response => {
-                const { search } = response && response.data;
-                const children = search.map(option => (
-                    <Option key={option.id} value={option.id}>
-                        <span>{option.label}</span>
-                        <small>{option.description}</small>
-                    </Option>
-                ));
-
-                this.setState({
-                    isLoading: false,
-                    children,
-                    search
-                });
-            })
-            .catch(e => {
-                throw e;
-            });
+        this.savePersonality = this.savePersonality.bind(this);
     }
 
-    _handleSearch = query => {
-        this.setState({ isLoading: true });
-        this.wikidataSearch(query);
-    };
+    updatePersonalityState(state) {
+        this.setState({ ...state });
+    }
 
-    onSelect(wikidataId) {
-        const wbEntities = this.state.search.filter(
-            child => child.id === wikidataId
-        );
-        console.log("wbEntities", wbEntities);
-        if (Array.isArray(wbEntities) && wbEntities.length > 0) {
-            const wbEntity = wbEntities[0];
+    savePersonality() {
+        console.log(this.formRef);
+        this.formRef.current.validateFields().then(values => {
+            console.log("Received values of form: ", values);
+            // TODO: Check if personality already exists
             axios
-                .get(`${process.env.API_URL}/wikidata/${wbEntity.id}`)
+                .post(
+                    `${process.env.API_URL}/personality`,
+                    this.state.personality
+                )
                 .then(response => {
-                    const personality = {
-                        ...response.data,
-                        wikidata: wbEntity.id
-                    };
-                    this.setState({
-                        personality,
-                        inputsDisabled: true
-                    });
+                    console.log(response.data);
                 })
                 .catch(() => {
-                    console.log(
-                        "Error while fetching Wikdiata metadata of Personality "
-                    );
+                    console.log("Error while saving claim");
                 });
-        } else {
-            this.setState({
-                personality: {
-                    bio: ""
-                },
-                inputsDisabled: false
-            });
-        }
-    }
-
-    savePersonality(e) {
-        e.preventDefault();
-        // TODO: Check if personality already exists
-        axios
-            .post(`${process.env.API_URL}/personality`, this.state.personality)
-            .then(response => {
-                console.log(response.data);
-            })
-            .catch(() => {
-                console.log("Error while saving claim");
-            });
+        });
     }
 
     render() {
         const { personality } = this.state;
-        const imageStyle = {
-            backgroundImage: `url(${personality.image})`
-        };
         return (
             <Row gutter={[32, 0]}>
                 <Col span={6}>
-                    {personality.image ? (
-                        <div className="thumbnail">
-                            <div className="thumbnail__container">
-                                <div
-                                    className="thumbnail__img"
-                                    style={imageStyle || ""}
-                                ></div>
-                            </div>
-                        </div>
-                    ) : (
-                        <Avatar
-                            shape="square"
-                            size={200}
-                            icon={<UserOutlined />}
-                        />
-                    )}
+                    <ProfilePic image={personality.image} />
                 </Col>
                 <Col span={18}>
-                    <Form onSubmit={this.savePersonality}>
+                    <Form
+                        ref={this.formRef}
+                        id="createPersonality"
+                        onFinish={this.savePersonality}
+                    >
+                        <WikidataTypeAhead
+                            style={{
+                                width: "100%"
+                            }}
+                            callback={this.updatePersonalityState.bind(this)}
+                        />
                         <Form.Item
-                            label="Warning"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input your password!"
+                                }
+                            ]}
                             hasFeedback
-                            validateStatus="warning"
-                        >
-                            <AutoComplete
-                                style={{
-                                    width: 200
-                                }}
-                                onSearch={this._handleSearch}
-                                onSelect={this.onSelect}
-                                // TODO: onChange
-                                // TODO: selected value should be label
-                                placeholder="Name of the personality"
-                            >
-                                {this.state.children}
-                            </AutoComplete>
-                            {/* <Complete /> */}
-                        </Form.Item>
-                        <Form.Item
-                            label="Warning"
-                            hasFeedback
-                            validateStatus="warning"
                         >
                             <TextArea
-                                placeholder="Bio"
+                                style={{
+                                    width: "100%"
+                                }}
+                                placeholder="Description"
                                 rows={4}
-                                name="bio"
-                                value={this.state.personality.bio || ""}
-                                id="bio"
+                                value={this.state.personality.description}
                                 disabled={this.state.inputsDisabled}
                             />
                         </Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Save Personality
-                        </Button>
+                        <Form.Item
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input your password!"
+                                }
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Save Personality
+                            </Button>
+                        </Form.Item>
                     </Form>
                 </Col>
             </Row>

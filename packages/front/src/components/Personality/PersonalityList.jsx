@@ -88,7 +88,7 @@ class PersonalityList extends Component {
                                         >
                                             <Meta
                                                 title={p.name}
-                                                description={p.bio}
+                                                description={p.description}
                                             />
                                         </Card>
                                     </Link>
