@@ -41,17 +41,13 @@ class ClaimReviewForm extends Component {
         );
     }
 
-    onChangeClassification(e) {
-        if (e.target.value) {
-            this.setState(
-                { classification: e.target.value },
-                this.toggleDisabledSubmit
-            );
+    onChangeClassification(value) {
+        if (value) {
+            this.setState({ classification: value }, this.toggleDisabledSubmit);
         }
     }
 
-    onSubmit(e) {
-        e.preventDefault();
+    onSubmit(values) {
         console.log(this.props);
 
         if (recaptchaRef && recaptchaRef.current) {
@@ -90,7 +86,7 @@ class ClaimReviewForm extends Component {
             return (
                 <>
                     <Title level={2}> Classify Sentence </Title>
-                    <Form onSubmit={this.onSubmit}>
+                    <Form onFinish={this.onSubmit}>
                         <Form.Item>
                             <Select
                                 type="select"
@@ -121,8 +117,8 @@ class ClaimReviewForm extends Component {
                                 onExpired={this.onExpiredCaptcha}
                             />
                             <Button
-                                type="submit"
-                                value="Submit"
+                                type="primary"
+                                htmlType="Submit"
                                 disabled={this.state.disableSubmit}
                             >
                                 Submit
