@@ -1,25 +1,25 @@
 [
     {
         "name": "Barack Obama",
-        "bio": "Former President of the USA",
+        "description": "Former President of the USA",
         "wikidata": "Q76",
         "claims": []
     },
     {
         "name": "Donald Trump",
-        "bio": "Current President of USA",
+        "description": "Current President of USA",
         "wikidata": "Q22686",
         "claims": []
     },
     {
         "name": "Luís Inácio Lula da Silva",
-        "bio": "Former President of Brasil",
+        "description": "Former President of Brasil",
         "wikidata": "Q37181",
         "claims": []
     },
     {
         "name": "Jair Bolsonaro",
-        "bio": "Current President of Brasil",
+        "description": "Current President of Brasil",
         "wikidata": "Q10304982",
         "claims": []
     }
