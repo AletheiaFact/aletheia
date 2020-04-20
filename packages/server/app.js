@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
 const packageInfo = require("./package.json");
+const specLib = require("./lib/spec");
 
 function loadModels(dir) {
     fs.readdirSync(dir).map(fname => {
@@ -81,7 +82,7 @@ function initApp(options) {
 
     // set up the spec
     if (!app.config.spec) {
-        app.config.spec = `${__dirname}/spec.yaml`;
+        app.config.spec = specLib.load(`${__dirname}/spec`, {});
     }
 
     if (app.config.spec.constructor !== Object) {

@@ -1,0 +1,10 @@
+components:
+  parameters:
+    personalityId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: |
+        Personality's ID

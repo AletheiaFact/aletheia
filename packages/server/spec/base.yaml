@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.1
 info:
   version: 0.0.1
   title: Aletheia Node.js service
@@ -90,23 +90,3 @@ paths:
               description: /.+/
               version: /.+/
               home: /.+/
-
-components:
-  schemas:
-    # A https://tools.ietf.org/html/draft-nottingham-http-problem
-    problem:
-      required:
-        - type
-      properties:
-        status:
-          type: integer
-        type:
-          type: string
-        title:
-          type: string
-        detail:
-          type: string
-        method:
-          type: string
-        uri:
-          type: string
