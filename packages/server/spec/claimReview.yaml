@@ -1,0 +1,45 @@
+paths:
+    /claimreview:
+      post:
+        tags:
+          - Claim review
+        summary: Send claim review data for creation
+        description: Send claim review
+        responses:
+          200:
+            description: Claim review data was inserted succesfully
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/claimreview'
+          default:
+            $ref: "#/components/responses/problem"
+    /claimreview/{id}:
+      get:
+        tags:
+          - Claim review
+        summary: Get claim review data by ID
+        description: Get claim review given an specific ID
+        parameters:
+          - $ref: "#/components/parameters/claimreviewId"
+        responses:
+          200:
+            description: Claim review data
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/claimreview'
+          default:
+            $ref: "#/components/responses/problem"
+      delete:
+        tags:
+          - Claim review
+        summary: Delete claim review from DB
+        description: Deletes claim review from DB given an specific ID
+        parameters:
+          - $ref: "#/components/parameters/claimreviewId"
+        responses:
+          200:
+            description: Claim review was deleted succesfully
+          default:
+            $ref: "#/components/responses/problem"

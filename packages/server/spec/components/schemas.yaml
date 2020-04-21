@@ -70,3 +70,21 @@ components:
           type: array
           items:
             type: "string"
+    claimreview:
+      required:
+        - classification
+        - claim
+        - personality
+        - sentence_content
+        - sentence_hash
+      properties:
+        classification:
+          type: "string"
+        claim:
+          type: "string"
+        personality:
+          type: "string"
+        sentence_hash:
+          type: "string"
+        sentence_content:
+          type: "string"
