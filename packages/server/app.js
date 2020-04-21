@@ -26,11 +26,7 @@ function loadDB(app) {
         // mongoose instance connection url connection
         mongoose.Promise = global.Promise;
         mongoose
-            .connect(
-                (app.config.db && app.config.db.path) ||
-                    "mongodb://localhost/Aletheia",
-                (app.config.db && app.config.db.callback) || {}
-            )
+            .connect(app.config.db.path, app.config.db.callback)
             .then(() => resolve(app));
     });
 }
@@ -64,6 +60,7 @@ function createServer(app) {
     return new Promise((resolve, reject) => {
         app.listen(app.config.port);
         app.logger.log(
+            "info",
             `${app.serviceName} with PID ${process.pid} listening on ${app
                 .config.interface || "*"}:${app.config.port}`
         );
@@ -111,7 +108,20 @@ function initApp(options) {
     if (!app.config && !app.config.port) {
         app.config.port = 8888;
     }
+    if (!app.config.db) {
+        app.config.db = {};
+    }
 
+    if (!app.config.db.path) {
+        app.config.db.path = "mongodb://localhost/Aletheia";
+    }
+
+    if (!app.config.db.callback) {
+        app.config.db.callback = {
+            useUnifiedTopology: true,
+            useNewUrlParser: true
+        };
+    }
     // CORS
     app.all("*", (req, res, next) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
@@ -136,6 +146,6 @@ module.exports = options => {
     // TODO: Promisify it all
     return initApp(options)
         .then(loadDB)
-        .then(app => loadRoutes(app, "./routes"))
+        .then(app => loadRoutes(app, `${__dirname}/routes`))
         .then(createServer);
 };
