@@ -3,7 +3,7 @@ import axios from "axios";
 import { Editor, EditorState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import "draft-js/dist/Draft.css";
-import { Typography, Form, Input, Button } from "antd";
+import { Typography, Form, Input, Button, message } from "antd";
 
 const { Title } = Typography;
 class ClaimCreate extends Component {
@@ -29,10 +29,24 @@ class ClaimCreate extends Component {
                 personality
             })
             .then(response => {
-                console.log(response.data);
+                const { title, _id } = response.data;
+                message.success(`"${title}" created with success`);
+                // Redirect to personality profile in case _id is not present
+                const path = _id ? `./${_id}` : "../";
+                this.props.history.push(path);
             })
-            .catch(() => {
-                console.log("Error while saving claim");
+            .catch(err => {
+                const response = err && err.response;
+                if (!response) {
+                    // TODO: Track unknow errors
+                    console.log(err);
+                }
+                const { data } = response;
+                message.error(
+                    data && data.message
+                        ? data.message
+                        : "Error while saving claim"
+                );
             });
     }
 
