@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-import { Card, Row, Col, Pagination } from "antd";
+import { Card, Row, Col, Pagination, Button } from "antd";
 import InputSearch from "../Form/InputSearch";
 import "./PersonalityList.css";
 const { Meta } = Card;
@@ -10,6 +10,7 @@ const { Meta } = Card;
 class PersonalityList extends Component {
     constructor(props) {
         super(props);
+        this.createPersonality = this.createPersonality.bind(this);
         this.state = {
             personalities: [],
             page: 1,
@@ -24,6 +25,10 @@ class PersonalityList extends Component {
         self.getPersonalities();
     }
 
+    createPersonality() {
+        const path = `./personality/create`;
+        this.props.history.push(path);
+    }
     getPersonalities() {
         const { page, searchName, pageSize } = this.state;
         const params = {
@@ -67,6 +72,13 @@ class PersonalityList extends Component {
                 </h1>
                 <Row id="search">
                     <Col span={24}>
+                        <Button
+                            onClick={this.createPersonality}
+                            type="primary"
+                            style={{ marginBottom: 16 }}
+                        >
+                            Add Claim
+                        </Button>
                         <InputSearch
                             callback={this.handleInputSearch.bind(this)}
                         />
