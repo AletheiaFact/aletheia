@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Input, Form, Button, Row, Col } from "antd";
+import { Input, Form, Button, Row, Col, message } from "antd";
 
 import ProfilePic from "../Personality/ProfilePic";
 import WikidataTypeAhead from "../Personality/WikidataTypeAhead";
@@ -24,7 +24,6 @@ class PersonalityCreate extends Component {
     }
 
     savePersonality() {
-        console.log(this.formRef);
         this.formRef.current.validateFields().then(values => {
             console.log("Received values of form: ", values);
             // TODO: Check if personality already exists
@@ -34,10 +33,20 @@ class PersonalityCreate extends Component {
                     this.state.personality
                 )
                 .then(response => {
-                    console.log(response.data);
+                    const { name, _id } = response.data;
+                    message.success(`${name} profile created with success`);
+
+                    // Redirect to personality list in case _id is not present
+                    const path = `/personality` + _id ? `/${_id}` : "";
+                    this.props.history.push(path);
                 })
-                .catch(() => {
-                    console.log("Error while saving claim");
+                .catch(err => {
+                    const { data } = err && err.response;
+                    message.error(
+                        data && data.message
+                            ? data.message
+                            : "Error while saving personality"
+                    );
                 });
         });
     }
@@ -79,16 +88,6 @@ class PersonalityCreate extends Component {
                                 value={this.state.personality.description}
                                 disabled={this.state.inputsDisabled}
                             />
-                        </Form.Item>
-                        <Form.Item
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your password!"
-                                }
-                            ]}
-                        >
-                            <Input />
                         </Form.Item>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
