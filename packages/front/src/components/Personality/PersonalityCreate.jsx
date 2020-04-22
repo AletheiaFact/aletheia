@@ -34,14 +34,19 @@ class PersonalityCreate extends Component {
                 )
                 .then(response => {
                     const { name, _id } = response.data;
-                    message.success(`${name} profile created with success`);
+                    message.success(`"${name}" profile created with success`);
 
                     // Redirect to personality list in case _id is not present
                     const path = `/personality` + _id ? `/${_id}` : "";
                     this.props.history.push(path);
                 })
                 .catch(err => {
-                    const { data } = err && err.response;
+                    const response = err && err.response;
+                    if (!response) {
+                        // TODO: Track unknow errors
+                        console.log(err);
+                    }
+                    const { data } = response;
                     message.error(
                         data && data.message
                             ? data.message

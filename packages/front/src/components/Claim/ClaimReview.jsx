@@ -2,7 +2,7 @@ import axios from "axios";
 import _ from "underscore";
 import React, { Component } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Typography, Form, Select, Button } from "antd";
+import { Typography, Form, Select, Button, message } from "antd";
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -48,8 +48,6 @@ class ClaimReviewForm extends Component {
     }
 
     onSubmit(values) {
-        console.log(this.props);
-
         if (recaptchaRef && recaptchaRef.current) {
             recaptchaRef.current.reset();
         }
@@ -65,7 +63,20 @@ class ClaimReviewForm extends Component {
                 axios
                     .post(`${process.env.API_URL}/claimreview`, this.state)
                     .then(response => {
-                        console.log("Classification Succeed");
+                        message.success("Classification Succeed");
+                    })
+                    .catch(err => {
+                        const response = err && err.response;
+                        if (!response) {
+                            // TODO: Track unknow errors
+                            console.log(err);
+                        }
+                        const { data } = response;
+                        message.error(
+                            data && data.message
+                                ? data.message
+                                : "Error while submitting claim review"
+                        );
                     });
             }
         );
