@@ -19,12 +19,18 @@ module.exports = class WikidataResolver {
         if (!wikidata) {
             return {};
         }
-
+        console.log(wikidata.labels[lang]);
         // Get label for the personality name
-        wikidataProps.name = wikidata.labels[lang].value;
+        wikidataProps.name =
+            wikidata.labels &&
+            wikidata.labels[lang] &&
+            wikidata.labels[lang].value;
 
         // Get description for the personality description
-        wikidataProps.description = wikidata.descriptions[lang].value;
+        wikidataProps.description =
+            wikidata.descriptions &&
+            wikidata.descriptions[lang] &&
+            wikidata.descriptions[lang].value;
 
         // Extract image if it exists
         if (wikidata.claims.P18) {

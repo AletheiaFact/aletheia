@@ -8,9 +8,11 @@ class WikdiataTypeAhead extends Component {
         super(props);
 
         this.state = {
-            children: []
+            children: [],
+            search: []
         };
         this.onSelect = this.onSelect.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
     }
 
@@ -34,7 +36,7 @@ class WikdiataTypeAhead extends Component {
                     search &&
                     search.map(option => (
                         <Option key={option.id} value={option.label}>
-                            <span>{option.label}</span>
+                            <span>{option.label}</span>&nbsp;
                             <small>{option.description}</small>
                         </Option>
                     ));
@@ -51,7 +53,7 @@ class WikdiataTypeAhead extends Component {
     }
 
     handleSearch(query) {
-        this.setState({ isLoading: true });
+        this.setState({ query, isLoading: true });
         this.wikidataSearch(query);
     }
 
@@ -79,6 +81,7 @@ class WikdiataTypeAhead extends Component {
         } else {
             this.props.callback({
                 personality: {
+                    name: this.state.query,
                     description: ""
                 },
                 inputsDisabled: false
@@ -86,17 +89,33 @@ class WikdiataTypeAhead extends Component {
         }
     }
 
-    onSelect(value, option) {
-        this.fetchWikidata(option.props.key);
+    onSelect(query, option) {
+        this.setState({ query }, () => {
+            this.fetchWikidata(option.props.key);
+        });
     }
+
+    onChange(query) {
+        this.setState({ query }, () => {
+            this.props.callback({
+                personality: {
+                    name: this.state.query,
+                    description: ""
+                },
+                inputsDisabled: false
+            });
+        });
+    }
+
     render() {
         return (
             <AutoComplete
+                autoFocus={true}
+                backfill={false}
                 style={this.props.style || {}}
                 onSearch={this.handleSearch}
                 onSelect={this.onSelect}
-                // TODO: onChange
-                // TODO: selected value should be label
+                onChange={this.onChange}
                 placeholder="Name of the personality"
             >
                 {this.state.children}

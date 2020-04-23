@@ -20,40 +20,55 @@ class PersonalityCreate extends Component {
     }
 
     updatePersonalityState(state) {
-        this.setState({ ...state });
+        this.setState({ ...state }, () => {
+            const { personality } = this.state;
+            this.formRef.current.setFieldsValue({
+                name: personality.name,
+                description: personality.description
+            });
+            console.log(this.state);
+        });
     }
 
     savePersonality() {
-        this.formRef.current.validateFields().then(values => {
-            console.log("Received values of form: ", values);
-            // TODO: Check if personality already exists
-            axios
-                .post(
-                    `${process.env.API_URL}/personality`,
-                    this.state.personality
-                )
-                .then(response => {
-                    const { name, _id } = response.data;
-                    message.success(`"${name}" profile created with success`);
+        this.formRef.current
+            .validateFields()
+            .then(values => {
+                this.setState({ personality: values });
+                console.log("Received values of form: ", values);
+                // TODO: Check if personality already exists
+                axios
+                    .post(
+                        `${process.env.API_URL}/personality`,
+                        this.state.personality
+                    )
+                    .then(response => {
+                        const { name, _id } = response.data;
+                        message.success(
+                            `"${name}" profile created with success`
+                        );
 
-                    // Redirect to personality list in case _id is not present
-                    const path = `/personality` + _id ? `/${_id}` : "";
-                    this.props.history.push(path);
-                })
-                .catch(err => {
-                    const response = err && err.response;
-                    if (!response) {
-                        // TODO: Track unknow errors
-                        console.log(err);
-                    }
-                    const { data } = response;
-                    message.error(
-                        data && data.message
-                            ? data.message
-                            : "Error while saving personality"
-                    );
-                });
-        });
+                        // Redirect to personality list in case _id is not present
+                        const path = _id ? `./${_id}` : "";
+                        this.props.history.push(path);
+                    })
+                    .catch(err => {
+                        const response = err && err.response;
+                        if (!response) {
+                            // TODO: Track unknow errors
+                            console.log(err);
+                        }
+                        const { data } = response;
+                        message.error(
+                            data && data.message
+                                ? data.message
+                                : "Error while saving personality"
+                        );
+                    });
+            })
+            .catch(errorInfo => {
+                console.log(errorInfo);
+            });
     }
 
     render() {
@@ -69,20 +84,42 @@ class PersonalityCreate extends Component {
                         id="createPersonality"
                         onFinish={this.savePersonality}
                     >
-                        <WikidataTypeAhead
-                            style={{
-                                width: "100%"
-                            }}
-                            callback={this.updatePersonalityState.bind(this)}
-                        />
                         <Form.Item
+                            name="name"
+                            label="Name"
                             rules={[
                                 {
                                     required: true,
-                                    message: "Please input your password!"
+                                    message: "Please insert a name"
                                 }
                             ]}
-                            hasFeedback
+                            wrapperCol={{ sm: 24 }}
+                            style={{
+                                width: "100%"
+                            }}
+                        >
+                            <WikidataTypeAhead
+                                style={{
+                                    width: "100%"
+                                }}
+                                callback={this.updatePersonalityState.bind(
+                                    this
+                                )}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            name="description"
+                            label="Description"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please insert a description"
+                                }
+                            ]}
+                            wrapperCol={{ sm: 24 }}
+                            style={{
+                                width: "100%"
+                            }}
                         >
                             <TextArea
                                 style={{
