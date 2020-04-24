@@ -119,7 +119,9 @@ function initApp(options) {
     if (!app.config.db.callback) {
         app.config.db.callback = {
             useUnifiedTopology: true,
-            useNewUrlParser: true
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useFindAndModify: false
         };
     }
     // CORS
