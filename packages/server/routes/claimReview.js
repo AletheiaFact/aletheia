@@ -1,16 +1,28 @@
 const ClaimReviewController = require("../api/controller/claimReviewController");
 const Requester = require("../infra/interceptor/requester");
+const captcha = require("../lib/captcha");
 
 /**
  * The main router object
  */
 const router = require("../lib/util").router();
 
+let app;
+
 /**
  * POST {domain}/claim
  */
-router.post("/", (req, res, next) => {
+router.post("/", async (req, res, next) => {
     const claimReview = new ClaimReviewController();
+    const recaptchaCheck = await captcha.checkResponse(
+        app.config.recaptcha_secret,
+        req.body && req.body.recaptcha
+    );
+    if (!recaptchaCheck.success) {
+        next(
+            Requester.internalError(res, "Error with your reCaptcha response")
+        );
+    }
     claimReview
         .create(req.body)
         .then(result => res.send(result))
@@ -46,6 +58,7 @@ router.delete("/:id", (req, res, next) => {
 });
 
 module.exports = function(appObj) {
+    app = appObj;
     return {
         path: "/claimreview",
         api_version: 1,

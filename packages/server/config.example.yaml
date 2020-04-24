@@ -22,3 +22,4 @@ services:
       port: 3000
       cors: '*'
       debug: true
+      recaptcha_secret: RECAPTCHA_SECRET
