@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const supportReferenceSchema = new Schema({
+const referenceSchema = new Schema({
     link: {
         type: String,
         required: true
@@ -28,4 +28,4 @@ const supportReferenceSchema = new Schema({
     // TODO user_id
 });
 
-module.exports = mongoose.model("SupportReference", supportReferenceSchema);
+module.exports = mongoose.model("Reference", referenceSchema);
