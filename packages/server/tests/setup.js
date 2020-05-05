@@ -8,7 +8,7 @@ beforeEach(done => {
     function clearDB() {
         for (const i in mongoose.connection.collections) {
             if ({}.hasOwnProperty.call(mongoose.connection.collections, i)) {
-                mongoose.connection.collections[i].remove(() => {});
+                mongoose.connection.collections[i].deleteMany(() => {});
             }
         }
         return done();

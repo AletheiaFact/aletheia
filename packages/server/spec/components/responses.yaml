@@ -1,0 +1,12 @@
+# shared responses
+components:
+  responses:
+    problem:
+      description: Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/problem'
+    success:
+      description: Success
+  

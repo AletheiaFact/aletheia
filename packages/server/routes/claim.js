@@ -7,19 +7,6 @@ const Requester = require("../infra/interceptor/requester");
 const router = require("../lib/util").router();
 
 /**
- * GET {domain}/claim
- */
-router.get("/", (req, res, next) => {
-    const claim = new ClaimController();
-    claim
-        .listAll()
-        .then(result => res.send(result))
-        .catch(error => {
-            next(Requester.internalError(res, error.message));
-        });
-});
-
-/**
  * POST {domain}/claim
  */
 router.post("/", (req, res, next) => {

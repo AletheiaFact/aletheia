@@ -1,3 +1,18 @@
+# Number of worker processes to spawn.
+# Use 'ncpu' to run as many workers as there are CPU units
+num_workers: 1
+
+# Log error messages and gracefully restart a worker if v8 reports that it
+# uses more heap (note: not RSS) than this many mb.
+# worker_heap_limit_mb: 250
+
+# Logger info
+logging:
+  level: trace
+  streams:
+  - type: stdout # log to stdout
+    named_levels: true # emit log level name instead of index. e.g. INFO vs 30
+
 # Using config.yaml with wikimedia service-runner pattern
 services:
   - name: service-aletheia
@@ -5,3 +20,5 @@ services:
     module: app.js
     conf:
       port: 3000
+      cors: '*'
+      debug: true

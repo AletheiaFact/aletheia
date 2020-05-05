@@ -1,0 +1,26 @@
+components:
+  parameters:
+    personalityId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: |
+        Personality's ID
+    claimId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: |
+        Claim's ID
+    claimreviewId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: |
+        Claim Review' ID
