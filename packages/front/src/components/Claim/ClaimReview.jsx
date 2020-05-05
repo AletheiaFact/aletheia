@@ -123,7 +123,7 @@ class ClaimReviewForm extends Component {
                             </Select>
                             <ReCAPTCHA
                                 ref={recaptchaRef}
-                                sitekey="6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh"
+                                sitekey={process.env.RECAPTCHA_SITEKEY}
                                 onChange={this.onChangeCaptcha}
                                 onExpired={this.onExpiredCaptcha}
                             />
