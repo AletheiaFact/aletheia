@@ -37,11 +37,15 @@ jobs:
 
       # Build the Docker image
       - name: Build
-        run: docker build -t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" .
+        run: |
+          docker build -t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" .
+          docker tag "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
 
       # Push the Docker image to Google Container Registry
       - name: Publish
-        run: docker push $REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
+        run: |
+          docker push $REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
+          docker push "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
       # # Deploy the Docker image to the GKE cluster
       # - name: Deploy
       #   run: |
