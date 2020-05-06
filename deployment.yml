@@ -1,0 +1,49 @@
+### INGRESS ###
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-aletheia
+  namespace: development
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: dev.aletheia.opentesseract.org
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: aletheia
+              servicePort: aletheia
+---
+### SERVICE  ###
+apiVersion: v1
+kind: Service
+metadata:
+  name: aletheia
+  namespace: aletheia
+spec:
+  type: NodePort
+  selector:
+    app: aletheia
+  ports:
+    - name: aletheia
+      targetPort: 1234
+      port: 80
+---
+### DEPLOYMENT ###
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: aletheia
+  namespace: aletheia
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: aletheia
+    spec:
+      containers:
+        - name: aletheia
+          image: us.gcr.io/aletheia-opentesseract/aletheia:latest

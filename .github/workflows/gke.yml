@@ -46,9 +46,10 @@ jobs:
         run: |
           docker push $REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
           docker push "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
-      # # Deploy the Docker image to the GKE cluster
-      # - name: Deploy
-      #   run: |
-      #     gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
-      #     kubectl apply
-      #     kubectl rollout status deployment/$DEPLOYMENT_NAME
+
+      # Deploy the Docker image to the GKE cluster
+      - name: Deploy
+        run: |
+          gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
+          kubectl apply
+          kubectl rollout status deployment/$DEPLOYMENT_NAME
