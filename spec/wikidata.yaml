@@ -1,0 +1,35 @@
+paths:
+  /wikidata/{wikidataId}:
+    get:
+      tags:
+        - Wikidata
+      summary: Fetch wikidata properties
+      description: Fetch wikidata properties given an specific Q id
+      parameters:
+        - in: path
+          name: wikidataId
+          required: true
+          schema:
+            type: string
+          description: |
+            Wikidata Q id
+      responses:
+        200:
+          description: Wikidata properties
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - name
+                  - description
+                  - image
+                properties:
+                  name:
+                    type: "string"
+                  description:
+                    type: "string"
+                  image:
+                    type: "string"
+        default:
+          $ref: "#/components/responses/problem"

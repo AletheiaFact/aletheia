@@ -1,0 +1,90 @@
+paths:
+  /personality:
+    get:
+      tags:
+        - Personality
+      summary: Get personalities list
+      description: Get personalities from Aletheia DB as a list
+      responses:
+        200:
+          description: Personality data or list of personalities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/personality'
+        default:
+          $ref: "#/components/responses/problem"
+    post:
+      tags:
+        - Personality
+      summary: Send personality data for creatio
+      description: Send personality
+      responses:
+        200:
+          description: Personality data was inserted succesfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/personality'
+        default:
+          $ref: "#/components/responses/problem"
+  /personality/{id}:
+    get:
+      tags:
+        - Personality
+      summary: Get personality data by ID
+      description: Get single personality given an specific ID
+      parameters:
+        - $ref: "#/components/parameters/personalityId"
+      responses:
+        200:
+          description: Personality data or list of personalities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/personality'
+        default:
+          $ref: "#/components/responses/problem"
+    put:
+      tags:
+        - Personality
+      summary: Update personality
+      description: Update personality's data given an specific ID
+      parameters:
+        - $ref: "#/components/parameters/personalityId"
+      responses:
+        200:
+          description: Personality data was updated succesfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/personality'
+        default:
+          $ref: "#/components/responses/problem"
+    delete:
+      tags:
+        - Personality
+      summary: Delete personality from DB
+      description: Deletes personality from DB given an specific ID
+      parameters:
+        - $ref: "#/components/parameters/personalityId"
+      responses:
+        200:
+          description: Personality data was deleted succesfully
+        default:
+          $ref: "#/components/responses/problem"
+  /personality/{id}/reviews:
+    get:
+      tags:
+        - Personality
+      summary: Get personality's review stats
+      description: Get personality's review stats given an specific ID
+      parameters:
+        - $ref: "#/components/parameters/personalityId"
+      responses:
+        200:
+          description: Personality data or list of personalities
+        default:
+          $ref: "#/components/responses/problem"

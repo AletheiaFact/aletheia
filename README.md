@@ -21,9 +21,10 @@
   ``` sh
   yarn bootstrap
   ```
-- Run in dev mode:
+- To run in dev mode, you should run server and front separately:
   ``` sh
-  yarn dev
+  yarn dev:server
+  yarn dev:front
   ```
 - Access http://localhost:1234 in your browser.
 
