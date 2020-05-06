@@ -1,9 +1,9 @@
-### INGRESS ###
+### INGRESS FRONTEND ###
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ingress-aletheia
-  namespace: development
+  namespace: ENVIRONMENT
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:
@@ -13,37 +13,88 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: aletheia
-              servicePort: aletheia
+              serviceName: frontend
+              servicePort: frontend
 ---
-### SERVICE  ###
+### SERVICE  FRONTEND ###
 apiVersion: v1
 kind: Service
 metadata:
-  name: aletheia
-  namespace: development
+  name: frontend
+  namespace: ENVIRONMENT
 spec:
   type: NodePort
   selector:
-    app: aletheia
+    app: frontend
   ports:
-    - name: aletheia
+    - name: frontend
       targetPort: 1234
       port: 80
 ---
-### DEPLOYMENT ###
+### DEPLOYMENT FRONTEND ###
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: aletheia
-  namespace: development
+  name: frontend
+  namespace: ENVIRONMENT
 spec:
-  replicas: 3
+  replicas: 2
   template:
     metadata:
       labels:
-        app: aletheia
+        app: frontend
     spec:
       containers:
-        - name: aletheia
+        - name: frontend
           image: us.gcr.io/aletheia-opentesseract/aletheia:latest
+          command: ["yarn", "dev:front"]
+          env:
+            - name: API_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: api_url
+                  name: aletheia-config
+            - name: RECAPTCHA_SITEKEY
+              valueFrom:
+                configMapKeyRef:
+                  key: recaptcha_sitekey
+                  name: aletheia-config
+---
+### SERVICE  BACKEND ###
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: ENVIRONMENT
+spec:
+  type: NodePort
+  selector:
+    app: backend
+  ports:
+    - name: backend
+      targetPort: 3000
+      port: 80
+---
+### DEPLOYMENT BACKEND ###
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: ENVIRONMENT
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: us.gcr.io/aletheia-opentesseract/aletheia:latest
+          command: ["yarn", "dev:server"]
+          env:
+            - name: MONGODB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: mongodb_host
+                  name: aletheia-config

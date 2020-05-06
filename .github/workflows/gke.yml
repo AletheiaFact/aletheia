@@ -2,7 +2,9 @@ name: Build and Deploy to GKE
 
 on:
   push:
-    branches: [feature/kubernetes]
+    branches:
+      - master
+      - feature/kubernetes
   # For future
   # release:
   #   types: [created]
@@ -15,7 +17,7 @@ env:
   GKE_CLUSTER: aletheia
   IMAGE: aletheia
   REGISTRY_HOSTNAME: us.gcr.io
-  DEPLOYMENT_NAME: aletheia
+  ENVIRONMENT: development
 
 jobs:
   setup-build-publish-deploy:
@@ -24,6 +26,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Check Environment
+        if: endsWith(github.ref, '/master')
+        run: |
+          echo "::set-env name=ENVIRONMENT::production"
+
+      - name: Set environment
+        run: |
+          sed -i "s/ENVIRONMENT/$ENVIROMENT/g" deployment.yml
 
       # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -52,4 +63,3 @@ jobs:
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
           kubectl apply -f deployment.yml
-          kubectl rollout status deployment $DEPLOYMENT_NAME --namespace development
