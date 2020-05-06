@@ -21,7 +21,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: aletheia
-  namespace: aletheia
+  namespace: development
 spec:
   type: NodePort
   selector:
@@ -36,7 +36,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: aletheia
-  namespace: aletheia
+  namespace: development
 spec:
   replicas: 3
   template:
