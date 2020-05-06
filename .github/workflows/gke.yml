@@ -51,5 +51,5 @@ jobs:
       - name: Deploy
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
-          kubectl apply
+          kubectl apply -f deployment.yml
           kubectl rollout status deployment/$DEPLOYMENT_NAME
