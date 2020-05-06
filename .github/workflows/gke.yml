@@ -34,7 +34,7 @@ jobs:
 
       - name: Set environment
         run: |
-          sed -i "s/ENVIRONMENT/$ENVIROMENT/g" deployment.yml
+          sed -i "s/ENVIRONMENT/$ENVIRONMENT/g" deployment.yml
 
       # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
