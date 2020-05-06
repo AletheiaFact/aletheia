@@ -1,18 +1,28 @@
 {
-  "name": "root",
+  "name": "aletheia",
+  "version": "0.0.1",
+  "description": "Crowd-sourced fact-checking platform.",
   "private": false,
   "license": "MIT",
+  "main": "index.js",
   "scripts": {
-    "postinstall": "yarn bootstrap",
-    "bootstrap": "lerna bootstrap",
-    "start": "lerna run start",
-    "dev": "lerna run dev",
-    "build": "lerna run build",
-    "test": "lerna run test",
+    "start": "node server.js",
+    "dev:server": "nodemon server.js",
+    "dev:front": "parcel ./src/index.html",
+    "test": "jest",
+    "seed": "node ./infra/database/seeds/generateSeeds.js",
+    "build": "parcel build ./src/index.html",
     "lint": "eslint --cache --max-warnings 0 --ext .js --ext .jsx .",
     "lint:fix": "eslint --fix --ext .js --ext .jsx .",
     "clean": "rimraf **/{node_modules}"
   },
+  "keywords": [
+    "aletheia",
+    "REST",
+    "API",
+    "react",
+    "fact-checking"
+  ],
   "contributors": [
     {
       "name": "Mateus Santos",
@@ -25,7 +35,48 @@
       "pre-commit": "yarn lint"
     }
   },
+  "dependencies": {
+    "@shelf/jest-mongodb": "^1.0.1",
+    "axios": "^0.19.2",
+    "domino": "^2.1.0",
+    "express": "^4.16.4",
+    "js-yaml": "^3.12.0",
+    "md5": "^2.2.1",
+    "mongoose": "^5.7.5",
+    "mongoose-seed": "^0.6.0",
+    "swagger-ui-dist": "^3.22.3",
+    "service-runner": "^2.7.6",
+    "@ant-design/icons": "4.0.0",
+    "@ant-design/icons-svg": "^4.0.0",
+    "@babel/polyfill": "^7.8.3",
+    "antd": "^4.0.0",
+    "bootstrap": "^4.4.1",
+    "draft-js": ">=0.10.0",
+    "draft-js-export-html": "^1.4.1",
+    "immutable": "3.x.x",
+    "jquery": "1.9.1 - 3",
+    "popper.js": "^1.16.0",
+    "react": "^16.0.0",
+    "react-bootstrap-typeahead": "^4.0.0-rc.2",
+    "react-dom": "^0.14.0 || ^15.0.0-rc || ^16.0.0-rc || ^16.0.0",
+    "react-google-recaptcha": "^2.0.1",
+    "react-paginate": "^6.3.2",
+    "react-router-dom": "^5.1.2",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.88.2",
+    "styled-components": "^5.0.1",
+    "underscore": "^1.9.2"
+  },
   "devDependencies": {
+    "jest": "^24.8.0",
+    "nodemon": "^1.18.4",
+    "supertest": "^4.0.2",
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "less": "^3.11.1",
+    "parcel-bundler": "^1.12.4",
     "@typescript-eslint/eslint-plugin": "^2.19.0",
     "@typescript-eslint/parser": "^2.19.0",
     "babel-eslint": "^10.0.3",
@@ -42,13 +93,20 @@
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-hooks": "^2.3.0",
     "husky": "^2.4.1",
-    "lerna": "^3.13.1",
     "prettier": "^1.19.1",
     "rimraf": "3.0.2",
     "typescript": "^3.7.5"
   },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "resolutions": {
+    "**/**/serialize-javascript": ">=2.1.1",
     "**/**/https-proxy-agent": ">=2.2.3",
+    "**/**/@hapi/hoek": ">=9.0.3",
     "**/**/set-value": ">=3.0.1",
     "**/**/lodash": ">=4.17.12"
   }
