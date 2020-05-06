@@ -9,7 +9,7 @@ COPY ./src /app/src
 COPY ./.babelrc /app/.babelrc
 COPY ./config.example.yaml /app/config.yaml
 COPY ./.eslintignore /app/.eslintignore
-COPY ./.eslinttc.yml /app/.eslinttc.yml
+COPY ./.eslintrc.yml /app/.eslintrc.yml
 COPY ./app.js /app/app.js
 COPY ./jest.config.js /app/jest.config.js
 COPY ./lerna.json /app/lerna.json
