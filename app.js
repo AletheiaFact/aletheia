@@ -43,7 +43,7 @@ function loadRoutes(app, dir) {
                 const routeModule = require(`${dir}/${fname}`);
                 const route = routeModule(app);
                 if (route !== undefined) {
-                    app.use(route.path, route.router);
+                    app.use(`/api${route.path}`, route.router);
                 }
                 return route;
             }
