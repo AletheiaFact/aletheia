@@ -4,7 +4,7 @@ const yaml = require("js-yaml");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
-const packageInfo = require("./package.json");
+const packageInfo = require("../../package.json");
 const specLib = require("./lib/spec");
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
 
@@ -23,7 +23,7 @@ function loadModels(dir) {
 
 function loadDB(app) {
     return new Promise((resolve, reject) => {
-        loadModels("./api/model");
+        loadModels(`${__dirname}/api/model`);
         // mongoose instance connection url connection
         mongoose.Promise = global.Promise;
         mongoose
