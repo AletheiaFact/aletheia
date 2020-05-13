@@ -63,3 +63,7 @@ jobs:
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
           kubectl apply -f deployment.yml
+          if [[ $? -eq 1 ]]; then
+            kubectl set image deployment frontend frontend=$REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA --record -n ${ENVIRONMENT}; 
+            kubectl set image deployment backend backend=$REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA --record -n ${ENVIRONMENT}; 
+          fi
