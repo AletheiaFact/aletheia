@@ -42,7 +42,7 @@ function loadRoutes(app, dir) {
                 const routeModule = require(`${dir}/${fname}`);
                 const route = routeModule(app);
                 if (route !== undefined) {
-                    app.use(route.path, route.router);
+                    app.use(`/api${route.path}`, route.router);
                 }
                 return route;
             }
@@ -144,10 +144,25 @@ function initApp(options) {
     return Promise.resolve(app);
 }
 
+function loadClient(app) {
+    app.use(
+        "/assets",
+        express.static(path.join(__dirname, "../assets"), {
+            index: false
+        })
+    );
+    // Always set root directory to serve client html
+    app.get("/", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "../assets/index.html"));
+    });
+    return app;
+}
+
 module.exports = options => {
     // TODO: Promisify it all
     return initApp(options)
         .then(loadDB)
         .then(app => loadRoutes(app, `${__dirname}/routes`))
+        .then(loadClient)
         .then(createServer);
 };
