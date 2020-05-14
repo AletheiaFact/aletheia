@@ -1,5 +1,7 @@
 FROM node:12.13.1-alpine AS package
 
+ENV PARCEL_WORKERS=1
+
 COPY ./.babelrc /app/.babelrc
 COPY ./config.example.yaml /app/config.yaml
 COPY ./.eslintignore /app/.eslintignore
@@ -9,7 +11,9 @@ COPY ./lerna.json /app/lerna.json
 COPY ./package.json /app/package.json
 COPY ./yarn.lock /app/yarn.lock
 COPY ./scripts /app/scripts
-COPY ./server/ /app/
+COPY ./tsconfig.json /app/tsconfig.json
+COPY ./server /app/
+COPY ./src /app/src
 
 WORKDIR /app
 
@@ -22,7 +26,6 @@ FROM node:12.13.1-alpine
 LABEL maintainer="Giovanni Rossini <giovannijrrossini@gmail.com>"
 
 COPY --from=package /app /app
-COPY ./src /app/src
 
 WORKDIR /app
 
