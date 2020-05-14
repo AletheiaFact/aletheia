@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - stage
+      - feature/kubernetes
   # For future
   # release:
   #   types: [created]

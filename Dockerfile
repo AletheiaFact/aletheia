@@ -2,17 +2,18 @@ FROM node:12.13.1-alpine AS package
 
 ENV PARCEL_WORKERS=1
 
+# Editorconfig is required for yarn lint
+COPY ./.editorconfig /app/.editorconfig
 COPY ./.babelrc /app/.babelrc
 COPY ./config.example.yaml /app/config.yaml
 COPY ./.eslintignore /app/.eslintignore
 COPY ./.eslintrc.yml /app/.eslintrc.yml
 COPY ./jest.config.js /app/jest.config.js
-COPY ./lerna.json /app/lerna.json
 COPY ./package.json /app/package.json
 COPY ./yarn.lock /app/yarn.lock
 COPY ./scripts /app/scripts
 COPY ./tsconfig.json /app/tsconfig.json
-COPY ./server /app/
+COPY ./server /app/server
 COPY ./src /app/src
 
 WORKDIR /app
