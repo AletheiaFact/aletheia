@@ -151,7 +151,7 @@ function loadClient(app) {
             index: false
         })
     );
-    // Always set root directory to serve client html
+    // Always set root endpoint to serve client html
     app.get("/", (req, res) => {
         res.sendFile(path.resolve(__dirname, "../assets/index.html"));
     });
