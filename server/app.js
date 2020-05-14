@@ -7,6 +7,7 @@ const path = require("path");
 const packageInfo = require("../../package.json");
 const specLib = require("./lib/spec");
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
+const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
 
 function loadModels(dir) {
     fs.readdirSync(dir).map(fname => {
@@ -114,7 +115,7 @@ function initApp(options) {
     }
 
     if (!app.config.db.path) {
-        app.config.db.path = `mongodb://${mongodb_host}/Aletheia`;
+        app.config.db.path = `mongodb://${mongodb_host}/${mongodb_name}`;
     }
 
     if (!app.config.db.callback) {

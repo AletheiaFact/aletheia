@@ -13,50 +13,45 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: frontend
-              servicePort: frontend
-          - path: /api
-            backend:
-              serviceName: backend
-              servicePort: backend
+              serviceName: aletheia
+              servicePort: aletheia
 ---
 ### SERVICE  FRONTEND ###
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: aletheia
   namespace: ENVIRONMENT
 spec:
   type: NodePort
   selector:
-    app: frontend
+    app: aletheia
   ports:
-    - name: frontend
-      targetPort: 1234
+    - name: aletheia
+      targetPort: 3000
       port: 80
 ---
 ### DEPLOYMENT FRONTEND ###
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: frontend
+  name: aletheia
   namespace: ENVIRONMENT
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        app: frontend
+        app: aletheia
     spec:
       containers:
-        - name: frontend
+        - name: aletheia
           image: us.gcr.io/aletheia-opentesseract/aletheia:latest
           imagePullPolicy: Always
-          command: ["yarn", "dev:front"]
           livenessProbe:
             httpGet:
               path: /api/stats/health
-              port: 1234
+              port: 3000
           env:
             - name: API_URL
               valueFrom:
@@ -68,47 +63,13 @@ spec:
                 configMapKeyRef:
                   key: recaptcha_sitekey
                   name: aletheia-config
----
-### SERVICE  BACKEND ###
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend
-  namespace: ENVIRONMENT
-spec:
-  type: NodePort
-  selector:
-    app: backend
-  ports:
-    - name: backend
-      targetPort: 3000
-      port: 80
----
-### DEPLOYMENT BACKEND ###
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: backend
-  namespace: ENVIRONMENT
-spec:
-  replicas: 2
-  template:
-    metadata:
-      labels:
-        app: backend
-    spec:
-      containers:
-        - name: backend
-          image: us.gcr.io/aletheia-opentesseract/aletheia:latest
-          imagePullPolicy: Always
-          command: ["yarn", "dev:server"]
-          livenessProbe:
-            httpGet:
-              path: /api/stats/health
-              port: 3000
-          env:
             - name: MONGODB_HOST
               valueFrom:
                 configMapKeyRef:
                   key: mongodb_host
+                  name: aletheia-config
+            - name: MONGODB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: mongodb_name
                   name: aletheia-config

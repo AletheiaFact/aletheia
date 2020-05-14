@@ -30,6 +30,7 @@ jobs:
       - name: Check Environment
         if: endsWith(github.ref, '/master')
         run: |
+          sed -i '11{s/dev.//}' deployment.yml
           echo "::set-env name=ENVIRONMENT::production"
 
       - name: Set environment
