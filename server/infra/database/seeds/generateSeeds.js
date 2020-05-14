@@ -6,7 +6,10 @@ const seeders = [
     {
         model: "Personality",
         documents: JSON.parse(
-            fs.readFileSync("./infra/database/seeds/personality.json", "utf8")
+            fs.readFileSync(
+                "./server/infra/database/seeds/personality.json",
+                "utf8"
+            )
         )
     }
 ];
@@ -15,7 +18,7 @@ const seeders = [
 seeder.setLogOutput(false);
 seeder.connect(Config.mongodb, () => {
     // Load Mongoose models
-    seeder.loadModels(["./api/model/personalityModel"]);
+    seeder.loadModels(["./server/api/model/personalityModel"]);
     // Clear specified collections
     seeder.clearModels(["Personality"], () => {
         // Callback to populate DB once collections have been cleared
