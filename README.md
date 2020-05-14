@@ -19,7 +19,7 @@
   ```
 - Install packages:
   ``` sh
-  yarn bootstrap
+  yarn install
   ```
 - To run in dev mode, you should run server and front separately:
   ``` sh
@@ -28,10 +28,15 @@
   ```
 - Access http://localhost:1234 in your browser.
 
-## Setup for development
+## Development DB
 
-- Go to the server package and run seed:
+- Run seeder:
   ``` sh
-  cd packages/server
   yarn seed
   ```
+## Build to production
+
+- The build step should be run as follow:
+```
+yarn build
+```
