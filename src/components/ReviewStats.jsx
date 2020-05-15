@@ -1,6 +1,6 @@
 import React, { Component, useRef } from "react";
 
-import { Statistic, Tooltip } from "antd";
+import { Statistic, Tooltip, Col } from "antd";
 
 import {
     CheckCircleFilled,
@@ -80,14 +80,15 @@ class ReviewStats extends Component {
                             title={review._id}
                             key={review._id}
                         >
-                            <span>
+                            <Col span={2}>
                                 {" "}
                                 <Statistic
                                     value={percentage}
                                     suffix="%"
                                     {...this.getIcon(review._id)}
                                 />
-                            </span>
+                            </Col>
+                            <Col span={1}> </Col>
                         </Tooltip>
                     );
                 })}

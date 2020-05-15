@@ -8,20 +8,16 @@ import ClaimView from "./components/Claim/ClaimView";
 import PersonalityList from "./components/Personality/PersonalityList";
 import PersonalityView from "./components/Personality/PersonalityView";
 import PersonalityCreate from "./components/Personality/PersonalityCreate";
-const { Header, Footer, Sider, Content } = Layout;
+import AletheiaHeader from "./components/Header/AletheiaHeader";
+
+const { Footer, Content } = Layout;
 
 class App extends Component {
     render() {
         return (
             <Layout>
-                <Header>
-                    <div className="logo">
-                        <a href="/">Aletheia</a>
-                    </div>
-                </Header>
-                <Content
-                    style={{ padding: "15px", height: "calc(100vh -70px)" }}
-                >
+                <AletheiaHeader />
+                <Content>
                     <Router>
                         <Switch>
                             <Route exact path="/" component={PersonalityList} />

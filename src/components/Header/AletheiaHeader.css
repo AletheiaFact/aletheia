@@ -1,0 +1,18 @@
+.aletheia-header {
+    background: #5ea7d2;
+    text-align: center;
+    padding: 10px;
+}
+
+.aletheia-logo {
+    font-family: Noticia Text;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 26px;
+    line-height: 39px;
+    /* or 150% */
+
+    text-align: center;
+
+    color: #ffffff;
+}

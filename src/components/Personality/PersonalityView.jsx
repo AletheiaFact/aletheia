@@ -1,13 +1,96 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
-import { Spin, Table, Button, Col, Row, Typography } from "antd";
+import {
+    Divider,
+    Avatar,
+    Affix,
+    Comment,
+    Spin,
+    Table,
+    Button,
+    Col,
+    Row,
+    Typography,
+    Tooltip
+} from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+
 import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
 import ProfilePic from "./ProfilePic";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { Column } = Table;
+
+function AffixButton(props) {
+    // const [bottom, setBottom] = useState(10);
+    // @TODO use antd affix
+    return (
+        // <Affix offsetBottom={10}>
+        <Button
+            style={{
+                position: "fixed",
+                zInex: 9999,
+                bottom: "3%",
+                left: "85%"
+            }}
+            size="large"
+            shape="circle"
+            onClick={props.createClaim}
+            type="primary"
+            icon={<PlusOutlined />}
+        ></Button>
+        // </Affix>
+    );
+}
+
+function ClaimCard(props) {
+    return (
+        <Col span={24}>
+            <Comment
+                style={{ margin: "0px 20px" }}
+                key={props.claimIndex}
+                author={props.personality.name}
+                avatar={
+                    <Avatar
+                        src={props.personality.image}
+                        alt={props.personality.name}
+                    />
+                }
+                content={
+                    <>
+                        <Row>
+                            <Col>
+                                <p>{props.claim.title}</p>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col offset={16}>
+                                <Button
+                                    shape="round"
+                                    type="primary"
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        props.viewClaim(props.claim._id);
+                                    }}
+                                >
+                                    Revisar
+                                </Button>
+                            </Col>
+                        </Row>
+                    </>
+                }
+                datetime={
+                    <Tooltip title="01/2020">
+                        <span>há 5 meses</span>
+                    </Tooltip>
+                }
+            />
+            <hr style={{ opacity: "20%" }} />
+        </Col>
+    );
+}
 
 class PersonalityView extends Component {
     constructor(props) {
@@ -48,6 +131,7 @@ class PersonalityView extends Component {
 
     render() {
         const personality = this.state.personality;
+
         if (personality) {
             const imageStyle = {
                 backgroundImage: `url(${personality.image})`
@@ -55,62 +139,33 @@ class PersonalityView extends Component {
             const { reviews } = personality.stats;
             return (
                 <>
-                    <Row gutter={[32, 0]}>
+                    <Row style={{ padding: "10px 30px", marginTop: "10px" }}>
                         <Col span={6}>
-                            <ProfilePic image={personality.image} />
+                            <Avatar size={90} src={personality.image} />
                         </Col>
-                        <Col span={12}>
-                            <Row>
-                                <Typography>
-                                    <Title>{personality.name}</Title>
-                                    <Text>{personality.description}</Text>
-                                </Typography>
-                            </Row>
-                        </Col>
-                        <Col span={6}>
-                            <Row justify="end">
-                                <Col span={24} flex="column">
-                                    <ReviewStats dataSource={reviews} />
-                                </Col>
-                            </Row>
+                        <Col span={3}></Col>
+                        <Col span={15}>
+                            <Title level={4}>{personality.name}</Title>
+                            <Paragraph ellipsis={{ rows: 1, expandable: true }}>
+                                {personality.description}
+                            </Paragraph>
                         </Col>
                     </Row>
-                    <Row>
-                        <div style={{ width: "100%", padding: "15px" }}>
-                            <Button
-                                onClick={this.createClaim}
-                                type="primary"
-                                style={{ marginBottom: 16 }}
-                            >
-                                Add Claim
-                            </Button>
-                            <Table
-                                dataSource={personality.claims}
-                                rowKey={record => record._id}
-                            >
-                                <Column
-                                    width="70%"
-                                    title="Title"
-                                    dataIndex="title"
-                                    key="title"
-                                />
-
-                                <Column
-                                    title="Action"
-                                    key="action"
-                                    render={record => (
-                                        <Button
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                                this.viewClaim(record._id);
-                                            }}
-                                        >
-                                            View Claim
-                                        </Button>
-                                    )}
-                                />
-                            </Table>
-                        </div>
+                    <hr style={{ opacity: "20%" }} />
+                    <Row style={{ padding: "5px 30px" }}>
+                        <ReviewStats dataSource={reviews} />
+                    </Row>
+                    <br />
+                    <AffixButton createClaim={this.createClaim} />
+                    <Row style={{ background: "white" }}>
+                        {personality.claims.map((claim, claimIndex) => (
+                            <ClaimCard
+                                key={claimIndex}
+                                personality={personality}
+                                claim={claim}
+                                viewClaim={this.viewClaim}
+                            />
+                        ))}
                     </Row>
                 </>
             );
