@@ -5,12 +5,14 @@ import {
     Divider,
     Avatar,
     Affix,
+    Comment,
     Spin,
     Table,
     Button,
     Col,
     Row,
-    Typography
+    Typography,
+    Tooltip
 } from "antd";
 
 import "./PersonalityView.css";
@@ -22,7 +24,7 @@ const { Column } = Table;
 
 function AffixButton(props) {
     // const [bottom, setBottom] = useState(10);
-
+    // @TODO use antd affix
     return (
         // <Affix offsetBottom={10}>
         <Button
@@ -38,6 +40,42 @@ function AffixButton(props) {
             Add Claim
         </Button>
         // </Affix>
+    );
+}
+
+function ClaimCard(props) {
+    return (
+        <Col span={24}>
+            <Comment
+                key={props.claimIndex}
+                author={props.personality.name}
+                avatar={
+                    <Avatar
+                        src={props.personality.image}
+                        alt={props.personality.name}
+                    />
+                }
+                content={
+                    <>
+                        <p>{props.claim.title}</p>
+                        <Button
+                            onClick={e => {
+                                e.stopPropagation();
+                                props.viewClaim(props.claim._id);
+                            }}
+                        >
+                            Visualizar afirmação
+                        </Button>
+                    </>
+                }
+                datetime={
+                    <Tooltip title="01/2020">
+                        <span>há 5 meses</span>
+                    </Tooltip>
+                }
+            />
+            <hr style={{ opacity: "20%" }} />
+        </Col>
     );
 }
 
@@ -80,6 +118,7 @@ class PersonalityView extends Component {
 
     render() {
         const personality = this.state.personality;
+        const arraynovo = new Array().fill(100);
         if (personality) {
             const imageStyle = {
                 backgroundImage: `url(${personality.image})`
@@ -99,40 +138,21 @@ class PersonalityView extends Component {
                             </Paragraph>
                         </Col>
                     </Row>
-                    <Divider />
+                    <hr style={{ opacity: "20%" }} />
                     <Row style={{ padding: "5px 20px" }}>
                         <ReviewStats dataSource={reviews} />
                     </Row>
+                    <Divider/>
                     <AffixButton createClaim={this.createClaim} />
                     <Row>
-                        <div style={{ width: "100%", padding: "15px" }}>
-                            <Table
-                                dataSource={personality.claims}
-                                rowKey={record => record._id}
-                            >
-                                <Column
-                                    width="70%"
-                                    title="Title"
-                                    dataIndex="title"
-                                    key="title"
-                                />
-
-                                <Column
-                                    title="Action"
-                                    key="action"
-                                    render={record => (
-                                        <Button
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                                this.viewClaim(record._id);
-                                            }}
-                                        >
-                                            View Claim
-                                        </Button>
-                                    )}
-                                />
-                            </Table>
-                        </div>
+                        {personality.claims.map((claim, claimIndex) => (
+                            <ClaimCard
+                                key={claimIndex}
+                                personality={personality}
+                                claim={claim}
+                                viewClaim={this.viewClaim}
+                            />
+                        ))}
                     </Row>
                 </>
             );

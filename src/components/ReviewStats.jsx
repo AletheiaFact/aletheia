@@ -80,7 +80,7 @@ class ReviewStats extends Component {
                             title={review._id}
                             key={review._id}
                         >
-                            <Col span={1}>
+                            <Col span={2}>
                                 {" "}
                                 <Statistic
                                     value={percentage}
