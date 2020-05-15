@@ -1,5 +1,7 @@
 FROM node:12.13.1-alpine AS package
 
+ARG API_URL
+ARG RECAPTCHA_SITEKEY
 ENV PARCEL_WORKERS=1
 
 # Editorconfig is required for yarn lint

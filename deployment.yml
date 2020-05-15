@@ -48,10 +48,19 @@ spec:
         - name: aletheia
           image: us.gcr.io/aletheia-opentesseract/aletheia:latest
           imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
           livenessProbe:
             httpGet:
-              path: /api/stats/health
+              path: /api/health
               port: 3000
+            initialDelaySeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 10
           env:
             - name: API_URL
               valueFrom:
