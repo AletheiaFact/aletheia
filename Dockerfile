@@ -5,7 +5,6 @@ ARG RECAPTCHA_SITEKEY
 ENV PARCEL_WORKERS=1
 
 # Editorconfig is required for yarn lint
-COPY ./.editorconfig /app/.editorconfig
 COPY ./.babelrc /app/.babelrc
 COPY ./config.example.yaml /app/config.yaml
 COPY ./.eslintignore /app/.eslintignore
