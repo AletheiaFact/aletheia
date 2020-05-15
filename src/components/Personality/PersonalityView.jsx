@@ -131,7 +131,7 @@ class PersonalityView extends Component {
 
     render() {
         const personality = this.state.personality;
-        const arraynovo = new Array().fill(100);
+
         if (personality) {
             const imageStyle = {
                 backgroundImage: `url(${personality.image})`
