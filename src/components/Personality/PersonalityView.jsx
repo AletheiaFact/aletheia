@@ -87,7 +87,7 @@ class PersonalityView extends Component {
             const { reviews } = personality.stats;
             return (
                 <>
-                    <Row style={{ padding: "0px 20px 0px 20px" }}>
+                    <Row style={{ padding: "5px 20px" }}>
                         <Col span={6}>
                             <Avatar size={90} src={personality.image} />
                         </Col>
@@ -100,16 +100,10 @@ class PersonalityView extends Component {
                         </Col>
                     </Row>
                     <Divider />
-                    <AffixButton createClaim={this.createClaim} />
-                    <Row>
-                        <Col span={6}>
-                            <Row justify="end">
-                                <Col span={24} flex="column">
-                                    <ReviewStats dataSource={reviews} />
-                                </Col>
-                            </Row>
-                        </Col>
+                    <Row style={{ padding: "5px 20px" }}>
+                        <ReviewStats dataSource={reviews} />
                     </Row>
+                    <AffixButton createClaim={this.createClaim} />
                     <Row>
                         <div style={{ width: "100%", padding: "15px" }}>
                             <Table
