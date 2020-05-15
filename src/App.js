@@ -8,17 +8,15 @@ import ClaimView from "./components/Claim/ClaimView";
 import PersonalityList from "./components/Personality/PersonalityList";
 import PersonalityView from "./components/Personality/PersonalityView";
 import PersonalityCreate from "./components/Personality/PersonalityCreate";
-const { Header, Footer, Sider, Content } = Layout;
+import AletheiaHeader from "./components/Header/AletheiaHeader";
+
+const { Footer, Content } = Layout;
 
 class App extends Component {
     render() {
         return (
             <Layout>
-                <Header>
-                    <div className="logo">
-                        <a href="/">Aletheia</a>
-                    </div>
-                </Header>
+                <AletheiaHeader />
                 <Content>
                     <Router>
                         <Switch>

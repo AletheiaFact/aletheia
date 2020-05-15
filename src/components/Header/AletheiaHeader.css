@@ -1,7 +1,18 @@
-.claim-sentence {
-    background-color: #eee;
+.aletheia-header {
+    background: #5ea7d2;
+    text-align: center;
+    padding: 10px;
 }
 
-.claim-sentence:hover {
-    background-color: #00eeee;
+.aletheia-logo {
+    font-family: Noticia Text;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 26px;
+    line-height: 39px;
+    /* or 150% */
+
+    text-align: center;
+
+    color: #ffffff;
 }

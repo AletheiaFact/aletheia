@@ -139,7 +139,7 @@ class PersonalityView extends Component {
             const { reviews } = personality.stats;
             return (
                 <>
-                    <Row style={{ padding: "5px 30px" }}>
+                    <Row style={{ padding: "10px 30px", marginTop: "10px" }}>
                         <Col span={6}>
                             <Avatar size={90} src={personality.image} />
                         </Col>
