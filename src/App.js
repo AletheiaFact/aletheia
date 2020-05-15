@@ -19,9 +19,7 @@ class App extends Component {
                         <a href="/">Aletheia</a>
                     </div>
                 </Header>
-                <Content
-                    style={{ padding: "15px", height: "calc(100vh -70px)" }}
-                >
+                <Content>
                     <Router>
                         <Switch>
                             <Route exact path="/" component={PersonalityList} />
