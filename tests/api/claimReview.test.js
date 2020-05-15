@@ -37,7 +37,7 @@ beforeAll(done => {
     return app;
 });
 
-describe("Test claimReview CRUD", () => {
+describe.skip("Test claimReview CRUD", () => {
     test("list all should return empty", async done => {
         const response = await request(await app).get("/claimreview");
         // console.log(Object.keys(response.res))

@@ -1,6 +1,6 @@
+import Parser from "../../lib/parser";
 const Claim = require("../model/claimModel");
 const Personality = require("../model/personalityModel");
-const Parser = require("../../lib/parser");
 
 const optionsToUpdate = {
     new: true,
@@ -17,8 +17,8 @@ module.exports = class ClaimRepository {
 
     static create(claim) {
         return new Promise((resolve, reject) => {
-            const p = new Parser(claim.content);
-            claim.content = p.parse();
+            const p = new Parser();
+            claim.content = p.parse(claim.content);
             const newClaim = new Claim(claim);
             newClaim.save((err, claim) => {
                 if (err) {
