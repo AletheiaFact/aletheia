@@ -1,13 +1,45 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
-import { Spin, Table, Button, Col, Row, Typography } from "antd";
+import {
+    Divider,
+    Avatar,
+    Affix,
+    Spin,
+    Table,
+    Button,
+    Col,
+    Row,
+    Typography
+} from "antd";
+
 import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
 import ProfilePic from "./ProfilePic";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { Column } = Table;
+
+function AffixButton(props) {
+    // const [bottom, setBottom] = useState(10);
+
+    return (
+        // <Affix offsetBottom={10}>
+        <Button
+            style={{
+                position: "fixed",
+                zInex: 9999,
+                bottom: "3%",
+                left: "70%"
+            }}
+            onClick={props.createClaim}
+            type="primary"
+        >
+            Add Claim
+        </Button>
+        // </Affix>
+    );
+}
 
 class PersonalityView extends Component {
     constructor(props) {
@@ -55,18 +87,21 @@ class PersonalityView extends Component {
             const { reviews } = personality.stats;
             return (
                 <>
-                    <Row gutter={[32, 0]}>
+                    <Row style={{ padding: "0px 20px 0px 20px" }}>
                         <Col span={6}>
-                            <ProfilePic image={personality.image} />
+                            <Avatar size={90} src={personality.image} />
                         </Col>
-                        <Col span={12}>
-                            <Row>
-                                <Typography>
-                                    <Title>{personality.name}</Title>
-                                    <Text>{personality.description}</Text>
-                                </Typography>
-                            </Row>
+                        <Col span={3}></Col>
+                        <Col span={15}>
+                            <Title level={4}>{personality.name}</Title>
+                            <Paragraph ellipsis={{ rows: 1, expandable: true }}>
+                                {personality.description}
+                            </Paragraph>
                         </Col>
+                    </Row>
+                    <Divider />
+                    <AffixButton createClaim={this.createClaim} />
+                    <Row>
                         <Col span={6}>
                             <Row justify="end">
                                 <Col span={24} flex="column">
@@ -77,13 +112,6 @@ class PersonalityView extends Component {
                     </Row>
                     <Row>
                         <div style={{ width: "100%", padding: "15px" }}>
-                            <Button
-                                onClick={this.createClaim}
-                                type="primary"
-                                style={{ marginBottom: 16 }}
-                            >
-                                Add Claim
-                            </Button>
                             <Table
                                 dataSource={personality.claims}
                                 rowKey={record => record._id}
