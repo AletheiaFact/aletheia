@@ -62,16 +62,6 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 10
           env:
-            - name: API_URL
-              valueFrom:
-                configMapKeyRef:
-                  key: api_url
-                  name: aletheia-config
-            - name: RECAPTCHA_SITEKEY
-              valueFrom:
-                configMapKeyRef:
-                  key: recaptcha_sitekey
-                  name: aletheia-config
             - name: MONGODB_HOST
               valueFrom:
                 configMapKeyRef:
