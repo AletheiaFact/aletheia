@@ -16,7 +16,7 @@ class App extends Component {
             <Layout>
                 <Header>
                     <div className="logo">
-                        <a href="">Aletheia</a>
+                        <a href="/">Aletheia</a>
                     </div>
                 </Header>
                 <Content style={{ padding: "10px" }}>

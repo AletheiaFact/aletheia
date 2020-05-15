@@ -1,0 +1,74 @@
+### INGRESS FRONTEND ###
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-aletheia
+  namespace: ENVIRONMENT
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: dev.aletheia.opentesseract.org
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: aletheia
+              servicePort: aletheia
+---
+### SERVICE  FRONTEND ###
+apiVersion: v1
+kind: Service
+metadata:
+  name: aletheia
+  namespace: ENVIRONMENT
+spec:
+  type: NodePort
+  selector:
+    app: aletheia
+  ports:
+    - name: aletheia
+      targetPort: 3000
+      port: 80
+---
+### DEPLOYMENT FRONTEND ###
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: aletheia
+  namespace: ENVIRONMENT
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: aletheia
+    spec:
+      containers:
+        - name: aletheia
+          image: us.gcr.io/aletheia-opentesseract/aletheia:latest
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 10
+          env:
+            - name: MONGODB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: mongodb_host
+                  name: aletheia-config
+            - name: MONGODB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: mongodb_name
+                  name: aletheia-config

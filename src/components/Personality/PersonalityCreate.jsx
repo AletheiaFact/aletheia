@@ -34,8 +34,8 @@ class PersonalityCreate extends Component {
         this.formRef.current
             .validateFields()
             .then(values => {
-                this.setState({ personality: values });
-                console.log("Received values of form: ", values);
+                const personality = Object.assign(this.state.personality, values);
+                this.setState({ personality });
                 // TODO: Check if personality already exists
                 axios
                     .post(

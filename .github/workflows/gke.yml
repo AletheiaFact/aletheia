@@ -1,0 +1,72 @@
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches:
+      - master
+      - stage
+  # For future
+  # release:
+  #   types: [created]
+
+env:
+  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+  GKE_EMAIL: ${{ secrets.GKE_EMAIL }}
+  GITHUB_SHA: ${{ github.sha }}
+  GKE_ZONE: us-central1-c
+  GKE_CLUSTER: aletheia
+  IMAGE: aletheia
+  REGISTRY_HOSTNAME: us.gcr.io
+  API_URL: ${{ secrets.API_URL }}
+  ENVIRONMENT: development
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check Environment
+        if: endsWith(github.ref, '/master')
+        run: |
+          sed -i '11{s/dev.//}' deployment.yml
+          echo "::set-env name=ENVIRONMENT::production"
+          echo "::set-env name=API_URL::${{ secrets.API_URL_PRODUCTION }}"
+
+      - name: Set environment
+        run: |
+          sed -i "s/ENVIRONMENT/$ENVIRONMENT/g" deployment.yml
+
+      # Setup gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: "270.0.0"
+          service_account_email: ${{ secrets.GKE_EMAIL }}
+          service_account_key: ${{ secrets.GKE_KEY }}
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: gcloud auth configure-docker
+
+      # Build the Docker image
+      - name: Build
+        run: |
+          docker build --build-arg API_URL=$API_URL --build-arg RECAPTCHA_SITEKEY=${{ secrets.RECAPTCHA_SITEKEY }} -t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" .
+          docker tag "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
+
+      # Push the Docker image to Google Container Registry
+      - name: Publish
+        run: |
+          docker push $REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
+          docker push "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
+
+      # Deploy the Docker image to the GKE cluster
+      - name: Deploy
+        run: |
+          gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
+          kubectl apply -f deployment.yml
+          if [[ $? -eq 1 ]]; then
+            kubectl set image deployment frontend frontend=$REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA --record -n ${ENVIRONMENT}; 
+            kubectl set image deployment backend backend=$REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA --record -n ${ENVIRONMENT}; 
+          fi
