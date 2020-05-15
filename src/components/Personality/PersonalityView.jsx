@@ -131,7 +131,7 @@ class PersonalityView extends Component {
 
     render() {
         const personality = this.state.personality;
-        const arraynovo = new Array().fill(100);
+
         if (personality) {
             const imageStyle = {
                 backgroundImage: `url(${personality.image})`
@@ -139,7 +139,7 @@ class PersonalityView extends Component {
             const { reviews } = personality.stats;
             return (
                 <>
-                    <Row style={{ padding: "5px 30px" }}>
+                    <Row style={{ padding: "10px 30px", marginTop: "10px" }}>
                         <Col span={6}>
                             <Avatar size={90} src={personality.image} />
                         </Col>
