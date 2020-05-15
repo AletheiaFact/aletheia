@@ -18,8 +18,7 @@ describe("parse()", () => {
     });
 
     it("<br> paragraphs are stripped away", async () => {
-        const claimText =
-            "<p>Nulla facilisi.</p>" + "\n<p><br></p>" + "\n<p>Ut leo.</p>";
+        const claimText = "<p>Nulla facilisi.</p>\n<p><br></p>\n<p>Ut leo.</p>";
         const parseOutput = parser.parse(claimText);
         const paragraphs = parseOutput.object;
         assert.ok(Array.isArray(paragraphs));
