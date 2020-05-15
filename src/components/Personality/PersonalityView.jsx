@@ -69,6 +69,7 @@ function ClaimCard(props) {
                             <Col offset={16}>
                                 <Button
                                     shape="round"
+                                    type="primary"
                                     onClick={e => {
                                         e.stopPropagation();
                                         props.viewClaim(props.claim._id);
