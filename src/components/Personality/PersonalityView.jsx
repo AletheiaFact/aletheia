@@ -14,6 +14,7 @@ import {
     Typography,
     Tooltip
 } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
 import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
@@ -32,13 +33,14 @@ function AffixButton(props) {
                 position: "fixed",
                 zInex: 9999,
                 bottom: "3%",
-                left: "70%"
+                left: "85%"
             }}
+            size="large"
+            shape="circle"
             onClick={props.createClaim}
             type="primary"
-        >
-            Add Claim
-        </Button>
+            icon={<PlusOutlined />}
+        ></Button>
         // </Affix>
     );
 }
@@ -47,6 +49,7 @@ function ClaimCard(props) {
     return (
         <Col span={24}>
             <Comment
+                style={{ margin: "0px 20px" }}
                 key={props.claimIndex}
                 author={props.personality.name}
                 avatar={
@@ -57,15 +60,24 @@ function ClaimCard(props) {
                 }
                 content={
                     <>
-                        <p>{props.claim.title}</p>
-                        <Button
-                            onClick={e => {
-                                e.stopPropagation();
-                                props.viewClaim(props.claim._id);
-                            }}
-                        >
-                            Visualizar afirmação
-                        </Button>
+                        <Row>
+                            <Col>
+                                <p>{props.claim.title}</p>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col offset={16}>
+                                <Button
+                                    shape="round"
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        props.viewClaim(props.claim._id);
+                                    }}
+                                >
+                                    Revisar
+                                </Button>
+                            </Col>
+                        </Row>
                     </>
                 }
                 datetime={
@@ -126,7 +138,7 @@ class PersonalityView extends Component {
             const { reviews } = personality.stats;
             return (
                 <>
-                    <Row style={{ padding: "5px 20px" }}>
+                    <Row style={{ padding: "5px 30px" }}>
                         <Col span={6}>
                             <Avatar size={90} src={personality.image} />
                         </Col>
@@ -139,12 +151,12 @@ class PersonalityView extends Component {
                         </Col>
                     </Row>
                     <hr style={{ opacity: "20%" }} />
-                    <Row style={{ padding: "5px 20px" }}>
+                    <Row style={{ padding: "5px 30px" }}>
                         <ReviewStats dataSource={reviews} />
                     </Row>
-                    <Divider/>
+                    <br />
                     <AffixButton createClaim={this.createClaim} />
-                    <Row>
+                    <Row style={{ background: "white" }}>
                         {personality.claims.map((claim, claimIndex) => (
                             <ClaimCard
                                 key={claimIndex}
