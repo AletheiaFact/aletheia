@@ -51,7 +51,7 @@ jobs:
       # Build the Docker image
       - name: Build
         run: |
-          docker build --build-arg API_URL=${{ secrets.API_URL }} RECAPTCHA_SITEKEY=${{ secrets.RECAPTCHA_SITEKEY }}-t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" .
+          docker build --build-arg API_URL=${{ secrets.API_URL }} --build-arg RECAPTCHA_SITEKEY=${{ secrets.RECAPTCHA_SITEKEY }}-t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" .
           docker tag "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
 
       # Push the Docker image to Google Container Registry
