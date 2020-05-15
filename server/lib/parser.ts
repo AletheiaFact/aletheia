@@ -28,7 +28,6 @@ class Parser {
             const paragraphId = this.createParagraphId();
             const paragraphContent = paragraphs[i].innerHTML;
             const newParagraph = document.createElement("p");
-            // eslint-disable-next-line no-useless-escape
             const sentences = this.extractSentences(paragraphContent);
 
             if (Array.isArray(sentences) && sentences.length) {
@@ -56,11 +55,11 @@ class Parser {
      * @param {String} text
      */
     extractSentences(text: string) {
-        text = text.replace(/\<br\>/g, "");
+        text = text.replace(/<br>/g, "");
         // TODO: there are more rules that should be applied in the future, see source
         text = text.replace(/\./g, ".<stop>");
         text = text.replace(/\?/g, "?<stop>");
-        text = text.replace(/\!/g, "!<stop>");
+        text = text.replace(/!/g, "!<stop>");
         return text.split("<stop>").filter(s => {
             return s && s.length !== 0;
         });
