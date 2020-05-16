@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
-
-import { Card, Row, Col, Pagination, Button } from "antd";
-import InputSearch from "../Form/InputSearch";
+import { connect } from "react-redux";
+import api from "../../api/personality";
+import { Card, Row, Col, Pagination } from "antd";
 import "./PersonalityList.css";
 const { Meta } = Card;
 
@@ -11,84 +10,36 @@ class PersonalityList extends Component {
     constructor(props) {
         super(props);
         this.createPersonality = this.createPersonality.bind(this);
-        this.state = {
-            personalities: [],
-            page: 1,
-            searchName: null,
-            pageSize: 10,
-            totalPages: 1
-        };
     }
 
     componentDidMount() {
-        const self = this;
-        self.getPersonalities();
+        api.getPersonalities(this.props, this.props.dispatch);
     }
 
     createPersonality() {
         const path = `./personality/create`;
         this.props.history.push(path);
     }
-    getPersonalities() {
-        const { page, searchName, pageSize } = this.state;
-        const params = {
-            page: page - 1,
-            name: searchName,
-            pageSize
-        };
-
-        axios
-            .get(`${process.env.API_URL}/personality`, { params })
-            .then(response => {
-                const { personalities, totalPages } = response.data;
-                this.setState({
-                    personalities,
-                    totalPages
-                });
-            })
-            .catch(e => {
-                throw e;
-            });
-    }
-
-    handleInputSearch(name) {
-        this.setState({ searchName: name });
-        this.getPersonalities();
-    }
 
     handlePagination(page) {
-        this.setState({ page }, () => {
-            this.getPersonalities();
+        this.props.dispatch({
+            type: "SET_CUR_PAGE",
+            page
         });
+
+        api.getPersonalities(this.props, this.props.dispatch);
     }
 
     render() {
-        const { personalities } = this.state;
+        const { personalities } = this.props;
 
         return (
             <>
-                <h1 id="title" level="2" margin="none">
-                    Choose a personality
-                </h1>
-                <Row id="search">
-                    <Col span={24}>
-                        <Button
-                            onClick={this.createPersonality}
-                            type="primary"
-                            style={{ marginBottom: 16 }}
-                        >
-                            Add Claim
-                        </Button>
-                        <InputSearch
-                            callback={this.handleInputSearch.bind(this)}
-                        />
-                    </Col>
-                </Row>
                 <Row id="card" gutter="16   ">
                     {personalities ? (
                         <>
                             {personalities.map((p, i) => (
-                                <Col span={8}>
+                                <Col span={8} key={i}>
                                     <Link to={`personality/${p._id}`}>
                                         <Card
                                             hoverable
@@ -96,7 +47,6 @@ class PersonalityList extends Component {
                                                 width: "100%",
                                                 margin: "8px 0"
                                             }}
-                                            key={i}
                                         >
                                             <Meta
                                                 title={p.name}
@@ -114,10 +64,10 @@ class PersonalityList extends Component {
                 <Row id="pagination">
                     <Col span={24}>
                         <Pagination
-                            total={this.state.totalPages * this.state.pageSize}
-                            pageSize={this.state.pageSize}
+                            total={this.props.totalPages * this.props.pageSize}
+                            pageSize={this.props.pageSize}
                             onChange={this.handlePagination.bind(this)}
-                            current={this.state.page}
+                            current={this.props.page}
                         />
                     </Col>
                 </Row>
@@ -125,5 +75,12 @@ class PersonalityList extends Component {
         );
     }
 }
-
-export default PersonalityList;
+const mapStateToProps = state => {
+    return {
+        personalities: (state && state.searchResults) || [],
+        page: (state && state.searchCurPage) || 1,
+        pageSize: (state && state.searchPageSize) || 10,
+        totalPages: (state && state.searchTotalPages) || 1
+    };
+};
+export default connect(mapStateToProps)(PersonalityList);
