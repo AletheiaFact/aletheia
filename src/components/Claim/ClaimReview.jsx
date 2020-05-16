@@ -17,7 +17,8 @@ class ClaimReviewForm extends Component {
             sentence_hash: "",
             sentence_content: "",
             // recaptcha: "",
-            disableSubmit: true
+            // disableSubmit: true
+            disableSubmit: false
         };
         this.onSubmit = this.onSubmit.bind(this);
         // this.onExpiredCaptcha = this.onExpiredCaptcha.bind(this);
@@ -90,10 +91,10 @@ class ClaimReviewForm extends Component {
         //     this.setState({ disableSubmit: !this.state.disableSubmit });
         // }
 
-        const classification = !!this.state.classification;
-        if (classification) {
-            this.setState({ disableSubmit: !this.state.disableSubmit });
-        }
+        // const classification = !!this.state.classification;
+        // if (classification) {
+        //     this.setState({ disableSubmit: !this.state.disableSubmit });
+        // }
     }
 
     render() {
@@ -111,20 +112,35 @@ class ClaimReviewForm extends Component {
                                 defaultValue=""
                             >
                                 <Option value="" disabled>
-                                    Select classification
+                                    Selecione uma classificação
                                 </Option>
-                                <Option value="not-fact">Not fact</Option>
-                                <Option value="true">True</Option>
-                                <Option value="true-but">True, but</Option>
-                                <Option value="arguable">Arguable</Option>
-                                <Option value="misleading">Misleading</Option>
-                                <Option value="false">False</Option>
-                                <Option value="unsustainable">
+                                {/* <Option value="not-fact">Not fact</Option> */}
+                                <Option value="not-fact">Não é fato</Option>
+                                {/* <Option value="true">True</Option> */}
+                                <Option value="true">Verdadeiro</Option>
+                                {/* <Option value="true-but">True, but</Option> */}
+                                <Option value="true-but">
+                                    Verdadeiro, mas
+                                </Option>
+                                {/* <Option value="arguable">Arguable</Option> */}
+                                <Option value="arguable">Discutível</Option>
+                                {/* <Option value="misleading">Misleading</Option> */}
+                                <Option value="misleading">Enganoso</Option>
+                                {/* <Option value="false">False</Option> */}
+                                <Option value="false">Falso</Option>
+                                {/* <Option value="unsustainable">
                                     Unsustainable
+                                </Option> */}
+                                <Option value="unsustainable">
+                                    Insustentável
                                 </Option>
-                                <Option value="exaggerated">Exaggerated</Option>
-                                <Option value="unverifiable">
+                                {/* <Option value="exaggerated">Exaggerated</Option> */}
+                                <Option value="exaggerated">Exagerado</Option>
+                                {/* <Option value="unverifiable">
                                     Unverifiable
+                                </Option> */}
+                                <Option value="unverifiable">
+                                    Inverificável
                                 </Option>
                             </Select>
                             {/* <ReCAPTCHA
