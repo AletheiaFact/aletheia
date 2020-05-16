@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Layout } from "antd";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./App.less";
 
 import ClaimCreate from "./components/Claim/ClaimCreate";
@@ -16,7 +16,9 @@ class App extends Component {
     render() {
         return (
             <Layout>
-                <AletheiaHeader />
+                <a href="/">
+                    <AletheiaHeader />
+                </a>
                 <Content>
                     <Router>
                         <Switch>

@@ -88,7 +88,7 @@ class PersonalityList extends Component {
                     {personalities ? (
                         <>
                             {personalities.map((p, i) => (
-                                <Col span={8}>
+                                <Col key={i} span={8}>
                                     <Link to={`personality/${p._id}`}>
                                         <Card
                                             hoverable
