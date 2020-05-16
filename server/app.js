@@ -154,7 +154,9 @@ function loadClient(app) {
         })
     );
     // Always set root endpoint to serve client html
-    app.get("/", (req, res) => {
+    // Serving the html to every request and let react router deal with
+    // the path in the browser
+    app.get("*", (req, res) => {
         res.sendFile(path.resolve(__dirname, "../assets/index.html"));
     });
     return app;
