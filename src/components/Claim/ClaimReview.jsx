@@ -1,12 +1,12 @@
 import axios from "axios";
 import _ from "underscore";
 import React, { Component } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, Form, Select, Button, message } from "antd";
 
 const { Option } = Select;
 const { Title } = Typography;
-const recaptchaRef = React.createRef();
+// const recaptchaRef = React.createRef();
 
 class ClaimReviewForm extends Component {
     constructor(props) {
@@ -16,12 +16,12 @@ class ClaimReviewForm extends Component {
             claim: "",
             sentence_hash: "",
             sentence_content: "",
-            recaptcha: "",
+            // recaptcha: "",
             disableSubmit: true
         };
         this.onSubmit = this.onSubmit.bind(this);
-        this.onExpiredCaptcha = this.onExpiredCaptcha.bind(this);
-        this.onChangeCaptcha = this.onChangeCaptcha.bind(this);
+        // this.onExpiredCaptcha = this.onExpiredCaptcha.bind(this);
+        // this.onChangeCaptcha = this.onChangeCaptcha.bind(this);
         this.onChangeClassification = this.onChangeClassification.bind(this);
     }
 
@@ -48,9 +48,9 @@ class ClaimReviewForm extends Component {
     }
 
     onSubmit(values) {
-        if (recaptchaRef && recaptchaRef.current) {
-            recaptchaRef.current.reset();
-        }
+        // if (recaptchaRef && recaptchaRef.current) {
+        //     recaptchaRef.current.reset();
+        // }
 
         this.setState(
             {
@@ -64,6 +64,7 @@ class ClaimReviewForm extends Component {
                     .post(`${process.env.API_URL}/claimreview`, this.state)
                     .then(response => {
                         message.success("Classification Succeed");
+                        this.props.handleOk();
                     })
                     .catch(err => {
                         const response = err && err.response;
@@ -83,9 +84,14 @@ class ClaimReviewForm extends Component {
     }
 
     toggleDisabledSubmit() {
-        const recaptcha = !!this.state.recaptcha;
+        // const recaptcha = !!this.state.recaptcha;
+        // const classification = !!this.state.classification;
+        // if (recaptcha && classification) {
+        //     this.setState({ disableSubmit: !this.state.disableSubmit });
+        // }
+
         const classification = !!this.state.classification;
-        if (recaptcha && classification) {
+        if (classification) {
             this.setState({ disableSubmit: !this.state.disableSubmit });
         }
     }
@@ -121,12 +127,12 @@ class ClaimReviewForm extends Component {
                                     Unverifiable
                                 </Option>
                             </Select>
-                            <ReCAPTCHA
+                            {/* <ReCAPTCHA
                                 ref={recaptchaRef}
                                 sitekey={process.env.RECAPTCHA_SITEKEY}
                                 onChange={this.onChangeCaptcha}
                                 onExpired={this.onExpiredCaptcha}
-                            />
+                            /> */}
                             <Button
                                 type="primary"
                                 htmlType="Submit"

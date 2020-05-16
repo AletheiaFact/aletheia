@@ -49,6 +49,13 @@ class Claim extends Component {
         });
     };
 
+    handleOk = e => {
+        console.log(e);
+        this.setState({
+            visible: false
+        });
+    };
+
     render() {
         if (this.state && this.state.body) {
             const body = this.state.body;
@@ -58,7 +65,10 @@ class Claim extends Component {
             return (
                 <>
                     <Modal visible={this.state.visible}>
-                        <ClaimReviewForm highlight={this.state.highlight} />
+                        <ClaimReviewForm
+                            handleOk={this.handleOk}
+                            highlight={this.state.highlight}
+                        />
                     </Modal>
                     <Row style={{ marginTop: "20px" }}>
                         <Col offset={2} span={18}>
