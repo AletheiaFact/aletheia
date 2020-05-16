@@ -64,7 +64,7 @@ class Claim extends Component {
 
             return (
                 <>
-                    <Modal visible={this.state.visible}>
+                    <Modal footer="" visible={this.state.visible}>
                         <ClaimReviewForm
                             handleOk={this.handleOk}
                             highlight={this.state.highlight}
