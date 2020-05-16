@@ -13,7 +13,7 @@
     "test": "PREQ_CONNECT_TIMEOUT=15 mocha -r ts-node/register tests/**/*.ts",
     "coverage": "PREQ_CONNECT_TIMEOUT=15 nyc --reporter=lcov _mocha -r ts-node/register tests/**/*.ts",
     "seed": "node ./server/infra/database/seeds/generateSeeds.js",
-    "build": "parcel build ./src/index.html --out-dir dist/assets --no-minify --public-url './assets' && yarn build-ts && yarn copy-static-assets",
+    "build": "parcel build ./src/index.html --out-dir dist/assets --no-minify --public-url '/assets' && yarn build-ts && yarn copy-static-assets",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "debug": "yarn build && yarn watch-debug",
