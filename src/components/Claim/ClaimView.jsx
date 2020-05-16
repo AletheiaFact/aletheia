@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
 import ClaimReviewForm from "./ClaimReview";
-import { Row, Col, Typography, Modal } from "antd";
+import { Row, Col, Typography, Modal, message } from "antd";
 
 const { Title } = Typography;
 
@@ -10,6 +10,7 @@ class Claim extends Component {
     componentDidMount() {
         const self = this;
         self.getClaim();
+        message.info("Clique em uma frase para iniciar uma revisão");
     }
 
     getClaim() {
@@ -56,6 +57,13 @@ class Claim extends Component {
         });
     };
 
+    handleCancel = e => {
+        console.log(e);
+        this.setState({
+            visible: false
+        });
+    };
+
     render() {
         if (this.state && this.state.body) {
             const body = this.state.body;
@@ -64,7 +72,11 @@ class Claim extends Component {
 
             return (
                 <>
-                    <Modal footer="" visible={this.state.visible}>
+                    <Modal
+                        footer=""
+                        visible={this.state.visible}
+                        onCancel={this.handleCancel}
+                    >
                         <ClaimReviewForm
                             handleOk={this.handleOk}
                             highlight={this.state.highlight}
@@ -72,10 +84,7 @@ class Claim extends Component {
                     </Modal>
                     <Row style={{ marginTop: "20px" }}>
                         <Col offset={2} span={18}>
-                            <Title>{title}</Title>
-                            <br></br>
-
-                            {/* <ClaimReviewForm highlight={this.state.highlight} /> */}
+                            <Title level={4}>{title}</Title>
                         </Col>
                     </Row>
                     <Row>

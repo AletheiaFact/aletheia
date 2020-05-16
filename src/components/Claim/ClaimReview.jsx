@@ -63,7 +63,7 @@ class ClaimReviewForm extends Component {
                 axios
                     .post(`${process.env.API_URL}/claimreview`, this.state)
                     .then(response => {
-                        message.success("Classification Succeed");
+                        message.success("Revisão concluída!");
                         this.props.handleOk();
                     })
                     .catch(err => {
@@ -76,7 +76,7 @@ class ClaimReviewForm extends Component {
                         message.error(
                             data && data.message
                                 ? data.message
-                                : "Error while submitting claim review"
+                                : "Erro ao enviar revisão"
                         );
                     });
             }
@@ -98,11 +98,11 @@ class ClaimReviewForm extends Component {
 
     render() {
         if (_.isEmpty(this.props.highlight)) {
-            return <Title level={2}> Choose a sentence to Fact Check! </Title>;
+            return <Title level={4}> Escolha uma frase para revisar </Title>;
         } else {
             return (
                 <>
-                    <Title level={2}> Classify Sentence </Title>
+                    <Title level={2}> Classifique a frase </Title>
                     <Form onFinish={this.onSubmit}>
                         <Form.Item>
                             <Select
