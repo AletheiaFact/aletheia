@@ -19,6 +19,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
 import ProfilePic from "./ProfilePic";
+import PersonalityCard from "./PersonalityCard";
 
 const { Title, Text, Paragraph } = Typography;
 const { Column } = Table;
@@ -139,19 +140,7 @@ class PersonalityView extends Component {
             const { reviews } = personality.stats;
             return (
                 <>
-                    <Row style={{ padding: "10px 30px", marginTop: "10px" }}>
-                        <Col span={6}>
-                            <Avatar size={90} src={personality.image} />
-                        </Col>
-                        <Col span={3}></Col>
-                        <Col span={15}>
-                            <Title level={4}>{personality.name}</Title>
-                            <Paragraph ellipsis={{ rows: 1, expandable: true }}>
-                                {personality.description}
-                            </Paragraph>
-                        </Col>
-                    </Row>
-                    <hr style={{ opacity: "20%" }} />
+                    <PersonalityCard personality={personality} />
                     <Row style={{ padding: "5px 30px" }}>
                         <ReviewStats dataSource={reviews} />
                     </Row>
