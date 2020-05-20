@@ -59,14 +59,11 @@ jobs:
       - name: Publish
         run: |
           docker push $REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
-          docker push "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
+          if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest; fi
 
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
+          sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
           kubectl apply -f deployment.yml
-          if [[ $? -eq 1 ]]; then
-            kubectl set image deployment frontend frontend=$REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA --record -n ${ENVIRONMENT}; 
-            kubectl set image deployment backend backend=$REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA --record -n ${ENVIRONMENT}; 
-          fi

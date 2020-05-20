@@ -46,7 +46,7 @@ spec:
     spec:
       containers:
         - name: aletheia
-          image: us.gcr.io/aletheia-opentesseract/aletheia
+          image: us.gcr.io/aletheia-opentesseract/aletheia:TAG
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
