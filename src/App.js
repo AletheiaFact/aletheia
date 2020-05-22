@@ -9,11 +9,13 @@ import PersonalityList from "./components/Personality/PersonalityList";
 import PersonalityView from "./components/Personality/PersonalityView";
 import PersonalityCreate from "./components/Personality/PersonalityCreate";
 import AletheiaHeader from "./components/Header/AletheiaHeader";
+import { withTranslation } from "react-i18next";
 
 const { Footer, Content } = Layout;
 
 class App extends Component {
     render() {
+        const { t } = this.props;
         return (
             <Layout>
                 <a href="/">
@@ -52,11 +54,11 @@ class App extends Component {
                     </Router>
                 </Content>
                 <Footer style={{ textAlign: "center" }}>
-                    Aletheia ©2020 Created by Open Tesseract
+                    {t("footer.copyright")}
                 </Footer>
             </Layout>
         );
     }
 }
 
-export default App;
+export default withTranslation()(App);
