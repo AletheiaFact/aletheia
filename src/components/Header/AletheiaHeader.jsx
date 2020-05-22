@@ -39,7 +39,7 @@ class AletheiaHeader extends Component {
                         </Col>
                         <Col span={14}>
                             <InputSearch
-                                placeholder={t("header.search_personality")}
+                                placeholder={t("header:search_personality")}
                                 callback={this.handleInputSearch.bind(this)}
                             />
                         </Col>

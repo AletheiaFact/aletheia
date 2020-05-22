@@ -54,7 +54,7 @@ class App extends Component {
                     </Router>
                 </Content>
                 <Footer style={{ textAlign: "center" }}>
-                    {t("footer.copyright")}
+                    {t("footer:copyright")}
                 </Footer>
             </Layout>
         );

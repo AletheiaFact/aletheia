@@ -6,15 +6,19 @@ import LanguageDetector from "i18next-browser-languagedetector";
 // (tip move them in a JSON file and import them)
 const resources = {
     en: {
-        translation: {
-            "header.search_personality": "Search personality",
-            "footer.copyright": "Aletheia ©2020 Created by Open Tesseract"
+        header: {
+            "search_personality": "Search personality"
+        },
+        footer: {
+            "copyright": "Aletheia ©2020 Created by Open Tesseract"
         }
     },
     pt: {
-        translation: {
-            "header.search_personality": "Busque uma personalidade",
-            "footer.copyright": "Aletheia ©2020 Criado por Open Tesseract"
+        header: {
+            "search_personality": "Busque uma personalidade"
+        },
+        footer: {
+            "copyright": "Aletheia ©2020 Criado por Open Tesseract"
         }
     }
 };

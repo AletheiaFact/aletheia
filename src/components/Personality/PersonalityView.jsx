@@ -18,7 +18,6 @@ import { PlusOutlined } from "@ant-design/icons";
 
 import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
-import ProfilePic from "./ProfilePic";
 
 const { Title, Text, Paragraph } = Typography;
 const { Column } = Table;
