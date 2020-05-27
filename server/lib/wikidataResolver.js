@@ -2,7 +2,6 @@ const axios = require("axios");
 
 module.exports = class WikidataResolver {
     async fetchProperties(params) {
-        console.log(params);
         const { data } = await axios.get("https://www.wikidata.org/w/api.php", {
             params: {
                 action: "wbgetentities",
@@ -23,7 +22,7 @@ module.exports = class WikidataResolver {
         if (!wikidata) {
             return {};
         }
-        console.log(lang);
+        
         // Get label for the personality name
         wikidataProps.name =
             wikidata.labels &&
