@@ -17,7 +17,7 @@ class App extends Component {
     render() {
         const { t } = this.props;
         return (
-            <Layout>
+            <Layout style={{ minHeight: "100vh" }}>
                 <a href="/">
                     <AletheiaHeader />
                 </a>
