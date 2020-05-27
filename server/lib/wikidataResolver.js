@@ -22,7 +22,7 @@ module.exports = class WikidataResolver {
         if (!wikidata) {
             return {};
         }
-        
+
         // Get label for the personality name
         wikidataProps.name =
             wikidata.labels &&
