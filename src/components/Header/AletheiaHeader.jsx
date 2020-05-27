@@ -5,6 +5,7 @@ import { Row, Col } from "antd";
 import { MenuOutlined, UserOutlined } from "@ant-design/icons";
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
+import { withTranslation } from "react-i18next";
 
 class AletheiaHeader extends Component {
     handleInputSearch(name) {
@@ -17,6 +18,7 @@ class AletheiaHeader extends Component {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <header className="aletheia-header">
                 <nav>
@@ -37,6 +39,7 @@ class AletheiaHeader extends Component {
                         </Col>
                         <Col span={14}>
                             <InputSearch
+                                placeholder={t("header:search_personality")}
                                 callback={this.handleInputSearch.bind(this)}
                             />
                         </Col>
@@ -64,4 +67,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(AletheiaHeader);
+export default connect(mapStateToProps)(withTranslation()(AletheiaHeader));

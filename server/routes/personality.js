@@ -43,7 +43,10 @@ router.get("/:id", (req, res, next) => {
         .getPersonalityId(req.params.id)
         .then(async result => {
             const wikidataId = result && result.wikidata;
-            const extract = await wikidata.fetchProperties(wikidataId);
+            const extract = await wikidata.fetchProperties({
+                wikidataId,
+                ...req.query
+            });
             res.send({ ...result, ...extract });
         })
         .catch(error => {
