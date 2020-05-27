@@ -1,9 +1,9 @@
-const ReferenceRespository = require("../repository/reference");
+const ReferenceRepository = require("../repository/reference");
 
 module.exports = class ReferenceController {
     listAll() {
         try {
-            return ReferenceRespository.listAll();
+            return ReferenceRepository.listAll();
         } catch (error) {
             return error;
         }
@@ -11,7 +11,7 @@ module.exports = class ReferenceController {
 
     create(body) {
         try {
-            return ReferenceRespository.create(body);
+            return ReferenceRepository.create(body);
         } catch (error) {
             return error;
         }
@@ -19,7 +19,7 @@ module.exports = class ReferenceController {
 
     getReferenceId(id) {
         try {
-            return ReferenceRespository.getById(id);
+            return ReferenceRepository.getById(id);
         } catch (error) {
             return error;
         }
@@ -27,7 +27,7 @@ module.exports = class ReferenceController {
 
     async update(id, body) {
         try {
-            return ReferenceRespository.update(id, body);
+            return ReferenceRepository.update(id, body);
         } catch (error) {
             return error;
         }
@@ -35,7 +35,7 @@ module.exports = class ReferenceController {
 
     async delete(id) {
         try {
-            await ReferenceRespository.delete(id);
+            await ReferenceRepository.delete(id);
             return { message: "Reference successfully deleted" };
         } catch (error) {
             return error;

@@ -1,4 +1,4 @@
-const Reference = require("../model/reference");
+const Reference = require("../model/referenceModel");
 
 const optionsToUpdate = {
     new: true,

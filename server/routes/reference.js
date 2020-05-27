@@ -1,4 +1,4 @@
-const ReferenceController = require("../api/controller/referrence");
+const ReferenceController = require("../api/controller/referenceController");
 const Requester = require("../infra/interceptor/requester");
 
 /**
@@ -6,6 +6,7 @@ const Requester = require("../infra/interceptor/requester");
  */
 const router = require("../lib/util").router();
 
+let app;
 /**
  * GET {domain}/reference
  */
@@ -15,7 +16,7 @@ router.get("/", (req, res, next) => {
         .listAll()
         .then(result => res.send(result))
         .catch(error => {
-            next(Requester.internalError(res, error.message));
+            next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
@@ -28,7 +29,7 @@ router.post("/", (req, res, next) => {
         .create(req.body)
         .then(result => res.send(result))
         .catch(error => {
-            next(Requester.internalError(res, error.message));
+            next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
@@ -41,7 +42,7 @@ router.get("/:id", (req, res, next) => {
         .getReferenceId(req.params.id)
         .then(result => res.send(result))
         .catch(error => {
-            next(Requester.internalError(res, error.message));
+            next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
@@ -54,7 +55,7 @@ router.put("/:id", (req, res, next) => {
         .update(req.params.id, req.body)
         .then(result => res.send(result))
         .catch(error => {
-            next(Requester.internalError(res, error.message));
+            next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
@@ -67,11 +68,12 @@ router.delete("/:id", (req, res, next) => {
         .delete(req.params.id)
         .then(result => res.send(result))
         .catch(error => {
-            next(Requester.internalError(res, error.message));
+            next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
 module.exports = function(appObj) {
+    app = appObj;
     return {
         path: "/reference",
         api_version: 1,
