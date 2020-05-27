@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
 import ClaimReviewForm from "./ClaimReview";
-import { Row, Col, Typography } from "antd";
+import { Row, Col, Typography, Modal, message } from "antd";
 
 const { Title } = Typography;
 
@@ -10,6 +10,7 @@ class Claim extends Component {
     componentDidMount() {
         const self = this;
         self.getClaim();
+        message.info("Clique em uma frase para iniciar uma revisão");
     }
 
     getClaim() {
@@ -20,7 +21,12 @@ class Claim extends Component {
             .then(response => {
                 console.log(response.data);
                 const { content, title } = response.data;
-                this.setState({ title, body: content.object, highlight: {} });
+                this.setState({
+                    title,
+                    body: content.object,
+                    highlight: {},
+                    visible: false
+                });
             })
             .catch(() => {
                 console.log("Error while fetching claim");
@@ -35,17 +41,54 @@ class Claim extends Component {
             personality: this.props.match.params.id
         };
         this.setState({ body, highlight });
+        this.showModal();
+    };
+
+    showModal = () => {
+        this.setState({
+            visible: true
+        });
+    };
+
+    handleOk = e => {
+        console.log(e);
+        this.setState({
+            visible: false
+        });
+    };
+
+    handleCancel = e => {
+        console.log(e);
+        this.setState({
+            visible: false
+        });
     };
 
     render() {
         if (this.state && this.state.body) {
             const body = this.state.body;
             const title = this.state.title;
+            const visible = this.state.visible;
+
             return (
                 <>
-                    <Title>{title}</Title>
+                    <Modal
+                        footer=""
+                        visible={this.state.visible}
+                        onCancel={this.handleCancel}
+                    >
+                        <ClaimReviewForm
+                            handleOk={this.handleOk}
+                            highlight={this.state.highlight}
+                        />
+                    </Modal>
+                    <Row style={{ marginTop: "20px" }}>
+                        <Col offset={2} span={18}>
+                            <Title level={4}>{title}</Title>
+                        </Col>
+                    </Row>
                     <Row>
-                        <Col span={16}>
+                        <Col offset={2} span={18}>
                             <div>
                                 {body.map(p => (
                                     <ClaimParagraph
@@ -57,9 +100,6 @@ class Claim extends Component {
                                     />
                                 ))}
                             </div>
-                        </Col>
-                        <Col span={4}>
-                            <ClaimReviewForm highlight={this.state.highlight} />
                         </Col>
                     </Row>
                 </>

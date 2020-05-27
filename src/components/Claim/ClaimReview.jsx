@@ -1,12 +1,12 @@
 import axios from "axios";
 import _ from "underscore";
 import React, { Component } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, Form, Select, Button, message } from "antd";
 
 const { Option } = Select;
 const { Title } = Typography;
-const recaptchaRef = React.createRef();
+// const recaptchaRef = React.createRef();
 
 class ClaimReviewForm extends Component {
     constructor(props) {
@@ -16,12 +16,13 @@ class ClaimReviewForm extends Component {
             claim: "",
             sentence_hash: "",
             sentence_content: "",
-            recaptcha: "",
-            disableSubmit: true
+            // recaptcha: "",
+            // disableSubmit: true
+            disableSubmit: false
         };
         this.onSubmit = this.onSubmit.bind(this);
-        this.onExpiredCaptcha = this.onExpiredCaptcha.bind(this);
-        this.onChangeCaptcha = this.onChangeCaptcha.bind(this);
+        // this.onExpiredCaptcha = this.onExpiredCaptcha.bind(this);
+        // this.onChangeCaptcha = this.onChangeCaptcha.bind(this);
         this.onChangeClassification = this.onChangeClassification.bind(this);
     }
 
@@ -48,9 +49,9 @@ class ClaimReviewForm extends Component {
     }
 
     onSubmit(values) {
-        if (recaptchaRef && recaptchaRef.current) {
-            recaptchaRef.current.reset();
-        }
+        // if (recaptchaRef && recaptchaRef.current) {
+        //     recaptchaRef.current.reset();
+        // }
 
         this.setState(
             {
@@ -63,7 +64,8 @@ class ClaimReviewForm extends Component {
                 axios
                     .post(`${process.env.API_URL}/claimreview`, this.state)
                     .then(response => {
-                        message.success("Classification Succeed");
+                        message.success("Revisão concluída!");
+                        this.props.handleOk();
                     })
                     .catch(err => {
                         const response = err && err.response;
@@ -75,7 +77,7 @@ class ClaimReviewForm extends Component {
                         message.error(
                             data && data.message
                                 ? data.message
-                                : "Error while submitting claim review"
+                                : "Erro ao enviar revisão"
                         );
                     });
             }
@@ -83,20 +85,25 @@ class ClaimReviewForm extends Component {
     }
 
     toggleDisabledSubmit() {
-        const recaptcha = !!this.state.recaptcha;
-        const classification = !!this.state.classification;
-        if (recaptcha && classification) {
-            this.setState({ disableSubmit: !this.state.disableSubmit });
-        }
+        // const recaptcha = !!this.state.recaptcha;
+        // const classification = !!this.state.classification;
+        // if (recaptcha && classification) {
+        //     this.setState({ disableSubmit: !this.state.disableSubmit });
+        // }
+
+        // const classification = !!this.state.classification;
+        // if (classification) {
+        //     this.setState({ disableSubmit: !this.state.disableSubmit });
+        // }
     }
 
     render() {
         if (_.isEmpty(this.props.highlight)) {
-            return <Title level={2}> Choose a sentence to Fact Check! </Title>;
+            return <Title level={4}> Escolha uma frase para revisar </Title>;
         } else {
             return (
                 <>
-                    <Title level={2}> Classify Sentence </Title>
+                    <Title level={2}> Classifique a frase </Title>
                     <Form onFinish={this.onSubmit}>
                         <Form.Item>
                             <Select
@@ -105,28 +112,43 @@ class ClaimReviewForm extends Component {
                                 defaultValue=""
                             >
                                 <Option value="" disabled>
-                                    Select classification
+                                    Selecione uma classificação
                                 </Option>
-                                <Option value="not-fact">Not fact</Option>
-                                <Option value="true">True</Option>
-                                <Option value="true-but">True, but</Option>
-                                <Option value="arguable">Arguable</Option>
-                                <Option value="misleading">Misleading</Option>
-                                <Option value="false">False</Option>
-                                <Option value="unsustainable">
+                                {/* <Option value="not-fact">Not fact</Option> */}
+                                <Option value="not-fact">Não é fato</Option>
+                                {/* <Option value="true">True</Option> */}
+                                <Option value="true">Verdadeiro</Option>
+                                {/* <Option value="true-but">True, but</Option> */}
+                                <Option value="true-but">
+                                    Verdadeiro, mas
+                                </Option>
+                                {/* <Option value="arguable">Arguable</Option> */}
+                                <Option value="arguable">Discutível</Option>
+                                {/* <Option value="misleading">Misleading</Option> */}
+                                <Option value="misleading">Enganoso</Option>
+                                {/* <Option value="false">False</Option> */}
+                                <Option value="false">Falso</Option>
+                                {/* <Option value="unsustainable">
                                     Unsustainable
+                                </Option> */}
+                                <Option value="unsustainable">
+                                    Insustentável
                                 </Option>
-                                <Option value="exaggerated">Exaggerated</Option>
-                                <Option value="unverifiable">
+                                {/* <Option value="exaggerated">Exaggerated</Option> */}
+                                <Option value="exaggerated">Exagerado</Option>
+                                {/* <Option value="unverifiable">
                                     Unverifiable
+                                </Option> */}
+                                <Option value="unverifiable">
+                                    Inverificável
                                 </Option>
                             </Select>
-                            <ReCAPTCHA
+                            {/* <ReCAPTCHA
                                 ref={recaptchaRef}
                                 sitekey={process.env.RECAPTCHA_SITEKEY}
                                 onChange={this.onChangeCaptcha}
                                 onExpired={this.onExpiredCaptcha}
-                            />
+                            /> */}
                             <Button
                                 type="primary"
                                 htmlType="Submit"
