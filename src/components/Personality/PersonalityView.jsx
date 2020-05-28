@@ -140,7 +140,7 @@ class PersonalityView extends Component {
                         <ReviewStats dataSource={reviews} />
                     </Row>
                     <br />
-                    <AffixButton createClaim={this.createClaim} />
+                    <AffixButton onClick={this.createClaim} />
                     <Row style={{ background: "white" }}>
                         {personality.claims.map((claim, claimIndex) => (
                             <ClaimCard

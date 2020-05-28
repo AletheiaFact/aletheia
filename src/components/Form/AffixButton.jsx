@@ -16,7 +16,7 @@ function AffixButton(props) {
             }}
             size="large"
             shape="circle"
-            onClick={props.createClaim}
+            onClick={props.onClick}
             type="primary"
             icon={<PlusOutlined />}
         ></Button>

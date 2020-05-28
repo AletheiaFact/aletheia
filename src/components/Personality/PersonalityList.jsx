@@ -73,7 +73,7 @@ class PersonalityList extends Component {
                         />
                     </Col>
                 </Row>
-                <AffixButton createClaim={this.createPersonality} />
+                <AffixButton onClick={this.createPersonality} />
             </>
         );
     }
