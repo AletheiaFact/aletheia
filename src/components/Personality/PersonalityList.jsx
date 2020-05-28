@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import api from "../../api/personality";
 import { Card, Row, Col, Pagination } from "antd";
 import "./PersonalityList.css";
+import AffixButton from "../Form/AffixButton";
+
 const { Meta } = Card;
 
 class PersonalityList extends Component {
@@ -71,6 +73,7 @@ class PersonalityList extends Component {
                         />
                     </Col>
                 </Row>
+                <AffixButton onClick={this.createPersonality} />
             </>
         );
     }
