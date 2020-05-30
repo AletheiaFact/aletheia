@@ -13,24 +13,13 @@ let app;
  */
 router.post("/", (req, res, next) => {
     const reference = new ReferenceController();
-    const { claim, claimReview } = req.body;
 
-    if (!claim && !claimReview) {
-        next(
-            Requester.internalError(
-                res,
-                "claim or claimReview should be provided",
-                app.logger
-            )
-        );
-    } else {
-        reference
-            .create(req.body)
-            .then(result => res.send(result))
-            .catch(error => {
-                next(Requester.internalError(res, error.message, app.logger));
-            });
-    }
+    reference
+        .create(req.body)
+        .then(result => res.send(result))
+        .catch(error => {
+            next(Requester.internalError(res, error.message, app.logger));
+        });
 });
 
 /**

@@ -1,22 +1,12 @@
 import * as mongoose from "mongoose";
 
+/**
+ * Use Dynamic ref https://mongoosejs.com/docs/populate.html#dynamic-ref
+ */
 const referenceSchema = new mongoose.Schema({
     link: {
         type: String,
         required: true
-    },
-    description: {
-        type: String
-    },
-    type: {
-        type: String,
-        required: true,
-        validate: {
-            validator: v => {
-                return ["claim", "claim_review"].indexOf(v) !== -1;
-            }
-        },
-        message: tag => `${tag} is not a valid type.`
     },
     classification: {
         type: String,
@@ -28,13 +18,18 @@ const referenceSchema = new mongoose.Schema({
         },
         message: tag => `${tag} is not a valid classification.`
     },
-    claim: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Claim"
+    description: {
+        type: String
     },
-    claimReview: {
+    targetId: {
         type: mongoose.Schema.ObjectId,
-        ref: "ClaimReview"
+        required: true,
+        refPath: "onModel"
+    },
+    targetModel: {
+        type: String,
+        required: true,
+        enum: ["Claim", "ClaimReview"]
     }
     // TODO user_id
 });
