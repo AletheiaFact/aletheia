@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import * as mongoose from "mongoose";
 
-const claimReviewSchema = new Schema({
+const claimReviewSchema = new mongoose.Schema({
     classification: {
         type: String,
         required: true,
@@ -41,10 +40,15 @@ const claimReviewSchema = new Schema({
     sentence_content: {
         type: String,
         required: true
-    }
+    },
+    references: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "Reference"
+        }
+    ]
     // TODO: user_id
     // TODO: user_agent
-    // TODO: reference
     // TODO: revision_id
 });
 

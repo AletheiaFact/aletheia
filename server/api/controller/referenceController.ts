@@ -1,14 +1,6 @@
-const ReferenceRepository = require("../repository/reference");
+import ReferenceRepository from "../repository/reference";
 
 module.exports = class ReferenceController {
-    listAll() {
-        try {
-            return ReferenceRepository.listAll();
-        } catch (error) {
-            return error;
-        }
-    }
-
     create(body) {
         try {
             return ReferenceRepository.create(body);
