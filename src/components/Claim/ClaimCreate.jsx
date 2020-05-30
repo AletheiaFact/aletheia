@@ -4,6 +4,7 @@ import { Editor, EditorState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import "draft-js/dist/Draft.css";
 import { Typography, Form, Input, Button, message, Row, Col } from "antd";
+import BackButton from "../BackButton";
 
 const { Title } = Typography;
 class ClaimCreate extends Component {
@@ -66,68 +67,73 @@ class ClaimCreate extends Component {
 
     render() {
         return (
-            <Row gutter={[32, 0]}>
-                <Col span={24}>
-                    <Title level={2}>
-                        <center>Create Claim</center>
-                    </Title>
-                    <Form
-                        ref={this.formRef}
-                        id="createClaim"
-                        onFinish={this.saveClaim}
-                    >
-                        <Form.Item
-                            name="title"
-                            label="Title"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please insert a title"
-                                }
-                            ]}
-                            wrapperCol={{ sm: 24 }}
-                            style={{
-                                width: "100%"
-                            }}
+            <>
+                <Row style={{ padding: "0 30px", marginTop: "10px" }}>
+                    <BackButton />
+                </Row>
+                <Row gutter={[32, 0]}>
+                    <Col span={24}>
+                        <Title level={2}>
+                            <center>Create Claim</center>
+                        </Title>
+                        <Form
+                            ref={this.formRef}
+                            id="createClaim"
+                            onFinish={this.saveClaim}
                         >
-                            <Input
-                                value={this.state.title || ""}
-                                onChange={e =>
-                                    this.setState({ title: e.target.value })
-                                }
-                                placeholder={"Some Title"}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            name="content"
-                            label="Content"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please insert the content"
-                                }
-                            ]}
-                            wrapperCol={{ sm: 24 }}
-                            style={{
-                                width: "100%"
-                            }}
-                        >
-                            <div className="ant-input">
-                                <Editor
-                                    placeholder="Claim"
-                                    editorState={this.state.editorState}
-                                    onChange={this.onChange}
+                            <Form.Item
+                                name="title"
+                                label="Title"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Please insert a title"
+                                    }
+                                ]}
+                                wrapperCol={{ sm: 24 }}
+                                style={{
+                                    width: "100%"
+                                }}
+                            >
+                                <Input
+                                    value={this.state.title || ""}
+                                    onChange={e =>
+                                        this.setState({ title: e.target.value })
+                                    }
+                                    placeholder={"Some Title"}
                                 />
-                            </div>
-                        </Form.Item>
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">
-                                Save
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </Col>
-            </Row>
+                            </Form.Item>
+                            <Form.Item
+                                name="content"
+                                label="Content"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Please insert the content"
+                                    }
+                                ]}
+                                wrapperCol={{ sm: 24 }}
+                                style={{
+                                    width: "100%"
+                                }}
+                            >
+                                <div className="ant-input">
+                                    <Editor
+                                        placeholder="Claim"
+                                        editorState={this.state.editorState}
+                                        onChange={this.onChange}
+                                    />
+                                </div>
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    Save
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </Col>
+                </Row>
+            </>
         );
     }
 }

@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
 import ClaimReviewForm from "./ClaimReview";
 import { Row, Col, Typography, Modal, message } from "antd";
+import BackButton from "../BackButton";
 
 const { Title } = Typography;
 
@@ -72,6 +73,9 @@ class Claim extends Component {
 
             return (
                 <>
+                    <Row style={{ padding: "0 30px", marginTop: "10px" }}>
+                        <BackButton />
+                    </Row>
                     <Modal
                         footer=""
                         visible={this.state.visible}

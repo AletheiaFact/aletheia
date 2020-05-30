@@ -4,6 +4,7 @@ import { Input, Form, Button, Row, Col, message } from "antd";
 
 import ProfilePic from "../Personality/ProfilePic";
 import WikidataTypeAhead from "../Personality/WikidataTypeAhead";
+import BackButton from "../BackButton";
 
 const { TextArea } = Input;
 
@@ -74,71 +75,76 @@ class PersonalityCreate extends Component {
     render() {
         const { personality } = this.state;
         return (
-            <Row gutter={[32, 0]}>
-                <Col span={6}>
-                    <ProfilePic image={personality.image} />
-                </Col>
-                <Col span={18}>
-                    <Form
-                        ref={this.formRef}
-                        id="createPersonality"
-                        onFinish={this.savePersonality}
-                    >
-                        <Form.Item
-                            name="name"
-                            label="Name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please insert a name"
-                                }
-                            ]}
-                            wrapperCol={{ sm: 24 }}
-                            style={{
-                                width: "100%"
-                            }}
+            <>
+                <Row style={{ padding: "0 30px", marginTop: "10px" }}>
+                    <BackButton />
+                </Row>
+                <Row gutter={[32, 0]}>
+                    <Col span={6}>
+                        <ProfilePic image={personality.image} />
+                    </Col>
+                    <Col span={18}>
+                        <Form
+                            ref={this.formRef}
+                            id="createPersonality"
+                            onFinish={this.savePersonality}
                         >
-                            <WikidataTypeAhead
+                            <Form.Item
+                                name="name"
+                                label="Name"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Please insert a name"
+                                    }
+                                ]}
+                                wrapperCol={{ sm: 24 }}
                                 style={{
                                     width: "100%"
                                 }}
-                                callback={this.updatePersonalityState.bind(
-                                    this
-                                )}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label="Description"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please insert a description"
-                                }
-                            ]}
-                            wrapperCol={{ sm: 24 }}
-                            style={{
-                                width: "100%"
-                            }}
-                        >
-                            <TextArea
+                            >
+                                <WikidataTypeAhead
+                                    style={{
+                                        width: "100%"
+                                    }}
+                                    callback={this.updatePersonalityState.bind(
+                                        this
+                                    )}
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                name="description"
+                                label="Description"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Please insert a description"
+                                    }
+                                ]}
+                                wrapperCol={{ sm: 24 }}
                                 style={{
                                     width: "100%"
                                 }}
-                                placeholder="Description"
-                                rows={4}
-                                value={this.state.personality.description}
-                                disabled={this.state.inputsDisabled}
-                            />
-                        </Form.Item>
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">
-                                Save Personality
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </Col>
-            </Row>
+                            >
+                                <TextArea
+                                    style={{
+                                        width: "100%"
+                                    }}
+                                    placeholder="Description"
+                                    rows={4}
+                                    value={this.state.personality.description}
+                                    disabled={this.state.inputsDisabled}
+                                />
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    Save Personality
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </Col>
+                </Row>
+            </>
         );
     }
 }
