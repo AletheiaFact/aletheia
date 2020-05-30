@@ -3,8 +3,7 @@ class Requester {
         if (logger) {
             logger.log(`error/http`, message);
         }
-        res.status(500);
-        res.json({ message });
+        res.status(500).json({ message });
     }
 }
 
