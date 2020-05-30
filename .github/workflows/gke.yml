@@ -39,12 +39,6 @@ jobs:
         run: |
           sed -i "s/ENVIRONMENT/$ENVIRONMENT/g" deployment.yml
 
-      - name: Set ReCaptcha
-        env:
-          RECAPTCHA_SECRET: "{{ secrets.RECAPTCHA_SITEKEY }}"
-        run: |
-          sed -i "s/RECAPTCHA_SECRET/$RECAPTCHA_SECRET/g" config.example.yml
-
       # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
@@ -60,6 +54,12 @@ jobs:
         run: |
           docker build --build-arg API_URL=$API_URL --build-arg RECAPTCHA_SITEKEY=${{ secrets.RECAPTCHA_SITEKEY }} -t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" .
           docker tag "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
+
+      - name: Set ReCaptcha
+        env:
+            RECAPTCHA_SECRET: "{{ secrets.RECAPTCHA_SITEKEY }}"
+        run: |
+            sed -i "s/RECAPTCHA_SECRET/$RECAPTCHA_SECRET/g" config.yaml
 
       # Push the Docker image to Google Container Registry
       - name: Publish
