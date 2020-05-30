@@ -6,7 +6,7 @@ const referenceSchema = new Schema({
         type: String,
         required: true
     },
-    citation: {
+    description: {
         type: String,
         required: true
     },
@@ -21,7 +21,7 @@ const referenceSchema = new Schema({
         type: mongoose.Schema.ObjectId,
         ref: "Claim"
     },
-    claimReviews: {
+    claimReview: {
         type: mongoose.Schema.ObjectId,
         ref: "ClaimReview"
     }
