@@ -26,34 +26,6 @@ import AffixButton from "../Form/AffixButton";
 const { Title, Text, Paragraph } = Typography;
 const { Column } = Table;
 
-function AffixButton(props) {
-    // const [bottom, setBottom] = useState(10);
-    // @TODO use antd affix
-    return (
-        // <Affix offsetBottom={10}>
-        <Tooltip
-            placement="left"
-            defaultVisible={props.tooltipVisible}
-            title="Clique aqui para adicionar uma claim"
-        >
-            <Button
-                style={{
-                    position: "fixed",
-                    zInex: 9999,
-                    bottom: "3%",
-                    left: "85%"
-                }}
-                size="large"
-                shape="circle"
-                onClick={props.createClaim}
-                type="primary"
-                icon={<PlusOutlined />}
-            ></Button>
-        </Tooltip>
-        // </Affix>
-    );
-}
-
 function ClaimCard(props) {
     return (
         <Col span={24}>
@@ -163,7 +135,7 @@ class PersonalityView extends Component {
                     </Row>
                     <br />
                     <AffixButton
-                        tooltipVisible={this.tooltipVisible}
+                        tooltipVisible={true}
                         createClaim={this.createClaim}
                     />
                     <Row style={{ background: "white" }}>
