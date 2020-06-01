@@ -26,3 +26,5 @@ yarn-error.log*
 dist
 
 config.yaml
+
+.idea/**/*

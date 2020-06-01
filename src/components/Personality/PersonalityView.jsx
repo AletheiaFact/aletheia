@@ -20,6 +20,8 @@ import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
 import ProfilePic from "./ProfilePic";
 import PersonalityCard from "./PersonalityCard";
+import { withTranslation } from "react-i18next";
+import AffixButton from "../Form/AffixButton";
 
 const { Title, Text, Paragraph } = Typography;
 const { Column } = Table;
@@ -119,7 +121,12 @@ class PersonalityView extends Component {
     getPersonality() {
         axios
             .get(
-                `${process.env.API_URL}/personality/${this.props.match.params.id}`
+                `${process.env.API_URL}/personality/${this.props.match.params.id}`,
+                {
+                    params: {
+                        language: this.props.i18n.languages[0]
+                    }
+                }
             )
             .then(response => {
                 const personality = response.data;
@@ -142,7 +149,7 @@ class PersonalityView extends Component {
 
     render() {
         const personality = this.state.personality;
-
+        const { t } = this.props;
         if (personality) {
             const imageStyle = {
                 backgroundImage: `url(${personality.image})`
@@ -174,7 +181,7 @@ class PersonalityView extends Component {
         } else {
             return (
                 <Spin
-                    tip="Loading..."
+                    tip={t("global:loading")}
                     style={{
                         textAlign: "center",
                         position: "absolute",
@@ -186,5 +193,4 @@ class PersonalityView extends Component {
         }
     }
 }
-
-export default withRouter(PersonalityView);
+export default withRouter(withTranslation()(PersonalityView));

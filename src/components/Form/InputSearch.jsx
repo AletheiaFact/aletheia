@@ -23,7 +23,7 @@ class InputSearch extends Component {
     render() {
         return (
             <Search
-                placeholder="Type a name..."
+                placeholder={this.props.placeholder || ""}
                 size="large"
                 loading={this.loading}
                 onChange={e => this.doSearch(e)}

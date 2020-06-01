@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { AutoComplete } from "antd";
+import { withTranslation } from "react-i18next";
 
 const { Option } = AutoComplete;
 class WikdiataTypeAhead extends Component {
@@ -17,6 +18,7 @@ class WikdiataTypeAhead extends Component {
     }
 
     wikidataSearch(query, lang = "en") {
+        console.log("wikidataSearch", lang)
         const params = {
             action: "wbsearchentities",
             search: query,
@@ -54,22 +56,26 @@ class WikdiataTypeAhead extends Component {
 
     handleSearch(query) {
         this.setState({ query, isLoading: true });
-        this.wikidataSearch(query);
+        this.wikidataSearch(query, this.props.i18n.languages[0]);
     }
 
-    fetchWikidata(wikidataId) {
+    fetchWikidata(wikidataId, language = "en") {
         const wbEntities = this.state.search.filter(
             child => child.id === wikidataId
         );
         if (Array.isArray(wbEntities) && wbEntities.length > 0) {
             const wbEntity = wbEntities[0];
             axios
-                .get(`${process.env.API_URL}/wikidata/${wbEntity.id}`)
+                .get(`${process.env.API_URL}/wikidata/${wbEntity.id}`, {
+                    params: { language }
+                })
                 .then(response => {
+                    console.log(response.data)
                     const personality = {
                         ...response.data,
                         wikidata: wbEntity.id
                     };
+                    console.log(personality)
                     this.props.callback({
                         personality,
                         inputsDisabled: true
@@ -91,7 +97,7 @@ class WikdiataTypeAhead extends Component {
 
     onSelect(query, option) {
         this.setState({ query }, () => {
-            this.fetchWikidata(option.props.key);
+            this.fetchWikidata(option.props.key, this.props.i18n.languages[0]);
         });
     }
 
@@ -116,7 +122,7 @@ class WikdiataTypeAhead extends Component {
                 onSearch={this.handleSearch}
                 onSelect={this.onSelect}
                 onChange={this.onChange}
-                placeholder="Name of the personality"
+                placeholder={this.props.placeholder || ""}
             >
                 {this.state.children}
             </AutoComplete>
@@ -124,4 +130,4 @@ class WikdiataTypeAhead extends Component {
     }
 }
 
-export default WikdiataTypeAhead;
+export default withTranslation()(WikdiataTypeAhead);

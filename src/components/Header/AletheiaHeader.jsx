@@ -1,12 +1,24 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import "./AletheiaHeader.css";
-import { Row, Col, Input } from "antd";
+import { Row, Col } from "antd";
 import { MenuOutlined, UserOutlined } from "@ant-design/icons";
-
-const { Search } = Input;
+import InputSearch from "../Form/InputSearch";
+import api from "../../api/personality";
+import { withTranslation } from "react-i18next";
 
 class AletheiaHeader extends Component {
+    handleInputSearch(name) {
+        this.props.dispatch({
+            type: "SET_SEARCH_NAME",
+            searchName: name
+        });
+
+        api.getPersonalities(this.props, this.props.dispatch);
+    }
+
     render() {
+        const { t } = this.props;
         return (
             <header className="aletheia-header">
                 <nav>
@@ -26,9 +38,9 @@ class AletheiaHeader extends Component {
                             />
                         </Col>
                         <Col span={14}>
-                            <Search
-                                placeholder="Busque uma personalidade"
-                                onSearch={value => console.log(value)}
+                            <InputSearch
+                                placeholder={t("header:search_personality")}
+                                callback={this.handleInputSearch.bind(this)}
                             />
                         </Col>
                         <Col span={2}>
@@ -47,4 +59,12 @@ class AletheiaHeader extends Component {
     }
 }
 
-export default AletheiaHeader;
+const mapStateToProps = state => {
+    return {
+        page: (state && state.searchCurPage) || 1,
+        pageSize: (state && state.searchPageSize) || 10,
+        searchName: (state && state.searchInput) || null
+    };
+};
+
+export default connect(mapStateToProps)(withTranslation()(AletheiaHeader));
