@@ -29,19 +29,25 @@ function AffixButton(props) {
     // @TODO use antd affix
     return (
         // <Affix offsetBottom={10}>
-        <Button
-            style={{
-                position: "fixed",
-                zInex: 9999,
-                bottom: "3%",
-                left: "85%"
-            }}
-            size="large"
-            shape="circle"
-            onClick={props.createClaim}
-            type="primary"
-            icon={<PlusOutlined />}
-        ></Button>
+        <Tooltip
+            placement="left"
+            defaultVisible={props.tooltipVisible}
+            title="Clique aqui para adicionar uma claim"
+        >
+            <Button
+                style={{
+                    position: "fixed",
+                    zInex: 9999,
+                    bottom: "3%",
+                    left: "85%"
+                }}
+                size="large"
+                shape="circle"
+                onClick={props.createClaim}
+                type="primary"
+                icon={<PlusOutlined />}
+            ></Button>
+        </Tooltip>
         // </Affix>
     );
 }
@@ -99,6 +105,10 @@ class PersonalityView extends Component {
         this.createClaim = this.createClaim.bind(this);
         this.viewClaim = this.viewClaim.bind(this);
         this.state = {};
+        this.tooltipVisible = true;
+        setTimeout(() => {
+            this.tooltipVisible = false;
+        }, 2500);
     }
 
     componentDidMount() {
@@ -145,7 +155,10 @@ class PersonalityView extends Component {
                         <ReviewStats dataSource={reviews} />
                     </Row>
                     <br />
-                    <AffixButton createClaim={this.createClaim} />
+                    <AffixButton
+                        tooltipVisible={this.tooltipVisible}
+                        createClaim={this.createClaim}
+                    />
                     <Row style={{ background: "white" }}>
                         {personality.claims.map((claim, claimIndex) => (
                             <ClaimCard
