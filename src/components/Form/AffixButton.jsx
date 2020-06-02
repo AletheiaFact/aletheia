@@ -1,26 +1,32 @@
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import React from "react";
+import { Tooltip } from "antd";
 
 function AffixButton(props) {
-    // const [bottom, setBottom] = useState(10);
     // @TODO use antd affix
     return (
-        // <Affix offsetBottom={10}>
-        <Button
-            style={{
-                position: "fixed",
-                zInex: 9999,
-                bottom: "3%",
-                left: "85%"
-            }}
-            size="large"
-            shape="circle"
-            onClick={props.onClick}
-            type="primary"
-            icon={<PlusOutlined />}
-        ></Button>
-        // </Affix>
+        <>
+            <Tooltip
+                placement="left"
+                defaultVisible={true}
+                title="Clique aqui para adicionar uma claim"
+            >
+                <Button
+                    style={{
+                        position: "fixed",
+                        zIndex: 9999,
+                        bottom: "3%",
+                        left: "85%"
+                    }}
+                    size="large"
+                    shape="circle"
+                    onClick={props.onClick}
+                    type="primary"
+                    icon={<PlusOutlined />}
+                ></Button>
+            </Tooltip>
+        </>
     );
 }
 
