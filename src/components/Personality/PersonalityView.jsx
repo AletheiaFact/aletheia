@@ -14,6 +14,8 @@ import {
 
 import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
+import ProfilePic from "./ProfilePic";
+import PersonalityCard from "./PersonalityCard";
 import { withTranslation } from "react-i18next";
 import AffixButton from "../Form/AffixButton";
 import BackButton from "../BackButton";
@@ -73,6 +75,10 @@ class PersonalityView extends Component {
         this.createClaim = this.createClaim.bind(this);
         this.viewClaim = this.viewClaim.bind(this);
         this.state = {};
+        this.tooltipVisible = true;
+        setTimeout(() => {
+            this.tooltipVisible = false;
+        }, 2500);
     }
 
     componentDidMount() {
@@ -122,24 +128,16 @@ class PersonalityView extends Component {
                     <Row style={{ padding: "0 30px", marginTop: "10px" }}>
                         <BackButton />
                     </Row>
-                    <Row style={{ padding: "10px 30px" }}>
-                        <Col span={6}>
-                            <Avatar size={90} src={personality.image} />
-                        </Col>
-                        <Col span={3}></Col>
-                        <Col span={15}>
-                            <Title level={4}>{personality.name}</Title>
-                            <Paragraph ellipsis={{ rows: 1, expandable: true }}>
-                                {personality.description}
-                            </Paragraph>
-                        </Col>
-                    </Row>
-                    <hr style={{ opacity: "20%" }} />
+                    <PersonalityCard personality={personality} />
+
                     <Row style={{ padding: "5px 30px" }}>
                         <ReviewStats dataSource={reviews} />
                     </Row>
                     <br />
-                    <AffixButton onClick={this.createClaim} />
+                    <AffixButton
+                        tooltipVisible={true}
+                        createClaim={this.createClaim}
+                    />
                     <Row style={{ background: "white" }}>
                         {personality.claims.map((claim, claimIndex) => (
                             <ClaimCard
