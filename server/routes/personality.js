@@ -37,7 +37,6 @@ router.post("/", (req, res, next) => {
  */
 router.get("/:id", (req, res, next) => {
     const personality = new PersonalityController();
-    console.log(req.query);
     personality
         .getPersonalityId(req.params.id, req.query.language)
         .then(async result => {
