@@ -15,7 +15,7 @@ function loadModels(dir) {
         const isDirectory = fs.statSync(resolvedPath).isDirectory();
         if (isDirectory) {
             loadModels(resolvedPath);
-        } else if (/\.js$/.test(fname)) {
+        } else if (/\.(js|ts)$/.test(fname)) {
             return require(`${dir}/${fname}`);
         }
         return false;
@@ -40,7 +40,7 @@ function loadRoutes(app, dir) {
             const isDirectory = fs.statSync(resolvedPath).isDirectory();
             if (isDirectory) {
                 loadRoutes(app, resolvedPath);
-            } else if (/\.js$/.test(fname)) {
+            } else if (/\.(js|ts)$/.test(fname)) {
                 const routeModule = require(`${dir}/${fname}`);
                 const route = routeModule(app);
                 if (route !== undefined) {

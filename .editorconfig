@@ -9,5 +9,8 @@ insert_final_newline = true
 end_of_line = lf
 max_line_length = off
 
+[*.yaml]
+indent_size = 2
+
 [*.md]
 indent_size = false

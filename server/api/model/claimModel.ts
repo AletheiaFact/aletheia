@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import * as mongoose from "mongoose";
 
-const claimSchema = new Schema({
+const claimSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
@@ -19,6 +18,12 @@ const claimSchema = new Schema({
         {
             type: mongoose.Schema.ObjectId,
             ref: "ClaimReview"
+        }
+    ],
+    references: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "Reference"
         }
     ]
 });

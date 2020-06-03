@@ -1,9 +1,9 @@
-const ClaimRespository = require("../repository/claim");
+const ClaimRepository = require("../repository/claim");
 
 module.exports = class ClaimController {
     listAll() {
         try {
-            return ClaimRespository.listAll();
+            return ClaimRepository.listAll();
         } catch (error) {
             return error;
         }
@@ -11,7 +11,7 @@ module.exports = class ClaimController {
 
     create(body) {
         try {
-            return ClaimRespository.create(body);
+            return ClaimRepository.create(body);
         } catch (error) {
             return error;
         }
@@ -19,7 +19,7 @@ module.exports = class ClaimController {
 
     getClaimId(id) {
         try {
-            return ClaimRespository.getById(id);
+            return ClaimRepository.getById(id);
         } catch (error) {
             return error;
         }
@@ -27,7 +27,7 @@ module.exports = class ClaimController {
 
     async update(id, body) {
         try {
-            return ClaimRespository.update(id, body);
+            return ClaimRepository.update(id, body);
         } catch (error) {
             return error;
         }
@@ -35,7 +35,7 @@ module.exports = class ClaimController {
 
     async delete(id) {
         try {
-            await ClaimRespository.delete(id);
+            await ClaimRepository.delete(id);
             return { message: "Claim successfully deleted" };
         } catch (error) {
             return error;

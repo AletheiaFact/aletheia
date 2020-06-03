@@ -40,7 +40,9 @@ module.exports = class ClaimRepository {
     }
 
     static getById(claimId) {
-        return Claim.findById(claimId).populate("personality", "_id name");
+        return Claim.findById(claimId)
+            .populate("personality", "_id name")
+            .populate("references", "_id link classification");
     }
 
     static async update(claimId, claimBody) {
