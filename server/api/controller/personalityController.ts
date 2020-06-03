@@ -1,7 +1,7 @@
 const PersonalityRepository = require("../repository/personality");
 
 module.exports = class PersonalityController {
-    async listAll(query) {
+    async listAll(query, language) {
         const { page = 0, pageSize = 10, order = "desc" } = query;
         const queryInputs = await this.verifyInputsQuery(query);
 
@@ -10,7 +10,8 @@ module.exports = class PersonalityController {
                 page,
                 parseInt(pageSize, 10),
                 order,
-                queryInputs
+                queryInputs,
+                query.language
             ),
             PersonalityRepository.count(queryInputs)
         ])
@@ -31,6 +32,7 @@ module.exports = class PersonalityController {
     verifyInputsQuery(query) {
         const queryInputs = {};
         if (query.name) {
+            // @ts-ignore
             queryInputs.name = { $regex: query.name, $options: "i" };
         }
         return queryInputs;
@@ -44,9 +46,9 @@ module.exports = class PersonalityController {
         }
     }
 
-    getPersonalityId(id) {
+    getPersonalityId(id, language) {
         try {
-            return PersonalityRepository.getById(id);
+            return PersonalityRepository.getById(id, language);
         } catch (error) {
             return error;
         }
