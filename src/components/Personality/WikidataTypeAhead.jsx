@@ -70,7 +70,6 @@ class WikdiataTypeAhead extends Component {
                     params: { language }
                 })
                 .then(response => {
-                    console.log(response.data);
                     const personality = {
                         ...response.data,
                         wikidata: wbEntity.id
