@@ -5,6 +5,8 @@ import api from "../../api/personality";
 import { Card, Row, Col, Pagination } from "antd";
 import "./PersonalityList.css";
 import AffixButton from "../Form/AffixButton";
+import { withTranslation } from "react-i18next";
+import PersonalityCard from "./PersonalityCard";
 
 const { Meta } = Card;
 
@@ -37,43 +39,33 @@ class PersonalityList extends Component {
 
         return (
             <>
-                <Row id="card" gutter="16   ">
-                    {personalities ? (
-                        <>
-                            {personalities.map((p, i) => (
-                                <Col span={8} key={i}>
-                                    <Link to={`personality/${p._id}`}>
-                                        <Card
-                                            hoverable
-                                            style={{
-                                                width: "100%",
-                                                margin: "8px 0"
-                                            }}
-                                        >
-                                            <Meta
-                                                title={p.name}
-                                                description={p.description}
-                                            />
-                                        </Card>
-                                    </Link>
-                                </Col>
-                            ))}
-                        </>
-                    ) : (
-                        <span>No results found</span>
-                    )}
-                </Row>
-                <Row id="pagination">
-                    <Col span={24}>
-                        <Pagination
-                            total={this.props.totalPages * this.props.pageSize}
-                            pageSize={this.props.pageSize}
-                            onChange={this.handlePagination.bind(this)}
-                            current={this.props.page}
-                        />
-                    </Col>
-                </Row>
-                <AffixButton onClick={this.createPersonality} />
+                {personalities ? (
+                    <>
+                        {personalities.map((p, i) => (
+                            <PersonalityCard
+                                personality={p}
+                                summarized={true}
+                                key={p._id}
+                            />
+                        ))}
+                        <Row id="pagination">
+                            <Col span={24}>
+                                <Pagination
+                                    total={
+                                        this.props.totalPages *
+                                        this.props.pageSize
+                                    }
+                                    pageSize={this.props.pageSize}
+                                    onChange={this.handlePagination.bind(this)}
+                                    current={this.props.page}
+                                />
+                            </Col>
+                        </Row>
+                        <AffixButton onClick={this.createPersonality} />
+                    </>
+                ) : (
+                    <span>No results found</span>
+                )}
             </>
         );
     }
@@ -86,4 +78,4 @@ const mapStateToProps = state => {
         totalPages: (state && state.searchTotalPages) || 1
     };
 };
-export default connect(mapStateToProps)(PersonalityList);
+export default connect(mapStateToProps)(withTranslation()(PersonalityList));
