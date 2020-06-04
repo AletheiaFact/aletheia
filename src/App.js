@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Layout } from "antd";
+import { Layout, Row } from "antd";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { withTranslation } from "react-i18next";
 import "./App.less";
 
 import ClaimCreate from "./components/Claim/ClaimCreate";
@@ -9,7 +10,7 @@ import PersonalityList from "./components/Personality/PersonalityList";
 import PersonalityView from "./components/Personality/PersonalityView";
 import PersonalityCreate from "./components/Personality/PersonalityCreate";
 import AletheiaHeader from "./components/Header/AletheiaHeader";
-import { withTranslation } from "react-i18next";
+import BackButton from "./components/BackButton";
 
 const { Footer, Content } = Layout;
 
@@ -21,8 +22,12 @@ class App extends Component {
                 <a href="/">
                     <AletheiaHeader />
                 </a>
+
                 <Content>
                     <Router>
+                        <Row style={{ padding: "0 30px", marginTop: "10px" }}>
+                            <BackButton />
+                        </Row>
                         <Switch>
                             <Route exact path="/" component={PersonalityList} />
                             <Route
