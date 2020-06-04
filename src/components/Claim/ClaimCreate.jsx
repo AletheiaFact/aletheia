@@ -4,7 +4,6 @@ import { Editor, EditorState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import "draft-js/dist/Draft.css";
 import { Typography, Form, Input, Button, message, Row, Col } from "antd";
-import BackButton from "../BackButton";
 
 const { Title } = Typography;
 class ClaimCreate extends Component {
@@ -68,9 +67,6 @@ class ClaimCreate extends Component {
     render() {
         return (
             <>
-                <Row style={{ padding: "0 30px", marginTop: "10px" }}>
-                    <BackButton />
-                </Row>
                 <Row gutter={[32, 0]}>
                     <Col span={24}>
                         <Title level={2}>

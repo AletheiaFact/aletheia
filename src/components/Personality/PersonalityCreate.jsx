@@ -4,7 +4,6 @@ import { Input, Form, Button, Row, Col, message } from "antd";
 
 import ProfilePic from "../Personality/ProfilePic";
 import WikidataTypeAhead from "../Personality/WikidataTypeAhead";
-import BackButton from "../BackButton";
 
 const { TextArea } = Input;
 
@@ -27,7 +26,6 @@ class PersonalityCreate extends Component {
                 name: personality.name,
                 description: personality.description
             });
-            console.log(this.state);
         });
     }
 
@@ -35,7 +33,10 @@ class PersonalityCreate extends Component {
         this.formRef.current
             .validateFields()
             .then(values => {
-                const personality = Object.assign(this.state.personality, values);
+                const personality = Object.assign(
+                    this.state.personality,
+                    values
+                );
                 this.setState({ personality });
                 // TODO: Check if personality already exists
                 axios
@@ -76,9 +77,6 @@ class PersonalityCreate extends Component {
         const { personality } = this.state;
         return (
             <>
-                <Row style={{ padding: "0 30px", marginTop: "10px" }}>
-                    <BackButton />
-                </Row>
                 <Row gutter={[32, 0]}>
                     <Col span={6}>
                         <ProfilePic image={personality.image} />

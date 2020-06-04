@@ -5,17 +5,22 @@ import React from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 function BackButton(props) {
     const { t } = props;
-    return (
-        <a
-            className="back-button"
-            style={{
-                "font-weight": "bold"
-            }}
-            onClick={props.history.goBack}
-        >
-            <ArrowLeftOutlined /> {t("global:back_button")}
-        </a>
-    );
+
+    if (props.location.pathname !== "/") {
+        return (
+            <a
+                className="back-button"
+                style={{
+                    fontWeight: "bold"
+                }}
+                onClick={props.history.goBack}
+            >
+                <ArrowLeftOutlined /> {t("global:back_button")}
+            </a>
+        );
+    } else {
+        return <></>;
+    }
 }
 
 export default withRouter(withTranslation()(BackButton));

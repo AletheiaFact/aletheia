@@ -18,7 +18,7 @@ class WikdiataTypeAhead extends Component {
     }
 
     wikidataSearch(query, lang = "en") {
-        console.log("wikidataSearch", lang)
+        console.log("wikidataSearch", lang);
         const params = {
             action: "wbsearchentities",
             search: query,
@@ -70,12 +70,11 @@ class WikdiataTypeAhead extends Component {
                     params: { language }
                 })
                 .then(response => {
-                    console.log(response.data)
+                    console.log(response.data);
                     const personality = {
                         ...response.data,
                         wikidata: wbEntity.id
                     };
-                    console.log(personality)
                     this.props.callback({
                         personality,
                         inputsDisabled: true

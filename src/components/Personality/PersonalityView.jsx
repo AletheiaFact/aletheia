@@ -18,7 +18,6 @@ import ProfilePic from "./ProfilePic";
 import PersonalityCard from "./PersonalityCard";
 import { withTranslation } from "react-i18next";
 import AffixButton from "../Form/AffixButton";
-import BackButton from "../BackButton";
 
 const { Title, Paragraph } = Typography;
 
@@ -125,9 +124,6 @@ class PersonalityView extends Component {
             const { reviews } = personality.stats;
             return (
                 <>
-                    <Row style={{ padding: "0 30px", marginTop: "10px" }}>
-                        <BackButton />
-                    </Row>
                     <PersonalityCard personality={personality} />
 
                     <Row style={{ padding: "5px 30px" }}>
