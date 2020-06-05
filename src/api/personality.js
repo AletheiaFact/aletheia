@@ -1,11 +1,12 @@
 import axios from "axios";
 
-const getPersonalities = (options, dispatch) => {
-    const { page, searchName, pageSize } = options || {};
+const getPersonalities = (options = {}, dispatch) => {
     const params = {
-        page: page - 1,
-        name: searchName,
-        pageSize
+        page: options.page - 1,
+        name: options.searchName,
+        pageSize: options.pageSize,
+        language:
+            options.i18n && options.i18n.languages && options.i18n.languages[0]
     };
 
     axios

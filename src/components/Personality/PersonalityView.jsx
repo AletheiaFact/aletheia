@@ -1,72 +1,14 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
-import {
-    Avatar,
-    Comment,
-    Spin,
-    Button,
-    Col,
-    Row,
-    Typography,
-    Tooltip
-} from "antd";
+import { Spin, Row } from "antd";
+import { withTranslation } from "react-i18next";
 
 import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
-import ProfilePic from "./ProfilePic";
 import PersonalityCard from "./PersonalityCard";
-import { withTranslation } from "react-i18next";
 import AffixButton from "../Form/AffixButton";
-
-const { Title, Paragraph } = Typography;
-
-function ClaimCard(props) {
-    return (
-        <Col span={24}>
-            <Comment
-                style={{ margin: "0px 20px" }}
-                key={props.claimIndex}
-                author={props.personality.name}
-                avatar={
-                    <Avatar
-                        src={props.personality.image}
-                        alt={props.personality.name}
-                    />
-                }
-                content={
-                    <>
-                        <Row>
-                            <Col>
-                                <p>{props.claim.title}</p>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col offset={16}>
-                                <Button
-                                    shape="round"
-                                    type="primary"
-                                    onClick={e => {
-                                        e.stopPropagation();
-                                        props.viewClaim(props.claim._id);
-                                    }}
-                                >
-                                    Revisar
-                                </Button>
-                            </Col>
-                        </Row>
-                    </>
-                }
-                datetime={
-                    <Tooltip title="01/2020">
-                        <span>há 5 meses</span>
-                    </Tooltip>
-                }
-            />
-            <hr style={{ opacity: "20%" }} />
-        </Col>
-    );
-}
+import ClaimCard from "../Claim/ClaimCard";
 
 class PersonalityView extends Component {
     constructor(props) {
