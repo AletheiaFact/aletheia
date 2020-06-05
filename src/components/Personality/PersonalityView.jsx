@@ -2,19 +2,15 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import {
-    Divider,
     Avatar,
-    Affix,
     Comment,
     Spin,
-    Table,
     Button,
     Col,
     Row,
     Typography,
     Tooltip
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 
 import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
@@ -23,8 +19,7 @@ import PersonalityCard from "./PersonalityCard";
 import { withTranslation } from "react-i18next";
 import AffixButton from "../Form/AffixButton";
 
-const { Title, Text, Paragraph } = Typography;
-const { Column } = Table;
+const { Title, Paragraph } = Typography;
 
 function ClaimCard(props) {
     return (
@@ -130,6 +125,7 @@ class PersonalityView extends Component {
             return (
                 <>
                     <PersonalityCard personality={personality} />
+
                     <Row style={{ padding: "5px 30px" }}>
                         <ReviewStats dataSource={reviews} />
                     </Row>

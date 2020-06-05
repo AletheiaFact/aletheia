@@ -7,7 +7,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 const resources = {
     en: {
         global: {
-            loading: "Loading..."
+            loading: "Loading...",
+            back_button: "Back"
         },
         header: {
             search_personality: "Search personality"
@@ -18,7 +19,8 @@ const resources = {
     },
     pt: {
         global: {
-            loading: "Carregando..."
+            loading: "Carregando...",
+            back_button: "Voltar"
         },
         header: {
             search_personality: "Busque uma personalidade"
