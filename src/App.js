@@ -19,10 +19,7 @@ class App extends Component {
         const { t } = this.props;
         return (
             <Layout style={{ minHeight: "100vh" }}>
-                <a href="/">
-                    <AletheiaHeader />
-                </a>
-
+                <AletheiaHeader />
                 <Content>
                     <Router>
                         <Row style={{ padding: "0 30px", marginTop: "10px" }}>
