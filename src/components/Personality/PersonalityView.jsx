@@ -132,7 +132,7 @@ class PersonalityView extends Component {
                     <br />
                     <AffixButton
                         tooltipVisible={true}
-                        createClaim={this.createClaim}
+                        onClick={this.createClaim}
                     />
                     <Row style={{ background: "white" }}>
                         {personality.claims.map((claim, claimIndex) => (
