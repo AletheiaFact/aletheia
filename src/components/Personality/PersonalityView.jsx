@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import axios from "axios";
 import { Spin, Row } from "antd";
+import { withTranslation } from "react-i18next";
 
 import "./PersonalityView.css";
 import ReviewStats from "../ReviewStats";
 import PersonalityCard from "./PersonalityCard";
-import { withTranslation } from "react-i18next";
 import AffixButton from "../Form/AffixButton";
 import ClaimCard from "../Claim/ClaimCard";
 
@@ -67,13 +67,14 @@ class PersonalityView extends Component {
             return (
                 <>
                     <PersonalityCard personality={personality} />
+
                     <Row style={{ padding: "5px 30px" }}>
                         <ReviewStats dataSource={reviews} />
                     </Row>
                     <br />
                     <AffixButton
                         tooltipVisible={true}
-                        createClaim={this.createClaim}
+                        onClick={this.createClaim}
                     />
                     <Row style={{ background: "white" }}>
                         {personality.claims.map((claim, claimIndex) => (
