@@ -52,7 +52,7 @@ jobs:
       # Setting up recaptcha based on environment
       - name: Set ReCaptcha
         env:
-            RECAPTCHA_SECRET: "{{ secrets.RECAPTCHA_SITEKEY }}"
+            RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SITEKEY }}
         run: |
             sed -i "s/RECAPTCHA_SECRET/$RECAPTCHA_SECRET/g" config.$ENVIRONMENT.yaml
 
