@@ -18,6 +18,18 @@ const resources = {
         },
         footer: {
             copyright: "Aletheia ©2020 Created by Open Tesseract"
+        },
+        claimReviewSelect: {
+            placeholder: "Choose a classification",
+            "not-fact": "Not fact",
+            true: "True",
+            "true-but": "True, but",
+            arguable: "Arguable",
+            misleading: "Misleading",
+            false: "False",
+            unsustainable: "Unsustainable",
+            exaggerated: "Exaggerated",
+            unverifiable: "Unverifiable"
         }
     },
     pt: {
@@ -33,6 +45,18 @@ const resources = {
         },
         footer: {
             copyright: "Aletheia ©2020 Criado por Open Tesseract"
+        },
+        claimReviewSelect: {
+            placeholder: "Selecione uma classificação",
+            "not-fact": "Não é fato",
+            true: "Verdadeiro",
+            "true-but": "Verdadeiro, mas",
+            arguable: "Discutível",
+            misleading: "Enganoso",
+            false: "Falso",
+            unsustainable: "Insustentável",
+            exaggerated: "Exagerado",
+            unverifiable: "Inverificável"
         }
     }
 };
