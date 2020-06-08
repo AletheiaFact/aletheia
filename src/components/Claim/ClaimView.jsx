@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
 import ClaimReviewForm from "./ClaimReview";
 import { Row, Col, Typography, Modal, message } from "antd";
+import PersonalityCard from "../Personality/PersonalityCard";
+import { withTranslation } from "react-i18next";
 
 const { Title } = Typography;
 
@@ -10,6 +12,7 @@ class Claim extends Component {
     componentDidMount() {
         const self = this;
         self.getClaim();
+        self.getPersonality();
         message.info("Clique em uma frase para iniciar uma revisão");
     }
 
@@ -29,6 +32,25 @@ class Claim extends Component {
             })
             .catch(() => {
                 console.log("Error while fetching claim");
+            });
+    }
+
+    getPersonality() {
+        axios
+            .get(
+                `${process.env.API_URL}/personality/${this.props.match.params.id}`,
+                {
+                    params: {
+                        language: this.props.i18n.languages[0]
+                    }
+                }
+            )
+            .then(response => {
+                const personality = response.data;
+                this.setState({ personality });
+            })
+            .catch(() => {
+                console.log("Error while fetching Personality");
             });
     }
 
@@ -68,6 +90,7 @@ class Claim extends Component {
             const body = this.state.body;
             const title = this.state.title;
             const visible = this.state.visible;
+            const personality = this.state.personality;
 
             return (
                 <>
@@ -81,6 +104,10 @@ class Claim extends Component {
                             highlight={this.state.highlight}
                         />
                     </Modal>
+                    {personality && (
+                        <PersonalityCard personality={personality} />
+                    )}
+
                     <Row style={{ marginTop: "20px" }}>
                         <Col offset={2} span={18}>
                             <Title level={4}>{title}</Title>
@@ -109,4 +136,4 @@ class Claim extends Component {
     }
 }
 
-export default Claim;
+export default withTranslation()(Claim);
