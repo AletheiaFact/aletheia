@@ -14,30 +14,30 @@ class ClaimReviewSelect extends Component {
                 defaultValue={this.props.defaultValue}
             >
                 <Option value="" disabled>
-                    {t("claimReviewSelect:placeholder")}
+                    {t("claimReviewForm:placeholder")}
                 </Option>
                 <Option value="not-fact">
-                    {t("claimReviewSelect:not-fact")}
+                    {t("claimReviewForm:not-fact")}
                 </Option>
-                <Option value="true">{t("claimReviewSelect:true")}</Option>
+                <Option value="true">{t("claimReviewForm:true")}</Option>
                 <Option value="true-but">
-                    {t("claimReviewSelect:true-but")}
+                    {t("claimReviewForm:true-but")}
                 </Option>
                 <Option value="arguable">
-                    {t("claimReviewSelect:arguable")}
+                    {t("claimReviewForm:arguable")}
                 </Option>
                 <Option value="misleading">
-                    {t("claimReviewSelect:misleading")}
+                    {t("claimReviewForm:misleading")}
                 </Option>
-                <Option value="false">{t("claimReviewSelect:false")}</Option>
+                <Option value="false">{t("claimReviewForm:false")}</Option>
                 <Option value="unsustainable">
-                    {t("claimReviewSelect:unsustainable")}
+                    {t("claimReviewForm:unsustainable")}
                 </Option>
                 <Option value="exaggerated">
-                    {t("claimReviewSelect:exaggerated")}
+                    {t("claimReviewForm:exaggerated")}
                 </Option>
                 <Option value="unverifiable">
-                    {t("claimReviewSelect:unverifiable")}
+                    {t("claimReviewForm:unverifiable")}
                 </Option>
             </Select>
         );

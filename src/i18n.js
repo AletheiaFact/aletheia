@@ -19,7 +19,9 @@ const resources = {
         footer: {
             copyright: "Aletheia ©2020 Created by Open Tesseract"
         },
-        claimReviewSelect: {
+        claimReviewForm: {
+            titleEmpty: "Choose a sentence to review",
+            title: "Review the sentence",
             placeholder: "Choose a classification",
             "not-fact": "Not fact",
             true: "True",
@@ -46,7 +48,9 @@ const resources = {
         footer: {
             copyright: "Aletheia ©2020 Criado por Open Tesseract"
         },
-        claimReviewSelect: {
+        claimReviewForm: {
+            titleEmpty: "Escolha uma frase para revisar",
+            title: "Classifique a frase",
             placeholder: "Selecione uma classificação",
             "not-fact": "Não é fato",
             true: "Verdadeiro",

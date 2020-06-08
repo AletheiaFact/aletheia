@@ -2,8 +2,9 @@ import axios from "axios";
 import _ from "underscore";
 import React, { Component } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import {Typography, Form, Button, message, Select} from "antd";
+import { Typography, Form, Button, message, Select } from "antd";
 import ClaimReviewSelect from "../Form/ClaimReviewSelect";
+import { withTranslation } from "react-i18next";
 
 const { Title } = Typography;
 const recaptchaRef = React.createRef();
@@ -97,12 +98,13 @@ class ClaimReviewForm extends Component {
     }
 
     render() {
+        const { t } = this.props;
         if (_.isEmpty(this.props.highlight)) {
-            return <Title level={4}> Escolha uma frase para revisar </Title>;
+            return <Title level={4}> {t("claimReviewForm:titleEmpty")} </Title>;
         } else {
             return (
                 <>
-                    <Title level={2}> Classifique a frase </Title>
+                    <Title level={2}> {t("claimReviewForm:title")} </Title>
                     <Form onFinish={this.onSubmit}>
                         <Form.Item>
                             <ClaimReviewSelect
@@ -132,4 +134,4 @@ class ClaimReviewForm extends Component {
     }
 }
 
-export default ClaimReviewForm;
+export default withTranslation()(ClaimReviewForm);
