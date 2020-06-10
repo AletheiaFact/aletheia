@@ -5,7 +5,7 @@ import ClaimReviewForm from "./ClaimReview";
 import { Row, Col, Typography, Modal, message } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
-import ClaimMetrics from "./ClaimMetrics";
+import ReviewStats from "../ReviewStats";
 
 const { Title } = Typography;
 
@@ -158,7 +158,7 @@ class Claim extends Component {
                                     , of which:
                                 </span>
                             </div>
-                            <ClaimMetrics
+                            <ReviewStats
                                 stats={this.state.stats}
                                 countInTitle={true}
                                 type="line"
