@@ -1,21 +1,31 @@
 const Personality = require("../model/personalityModel");
 const ClaimReview = require("../model/claimReviewModel");
+const WikidataResolver = require("../../lib/wikidataResolver");
 
 const optionsToUpdate = {
     new: true,
     upsert: true
 };
 
+const wikidata = new WikidataResolver();
+
 /**
  * @class PersonalityRepository
  */
 module.exports = class PersonalityRepository {
-    static async listAll(page, pageSize, order, query) {
+    static async listAll(page, pageSize, order, query, language) {
         return Personality.find(query)
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ createdAt: order })
-            .lean();
+            .lean()
+            .then(async personalities => {
+                return Promise.all(
+                    personalities.map(async personality => {
+                        return await this.postProcess(personality, language);
+                    })
+                );
+            });
     }
 
     static create(personality) {
@@ -23,15 +33,26 @@ module.exports = class PersonalityRepository {
         return newPersonality.save();
     }
 
-    static async getById(personalityId) {
+    static async getById(personalityId, language = "en") {
         const personality = await Personality.findById(personalityId).populate({
             path: "claims",
             select: "_id title"
         });
+        return await this.postProcess(personality.toObject(), language);
+    }
+
+    private static async postProcess(personality, language: string = "en") {
         if (personality) {
-            const stats = await this.getReviewStats(personalityId);
-            return Object.assign(personality.toObject(), { stats });
+            const stats = await this.getReviewStats(personality._id);
+            const wikidataId = personality.wikidata;
+            // TODO: allow wikdiata resolver to fetch in batches
+            const wikidataExtract = await wikidata.fetchProperties({
+                wikidataId,
+                language
+            });
+            return Object.assign(personality, { stats }, wikidataExtract);
         }
+
         return personality;
     }
 

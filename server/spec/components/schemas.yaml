@@ -70,6 +70,24 @@ components:
           type: array
           items:
             type: "string"
+    reference:
+      required:
+        - classification
+        - type
+        - link
+      properties:
+        link:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        classification:
+          type: string
+        claim:
+          type: string
+        claimReview:
+          type: string
     claimreview:
       required:
         - classification

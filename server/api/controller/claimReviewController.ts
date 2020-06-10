@@ -1,9 +1,9 @@
-const ClaimReviewRespository = require("../repository/claimReview");
+import ClaimReviewRepository from "../repository/claimReview";
 
 module.exports = class ClaimReviewController {
     listAll() {
         try {
-            return ClaimReviewRespository.listAll();
+            return ClaimReviewRepository.listAll();
         } catch (error) {
             return error;
         }
@@ -11,7 +11,7 @@ module.exports = class ClaimReviewController {
 
     create(body) {
         try {
-            return ClaimReviewRespository.create(body);
+            return ClaimReviewRepository.create(body);
         } catch (error) {
             return error;
         }
@@ -19,7 +19,7 @@ module.exports = class ClaimReviewController {
 
     getClaimReviewId(id) {
         try {
-            return ClaimReviewRespository.getById(id);
+            return ClaimReviewRepository.getById(id);
         } catch (error) {
             return error;
         }
@@ -27,7 +27,7 @@ module.exports = class ClaimReviewController {
 
     async update(id, body) {
         try {
-            return ClaimReviewRespository.update(id, body);
+            return ClaimReviewRepository.update(id, body);
         } catch (error) {
             return error;
         }
@@ -35,7 +35,7 @@ module.exports = class ClaimReviewController {
 
     async delete(id) {
         try {
-            await ClaimReviewRespository.delete(id);
+            await ClaimReviewRepository.delete(id);
             return { message: "Claim Review successfully deleted" };
         } catch (error) {
             return error;

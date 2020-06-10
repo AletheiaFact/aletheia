@@ -10,7 +10,7 @@ router.get("/:wikidataId", (req, res, next) => {
     const wikidata = new WikidataResolver();
 
     wikidata
-        .fetchProperties(req.params.wikidataId)
+        .fetchProperties({ ...req.params, ...req.query })
         .then(props => {
             // Check if personality already exists
             res.send({ ...props });

@@ -48,25 +48,29 @@ jobs:
 
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: gcloud auth configure-docker
+        
+      # Setting up recaptcha based on environment
+      - name: Set ReCaptcha
+        env:
+            RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SITEKEY }}
+        run: |
+            sed -i "s/RECAPTCHA_SECRET/$RECAPTCHA_SECRET/g" config.$ENVIRONMENT.yaml
 
       # Build the Docker image
       - name: Build
         run: |
-          docker build --build-arg API_URL=$API_URL --build-arg RECAPTCHA_SITEKEY=${{ secrets.RECAPTCHA_SITEKEY }} -t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" .
+          docker build --build-arg ENVIRONMENT=$ENVIRONMENT --build-arg API_URL=$API_URL --build-arg RECAPTCHA_SITEKEY=${{ secrets.RECAPTCHA_SITEKEY }} -t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" .
           docker tag "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
 
       # Push the Docker image to Google Container Registry
       - name: Publish
         run: |
           docker push $REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
-          docker push "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
+          if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest; fi
 
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
+          sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
           kubectl apply -f deployment.yml
-          if [[ $? -eq 1 ]]; then
-            kubectl set image deployment frontend frontend=$REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA --record -n ${ENVIRONMENT}; 
-            kubectl set image deployment backend backend=$REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA --record -n ${ENVIRONMENT}; 
-          fi

@@ -2,10 +2,11 @@ FROM node:12.13.1-alpine AS package
 
 ARG API_URL
 ARG RECAPTCHA_SITEKEY
+ARG ENVIRONMENT
 ENV PARCEL_WORKERS=1
 
 COPY ./.babelrc /app/.babelrc
-COPY ./config.example.yaml /app/config.yaml
+COPY config.$ENVIRONMENT.yaml /app/config.yaml
 COPY ./.eslintignore /app/.eslintignore
 COPY ./.eslintrc.yml /app/.eslintrc.yml
 COPY ./jest.config.js /app/jest.config.js

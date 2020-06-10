@@ -19,7 +19,6 @@ class Claim extends Component {
                 `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
             )
             .then(response => {
-                console.log(response.data);
                 const { content, title } = response.data;
                 this.setState({
                     title,

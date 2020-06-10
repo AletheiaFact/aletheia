@@ -1,17 +1,20 @@
 const axios = require("axios");
 
 module.exports = class WikidataResolver {
-    async fetchProperties(wikidataId) {
+    async fetchProperties(params) {
         const { data } = await axios.get("https://www.wikidata.org/w/api.php", {
             params: {
                 action: "wbgetentities",
-                ids: encodeURIComponent(wikidataId),
+                ids: encodeURIComponent(params.wikidataId),
                 format: "json",
                 formatversion: "2"
             }
         });
         const entities = data && data.entities;
-        return this.extractProperties(entities && entities[wikidataId]);
+        return this.extractProperties(
+            entities && entities[params.wikidataId],
+            params.language
+        );
     }
 
     async extractProperties(wikidata, lang = "en") {
@@ -19,6 +22,7 @@ module.exports = class WikidataResolver {
         if (!wikidata) {
             return {};
         }
+
         // Get label for the personality name
         wikidataProps.name =
             wikidata.labels &&

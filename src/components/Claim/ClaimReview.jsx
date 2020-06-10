@@ -149,6 +149,7 @@ class ClaimReviewForm extends Component {
                                 onChange={this.onChangeCaptcha}
                                 onExpired={this.onExpiredCaptcha}
                             /> */}
+                            <br/>
                             <Button
                                 type="primary"
                                 htmlType="Submit"

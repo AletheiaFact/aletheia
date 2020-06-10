@@ -2,10 +2,6 @@
 
 <p align="center">Plataforma de análise de discursos de personalidades públicas e combate a Fake News.</p>
 
-<p align="center">
-  <a href="https://lerna.js.org" target="_blank" rel="nofollow noopener"><img src="https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg" /></a>
-</p>
-
 ## Instalação
 
 - Fork this repo and clone it locally:

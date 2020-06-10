@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Layout } from "antd";
+import { Layout, Row } from "antd";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { withTranslation } from "react-i18next";
 import "./App.less";
 
 import ClaimCreate from "./components/Claim/ClaimCreate";
@@ -9,18 +10,21 @@ import PersonalityList from "./components/Personality/PersonalityList";
 import PersonalityView from "./components/Personality/PersonalityView";
 import PersonalityCreate from "./components/Personality/PersonalityCreate";
 import AletheiaHeader from "./components/Header/AletheiaHeader";
+import BackButton from "./components/BackButton";
 
 const { Footer, Content } = Layout;
 
 class App extends Component {
     render() {
+        const { t } = this.props;
         return (
-            <Layout>
-                <a href="/">
-                    <AletheiaHeader />
-                </a>
+            <Layout style={{ minHeight: "100vh" }}>
+                <AletheiaHeader />
                 <Content>
                     <Router>
+                        <Row style={{ padding: "0 30px", marginTop: "10px" }}>
+                            <BackButton />
+                        </Row>
                         <Switch>
                             <Route exact path="/" component={PersonalityList} />
                             <Route
@@ -52,11 +56,11 @@ class App extends Component {
                     </Router>
                 </Content>
                 <Footer style={{ textAlign: "center" }}>
-                    Aletheia ©2020 Created by Open Tesseract
+                    {t("footer:copyright")}
                 </Footer>
             </Layout>
         );
     }
 }
 
-export default App;
+export default withTranslation()(App);

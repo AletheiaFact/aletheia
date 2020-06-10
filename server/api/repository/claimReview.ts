@@ -8,7 +8,7 @@ const optionsToUpdate = {
 /**
  * @class ClaimReviewRepository
  */
-module.exports = class ClaimReviewRepository {
+export default class ClaimReviewRepository {
     static listAll() {
         return ClaimReview.find({}).lean();
     }
@@ -19,10 +19,9 @@ module.exports = class ClaimReviewRepository {
     }
 
     static getById(claimReviewId) {
-        return ClaimReview.findById(claimReviewId).populate(
-            "claims",
-            "_id title"
-        );
+        return ClaimReview.findById(claimReviewId)
+            .populate("claims", "_id title")
+            .populate("references", "_id link classification");
     }
 
     static async update(claimReviewId, claimReviewBody) {
@@ -45,4 +44,4 @@ module.exports = class ClaimReviewRepository {
     static delete(claimReviewId) {
         return ClaimReview.findByIdAndRemove(claimReviewId);
     }
-};
+}
