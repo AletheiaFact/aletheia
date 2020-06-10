@@ -1,4 +1,6 @@
+import util from "../../lib/util";
 const Personality = require("../model/personalityModel");
+
 const ClaimReview = require("../model/claimReviewModel");
 const WikidataResolver = require("../../lib/wikidataResolver");
 
@@ -76,17 +78,10 @@ module.exports = class PersonalityRepository {
         const personality = await Personality.findById(id);
         const reviews = await ClaimReview.aggregate([
             { $match: { personality: personality._id } },
-            { $group: { _id: "$classification", count: { $sum: 1 } } }
+            { $group: { _id: "$classification", count: { $sum: 1 } } },
+            { $sort: { count: -1 } }
         ]);
-        const total = reviews.reduce((agg, review) => {
-            agg += review.count;
-            return agg;
-        }, 0);
-        const result = reviews.map(review => {
-            const percentage = (review.count / total) * 100;
-            return { _id: review._id, percentage };
-        });
-        return { total, reviews: result };
+        return util.formatStats(reviews, true);
     }
 
     static async update(personalityId, personalityBody) {
