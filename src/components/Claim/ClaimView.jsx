@@ -5,6 +5,7 @@ import ClaimReviewForm from "./ClaimReview";
 import { Row, Col, Typography, Modal, message } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
+import ClaimMetrics from "./ClaimMetrics";
 
 const { Title } = Typography;
 
@@ -22,10 +23,12 @@ class Claim extends Component {
                 `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
             )
             .then(response => {
-                const { content, title } = response.data;
+                console.log(response.data);
+                const { content, title, stats } = response.data;
                 this.setState({
                     title,
                     body: content.object,
+                    stats,
                     highlight: {},
                     visible: false
                 });
@@ -88,6 +91,7 @@ class Claim extends Component {
     render() {
         if (this.state && this.state.body) {
             const body = this.state.body;
+            console.log(this.state.stats);
             const title = this.state.title;
             const visible = this.state.visible;
             const personality = this.state.personality;
@@ -126,6 +130,39 @@ class Claim extends Component {
                                     />
                                 ))}
                             </div>
+                        </Col>
+                    </Row>
+                    <Row style={{ background: "white" }}>
+                        <Col
+                            style={{
+                                width: "100%",
+                                color: "#262626",
+                                padding: "10px 0 25px 0px"
+                            }}
+                            offset={2}
+                            span={18}
+                        >
+
+                            <div
+                                style={{
+                                    textAlign: "center",
+                                    marginBottom: "5px"
+                                }}
+                            >
+                                <Title level={4}>Metrics</Title>
+                                <span>
+                                    This speech contains{" "}
+                                    <span style={{ fontWeight: "bold" }}>
+                                        58 claims
+                                    </span>
+                                    , of which:
+                                </span>
+                            </div>
+                            <ClaimMetrics
+                                stats={this.state.stats}
+                                countInTitle={true}
+                                type="line"
+                            />
                         </Col>
                     </Row>
                 </>

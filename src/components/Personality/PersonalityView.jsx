@@ -9,6 +9,7 @@ import ReviewStats from "../ReviewStats";
 import PersonalityCard from "./PersonalityCard";
 import AffixButton from "../Form/AffixButton";
 import ClaimCard from "../Claim/ClaimCard";
+import ClaimMetrics from "../Claim/ClaimMetrics";
 
 class PersonalityView extends Component {
     constructor(props) {
@@ -63,13 +64,53 @@ class PersonalityView extends Component {
             const imageStyle = {
                 backgroundImage: `url(${personality.image})`
             };
-            const { reviews } = personality.stats;
             return (
                 <>
                     <PersonalityCard personality={personality} />
 
                     <Row style={{ padding: "5px 30px" }}>
-                        <ReviewStats dataSource={reviews} />
+                        <Row
+                            style={{
+                                width: "100%",
+                                flexDirection: "column",
+                                textAlign: "center",
+                                fontWeight: "bold",
+                                color: "#262626",
+                                padding: "10px 0 25px 0px"
+                            }}
+                        >
+                            <span>
+                                <span
+                                    style={{
+                                        color: "#70b0d6",
+                                        fontSize: "20px"
+                                    }}
+                                >
+                                    {personality.stats.total}
+                                </span>{" "}
+                                Claims reviewed
+                            </span>
+                            <small>
+                                from{" "}
+                                <span style={{ color: "#70b0d6" }}>
+                                    {personality.claims.length}
+                                </span>{" "}
+                                speeches
+                            </small>
+                        </Row>
+                        <Row
+                            style={{
+                                justifyContent: "space-between",
+                                width: "100%"
+                            }}
+                        >
+                            <ClaimMetrics
+                                stats={personality.stats}
+                                type="circle"
+                                format="count"
+                                strokeWidth="16"
+                            />
+                        </Row>
                     </Row>
                     <br />
                     <AffixButton
