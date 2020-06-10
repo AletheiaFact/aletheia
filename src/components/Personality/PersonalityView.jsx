@@ -5,11 +5,10 @@ import { Spin, Row } from "antd";
 import { withTranslation } from "react-i18next";
 
 import "./PersonalityView.css";
-import ReviewStats from "../ReviewStats";
 import PersonalityCard from "./PersonalityCard";
 import AffixButton from "../Form/AffixButton";
 import ClaimCard from "../Claim/ClaimCard";
-import ClaimMetrics from "../Claim/ClaimMetrics";
+import ReviewStats from "../ReviewStats";
 
 class PersonalityView extends Component {
     constructor(props) {
@@ -104,7 +103,7 @@ class PersonalityView extends Component {
                                 width: "100%"
                             }}
                         >
-                            <ClaimMetrics
+                            <ReviewStats
                                 stats={personality.stats}
                                 type="circle"
                                 format="count"
