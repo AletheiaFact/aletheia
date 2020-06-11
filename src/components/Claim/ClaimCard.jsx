@@ -5,7 +5,7 @@ function ClaimCard(props) {
     return (
         <Col span={24}>
             <Comment
-                style={{ margin: "0px 20px" }}
+                style={{ margin: "0 20px" }}
                 key={props.claimIndex}
                 author={props.personality.name}
                 avatar={
