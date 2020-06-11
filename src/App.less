@@ -1,34 +1,42 @@
-.nav-bar{
+@import './theme/_variables';
+@import "./theme/_forms";
+
+section.ant-layout {
+  background-color: #fff;
+}
+.nav-bar {
   padding: 0 20px;
   border-bottom: solid 1px #e8e8e8;
   overflow: auto;
   box-shadow: 0 0 30px #f3f1f1;
 }
-.logo{
+.logo {
   width: 150px;
   float: left;
 }
-.logo a{
+.logo a {
   display: inline-block;
   font-size: 20px;
   padding: 19px 20px;
   text-transform: capitalize;
 }
 
-@media(max-width: 767px){
-  .barsMenu{
+@media (max-width: 767px) {
+  .barsMenu {
     display: inline-block;
   }
-  .leftMenu,.rightMenu{
+  .leftMenu,
+  .rightMenu {
     display: none;
   }
-  .logo a{
+  .logo a {
     margin-left: -20px;
   }
-  .menuCon .ant-menu-item, .menuCon .ant-menu-submenu-title{
+  .menuCon .ant-menu-item,
+  .menuCon .ant-menu-submenu-title {
     padding: 1px 20px;
   }
-  .logo a{
+  .logo a {
     padding: 10px 20px;
   }
 }

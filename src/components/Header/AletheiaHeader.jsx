@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
-import "./AletheiaHeader.css";
-import { Row, Col } from "antd";
 import { MenuOutlined, UserOutlined } from "@ant-design/icons";
-import InputSearch from "../Form/InputSearch";
-import api from "../../api/personality";
+import { Col, Row } from "antd";
 import { withTranslation } from "react-i18next";
+import { connect } from "react-redux";
+
+import api from "../../api/personality";
+import InputSearch from "../Form/InputSearch";
+import "./AletheiaHeader.less";
 
 class AletheiaHeader extends Component {
     handleInputSearch(name) {
@@ -23,12 +24,12 @@ class AletheiaHeader extends Component {
             <header className="aletheia-header">
                 <nav>
                     <Row>
-                        <Col span={24}>
-                            <span className="aletheia-logo">Aletheia</span>
+                        <Col flex={1}>
+                            <p className="aletheia-logo">Aletheia</p>
                         </Col>
                     </Row>
                     <Row>
-                        <Col offset={3} span={2}>
+                        <Col>
                             <MenuOutlined
                                 style={{
                                     fontSize: "16px",
@@ -37,13 +38,13 @@ class AletheiaHeader extends Component {
                                 }}
                             />
                         </Col>
-                        <Col span={14}>
+                        <Col flex={1}>
                             <InputSearch
                                 placeholder={t("header:search_personality")}
                                 callback={this.handleInputSearch.bind(this)}
                             />
                         </Col>
-                        <Col span={2}>
+                        <Col>
                             <UserOutlined
                                 style={{
                                     fontSize: "16px",
