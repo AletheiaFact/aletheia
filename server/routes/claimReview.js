@@ -19,22 +19,25 @@ router.post("/", async (req, res, next) => {
     // config.yaml in the production environment with proper secrets that can't
     // be leaked
 
-    // const recaptchaCheck = await captcha.checkResponse(
-    //     app.config.recaptcha_secret,
-    //     req.body && req.body.recaptcha
-    // );
+    const recaptchaCheck = await captcha.checkResponse(
+        app.config.recaptcha_secret,
+        req.body && req.body.recaptcha
+    );
 
-    // if (!recaptchaCheck.success) {
-    //     // next(
-    //     //     Requester.internalError(res, "Error with your reCaptcha response")
-    //     // );
-    // }
-    claimReview
-        .create(req.body)
-        .then(result => res.send(result))
-        .catch(error => {
-            next(Requester.internalError(res, error.message));
-        });
+    if (!recaptchaCheck.success) {
+        app.logger.log("error/recaptcha", recaptchaCheck);
+        next(
+            Requester.internalError(res, "Error with your reCaptcha response")
+        );
+    } else {
+        claimReview
+            .create(req.body)
+            .then(result => res.send(result))
+            .catch(error => {
+                app.logger.log("error/create", error);
+                next(Requester.internalError(res, error.message));
+            });
+    }
 });
 
 /**
@@ -46,6 +49,7 @@ router.get("/:id", (req, res, next) => {
         .getClaimReviewId(req.params.id)
         .then(result => res.send(result))
         .catch(error => {
+            app.logger.log("error/update", error);
             next(Requester.internalError(res, error.message));
         });
 });
@@ -59,6 +63,7 @@ router.delete("/:id", (req, res, next) => {
         .delete(req.params.id)
         .then(result => res.send(result))
         .catch(error => {
+            app.logger.log("error/delete", error);
             next(Requester.internalError(res, error.message));
         });
 });
