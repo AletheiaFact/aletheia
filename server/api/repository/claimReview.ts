@@ -21,7 +21,7 @@ export default class ClaimReviewRepository {
     static getById(claimReviewId) {
         return ClaimReview.findById(claimReviewId)
             .populate("claims", "_id title")
-            .populate("references", "_id link classification");
+            .populate("sources", "_id link classification");
     }
 
     static async update(claimReviewId, claimReviewBody) {

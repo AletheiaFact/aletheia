@@ -20,10 +20,10 @@ const claimSchema = new mongoose.Schema({
             ref: "ClaimReview"
         }
     ],
-    references: [
+    sources: [
         {
             type: mongoose.Schema.ObjectId,
-            ref: "Reference"
+            ref: "Source"
         }
     ]
 });

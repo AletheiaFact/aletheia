@@ -16,7 +16,7 @@ components:
         type: string
       description: |
         Claim's ID
-    referenceId:
+    sourceId:
       in: path
       name: id
       required: true

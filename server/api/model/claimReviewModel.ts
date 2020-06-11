@@ -41,10 +41,10 @@ const claimReviewSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    references: [
+    sources: [
         {
             type: mongoose.Schema.ObjectId,
-            ref: "Reference"
+            ref: "Source"
         }
     ]
     // TODO: user_id
