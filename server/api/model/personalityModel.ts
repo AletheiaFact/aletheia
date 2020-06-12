@@ -11,7 +11,8 @@ const personalitySchema = new Schema({
         required: true
     },
     wikidata: {
-        type: String
+        type: String,
+        index: { unique: true, sparse: true }
     },
     claims: [
         {
