@@ -4,7 +4,7 @@ import axios from "axios";
 import { Spin, Row } from "antd";
 import { withTranslation } from "react-i18next";
 
-import "./PersonalityView.css";
+import "./PersonalityView.less";
 import PersonalityCard from "./PersonalityCard";
 import AffixButton from "../Form/AffixButton";
 import ClaimCard from "../Claim/ClaimCard";

@@ -1,6 +1,8 @@
-import { Avatar, Button, Col, Comment, Row, Tooltip } from "antd";
+import { Avatar, Button, Col, Comment, Row, Tooltip, Typography } from "antd";
 import React from "react";
+import "./ClaimCard.less";
 
+const { Paragraph } = Typography;
 function ClaimCard(props) {
     return (
         <Col span={24}>
@@ -16,9 +18,13 @@ function ClaimCard(props) {
                 }
                 content={
                     <>
-                        <Row>
+                        <Row className="claim-summary">
                             <Col>
-                                <p>{props.claim.title}</p>
+                                <Paragraph
+                                    ellipsis={{ rows: 4, expandable: false }}
+                                >
+                                    "{props.claim.content || props.claim.title}"
+                                </Paragraph>
                             </Col>
                         </Row>
                         <Row>
