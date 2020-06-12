@@ -1,5 +1,6 @@
 import util from "../../lib/util";
 const Personality = require("../model/personalityModel");
+
 const ClaimReview = require("../model/claimReviewModel");
 const WikidataResolver = require("../../lib/wikidataResolver");
 

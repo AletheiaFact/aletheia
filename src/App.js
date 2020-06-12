@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Layout, Row } from "antd";
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import "./App.less";
 
