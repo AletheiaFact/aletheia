@@ -35,6 +35,12 @@ describe("parse()", () => {
         assert.ok(Array.isArray(paragraphs));
         assert.deepEqual(paragraphs.length, 46);
     });
+
+    it("parsed object conforms to schema", async () => {
+        const claimText = "<p>Nulla facilisi.</p>\n<p><br></p>\n<p>Ut leo.</p>";
+        const parseOutput = parser.parse(claimText);
+        assert.deepEqual(Object.keys(parseOutput), ["object", "text"]);
+    });
 });
 
 describe("extractSentence()", () => {

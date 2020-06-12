@@ -14,6 +14,7 @@ class Claim extends Component {
         const self = this;
         self.getClaim();
         self.getPersonality();
+        // @TODO i18n
         message.info("Clique em uma frase para iniciar uma revisão");
     }
 
