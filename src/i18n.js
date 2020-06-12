@@ -19,6 +19,15 @@ const resources = {
         footer: {
             copyright: "Aletheia ©2020 Created by Open Tesseract"
         },
+        personalityCreateForm: {
+            errorMessage: "Error while saving personality",
+            successMessage: "profile created with success",
+            errorNameRequired: "Please insert a name",
+            errorDescriptionRequired: "Please insert a description",
+            description: "Description",
+            name: "Nome",
+            saveButton: "Save personality"
+        },
         claimReviewForm: {
             titleEmpty: "Choose a sentence to review",
             title: "Review the sentence",
@@ -47,6 +56,15 @@ const resources = {
         },
         footer: {
             copyright: "Aletheia ©2020 Criado por Open Tesseract"
+        },
+        personalityCreateForm: {
+            errorMessage: "Erro ao salvar personalidade",
+            successMessage: "perfil criado com sucesso",
+            errorNameRequired: "Por favor, insira um nome",
+            errorDescriptionRequired: "Por favor, insira uma descrição",
+            description: "Descrição",
+            name: "Nome",
+            saveButton: "Salvar personalidade"
         },
         claimReviewForm: {
             titleEmpty: "Escolha uma frase para revisar",

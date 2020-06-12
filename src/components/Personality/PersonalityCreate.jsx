@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Input, Form, Button, Row, Col, message } from "antd";
+import { Input, Form, Button, Row, Col, message, Avatar } from "antd";
 
 import ProfilePic from "../Personality/ProfilePic";
 import WikidataTypeAhead from "../Personality/WikidataTypeAhead";
+import { withTranslation } from "react-i18next";
 
 const { TextArea } = Input;
 
@@ -20,7 +21,6 @@ class PersonalityCreate extends Component {
     }
 
     updatePersonalityState(state) {
-        console.log(state)
         this.setState({ ...state }, () => {
             const { personality } = this.state;
             this.formRef.current.setFieldsValue({
@@ -48,7 +48,9 @@ class PersonalityCreate extends Component {
                     .then(response => {
                         const { name, _id } = response.data;
                         message.success(
-                            `"${name}" profile created with success`
+                            `"${name}" ${this.props.t(
+                                "personalityCreateForm:successMessage"
+                            )}`
                         );
 
                         // Redirect to personality list in case _id is not present
@@ -65,7 +67,9 @@ class PersonalityCreate extends Component {
                         message.error(
                             data && data.message
                                 ? data.message
-                                : "Error while saving personality"
+                                : this.props.t(
+                                      "personalityCreateForm:errorMessage"
+                                  )
                         );
                     });
             })
@@ -76,76 +80,79 @@ class PersonalityCreate extends Component {
 
     render() {
         const { personality } = this.state;
+        const { t } = this.props;
         return (
             <>
-                <Row gutter={[32, 0]}>
-                    <Col span={6}>
-                        <ProfilePic image={personality.image} />
-                    </Col>
-                    <Col span={18}>
-                        <Form
-                            ref={this.formRef}
-                            id="createPersonality"
-                            onFinish={this.savePersonality}
+                <Row style={{ padding: "10px 30px", marginTop: "10px" }}>
+                    <Avatar size={120} src={personality.image} />
+                </Row>
+                <Row style={{ padding: "10px 30px", marginTop: "10px" }}>
+                    <Form
+                        ref={this.formRef}
+                        id="createPersonality"
+                        onFinish={this.savePersonality}
+                    >
+                        <Form.Item
+                            name="name"
+                            label={t("personalityCreateForm:name")}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: t(
+                                        "personalityCreateForm:errorNameRequired"
+                                    )
+                                }
+                            ]}
+                            wrapperCol={{ sm: 24 }}
+                            style={{
+                                width: "100%"
+                            }}
                         >
-                            <Form.Item
-                                name="name"
-                                label="Name"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please insert a name"
-                                    }
-                                ]}
-                                wrapperCol={{ sm: 24 }}
+                            <WikidataTypeAhead
                                 style={{
                                     width: "100%"
                                 }}
-                            >
-                                <WikidataTypeAhead
-                                    style={{
-                                        width: "100%"
-                                    }}
-                                    callback={this.updatePersonalityState.bind(
-                                        this
-                                    )}
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name="description"
-                                label="Description"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please insert a description"
-                                    }
-                                ]}
-                                wrapperCol={{ sm: 24 }}
+                                callback={this.updatePersonalityState.bind(
+                                    this
+                                )}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            name="description"
+                            label={t("personalityCreateForm:description")}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please insert a description"
+                                }
+                            ]}
+                            wrapperCol={{ sm: 24 }}
+                            style={{
+                                width: "100%"
+                            }}
+                        >
+                            <TextArea
                                 style={{
                                     width: "100%"
                                 }}
-                            >
-                                <TextArea
-                                    style={{
-                                        width: "100%"
-                                    }}
-                                    placeholder="Description"
-                                    rows={4}
-                                    value={this.state.personality.description}
-                                    disabled={this.state.inputsDisabled}
-                                />
-                            </Form.Item>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Save Personality
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                    </Col>
+                                placeholder={t(
+                                    "personalityCreateForm:description"
+                                )}
+                                rows={4}
+                                value={this.state.personality.description}
+                                disabled={this.state.inputsDisabled}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                {t("personalityCreateForm:saveButton")}
+                            </Button>
+                        </Form.Item>
+                    </Form>
                 </Row>
             </>
         );
     }
 }
 
-export default PersonalityCreate;
+export default withTranslation()(PersonalityCreate);
