@@ -20,6 +20,7 @@ class PersonalityCreate extends Component {
     }
 
     updatePersonalityState(state) {
+        console.log(state)
         this.setState({ ...state }, () => {
             const { personality } = this.state;
             this.formRef.current.setFieldsValue({

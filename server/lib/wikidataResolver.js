@@ -30,17 +30,23 @@ module.exports = class WikidataResolver {
             wikidata.labels[lang].value;
 
         // Get description for the personality description
-        wikidataProps.description =
-            wikidata.descriptions &&
-            wikidata.descriptions[lang] &&
-            wikidata.descriptions[lang].value;
-
+        wikidataProps.description = this.extractDescription(
+            wikidata.descriptions,
+            lang
+        );
         // Extract image if it exists
         if (wikidata.claims.P18) {
             const fileName = wikidata.claims.P18[0].mainsnak.datavalue.value;
             wikidataProps.image = await this.getCommonsThumbURL(fileName);
         }
         return wikidataProps;
+    }
+    extractDescription(descriptions, lang) {
+        if (!descriptions) {
+            return;
+        }
+        const langFallback = descriptions && descriptions[lang] ? lang : "en";
+        return descriptions[langFallback] && descriptions[langFallback].value;
     }
 
     async getCommonsThumbURL(imageTitle) {
