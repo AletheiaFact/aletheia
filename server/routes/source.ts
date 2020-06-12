@@ -28,8 +28,10 @@ router.post("/", (req, res, next) => {
 router.get("/:id", (req, res, next) => {
     const source = new SourceController();
     source
-        .getsourceId(req.params.id)
-        .then(result => res.send(result))
+        .getSourceId(req.params.id)
+        .then(result => {
+            res.send(result);
+        })
         .catch(error => {
             next(Requester.internalError(res, error.message, app.logger));
         });

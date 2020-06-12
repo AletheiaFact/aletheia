@@ -2,7 +2,7 @@ import axios from "axios";
 import _ from "underscore";
 import React, { Component } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Typography, Form, Button, message, Select } from "antd";
+import { Typography, Form, Button, message, Select, Input } from "antd";
 import ClaimReviewSelect from "../Form/ClaimReviewSelect";
 import { withTranslation } from "react-i18next";
 
@@ -18,6 +18,7 @@ class ClaimReviewForm extends Component {
             sentence_hash: "",
             sentence_content: "",
             recaptcha: "",
+            source: "",
             disableSubmit: true
         };
         this.onSubmit = this.onSubmit.bind(this);
@@ -28,9 +29,7 @@ class ClaimReviewForm extends Component {
 
     onExpiredCaptcha() {
         return new Promise(resolve => {
-            console.log("expired captcha");
             this.setState({ disableSubmit: true });
-
             resolve();
         });
     }
@@ -65,20 +64,22 @@ class ClaimReviewForm extends Component {
                 axios
                     .post(`${process.env.API_URL}/claimreview`, this.state)
                     .then(response => {
-                        message.success("Revisão concluída!");
+                        message.success(
+                            this.props.t("claimReviewForm:successMessage")
+                        );
                         this.props.handleOk();
                     })
                     .catch(err => {
                         const response = err && err.response;
                         if (!response) {
-                            // TODO: Track unknow errors
                             console.log(err);
                         }
+                        // TODO: Track unknow errors
                         const { data } = response;
                         message.error(
                             data && data.message
                                 ? data.message
-                                : "Erro ao enviar revisão"
+                                : this.props.t("claimReviewForm:errorMessage")
                         );
                     });
             }
@@ -106,25 +107,45 @@ class ClaimReviewForm extends Component {
                 <>
                     <Title level={2}> {t("claimReviewForm:title")} </Title>
                     <Form onFinish={this.onSubmit}>
-                        <Form.Item>
+                        <Form.Item
+                            name="classification"
+                            label={t("claimReviewForm:selectLabel")}
+                        >
                             <ClaimReviewSelect
                                 type="select"
                                 onChange={this.onChangeClassification}
                                 defaultValue=""
                             />
+                        </Form.Item>
+                        <Form.Item
+                            name="source"
+                            label={t("claimReviewForm:sourceLabel")}
+                        >
+                            <Input
+                                value={this.state.source || ""}
+                                onChange={e =>
+                                    this.setState({ source: e.target.value })
+                                }
+                                placeholder={t(
+                                    "claimReviewForm:sourcePlaceholder"
+                                )}
+                            />
+                        </Form.Item>
+                        <Form.Item>
                             <ReCAPTCHA
                                 ref={recaptchaRef}
                                 sitekey={process.env.RECAPTCHA_SITEKEY}
                                 onChange={this.onChangeCaptcha}
                                 onExpired={this.onExpiredCaptcha}
                             />
-                            <br />
+                        </Form.Item>
+                        <Form.Item>
                             <Button
                                 type="primary"
                                 htmlType="Submit"
                                 disabled={this.state.disableSubmit}
                             >
-                                Submit
+                                {t("claimReviewForm:addReviewButton")}
                             </Button>
                         </Form.Item>
                     </Form>

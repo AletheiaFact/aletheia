@@ -22,6 +22,10 @@ const resources = {
         claimReviewForm: {
             titleEmpty: "Choose a sentence to review",
             title: "Review the sentence",
+            selectLabel: "Review this claim",
+            sourceLabel: "Provide a link to a reliable source",
+            sourcePlaceholder: "Paste URL",
+            addReviewButton: "Add review",
             placeholder: "Choose a classification",
             "not-fact": "Not fact",
             true: "True",
@@ -31,7 +35,9 @@ const resources = {
             false: "False",
             unsustainable: "Unsustainable",
             exaggerated: "Exaggerated",
-            unverifiable: "Unverifiable"
+            unverifiable: "Unverifiable",
+            errorMessage: "Error while sending review",
+            successMessage: "Review succeeded"
         }
     },
     pt: {
@@ -51,6 +57,10 @@ const resources = {
         claimReviewForm: {
             titleEmpty: "Escolha uma frase para revisar",
             title: "Classifique a frase",
+            selectLabel: "Revise essa frase",
+            sourceLabel: "Forneça um link de uma fonte confiável",
+            sourcePlaceholder: "Cole uma URL",
+            addReviewButton: "Adicione revisão",
             placeholder: "Selecione uma classificação",
             "not-fact": "Não é fato",
             true: "Verdadeiro",
@@ -60,7 +70,9 @@ const resources = {
             false: "Falso",
             unsustainable: "Insustentável",
             exaggerated: "Exagerado",
-            unverifiable: "Inverificável"
+            unverifiable: "Inverificável",
+            errorMessage: "Erro ao enviar revisão",
+            successMessage: "Revisão concluída"
         }
     }
 };

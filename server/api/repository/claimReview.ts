@@ -1,5 +1,5 @@
 const ClaimReview = require("../model/claimReviewModel");
-const Claim = require("../model/claimReviewModel");
+const Source = require("../model/sourceModel");
 
 const optionsToUpdate = {
     new: true,
@@ -14,26 +14,19 @@ export default class ClaimReviewRepository {
         return ClaimReview.find({}).lean();
     }
 
-    static create(claimReview) {
-        return new Promise((resolve, reject) => {
-            const newClaimReview = new ClaimReview(claimReview);
-            newClaimReview.save((err, claimReview) => {
-                if (err) {
-                    reject(err);
-                }
-                Claim.findOneAndUpdate(
-                    { _id: claimReview.claim },
-                    { $push: { claimReviews: claimReview } },
-                    { new: true },
-                    err => {
-                        if (err) {
-                            reject(err);
-                        }
-                    }
-                );
+    static async create(claimReview) {
+        const newClaimReview = new ClaimReview(claimReview);
+        if (claimReview.source) {
+            const source = new Source({
+                link: claimReview.source,
+                targetId: newClaimReview.id,
+                targetModel: "ClaimReview"
             });
-            resolve(newClaimReview);
-        });
+            await source.save();
+            newClaimReview.sources = [source];
+        }
+
+        return newClaimReview.save();
     }
 
     static getById(claimReviewId) {
