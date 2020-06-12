@@ -14,6 +14,7 @@ class Claim extends Component {
         const self = this;
         self.getClaim();
         self.getPersonality();
+        // @TODO i18n
         message.info("Clique em uma frase para iniciar uma revisão");
     }
 
@@ -23,7 +24,6 @@ class Claim extends Component {
                 `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
             )
             .then(response => {
-                console.log(response.data);
                 const { content, title, stats } = response.data;
                 this.setState({
                     title,
@@ -91,7 +91,6 @@ class Claim extends Component {
     render() {
         if (this.state && this.state.body) {
             const body = this.state.body;
-            console.log(this.state.stats);
             const title = this.state.title;
             const visible = this.state.visible;
             const personality = this.state.personality;
