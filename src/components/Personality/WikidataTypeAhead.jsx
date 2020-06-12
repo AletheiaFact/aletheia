@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Select } from "antd";
+import { AutoComplete } from "antd";
 import { withTranslation } from "react-i18next";
 
-const { Option } = Select;
+const { Option } = AutoComplete;
 class WikdiataTypeAhead extends Component {
     constructor(props) {
         super(props);
@@ -35,7 +35,7 @@ class WikdiataTypeAhead extends Component {
                 const children =
                     search &&
                     search.map(option => (
-                        <Option key={option.id}>
+                        <Option key={option.id} value={`${option.label} - ${option.id}`}>
                             <span>{option.label}</span>&nbsp;
                             <small>{option.description}</small>
                         </Option>
@@ -112,7 +112,7 @@ class WikdiataTypeAhead extends Component {
 
     render() {
         return (
-            <Select
+            <AutoComplete
                 showSearch
                 autoFocus={true}
                 backfill={false}
@@ -124,7 +124,7 @@ class WikdiataTypeAhead extends Component {
                 placeholder={this.props.placeholder || ""}
             >
                 {this.state.children}
-            </Select>
+            </AutoComplete>
         );
     }
 }
