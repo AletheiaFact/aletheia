@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import axios from "axios";
 import { Input, Form, Button, Row, Col, message, Avatar } from "antd";
 
-import ProfilePic from "../Personality/ProfilePic";
 import WikidataTypeAhead from "../Personality/WikidataTypeAhead";
 import { withTranslation } from "react-i18next";
 
