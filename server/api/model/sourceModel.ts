@@ -10,10 +10,13 @@ const sourceSchema = new mongoose.Schema({
     },
     classification: {
         type: String,
-        required: true,
         validate: {
             validator: v => {
-                return ["reliable", "unreliable", "fake"].indexOf(v) !== -1;
+                return (
+                    ["unclassified", "reliable", "unreliable", "fake"].indexOf(
+                        v
+                    ) !== -1
+                );
             }
         },
         message: tag => `${tag} is not a valid classification.`
