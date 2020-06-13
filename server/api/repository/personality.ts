@@ -31,8 +31,10 @@ module.exports = class PersonalityRepository {
     }
 
     static create(personality) {
-        const newPersonality = new Personality(personality);
-        return newPersonality.save();
+        try {
+            const newPersonality = new Personality(personality);
+            return newPersonality.save();
+        } catch (err) {}
     }
 
     static async getById(personalityId, language = "en") {
