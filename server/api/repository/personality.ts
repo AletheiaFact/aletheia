@@ -1,4 +1,6 @@
+import util from "../../lib/util";
 const Personality = require("../model/personalityModel");
+
 const ClaimReview = require("../model/claimReviewModel");
 const WikidataResolver = require("../../lib/wikidataResolver");
 
@@ -36,57 +38,36 @@ module.exports = class PersonalityRepository {
     static async getById(personalityId, language = "en") {
         const personality = await Personality.findById(personalityId).populate({
             path: "claims",
-            select: "_id title"
+            select: "_id title content"
         });
         return await this.postProcess(personality.toObject(), language);
     }
 
     private static async postProcess(personality, language: string = "en") {
         if (personality) {
-            const stats = await this.getReviewStats(personality._id);
-            const wikidataId = personality.wikidata;
             // TODO: allow wikdiata resolver to fetch in batches
             const wikidataExtract = await wikidata.fetchProperties({
-                wikidataId,
+                wikidataId: personality.wikidata,
                 language
             });
-            return Object.assign(personality, { stats }, wikidataExtract);
+            return Object.assign(personality, {
+                stats: await this.getReviewStats(personality._id),
+                ...wikidataExtract,
+                claims: this.extractClaimWithTextSummary(personality.claims)
+            });
         }
 
         return personality;
-    }
-
-    static async getReviewStatsByClaims(id) {
-        const personality = await Personality.findById(id);
-        return Promise.all(
-            personality.claims.map(async claimId => {
-                const reviews = await ClaimReview.aggregate([
-                    { $match: { claim: claimId } },
-                    { $group: { _id: "$classification", count: { $sum: 1 } } }
-                ]);
-
-                return { claimId, reviews };
-            })
-        ).then(result => {
-            return result;
-        });
     }
 
     static async getReviewStats(id) {
         const personality = await Personality.findById(id);
         const reviews = await ClaimReview.aggregate([
             { $match: { personality: personality._id } },
-            { $group: { _id: "$classification", count: { $sum: 1 } } }
+            { $group: { _id: "$classification", count: { $sum: 1 } } },
+            { $sort: { count: -1 } }
         ]);
-        const total = reviews.reduce((agg, review) => {
-            agg += review.count;
-            return agg;
-        }, 0);
-        const result = reviews.map(review => {
-            const percentage = (review.count / total) * 100;
-            return { _id: review._id, percentage };
-        });
-        return { total, reviews: result };
+        return util.formatStats(reviews, true);
     }
 
     static async update(personalityId, personalityBody) {
@@ -112,5 +93,11 @@ module.exports = class PersonalityRepository {
 
     static count(query) {
         return Personality.countDocuments().where(query);
+    }
+
+    private static extractClaimWithTextSummary(claims: any) {
+        return claims.map(claim => {
+            return { ...claim, content: claim.content.text };
+        });
     }
 };

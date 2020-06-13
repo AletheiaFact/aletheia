@@ -3,6 +3,9 @@ import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
 import ClaimReviewForm from "./ClaimReview";
 import { Row, Col, Typography, Modal, message } from "antd";
+import PersonalityCard from "../Personality/PersonalityCard";
+import { withTranslation } from "react-i18next";
+import ReviewStats from "../ReviewStats";
 
 const { Title } = Typography;
 
@@ -10,6 +13,8 @@ class Claim extends Component {
     componentDidMount() {
         const self = this;
         self.getClaim();
+        self.getPersonality();
+        // @TODO i18n
         message.info("Clique em uma frase para iniciar uma revisão");
     }
 
@@ -19,16 +24,36 @@ class Claim extends Component {
                 `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
             )
             .then(response => {
-                const { content, title } = response.data;
+                const { content, title, stats } = response.data;
                 this.setState({
                     title,
                     body: content.object,
+                    stats,
                     highlight: {},
                     visible: false
                 });
             })
             .catch(() => {
                 console.log("Error while fetching claim");
+            });
+    }
+
+    getPersonality() {
+        axios
+            .get(
+                `${process.env.API_URL}/personality/${this.props.match.params.id}`,
+                {
+                    params: {
+                        language: this.props.i18n.languages[0]
+                    }
+                }
+            )
+            .then(response => {
+                const personality = response.data;
+                this.setState({ personality });
+            })
+            .catch(() => {
+                console.log("Error while fetching Personality");
             });
     }
 
@@ -50,14 +75,12 @@ class Claim extends Component {
     };
 
     handleOk = e => {
-        console.log(e);
         this.setState({
             visible: false
         });
     };
 
     handleCancel = e => {
-        console.log(e);
         this.setState({
             visible: false
         });
@@ -68,6 +91,7 @@ class Claim extends Component {
             const body = this.state.body;
             const title = this.state.title;
             const visible = this.state.visible;
+            const personality = this.state.personality;
 
             return (
                 <>
@@ -81,6 +105,10 @@ class Claim extends Component {
                             highlight={this.state.highlight}
                         />
                     </Modal>
+                    {personality && (
+                        <PersonalityCard personality={personality} />
+                    )}
+
                     <Row style={{ marginTop: "20px" }}>
                         <Col offset={2} span={18}>
                             <Title level={4}>{title}</Title>
@@ -101,6 +129,39 @@ class Claim extends Component {
                             </div>
                         </Col>
                     </Row>
+                    <Row style={{ background: "white" }}>
+                        <Col
+                            style={{
+                                width: "100%",
+                                color: "#262626",
+                                padding: "10px 0 25px 0px"
+                            }}
+                            offset={2}
+                            span={18}
+                        >
+
+                            <div
+                                style={{
+                                    textAlign: "center",
+                                    marginBottom: "5px"
+                                }}
+                            >
+                                <Title level={4}>Metrics</Title>
+                                <span>
+                                    This speech contains{" "}
+                                    <span style={{ fontWeight: "bold" }}>
+                                        58 claims
+                                    </span>
+                                    , of which:
+                                </span>
+                            </div>
+                            <ReviewStats
+                                stats={this.state.stats}
+                                countInTitle={true}
+                                type="line"
+                            />
+                        </Col>
+                    </Row>
                 </>
             );
         } else {
@@ -109,4 +170,4 @@ class Claim extends Component {
     }
 }
 
-export default Claim;
+export default withTranslation()(Claim);

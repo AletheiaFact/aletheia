@@ -1,66 +1,60 @@
-import React, { Component, useRef } from "react";
-
-import { Statistic, Tooltip, Col } from "antd";
-
-import {
-    CheckCircleFilled,
-    CloseCircleFilled,
-    ExclamationCircleFilled,
-    QuestionCircleFilled,
-    MinusCircleFilled,
-    MonitorOutlined,
-    DotChartOutlined,
-    CloseSquareFilled,
-    SoundOutlined
-} from "@ant-design/icons";
+import React, { Component } from "react";
+import { Progress } from "antd";
+import { withTranslation } from "react-i18next";
 
 class ReviewStats extends Component {
-    getIcon(reviewId) {
+    getStyle(reviewId) {
+        const defaultStyle = {
+            strokeWidth: this.props.strokeWidth || 18,
+            width: this.props.width || 80,
+            strokeLinecap: this.props.type === "circle" ? "square" : "round",
+            trailColor: "#cccccc"
+        };
         switch (reviewId) {
             case "not-fact":
                 return {
-                    valueStyle: { color: "#dddddd" },
-                    prefix: <MinusCircleFilled />
+                    ...defaultStyle,
+                    strokeColor: "#111"
                 };
             case "true":
                 return {
-                    valueStyle: { color: "#60b546" },
-                    prefix: <CheckCircleFilled />
+                    ...defaultStyle,
+                    strokeColor: "#4dc24d"
                 };
             case "true-but":
                 return {
-                    valueStyle: { color: "#9dbaec" },
-                    prefix: <MonitorOutlined />
+                    ...defaultStyle,
+                    strokeColor: "#57e173"
                 };
             case "arguable":
                 return {
-                    valueStyle: { color: "#4123" },
-                    prefix: <DotChartOutlined />
+                    ...defaultStyle,
+                    strokeColor: "#d8d12f"
                 };
             case "misleading":
                 return {
-                    valueStyle: { color: "#febb39" },
-                    prefix: <ExclamationCircleFilled />
+                    ...defaultStyle,
+                    strokeColor: "#d35730"
                 };
             case "false":
                 return {
-                    valueStyle: { color: "#ec3e37" },
-                    prefix: <CloseCircleFilled />
+                    ...defaultStyle,
+                    strokeColor: "#d33730"
                 };
             case "unsustainable":
                 return {
-                    valueStyle: { color: "#282828" },
-                    prefix: <CloseSquareFilled />
+                    ...defaultStyle,
+                    strokeColor: "#d7425e"
                 };
             case "exaggerated":
                 return {
-                    valueStyle: { color: "#f26538" },
-                    prefix: <SoundOutlined />
+                    ...defaultStyle,
+                    strokeColor: "#c1d259"
                 };
             case "unverifiable":
                 return {
-                    valueStyle: { color: "#2175fb" },
-                    prefix: <QuestionCircleFilled />
+                    ...defaultStyle,
+                    strokeColor: "#d89d2f"
                 };
 
             default:
@@ -69,32 +63,35 @@ class ReviewStats extends Component {
     }
 
     render() {
+        const { reviews } = this.props.stats;
+        const { t } = this.props;
         return (
             <>
-                {this.props.dataSource.map(review => {
-                    const percentage =
-                        Math.floor(review.percentage * 100) / 100;
-                    return (
-                        <Tooltip
-                            placement="left"
-                            title={review._id}
-                            key={review._id}
-                        >
-                            <Col span={2}>
-                                {" "}
-                                <Statistic
-                                    value={percentage}
-                                    suffix="%"
-                                    {...this.getIcon(review._id)}
+                {reviews &&
+                    reviews.map(review => {
+                        const format =
+                            this.props.format === "count"
+                                ? () => review.count
+                                : null;
+                        return (
+                            <div className={`stat-${this.props.type}`}>
+                                <span>
+                                    {this.props.countInTitle &&
+                                        `${review.count} `}
+                                    {t(`claimReviewForm:${review._id}`)}
+                                </span>
+                                <Progress
+                                    percent={review.percentage}
+                                    type={this.props.type}
+                                    format={format}
+                                    {...this.getStyle(review._id)}
                                 />
-                            </Col>
-                            <Col span={1}> </Col>
-                        </Tooltip>
-                    );
-                })}
+                            </div>
+                        );
+                    })}
             </>
         );
     }
 }
 
-export default ReviewStats;
+export default withTranslation()(ReviewStats);

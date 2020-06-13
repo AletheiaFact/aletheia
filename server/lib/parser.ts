@@ -21,6 +21,7 @@ class Parser {
 
     parse(html: string) {
         const document = dom.createDocument(html);
+        const text = document.body.textContent;
         const result = [];
         const paragraphs = document.querySelectorAll("p");
 
@@ -46,7 +47,7 @@ class Parser {
                 });
             }
         }
-        return { object: result };
+        return { object: result, text };
     }
 
     /**

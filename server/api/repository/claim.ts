@@ -1,7 +1,8 @@
 import Parser from "../../lib/parser";
 const Claim = require("../model/claimModel");
+const ClaimReview = require("../model/claimReviewModel");
 const Personality = require("../model/personalityModel");
-
+const util = require("../../lib/util");
 const optionsToUpdate = {
     new: true,
     upsert: true
@@ -39,10 +40,31 @@ module.exports = class ClaimRepository {
         });
     }
 
-    static getById(claimId) {
-        return Claim.findById(claimId)
+    static async getById(claimId) {
+        const claim = await Claim.findById(claimId)
             .populate("personality", "_id name")
+            .populate("claimReviews", "_id classification")
             .populate("sources", "_id link classification");
+
+        return await this.postProcess(claim.toObject());
+    }
+
+    private static async postProcess(personality) {
+        if (personality) {
+            const stats = await this.getReviewStats(personality._id);
+            return Object.assign(personality, { stats });
+        }
+
+        return personality;
+    }
+
+    static async getReviewStats(id) {
+        const claim = await Claim.findById(id);
+        const reviews = await ClaimReview.aggregate([
+            { $match: { claim: claim._id } },
+            { $group: { _id: "$classification", count: { $sum: 1 } } }
+        ]);
+        return util.formatStats(reviews);
     }
 
     static async update(claimId, claimBody) {

@@ -1,4 +1,5 @@
 const ClaimReview = require("../model/claimReviewModel");
+const Claim = require("../model/claimReviewModel");
 
 const optionsToUpdate = {
     new: true,
@@ -14,8 +15,25 @@ export default class ClaimReviewRepository {
     }
 
     static create(claimReview) {
-        const newClaimReview = new ClaimReview(claimReview);
-        return newClaimReview.save();
+        return new Promise((resolve, reject) => {
+            const newClaimReview = new ClaimReview(claimReview);
+            newClaimReview.save((err, claimReview) => {
+                if (err) {
+                    reject(err);
+                }
+                Claim.findOneAndUpdate(
+                    { _id: claimReview.claim },
+                    { $push: { claimReviews: claimReview } },
+                    { new: true },
+                    err => {
+                        if (err) {
+                            reject(err);
+                        }
+                    }
+                );
+            });
+            resolve(newClaimReview);
+        });
     }
 
     static getById(claimReviewId) {
