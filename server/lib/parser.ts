@@ -47,7 +47,8 @@ class Parser {
                 });
             }
         }
-        return { object: result, text };
+        // TODO: check security for html content
+        return { object: result, text, html };
     }
 
     /**
