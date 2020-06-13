@@ -52,6 +52,13 @@ class App extends Component {
                                 path="/personality/:id/claim/:claimId"
                                 component={ClaimView}
                             />
+                            <Route
+                                exact
+                                path="/personality/:id/claim/:claimId/edit"
+                                render={props => (
+                                    <ClaimCreate {...props} edit={true} />
+                                )}
+                            />
                         </Switch>
                     </Router>
                 </Content>

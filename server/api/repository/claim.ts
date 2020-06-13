@@ -71,6 +71,8 @@ module.exports = class ClaimRepository {
         // eslint-disable-next-line no-useless-catch
         try {
             const claim = await this.getById(claimId);
+            const p = new Parser();
+            claimBody.content = p.parse(claimBody.content);
             const newClaim = Object.assign(claim, claimBody);
             const claimUpdate = await Claim.findByIdAndUpdate(
                 claimId,

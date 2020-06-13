@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Editor, EditorState } from "draft-js";
+import { Editor, EditorState, ContentState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
+import { stateFromHTML } from "draft-js-import-html";
 import "draft-js/dist/Draft.css";
 import { Typography, Form, Input, Button, message, Row, Col } from "antd";
 
@@ -11,12 +12,47 @@ class ClaimCreate extends Component {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            editorState: EditorState.createEmpty()
-        };
+        if (this.props.edit) {
+            this.state = {
+                editorState: EditorState.createEmpty()
+            };
+        }
         this.saveClaim = this.saveClaim.bind(this);
+        this.updateClaim = this.updateClaim.bind(this);
         this.onChange = this.onChange.bind(this);
+    }
+    componentDidMount() {
+        if (this.props.edit) {
+            axios
+                .get(
+                    `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
+                )
+                .then(response => {
+                    const { content, title } = response.data;
+                    const editorState = EditorState.createWithContent(
+                        stateFromHTML(content.html)
+                    );
+                    this.setState(
+                        {
+                            title,
+                            editorState,
+                            content: stateToHTML(
+                                this.state.editorState.getCurrentContent()
+                            )
+                        },
+                        () => {
+                            this.formRef.current.setFieldsValue({
+                                title,
+                                content: this.state.content
+                            });
+                        }
+                    );
+                })
+                .catch(err => {
+                    throw err;
+                    console.log("Error while fetching claim");
+                });
+        }
     }
 
     saveClaim(values) {
@@ -52,6 +88,39 @@ class ClaimCreate extends Component {
             });
     }
 
+    updateClaim(values) {
+        const content = stateToHTML(this.state.editorState.getCurrentContent());
+        const title = this.state.title;
+        axios
+            .put(
+                `${process.env.API_URL}/claim/${this.props.match.params.claimId}`,
+                {
+                    title,
+                    content
+                }
+            )
+            .then(response => {
+                const { title, _id } = response.data;
+                message.success(`"${title}" updated with success`);
+                // Redirect to personality profile in case _id is not present
+                const path = "./";
+                this.props.history.push(path);
+            })
+            .catch(err => {
+                const response = err && err.response;
+                if (!response) {
+                    // TODO: Track unknow errors
+                    console.log(err);
+                }
+                const { data } = response;
+                message.error(
+                    data && data.message
+                        ? data.message
+                        : "Error while updating claim"
+                );
+            });
+    }
+
     onChange(editorState) {
         this.setState({ editorState }, () => {
             if (this.formRef.current) {
@@ -75,7 +144,11 @@ class ClaimCreate extends Component {
                         <Form
                             ref={this.formRef}
                             id="createClaim"
-                            onFinish={this.saveClaim}
+                            onFinish={
+                                this.props.edit
+                                    ? this.updateClaim
+                                    : this.saveClaim
+                            }
                         >
                             <Form.Item
                                 name="title"
@@ -122,9 +195,15 @@ class ClaimCreate extends Component {
                                 </div>
                             </Form.Item>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Save
-                                </Button>
+                                {this.props.edit ? (
+                                    <Button type="primary" htmlType="submit">
+                                        Update
+                                    </Button>
+                                ) : (
+                                    <Button type="primary" htmlType="submit">
+                                        Save
+                                    </Button>
+                                )}
                             </Form.Item>
                         </Form>
                     </Col>

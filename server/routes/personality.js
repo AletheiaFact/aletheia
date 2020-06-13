@@ -6,6 +6,8 @@ const Requester = require("../infra/interceptor/requester");
  */
 const router = require("../lib/util").router();
 
+let app;
+
 /**
  * GET {domain}/personality
  */
@@ -15,7 +17,7 @@ router.get("/", (req, res, next) => {
         .listAll(req.query)
         .then(result => res.send(result))
         .catch(error => {
-            next(Requester.internalError(res, error.message));
+            next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
@@ -28,7 +30,14 @@ router.post("/", (req, res, next) => {
         .create(req.body)
         .then(result => res.send(result))
         .catch(error => {
-            next(Requester.internalError(res, error.message));
+            if (
+                error.name === "MongoError" &&
+                error.keyPattern &&
+                error.keyPattern.wikidata
+            ) {
+                error.message = `Personality with wikidata id ${error.keyValue.wikidata} already exists`;
+            }
+            next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
@@ -43,10 +52,13 @@ router.get("/:id", (req, res, next) => {
             res.send(result);
         })
         .catch(error => {
-            next(Requester.internalError(res, error.message));
+            next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
+/**
+ * GET {domain}/personality{/id}/reviews
+ */
 router.get("/:id/reviews", (req, res, next) => {
     const personality = new PersonalityController();
 
@@ -56,7 +68,7 @@ router.get("/:id/reviews", (req, res, next) => {
             res.send(result);
         })
         .catch(error => {
-            next(res.send(error));
+            next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
@@ -87,6 +99,7 @@ router.delete("/:id", (req, res, next) => {
 });
 
 module.exports = function(appObj) {
+    app = appObj;
     return {
         path: "/personality",
         api_version: 1,

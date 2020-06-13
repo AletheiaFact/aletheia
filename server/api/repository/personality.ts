@@ -97,6 +97,9 @@ module.exports = class PersonalityRepository {
 
     private static extractClaimWithTextSummary(claims: any) {
         return claims.map(claim => {
+            if (!claim.content) {
+                return claim;
+            }
             return { ...claim, content: claim.content.text };
         });
     }
