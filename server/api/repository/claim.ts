@@ -44,7 +44,7 @@ module.exports = class ClaimRepository {
         const claim = await Claim.findById(claimId)
             .populate("personality", "_id name")
             .populate("claimReviews", "_id classification")
-            .populate("references", "_id link classification");
+            .populate("sources", "_id link classification");
 
         return await this.postProcess(claim.toObject());
     }

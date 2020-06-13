@@ -1,4 +1,4 @@
-const ReferenceController = require("../api/controller/referenceController");
+const SourceController = require("../api/controller/sourceController");
 const Requester = require("../infra/interceptor/requester");
 
 /**
@@ -9,12 +9,12 @@ const router = require("../lib/util").router();
 let app;
 
 /**
- * POST {domain}/reference
+ * POST {domain}/source
  */
 router.post("/", (req, res, next) => {
-    const reference = new ReferenceController();
+    const source = new SourceController();
 
-    reference
+    source
         .create(req.body)
         .then(result => res.send(result))
         .catch(error => {
@@ -23,12 +23,12 @@ router.post("/", (req, res, next) => {
 });
 
 /**
- * GET {domain}/reference{/id}
+ * GET {domain}/source{/id}
  */
 router.get("/:id", (req, res, next) => {
-    const reference = new ReferenceController();
-    reference
-        .getReferenceId(req.params.id)
+    const source = new SourceController();
+    source
+        .getsourceId(req.params.id)
         .then(result => res.send(result))
         .catch(error => {
             next(Requester.internalError(res, error.message, app.logger));
@@ -36,11 +36,11 @@ router.get("/:id", (req, res, next) => {
 });
 
 /**
- * PUT {domain}/reference{/id}
+ * PUT {domain}/source{/id}
  */
 router.put("/:id", (req, res, next) => {
-    const reference = new ReferenceController();
-    reference
+    const source = new SourceController();
+    source
         .update(req.params.id, req.body)
         .then(result => res.send(result))
         .catch(error => {
@@ -49,11 +49,11 @@ router.put("/:id", (req, res, next) => {
 });
 
 /**
- * DELETE {domain}/reference{/id}
+ * DELETE {domain}/source{/id}
  */
 router.delete("/:id", (req, res, next) => {
-    const reference = new ReferenceController();
-    reference
+    const source = new SourceController();
+    source
         .delete(req.params.id)
         .then(result => res.send(result))
         .catch(error => {
@@ -64,7 +64,7 @@ router.delete("/:id", (req, res, next) => {
 module.exports = function(appObj) {
     app = appObj;
     return {
-        path: "/reference",
+        path: "/source",
         api_version: 1,
         router
     };
