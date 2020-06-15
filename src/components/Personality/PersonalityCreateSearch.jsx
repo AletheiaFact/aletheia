@@ -7,6 +7,7 @@ import api from "../../api/personality";
 import { connect } from "react-redux";
 import PersonalityCard from "./PersonalityCard";
 import axios from "axios";
+import PersonalityCreateCTA from "./PersonalityCreateCTA";
 
 class PersonalityCreateSearch extends Component {
     constructor(props) {
@@ -94,24 +95,20 @@ class PersonalityCreateSearch extends Component {
                             />
                         )
                 )}
-                <Row
-                    style={{
-                        flexDirection: "column",
-                        alignItems: "center",
-                        width: "100%"
-                    }}
-                >
-                    <p>
-                        <b>Didn't find who you were looking for?</b>
-                    </p>
-
-                    <p>
-                        <Button type="primary" href={`./create`}>
-                            + Add personality
-                        </Button>
-                    </p>
-                    <p>And help us grow our database!</p>
-                </Row>
+                {this.props.searchName &&
+                    this.props.searchName.length > 0 &&
+                    Array.isArray(this.props.personalities) &&
+                    !this.props.personalities.length && (
+                        <Row
+                            style={{
+                                flexDirection: "column",
+                                alignItems: "center",
+                                width: "100%"
+                            }}
+                        >
+                            <PersonalityCreateCTA href="./create" />
+                        </Row>
+                    )}
             </Row>
         );
     }
