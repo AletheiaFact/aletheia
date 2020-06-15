@@ -24,6 +24,7 @@ class PersonalityCreateForm extends Component {
             const { personality } = this.state;
             this.formRef.current.setFieldsValue({
                 name: personality.name,
+                wikidata: personality.wikidata,
                 description: personality.description
             });
         });
@@ -93,10 +94,9 @@ class PersonalityCreateForm extends Component {
                     >
                         <Form.Item
                             name="name"
-                            label={t("personalityCreateForm:name")}
+                            label={t("personalityCreateForm:wikidata")}
                             rules={[
                                 {
-                                    required: true,
                                     message: t(
                                         "personalityCreateForm:errorNameRequired"
                                     )
@@ -114,6 +114,27 @@ class PersonalityCreateForm extends Component {
                                 callback={this.updatePersonalityState.bind(
                                     this
                                 )}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            name="name"
+                            label={t("personalityCreateForm:name")}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: t(
+                                        "personalityCreateForm:errorNameRequired"
+                                    )
+                                }
+                            ]}
+                            wrapperCol={{ sm: 24 }}
+                            style={{
+                                width: "100%"
+                            }}
+                        >
+                            <Input
+                                value={this.state.personality.name}
+                                disabled={this.state.inputsDisabled}
                             />
                         </Form.Item>
                         <Form.Item

@@ -8,15 +8,15 @@ class PersonalityCreateCTA extends Component {
         return (
             <>
                 <p>
-                    <b>{t("Didn't find who you were looking for?")}</b>
+                    <b>{t("personalityCTA:header")}</b>
                 </p>
 
                 <p>
                     <Button type="primary" href={this.props.href || `./create`}>
-                        + {t("Add personality")}
+                        + {t("personalityCTA:button")}
                     </Button>
                 </p>
-                <p>{t("And help us grow our database!")}</p>
+                <p>{t("personalityCTA:footer")}</p>
             </>
         );
     }

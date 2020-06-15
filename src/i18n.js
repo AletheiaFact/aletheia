@@ -27,7 +27,13 @@ const resources = {
             errorDescriptionRequired: "Please insert a description",
             description: "Description",
             name: "Nome",
+            wikidata: "Wikidata ID",
             saveButton: "Save personality"
+        },
+        personalityCTA: {
+            header: "Didn't find who you were looking for?",
+            footer: "And help us grow our database!",
+            button: "Add personality"
         },
         claimReviewForm: {
             titleEmpty: "Choose a sentence to review",
@@ -72,7 +78,13 @@ const resources = {
             errorDescriptionRequired: "Por favor, insira uma descrição",
             description: "Descrição",
             name: "Nome",
+            wikidata: "ID Wikidata",
             saveButton: "Salvar personalidade"
+        },
+        personalityCTA: {
+            header: "Não encontrou o que procurava?",
+            footer: "e ajude-nos a aumentar o nosso banco de dados!",
+            button: "Incluir personalidade"
         },
         claimReviewForm: {
             titleEmpty: "Escolha uma frase para revisar",

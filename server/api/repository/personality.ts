@@ -88,7 +88,6 @@ module.exports = class PersonalityRepository {
                 wikidataId: personality.wikidata,
                 language
             });
-            console.log(wikidataExtract.isAllowedProp);
 
             // bail out if wikidata property is not allowed
             if (wikidataExtract.isAllowedProp === false) {
