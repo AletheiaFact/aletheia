@@ -15,6 +15,7 @@ const resources = {
         },
         personality: {
             profile_button: "See profile",
+            errorFetch: "Error while fetching Personality",
             add_button: "Add"
         },
         footer: {
@@ -23,12 +24,17 @@ const resources = {
         personalityCreateForm: {
             errorMessage: "Error while saving personality",
             successMessage: "profile created with success",
+            successUpdate: "updated successfully",
             errorNameRequired: "Please insert a name",
             errorDescriptionRequired: "Please insert a description",
+            errorFetch: "Error while fetching personality",
+            errorUpdate: "Error while updating personality",
             description: "Description",
-            name: "Nome",
+            name: "Name",
             wikidata: "Wikidata ID",
-            saveButton: "Save personality"
+            saveButton: "Save personality",
+            updateButton: "Update personality",
+            clearButton: "Clear fields"
         },
         personalityCTA: {
             header: "Didn't find who you were looking for?",
@@ -74,12 +80,17 @@ const resources = {
         personalityCreateForm: {
             errorMessage: "Erro ao salvar personalidade",
             successMessage: "perfil criado com sucesso",
+            successUpdate: "atualizado com sucesso",
             errorNameRequired: "Por favor, insira um nome",
             errorDescriptionRequired: "Por favor, insira uma descrição",
+            errorFetch: "Erro ao buscar personalidade",
+            errorUpdate: "Erro ao atualizar personalidade",
             description: "Descrição",
             name: "Nome",
             wikidata: "ID Wikidata",
-            saveButton: "Salvar personalidade"
+            saveButton: "Salvar personalidade",
+            updateButton: "Atualizar personalidade",
+            clearButton: "Limpar campos"
         },
         personalityCTA: {
             header: "Não encontrou o que procurava?",

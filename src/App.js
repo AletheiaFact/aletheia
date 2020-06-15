@@ -55,6 +55,16 @@ class App extends Component {
                             />
                             <Route
                                 exact
+                                path="/personality/:id/edit"
+                                render={props => (
+                                    <PersonalityCreateForm
+                                        {...props}
+                                        edit={true}
+                                    />
+                                )}
+                            />
+                            <Route
+                                exact
                                 path="/personality/:id/claim/create"
                                 component={ClaimCreate}
                             />
