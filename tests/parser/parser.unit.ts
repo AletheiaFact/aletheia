@@ -41,6 +41,25 @@ describe("parse()", () => {
         const parseOutput = parser.parse(claimText);
         assert.deepEqual(Object.keys(parseOutput), ["object", "text", "html"]);
     });
+
+    it("Ph.D word is not confused with end of sentence", async () => {
+        const claimText = "<p>Jose is Ph.D. and Maria is a Ph.D.</p>";
+        const parseOutput = parser.parse(claimText);
+        const paragraphs = parseOutput.object;
+        assert.ok(Array.isArray(paragraphs));
+        assert.deepEqual(paragraphs.length, 1);
+        assert.deepEqual(paragraphs[0].content.length, 1);
+    });
+
+    it("Prefixes are not confused with end of sentence", async () => {
+        const claimText =
+            "<p>Mr. Jose and Mrs. Maria lives in St. Monica with Ms. Butterfly their Dr. of the year</p>";
+        const parseOutput = parser.parse(claimText);
+        const paragraphs = parseOutput.object;
+        assert.ok(Array.isArray(paragraphs));
+        assert.deepEqual(paragraphs.length, 1);
+        assert.deepEqual(paragraphs[0].content.length, 1);
+    });
 });
 
 describe("extractSentence()", () => {
