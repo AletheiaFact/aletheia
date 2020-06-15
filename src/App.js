@@ -11,6 +11,7 @@ import PersonalityView from "./components/Personality/PersonalityView";
 import PersonalityCreate from "./components/Personality/PersonalityCreate";
 import AletheiaHeader from "./components/Header/AletheiaHeader";
 import BackButton from "./components/BackButton";
+import NewPersonalityCreate from "./components/Personality/NewPersonalityCreate";
 
 const { Footer, Content } = Layout;
 
@@ -36,6 +37,16 @@ class App extends Component {
                                 exact
                                 path="/personality/create"
                                 component={PersonalityCreate}
+                            />
+                            <Route
+                                exact
+                                path="/personality/newcreate"
+                                render={props => (
+                                    <NewPersonalityCreate
+                                        {...props}
+                                        withSuggestions={true}
+                                    />
+                                )}
                             />
                             <Route
                                 exact

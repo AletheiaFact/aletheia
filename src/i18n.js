@@ -14,7 +14,8 @@ const resources = {
             search_personality: "Search personality"
         },
         personality: {
-            profile_button: "See profile"
+            profile_button: "See profile",
+            add_button: "Add"
         },
         footer: {
             copyright: "Aletheia ©2020 Created by Open Tesseract"
@@ -58,7 +59,8 @@ const resources = {
             search_personality: "Busque uma personalidade"
         },
         personality: {
-            profile_button: "Veja o perfil"
+            profile_button: "Veja o perfil",
+            add_button: "Inserir"
         },
         footer: {
             copyright: "Aletheia ©2020 Criado por Open Tesseract"

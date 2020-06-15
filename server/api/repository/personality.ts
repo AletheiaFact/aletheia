@@ -15,19 +15,55 @@ const wikidata = new WikidataResolver();
  * @class PersonalityRepository
  */
 module.exports = class PersonalityRepository {
-    static async listAll(page, pageSize, order, query, language) {
-        return Personality.find(query)
+    /**
+     * https://medium.com/javascript-in-plain-english/javascript-merge-duplicate-objects-in-array-of-objects-9a76c3a1c35c
+     * @param array
+     * @param property
+     */
+    static mergeObjectsInUnique<T>(array: T[], property: any): T[] {
+        const newArray = new Map();
+
+        array.forEach((item: T) => {
+            const propertyValue = item[property];
+            newArray.has(propertyValue)
+                ? newArray.set(propertyValue, {
+                      ...item,
+                      ...newArray.get(propertyValue)
+                  })
+                : newArray.set(propertyValue, item);
+        });
+
+        return Array.from(newArray.values());
+    }
+
+    static async listAll(
+        page,
+        pageSize,
+        order,
+        query,
+        language,
+        withSuggestions = false
+    ) {
+        let personalities = await Personality.find(query)
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ createdAt: order })
-            .lean()
-            .then(async personalities => {
-                return Promise.all(
-                    personalities.map(async personality => {
-                        return await this.postProcess(personality, language);
-                    })
-                );
-            });
+            .lean();
+        if (withSuggestions) {
+            const wbentities = await wikidata.queryWikibaseEntities(
+                query.name.$regex,
+                language
+            );
+            personalities = this.mergeObjectsInUnique(
+                [...wbentities, ...personalities],
+                "wikidata"
+            );
+        }
+        return Promise.all(
+            personalities.map(async personality => {
+                return await this.postProcess(personality, language);
+            })
+        );
     }
 
     static create(personality) {
@@ -52,10 +88,20 @@ module.exports = class PersonalityRepository {
                 wikidataId: personality.wikidata,
                 language
             });
+            console.log(wikidataExtract.isAllowedProp);
+
+            // bail out if wikidata property is not allowed
+            if (wikidataExtract.isAllowedProp === false) {
+                return;
+            }
             return Object.assign(personality, {
-                stats: await this.getReviewStats(personality._id),
+                stats:
+                    personality._id &&
+                    (await this.getReviewStats(personality._id)),
                 ...wikidataExtract,
-                claims: this.extractClaimWithTextSummary(personality.claims)
+                claims:
+                    personality.claims &&
+                    this.extractClaimWithTextSummary(personality.claims)
             });
         }
 
