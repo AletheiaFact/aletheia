@@ -39,7 +39,7 @@ describe("parse()", () => {
     it("parsed object conforms to schema", async () => {
         const claimText = "<p>Nulla facilisi.</p>\n<p><br></p>\n<p>Ut leo.</p>";
         const parseOutput = parser.parse(claimText);
-        assert.deepEqual(Object.keys(parseOutput), ["object", "text"]);
+        assert.deepEqual(Object.keys(parseOutput), ["object", "text", "html"]);
     });
 });
 
