@@ -7,7 +7,7 @@ import { withTranslation } from "react-i18next";
 
 const { TextArea } = Input;
 
-class PersonalityCreate extends Component {
+class PersonalityCreateForm extends Component {
     formRef = React.createRef();
 
     constructor(props) {
@@ -154,4 +154,4 @@ class PersonalityCreate extends Component {
     }
 }
 
-export default withTranslation()(PersonalityCreate);
+export default withTranslation()(PersonalityCreateForm);

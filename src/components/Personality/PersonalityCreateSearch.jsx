@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import PersonalityCard from "./PersonalityCard";
 import axios from "axios";
 
-class NewPersonalityCreate extends Component {
+class PersonalityCreateSearch extends Component {
     constructor(props) {
         super(props);
     }
@@ -27,7 +27,7 @@ class NewPersonalityCreate extends Component {
             .post(`${process.env.API_URL}/personality`, personality)
             .then(response => {
                 const { name, _id } = response.data;
-                console.log(response)
+                console.log(response);
                 message.success(
                     `"${name}" ${this.props.t(
                         "personalityCreateForm:successMessage"
@@ -94,6 +94,24 @@ class NewPersonalityCreate extends Component {
                             />
                         )
                 )}
+                <Row
+                    style={{
+                        flexDirection: "column",
+                        alignItems: "center",
+                        width: "100%"
+                    }}
+                >
+                    <p>
+                        <b>Didn't find who you were looking for?</b>
+                    </p>
+
+                    <p>
+                        <Button type="primary" href={`./create`}>
+                            + Add personality
+                        </Button>
+                    </p>
+                    <p>And help us grow our database!</p>
+                </Row>
             </Row>
         );
     }
@@ -106,5 +124,5 @@ const mapStateToProps = state => {
     };
 };
 export default connect(mapStateToProps)(
-    withTranslation()(NewPersonalityCreate)
+    withTranslation()(PersonalityCreateSearch)
 );
