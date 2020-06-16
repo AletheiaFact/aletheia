@@ -7,7 +7,6 @@ const { Option } = AutoComplete;
 class WikdiataTypeAhead extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             children: [],
             search: []
