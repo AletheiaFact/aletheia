@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const getPersonalities = (options = {}, dispatch) => {
+    console.log(options);
     const params = {
         page: options.page - 1,
         name: options.searchName,
@@ -10,7 +11,7 @@ const getPersonalities = (options = {}, dispatch) => {
             options.i18n && options.i18n.languages && options.i18n.languages[0]
     };
 
-    axios
+    return axios
         .get(`${process.env.API_URL}/personality`, { params })
         .then(response => {
             const { personalities, totalPages } = response.data;

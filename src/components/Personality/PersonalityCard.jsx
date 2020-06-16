@@ -40,7 +40,7 @@ class PersonalityCard extends Component {
                         <Col span={3}></Col>
                         <Col span={this.titleSpan}>
                             <Title level={4}>{personality.name}</Title>
-                            <Paragraph ellipsis={{ rows: 1, expandable: true }}>
+                            <Paragraph>
                                 {personality.description}
                             </Paragraph>
                         </Col>
@@ -77,12 +77,12 @@ class PersonalityCard extends Component {
         } else {
             return (
                 <Spin
-                    tip="Loading..."
+                    tip={t("global:loading")}
                     style={{
                         textAlign: "center",
                         position: "absolute",
                         top: "50%",
-                        width: "100%"
+                        left: "calc(50% - 40px)"
                     }}
                 ></Spin>
             );

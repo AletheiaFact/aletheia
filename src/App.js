@@ -21,7 +21,7 @@ class App extends Component {
         return (
             <Layout style={{ minHeight: "100vh" }}>
                 <AletheiaHeader />
-                <Content>
+                <Content className="main-content">
                     <Router>
                         <Row style={{ padding: "0 30px", marginTop: "10px" }}>
                             <BackButton />

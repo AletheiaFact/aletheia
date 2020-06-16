@@ -16,7 +16,8 @@ const resources = {
         personality: {
             profile_button: "See profile",
             errorFetch: "Error while fetching Personality",
-            add_button: "Add"
+            add_button: "Add",
+            affixButtonTitle: "Click here to add a claim"
         },
         footer: {
             copyright: "Aletheia ©2020 Created by Open Tesseract"
@@ -60,6 +61,12 @@ const resources = {
             unverifiable: "Unverifiable",
             errorMessage: "Error while sending review",
             successMessage: "Review succeeded"
+        },
+        claim: {
+            metricsHeaderTitle: "Metrics",
+            metricsHeaderPrefix: "This speech contains ",
+            metricsHeaderInfo: "{{totalReviews}} reviewed claims",
+            metricsHeaderSuffix: ", of which:"
         }
     },
     pt: {
@@ -72,7 +79,9 @@ const resources = {
         },
         personality: {
             profile_button: "Veja o perfil",
-            add_button: "Inserir"
+            errorFetch: "Erro ao buscar Personalidade",
+            add_button: "Inserir",
+            affixButtonTitle: "Clique aqui para adicionar um discurso"
         },
         footer: {
             copyright: "Aletheia ©2020 Criado por Open Tesseract"
@@ -116,6 +125,12 @@ const resources = {
             unverifiable: "Inverificável",
             errorMessage: "Erro ao enviar revisão",
             successMessage: "Revisão concluída"
+        },
+        claim: {
+            metricsHeaderTitle: "Avaliações",
+            metricsHeaderPrefix: "Esse discurso contém ",
+            metricsHeaderInfo: "{{totalReviews}} sentenças revisadas",
+            metricsHeaderSuffix: ", das quais:"
         }
     }
 };
