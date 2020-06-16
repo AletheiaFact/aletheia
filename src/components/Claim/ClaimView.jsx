@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
 import ClaimReviewForm from "./ClaimReview";
-import { Row, Col, Typography, Modal, message } from "antd";
+import { Row, Col, Typography, Modal, message, Spin } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
 import ReviewStats from "../ReviewStats";
@@ -25,6 +25,7 @@ class Claim extends Component {
             )
             .then(response => {
                 const { content, title, stats } = response.data;
+                console.log(stats)
                 this.setState({
                     title,
                     body: content.object,
@@ -87,6 +88,7 @@ class Claim extends Component {
     };
 
     render() {
+        const { t } = this.props;
         if (this.state && this.state.body) {
             const body = this.state.body;
             const title = this.state.title;
@@ -129,43 +131,59 @@ class Claim extends Component {
                             </div>
                         </Col>
                     </Row>
-                    <Row style={{ background: "white" }}>
-                        <Col
-                            style={{
-                                width: "100%",
-                                color: "#262626",
-                                padding: "10px 0 25px 0px"
-                            }}
-                            offset={2}
-                            span={18}
-                        >
-
-                            <div
+                    {this.state.stats.total && (
+                        <Row style={{ background: "white" }}>
+                            <Col
                                 style={{
-                                    textAlign: "center",
-                                    marginBottom: "5px"
+                                    width: "100%",
+                                    color: "#262626",
+                                    padding: "10px 0 25px 0px"
                                 }}
+                                offset={2}
+                                span={18}
                             >
-                                <Title level={4}>Metrics</Title>
-                                <span>
-                                    This speech contains{" "}
-                                    <span style={{ fontWeight: "bold" }}>
-                                        58 claims
+                                <div
+                                    style={{
+                                        textAlign: "center",
+                                        marginBottom: "5px"
+                                    }}
+                                >
+                                    <Title level={4}>
+                                        {t("claim:metricsHeaderTitle")}
+                                    </Title>
+                                    <span>
+                                        {t("claim:metricsHeaderPrefix")}
+                                        <span style={{ fontWeight: "bold" }}>
+                                            {t("claim:metricsHeaderInfo", {
+                                                totalReviews: this.state.stats
+                                                    .total
+                                            })}
+                                        </span>
+                                        {t("claim:metricsHeaderSuffix")}
                                     </span>
-                                    , of which:
-                                </span>
-                            </div>
-                            <ReviewStats
-                                stats={this.state.stats}
-                                countInTitle={true}
-                                type="line"
-                            />
-                        </Col>
-                    </Row>
+                                </div>
+                                <ReviewStats
+                                    stats={this.state.stats}
+                                    countInTitle={true}
+                                    type="line"
+                                />
+                            </Col>
+                        </Row>
+                    )}
                 </>
             );
         } else {
-            return "Loading";
+            return (
+                <Spin
+                    tip={t("global:loading")}
+                    style={{
+                        textAlign: "center",
+                        position: "absolute",
+                        top: "50%",
+                        left: "calc(50% - 40px)"
+                    }}
+                ></Spin>
+            );
         }
     }
 }

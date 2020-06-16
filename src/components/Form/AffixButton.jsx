@@ -9,8 +9,7 @@ function AffixButton(props) {
         <>
             <Tooltip
                 placement="left"
-                defaultVisible={true}
-                title="Clique aqui para adicionar uma claim"
+                title={props.tooltipTitle}
             >
                 <Button
                     style={{

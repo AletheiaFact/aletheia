@@ -294,7 +294,7 @@ class PersonalityCreateForm extends Component {
                         textAlign: "center",
                         position: "absolute",
                         top: "50%",
-                        width: "100%"
+                        left: "calc(50% - 40px)"
                     }}
                 ></Spin>
             );
