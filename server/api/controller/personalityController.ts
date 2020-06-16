@@ -11,7 +11,8 @@ module.exports = class PersonalityController {
                 parseInt(pageSize, 10),
                 order,
                 queryInputs,
-                query.language
+                query.language,
+                query.withSuggestions
             ),
             PersonalityRepository.count(queryInputs)
         ])

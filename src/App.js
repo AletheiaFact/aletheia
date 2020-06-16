@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Layout, Row } from "antd";
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import "./App.less";
 
@@ -8,9 +8,10 @@ import ClaimCreate from "./components/Claim/ClaimCreate";
 import ClaimView from "./components/Claim/ClaimView";
 import PersonalityList from "./components/Personality/PersonalityList";
 import PersonalityView from "./components/Personality/PersonalityView";
-import PersonalityCreate from "./components/Personality/PersonalityCreate";
+import PersonalityCreateForm from "./components/Personality/PersonalityCreateForm";
 import AletheiaHeader from "./components/Header/AletheiaHeader";
 import BackButton from "./components/BackButton";
+import PersonalityCreateSearch from "./components/Personality/PersonalityCreateSearch";
 
 const { Footer, Content } = Layout;
 
@@ -20,7 +21,7 @@ class App extends Component {
         return (
             <Layout style={{ minHeight: "100vh" }}>
                 <AletheiaHeader />
-                <Content>
+                <Content className="main-content">
                     <Router>
                         <Row style={{ padding: "0 30px", marginTop: "10px" }}>
                             <BackButton />
@@ -35,12 +36,32 @@ class App extends Component {
                             <Route
                                 exact
                                 path="/personality/create"
-                                component={PersonalityCreate}
+                                component={PersonalityCreateForm}
+                            />
+                            <Route
+                                exact
+                                path="/personality/search"
+                                render={props => (
+                                    <PersonalityCreateSearch
+                                        {...props}
+                                        withSuggestions={true}
+                                    />
+                                )}
                             />
                             <Route
                                 exact
                                 path="/personality/:id"
                                 component={PersonalityView}
+                            />
+                            <Route
+                                exact
+                                path="/personality/:id/edit"
+                                render={props => (
+                                    <PersonalityCreateForm
+                                        {...props}
+                                        edit={true}
+                                    />
+                                )}
                             />
                             <Route
                                 exact
@@ -51,6 +72,13 @@ class App extends Component {
                                 exact
                                 path="/personality/:id/claim/:claimId"
                                 component={ClaimView}
+                            />
+                            <Route
+                                exact
+                                path="/personality/:id/claim/:claimId/edit"
+                                render={props => (
+                                    <ClaimCreate {...props} edit={true} />
+                                )}
                             />
                         </Switch>
                     </Router>

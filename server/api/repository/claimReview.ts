@@ -1,4 +1,5 @@
 const ClaimReview = require("../model/claimReviewModel");
+const Source = require("../model/sourceModel");
 
 const optionsToUpdate = {
     new: true,
@@ -13,15 +14,25 @@ export default class ClaimReviewRepository {
         return ClaimReview.find({}).lean();
     }
 
-    static create(claimReview) {
+    static async create(claimReview) {
         const newClaimReview = new ClaimReview(claimReview);
+        if (claimReview.source) {
+            const source = new Source({
+                link: claimReview.source,
+                targetId: newClaimReview.id,
+                targetModel: "ClaimReview"
+            });
+            await source.save();
+            newClaimReview.sources = [source];
+        }
+
         return newClaimReview.save();
     }
 
     static getById(claimReviewId) {
         return ClaimReview.findById(claimReviewId)
             .populate("claims", "_id title")
-            .populate("references", "_id link classification");
+            .populate("sources", "_id link classification");
     }
 
     static async update(claimReviewId, claimReviewBody) {

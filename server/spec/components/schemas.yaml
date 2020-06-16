@@ -66,11 +66,11 @@ components:
           type: string
         personality:
           type: string
-        claimReviews:
+        reviews:
           type: array
           items:
             type: "string"
-    reference:
+    source:
       required:
         - classification
         - type

@@ -7,7 +7,6 @@ const { Option } = AutoComplete;
 class WikdiataTypeAhead extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             children: [],
             search: []
@@ -18,14 +17,12 @@ class WikdiataTypeAhead extends Component {
     }
 
     wikidataSearch(query, lang = "en") {
-        console.log("wikidataSearch", lang);
         const params = {
             action: "wbsearchentities",
             search: query,
             format: "json",
             errorformat: "plaintext",
             language: lang,
-            uselang: lang,
             type: "item",
             origin: "*"
         };
@@ -37,8 +34,11 @@ class WikdiataTypeAhead extends Component {
                 const children =
                     search &&
                     search.map(option => (
-                        <Option key={option.id} value={option.label}>
-                            <span>{option.label}</span>&nbsp;
+                        <Option key={option.id} value={`${option.id}`}>
+                            <span>
+                                {option.label} - {option.id}
+                            </span>
+                            &nbsp;
                             <small>{option.description}</small>
                         </Option>
                     ));
@@ -85,7 +85,8 @@ class WikdiataTypeAhead extends Component {
         } else {
             this.props.callback({
                 personality: {
-                    name: this.state.query,
+                    wikidata: this.state.query,
+                    name: "",
                     description: ""
                 },
                 inputsDisabled: false
@@ -103,7 +104,8 @@ class WikdiataTypeAhead extends Component {
         this.setState({ query }, () => {
             this.props.callback({
                 personality: {
-                    name: this.state.query,
+                    wikidata: this.state.query,
+                    name: "",
                     description: ""
                 },
                 inputsDisabled: false
@@ -114,8 +116,10 @@ class WikdiataTypeAhead extends Component {
     render() {
         return (
             <AutoComplete
+                showSearch
                 autoFocus={true}
                 backfill={false}
+                filterOption={false}
                 style={this.props.style || {}}
                 onSearch={this.handleSearch}
                 onSelect={this.onSelect}

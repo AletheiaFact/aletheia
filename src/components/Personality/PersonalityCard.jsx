@@ -24,7 +24,13 @@ class PersonalityCard extends Component {
         if (personality) {
             return (
                 <>
-                    <Row style={{ padding: "10px 30px", marginTop: "10px" }}>
+                    <Row
+                        style={{
+                            padding: "10px 30px",
+                            marginTop: "10px",
+                            width: "100%"
+                        }}
+                    >
                         <Col span={this.avatarSpan}>
                             <Avatar
                                 size={this.avatarSize}
@@ -34,18 +40,34 @@ class PersonalityCard extends Component {
                         <Col span={3}></Col>
                         <Col span={this.titleSpan}>
                             <Title level={4}>{personality.name}</Title>
-                            <Paragraph ellipsis={{ rows: 1, expandable: true }}>
+                            <Paragraph>
                                 {personality.description}
                             </Paragraph>
                         </Col>
                         {this.props.summarized && (
                             <Col span={6}>
-                                <Button
-                                    type="primary"
-                                    href={`personality/${personality._id}`}
-                                >
-                                    {t("personality:profile_button")}
-                                </Button>
+                                {personality._id ? (
+                                    <Button
+                                        type={
+                                            this.props.suggestion
+                                                ? ""
+                                                : "primary"
+                                        }
+                                        href={`${this.props.hrefBase ||
+                                            "personality/"}${personality._id}`}
+                                    >
+                                        {t("personality:profile_button")}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        type="primary"
+                                        onClick={() =>
+                                            this.props.onClick(personality)
+                                        }
+                                    >
+                                        + {t("personality:add_button")}
+                                    </Button>
+                                )}
                             </Col>
                         )}
                     </Row>
@@ -55,12 +77,12 @@ class PersonalityCard extends Component {
         } else {
             return (
                 <Spin
-                    tip="Loading..."
+                    tip={t("global:loading")}
                     style={{
                         textAlign: "center",
                         position: "absolute",
                         top: "50%",
-                        width: "100%"
+                        left: "calc(50% - 40px)"
                     }}
                 ></Spin>
             );
