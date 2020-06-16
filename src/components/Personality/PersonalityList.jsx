@@ -38,9 +38,10 @@ class PersonalityList extends Component {
             page
         });
         this.setState({ isLoading: true });
-        api.getPersonalities({ ...this.props, page }, this.props.dispatch).then(() =>
-            this.setState({ isLoading: false })
-        );
+        api.getPersonalities(
+            { ...this.props, page },
+            this.props.dispatch
+        ).then(() => this.setState({ isLoading: false }));
     }
 
     render() {
