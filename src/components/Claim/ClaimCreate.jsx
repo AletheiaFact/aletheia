@@ -12,11 +12,10 @@ class ClaimCreate extends Component {
 
     constructor(props) {
         super(props);
-        if (this.props.edit) {
-            this.state = {
-                editorState: EditorState.createEmpty()
-            };
-        }
+        this.state = {
+            title: "",
+            editorState: EditorState.createEmpty()
+        };
         this.saveClaim = this.saveClaim.bind(this);
         this.updateClaim = this.updateClaim.bind(this);
         this.onChange = this.onChange.bind(this);
@@ -165,7 +164,9 @@ class ClaimCreate extends Component {
                                 }}
                             >
                                 <Input
-                                    value={this.state.title || ""}
+                                    value={
+                                        (this.state && this.state.title) || ""
+                                    }
                                     onChange={e =>
                                         this.setState({ title: e.target.value })
                                     }
@@ -189,7 +190,7 @@ class ClaimCreate extends Component {
                                 <div className="ant-input">
                                     <Editor
                                         placeholder="Claim"
-                                        editorState={this.state.editorState}
+                                        editorState={this.state && this.state.editorState}
                                         onChange={this.onChange}
                                     />
                                 </div>

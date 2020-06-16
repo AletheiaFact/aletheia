@@ -131,7 +131,7 @@ class Claim extends Component {
                             </div>
                         </Col>
                     </Row>
-                    {this.state.stats.total && (
+                    {this.state.stats.total !== 0 && (
                         <Row style={{ background: "white" }}>
                             <Col
                                 style={{
