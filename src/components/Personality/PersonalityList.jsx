@@ -7,6 +7,7 @@ import "./PersonalityList.css";
 import AffixButton from "../Form/AffixButton";
 import { withTranslation } from "react-i18next";
 import PersonalityCard from "./PersonalityCard";
+import PersonalityCreateCTA from "./PersonalityCreateCTA";
 
 const { Meta } = Card;
 
@@ -39,7 +40,9 @@ class PersonalityList extends Component {
 
         return (
             <>
-                {personalities ? (
+                {personalities &&
+                Array.isArray(personalities) &&
+                personalities.length > 0 ? (
                     <>
                         {personalities.map((p, i) => (
                             <PersonalityCard
@@ -64,7 +67,15 @@ class PersonalityList extends Component {
                         <AffixButton onClick={this.createPersonality} />
                     </>
                 ) : (
-                    <span>No results found</span>
+                    <Row
+                        style={{
+                            flexDirection: "column",
+                            alignItems: "center",
+                            width: "100%"
+                        }}
+                    >
+                        <PersonalityCreateCTA href="personality/search" />
+                    </Row>
                 )}
             </>
         );

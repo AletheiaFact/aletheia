@@ -7,7 +7,7 @@ import { withTranslation } from "react-i18next";
 
 const { TextArea } = Input;
 
-class PersonalityCreate extends Component {
+class PersonalityCreateForm extends Component {
     formRef = React.createRef();
 
     constructor(props) {
@@ -24,6 +24,7 @@ class PersonalityCreate extends Component {
             const { personality } = this.state;
             this.formRef.current.setFieldsValue({
                 name: personality.name,
+                wikidata: personality.wikidata,
                 description: personality.description
             });
         });
@@ -93,10 +94,9 @@ class PersonalityCreate extends Component {
                     >
                         <Form.Item
                             name="name"
-                            label={t("personalityCreateForm:name")}
+                            label={t("personalityCreateForm:wikidata")}
                             rules={[
                                 {
-                                    required: true,
                                     message: t(
                                         "personalityCreateForm:errorNameRequired"
                                     )
@@ -114,6 +114,27 @@ class PersonalityCreate extends Component {
                                 callback={this.updatePersonalityState.bind(
                                     this
                                 )}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            name="name"
+                            label={t("personalityCreateForm:name")}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: t(
+                                        "personalityCreateForm:errorNameRequired"
+                                    )
+                                }
+                            ]}
+                            wrapperCol={{ sm: 24 }}
+                            style={{
+                                width: "100%"
+                            }}
+                        >
+                            <Input
+                                value={this.state.personality.name}
+                                disabled={this.state.inputsDisabled}
                             />
                         </Form.Item>
                         <Form.Item
@@ -154,4 +175,4 @@ class PersonalityCreate extends Component {
     }
 }
 
-export default withTranslation()(PersonalityCreate);
+export default withTranslation()(PersonalityCreateForm);

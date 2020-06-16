@@ -1,3 +1,5 @@
+import React from "react";
+
 const axios = require("axios");
 
 module.exports = class WikidataResolver {
@@ -24,16 +26,23 @@ module.exports = class WikidataResolver {
         }
 
         // Get label for the personality name
-        wikidataProps.name =
-            wikidata.labels &&
-            wikidata.labels[lang] &&
-            wikidata.labels[lang].value;
+        wikidataProps.name = this.extractValue(wikidata, "labels", lang);
 
         // Get description for the personality description
-        wikidataProps.description = this.extractDescription(
-            wikidata.descriptions,
+        wikidataProps.description = this.extractValue(
+            wikidata,
+            "descriptions",
             lang
         );
+
+        if (wikidata.claims.P31) {
+            const wikidataInstanceof =
+                wikidata.claims.P31[0].mainsnak.datavalue.value;
+            wikidataProps.isAllowedProp = wikidataInstanceof.id === "Q5";
+        } else {
+            wikidataProps.isAllowedProp = false;
+        }
+
         // Extract image if it exists
         if (wikidata.claims.P18) {
             const fileName = wikidata.claims.P18[0].mainsnak.datavalue.value;
@@ -41,12 +50,45 @@ module.exports = class WikidataResolver {
         }
         return wikidataProps;
     }
-    extractDescription(descriptions, lang) {
-        if (!descriptions) {
+
+    extractValue(wikidata, property, lang) {
+        if (!wikidata[property]) {
             return;
         }
-        const langFallback = descriptions && descriptions[lang] ? lang : "en";
-        return descriptions[langFallback] && descriptions[langFallback].value;
+        const langFallback =
+            wikidata[property] && wikidata[property][lang] ? lang : "en";
+        return (
+            wikidata[property][langFallback] &&
+            wikidata[property][langFallback].value
+        );
+    }
+
+    queryWikibaseEntities(query, language = "en") {
+        const params = {
+            action: "wbsearchentities",
+            search: query,
+            format: "json",
+            errorformat: "plaintext",
+            language,
+            type: "item",
+            origin: "*"
+        };
+
+        return axios
+            .get(`https://www.wikidata.org/w/api.php`, { params })
+            .then(response => {
+                const { search } = response && response.data;
+                return search.map(wbentity => {
+                    if (!wbentity.label) {
+                        return;
+                    }
+                    return {
+                        name: wbentity.label,
+                        description: wbentity.description,
+                        wikidata: wbentity.id
+                    };
+                });
+            });
     }
 
     async getCommonsThumbURL(imageTitle) {

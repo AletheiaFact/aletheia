@@ -14,7 +14,8 @@ const resources = {
             search_personality: "Search personality"
         },
         personality: {
-            profile_button: "See profile"
+            profile_button: "See profile",
+            add_button: "Add"
         },
         footer: {
             copyright: "Aletheia ©2020 Created by Open Tesseract"
@@ -26,7 +27,13 @@ const resources = {
             errorDescriptionRequired: "Please insert a description",
             description: "Description",
             name: "Nome",
+            wikidata: "Wikidata ID",
             saveButton: "Save personality"
+        },
+        personalityCTA: {
+            header: "Didn't find who you were looking for?",
+            footer: "And help us grow our database!",
+            button: "Add personality"
         },
         claimReviewForm: {
             titleEmpty: "Choose a sentence to review",
@@ -58,7 +65,8 @@ const resources = {
             search_personality: "Busque uma personalidade"
         },
         personality: {
-            profile_button: "Veja o perfil"
+            profile_button: "Veja o perfil",
+            add_button: "Inserir"
         },
         footer: {
             copyright: "Aletheia ©2020 Criado por Open Tesseract"
@@ -70,7 +78,13 @@ const resources = {
             errorDescriptionRequired: "Por favor, insira uma descrição",
             description: "Descrição",
             name: "Nome",
+            wikidata: "ID Wikidata",
             saveButton: "Salvar personalidade"
+        },
+        personalityCTA: {
+            header: "Não encontrou o que procurava?",
+            footer: "e ajude-nos a aumentar o nosso banco de dados!",
+            button: "Incluir personalidade"
         },
         claimReviewForm: {
             titleEmpty: "Escolha uma frase para revisar",

@@ -35,8 +35,11 @@ class WikdiataTypeAhead extends Component {
                 const children =
                     search &&
                     search.map(option => (
-                        <Option key={option.id} value={`${option.label} - ${option.id}`}>
-                            <span>{option.label}</span>&nbsp;
+                        <Option key={option.id} value={`${option.id}`}>
+                            <span>
+                                {option.label} - {option.id}
+                            </span>
+                            &nbsp;
                             <small>{option.description}</small>
                         </Option>
                     ));
@@ -61,7 +64,6 @@ class WikdiataTypeAhead extends Component {
         const wbEntities = this.state.search.filter(
             child => child.id === wikidataId
         );
-
         if (Array.isArray(wbEntities) && wbEntities.length > 0) {
             const wbEntity = wbEntities[0];
             axios
@@ -84,7 +86,8 @@ class WikdiataTypeAhead extends Component {
         } else {
             this.props.callback({
                 personality: {
-                    name: this.state.query,
+                    wikidata: this.state.query,
+                    name: "",
                     description: ""
                 },
                 inputsDisabled: false
@@ -102,7 +105,8 @@ class WikdiataTypeAhead extends Component {
         this.setState({ query }, () => {
             this.props.callback({
                 personality: {
-                    name: this.state.query,
+                    wikidata: this.state.query,
+                    name: "",
                     description: ""
                 },
                 inputsDisabled: false

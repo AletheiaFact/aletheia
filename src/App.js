@@ -8,9 +8,10 @@ import ClaimCreate from "./components/Claim/ClaimCreate";
 import ClaimView from "./components/Claim/ClaimView";
 import PersonalityList from "./components/Personality/PersonalityList";
 import PersonalityView from "./components/Personality/PersonalityView";
-import PersonalityCreate from "./components/Personality/PersonalityCreate";
+import PersonalityCreateForm from "./components/Personality/PersonalityCreateForm";
 import AletheiaHeader from "./components/Header/AletheiaHeader";
 import BackButton from "./components/BackButton";
+import PersonalityCreateSearch from "./components/Personality/PersonalityCreateSearch";
 
 const { Footer, Content } = Layout;
 
@@ -35,7 +36,17 @@ class App extends Component {
                             <Route
                                 exact
                                 path="/personality/create"
-                                component={PersonalityCreate}
+                                component={PersonalityCreateForm}
+                            />
+                            <Route
+                                exact
+                                path="/personality/search"
+                                render={props => (
+                                    <PersonalityCreateSearch
+                                        {...props}
+                                        withSuggestions={true}
+                                    />
+                                )}
                             />
                             <Route
                                 exact
