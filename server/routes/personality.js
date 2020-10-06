@@ -1,4 +1,6 @@
-const PersonalityController = require("../api/controller/personalityController");
+const {
+    PersonalityController
+} = require("../api/controller/personalityController");
 const Requester = require("../infra/interceptor/requester");
 
 /**
@@ -12,7 +14,7 @@ let app;
  * GET {domain}/personality
  */
 router.get("/", (req, res, next) => {
-    const personality = new PersonalityController();
+    const personality = new PersonalityController(app);
     personality
         .listAll(req.query)
         .then(result => res.send(result))
@@ -25,7 +27,7 @@ router.get("/", (req, res, next) => {
  * POST {domain}/personality
  */
 router.post("/", (req, res, next) => {
-    const personality = new PersonalityController();
+    const personality = new PersonalityController(app);
     personality
         .create(req.body)
         .then(result => res.send(result))
@@ -45,7 +47,7 @@ router.post("/", (req, res, next) => {
  * GET {domain}/personality{/id}
  */
 router.get("/:id", (req, res, next) => {
-    const personality = new PersonalityController();
+    const personality = new PersonalityController(app);
     personality
         .getPersonalityId(req.params.id, req.query.language)
         .then(async result => {
@@ -60,7 +62,7 @@ router.get("/:id", (req, res, next) => {
  * GET {domain}/personality{/id}/reviews
  */
 router.get("/:id/reviews", (req, res, next) => {
-    const personality = new PersonalityController();
+    const personality = new PersonalityController(app);
 
     personality
         .getReviewStats(req.params.id)
@@ -76,7 +78,7 @@ router.get("/:id/reviews", (req, res, next) => {
  * PUT {domain}/personality{/id}
  */
 router.put("/:id", (req, res, next) => {
-    const personality = new PersonalityController();
+    const personality = new PersonalityController(app);
     personality
         .update(req.params.id, req.body)
         .then(result => res.send(result))
@@ -89,7 +91,7 @@ router.put("/:id", (req, res, next) => {
  * DELETE {domain}/personality{/id}
  */
 router.delete("/:id", (req, res, next) => {
-    const personality = new PersonalityController();
+    const personality = new PersonalityController(app);
     personality
         .delete(req.params.id)
         .then(result => res.send(result))
