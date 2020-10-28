@@ -1,22 +1,30 @@
+import { ILogger } from "../../lib/loggerInterface";
+
 const Source = require("../model/sourceModel");
 const Claim = require("../model/claimModel");
 const ClaimReview = require("../model/claimReviewModel");
-
-const models = {
-    Claim,
-    ClaimReview
-};
-
-const optionsToUpdate = {
-    new: true,
-    upsert: true
-};
 
 /**
  * @class SourceRepository
  */
 export default class SourceRepository {
-    static async listAll(page, pageSize, order, query) {
+    optionsToUpdate: Object;
+    logger: ILogger;
+    models: Object;
+
+    constructor(logger: any = {}) {
+        this.logger = logger;
+        this.models = {
+            Claim,
+            ClaimReview
+        };
+        this.optionsToUpdate = {
+            new: true,
+            upsert: true
+        };
+    }
+
+    async listAll(page, pageSize, order, query) {
         return Source.find(query)
             .skip(page * pageSize)
             .limit(pageSize)
@@ -24,7 +32,7 @@ export default class SourceRepository {
             .lean();
     }
 
-    static create(source) {
+    create(source) {
         return new Promise((resolve, reject) => {
             const newSource = new Source(source);
             newSource.save((err, source) => {
@@ -32,7 +40,7 @@ export default class SourceRepository {
                     reject(err);
                 }
 
-                models[source.targetModel].findOneAndUpdate(
+                this.models[source.targetModel].findOneAndUpdate(
                     { _id: source.targetId },
                     { $push: { sources: source } },
                     { new: true },
@@ -47,12 +55,12 @@ export default class SourceRepository {
         });
     }
 
-    static async getById(sourceId) {
+    async getById(sourceId) {
         const source = await Source.findById(sourceId);
         return source;
     }
 
-    static async update(sourceId, sourceBody) {
+    async update(sourceId, sourceBody) {
         // eslint-disable-next-line no-useless-catch
         try {
             const source = await this.getById(sourceId);
@@ -60,7 +68,7 @@ export default class SourceRepository {
             const sourceUpdate = await Source.findByIdAndUpdate(
                 sourceId,
                 newSource,
-                optionsToUpdate
+                this.optionsToUpdate
             );
             return sourceUpdate;
         } catch (error) {
@@ -69,11 +77,11 @@ export default class SourceRepository {
         }
     }
 
-    static delete(sourceId) {
+    delete(sourceId) {
         return Source.findByIdAndRemove(sourceId);
     }
 
-    static count(query) {
+    count(query) {
         return Source.countDocuments().where(query);
     }
 }

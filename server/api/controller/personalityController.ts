@@ -1,4 +1,4 @@
-import { PersonalityRepository } from "../repository/personality";
+import PersonalityRepository from "../repository/personality";
 import { ILogger } from "../../lib/loggerInterface";
 
 export class PersonalityController {
