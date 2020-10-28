@@ -1,6 +1,4 @@
-const {
-    PersonalityController
-} = require("../api/controller/personalityController");
+import { PersonalityController } from "../api/controller/personalityController";
 const Requester = require("../infra/interceptor/requester");
 
 /**

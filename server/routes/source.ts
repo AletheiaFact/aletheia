@@ -1,4 +1,4 @@
-const SourceController = require("../api/controller/sourceController");
+import SourceController from "../api/controller/sourceController";
 const Requester = require("../infra/interceptor/requester");
 
 /**
@@ -12,7 +12,7 @@ let app;
  * POST {domain}/source
  */
 router.post("/", (req, res, next) => {
-    const source = new SourceController();
+    const source = new SourceController(app);
 
     source
         .create(req.body)
@@ -26,7 +26,7 @@ router.post("/", (req, res, next) => {
  * GET {domain}/source{/id}
  */
 router.get("/:id", (req, res, next) => {
-    const source = new SourceController();
+    const source = new SourceController(app);
     source
         .getSourceId(req.params.id)
         .then(result => {
@@ -41,7 +41,7 @@ router.get("/:id", (req, res, next) => {
  * PUT {domain}/source{/id}
  */
 router.put("/:id", (req, res, next) => {
-    const source = new SourceController();
+    const source = new SourceController(app);
     source
         .update(req.params.id, req.body)
         .then(result => res.send(result))
@@ -54,7 +54,7 @@ router.put("/:id", (req, res, next) => {
  * DELETE {domain}/source{/id}
  */
 router.delete("/:id", (req, res, next) => {
-    const source = new SourceController();
+    const source = new SourceController(app);
     source
         .delete(req.params.id)
         .then(result => res.send(result))

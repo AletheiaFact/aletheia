@@ -9,7 +9,7 @@ const WikidataResolver = require("../../lib/wikidataResolver");
 /**
  * @class PersonalityRepository
  */
-export class PersonalityRepository {
+export default class PersonalityRepository {
     optionsToUpdate: Object;
     wikidata: typeof WikidataResolver;
     logger: ILogger;

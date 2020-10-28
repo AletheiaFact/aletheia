@@ -1,4 +1,4 @@
-const ClaimReviewController = require("../api/controller/claimReviewController");
+import ClaimReviewController from "../api/controller/claimReviewController";
 const Requester = require("../infra/interceptor/requester");
 const captcha = require("../lib/captcha");
 
@@ -13,7 +13,7 @@ let app;
  * POST {domain}/claim
  */
 router.post("/", async (req, res, next) => {
-    const claimReview = new ClaimReviewController();
+    const claimReview = new ClaimReviewController(app);
     // TODO: re-enablle recaptcha server-side confirmation after the edit-a-thon
     // of 16/05/2020. Reason: we still need to figure out how to create
     // config.yaml in the production environment with proper secrets that can't
@@ -23,6 +23,8 @@ router.post("/", async (req, res, next) => {
         app.config.recaptcha_secret,
         req.body && req.body.recaptcha
     );
+
+    console.log(recaptchaCheck);
 
     if (!recaptchaCheck.success) {
         app.logger.log("error/recaptcha", recaptchaCheck);
@@ -44,7 +46,7 @@ router.post("/", async (req, res, next) => {
  * GET {domain}/claim{/id}
  */
 router.get("/:id", (req, res, next) => {
-    const claimReview = new ClaimReviewController();
+    const claimReview = new ClaimReviewController(app);
     claimReview
         .getClaimReviewId(req.params.id)
         .then(result => res.send(result))
@@ -58,7 +60,7 @@ router.get("/:id", (req, res, next) => {
  * DELETE {domain}/claim{/id}
  */
 router.delete("/:id", (req, res, next) => {
-    const claimReview = new ClaimReviewController();
+    const claimReview = new ClaimReviewController(app);
     claimReview
         .delete(req.params.id)
         .then(result => res.send(result))

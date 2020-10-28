@@ -1,18 +1,18 @@
-import ClaimReviewRepository from "../repository/claimReview";
+import ClaimRepository from "../repository/claim";
 import { ILogger } from "../../lib/loggerInterface";
 
-export default class ClaimReviewController {
-    claimReviewRepository: ClaimReviewRepository;
+export default class ClaimController {
+    claimRepository: ClaimRepository;
     logger: ILogger;
 
     constructor({ logger }) {
         this.logger = logger;
-        this.claimReviewRepository = new ClaimReviewRepository(logger);
+        this.claimRepository = new ClaimRepository(logger);
     }
 
     listAll() {
         try {
-            return this.claimReviewRepository.listAll();
+            return this.claimRepository.listAll();
         } catch (error) {
             return error;
         }
@@ -20,15 +20,15 @@ export default class ClaimReviewController {
 
     create(body) {
         try {
-            return this.claimReviewRepository.create(body);
+            return this.claimRepository.create(body);
         } catch (error) {
             return error;
         }
     }
 
-    getClaimReviewId(id) {
+    getClaimId(id) {
         try {
-            return this.claimReviewRepository.getById(id);
+            return this.claimRepository.getById(id);
         } catch (error) {
             return error;
         }
@@ -36,7 +36,7 @@ export default class ClaimReviewController {
 
     async update(id, body) {
         try {
-            return this.claimReviewRepository.update(id, body);
+            return this.claimRepository.update(id, body);
         } catch (error) {
             return error;
         }
@@ -44,8 +44,8 @@ export default class ClaimReviewController {
 
     async delete(id) {
         try {
-            await this.claimReviewRepository.delete(id);
-            return { message: "Claim Review successfully deleted" };
+            await this.claimRepository.delete(id);
+            return { message: "Claim successfully deleted" };
         } catch (error) {
             return error;
         }
