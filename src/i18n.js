@@ -166,35 +166,34 @@ const resources = {
             clearButton: "Svuota campi"
         },
         personalityCTA: {
-            header: "Didn't find who you were looking for?",
-            footer: "And help us grow our database!",
+            header: "Non hai trovato chi stavi cercando?",
+            footer: "Aiutaci a far crescere il nostro database",
             button: "Aggiungi personalità"
         },
         claimReviewForm: {
-            titleEmpty: "Choose a sentence to review",
-            title: "Review the sentence",
-            selectLabel: "Review this claim",
-            sourceLabel: "Provide a link to a reliable source",
-            sourcePlaceholder: "Paste URL",
-            addReviewButton: "Add review",
-            placeholder: "Choose a classification",
-            "not-fact": "Not fact",
-            true: "True",
-            "true-but": "True, but",
-            arguable: "Arguable",
-            misleading: "Misleading",
-            false: "False",
-            unsustainable: "Unsustainable",
-            exaggerated: "Exaggerated",
-            unverifiable: "Unverifiable",
-            errorMessage: "Error while sending review",
-            successMessage: "Review succeeded"
+            title: "Recensisci la dichiarazione",
+            selectLabel: "Recensisci",
+            sourceLabel: "Fornisci un link per convalidare la recensione",
+            sourcePlaceholder: "Incolla URL",
+            addReviewButton: "Aggiungi recensione",
+            placeholder: "Classificala",
+            "not-fact": "Non è un fattp",
+            true: "Vero",
+            "true-but": "Vero, ma",
+            arguable: "discutibile",
+            misleading: "Ingannevole",
+            false: "Falso",
+            unsustainable: "Insostenibile",
+            exaggerated: "Esagerato",
+            unverifiable: "Inverificabile",
+            errorMessage: "Errore durante l'invio della recensione",
+            successMessage: "Revisione inviata con successo"
         },
         claim: {
-            metricsHeaderTitle: "Metrics",
-            metricsHeaderPrefix: "This speech contains ",
-            metricsHeaderInfo: "{{totalReviews}} reviewed claims",
-            metricsHeaderSuffix: ", of which:"
+            metricsHeaderTitle: "Statistiche",
+            metricsHeaderPrefix: "Questa dichiarazione contiene  ",
+            metricsHeaderInfo: "{{totalReviews}} recensioni",
+            metricsHeaderSuffix: ", delle quali:"
         }
     }
 };
