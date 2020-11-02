@@ -132,7 +132,71 @@ const resources = {
             metricsHeaderInfo: "{{totalReviews}} sentenças revisadas",
             metricsHeaderSuffix: ", das quais:"
         }
-    }
+    },
+    it: {
+        global: {
+            loading: "Caricamento...",
+            back_button: "Indietro"
+        },
+        header: {
+            search_personality: "Ricerca personalità"
+        },
+        personality: {
+            profile_button: "Guarda il profilo",
+            errorFetch: "Errore durante ricerca della personalità",
+            add_button: "aggiungi",
+            affixButtonTitle: "Premere qui per aggiungere una richiesta"
+        },
+        footer: {
+            copyright: "Aletheia ©2020 Creato da Open Tesseract"
+        },
+        personalityCreateForm: {
+            errorMessage: "Errore durante il salvataggio della personalità ",
+            successMessage: "Profilo creato con successo",
+            successUpdate: "Aggiornato con successo",
+            errorNameRequired: "Per favore insierire un nome",
+            errorDescriptionRequired: "Per favore insierire una descrizione",
+            errorFetch: "Errore durante ricerca della personalità",
+            errorUpdate: "Errore durante l'aggiornamento della personalità",
+            description: "Descrizione",
+            name: "Nome",
+            wikidata: "Wikidata ID",
+            saveButton: "Salva personalità",
+            updateButton: "Aggiorna personalità",
+            clearButton: "Svuota campi"
+        },
+        personalityCTA: {
+            header: "Didn't find who you were looking for?",
+            footer: "And help us grow our database!",
+            button: "Add personality"
+        },
+        claimReviewForm: {
+            titleEmpty: "Choose a sentence to review",
+            title: "Review the sentence",
+            selectLabel: "Review this claim",
+            sourceLabel: "Provide a link to a reliable source",
+            sourcePlaceholder: "Paste URL",
+            addReviewButton: "Add review",
+            placeholder: "Choose a classification",
+            "not-fact": "Not fact",
+            true: "True",
+            "true-but": "True, but",
+            arguable: "Arguable",
+            misleading: "Misleading",
+            false: "False",
+            unsustainable: "Unsustainable",
+            exaggerated: "Exaggerated",
+            unverifiable: "Unverifiable",
+            errorMessage: "Error while sending review",
+            successMessage: "Review succeeded"
+        },
+        claim: {
+            metricsHeaderTitle: "Metrics",
+            metricsHeaderPrefix: "This speech contains ",
+            metricsHeaderInfo: "{{totalReviews}} reviewed claims",
+            metricsHeaderSuffix: ", of which:"
+        }
+    },
 };
 
 i18n.use(initReactI18next) // passes i18n down to react-i18next
@@ -151,3 +215,4 @@ i18n.use(initReactI18next) // passes i18n down to react-i18next
     });
 
 export default i18n;
+
