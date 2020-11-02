@@ -168,7 +168,7 @@ const resources = {
         personalityCTA: {
             header: "Didn't find who you were looking for?",
             footer: "And help us grow our database!",
-            button: "Add personality"
+            button: "Aggiungi personalità"
         },
         claimReviewForm: {
             titleEmpty: "Choose a sentence to review",
@@ -196,7 +196,7 @@ const resources = {
             metricsHeaderInfo: "{{totalReviews}} reviewed claims",
             metricsHeaderSuffix: ", of which:"
         }
-    },
+    }
 };
 
 i18n.use(initReactI18next) // passes i18n down to react-i18next
@@ -215,4 +215,3 @@ i18n.use(initReactI18next) // passes i18n down to react-i18next
     });
 
 export default i18n;
-
