@@ -62,16 +62,16 @@ const resources = {
             errorMessage: "Error while sending review",
             successMessage: "Review succeeded"
         },
-        claimCreate:{
-            errorMessage:"Error while fetching claim",
-            responseC:"create with success",
-            errorMessage1:"Error while saving claim",
-            responceU:"update with success",
-            errorMessage2:"Error while updating claim",
-            message:"Please insert a title",
-            placeholder:"Some title",
-            message1:"Please insert the content",
-            placeholder1:"claim",
+        claimCreate: {
+            errorMessage: "Error while fetching claim",
+            responseC: "create with success",
+            errorMessage1: "Error while saving claim",
+            responceU: "update with success",
+            errorMessage2: "Error while updating claim",
+            message: "Please insert a title",
+            placeholder: "Some title",
+            message1: "Please insert the content",
+            placeholder1: "claim"
         },
         claim: {
             metricsHeaderTitle: "Metrics",
@@ -200,16 +200,16 @@ const resources = {
             errorMessage: "Errore durante l'invio della recensione",
             successMessage: "Revisione inviata con successo"
         },
-        claimCreate:{
-            errorMessage:"Errore durante il recupero della richiesta",
-            responseC:"Creato con successo",
-            errorMessage1:"Errore durante il salvataggio della richiesta",
-            responceU:"Aggiornato con successo",
-            errorMessage2:"Errore durante l'aggiornamento della richiesta",
-            message:"Per favore inserire un titolo",
-            placeholder:"Alcuni titoli",//dumb of sense
-            message1:"Per favore inserire il contenuto",
-            placeholder1:"Richiesta",
+        claimCreate: {
+            errorMessage: "Errore durante il recupero della richiesta",
+            responseC: "Creato con successo",
+            errorMessage1: "Errore durante il salvataggio della richiesta",
+            responceU: "Aggiornato con successo",
+            errorMessage2: "Errore durante l'aggiornamento della richiesta",
+            message: "Per favore inserire un titolo",
+            placeholder: "Alcuni titoli", // dumb of sense
+            message1: "Per favore inserire il contenuto",
+            placeholder1: "Richiesta"
         },
         claim: {
             metricsHeaderTitle: "Statistiche",
