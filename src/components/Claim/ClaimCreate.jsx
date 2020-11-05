@@ -5,6 +5,7 @@ import { stateToHTML } from "draft-js-export-html";
 import { stateFromHTML } from "draft-js-import-html";
 import "draft-js/dist/Draft.css";
 import { Typography, Form, Input, Button, message, Row, Col } from "antd";
+import { withTranslation } from "react-i18next";
 
 const { Title } = Typography;
 class ClaimCreate extends Component {
@@ -49,7 +50,7 @@ class ClaimCreate extends Component {
                 })
                 .catch(err => {
                     throw err;
-                    console.log("Error while fetching claim");
+                    console.log(this.props.t("ClaimCreate:errorMessage"));
                 });
         }
     }
@@ -67,7 +68,7 @@ class ClaimCreate extends Component {
             })
             .then(response => {
                 const { title, _id } = response.data;
-                message.success(`"${title}" created with success`);
+                message.success(`"${title}${this.props.t("claimCreate:responseC")}`);
                 // Redirect to personality profile in case _id is not present
                 const path = _id ? `./${_id}` : "../";
                 this.props.history.push(path);
@@ -82,7 +83,7 @@ class ClaimCreate extends Component {
                 message.error(
                     data && data.message
                         ? data.message
-                        : "Error while saving claim"
+                        : this.props.t("ClaimCreate:errorMessage1")
                 );
             });
     }
@@ -100,7 +101,7 @@ class ClaimCreate extends Component {
             )
             .then(response => {
                 const { title, _id } = response.data;
-                message.success(`"${title}" updated with success`);
+                message.success(`"${title}"${this.props.t("claimCreate:responseU")}`);
                 // Redirect to personality profile in case _id is not present
                 const path = "./";
                 this.props.history.push(path);
@@ -115,7 +116,7 @@ class ClaimCreate extends Component {
                 message.error(
                     data && data.message
                         ? data.message
-                        : "Error while updating claim"
+                        : this.props.t("ClaimCreate:errorMessage2")
                 );
             });
     }
@@ -155,7 +156,7 @@ class ClaimCreate extends Component {
                                 rules={[
                                     {
                                         required: true,
-                                        message: "Please insert a title"
+                                        message: this.props.t("ClaimCreate:message")
                                     }
                                 ]}
                                 wrapperCol={{ sm: 24 }}
@@ -170,7 +171,7 @@ class ClaimCreate extends Component {
                                     onChange={e =>
                                         this.setState({ title: e.target.value })
                                     }
-                                    placeholder={"Some Title"}
+                                    placeholder={this.props.t("ClaimCreate:placeholder")}
                                 />
                             </Form.Item>
                             <Form.Item
@@ -179,7 +180,7 @@ class ClaimCreate extends Component {
                                 rules={[
                                     {
                                         required: true,
-                                        message: "Please insert the content"
+                                        message: this.props.t("ClaimCreate:message1")
                                     }
                                 ]}
                                 wrapperCol={{ sm: 24 }}
@@ -189,7 +190,7 @@ class ClaimCreate extends Component {
                             >
                                 <div className="ant-input">
                                     <Editor
-                                        placeholder="Claim"
+                                        placeholder={this.props.t("ClaimCreate:placeholder1")}
                                         editorState={this.state && this.state.editorState}
                                         onChange={this.onChange}
                                     />
