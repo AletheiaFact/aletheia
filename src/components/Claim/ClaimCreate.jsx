@@ -1,11 +1,12 @@
+import { withTranslation } from "react-i18next";
 import React, { Component } from "react";
 import axios from "axios";
 import { Editor, EditorState, ContentState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import { stateFromHTML } from "draft-js-import-html";
 import "draft-js/dist/Draft.css";
+
 import { Typography, Form, Input, Button, message, Row, Col } from "antd";
-import { withTranslation } from "react-i18next";
 
 const { Title } = Typography;
 class ClaimCreate extends Component {
@@ -25,7 +26,13 @@ class ClaimCreate extends Component {
         if (this.props.edit) {
             axios
                 .get(
-                    `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
+                    `${process.env.API_URL}/claim/${this.props.match.params.claimId}`,
+                    {
+                        params: {
+                            language: this.props.i18n.languages[0]
+                        }
+                    }
+
                 )
                 .then(response => {
                     const { content, title } = response.data;
@@ -49,7 +56,7 @@ class ClaimCreate extends Component {
                     );
                 })
                 .catch(err => {
-                    throw err,
+                    throw err;
                     console.log(this.props.t("ClaimCreate:errorMessage"));
                 });
         }
@@ -214,5 +221,5 @@ class ClaimCreate extends Component {
         );
     }
 }
-
+export default withTranslation()(Claim);
 export default ClaimCreate;
