@@ -55,9 +55,10 @@ class ClaimCreate extends Component {
                         }
                     );
                 })
-                .catch(() => {
-                    
+                .catch(err => {
                     console.log(this.props.t("ClaimCreate:errorMessage"));
+                    throw err;
+                    
                 });
         }
     }
