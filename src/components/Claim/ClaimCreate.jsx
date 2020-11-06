@@ -223,4 +223,3 @@ class ClaimCreate extends Component {
     }
 }
 export default withTranslation()(Claim);
-export default ClaimCreate;
