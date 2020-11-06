@@ -76,7 +76,7 @@ const resources = {
         claim: {
             errorMessage3:"Error while fetching Personality",
             errorMessage4:"Error while fetching claim",
-            message:"Click on a sentence to start a review",
+            message1:"Click on a sentence to start a review",
             metricsHeaderTitle: "Metrics",
             metricsHeaderPrefix: "This speech contains ",
             metricsHeaderInfo: "{{totalReviews}} reviewed claims",
@@ -216,9 +216,9 @@ const resources = {
             placeholder1: "Richiesta"
         },
         claim: {
-            errorMessage:"Errore durante il recupero della personalità",
-            errorMessage1:"Errore durante il recupero della richiesta",
-            message:"Clicca su una frase per iniziare la revisione",
+            errorMessage3:"Errore durante il recupero della personalità",
+            errorMessage4:"Errore durante il recupero della richiesta",
+            message1:"Clicca su una frase per iniziare la revisione",
             metricsHeaderTitle: "Statistiche",
             metricsHeaderPrefix: "Questa dichiarazione contiene  ",
             metricsHeaderInfo: "{{totalReviews}} recensioni",
