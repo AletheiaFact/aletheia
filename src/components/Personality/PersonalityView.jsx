@@ -85,7 +85,7 @@ class PersonalityView extends Component {
                                         fontSize: "20px"
                                     }}
                                 >
-                                    {personality.stats.total}
+                                    {personality.stats?.total}
                                 </span>{" "}
                                 Claims reviewed
                             </span>

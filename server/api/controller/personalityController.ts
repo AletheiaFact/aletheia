@@ -65,30 +65,24 @@ export class PersonalityController {
     }
 
     getPersonalityId(id, language) {
-        try {
-            return this.personalityRepository.getById(id, language);
-        } catch (error) {
-            this.logger.log("error", error);
-            return error;
-        }
+        return this.personalityRepository.getById(id, language).catch(err => {
+            this.logger.log("error", err);
+            return err;
+        });
     }
 
     getReviewStats(id) {
-        try {
-            return this.personalityRepository.getReviewStats(id);
-        } catch (error) {
-            this.logger.log("error", error);
-            return error;
-        }
+        return this.personalityRepository.getReviewStats(id).catch(err => {
+            this.logger.log("error", err);
+            return err;
+        });
     }
 
     async update(id, body) {
-        try {
-            return this.personalityRepository.update(id, body);
-        } catch (error) {
-            this.logger.log("error", error);
-            return error;
-        }
+        return this.personalityRepository.update(id, body).catch(err => {
+            this.logger.log("error", err);
+            return err;
+        });
     }
 
     async delete(id) {
