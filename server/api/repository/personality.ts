@@ -79,7 +79,7 @@ export default class PersonalityRepository {
             const newPersonality = new Personality(personality);
             this.logger.log(
                 "info",
-                `Created new personality with data ${personality}`
+                `Attempting to create new personality with data ${personality}`
             );
             return newPersonality.save();
         } catch (err) {}

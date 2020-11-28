@@ -11,43 +11,23 @@ export default class ClaimController {
     }
 
     listAll() {
-        try {
-            return this.claimRepository.listAll();
-        } catch (error) {
-            return error;
-        }
+        return this.claimRepository.listAll();
     }
 
     create(body) {
-        try {
-            return this.claimRepository.create(body);
-        } catch (error) {
-            return error;
-        }
+        return this.claimRepository.create(body);
     }
 
     getClaimId(id) {
-        try {
-            return this.claimRepository.getById(id);
-        } catch (error) {
-            return error;
-        }
+        return this.claimRepository.getById(id);
     }
 
     async update(id, body) {
-        try {
-            return this.claimRepository.update(id, body);
-        } catch (error) {
-            return error;
-        }
+        return this.claimRepository.update(id, body);
     }
 
     async delete(id) {
-        try {
-            await this.claimRepository.delete(id);
-            return { message: "Claim successfully deleted" };
-        } catch (error) {
-            return error;
-        }
+        await this.claimRepository.delete(id);
+        return { message: "Claim successfully deleted" };
     }
 }
