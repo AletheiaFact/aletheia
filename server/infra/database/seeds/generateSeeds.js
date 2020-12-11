@@ -18,7 +18,7 @@ const seeders = [
 seeder.setLogOutput(false);
 seeder.connect(Config.mongodb, () => {
     // Load Mongoose models
-    seeder.loadModels(["./server/api/model/personalityModel"]);
+    seeder.loadModels(["./server/api/model/personalityModel.ts"]);
     // Clear specified collections
     seeder.clearModels(["Personality"], () => {
         // Callback to populate DB once collections have been cleared
