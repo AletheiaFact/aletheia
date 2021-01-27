@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const path = require("path");
 const packageInfo = require("../../package.json");
 const specLib = require("./lib/spec");
+var passport = require("passport");
+var LocalStrategy = require("passport-local").Strategy;
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
 const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
 
@@ -146,6 +148,18 @@ function initApp(options) {
     return Promise.resolve(app);
 }
 
+function loadPassport(app) {
+    app.use(passport.initialize());
+    app.use(passport.session());
+    const User = require("./api/model/userModel");
+    passport.use(
+        new LocalStrategy({ usernameField: "email" }, User.authenticate())
+    );
+    passport.serializeUser(User.serializeUser());
+    passport.deserializeUser(User.deserializeUser());
+    return app;
+}
+
 function loadClient(app) {
     app.use(
         "/assets",
@@ -166,6 +180,7 @@ module.exports = options => {
     // TODO: Promisify it all
     return initApp(options)
         .then(loadDB)
+        .then(loadPassport)
         .then(app => loadRoutes(app, `${__dirname}/routes`))
         .then(loadClient)
         .then(createServer);
