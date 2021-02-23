@@ -30,7 +30,21 @@ router.post("/signup", (req, res, next) => {
             }
 
             passport.authenticate("local")(req, res, function() {
-                res.send({ status: "success" });
+                const prevSession = req.session;
+                req.session.regenerate(err => {
+                    if (err) {
+                        next(
+                            Requester.internalError(
+                                res,
+                                err.message,
+                                app.logger
+                            )
+                        );
+                    } else {
+                        Object.assign(req.session, prevSession);
+                        res.send({ status: "success" });
+                    }
+                });
             });
         }
     );
