@@ -1,4 +1,5 @@
 import ClaimController from "../api/controller/claimController";
+const ensureLoggedIn = require("../api/middleware/ensureLoggedIn");
 const Requester = require("../infra/interceptor/requester");
 
 /**
@@ -11,7 +12,7 @@ let app;
 /**
  * POST {domain}/claim
  */
-router.post("/", (req, res, next) => {
+router.post("/", ensureLoggedIn, (req, res, next) => {
     const claim = new ClaimController(app);
     claim
         .create(req.body)
@@ -37,7 +38,7 @@ router.get("/:id", (req, res, next) => {
 /**
  * PUT {domain}/claim{/id}
  */
-router.put("/:id", (req, res, next) => {
+router.put("/:id", ensureLoggedIn, (req, res, next) => {
     const claim = new ClaimController(app);
     claim
         .update(req.params.id, req.body)
@@ -50,7 +51,7 @@ router.put("/:id", (req, res, next) => {
 /**
  * DELETE {domain}/claim{/id}
  */
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", ensureLoggedIn, (req, res, next) => {
     const claim = new ClaimController(app);
     claim
         .delete(req.params.id)
