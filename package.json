@@ -67,6 +67,7 @@
     "draft-js-export-html": "^1.4.1",
     "draft-js-import-html": "^1.4.1",
     "express": "^4.16.4",
+    "express-session": "^1.17.1",
     "i18next": ">= 19.0.0",
     "i18next-browser-languagedetector": "^4.2.0",
     "i18next-http-backend": "^1.0.11",

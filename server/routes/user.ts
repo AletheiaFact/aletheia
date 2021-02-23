@@ -12,7 +12,6 @@ let app;
  * POST {domain}/signin
  */
 router.post("/signin", passport.authenticate("local"), (req, res, next) => {
-    console.log("yo");
     res.send({ status: "signin success" });
 });
 

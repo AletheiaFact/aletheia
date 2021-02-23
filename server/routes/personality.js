@@ -1,4 +1,5 @@
 import { PersonalityController } from "../api/controller/personalityController";
+import ensureLogin from "../api/middleware/ensureLogin";
 const Requester = require("../infra/interceptor/requester");
 
 /**
