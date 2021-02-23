@@ -1,4 +1,5 @@
 import ClaimReviewController from "../api/controller/claimReviewController";
+const ensureLoggedIn = require("../api/middleware/ensureLoggedIn");
 const Requester = require("../infra/interceptor/requester");
 const captcha = require("../lib/captcha");
 
@@ -12,7 +13,7 @@ let app;
 /**
  * POST {domain}/claim
  */
-router.post("/", async (req, res, next) => {
+router.post("/", ensureLoggedIn, async (req, res, next) => {
     const claimReview = new ClaimReviewController(app);
     // TODO: re-enablle recaptcha server-side confirmation after the edit-a-thon
     // of 16/05/2020. Reason: we still need to figure out how to create
@@ -59,7 +60,7 @@ router.get("/:id", (req, res, next) => {
 /**
  * DELETE {domain}/claim{/id}
  */
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", ensureLoggedIn, (req, res, next) => {
     const claimReview = new ClaimReviewController(app);
     claimReview
         .delete(req.params.id)

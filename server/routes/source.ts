@@ -1,4 +1,5 @@
 import SourceController from "../api/controller/sourceController";
+const ensureLoggedIn = require("../api/middleware/ensureLoggedIn");
 const Requester = require("../infra/interceptor/requester");
 
 /**
@@ -11,7 +12,7 @@ let app;
 /**
  * POST {domain}/source
  */
-router.post("/", (req, res, next) => {
+router.post("/", ensureLoggedIn, (req, res, next) => {
     const source = new SourceController(app);
 
     source
@@ -40,7 +41,7 @@ router.get("/:id", (req, res, next) => {
 /**
  * PUT {domain}/source{/id}
  */
-router.put("/:id", (req, res, next) => {
+router.put("/:id", ensureLoggedIn, (req, res, next) => {
     const source = new SourceController(app);
     source
         .update(req.params.id, req.body)
@@ -53,7 +54,7 @@ router.put("/:id", (req, res, next) => {
 /**
  * DELETE {domain}/source{/id}
  */
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", ensureLoggedIn, (req, res, next) => {
     const source = new SourceController(app);
     source
         .delete(req.params.id)

@@ -1,4 +1,5 @@
 import { PersonalityController } from "../api/controller/personalityController";
+const ensureLoggedIn = require("../api/middleware/ensureLoggedIn");
 const Requester = require("../infra/interceptor/requester");
 
 /**
@@ -24,7 +25,7 @@ router.get("/", (req, res, next) => {
 /**
  * POST {domain}/personality
  */
-router.post("/", (req, res, next) => {
+router.post("/", ensureLoggedIn, (req, res, next) => {
     const personality = new PersonalityController(app);
     personality
         .create(req.body)
@@ -75,7 +76,7 @@ router.get("/:id/reviews", (req, res, next) => {
 /**
  * PUT {domain}/personality{/id}
  */
-router.put("/:id", (req, res, next) => {
+router.put("/:id", ensureLoggedIn, (req, res, next) => {
     const personality = new PersonalityController(app);
     personality
         .update(req.params.id, req.body)
@@ -88,7 +89,7 @@ router.put("/:id", (req, res, next) => {
 /**
  * DELETE {domain}/personality{/id}
  */
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", ensureLoggedIn, (req, res, next) => {
     const personality = new PersonalityController(app);
     personality
         .delete(req.params.id)
