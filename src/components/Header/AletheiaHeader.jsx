@@ -19,7 +19,7 @@ class AletheiaHeader extends Component {
     }
 
     render() {
-        const { t } = this.props;
+        const { t, search } = this.props;
         return (
             <header className="aletheia-header">
                 <nav>
@@ -39,10 +39,12 @@ class AletheiaHeader extends Component {
                             />
                         </Col>
                         <Col flex={1}>
-                            <InputSearch
-                                placeholder={t("header:search_personality")}
-                                callback={this.handleInputSearch.bind(this)}
-                            />
+                            {search && (
+                                <InputSearch
+                                    placeholder={t("header:search_personality")}
+                                    callback={this.handleInputSearch.bind(this)}
+                                />
+                            )}
                         </Col>
                         <Col>
                             <UserOutlined

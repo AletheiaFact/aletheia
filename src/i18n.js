@@ -67,6 +67,15 @@ const resources = {
             metricsHeaderPrefix: "This speech contains ",
             metricsHeaderInfo: "{{totalReviews}} reviewed claims",
             metricsHeaderSuffix: ", of which:"
+        },
+        login: {
+            formHeader: "Login to your account",
+            emailLabel: "E-mail",
+            passwordLabel: "Password",
+            submitButton: "Submit",
+            emailErrorMessage: "Please, insert your e-mail",
+            passwordErrorMessage: "Please, insert your password",
+            failed: "Unauthorized"
         }
     },
     pt: {
@@ -131,6 +140,15 @@ const resources = {
             metricsHeaderPrefix: "Esse discurso contém ",
             metricsHeaderInfo: "{{totalReviews}} sentenças revisadas",
             metricsHeaderSuffix: ", das quais:"
+        },
+        login: {
+            formHeader: "Acesse sua conta",
+            emailLabel: "E-mail",
+            passwordLabel: "Senha",
+            submitButton: "Enviar",
+            emailErrorMessage: "Por favor, insira seu e-mail",
+            passwordErrorMessage: "Por favor, insira sua senha",
+            failedMessage: "Login não autorizado"
         }
     },
     it: {

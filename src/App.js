@@ -19,7 +19,7 @@ class App extends Component {
     render() {
         const { t } = this.props;
         return (
-            <Layout style={{ minHeight: "100vh" }}>
+            <>
                 <AletheiaHeader />
                 <Content className="main-content">
                     <Router>
@@ -86,7 +86,7 @@ class App extends Component {
                 <Footer style={{ textAlign: "center" }}>
                     {t("footer:copyright")}
                 </Footer>
-            </Layout>
+            </>
         );
     }
 }
