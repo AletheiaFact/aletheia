@@ -62,7 +62,9 @@ class ClaimReviewForm extends Component {
             },
             () => {
                 axios
-                    .post(`${process.env.API_URL}/claimreview`, this.state)
+                    .post(`${process.env.API_URL}/claimreview`, this.state, {
+                        withCredentials: true
+                    })
                     .then(response => {
                         message.success(
                             this.props.t("claimReviewForm:successMessage")
