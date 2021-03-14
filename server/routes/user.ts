@@ -1,5 +1,6 @@
 import UserRepository from "../api/repository/user";
 const Requester = require("../infra/interceptor/requester");
+const ensureLoggedIn = require("../api/middleware/ensureLoggedIn");
 const passport = require("passport");
 /**
  * The main router object
@@ -22,6 +23,10 @@ router.post("/signin", (req, res, next) => {
             return res.send({ success: true });
         });
     })(req, res, next);
+});
+
+router.get("/validate", ensureLoggedIn, (req, res, next) => {
+    res.send({ success: true });
 });
 
 /**
