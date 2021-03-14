@@ -6,14 +6,23 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 function BackButton(props) {
     const { t } = props;
 
+    const onClick = () => {
+        if (props.callback) {
+            props.callback();
+        } else {
+            props.history.goBack();
+        }
+    };
+
     if (props.location.pathname !== "/") {
         return (
             <a
                 className="back-button"
                 style={{
-                    fontWeight: "bold"
+                    fontWeight: "bold",
+                    ...props.style
                 }}
-                onClick={props.history.goBack}
+                onClick={onClick}
             >
                 <ArrowLeftOutlined /> {t("global:back_button")}
             </a>
