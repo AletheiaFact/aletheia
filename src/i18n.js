@@ -17,7 +17,8 @@ const resources = {
             profile_button: "See profile",
             errorFetch: "Error while fetching Personality",
             add_button: "Add",
-            affixButtonTitle: "Click here to add a claim"
+            affixButtonTitle: "Click here to add a claim",
+            wikipediaPage: "View Wikipedia Page"
         },
         footer: {
             copyright: "Aletheia ©2020 Created by Open Tesseract"
@@ -99,7 +100,8 @@ const resources = {
             profile_button: "Veja o perfil",
             errorFetch: "Erro ao buscar Personalidade",
             add_button: "Inserir",
-            affixButtonTitle: "Clique aqui para adicionar um discurso"
+            affixButtonTitle: "Clique aqui para adicionar um discurso",
+            wikipediaPage: "Acesse a página do Wikipédia"
         },
         footer: {
             copyright: "Aletheia ©2020 Criado por Open Tesseract"

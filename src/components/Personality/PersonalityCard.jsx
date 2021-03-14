@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Avatar, Spin, Col, Row, Typography, Button } from "antd";
 import { withTranslation } from "react-i18next";
+import { ArrowRightOutlined } from "@ant-design/icons";
 
 const { Title, Paragraph } = Typography;
 
@@ -20,7 +21,7 @@ class PersonalityCard extends Component {
 
     render() {
         const { personality, t } = this.props;
-
+        console.log(personality);
         if (personality) {
             return (
                 <>
@@ -40,9 +41,19 @@ class PersonalityCard extends Component {
                         <Col span={3}></Col>
                         <Col span={this.titleSpan}>
                             <Title level={4}>{personality.name}</Title>
-                            <Paragraph>
-                                {personality.description}
-                            </Paragraph>
+                            <Paragraph>{personality.description}</Paragraph>
+                            {personality.wikipedia && (
+                                <a
+                                    style={{
+                                        fontWeight: "bold"
+                                    }}
+                                    target="_blank"
+                                    href={personality.wikipedia}
+                                >
+                                    {t("personality:wikipediaPage")}{" "}
+                                    <ArrowRightOutlined />
+                                </a>
+                            )}
                         </Col>
                         {this.props.summarized && (
                             <Col span={6}>

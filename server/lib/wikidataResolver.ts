@@ -1,8 +1,10 @@
-import React from "react";
-
 const axios = require("axios");
 
-module.exports = class WikidataResolver {
+const languageVariantMap = {
+    "pt-br": "pt"
+};
+
+class WikidataResolver {
     async fetchProperties(params) {
         const { data } = await axios.get("https://www.wikidata.org/w/api.php", {
             params: {
@@ -19,20 +21,26 @@ module.exports = class WikidataResolver {
         );
     }
 
-    async extractProperties(wikidata, lang = "en") {
-        const wikidataProps = {};
+    async extractProperties(wikidata, language = "en"): Promise<any> {
+        const wikidataProps = {
+            name: undefined,
+            description: undefined,
+            isAllowedProp: undefined,
+            image: undefined,
+            wikipedia: undefined
+        };
         if (!wikidata) {
             return {};
         }
 
         // Get label for the personality name
-        wikidataProps.name = this.extractValue(wikidata, "labels", lang);
+        wikidataProps.name = this.extractValue(wikidata, "labels", language);
 
         // Get description for the personality description
         wikidataProps.description = this.extractValue(
             wikidata,
             "descriptions",
-            lang
+            language
         );
 
         if (wikidata.claims.P31) {
@@ -48,18 +56,38 @@ module.exports = class WikidataResolver {
             const fileName = wikidata.claims.P18[0].mainsnak.datavalue.value;
             wikidataProps.image = await this.getCommonsThumbURL(fileName);
         }
+        const siteLinkName = this.getSiteLinkName(language);
+        if (wikidata.sitelinks[siteLinkName]) {
+            const wikiLang = siteLinkName.match(/^(.*)wiki$/)[1];
+            const wikiTitle = wikidata.sitelinks[siteLinkName].title;
+            if (wikiLang && wikiTitle) {
+                wikidataProps.wikipedia = `https://${wikiLang.replace(
+                    "_",
+                    "-"
+                )}.wikipedia.org/wiki/${encodeURI(wikiTitle)}`;
+            }
+        }
         return wikidataProps;
     }
 
-    extractValue(wikidata, property, lang) {
+    getSiteLinkName(language) {
+        if (languageVariantMap[language]) {
+            language = languageVariantMap[language];
+        }
+        return `${language}wiki`;
+    }
+
+    extractValue(wikidata, property, language) {
         if (!wikidata[property]) {
             return;
         }
-        const langFallback =
-            wikidata[property] && wikidata[property][lang] ? lang : "en";
+        const languageFallback =
+            wikidata[property] && wikidata[property][language]
+                ? language
+                : "en";
         return (
-            wikidata[property][langFallback] &&
-            wikidata[property][langFallback].value
+            wikidata[property][languageFallback] &&
+            wikidata[property][languageFallback].value
         );
     }
 
@@ -114,4 +142,6 @@ module.exports = class WikidataResolver {
             pages[0] && pages[0].imageinfo && pages[0].imageinfo[0];
         return imageinfo.url;
     }
-};
+}
+
+export default WikidataResolver;
