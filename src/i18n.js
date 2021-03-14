@@ -75,7 +75,16 @@ const resources = {
             submitButton: "Submit",
             emailErrorMessage: "Please, insert your e-mail",
             passwordErrorMessage: "Please, insert your password",
-            failed: "Unauthorized"
+            failed: "Unauthorized",
+            signup: "Sign-up"
+        },
+        CTARegistration: {
+            title: "Wanna be a reviewer?",
+            body:
+                "Wanna be a reviewer? Aletheia is currently on Beta Test and we are accepting all journalists and fact-checking professionals to test the platform!",
+            footer:
+                "Our goal is to be open for all users to add and review claims once tests are done. Keep it up with us on social media!",
+            button: "Apply to be a reviewer"
         }
     },
     pt: {
@@ -148,7 +157,16 @@ const resources = {
             submitButton: "Enviar",
             emailErrorMessage: "Por favor, insira seu e-mail",
             passwordErrorMessage: "Por favor, insira sua senha",
-            failedMessage: "Login não autorizado"
+            failedMessage: "Login não autorizado",
+            signup: "Registre-se"
+        },
+        CTARegistration: {
+            title: "Quer ser um revisor?",
+            body:
+                "Aletheia está atualmente em teste beta e estamos aceitando todos os jornalistas e profissionais de checagem de fatos para testar a plataforma!",
+            footer:
+                "Nosso objetivo é estar aberto para que todos os usuários adicionem e revisem alegações assim que os testes forem concluídos. Acompanhe-nos nas redes sociais!",
+            button: "Inscreva-se para ser um revisor"
         }
     },
     it: {
