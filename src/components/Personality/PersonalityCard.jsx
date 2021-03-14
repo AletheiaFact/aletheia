@@ -21,11 +21,7 @@ class PersonalityCard extends Component {
     }
 
     render() {
-        const { personality, t, summarized } = this.props;
-
-        if (summarized) {
-            delete personality.wikipedia;
-        }
+        const { personality, t } = this.props;
 
         if (personality) {
             return (
@@ -71,7 +67,7 @@ class PersonalityCard extends Component {
                                     </b>
                                 </Paragraph>
                             )}
-                            {personality.wikipedia && (
+                            {!this.props.summarized && personality.wikipedia && (
                                 <a
                                     style={{
                                         fontWeight: "bold"
