@@ -18,6 +18,21 @@ const login = (params, t) => {
         });
 };
 
+const validateSession = (params, t) => {
+    return axios
+        .get(`${process.env.API_URL}/user/validate`, { withCredentials: true })
+        .then(response => {
+            return { login: true, ...response };
+        })
+        .catch(e => {
+            const response = e?.response?.data || {
+                message: t("login:failedMessage")
+            };
+            return { login: false, ...response };
+        });
+};
+
 export default {
-    login
+    login,
+    validateSession
 };

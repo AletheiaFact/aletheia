@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Layout, Row } from "antd";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { withTranslation } from "react-i18next";
+import api from "./api/user";
 import "./App.less";
 
 import ClaimCreate from "./components/Claim/ClaimCreate";
@@ -12,10 +13,19 @@ import PersonalityCreateForm from "./components/Personality/PersonalityCreateFor
 import AletheiaHeader from "./components/Header/AletheiaHeader";
 import BackButton from "./components/BackButton";
 import PersonalityCreateSearch from "./components/Personality/PersonalityCreateSearch";
+import { connect } from "react-redux";
 
 const { Footer, Content } = Layout;
 
 class App extends Component {
+    async componentDidMount() {
+        const result = await api.validateSession({}, this.props.t);
+        this.props.dispatch({
+            type: "SET_LOGIN_VALIDATION",
+            login: result.login
+        });
+    }
+
     render() {
         const { t } = this.props;
         return (
@@ -91,4 +101,9 @@ class App extends Component {
     }
 }
 
-export default withTranslation()(App);
+const mapStateToProps = state => {
+    return {
+        isLoggedIn: state?.login || false
+    };
+};
+export default connect(mapStateToProps)(withTranslation()(App));
