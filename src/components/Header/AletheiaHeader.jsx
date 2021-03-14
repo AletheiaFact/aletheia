@@ -9,6 +9,10 @@ import InputSearch from "../Form/InputSearch";
 import "./AletheiaHeader.less";
 
 class AletheiaHeader extends Component {
+    static defaultProps = {
+        search: true
+    };
+
     handleInputSearch(name) {
         this.props.dispatch({
             type: "SET_SEARCH_NAME",
@@ -19,7 +23,7 @@ class AletheiaHeader extends Component {
     }
 
     render() {
-        const { t } = this.props;
+        const { t, search } = this.props;
         return (
             <header className="aletheia-header">
                 <nav>
@@ -39,10 +43,12 @@ class AletheiaHeader extends Component {
                             />
                         </Col>
                         <Col flex={1}>
-                            <InputSearch
-                                placeholder={t("header:search_personality")}
-                                callback={this.handleInputSearch.bind(this)}
-                            />
+                            {search && (
+                                <InputSearch
+                                    placeholder={t("header:search_personality")}
+                                    callback={this.handleInputSearch.bind(this)}
+                                />
+                            )}
                         </Col>
                         <Col>
                             <UserOutlined
@@ -62,9 +68,9 @@ class AletheiaHeader extends Component {
 
 const mapStateToProps = state => {
     return {
-        page: (state && state.searchCurPage) || 1,
-        pageSize: (state && state.searchPageSize) || 10,
-        searchName: (state && state.searchInput) || null
+        page: state?.search?.searchCurPage || 1,
+        pageSize: state?.search?.searchPageSize || 10,
+        searchName: state?.search?.searchInput || null
     };
 };
 

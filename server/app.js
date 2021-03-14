@@ -1,4 +1,6 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
 const fs = require("fs");
 const yaml = require("js-yaml");
 const bodyParser = require("body-parser");
@@ -6,6 +8,8 @@ const mongoose = require("mongoose");
 const path = require("path");
 const packageInfo = require("../../package.json");
 const specLib = require("./lib/spec");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
 const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
 
@@ -126,17 +130,23 @@ function initApp(options) {
             useFindAndModify: false
         };
     }
+
+    app.config.cors = app.config.cors === undefined ? "*" : app.config.cors;
+
     // CORS
     app.all("*", (req, res, next) => {
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader(
-            "Access-Control-Allow-Methods",
-            "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-        );
-        res.setHeader(
-            "Access-Control-Allow-Headers",
-            "Origin, X-Requested-With, Content-Type, Accept"
-        );
+        if (app.config.cors !== false) {
+            res.header("access-control-allow-origin", app.config.cors);
+            res.header("access-control-allow-credentials", true);
+            res.header(
+                "access-control-allow-methods",
+                "GET, PUT, POST, DELETE, HEAD, OPTIONS"
+            );
+            res.header(
+                "access-control-allow-headers",
+                "accept, x-requested-with, content-type"
+            );
+        }
         next();
     });
 
@@ -144,6 +154,26 @@ function initApp(options) {
     app.use(bodyParser.json());
 
     return Promise.resolve(app);
+}
+
+function loadPassport(app) {
+    app.use(cookieParser());
+    app.use(
+        session({
+            secret: "replace_me",
+            resave: false,
+            saveUninitialized: false
+        })
+    );
+    app.use(passport.initialize());
+    app.use(passport.session());
+    const User = require("./api/model/userModel");
+    passport.use(
+        new LocalStrategy({ usernameField: "email" }, User.authenticate())
+    );
+    passport.serializeUser(User.serializeUser());
+    passport.deserializeUser(User.deserializeUser());
+    return app;
 }
 
 function loadClient(app) {
@@ -166,6 +196,7 @@ module.exports = options => {
     // TODO: Promisify it all
     return initApp(options)
         .then(loadDB)
+        .then(loadPassport)
         .then(app => loadRoutes(app, `${__dirname}/routes`))
         .then(loadClient)
         .then(createServer);

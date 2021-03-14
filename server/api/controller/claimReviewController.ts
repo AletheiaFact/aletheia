@@ -1,9 +1,18 @@
 import ClaimReviewRepository from "../repository/claimReview";
+import { ILogger } from "../../lib/loggerInterface";
 
-module.exports = class ClaimReviewController {
+export default class ClaimReviewController {
+    claimReviewRepository: ClaimReviewRepository;
+    logger: ILogger;
+
+    constructor({ logger }) {
+        this.logger = logger;
+        this.claimReviewRepository = new ClaimReviewRepository(logger);
+    }
+
     listAll() {
         try {
-            return ClaimReviewRepository.listAll();
+            return this.claimReviewRepository.listAll();
         } catch (error) {
             return error;
         }
@@ -11,7 +20,7 @@ module.exports = class ClaimReviewController {
 
     create(body) {
         try {
-            return ClaimReviewRepository.create(body);
+            return this.claimReviewRepository.create(body);
         } catch (error) {
             return error;
         }
@@ -19,7 +28,7 @@ module.exports = class ClaimReviewController {
 
     getClaimReviewId(id) {
         try {
-            return ClaimReviewRepository.getById(id);
+            return this.claimReviewRepository.getById(id);
         } catch (error) {
             return error;
         }
@@ -27,7 +36,7 @@ module.exports = class ClaimReviewController {
 
     async update(id, body) {
         try {
-            return ClaimReviewRepository.update(id, body);
+            return this.claimReviewRepository.update(id, body);
         } catch (error) {
             return error;
         }
@@ -35,10 +44,10 @@ module.exports = class ClaimReviewController {
 
     async delete(id) {
         try {
-            await ClaimReviewRepository.delete(id);
+            await this.claimReviewRepository.delete(id);
             return { message: "Claim Review successfully deleted" };
         } catch (error) {
             return error;
         }
     }
-};
+}

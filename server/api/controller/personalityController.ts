@@ -1,12 +1,21 @@
-const PersonalityRepository = require("../repository/personality");
+import PersonalityRepository from "../repository/personality";
+import { ILogger } from "../../lib/loggerInterface";
 
-module.exports = class PersonalityController {
+export class PersonalityController {
+    personalityRepository: PersonalityRepository;
+    logger: ILogger;
+
+    constructor({ logger }) {
+        this.logger = logger;
+        this.personalityRepository = new PersonalityRepository(logger);
+    }
+
     async listAll(query, language) {
         const { page = 0, pageSize = 10, order = "desc" } = query;
         const queryInputs = await this.verifyInputsQuery(query);
 
         return Promise.all([
-            PersonalityRepository.listAll(
+            this.personalityRepository.listAll(
                 page,
                 parseInt(pageSize, 10),
                 order,
@@ -14,20 +23,27 @@ module.exports = class PersonalityController {
                 query.language,
                 query.withSuggestions
             ),
-            PersonalityRepository.count(queryInputs)
+            this.personalityRepository.count(queryInputs)
         ])
             .then(([personalities, totalPersonalities]) => {
+                const totalPages = Math.ceil(
+                    totalPersonalities / parseInt(pageSize, 10)
+                );
+
+                this.logger.log(
+                    "info",
+                    `Found ${totalPersonalities} personalities. Page ${page} of ${totalPages}`
+                );
+
                 return {
                     personalities,
                     totalPersonalities,
-                    totalPages: Math.ceil(
-                        totalPersonalities / parseInt(pageSize, 10)
-                    ),
+                    totalPages,
                     page,
                     pageSize
                 };
             })
-            .catch(error => error);
+            .catch(error => this.logger.log("error", error));
     }
 
     verifyInputsQuery(query) {
@@ -41,42 +57,41 @@ module.exports = class PersonalityController {
 
     create(body) {
         try {
-            return PersonalityRepository.create(body);
+            return this.personalityRepository.create(body);
         } catch (error) {
+            this.logger.log("error", error);
             return error;
         }
     }
 
     getPersonalityId(id, language) {
-        try {
-            return PersonalityRepository.getById(id, language);
-        } catch (error) {
-            return error;
-        }
+        return this.personalityRepository.getById(id, language).catch(err => {
+            this.logger.log("error", err);
+            return err;
+        });
     }
 
     getReviewStats(id) {
-        try {
-            return PersonalityRepository.getReviewStats(id);
-        } catch (error) {
-            return error;
-        }
+        return this.personalityRepository.getReviewStats(id).catch(err => {
+            this.logger.log("error", err);
+            return err;
+        });
     }
 
     async update(id, body) {
-        try {
-            return PersonalityRepository.update(id, body);
-        } catch (error) {
-            return error;
-        }
+        return this.personalityRepository.update(id, body).catch(err => {
+            this.logger.log("error", err);
+            return err;
+        });
     }
 
     async delete(id) {
         try {
-            await PersonalityRepository.delete(id);
+            await this.personalityRepository.delete(id);
             return { message: "Personality successfully deleted" };
         } catch (error) {
+            this.logger.log("error", error);
             return error;
         }
     }
-};
+}

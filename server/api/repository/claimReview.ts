@@ -1,20 +1,28 @@
+import { ILogger } from "../../lib/loggerInterface";
+
 const ClaimReview = require("../model/claimReviewModel");
 const Source = require("../model/sourceModel");
-
-const optionsToUpdate = {
-    new: true,
-    upsert: true
-};
 
 /**
  * @class ClaimReviewRepository
  */
 export default class ClaimReviewRepository {
-    static listAll() {
+    optionsToUpdate: Object;
+    logger: ILogger;
+
+    constructor(logger: any = {}) {
+        this.logger = logger;
+        this.optionsToUpdate = {
+            new: true,
+            upsert: true
+        };
+    }
+
+    listAll() {
         return ClaimReview.find({}).lean();
     }
 
-    static async create(claimReview) {
+    async create(claimReview) {
         const newClaimReview = new ClaimReview(claimReview);
         if (claimReview.source) {
             const source = new Source({
@@ -29,13 +37,13 @@ export default class ClaimReviewRepository {
         return newClaimReview.save();
     }
 
-    static getById(claimReviewId) {
+    getById(claimReviewId) {
         return ClaimReview.findById(claimReviewId)
             .populate("claims", "_id title")
             .populate("sources", "_id link classification");
     }
 
-    static async update(claimReviewId, claimReviewBody) {
+    async update(claimReviewId, claimReviewBody) {
         // eslint-disable-next-line no-useless-catch
         try {
             const claimReview = await this.getById(claimReviewId);
@@ -43,7 +51,7 @@ export default class ClaimReviewRepository {
             const claimReviewUpdate = await ClaimReview.findByIdAndUpdate(
                 claimReviewId,
                 newClaimReview,
-                optionsToUpdate
+                this.optionsToUpdate
             );
             return claimReviewUpdate;
         } catch (error) {
@@ -52,7 +60,7 @@ export default class ClaimReviewRepository {
         }
     }
 
-    static delete(claimReviewId) {
+    delete(claimReviewId) {
         return ClaimReview.findByIdAndRemove(claimReviewId);
     }
 }

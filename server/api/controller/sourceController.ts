@@ -1,9 +1,18 @@
 import SourceRepository from "../repository/source";
+import { ILogger } from "../../lib/loggerInterface";
 
-module.exports = class SourceController {
+export default class SourceController {
+    sourceRepository: SourceRepository;
+    logger: ILogger;
+
+    constructor({ logger }) {
+        this.logger = logger;
+        this.sourceRepository = new SourceRepository(logger);
+    }
+
     create(body) {
         try {
-            return SourceRepository.create(body);
+            return this.sourceRepository.create(body);
         } catch (error) {
             return error;
         }
@@ -11,7 +20,7 @@ module.exports = class SourceController {
 
     getSourceId(id) {
         try {
-            return SourceRepository.getById(id);
+            return this.sourceRepository.getById(id);
         } catch (error) {
             return error;
         }
@@ -19,7 +28,7 @@ module.exports = class SourceController {
 
     async update(id, body) {
         try {
-            return SourceRepository.update(id, body);
+            return this.sourceRepository.update(id, body);
         } catch (error) {
             return error;
         }
@@ -27,10 +36,10 @@ module.exports = class SourceController {
 
     async delete(id) {
         try {
-            await SourceRepository.delete(id);
+            await this.sourceRepository.delete(id);
             return { message: "Source successfully deleted" };
         } catch (error) {
             return error;
         }
     }
-};
+}

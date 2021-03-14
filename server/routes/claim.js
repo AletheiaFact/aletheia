@@ -1,4 +1,5 @@
-const ClaimController = require("../api/controller/claimController");
+import ClaimController from "../api/controller/claimController";
+const ensureLoggedIn = require("../api/middleware/ensureLoggedIn");
 const Requester = require("../infra/interceptor/requester");
 
 /**
@@ -6,11 +7,13 @@ const Requester = require("../infra/interceptor/requester");
  */
 const router = require("../lib/util").router();
 
+let app;
+
 /**
  * POST {domain}/claim
  */
-router.post("/", (req, res, next) => {
-    const claim = new ClaimController();
+router.post("/", ensureLoggedIn, (req, res, next) => {
+    const claim = new ClaimController(app);
     claim
         .create(req.body)
         .then(result => res.send(result))
@@ -23,7 +26,7 @@ router.post("/", (req, res, next) => {
  * GET {domain}/claim{/id}
  */
 router.get("/:id", (req, res, next) => {
-    const claim = new ClaimController();
+    const claim = new ClaimController(app);
     claim
         .getClaimId(req.params.id)
         .then(result => res.send(result))
@@ -35,8 +38,8 @@ router.get("/:id", (req, res, next) => {
 /**
  * PUT {domain}/claim{/id}
  */
-router.put("/:id", (req, res, next) => {
-    const claim = new ClaimController();
+router.put("/:id", ensureLoggedIn, (req, res, next) => {
+    const claim = new ClaimController(app);
     claim
         .update(req.params.id, req.body)
         .then(result => res.send(result))
@@ -48,8 +51,8 @@ router.put("/:id", (req, res, next) => {
 /**
  * DELETE {domain}/claim{/id}
  */
-router.delete("/:id", (req, res, next) => {
-    const claim = new ClaimController();
+router.delete("/:id", ensureLoggedIn, (req, res, next) => {
+    const claim = new ClaimController(app);
     claim
         .delete(req.params.id)
         .then(result => res.send(result))
@@ -59,6 +62,7 @@ router.delete("/:id", (req, res, next) => {
 });
 
 module.exports = function(appObj) {
+    app = appObj;
     return {
         path: "/claim",
         api_version: 1,
