@@ -44,7 +44,6 @@ class PersonalityCard extends Component {
                             <Paragraph>{personality.description}</Paragraph>
                             {personality.wikipedia && (
                                 <a
-                                    className="back-button"
                                     style={{
                                         fontWeight: "bold"
                                     }}
