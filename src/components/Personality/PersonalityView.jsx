@@ -66,51 +66,6 @@ class PersonalityView extends Component {
             return (
                 <>
                     <PersonalityCard personality={personality} />
-
-                    <Row style={{ padding: "5px 30px" }}>
-                        <Row
-                            style={{
-                                width: "100%",
-                                flexDirection: "column",
-                                textAlign: "center",
-                                fontWeight: "bold",
-                                color: "#262626",
-                                padding: "10px 0 25px 0px"
-                            }}
-                        >
-                            <span>
-                                <span
-                                    style={{
-                                        color: "#70b0d6",
-                                        fontSize: "20px"
-                                    }}
-                                >
-                                    {personality.stats?.total}
-                                </span>{" "}
-                                Claims reviewed
-                            </span>
-                            <small>
-                                from{" "}
-                                <span style={{ color: "#70b0d6" }}>
-                                    {personality.claims.length}
-                                </span>{" "}
-                                speeches
-                            </small>
-                        </Row>
-                        <Row
-                            style={{
-                                justifyContent: "space-between",
-                                width: "100%"
-                            }}
-                        >
-                            <ReviewStats
-                                stats={personality.stats}
-                                type="circle"
-                                format="count"
-                                strokeWidth="16"
-                            />
-                        </Row>
-                    </Row>
                     <br />
                     <AffixButton
                         tooltipTitle={t("personality:affixButtonTitle")}

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Avatar, Spin, Col, Row, Typography, Button } from "antd";
 import { withTranslation } from "react-i18next";
 import { ArrowRightOutlined } from "@ant-design/icons";
+import ReviewStats from "../ReviewStats";
 
 const { Title, Paragraph } = Typography;
 
@@ -20,8 +21,12 @@ class PersonalityCard extends Component {
     }
 
     render() {
-        const { personality, t } = this.props;
-        console.log(personality);
+        const { personality, t, summarized } = this.props;
+
+        if (summarized) {
+            delete personality.wikipedia;
+        }
+
         if (personality) {
             return (
                 <>
@@ -40,8 +45,32 @@ class PersonalityCard extends Component {
                         </Col>
                         <Col span={3}></Col>
                         <Col span={this.titleSpan}>
-                            <Title level={4}>{personality.name}</Title>
-                            <Paragraph>{personality.description}</Paragraph>
+                            <Title level={4} style={{ marginBottom: 0 }}>
+                                {personality.name}
+                            </Title>
+                            <Paragraph
+                                style={
+                                    this.props.summarized && {
+                                        fontSize: "12px"
+                                    }
+                                }
+                            >
+                                {personality.description}
+                            </Paragraph>
+                            {this.props.summarized && (
+                                <Paragraph
+                                    style={{
+                                        fontSize: "12px"
+                                    }}
+                                >
+                                    <b>
+                                        {t("personality:headerReviewsTotal", {
+                                            totalReviews:
+                                                personality.stats?.total
+                                        })}
+                                    </b>
+                                </Paragraph>
+                            )}
                             {personality.wikipedia && (
                                 <a
                                     style={{
@@ -81,6 +110,61 @@ class PersonalityCard extends Component {
                                 )}
                             </Col>
                         )}
+                    </Row>
+                    {!this.props.summarized && (
+                        <hr style={{ opacity: "20%" }} />
+                    )}
+                    <Row style={{ padding: "5px 30px" }}>
+                        {!this.props.summarized && (
+                            <Row
+                                style={{
+                                    width: "100%",
+                                    flexDirection: "column",
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    color: "#262626",
+                                    padding: "10px 0 25px 0px"
+                                }}
+                            >
+                                <span>
+                                    <span
+                                        style={{
+                                            color: "#70b0d6",
+                                            fontSize: "20px"
+                                        }}
+                                    >
+                                        {personality.claims.length}
+                                    </span>{" "}
+                                    {t("personality:headerClaimsTotal")}
+                                </span>
+                                <span>
+                                    <span
+                                        style={{
+                                            color: "#70b0d6",
+                                            fontSize: "20px"
+                                        }}
+                                    >
+                                        {personality.stats?.total}
+                                    </span>{" "}
+                                    {t("personality:headerReviewsTotal")}
+                                </span>
+                            </Row>
+                        )}
+                        <Row
+                            style={{
+                                justifyContent: "space-between",
+                                width: "100%"
+                            }}
+                        >
+                            <ReviewStats
+                                stats={personality.stats}
+                                type="circle"
+                                format="count"
+                                width={this.props.summarized && 30}
+                                showInfo={!this.props.summarized}
+                                strokeWidth="16"
+                            />
+                        </Row>
                     </Row>
                     <hr style={{ opacity: "20%" }} />
                 </>
