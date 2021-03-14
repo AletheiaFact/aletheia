@@ -9,6 +9,10 @@ import InputSearch from "../Form/InputSearch";
 import "./AletheiaHeader.less";
 
 class AletheiaHeader extends Component {
+    static defaultProps = {
+        search: true
+    };
+
     handleInputSearch(name) {
         this.props.dispatch({
             type: "SET_SEARCH_NAME",
@@ -64,9 +68,9 @@ class AletheiaHeader extends Component {
 
 const mapStateToProps = state => {
     return {
-        page: (state && state.searchCurPage) || 1,
-        pageSize: (state && state.searchPageSize) || 10,
-        searchName: (state && state.searchInput) || null
+        page: state?.search?.searchCurPage || 1,
+        pageSize: state?.search?.searchPageSize || 10,
+        searchName: state?.search?.searchInput || null
     };
 };
 

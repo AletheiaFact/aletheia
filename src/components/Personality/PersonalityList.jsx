@@ -109,10 +109,10 @@ class PersonalityList extends Component {
 }
 const mapStateToProps = state => {
     return {
-        personalities: (state && state.searchResults) || [],
-        page: (state && state.searchCurPage) || 1,
-        pageSize: (state && state.searchPageSize) || 10,
-        totalPages: (state && state.searchTotalPages) || 1
+        personalities: state?.search?.searchResults || [],
+        page: state?.search?.searchCurPage || 1,
+        pageSize: state?.search?.searchPageSize || 10,
+        totalPages: state?.search?.searchTotalPages || 1
     };
 };
 export default connect(mapStateToProps)(withTranslation()(PersonalityList));

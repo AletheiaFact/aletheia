@@ -116,8 +116,8 @@ class PersonalityCreateSearch extends Component {
 
 const mapStateToProps = state => {
     return {
-        personalities: (state && state.searchResults) || [],
-        searchName: (state && state.searchInput) || null
+        personalities: state?.search?.searchResults || [],
+        searchName: state?.search?.searchInput || null
     };
 };
 export default connect(mapStateToProps)(
