@@ -74,7 +74,10 @@ class ReviewStats extends Component {
                                 ? () => review.count
                                 : null;
                         return (
-                            <div className={`stat-${this.props.type}`}>
+                            <div
+                                className={`stat-${this.props.type}`}
+                                key={review._id}
+                            >
                                 <span>
                                     {this.props.countInTitle &&
                                         `${review.count} `}

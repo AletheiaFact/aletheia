@@ -18,7 +18,9 @@ const resources = {
             errorFetch: "Error while fetching Personality",
             add_button: "Add",
             affixButtonTitle: "Click here to add a claim",
-            wikipediaPage: "View Wikipedia Page"
+            wikipediaPage: "View Wikipedia Page",
+            headerReviewsTotal: "{{totalReviews}} claim reviews",
+            headerClaimsTotal: "{{totalClaims}} speeches added"
         },
         footer: {
             copyright: "Aletheia ©2020 Created by Open Tesseract"
@@ -66,7 +68,7 @@ const resources = {
         claim: {
             metricsHeaderTitle: "Metrics",
             metricsHeaderPrefix: "This speech contains ",
-            metricsHeaderInfo: "{{totalReviews}} reviewed claims",
+            metricsHeaderInfo: "{{totalReviews}} claim reviews",
             metricsHeaderSuffix: ", of which:"
         },
         login: {
@@ -101,7 +103,9 @@ const resources = {
             errorFetch: "Erro ao buscar Personalidade",
             add_button: "Inserir",
             affixButtonTitle: "Clique aqui para adicionar um discurso",
-            wikipediaPage: "Acesse a página do Wikipédia"
+            wikipediaPage: "Acesse a página do Wikipédia",
+            headerReviewsTotal: "{{totalReviews}} avaliações de sentenças",
+            headerClaimsTotal: "{{totalClaims}} discursos adicionados"
         },
         footer: {
             copyright: "Aletheia ©2020 Criado por Open Tesseract"
@@ -149,7 +153,7 @@ const resources = {
         claim: {
             metricsHeaderTitle: "Avaliações",
             metricsHeaderPrefix: "Esse discurso contém ",
-            metricsHeaderInfo: "{{totalReviews}} sentenças revisadas",
+            metricsHeaderInfo: "{{totalReviews}} avaliações de sentenças",
             metricsHeaderSuffix: ", das quais:"
         },
         login: {
