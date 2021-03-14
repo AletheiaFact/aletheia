@@ -1,17 +1,17 @@
 import util from "../../lib/util";
 
 import { ILogger } from "../../lib/loggerInterface";
+import WikidataResolver from "../../lib/wikidataResolver";
 
 const Personality = require("../model/personalityModel");
 const ClaimReview = require("../model/claimReviewModel");
-const WikidataResolver = require("../../lib/wikidataResolver");
 
 /**
  * @class PersonalityRepository
  */
 export default class PersonalityRepository {
     optionsToUpdate: Object;
-    wikidata: typeof WikidataResolver;
+    wikidata: WikidataResolver;
     logger: ILogger;
 
     constructor(logger: any = {}) {

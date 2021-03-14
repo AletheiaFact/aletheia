@@ -1,5 +1,5 @@
+import WikidataResolver from "../lib/wikidataResolver";
 const Requester = require("../infra/interceptor/requester");
-const WikidataResolver = require("../lib/wikidataResolver");
 
 /**
  * The main router object
