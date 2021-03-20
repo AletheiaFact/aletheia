@@ -16,8 +16,6 @@ class ClaimCard extends Component {
     }
     async componentDidMount() {
         const claim = await api.getById(this.state.claim._id);
-        console.log(claim);
-        console.log(this.state.claim);
         this.setState({
             claim: Object.assign(claim, { content: this.state.claim.content })
         });
@@ -52,12 +50,13 @@ class ClaimCard extends Component {
                                         "
                                     </Paragraph>
                                     <Link
-                                        onClick={e => {
-                                            e.preventDefault();
-                                            return this.props.viewClaim(
-                                                this.state.claim._id
-                                            );
-                                        }}
+                                        to={location =>
+                                            this.props.viewClaim(
+                                                this.state.claim._id,
+                                                true
+                                            )
+                                        }
+                                        style={{ textDecoration: "underline" }}
                                     >
                                         {t("claim:cardLinkToFullText")}
                                     </Link>
