@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import axios from "axios";
 import { Spin, Row } from "antd";
 import { withTranslation } from "react-i18next";
-
+import api from "../../api/personality";
 import "./PersonalityView.less";
 import PersonalityCard from "./PersonalityCard";
 import AffixButton from "../Form/AffixButton";
 import ClaimCard from "../Claim/ClaimCard";
-import ReviewStats from "../ReviewStats";
 
 class PersonalityView extends Component {
     constructor(props) {
@@ -22,28 +20,14 @@ class PersonalityView extends Component {
         }, 2500);
     }
 
-    componentDidMount() {
-        const self = this;
-        self.getPersonality();
-    }
-
-    getPersonality() {
-        axios
-            .get(
-                `${process.env.API_URL}/personality/${this.props.match.params.id}`,
-                {
-                    params: {
-                        language: this.props.i18n.languages[0]
-                    }
-                }
-            )
-            .then(response => {
-                const personality = response.data;
-                this.setState({ personality });
-            })
-            .catch(() => {
-                console.log("Error while fetching Personality");
-            });
+    async componentDidMount() {
+        const personality = await api.getPersonality(
+            this.props.match.params.id,
+            {
+                language: this.props.i18n.languages[0]
+            }
+        );
+        this.setState({ personality });
     }
 
     createClaim() {
@@ -60,9 +44,6 @@ class PersonalityView extends Component {
         const personality = this.state.personality;
         const { t } = this.props;
         if (personality) {
-            const imageStyle = {
-                backgroundImage: `url(${personality.image})`
-            };
             return (
                 <>
                     <PersonalityCard personality={personality} />
@@ -72,14 +53,16 @@ class PersonalityView extends Component {
                         onClick={this.createClaim}
                     />
                     <Row style={{ background: "white" }}>
-                        {personality.claims.map((claim, claimIndex) => (
-                            <ClaimCard
-                                key={claimIndex}
-                                personality={personality}
-                                claim={claim}
-                                viewClaim={this.viewClaim}
-                            />
-                        ))}
+                        {personality.claims.map((claim, claimIndex) => {
+                            return (
+                                <ClaimCard
+                                    key={claimIndex}
+                                    personality={personality}
+                                    claim={claim}
+                                    viewClaim={this.viewClaim}
+                                />
+                            );
+                        })}
                     </Row>
                 </>
             );
