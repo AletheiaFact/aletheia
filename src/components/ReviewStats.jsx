@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Progress } from "antd";
 import { withTranslation } from "react-i18next";
+import ReviewColors from "../constants/reviewColors";
 
 class ReviewStats extends Component {
     getStyle(reviewId) {
@@ -10,56 +11,11 @@ class ReviewStats extends Component {
             strokeLinecap: this.props.type === "circle" ? "square" : "round",
             trailColor: "#cccccc"
         };
-        switch (reviewId) {
-            case "not-fact":
-                return {
-                    ...defaultStyle,
-                    strokeColor: "#111"
-                };
-            case "true":
-                return {
-                    ...defaultStyle,
-                    strokeColor: "#4dc24d"
-                };
-            case "true-but":
-                return {
-                    ...defaultStyle,
-                    strokeColor: "#57e173"
-                };
-            case "arguable":
-                return {
-                    ...defaultStyle,
-                    strokeColor: "#d8d12f"
-                };
-            case "misleading":
-                return {
-                    ...defaultStyle,
-                    strokeColor: "#d35730"
-                };
-            case "false":
-                return {
-                    ...defaultStyle,
-                    strokeColor: "#d33730"
-                };
-            case "unsustainable":
-                return {
-                    ...defaultStyle,
-                    strokeColor: "#d7425e"
-                };
-            case "exaggerated":
-                return {
-                    ...defaultStyle,
-                    strokeColor: "#c1d259"
-                };
-            case "unverifiable":
-                return {
-                    ...defaultStyle,
-                    strokeColor: "#d89d2f"
-                };
 
-            default:
-                break;
-        }
+        return {
+            ...defaultStyle,
+            strokeColor: ReviewColors[reviewId] || "#000"
+        };
     }
 
     render() {
@@ -78,7 +34,17 @@ class ReviewStats extends Component {
                                 className={`stat-${this.props.type}`}
                                 key={review._id}
                             >
-                                <span>
+                                <span
+                                    style={{
+                                        color:
+                                            ReviewColors[review._id] || "#000",
+                                        fontWeight: "bold",
+                                        textTransform: "uppercase",
+                                        textAlign: "center",
+                                        fontSize: "10px",
+                                        marginTop: "5px"
+                                    }}
+                                >
                                     {this.props.countInTitle &&
                                         `${review.count} `}
                                     {t(`claimReviewForm:${review._id}`)}
