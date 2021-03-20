@@ -69,7 +69,10 @@ const resources = {
             metricsHeaderTitle: "Metrics",
             metricsHeaderPrefix: "This speech contains ",
             metricsHeaderInfo: "{{totalReviews}} claim reviews",
-            metricsHeaderSuffix: ", of which:"
+            metricsHeaderSuffix: ", of which:",
+            cardOverallReviewPrefix: "Most",
+            cardReviewButton: "Review",
+            cardLinkToFullText: "see full speech"
         },
         login: {
             formHeader: "Login to your account",
@@ -154,7 +157,10 @@ const resources = {
             metricsHeaderTitle: "Avaliações",
             metricsHeaderPrefix: "Esse discurso contém ",
             metricsHeaderInfo: "{{totalReviews}} avaliações de sentenças",
-            metricsHeaderSuffix: ", das quais:"
+            metricsHeaderSuffix: ", das quais:",
+            cardOverallReviewPrefix: "Maioria",
+            cardReviewButton: "Revisar",
+            cardLinkToFullText: "veja o texto completo"
         },
         login: {
             formHeader: "Acesse sua conta",

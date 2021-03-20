@@ -71,7 +71,8 @@ export default class ClaimRepository {
         const claim = await Claim.findById(id);
         const reviews = await ClaimReview.aggregate([
             { $match: { claim: claim._id } },
-            { $group: { _id: "$classification", count: { $sum: 1 } } }
+            { $group: { _id: "$classification", count: { $sum: 1 } } },
+            { $sort: { count: -1 } }
         ]);
         return util.formatStats(reviews);
     }
