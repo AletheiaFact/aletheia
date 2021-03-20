@@ -25,7 +25,6 @@ class Claim extends Component {
             )
             .then(response => {
                 const { content, title, stats } = response.data;
-                console.log(stats)
                 this.setState({
                     title,
                     body: content.object,
