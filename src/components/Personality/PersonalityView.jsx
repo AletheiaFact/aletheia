@@ -35,9 +35,13 @@ class PersonalityView extends Component {
         this.props.history.push(path);
     }
 
-    viewClaim(id) {
+    viewClaim(id, link = false) {
         const path = `./${this.props.match.params.id}/claim/${id}`;
-        this.props.history.push(path);
+        if (!link) {
+            this.props.history.push(path);
+        } else {
+            return path;
+        }
     }
 
     render() {
