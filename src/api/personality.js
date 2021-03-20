@@ -29,6 +29,20 @@ const getPersonalities = (options = {}, dispatch) => {
         });
 };
 
+const getPersonality = (id, params) => {
+    return axios
+        .get(`${process.env.API_URL}/personality/${id}`, {
+            params
+        })
+        .then(response => {
+            return response.data;
+        })
+        .catch(() => {
+            console.log("Error while fetching Personality");
+        });
+};
+
 export default {
-    getPersonalities
+    getPersonalities,
+    getPersonality
 };
