@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import axios from "axios";
-import { Editor, EditorState, ContentState } from "draft-js";
+import { Editor, EditorState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import { stateFromHTML } from "draft-js-import-html";
 import "draft-js/dist/Draft.css";
-import { Typography, Form, Input, Button, message, Row, Col } from "antd";
+import { Typography, Form, Input, Button, Row, Col } from "antd";
+import api from "../../api/claim";
 
 const { Title } = Typography;
 class ClaimCreate extends Component {
@@ -20,104 +20,51 @@ class ClaimCreate extends Component {
         this.updateClaim = this.updateClaim.bind(this);
         this.onChange = this.onChange.bind(this);
     }
-    componentDidMount() {
+    async componentDidMount() {
         if (this.props.edit) {
-            axios
-                .get(
-                    `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
-                )
-                .then(response => {
-                    const { content, title } = response.data;
-                    const editorState = EditorState.createWithContent(
-                        stateFromHTML(content.html)
-                    );
-                    this.setState(
-                        {
-                            title,
-                            editorState,
-                            content: stateToHTML(
-                                this.state.editorState.getCurrentContent()
-                            )
-                        },
-                        () => {
-                            this.formRef.current.setFieldsValue({
-                                title,
-                                content: this.state.content
-                            });
-                        }
-                    );
-                })
-                .catch(err => {
-                    throw err;
-                    console.log("Error while fetching claim");
-                });
+            const { content, title } = await api.getById(
+                this.props.match.params.claimId
+            );
+            const editorState = EditorState.createWithContent(
+                stateFromHTML(content.html)
+            );
+            this.setState(
+                {
+                    title,
+                    editorState,
+                    content: stateToHTML(
+                        this.state.editorState.getCurrentContent()
+                    )
+                },
+                () => {
+                    this.formRef.current.setFieldsValue({
+                        title,
+                        content: this.state.content
+                    });
+                }
+            );
         }
     }
 
-    saveClaim(values) {
-        console.log(values);
-        const content = stateToHTML(this.state.editorState.getCurrentContent());
-        const title = this.state.title;
-        const personality = this.props.match.params.id;
-        axios
-            .post(`${process.env.API_URL}/claim`, {
-                title,
-                content,
-                personality
-            })
-            .then(response => {
-                const { title, _id } = response.data;
-                message.success(`"${title}" created with success`);
-                // Redirect to personality profile in case _id is not present
-                const path = _id ? `./${_id}` : "../";
-                this.props.history.push(path);
-            })
-            .catch(err => {
-                const response = err && err.response;
-                if (!response) {
-                    // TODO: Track unknow errors
-                    console.log(err);
-                }
-                const { data } = response;
-                message.error(
-                    data && data.message
-                        ? data.message
-                        : "Error while saving claim"
-                );
-            });
+    async saveClaim() {
+        const _id = await api.save({
+            content: stateToHTML(this.state.editorState.getCurrentContent()),
+            title: this.state.title,
+            personality: this.props.match.params.id
+        });
+        // Redirect to personality profile in case _id is not present
+        const path = _id ? `./${_id}` : "../";
+        this.props.history.push(path);
     }
 
-    updateClaim(values) {
-        const content = stateToHTML(this.state.editorState.getCurrentContent());
-        const title = this.state.title;
-        axios
-            .put(
-                `${process.env.API_URL}/claim/${this.props.match.params.claimId}`,
-                {
-                    title,
-                    content
-                }
-            )
-            .then(response => {
-                const { title, _id } = response.data;
-                message.success(`"${title}" updated with success`);
-                // Redirect to personality profile in case _id is not present
-                const path = "./";
-                this.props.history.push(path);
-            })
-            .catch(err => {
-                const response = err && err.response;
-                if (!response) {
-                    // TODO: Track unknow errors
-                    console.log(err);
-                }
-                const { data } = response;
-                message.error(
-                    data && data.message
-                        ? data.message
-                        : "Error while updating claim"
-                );
-            });
+    async updateClaim() {
+        await api.update(this.props.match.params.claimId, {
+            title: stateToHTML(this.state.editorState.getCurrentContent()),
+            content: this.state.title
+        });
+        // Redirect to personality profile in case _id is not present
+        const path = "./";
+        this.props.history.push(path);
     }
 
     onChange(editorState) {
@@ -164,9 +111,7 @@ class ClaimCreate extends Component {
                                 }}
                             >
                                 <Input
-                                    value={
-                                        (this.state && this.state.title) || ""
-                                    }
+                                    value={this.state?.title || ""}
                                     onChange={e =>
                                         this.setState({ title: e.target.value })
                                     }
@@ -190,7 +135,7 @@ class ClaimCreate extends Component {
                                 <div className="ant-input">
                                     <Editor
                                         placeholder="Claim"
-                                        editorState={this.state && this.state.editorState}
+                                        editorState={this.state?.editorState}
                                         onChange={this.onChange}
                                     />
                                 </div>
