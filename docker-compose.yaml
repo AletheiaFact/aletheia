@@ -5,7 +5,7 @@ services:
     image: mongo:latest
     restart: unless-stopped
     volumes:
-    - ${DATA_PATH}/mongodb:/data
-    - ${DATA_PATH}/mongodb/db:/data/db
+    - ${DATA_PATH}/mongodb:/data:delegated
+    - ${DATA_PATH}/mongodb/db:/data/db:delegated
     ports:
     - "27017:27017"
