@@ -18,7 +18,7 @@ const getById = (id, params = {}) => {
 
 const save = (claim = {}) => {
     return axios
-        .post(`${baseUrl}`, claim)
+        .post(`${baseUrl}`, claim, { withCredentials: true })
         .then(response => {
             const { title, _id } = response.data;
             message.success(`"${title}" created with success`);

@@ -1,4 +1,6 @@
 import ClaimController from "../api/controller/claimController";
+
+const captcha = require("../lib/captcha");
 const ensureLoggedIn = require("../api/middleware/ensureLoggedIn");
 const Requester = require("../infra/interceptor/requester");
 
@@ -12,14 +14,28 @@ let app;
 /**
  * POST {domain}/claim
  */
-router.post("/", ensureLoggedIn, (req, res, next) => {
+router.post("/", ensureLoggedIn, async (req, res, next) => {
     const claim = new ClaimController(app);
-    claim
-        .create(req.body)
-        .then(result => res.send(result))
-        .catch(error => {
-            next(Requester.internalError(res, error.message));
-        });
+
+    const recaptchaCheck = await captcha.checkResponse(
+        app.config.recaptcha_secret,
+        req.body && req.body.recaptcha
+    );
+
+    if (!recaptchaCheck.success) {
+        app.logger.log("error/recaptcha", recaptchaCheck);
+        next(
+            Requester.internalError(res, "Error with your reCaptcha response")
+        );
+    } else {
+        claim
+            .create(req.body)
+            .then(result => res.send(result))
+            .catch(error => {
+                app.logger.log("error/create", error);
+                next(Requester.internalError(res, error.message));
+            });
+    }
 });
 
 /**

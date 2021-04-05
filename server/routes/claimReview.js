@@ -21,8 +21,6 @@ router.post("/", ensureLoggedIn, async (req, res, next) => {
         req.body && req.body.recaptcha
     );
 
-    console.log(recaptchaCheck);
-
     if (!recaptchaCheck.success) {
         app.logger.log("error/recaptcha", recaptchaCheck);
         next(

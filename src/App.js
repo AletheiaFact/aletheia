@@ -18,12 +18,23 @@ import { connect } from "react-redux";
 const { Footer, Content } = Layout;
 
 class App extends Component {
-    async componentDidMount() {
-        const result = await api.validateSession({}, this.props.t);
-        this.props.dispatch({
+    setLogin(login) {
+        return {
             type: "SET_LOGIN_VALIDATION",
-            login: result.login
-        });
+            login
+        };
+    }
+    validateSession() {
+        return dispatch => {
+            return api
+                .validateSession({}, this.props.t)
+                .then(result => dispatch(this.setLogin(result.login)));
+        };
+    }
+
+    async componentDidMount() {
+        const self = this;
+        this.props.dispatch(this.validateSession());
     }
 
     render() {

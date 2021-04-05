@@ -92,6 +92,7 @@
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "redux": "^2.0.0 || ^3.0.0 || ^4.0.0-0",
+    "redux-thunk": "^2.3.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2",
     "service-runner": "^2.7.6",

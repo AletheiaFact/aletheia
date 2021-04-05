@@ -157,6 +157,12 @@ function initApp(options) {
 }
 
 function loadPassport(app) {
+    const User = require("./api/model/userModel");
+    passport.use(
+        new LocalStrategy({ usernameField: "email" }, User.authenticate())
+    );
+    passport.serializeUser(User.serializeUser());
+    passport.deserializeUser(User.deserializeUser());
     app.use(cookieParser());
     app.use(
         session({
@@ -167,12 +173,6 @@ function loadPassport(app) {
     );
     app.use(passport.initialize());
     app.use(passport.session());
-    const User = require("./api/model/userModel");
-    passport.use(
-        new LocalStrategy({ usernameField: "email" }, User.authenticate())
-    );
-    passport.serializeUser(User.serializeUser());
-    passport.deserializeUser(User.deserializeUser());
     return app;
 }
 
