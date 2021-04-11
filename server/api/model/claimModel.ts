@@ -9,6 +9,20 @@ const claimSchema = new mongoose.Schema({
         type: Object,
         required: true
     },
+    type: {
+        type: String,
+        required: true,
+        validate: {
+            validator: v => {
+                return ["speech", "twitter"].indexOf(v) !== -1;
+            }
+        },
+        message: tag => `${tag} is not a valid claim type.`
+    },
+    date: {
+        type: Date,
+        required: true
+    },
     personality: {
         type: mongoose.Schema.ObjectId,
         ref: "Personality",

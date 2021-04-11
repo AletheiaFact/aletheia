@@ -1,6 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import React from "react";
 
 // the translations
 // (tip move them in a JSON file and import them)
@@ -73,6 +74,34 @@ const resources = {
             cardOverallReviewPrefix: "Most",
             cardReviewButton: "Review",
             cardLinkToFullText: "see full speech"
+        },
+        claimForm: {
+            titleField: "Title",
+            titleFieldError: "Please insert a title",
+            titleFieldPlaceholder: "Insert the title here",
+            contentField: "Content",
+            contentFieldPlaceholder: "Insert content here",
+            contentFieldError: "Please insert the content",
+            contentFieldHelp:
+                "Please do not edit or change any aspect of the original text and choose to add full speeches instead of out of context claims (Twitter and general social media posts are OK).",
+            dateField: "Date",
+            dateFieldPlaceholder: "Select date",
+            dateFieldError: "Please, insert a date",
+            dateFieldHelp:
+                "When was this speech released or told? Not the date you are adding it to Aletheia.",
+            disclaimer:
+                "* The Add speech tool is only available for\n" +
+                "manually adding real speeches and claims\n" +
+                "made by said personality. Any attempt to\n" +
+                "dissiminate fake news through this platform\n" +
+                "is utterly forbidden and will result on user\n" +
+                "ban and possible lawsuit.",
+            errorAcceptTerms: "You need to accept the terms to submit the form",
+            checkboxAcceptTerms:
+                "I personally atest that all information added is truthful.",
+            cancelButton: "Cancel",
+            updateButton: "Update speech",
+            saveButton: "Add speech"
         },
         login: {
             formHeader: "Login to your account",
@@ -161,6 +190,34 @@ const resources = {
             cardOverallReviewPrefix: "Maioria",
             cardReviewButton: "Revisar",
             cardLinkToFullText: "veja o texto completo"
+        },
+        claimForm: {
+            titleField: "Titulo",
+            titleFieldError: "Por favor, insira um titulo",
+            titleFieldPlaceholder: "Insira o titulo aqui",
+            contentField: "Conteudo",
+            contentFieldPlaceholder: "Insira conteudo aqui",
+            contentFieldError: "Por favor, insira o conteudo",
+            contentFieldHelp:
+                "Por favor, nao edite ou mude qualquer aspecto do texto original e escolha adicionar discursos completos ao inves de declaraçoes fora de contexto.",
+            dateField: "Data",
+            dateFieldPlaceholder: "Selecione Data",
+            dateFieldError: "Por favor, insira uma data",
+            dateFieldHelp: "Quando esse discurso foi dito ou publicado?",
+            disclaimer:
+                "* Essa ferramenta esta apenas disponivel para\n" +
+                "adicionar manualmente declaraçoes e discursos reais\n" +
+                "criados ou ditos por uma personalidade. Qualquer tentativa de\n" +
+                "dissiminar noticias falsas atraves dessa plataforma\n" +
+                "eh expressamente proibida e pode resultar em banimento\n" +
+                "do usuario e possivelmente açoa judicial.",
+            errorAcceptTerms:
+                "Voce precisa aceitar os termos para submeter o formulario",
+            checkboxAcceptTerms:
+                "Eu atesto pessoalmente que toda informaçao adicionada eh confiavel.",
+            cancelButton: "Cancelar",
+            updateButton: "Atualizar discurso",
+            saveButton: "Adicionar discurso"
         },
         login: {
             formHeader: "Acesse sua conta",

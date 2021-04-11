@@ -1,4 +1,5 @@
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 
 /**
  * This is a reducer, a pure function with (state, action) => state signature.
@@ -58,6 +59,6 @@ function appReducer(state, action) {
 
 // Create a Redux store holding the state of your app.
 // Its API is { subscribe, dispatch, getState }.
-const store = createStore(appReducer);
+const store = createStore(appReducer, applyMiddleware(thunk));
 
 export default store;

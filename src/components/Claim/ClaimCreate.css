@@ -1,0 +1,7 @@
+#createClaim .ant-form-item-control {
+    flex-direction: column-reverse
+}
+
+#createClaim .ant-form-item-extra {
+    margin-bottom: 10px;
+}
