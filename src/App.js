@@ -33,7 +33,6 @@ class App extends Component {
     }
 
     async componentDidMount() {
-        const self = this;
         this.props.dispatch(this.validateSession());
     }
 

@@ -14,7 +14,6 @@ import {
     Spin,
     Checkbox,
     Avatar,
-    message
 } from "antd";
 import claim from "../../api/claim";
 import personalityApi from "../../api/personality";
@@ -153,7 +152,6 @@ class ClaimCreate extends Component {
         console.log(this.props.isLoggedIn);
 
         if (this.props.isLoggedIn === false) {
-            // message.error("You are not logged in");
             return (
                 <Redirect
                     to={`/personality/${this.props.match.params.id}`}

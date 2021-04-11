@@ -38,7 +38,7 @@ const save = (claim = {}) => {
 };
 
 const update = (id, params = {}) => {
-    axios
+    return axios
         .put(`${baseUrl}/${id}`, params)
         .then(response => {
             const { title, _id } = response.data;
