@@ -1,6 +1,5 @@
 import { withTranslation } from "react-i18next";
 import React from "react";
-import BackButton from "../BackButton";
 import { Button, Typography } from "antd";
 
 const { Title } = Typography;

@@ -11,6 +11,7 @@ import PersonalityList from "./components/Personality/PersonalityList";
 import PersonalityView from "./components/Personality/PersonalityView";
 import PersonalityCreateForm from "./components/Personality/PersonalityCreateForm";
 import AletheiaHeader from "./components/Header/AletheiaHeader";
+import Home from "./components/Home/Home";
 import BackButton from "./components/BackButton";
 import PersonalityCreateSearch from "./components/Personality/PersonalityCreateSearch";
 import { connect } from "react-redux";
@@ -47,7 +48,7 @@ class App extends Component {
                             <BackButton />
                         </Row>
                         <Switch>
-                            <Route exact path="/" component={PersonalityList} />
+                            <Route exact path="/" component={Home} />
                             <Route
                                 exact
                                 path="/personality"

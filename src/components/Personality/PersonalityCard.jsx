@@ -25,7 +25,11 @@ class PersonalityCard extends Component {
 
         if (personality) {
             return (
-                <>
+                <Row
+                    style={{
+                        width: "100%"
+                    }}
+                >
                     <Row
                         style={{
                             padding: "10px 30px",
@@ -110,7 +114,7 @@ class PersonalityCard extends Component {
                     {!this.props.summarized && (
                         <hr style={{ opacity: "20%" }} />
                     )}
-                    <Row style={{ padding: "5px 30px" }}>
+                    <Row style={{ padding: "5px 30px", width: "100%" }}>
                         {!this.props.summarized && (
                             <Row
                                 style={{
@@ -163,7 +167,7 @@ class PersonalityCard extends Component {
                         </Row>
                     </Row>
                     <hr style={{ opacity: "20%" }} />
-                </>
+                </Row>
             );
         } else {
             return (

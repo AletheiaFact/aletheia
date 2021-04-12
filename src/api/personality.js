@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const getPersonalities = (options = {}, dispatch) => {
-    console.log(options);
     const params = {
         page: options.page - 1,
         name: options.searchName,
@@ -14,6 +13,10 @@ const getPersonalities = (options = {}, dispatch) => {
     return axios
         .get(`${process.env.API_URL}/personality`, { params })
         .then(response => {
+            if (options.fetchOnly) {
+                return response?.data?.personalities;
+            }
+
             const { personalities, totalPages } = response.data;
             dispatch({
                 type: "SEARCH_RESULTS",
