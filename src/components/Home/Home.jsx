@@ -2,25 +2,37 @@ import React, { Component } from "react";
 import CTARegistration from "./CTARegistration";
 import { Button, Row, Carousel } from "antd";
 import personalityApi from "../../api/personality";
+import statsApi from "../../api/stats";
 import PersonalityCard from "../Personality/PersonalityCard";
+import { withTranslation } from "react-i18next";
+
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            personalities: []
+            personalities: [],
+            stats: {
+                claims: 0,
+                personalities: 0,
+                reviews: 0
+            }
         };
     }
     componentDidMount() {
         personalityApi
             .getPersonalities({
+                i18n: this.props.i18n,
                 pageSize: 5,
                 fetchOnly: true
             })
             .then(personalities => this.setState({ personalities }));
+        statsApi.get().then(stats => this.setState({ stats }));
     }
 
     render() {
-        const { personalities } = this.state;
+        const { personalities, stats } = this.state;
+        const { t } = this.props;
+
         const contentStyle = {
             height: "auto",
             color: "#fff",
@@ -59,11 +71,10 @@ class Home extends Component {
                             {personalities.map(
                                 (p, i) =>
                                     p && (
-                                        <div>
+                                        <div key={i}>
                                             <img
                                                 style={contentStyle}
                                                 src={p.image}
-                                                key={p._id}
                                             />
                                         </div>
                                     )
@@ -92,10 +103,10 @@ class Home extends Component {
                                     fontSize: "26px"
                                 }}
                             >
-                                checking claims
+                                {t("home:title")}
                             </span>{" "}
                             <br />
-                            <span>from your favorite personalities</span>
+                            <span>{t("home:subtitle")}</span>
                         </Row>
                         <Row
                             style={{
@@ -113,9 +124,9 @@ class Home extends Component {
                                             fontSize: "34px"
                                         }}
                                     >
-                                        105
+                                        {stats.personalities}
                                     </span>{" "}
-                                    personalities
+                                    {t("home:statsPersonalities")}
                                 </p>
                             </Row>
                             <Row>
@@ -126,9 +137,9 @@ class Home extends Component {
                                             fontSize: "34px"
                                         }}
                                     >
-                                        1235
+                                        {stats.claims}
                                     </span>{" "}
-                                    speeches
+                                    {t("home:statsClaims")}
                                 </p>
                             </Row>
                             <Row>
@@ -139,9 +150,9 @@ class Home extends Component {
                                             fontSize: "34px"
                                         }}
                                     >
-                                        10495
+                                        {stats.reviews}
                                     </span>{" "}
-                                    claims reviewed
+                                    {t("home:statsClaimReviews")}
                                 </p>
                             </Row>
                         </Row>
@@ -152,10 +163,10 @@ class Home extends Component {
                                 justifyContent: "space-between"
                             }}
                         >
-                            <span>
-                                contribute to an internet free of fake news
-                            </span>{" "}
-                            <Button>Create account</Button>
+                            <span>{t("home:statsFooter")}</span>
+                            <Button href="#create_account">
+                                {t("home:createAccountButton")}
+                            </Button>
                         </Row>
                     </div>
                 </Row>
@@ -170,9 +181,17 @@ class Home extends Component {
                                 />
                             )
                     )}
-                    <Button>See more personalities</Button>
+                    <Row
+                        style={{
+                            padding: "10px"
+                        }}
+                    >
+                        <Button href="/personality">
+                            {t("home:seeMorePersonalitiesButton")}
+                        </Button>
+                    </Row>
                 </Row>
-                <Row>
+                <Row id="create_account">
                     <CTARegistration></CTARegistration>
                 </Row>
             </>
@@ -180,4 +199,4 @@ class Home extends Component {
     }
 }
 
-export default Home;
+export default withTranslation()(Home);
