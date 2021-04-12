@@ -1,6 +1,5 @@
 import { withTranslation } from "react-i18next";
 import React from "react";
-import BackButton from "../BackButton";
 import { Button, Typography } from "antd";
 
 const { Title } = Typography;
@@ -9,7 +8,8 @@ function CTARegistration(props) {
         <div
             style={{
                 backgroundColor: "#2D77A3",
-                textAlign: "center"
+                textAlign: "center",
+                padding: "30px"
             }}
         >
             <Title level={3} style={{ color: "#fff" }}>

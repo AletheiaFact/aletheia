@@ -11,6 +11,16 @@ const resources = {
             loading: "Loading...",
             back_button: "Back"
         },
+        home: {
+            title: "checking claims",
+            subtitle: "from your favorite personalities",
+            statsPersonalities: "personalities",
+            statsClaims: "claims",
+            statsClaimReviews: "reviewed claims",
+            statsFooter: "contribute to an internet free of fake news",
+            createAccountButton: "Create account",
+            seeMorePersonalitiesButton: "See more Personalities"
+        },
         header: {
             search_personality: "Search personality"
         },
@@ -126,6 +136,16 @@ const resources = {
         global: {
             loading: "Carregando...",
             back_button: "Voltar"
+        },
+        home: {
+            title: "checagem de afirmaçoes",
+            subtitle: "das suas personalidades favoritas",
+            statsPersonalities: "personalidades",
+            statsClaims: "afirmaçoes",
+            statsClaimReviews: "afirmaçoes revisadas",
+            statsFooter: "contribua para uma internet livre de noticias falsas",
+            createAccountButton: "Crie sua conta",
+            seeMorePersonalitiesButton: "Veja mais personalidades"
         },
         header: {
             search_personality: "Busque uma personalidade"
