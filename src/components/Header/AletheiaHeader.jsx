@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { MenuOutlined, UserOutlined } from "@ant-design/icons";
+import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
 import { Col, Row } from "antd";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
@@ -25,15 +25,10 @@ class AletheiaHeader extends Component {
     render() {
         const { t, search } = this.props;
         return (
-            <header className="aletheia-header">
-                <nav>
-                    <Row>
-                        <Col flex={1}>
-                            <p className="aletheia-logo">Aletheia</p>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
+            <header>
+                <Row className="aletheia-header">
+                    <Col span={2}>
+                        <a>
                             <MenuOutlined
                                 style={{
                                     fontSize: "16px",
@@ -41,26 +36,30 @@ class AletheiaHeader extends Component {
                                     padding: "8px"
                                 }}
                             />
-                        </Col>
-                        <Col flex={1}>
-                            {search && (
-                                <InputSearch
-                                    placeholder={t("header:search_personality")}
-                                    callback={this.handleInputSearch.bind(this)}
-                                />
-                            )}
-                        </Col>
-                        <Col>
-                            <UserOutlined
+                        </a>
+                    </Col>
+                    <Col span={20}>
+                        <p className="aletheia-logo">AletheiaFact</p>
+                    </Col>
+                    <Col span={2}>
+                        <a
+                            onClick={() => {
+                                this.props.dispatch({
+                                    type: "ENABLE_SEARCH_OVERLAY",
+                                    overlay: true
+                                });
+                            }}
+                        >
+                            <SearchOutlined
                                 style={{
                                     fontSize: "16px",
                                     color: "white",
                                     padding: "8px"
                                 }}
                             />
-                        </Col>
-                    </Row>
-                </nav>
+                        </a>
+                    </Col>
+                </Row>
             </header>
         );
     }
