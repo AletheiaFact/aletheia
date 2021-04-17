@@ -14,17 +14,11 @@ class ClaimCard extends Component {
     }
     async componentDidMount() {
         const claim = await api.getById(this.props.claim._id);
-        const self = this;
-        this.setState(
-            {
-                claim: Object.assign(claim, {
-                    content: this.props.claim.content
-                })
-            },
-            () => {
-                console.log(self.state.claim);
-            }
-        );
+        this.setState({
+            claim: Object.assign(claim, {
+                content: this.props.claim.content
+            })
+        });
     }
     render() {
         const { t } = this.props;

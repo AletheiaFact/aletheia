@@ -16,7 +16,6 @@ import thunk from "redux-thunk";
 function appReducer(state, action) {
     switch (action.type) {
         case "ENABLE_SEARCH_OVERLAY":
-            console.log(action.overlay);
             return {
                 ...state,
                 search: {
