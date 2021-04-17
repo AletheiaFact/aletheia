@@ -47,7 +47,7 @@ class Home extends Component {
                 <Row
                     style={{
                         position: "relative",
-                        marginTop: "-10px"
+                        margin: "-10px -15px 0px -15px"
                     }}
                 >
                     <div
@@ -191,7 +191,12 @@ class Home extends Component {
                         </Button>
                     </Row>
                 </Row>
-                <Row id="create_account">
+                <Row
+                    id="create_account"
+                    style={{
+                        margin: "0 -15px"
+                    }}
+                >
                     <CTARegistration></CTARegistration>
                 </Row>
             </>
