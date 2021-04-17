@@ -19,8 +19,13 @@ class PersonalityView extends Component {
             this.tooltipVisible = false;
         }, 2500);
     }
+    componentDidUpdate(prevProps) {
+        if (prevProps.match.params.id !== this.props.match.params.id) {
+            this.getPersonality();
+        }
+    }
 
-    async componentDidMount() {
+    async getPersonality() {
         const personality = await api.getPersonality(
             this.props.match.params.id,
             {
@@ -28,6 +33,10 @@ class PersonalityView extends Component {
             }
         );
         this.setState({ personality });
+    }
+
+    componentDidMount() {
+        this.getPersonality();
     }
 
     createClaim() {
