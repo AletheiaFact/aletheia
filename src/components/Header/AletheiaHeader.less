@@ -3,12 +3,16 @@
 .aletheia-header {
   background-color: @primary;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  height: 100px;
-  display: flex;
+  height: 70px;
+  padding: 0 15px;
   align-items: center;
   justify-content: center;
-  padding: 14px 30px;
+}
+
+@media (min-width: 768px) {
+  .aletheia-header {
+    padding: 0 30%;
+  }
 }
 
 .aletheia-logo {
