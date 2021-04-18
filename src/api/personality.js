@@ -1,4 +1,5 @@
 import axios from "axios";
+import { message } from "antd";
 
 const getPersonalities = (options = {}, dispatch) => {
     const params = {
@@ -45,7 +46,35 @@ const getPersonality = (id, params) => {
         });
 };
 
+const createPersonality = (personality, t) => {
+    return axios
+        .post(`${process.env.API_URL}/personality`, personality, {
+            withCredentials: true
+        })
+        .then(response => {
+            const { name, _id } = response.data;
+            message.success(
+                `"${name}" ${t("personalityCreateForm:successMessage")}`
+            );
+            return _id;
+        })
+        .catch(err => {
+            const response = err && err.response;
+            if (!response) {
+                // TODO: Track unknow errors
+                console.log(err);
+            }
+            const { data } = response;
+            message.error(
+                data && data.message
+                    ? data.message
+                    : t("personalityCreateForm:errorMessage")
+            );
+        });
+};
+
 export default {
     getPersonalities,
-    getPersonality
+    getPersonality,
+    createPersonality
 };

@@ -19,7 +19,8 @@ class ReviewStats extends Component {
     }
 
     render() {
-        const { reviews } = this.props.stats;
+
+        const { reviews } = this.props?.stats || {};
         const { t } = this.props;
         return (
             <>
