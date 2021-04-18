@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Avatar, Col, Row, Typography } from "antd";
+import { Avatar, Col, Row } from "antd";
 import { CloseOutlined, RightOutlined } from "@ant-design/icons";
 import InputSearch from "./Form/InputSearch";
 import { withTranslation } from "react-i18next";
 import api from "../api/personality";
 import { withRouter } from "react-router-dom";
 
-const { Title } = Typography;
 class SearchOverlay extends Component {
     handleInputSearch(name) {
         this.props.dispatch({
@@ -59,69 +58,71 @@ class SearchOverlay extends Component {
                         </a>
                     </Col>
                 </Row>
-                <Row
-                    className="main-content"
-                    style={{
-                        background: "rgba(255,255,255,0.9)",
-                        height: "100vh",
-                        zIndex: 3,
-                        position: "relative",
-                        flexDirection: "column"
-                    }}
-                >
-                    {personalities &&
-                        Array.isArray(personalities) &&
-                        personalities.length > 0 && (
-                            <>
-                                {personalities.map(
-                                    (p, i) =>
-                                        p && (
-                                            <Row
-                                                key={i}
-                                                style={{
-                                                    background: "#fff",
-                                                    padding: "10px 10%",
-                                                    boxShadow:
-                                                        "0 2px 2px rgba(0, 0, 0, 0.1)",
-                                                    cursor: "pointer"
-                                                }}
-                                                onClick={() => {
-                                                    this.props.dispatch({
-                                                        type:
-                                                            "ENABLE_SEARCH_OVERLAY",
-                                                        overlay: false
-                                                    });
-                                                    this.props.history.push(
-                                                        `/personality/${p._id}`
-                                                    );
-                                                }}
-                                            >
-                                                <Col span={4}>
-                                                    <Avatar
-                                                        size={30}
-                                                        src={p.image}
-                                                    />
-                                                </Col>
-                                                <Col span={18}>
-                                                    <span
-                                                        level={4}
-                                                        style={{
-                                                            marginBottom: 0,
-                                                            textSize: "14px"
-                                                        }}
-                                                    >
-                                                        {p.name}
-                                                    </span>
-                                                </Col>
-                                                <Col span={2}>
-                                                    <RightOutlined />
-                                                </Col>
-                                            </Row>
-                                        )
-                                )}
-                            </>
-                        )}
-                </Row>
+                {this.props.overlay.results && (
+                    <Row
+                        className="main-content"
+                        style={{
+                            background: "rgba(255,255,255,0.9)",
+                            height: "100vh",
+                            zIndex: 3,
+                            position: "relative",
+                            flexDirection: "column"
+                        }}
+                    >
+                        {personalities &&
+                            Array.isArray(personalities) &&
+                            personalities.length > 0 && (
+                                <>
+                                    {personalities.map(
+                                        (p, i) =>
+                                            p && (
+                                                <Row
+                                                    key={i}
+                                                    style={{
+                                                        background: "#fff",
+                                                        padding: "10px 10%",
+                                                        boxShadow:
+                                                            "0 2px 2px rgba(0, 0, 0, 0.1)",
+                                                        cursor: "pointer"
+                                                    }}
+                                                    onClick={() => {
+                                                        this.props.dispatch({
+                                                            type:
+                                                                "ENABLE_SEARCH_OVERLAY",
+                                                            overlay: false
+                                                        });
+                                                        this.props.history.push(
+                                                            `/personality/${p._id}`
+                                                        );
+                                                    }}
+                                                >
+                                                    <Col span={4}>
+                                                        <Avatar
+                                                            size={30}
+                                                            src={p.image}
+                                                        />
+                                                    </Col>
+                                                    <Col span={18}>
+                                                        <span
+                                                            level={4}
+                                                            style={{
+                                                                marginBottom: 0,
+                                                                textSize: "14px"
+                                                            }}
+                                                        >
+                                                            {p.name}
+                                                        </span>
+                                                    </Col>
+                                                    <Col span={2}>
+                                                        <RightOutlined />
+                                                    </Col>
+                                                </Row>
+                                            )
+                                    )}
+                                </>
+                            )}
+                    </Row>
+                )}
             </div>
         );
     }
@@ -134,4 +135,6 @@ const mapStateToProps = state => {
         searchName: state?.search?.searchInput || null
     };
 };
-export default connect(mapStateToProps)(withTranslation()(withRouter(SearchOverlay)));
+export default connect(mapStateToProps)(
+    withTranslation()(withRouter(SearchOverlay))
+);
