@@ -103,7 +103,7 @@ class App extends Component {
                 <Footer style={{ textAlign: "center" }}>
                     {t("footer:copyright")}
                 </Footer>
-                {enableOverlay && <SearchOverlay />}
+                {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
             </>
         );
     }

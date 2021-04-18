@@ -5,8 +5,8 @@ import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 
 import api from "../../api/personality";
-import InputSearch from "../Form/InputSearch";
 import "./AletheiaHeader.less";
+import { withRouter } from "react-router-dom";
 
 class AletheiaHeader extends Component {
     static defaultProps = {
@@ -39,14 +39,21 @@ class AletheiaHeader extends Component {
                         </a>
                     </Col>
                     <Col span={20}>
-                        <p className="aletheia-logo">AletheiaFact</p>
+                        <a onClick={() => this.props.history.push("/")}>
+                            <p className="aletheia-logo">AletheiaFact</p>
+                        </a>
                     </Col>
                     <Col span={2}>
                         <a
                             onClick={() => {
+                                const pathname = this.props.history.location
+                                    .pathname;
                                 this.props.dispatch({
                                     type: "ENABLE_SEARCH_OVERLAY",
-                                    overlay: true
+                                    overlay: {
+                                        search: true,
+                                        results: pathname !== "/personality"
+                                    }
                                 });
                             }}
                         >
@@ -73,4 +80,6 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(withTranslation()(AletheiaHeader));
+export default connect(mapStateToProps)(
+    withTranslation()(withRouter(AletheiaHeader))
+);

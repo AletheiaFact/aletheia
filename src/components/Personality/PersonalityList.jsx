@@ -1,15 +1,12 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import api from "../../api/personality";
-import { Card, Row, Col, Pagination, Spin } from "antd";
+import { Row, Col, Pagination, Spin } from "antd";
 import "./PersonalityList.css";
-import AffixButton from "../Form/AffixButton";
 import { withTranslation } from "react-i18next";
 import PersonalityCard from "./PersonalityCard";
 import PersonalityCreateCTA from "./PersonalityCreateCTA";
 
-const { Meta } = Card;
 
 class PersonalityList extends Component {
     constructor(props) {

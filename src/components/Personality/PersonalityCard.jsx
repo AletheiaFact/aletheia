@@ -57,20 +57,24 @@ class PersonalityCard extends Component {
                             >
                                 {personality.description}
                             </Paragraph>
-                            {this.props.summarized && (
-                                <Paragraph
-                                    style={{
-                                        fontSize: "12px"
-                                    }}
-                                >
-                                    <b>
-                                        {t("personality:headerReviewsTotal", {
-                                            totalReviews:
-                                                personality.stats?.total
-                                        })}
-                                    </b>
-                                </Paragraph>
-                            )}
+                            {this.props.summarized &&
+                                personality.stats?.total !== undefined && (
+                                    <Paragraph
+                                        style={{
+                                            fontSize: "12px"
+                                        }}
+                                    >
+                                        <b>
+                                            {t(
+                                                "personality:headerReviewsTotal",
+                                                {
+                                                    totalReviews:
+                                                        personality.stats?.total
+                                                }
+                                            )}
+                                        </b>
+                                    </Paragraph>
+                                )}
                             {!this.props.summarized && personality.wikipedia && (
                                 <a
                                     style={{
@@ -126,28 +130,37 @@ class PersonalityCard extends Component {
                                     padding: "10px 0 25px 0px"
                                 }}
                             >
-                                <span>
-                                    <span
-                                        style={{
-                                            color: "#70b0d6",
-                                            fontSize: "20px"
-                                        }}
-                                    >
-                                        {personality.claims.length}
-                                    </span>{" "}
-                                    {t("personality:headerClaimsTotal")}
-                                </span>
-                                <span>
-                                    <span
-                                        style={{
-                                            color: "#70b0d6",
-                                            fontSize: "20px"
-                                        }}
-                                    >
-                                        {personality.stats?.total}
-                                    </span>{" "}
-                                    {t("personality:headerReviewsTotal")}
-                                </span>
+                                {personality.claims.length !== undefined && (
+                                    <span>
+                                        <span
+                                            style={{
+                                                color: "#70b0d6",
+                                                fontSize: "20px"
+                                            }}
+                                        >
+                                            {personality.claims.length}
+                                        </span>{" "}
+                                        {t("personality:headerClaimsTotal")}
+                                    </span>
+                                )}
+                                {personality.stats?.total && (
+                                    <span>
+                                        <span
+                                            style={{
+                                                color: "#70b0d6",
+                                                fontSize: "20px"
+                                            }}
+                                        >
+                                            {t(
+                                                "personality:headerReviewsTotal",
+                                                {
+                                                    totalReviews:
+                                                        personality.stats?.total
+                                                }
+                                            )}
+                                        </span>
+                                    </span>
+                                )}
                             </Row>
                         )}
                         <Row
