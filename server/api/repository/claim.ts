@@ -105,7 +105,7 @@ export default class ClaimRepository {
                 }
             }
         ]).option({ serializeFunctions: true });
-        return await this.postProcess(claim.toObject(), reviews);
+        return this.postProcess(claim.toObject(), reviews);
     }
 
     private async postProcess(claim, reviews) {
@@ -129,13 +129,13 @@ export default class ClaimRepository {
         }
         claimContent.forEach((paragraph, paragraphIndex) => {
             paragraph.content.forEach((sentence, sentenceIndex) => {
-                const review = reviews.find(review => {
+                const claimReview = reviews.find(review => {
                     return review._id === sentence.props["data-hash"];
                 });
                 claimContent[paragraphIndex].content[
                     sentenceIndex
                 ].props = Object.assign(sentence.props, {
-                    topClassification: review.topClassification
+                    topClassification: claimReview.topClassification
                 });
             });
         });

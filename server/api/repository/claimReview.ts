@@ -43,9 +43,9 @@ export default class ClaimReviewRepository {
                 { _id: claimReview.claim },
                 { $push: { claimReviews: review } },
                 { new: true },
-                err => {
-                    if (err) {
-                        throw err;
+                e => {
+                    if (e) {
+                        throw e;
                     }
                 }
             );
