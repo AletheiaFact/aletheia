@@ -52,6 +52,10 @@ export default class ClaimRepository {
         const claim = await Claim.findById(claimId)
             .populate("personality", "_id name")
             .populate("sources", "_id link classification");
+        if (!claim) {
+            // TODO: handle 404 for claim not found
+            return {};
+        }
         const reviews = await ClaimReview.aggregate([
             { $match: { claim: claim._id } },
             {
