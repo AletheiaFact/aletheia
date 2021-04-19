@@ -5,7 +5,6 @@ const Claim = require("../model/claimModel");
 const ClaimReview = require("../model/claimReviewModel");
 const Personality = require("../model/personalityModel");
 const util = require("../../lib/util");
-
 /**
  * @class ClaimRepository
  */
@@ -52,19 +51,95 @@ export default class ClaimRepository {
     async getById(claimId) {
         const claim = await Claim.findById(claimId)
             .populate("personality", "_id name")
-            .populate("claimReviews", "_id classification")
             .populate("sources", "_id link classification");
+        if (!claim) {
+            // TODO: handle 404 for claim not found
+            return {};
+        }
+        const reviews = await ClaimReview.aggregate([
+            { $match: { claim: claim._id } },
+            {
+                $group: {
+                    _id: "$sentence_hash",
+                    topClassification: {
+                        $accumulator: {
+                            init: function() {
+                                return {};
+                            },
+                            accumulate: function(state, classification) {
+                                if (!state[classification]) {
+                                    state[classification] = 1;
+                                } else {
+                                    state[classification]++;
+                                }
 
-        return await this.postProcess(claim.toObject());
+                                return state;
+                            },
+                            accumulateArgs: ["$classification"],
+                            merge: function(state1, state2) {
+                                return { ...state1, ...state2 };
+                            },
+                            finalize: function(state) {
+                                // Find the classification with bigger count
+                                const topClassification = Object.keys(
+                                    state
+                                ).reduce((acc, classification) => {
+                                    if (!state[acc]) {
+                                        return classification;
+                                    } else {
+                                        return state[acc] >=
+                                            state[classification]
+                                            ? acc
+                                            : classification;
+                                    }
+                                }, "");
+                                // TODO: what can we do about ties?
+                                return {
+                                    classification: topClassification,
+                                    count: state[topClassification]
+                                };
+                            },
+                            lang: "js"
+                        }
+                    }
+                }
+            }
+        ]).option({ serializeFunctions: true });
+        return this.postProcess(claim.toObject(), reviews);
     }
 
-    private async postProcess(personality) {
-        if (personality) {
-            const stats = await this.getReviewStats(personality._id);
-            return Object.assign(personality, { stats });
+    private async postProcess(claim, reviews) {
+        if (claim) {
+            const stats = await this.getReviewStats(claim._id);
+            claim = Object.assign(claim, { stats });
         }
+        if (reviews.length > 0) {
+            const content = this.transformContentObject(
+                claim?.content?.object,
+                reviews
+            );
+            claim = Object.assign(claim, { content });
+        }
+        return claim;
+    }
 
-        return personality;
+    private transformContentObject(claimContent, reviews) {
+        if (!claimContent) {
+            return claimContent;
+        }
+        claimContent.forEach((paragraph, paragraphIndex) => {
+            paragraph.content.forEach((sentence, sentenceIndex) => {
+                const claimReview = reviews.find(review => {
+                    return review._id === sentence.props["data-hash"];
+                });
+                claimContent[paragraphIndex].content[
+                    sentenceIndex
+                ].props = Object.assign(sentence.props, {
+                    topClassification: claimReview.topClassification
+                });
+            });
+        });
+        return claimContent;
     }
 
     async getReviewStats(id) {

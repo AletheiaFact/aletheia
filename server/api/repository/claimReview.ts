@@ -1,6 +1,7 @@
 import { ILogger } from "../../lib/loggerInterface";
 
 const ClaimReview = require("../model/claimReviewModel");
+const Claim = require("../model/claimModel");
 const Source = require("../model/sourceModel");
 
 /**
@@ -34,7 +35,21 @@ export default class ClaimReviewRepository {
             newClaimReview.sources = [source];
         }
 
-        return newClaimReview.save();
+        return newClaimReview.save((err, review) => {
+            if (err) {
+                throw err;
+            }
+            Claim.findOneAndUpdate(
+                { _id: claimReview.claim },
+                { $push: { claimReviews: review } },
+                { new: true },
+                e => {
+                    if (e) {
+                        throw e;
+                    }
+                }
+            );
+        });
     }
 
     getById(claimReviewId) {
