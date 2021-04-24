@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
 import ClaimReviewForm from "./ClaimReview";
-import { Row, Col, Typography, Modal, message, Spin, Radio, Affix } from "antd";
+import { Row, Col, Typography, Modal, message, Spin, Affix } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
 import MetricsOverview from "../Metrics/MetricsOverview";
