@@ -117,7 +117,7 @@ export default class ClaimRepository {
                 );
             }
             const reviewStats = await this.getReviewStats(claim._id);
-            const overallStats = await this.calculateOverallStats(claim);
+            const overallStats = this.calculateOverallStats(claim);
             const stats = { ...reviewStats, ...overallStats };
             claim = Object.assign(claim, { stats });
         }
