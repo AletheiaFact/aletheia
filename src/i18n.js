@@ -89,7 +89,9 @@ const resources = {
         claim: {
             cardOverallReviewPrefix: "Most",
             cardReviewButton: "Review",
-            cardLinkToFullText: "see full speech"
+            cardLinkToFullText: "see full speech",
+            showHighlightsButton: "Show highlights",
+            hideHighlightsButton: "Hide highlights"
         },
         claimForm: {
             titleField: "Title",
@@ -221,7 +223,9 @@ const resources = {
         claim: {
             cardOverallReviewPrefix: "Maioria",
             cardReviewButton: "Revisar",
-            cardLinkToFullText: "veja o texto completo"
+            cardLinkToFullText: "veja o texto completo",
+            showHighlightsButton: "Mostrar destaques",
+            hideHighlightsButton: "Ocultar destaques"
         },
         claimForm: {
             titleField: "Titulo",

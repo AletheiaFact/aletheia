@@ -2,10 +2,11 @@ import axios from "axios";
 import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
 import ClaimReviewForm from "./ClaimReview";
-import { Row, Col, Typography, Modal, message, Spin } from "antd";
+import { Row, Col, Typography, Modal, message, Spin, Radio, Affix } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
 import MetricsOverview from "../Metrics/MetricsOverview";
+import ToggleSection from "../ToggleSection";
 
 const { Title } = Typography;
 
@@ -13,7 +14,8 @@ class Claim extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            stats: {}
+            stats: {},
+            showHighlights: true
         };
     }
     componentDidMount() {
@@ -127,6 +129,9 @@ class Claim extends Component {
                                     <ClaimParagraph
                                         key={p.props.id}
                                         paragraph={p}
+                                        showHighlights={
+                                            this.state.showHighlights
+                                        }
                                         onClaimReviewForm={
                                             this.handleClaimReviewForm
                                         }
@@ -135,6 +140,24 @@ class Claim extends Component {
                             </div>
                         </Col>
                     </Row>
+
+                    <Affix
+                        offsetBottom={15}
+                        style={{
+                            textAlign: "center"
+                        }}
+                    >
+                        <ToggleSection
+                            defaultValue={this.state.showHighlights}
+                            onChange={e => {
+                                this.setState({
+                                    showHighlights: e.target.value
+                                });
+                            }}
+                            labelTrue={t("claim:showHighlightsButton")}
+                            labelFalse={t("claim:hideHighlightsButton")}
+                        />
+                    </Affix>
                     {this.state.stats.total !== 0 && (
                         <MetricsOverview stats={this.state.stats} />
                     )}

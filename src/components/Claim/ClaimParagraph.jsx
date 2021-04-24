@@ -11,6 +11,7 @@ class ClaimParagraph extends Component {
                         key={sentence.props.id}
                         content={sentence.content}
                         props={sentence.props}
+                        showHighlights={this.props.showHighlights}
                         onClaimReviewForm={this.props.onClaimReviewForm}
                     />
                 ))}

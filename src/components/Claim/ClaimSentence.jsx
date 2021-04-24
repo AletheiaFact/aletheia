@@ -6,7 +6,7 @@ class Sentence extends Component {
     render() {
         let style = {};
         const { props, content } = this.props;
-        if (props.topClassification) {
+        if (props.topClassification && this.props.showHighlights) {
             style = {
                 backgroundColor: colors[props.topClassification.classification]
             };
@@ -25,7 +25,7 @@ class Sentence extends Component {
                 >
                     {this.props.content}
                 </a>
-                {props.topClassification && (
+                {props.topClassification && this.props.showHighlights && (
                     <sup
                         style={{
                             color:
