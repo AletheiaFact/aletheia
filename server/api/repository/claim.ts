@@ -110,22 +110,42 @@ export default class ClaimRepository {
 
     private async postProcess(claim, reviews) {
         if (claim) {
-            const stats = await this.getReviewStats(claim._id);
-            claim = Object.assign(claim, { stats });
-        }
-        if (reviews.length > 0) {
             if (claim?.content?.object) {
                 claim.content.object = this.transformContentObject(
                     claim.content.object,
                     reviews
                 );
             }
+            const reviewStats = await this.getReviewStats(claim._id);
+            const overallStats = await this.calculateOverallStats(claim);
+            const stats = { ...reviewStats, ...overallStats };
+            claim = Object.assign(claim, { stats });
         }
+
         return claim;
     }
 
+    private calculateOverallStats(claim) {
+        let totalClaims = 0;
+        let totalClaimsReviewed = 0;
+        if (claim?.content?.object) {
+            claim.content.object.forEach(p => {
+                totalClaims += p.content.length;
+                p.content.forEach(sentence => {
+                    if (sentence.props.topClassification) {
+                        totalClaimsReviewed++;
+                    }
+                });
+            }, 0);
+        }
+        return {
+            totalClaims,
+            totalClaimsReviewed
+        };
+    }
+
     private transformContentObject(claimContent, reviews) {
-        if (!claimContent) {
+        if (!claimContent || reviews.length <= 0) {
             return claimContent;
         }
         claimContent.forEach((paragraph, paragraphIndex) => {
@@ -146,9 +166,8 @@ export default class ClaimRepository {
     }
 
     async getReviewStats(id) {
-        const claim = await Claim.findById(id);
         const reviews = await ClaimReview.aggregate([
-            { $match: { claim: claim._id } },
+            { $match: { claim: id } },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } }
         ]);
