@@ -6,10 +6,11 @@ class ClaimParagraph extends Component {
         const sentences = this.props.paragraph.content;
         return (
             <p id={this.props.paragraph.props.id}>
-                {sentences.map(p => (
+                {sentences.map(sentence => (
                     <ClaimSentence
-                        key={p.props.id}
-                        sentence={p}
+                        key={sentence.props.id}
+                        content={sentence.content}
+                        props={sentence.props}
                         onClaimReviewForm={this.props.onClaimReviewForm}
                     />
                 ))}
