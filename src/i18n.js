@@ -91,7 +91,10 @@ const resources = {
             cardReviewButton: "Review",
             cardLinkToFullText: "see full speech",
             showHighlightsButton: "Show highlights",
-            hideHighlightsButton: "Hide highlights"
+            hideHighlightsButton: "Hide highlights",
+            metricsHeaderInfo: "{{totalReviews}} claim reviews",
+            dateFormat: "l",
+            info: "stated on {{claimDate}}:"
         },
         claimForm: {
             titleField: "Title",
@@ -225,7 +228,10 @@ const resources = {
             cardReviewButton: "Revisar",
             cardLinkToFullText: "veja o texto completo",
             showHighlightsButton: "Mostrar destaques",
-            hideHighlightsButton: "Ocultar destaques"
+            hideHighlightsButton: "Ocultar destaques",
+            metricsHeaderInfo: "{{totalReviews}} avaliações de sentenças",
+            dateFormat: "L",
+            info: "declarado em {{claimDate}}:"
         },
         claimForm: {
             titleField: "Titulo",
@@ -333,7 +339,9 @@ const resources = {
         metrics: {
             headerTitle: "Statistiche"
         },
-        claim: {}
+        claim: {
+            metricsHeaderInfo: "{{totalReviews}} recensioni"
+        }
     }
 };
 
