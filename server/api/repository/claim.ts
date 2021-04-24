@@ -114,11 +114,12 @@ export default class ClaimRepository {
             claim = Object.assign(claim, { stats });
         }
         if (reviews.length > 0) {
-            const content = this.transformContentObject(
-                claim?.content?.object,
-                reviews
-            );
-            claim = Object.assign(claim, { content });
+            if (claim?.content?.object) {
+                claim.content.object = this.transformContentObject(
+                    claim.content.object,
+                    reviews
+                );
+            }
         }
         return claim;
     }
@@ -132,11 +133,13 @@ export default class ClaimRepository {
                 const claimReview = reviews.find(review => {
                     return review._id === sentence.props["data-hash"];
                 });
-                claimContent[paragraphIndex].content[
-                    sentenceIndex
-                ].props = Object.assign(sentence.props, {
-                    topClassification: claimReview.topClassification
-                });
+                if (claimReview) {
+                    claimContent[paragraphIndex].content[
+                        sentenceIndex
+                    ].props = Object.assign(sentence.props, {
+                        topClassification: claimReview.topClassification
+                    });
+                }
             });
         });
         return claimContent;
