@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Progress } from "antd";
 import { withTranslation } from "react-i18next";
-import ReviewColors from "../constants/reviewColors";
+import ReviewColors from "../../constants/reviewColors";
 
 class ReviewStats extends Component {
     getStyle(reviewId) {
@@ -19,7 +19,6 @@ class ReviewStats extends Component {
     }
 
     render() {
-
         const { reviews } = this.props?.stats || {};
         const { t } = this.props;
         return (

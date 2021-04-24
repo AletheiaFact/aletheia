@@ -5,11 +5,17 @@ import ClaimReviewForm from "./ClaimReview";
 import { Row, Col, Typography, Modal, message, Spin } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
-import ReviewStats from "../ReviewStats";
+import MetricsOverview from "../Metrics/MetricsOverview";
 
 const { Title } = Typography;
 
 class Claim extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            stats: {}
+        };
+    }
     componentDidMount() {
         const self = this;
         self.getClaim();
@@ -29,7 +35,6 @@ class Claim extends Component {
                     title,
                     body: content.object,
                     stats,
-                    highlight: {},
                     visible: false
                 });
             })
@@ -131,43 +136,7 @@ class Claim extends Component {
                         </Col>
                     </Row>
                     {this.state.stats.total !== 0 && (
-                        <Row style={{ background: "white" }}>
-                            <Col
-                                style={{
-                                    width: "100%",
-                                    color: "#262626",
-                                    padding: "10px 0 25px 0px"
-                                }}
-                                offset={2}
-                                span={18}
-                            >
-                                <div
-                                    style={{
-                                        textAlign: "center",
-                                        marginBottom: "5px"
-                                    }}
-                                >
-                                    <Title level={4}>
-                                        {t("claim:metricsHeaderTitle")}
-                                    </Title>
-                                    <span>
-                                        {t("claim:metricsHeaderPrefix")}
-                                        <span style={{ fontWeight: "bold" }}>
-                                            {t("claim:metricsHeaderInfo", {
-                                                totalReviews: this.state.stats
-                                                    .total
-                                            })}
-                                        </span>
-                                        {t("claim:metricsHeaderSuffix")}
-                                    </span>
-                                </div>
-                                <ReviewStats
-                                    stats={this.state.stats}
-                                    countInTitle={true}
-                                    type="line"
-                                />
-                            </Col>
-                        </Row>
+                        <MetricsOverview stats={this.state.stats} />
                     )}
                 </>
             );
