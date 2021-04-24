@@ -76,11 +76,17 @@ const resources = {
             errorMessage: "Error while sending review",
             successMessage: "Review succeeded"
         },
+        metrics: {
+            headerTitle: "Metrics Overview",
+            header:
+                "The statistics below consider the most voted\n" +
+                "classification of individual claims. This\n" +
+                "speech contains {{totalClaims}} claims,\n" +
+                "of which {{totalClaimsReviewed}}\n" +
+                "received a total of {{total}} (100%)\n" +
+                "reviews:"
+        },
         claim: {
-            metricsHeaderTitle: "Metrics",
-            metricsHeaderPrefix: "This speech contains ",
-            metricsHeaderInfo: "{{totalReviews}} claim reviews",
-            metricsHeaderSuffix: ", of which:",
             cardOverallReviewPrefix: "Most",
             cardReviewButton: "Review",
             cardLinkToFullText: "see full speech"
@@ -202,11 +208,17 @@ const resources = {
             errorMessage: "Erro ao enviar revisão",
             successMessage: "Revisão concluída"
         },
+        metrics: {
+            headerTitle: "Resumo das Avaliações",
+            header:
+                "As estatísticas abaixo consideram a classificação\n" +
+                "mais votada afirmações individuais. Este\n" +
+                "discurso contém {{totalClaims}} afirmações,\n" +
+                "das quais {{totalClaimsReviewed}}\n" +
+                "receberam um total de {{total}} (100%)\n" +
+                "avaliações:"
+        },
         claim: {
-            metricsHeaderTitle: "Avaliações",
-            metricsHeaderPrefix: "Esse discurso contém ",
-            metricsHeaderInfo: "{{totalReviews}} avaliações de sentenças",
-            metricsHeaderSuffix: ", das quais:",
             cardOverallReviewPrefix: "Maioria",
             cardReviewButton: "Revisar",
             cardLinkToFullText: "veja o texto completo"
@@ -314,12 +326,10 @@ const resources = {
             errorMessage: "Errore durante l'invio della recensione",
             successMessage: "Revisione inviata con successo"
         },
-        claim: {
-            metricsHeaderTitle: "Statistiche",
-            metricsHeaderPrefix: "Questa dichiarazione contiene  ",
-            metricsHeaderInfo: "{{totalReviews}} recensioni",
-            metricsHeaderSuffix: ", delle quali:"
-        }
+        metrics: {
+            headerTitle: "Statistiche"
+        },
+        claim: {}
     }
 };
 

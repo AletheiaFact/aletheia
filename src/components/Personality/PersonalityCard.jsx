@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Avatar, Spin, Col, Row, Typography, Button } from "antd";
 import { withTranslation } from "react-i18next";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import ReviewStats from "../ReviewStats";
+import ReviewStats from "../Metrics/ReviewStats";
 
 const { Title, Paragraph } = Typography;
 
