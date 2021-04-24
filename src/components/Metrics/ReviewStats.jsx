@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Progress } from "antd";
 import { withTranslation } from "react-i18next";
 import ReviewColors from "../../constants/reviewColors";
+import StatsReviewColors from "../../constants/statsReviewColors";
 
 class ReviewStats extends Component {
     getStyle(reviewId) {
@@ -14,7 +15,7 @@ class ReviewStats extends Component {
 
         return {
             ...defaultStyle,
-            strokeColor: ReviewColors[reviewId] || "#000"
+            strokeColor: StatsReviewColors[reviewId] || "#000"
         };
     }
 

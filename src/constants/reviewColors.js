@@ -1,11 +1,11 @@
 export default {
-    "not-fact": "#111",
-    true: "#4dc24d",
-    "true-but": "#57e173",
-    arguable: "#d8d12f",
-    misleading: "#d35730",
-    false: "#d33730",
-    unsustainable: "#d7425e",
-    exaggerated: "#c1d259",
-    unverifiable: "#d89d2f"
+    "not-fact": "#006060",
+    true: "#008000",
+    "true-but": "#5A781D",
+    arguable: "#9F6B3F",
+    misleading: "#D6395F",
+    false: "#D32B20",
+    unsustainable: "#A74165",
+    exaggerated: "#B8860B",
+    unverifiable: "#C9502A"
 };
