@@ -20,22 +20,20 @@ class PersonalityList extends Component {
             </Row>
         );
         return (
-            <>
-                <BaseList
-                    apiCall={api.getPersonalities}
-                    emptyFallback={createPersonalityCTA}
-                    renderItem={p =>
-                        p && (
-                            <PersonalityCard
-                                personality={p}
-                                summarized={true}
-                                key={p._id}
-                            />
-                        )
-                    }
-                    footer={createPersonalityCTA}
-                />
-            </>
+            <BaseList
+                apiCall={api.getPersonalities}
+                emptyFallback={createPersonalityCTA}
+                renderItem={p =>
+                    p && (
+                        <PersonalityCard
+                            personality={p}
+                            summarized={true}
+                            key={p._id}
+                        />
+                    )
+                }
+                footer={createPersonalityCTA}
+            />
         );
     }
 }
