@@ -55,7 +55,7 @@ export default class PersonalityRepository {
         let personalities = await Personality.find(query)
             .skip(page * pageSize)
             .limit(pageSize)
-            .sort({ createdAt: order })
+            .sort({ _id: order })
             .lean();
         if (withSuggestions) {
             const wbentities = await this.wikidata.queryWikibaseEntities(

@@ -11,6 +11,10 @@ const resources = {
             loading: "Loading...",
             back_button: "Back"
         },
+        list: {
+            loadMoreButton: "Load more",
+            totalItems: "{{total}} total"
+        },
         home: {
             title: "checking claims",
             subtitle: "from your favorite personalities",
@@ -147,6 +151,10 @@ const resources = {
         global: {
             loading: "Carregando...",
             back_button: "Voltar"
+        },
+        list: {
+            loadMoreButton: "Carregar mais",
+            totalItems: "{{total}} no total"
         },
         home: {
             title: "checagem de afirmaçoes",
