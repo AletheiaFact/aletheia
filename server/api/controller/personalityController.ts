@@ -11,7 +11,7 @@ export class PersonalityController {
     }
 
     async listAll(query, language) {
-        const { page = 0, pageSize = 10, order = "desc" } = query;
+        const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = await this.verifyInputsQuery(query);
 
         return Promise.all([

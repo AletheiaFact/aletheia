@@ -25,7 +25,9 @@ class Home extends Component {
                 pageSize: 5,
                 fetchOnly: true
             })
-            .then(personalities => this.setState({ personalities }));
+            .then(personalities =>
+                this.setState({ personalities: personalities.data })
+            );
         statsApi.get().then(stats => this.setState({ stats }));
     }
 
