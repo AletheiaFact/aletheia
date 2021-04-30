@@ -28,7 +28,6 @@ class ClaimCard extends Component {
                 <Col span={24}>
                     <Comment
                         review="true"
-                        key={this.props.claimIndex}
                         author={this.props.personality.name}
                         avatar={
                             <Avatar
@@ -47,7 +46,7 @@ class ClaimCard extends Component {
                                             }}
                                         >
                                             "
-                                            {this.state.claim.content ||
+                                            {this.state.claim.content.text ||
                                                 this.state.claim.title}
                                             "
                                         </Paragraph>
