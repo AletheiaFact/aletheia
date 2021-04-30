@@ -20,8 +20,16 @@ export default class ClaimRepository {
         };
     }
 
-    listAll() {
-        return Claim.find({}).lean();
+    listAll(page, pageSize, order, query) {
+        return Claim.find(query)
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .sort({ _id: order })
+            .lean();
+    }
+
+    count(query) {
+        return Claim.countDocuments().where(query);
     }
 
     create(claim) {

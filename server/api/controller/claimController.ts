@@ -10,8 +10,47 @@ export default class ClaimController {
         this.claimRepository = new ClaimRepository(logger);
     }
 
-    listAll() {
-        return this.claimRepository.listAll();
+    async listAll(query) {
+        const { page = 0, pageSize = 10, order = "asc" } = query;
+        const queryInputs = await this.verifyInputsQuery(query);
+
+        return Promise.all([
+            this.claimRepository.listAll(
+                page,
+                parseInt(pageSize, 10),
+                order,
+                queryInputs
+            ),
+            this.claimRepository.count(queryInputs)
+        ])
+            .then(([claims, totalClaims]) => {
+                const totalPages = Math.ceil(
+                    totalClaims / parseInt(pageSize, 10)
+                );
+
+                this.logger.log(
+                    "info",
+                    `Found ${totalClaims} claims. Page ${page} of ${totalPages}`
+                );
+
+                return {
+                    claims,
+                    totalClaims,
+                    totalPages,
+                    page,
+                    pageSize
+                };
+            })
+            .catch(error => this.logger.log("error", error));
+    }
+
+    verifyInputsQuery(query) {
+        const queryInputs = {};
+        if (query.personality) {
+            // @ts-ignore
+            queryInputs.personality = query.personality;
+        }
+        return queryInputs;
     }
 
     create(body) {
