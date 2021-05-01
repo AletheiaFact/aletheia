@@ -9,6 +9,7 @@ import AffixButton from "../Form/AffixButton";
 import ClaimList from "../Claim/ClaimList";
 import ToggleSection from "../ToggleSection";
 import MetricsOverview from "../Metrics/MetricsOverview";
+import SocialMediaShare from "../SocialMediaShare";
 
 class PersonalityView extends Component {
     constructor(props) {
@@ -85,6 +86,7 @@ class PersonalityView extends Component {
                     ) : (
                         <MetricsOverview stats={personality.stats} />
                     )}
+                    <SocialMediaShare quote={personality.name} />
                 </>
             );
         } else {
