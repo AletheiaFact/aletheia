@@ -15,7 +15,6 @@ ReactDOM.render(
         <Layout style={{ minHeight: "100vh" }}>
             <Router>
                 <Switch>
-                    <Route exact path="/login" component={LoginView} />
                     <Route component={App} />
                 </Switch>
             </Router>

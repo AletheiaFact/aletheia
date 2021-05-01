@@ -11,6 +11,9 @@ const resources = {
             loading: "Loading...",
             back_button: "Back"
         },
+        menu: {
+            myAccountItem: "My Account"
+        },
         share: {
             quote: "Aletheia",
             title: "Share this page"
@@ -156,6 +159,9 @@ const resources = {
         global: {
             loading: "Carregando...",
             back_button: "Voltar"
+        },
+        menu: {
+            myAccountItem: "Minha conta"
         },
         share: {
             quote: "Aletheia",

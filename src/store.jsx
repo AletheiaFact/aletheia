@@ -15,6 +15,11 @@ import thunk from "redux-thunk";
  */
 function appReducer(state, action) {
     switch (action.type) {
+        case "TOGGLE_MENU":
+            return {
+                ...state,
+                menuCollapsed: action.menuCollapsed
+            };
         case "ENABLE_SEARCH_OVERLAY":
             return {
                 ...state,
