@@ -1,8 +1,7 @@
-import util from "../../lib/util";
-
 import { ILogger } from "../../lib/loggerInterface";
 import WikidataResolver from "../../lib/wikidataResolver";
 
+const util = require("../../lib/util");
 const Personality = require("../model/personalityModel");
 const ClaimReview = require("../model/claimReviewModel");
 
@@ -23,27 +22,6 @@ export default class PersonalityRepository {
         };
     }
 
-    /**
-     * https://medium.com/javascript-in-plain-english/javascript-merge-duplicate-objects-in-array-of-objects-9a76c3a1c35c
-     * @param array
-     * @param property
-     */
-    mergeObjectsInUnique<T>(array: T[], property: any): T[] {
-        const newArray = new Map();
-
-        array.forEach((item: T) => {
-            const propertyValue = item[property];
-            newArray.has(propertyValue)
-                ? newArray.set(propertyValue, {
-                      ...item,
-                      ...newArray.get(propertyValue)
-                  })
-                : newArray.set(propertyValue, item);
-        });
-
-        return Array.from(newArray.values());
-    }
-
     async listAll(
         page,
         pageSize,
@@ -62,7 +40,7 @@ export default class PersonalityRepository {
                 query.name.$regex,
                 language
             );
-            personalities = this.mergeObjectsInUnique(
+            personalities = util.mergeObjectsInUnique(
                 [...wbentities, ...personalities],
                 "wikidata"
             );

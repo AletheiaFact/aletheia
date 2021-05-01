@@ -2,7 +2,7 @@ const util = require("util");
 const fs = require("fs");
 const readFileAsync = util.promisify(fs.readFile);
 const path = require("path");
-const HTTPError = require("../lib/util.js").HTTPError;
+const HTTPError = require("./util").HTTPError;
 
 // Swagger-ui-dist helpfully exporting the absolute path of its dist directory
 const docRoot = `${require("swagger-ui-dist").getAbsoluteFSPath()}/`;
