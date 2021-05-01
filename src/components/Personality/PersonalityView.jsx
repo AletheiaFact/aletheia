@@ -7,12 +7,17 @@ import "./PersonalityView.less";
 import PersonalityCard from "./PersonalityCard";
 import AffixButton from "../Form/AffixButton";
 import ClaimList from "../Claim/ClaimList";
+import ToggleSection from "../ToggleSection";
+import MetricsOverview from "../Metrics/MetricsOverview";
 
 class PersonalityView extends Component {
     constructor(props) {
         super(props);
         this.createClaim = this.createClaim.bind(this);
-        this.state = {};
+        this.onSectionChange = this.onSectionChange.bind(this);
+        this.state = {
+            showSpeechesSection: true
+        };
         this.tooltipVisible = true;
         setTimeout(() => {
             this.tooltipVisible = false;
@@ -44,6 +49,12 @@ class PersonalityView extends Component {
         this.props.history.push(path);
     }
 
+    onSectionChange(e) {
+        this.setState({
+            showSpeechesSection: e.target.value
+        });
+    }
+
     render() {
         const personality = this.state.personality;
         const { t } = this.props;
@@ -56,7 +67,24 @@ class PersonalityView extends Component {
                         tooltipTitle={t("personality:affixButtonTitle")}
                         onClick={this.createClaim}
                     />
-                    <ClaimList personality={personality}></ClaimList>
+                    <Row
+                        style={{
+                            textAlign: "center",
+                            width: "100%"
+                        }}
+                    >
+                        <ToggleSection
+                            defaultValue={this.state.showSpeechesSection}
+                            labelTrue={t("personality:toggleSectionSpeeches")}
+                            labelFalse={t("metrics:headerTitle")}
+                            onChange={this.onSectionChange}
+                        ></ToggleSection>
+                    </Row>
+                    {this.state.showSpeechesSection ? (
+                        <ClaimList personality={personality}></ClaimList>
+                    ) : (
+                        <MetricsOverview stats={personality.stats} />
+                    )}
                 </>
             );
         } else {

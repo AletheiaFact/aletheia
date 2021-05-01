@@ -35,7 +35,8 @@ const resources = {
             affixButtonTitle: "Click here to add a claim",
             wikipediaPage: "View Wikipedia Page",
             headerReviewsTotal: "{{totalReviews}} claim reviews",
-            headerClaimsTotal: "{{totalClaims}} speeches added"
+            headerClaimsTotal: "{{totalClaims}} speeches added",
+            toggleSectionSpeeches: "Speeches"
         },
         footer: {
             copyright: "Aletheia ©2020 Created by Open Tesseract"
@@ -176,7 +177,8 @@ const resources = {
             affixButtonTitle: "Clique aqui para adicionar um discurso",
             wikipediaPage: "Acesse a página do Wikipédia",
             headerReviewsTotal: "{{totalReviews}} avaliações de sentenças",
-            headerClaimsTotal: "{{totalClaims}} discursos adicionados"
+            headerClaimsTotal: "{{totalClaims}} discursos adicionados",
+            toggleSectionSpeeches: "Discursos"
         },
         footer: {
             copyright: "Aletheia ©2020 Criado por Open Tesseract"

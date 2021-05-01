@@ -8,6 +8,7 @@ class ToggleSection extends Component {
                 defaultValue={this.props.defaultValue}
                 buttonStyle="solid"
                 onChange={this.props.onChange}
+                style={{ width: "100%" }}
             >
                 <Radio.Button value={true}>{this.props.labelTrue}</Radio.Button>
                 <Radio.Button value={false}>{this.props.labelFalse}</Radio.Button>
