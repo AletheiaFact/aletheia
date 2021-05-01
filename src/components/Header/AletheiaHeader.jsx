@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
-import { Col, Row } from "antd";
+import { Col, Layout, Menu, Row } from "antd";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 
 import api from "../../api/personality";
 import "./AletheiaHeader.less";
 import { withRouter } from "react-router-dom";
+
+const { Header } = Layout;
 
 class AletheiaHeader extends Component {
     static defaultProps = {
@@ -25,10 +27,22 @@ class AletheiaHeader extends Component {
     render() {
         const { t, search } = this.props;
         return (
-            <header>
+            <Header
+                style={{
+                    padding: "0",
+                    marginBottom: "6px"
+                }}
+            >
                 <Row className="aletheia-header">
                     <Col span={2}>
-                        <a>
+                        <a
+                            onClick={() => {
+                                this.props.dispatch({
+                                    type: "TOGGLE_MENU",
+                                    menuCollapsed: !this.props.menuCollapsed
+                                });
+                            }}
+                        >
                             <MenuOutlined
                                 style={{
                                     fontSize: "16px",
@@ -67,7 +81,7 @@ class AletheiaHeader extends Component {
                         </a>
                     </Col>
                 </Row>
-            </header>
+            </Header>
         );
     }
 }
@@ -76,7 +90,9 @@ const mapStateToProps = state => {
     return {
         page: state?.search?.searchCurPage || 1,
         pageSize: state?.search?.searchPageSize || 10,
-        searchName: state?.search?.searchInput || null
+        searchName: state?.search?.searchInput || null,
+        menuCollapsed:
+            state?.menuCollapsed !== undefined ? state?.menuCollapsed : true
     };
 };
 
