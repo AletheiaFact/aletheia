@@ -5,6 +5,7 @@ import personalityApi from "../../api/personality";
 import statsApi from "../../api/stats";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
+import SocialMediaShare from "../SocialMediaShare";
 
 class Home extends Component {
     constructor(props) {
@@ -201,6 +202,7 @@ class Home extends Component {
                 >
                     <CTARegistration></CTARegistration>
                 </Row>
+                <SocialMediaShare />
             </>
         );
     }

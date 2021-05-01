@@ -9,6 +9,7 @@ import MetricsOverview from "../Metrics/MetricsOverview";
 import ToggleSection from "../ToggleSection";
 import moment from "moment";
 import "moment/locale/pt";
+import SocialMediaShare from "../SocialMediaShare";
 
 const { Title } = Typography;
 
@@ -190,6 +191,7 @@ class Claim extends Component {
                     {this.state.stats.total !== 0 && (
                         <MetricsOverview stats={this.state.stats} />
                     )}
+                    <SocialMediaShare quote={personality.name} />
                 </>
             );
         } else {

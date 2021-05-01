@@ -11,6 +11,10 @@ const resources = {
             loading: "Loading...",
             back_button: "Back"
         },
+        share: {
+            quote: "Aletheia",
+            title: "Share this page"
+        },
         list: {
             loadMoreButton: "Load more",
             totalItems: "{{total}} total"
@@ -152,6 +156,10 @@ const resources = {
         global: {
             loading: "Carregando...",
             back_button: "Voltar"
+        },
+        share: {
+            quote: "Aletheia",
+            title: "Compartilhe esta pagina"
         },
         list: {
             loadMoreButton: "Carregar mais",
