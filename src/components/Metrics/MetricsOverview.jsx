@@ -6,10 +6,6 @@ import { withTranslation } from "react-i18next";
 const { Title } = Typography;
 
 class MetricsOverview extends Component {
-    constructor(props) {
-        super(props);
-        console.log(props);
-    }
     render() {
         const { stats, t } = this.props;
         return (
