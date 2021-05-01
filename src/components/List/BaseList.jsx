@@ -123,7 +123,7 @@ class BaseList extends Component {
                     ></Spin>
                 );
             } else {
-                return emptyFallback;
+                return emptyFallback || null;
             }
         }
     }

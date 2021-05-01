@@ -8,22 +8,10 @@ import ReviewColors from "../../constants/reviewColors";
 
 const { Paragraph } = Typography;
 class ClaimCard extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-    async componentDidMount() {
-        const claim = await api.getById(this.props.claim._id);
-        this.setState({
-            claim: Object.assign(claim, {
-                content: this.props.claim.content
-            })
-        });
-    }
     render() {
         const { t } = this.props;
-        const review = this.state.claim?.stats?.reviews[0];
-        if (this.state.claim) {
+        const review = this.props.claim?.stats?.reviews[0];
+        if (this.props.claim) {
             return (
                 <Col span={24}>
                     <Comment
@@ -46,14 +34,14 @@ class ClaimCard extends Component {
                                             }}
                                         >
                                             "
-                                            {this.state.claim.content.text ||
-                                                this.state.claim.title}
+                                            {this.props.claim.content.text ||
+                                                this.props.claim.title}
                                             "
                                         </Paragraph>
                                         <Link
                                             to={location =>
                                                 this.props.viewClaim(
-                                                    this.state.claim._id,
+                                                    this.props.claim._id,
                                                     true
                                                 )
                                             }
@@ -73,7 +61,7 @@ class ClaimCard extends Component {
                                             }}
                                         >
                                             {t("claim:metricsHeaderInfo", {
-                                                totalReviews: this.state.claim
+                                                totalReviews: this.props.claim
                                                     ?.stats?.total
                                             })}
                                         </span>{" "}
@@ -113,7 +101,7 @@ class ClaimCard extends Component {
                                             onClick={e => {
                                                 e.stopPropagation();
                                                 this.props.viewClaim(
-                                                    this.state.claim._id
+                                                    this.props.claim._id
                                                 );
                                             }}
                                         >
@@ -124,8 +112,8 @@ class ClaimCard extends Component {
                             </>
                         }
                         datetime={
-                            <Tooltip title={this.state.claim?.date}>
-                                <span>{this.state.claim?.date}</span>
+                            <Tooltip title={this.props.claim?.date}>
+                                <span>{this.props.claim?.date}</span>
                             </Tooltip>
                         }
                     />

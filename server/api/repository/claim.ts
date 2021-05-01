@@ -2,7 +2,6 @@ import Parser from "../../lib/parser";
 import { ILogger } from "../../lib/loggerInterface";
 import ClaimReviewRepository from "./claimReview";
 
-const util = require("../../lib/util");
 const Claim = require("../model/claimModel");
 const Personality = require("../model/personalityModel");
 
