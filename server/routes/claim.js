@@ -12,6 +12,19 @@ const router = require("../lib/util").router();
 let app;
 
 /**
+ * GET {domain}/personality
+ */
+router.get("/", (req, res, next) => {
+    const claim = new ClaimController(app);
+    claim
+        .listAll(req.query)
+        .then(result => res.send(result))
+        .catch(error => {
+            next(Requester.internalError(res, error.message, app.logger));
+        });
+});
+
+/**
  * POST {domain}/claim
  */
 router.post("/", ensureLoggedIn, async (req, res, next) => {

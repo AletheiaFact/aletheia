@@ -1,27 +1,42 @@
 import Parser from "../../lib/parser";
 import { ILogger } from "../../lib/loggerInterface";
+import ClaimReviewRepository from "./claimReview";
 
 const Claim = require("../model/claimModel");
-const ClaimReview = require("../model/claimReviewModel");
 const Personality = require("../model/personalityModel");
-const util = require("../../lib/util");
+
 /**
  * @class ClaimRepository
  */
 export default class ClaimRepository {
     optionsToUpdate: Object;
     logger: ILogger;
+    private claimReviewRepository: ClaimReviewRepository;
 
     constructor(logger: any = {}) {
         this.logger = logger;
+        this.claimReviewRepository = new ClaimReviewRepository(logger);
         this.optionsToUpdate = {
             new: true,
             upsert: true
         };
     }
 
-    listAll() {
-        return Claim.find({}).lean();
+    async listAll(page, pageSize, order, query) {
+        const claims = await Claim.find(query)
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .sort({ _id: order })
+            .lean();
+        return Promise.all(
+            claims.map(claim => {
+                return this.postProcess(claim);
+            })
+        );
+    }
+
+    count(query) {
+        return Claim.countDocuments().where(query);
     }
 
     create(claim) {
@@ -56,59 +71,14 @@ export default class ClaimRepository {
             // TODO: handle 404 for claim not found
             return {};
         }
-        const reviews = await ClaimReview.aggregate([
-            { $match: { claim: claim._id } },
-            {
-                $group: {
-                    _id: "$sentence_hash",
-                    topClassification: {
-                        $accumulator: {
-                            init: function() {
-                                return {};
-                            },
-                            accumulate: function(state, classification) {
-                                if (!state[classification]) {
-                                    state[classification] = 1;
-                                } else {
-                                    state[classification]++;
-                                }
 
-                                return state;
-                            },
-                            accumulateArgs: ["$classification"],
-                            merge: function(state1, state2) {
-                                return { ...state1, ...state2 };
-                            },
-                            finalize: function(state) {
-                                // Find the classification with bigger count
-                                const topClassification = Object.keys(
-                                    state
-                                ).reduce((acc, classification) => {
-                                    if (!state[acc]) {
-                                        return classification;
-                                    } else {
-                                        return state[acc] >=
-                                            state[classification]
-                                            ? acc
-                                            : classification;
-                                    }
-                                }, "");
-                                // TODO: what can we do about ties?
-                                return {
-                                    classification: topClassification,
-                                    count: state[topClassification]
-                                };
-                            },
-                            lang: "js"
-                        }
-                    }
-                }
-            }
-        ]).option({ serializeFunctions: true });
-        return this.postProcess(claim.toObject(), reviews);
+        return this.postProcess(claim.toObject());
     }
 
-    private async postProcess(claim, reviews) {
+    private async postProcess(claim) {
+        const reviews = await this.claimReviewRepository.getReviewsByClaimId(
+            claim._id
+        );
         if (claim) {
             if (claim?.content?.object) {
                 claim.content.object = this.transformContentObject(
@@ -116,7 +86,9 @@ export default class ClaimRepository {
                     reviews
                 );
             }
-            const reviewStats = await this.getReviewStats(claim._id);
+            const reviewStats = await this.claimReviewRepository.getReviewStatsByClaimId(
+                claim._id
+            );
             const overallStats = this.calculateOverallStats(claim);
             const stats = { ...reviewStats, ...overallStats };
             claim = Object.assign(claim, { stats });
@@ -163,15 +135,6 @@ export default class ClaimRepository {
             });
         });
         return claimContent;
-    }
-
-    async getReviewStats(id) {
-        const reviews = await ClaimReview.aggregate([
-            { $match: { claim: id } },
-            { $group: { _id: "$classification", count: { $sum: 1 } } },
-            { $sort: { count: -1 } }
-        ]);
-        return util.formatStats(reviews);
     }
 
     async update(claimId, claimBody) {

@@ -10,10 +10,12 @@ class BaseList extends Component {
             query: {
                 page: 1,
                 pageSize: 10,
-                fetchOnly: true
+                fetchOnly: true,
+                ...(props.query || {})
             },
             items: []
         };
+
         this.loadMore = this.loadMore.bind(this);
     }
     componentDidMount() {
@@ -121,7 +123,7 @@ class BaseList extends Component {
                     ></Spin>
                 );
             } else {
-                return emptyFallback;
+                return emptyFallback || null;
             }
         }
     }

@@ -3,6 +3,31 @@ import { message } from "antd";
 
 const baseUrl = `${process.env.API_URL}/claim`;
 
+const get = (options = {}) => {
+    const params = {
+        page: options.page - 1,
+        name: options.searchName,
+        pageSize: options.pageSize,
+        personality: options.personality
+    };
+
+    return axios
+        .get(`${process.env.API_URL}/claim`, { params })
+        .then(response => {
+            const { claims, totalPages, totalClaims } = response.data;
+            if (options.fetchOnly) {
+                return {
+                    data: claims,
+                    total: totalClaims,
+                    totalPages
+                };
+            }
+        })
+        .catch(e => {
+            throw e;
+        });
+};
+
 const getById = (id, params = {}) => {
     return axios
         .get(`${baseUrl}/${id}`, {
@@ -61,6 +86,7 @@ const update = (id, params = {}) => {
 };
 
 export default {
+    get,
     getById,
     save,
     update

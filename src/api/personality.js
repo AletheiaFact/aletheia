@@ -14,7 +14,6 @@ const getPersonalities = (options = {}, dispatch) => {
     return axios
         .get(`${process.env.API_URL}/personality`, { params })
         .then(response => {
-            console.log(response.data);
             const {
                 personalities,
                 totalPages,

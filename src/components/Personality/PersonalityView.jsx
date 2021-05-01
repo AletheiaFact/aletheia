@@ -6,19 +6,19 @@ import api from "../../api/personality";
 import "./PersonalityView.less";
 import PersonalityCard from "./PersonalityCard";
 import AffixButton from "../Form/AffixButton";
-import ClaimCard from "../Claim/ClaimCard";
+import ClaimList from "../Claim/ClaimList";
 
 class PersonalityView extends Component {
     constructor(props) {
         super(props);
         this.createClaim = this.createClaim.bind(this);
-        this.viewClaim = this.viewClaim.bind(this);
         this.state = {};
         this.tooltipVisible = true;
         setTimeout(() => {
             this.tooltipVisible = false;
         }, 2500);
     }
+
     componentDidUpdate(prevProps) {
         if (prevProps.match.params.id !== this.props.match.params.id) {
             this.getPersonality();
@@ -44,15 +44,6 @@ class PersonalityView extends Component {
         this.props.history.push(path);
     }
 
-    viewClaim(id, link = false) {
-        const path = `./${this.props.match.params.id}/claim/${id}`;
-        if (!link) {
-            this.props.history.push(path);
-        } else {
-            return path;
-        }
-    }
-
     render() {
         const personality = this.state.personality;
         const { t } = this.props;
@@ -65,18 +56,7 @@ class PersonalityView extends Component {
                         tooltipTitle={t("personality:affixButtonTitle")}
                         onClick={this.createClaim}
                     />
-                    <Row style={{ background: "white" }}>
-                        {personality.claims.map((claim, claimIndex) => {
-                            return (
-                                <ClaimCard
-                                    key={claimIndex}
-                                    personality={personality}
-                                    claim={claim}
-                                    viewClaim={this.viewClaim}
-                                />
-                            );
-                        })}
-                    </Row>
+                    <ClaimList personality={personality}></ClaimList>
                 </>
             );
         } else {
