@@ -29,8 +29,8 @@ export default class ClaimRepository {
             .sort({ _id: order })
             .lean();
         return Promise.all(
-            claims.map(async claim => {
-                return await this.postProcess(claim);
+            claims.map(claim => {
+                return this.postProcess(claim);
             })
         );
     }

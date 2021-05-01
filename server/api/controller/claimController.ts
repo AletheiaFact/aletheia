@@ -10,9 +10,9 @@ export default class ClaimController {
         this.claimRepository = new ClaimRepository(logger);
     }
 
-    async listAll(query) {
+    listAll(query) {
         const { page = 0, pageSize = 10, order = "asc" } = query;
-        const queryInputs = await this.verifyInputsQuery(query);
+        const queryInputs = this.verifyInputsQuery(query);
 
         return Promise.all([
             this.claimRepository.listAll(

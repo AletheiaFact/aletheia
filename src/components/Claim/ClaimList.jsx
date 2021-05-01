@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import claim from "../../api/claim";
+import claimApi from "../../api/claim";
 import BaseList from "../List/BaseList";
 import ClaimCard from "./ClaimCard";
 import { withRouter } from "react-router-dom";
@@ -22,7 +22,7 @@ class ClaimList extends Component {
         const { personality } = this.props;
         return (
             <BaseList
-                apiCall={claim.get}
+                apiCall={claimApi.get}
                 query={{ personality: personality._id }}
                 renderItem={claim =>
                     claim && (
