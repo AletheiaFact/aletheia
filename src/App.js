@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Col, Layout, Menu, Row } from "antd";
+import { Layout, Row } from "antd";
 import { Route, Switch } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import api from "./api/user";

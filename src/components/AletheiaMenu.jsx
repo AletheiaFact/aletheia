@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Divider, Menu } from "antd";
+import { Menu } from "antd";
 import { withTranslation } from "react-i18next";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";

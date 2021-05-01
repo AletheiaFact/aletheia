@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
-import { Col, Layout, Menu, Row } from "antd";
+import { Col, Layout, Row } from "antd";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 
