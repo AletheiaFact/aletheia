@@ -30,24 +30,38 @@ router.get("/validate", ensureLoggedIn, (req, res, next) => {
 });
 
 /**
- * TODO: this endpoint won't be publicly available
+ * TODO: this endpoint will be enabled when signup is ready
+ * to be publicly available
  * POST {domain}/signup
  */
-router.post("/signup", async (req, res, next) => {
+// router.post("/signup", async (req, res, next) => {
+//     const userRepository = new UserRepository(app.logger);
+//     try {
+//         await userRepository.register(req.body);
+//         passport.authenticate("local")(req, res, function() {
+//             const prevSession = req.session;
+//             req.session.regenerate(err => {
+//                 if (err) {
+//                     throw err;
+//                 } else {
+//                     Object.assign(req.session, prevSession);
+//                     res.send({ success: true });
+//                 }
+//             });
+//         });
+//     } catch (e) {
+//         next(Requester.internalError(res, e.message, app.logger));
+//     }
+// });
+
+/**
+ * POST {domain}/user/{id}/password
+ */
+router.post("/:id/password", async (req, res, next) => {
     const userRepository = new UserRepository(app.logger);
     try {
-        await userRepository.register(req.body);
-        passport.authenticate("local")(req, res, function() {
-            const prevSession = req.session;
-            req.session.regenerate(err => {
-                if (err) {
-                    throw err;
-                } else {
-                    Object.assign(req.session, prevSession);
-                    res.send({ success: true });
-                }
-            });
-        });
+        // TODO: validate current user's password
+        // TODO: change the password and return success
     } catch (e) {
         next(Requester.internalError(res, e.message, app.logger));
     }
