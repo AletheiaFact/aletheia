@@ -41,7 +41,7 @@ function CTARegistration(props) {
                 shape="round"
                 type="default"
                 target="_blank"
-                href="https://forms.gle/gaKKjrpLpsqwiQoEA"
+                href={props.t("global:registrationLink")}
                 style={{
                     color: "#2D77A3",
                     borderColor: "#FFF",
