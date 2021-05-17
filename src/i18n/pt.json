@@ -1,0 +1,150 @@
+{
+    global: {
+        loading: "Carregando...",
+        back_button: "Voltar",
+        registrationLink: "https://forms.gle/xgCc9fRPKkkCKkkW8"
+    },
+    menu: {
+        myAccountItem: "Minha conta"
+    },
+    share: {
+        quote: "Aletheia",
+        title: "Compartilhe esta pagina"
+    },
+    list: {
+        loadMoreButton: "Carregar mais",
+        totalItems: "{{total}} no total"
+    },
+    home: {
+        title: "checagem de afirmaçoes",
+        subtitle: "das suas personalidades favoritas",
+        statsPersonalities: "personalidades",
+        statsClaims: "afirmaçoes",
+        statsClaimReviews: "afirmaçoes revisadas",
+        statsFooter: "contribua para uma internet livre de noticias falsas",
+        createAccountButton: "Crie sua conta",
+        seeMorePersonalitiesButton: "Veja mais personalidades"
+    },
+    header: {
+        search_personality: "Busque uma personalidade"
+    },
+    personality: {
+        profile_button: "Veja o perfil",
+        errorFetch: "Erro ao buscar Personalidade",
+        add_button: "Inserir",
+        affixButtonTitle: "Clique aqui para adicionar um discurso",
+        wikipediaPage: "Acesse a página do Wikipédia",
+        headerReviewsTotal: "{{totalReviews}} avaliações de sentenças",
+        headerClaimsTotal: "{{totalClaims}} discursos adicionados",
+        toggleSectionSpeeches: "Discursos"
+    },
+    footer: {
+        copyright: "Aletheia ©2020 Criado por Open Tesseract"
+    },
+    personalityCreateForm: {
+        errorMessage: "Erro ao salvar personalidade",
+        successMessage: "perfil criado com sucesso",
+        successUpdate: "atualizado com sucesso",
+        errorNameRequired: "Por favor, insira um nome",
+        errorDescriptionRequired: "Por favor, insira uma descrição",
+        errorFetch: "Erro ao buscar personalidade",
+        errorUpdate: "Erro ao atualizar personalidade",
+        description: "Descrição",
+        name: "Nome",
+        wikidata: "ID Wikidata",
+        saveButton: "Salvar personalidade",
+        updateButton: "Atualizar personalidade",
+        clearButton: "Limpar campos"
+    },
+    personalityCTA: {
+        header: "Não encontrou o que procurava?",
+        footer: "e ajude-nos a aumentar o nosso banco de dados!",
+        button: "Incluir personalidade"
+    },
+    claimReviewForm: {
+        titleEmpty: "Escolha uma frase para revisar",
+        title: "Classifique a frase",
+        selectLabel: "Revise essa frase",
+        sourceLabel: "Forneça um link de uma fonte confiável",
+        sourcePlaceholder: "Cole uma URL",
+        addReviewButton: "Adicione revisão",
+        placeholder: "Selecione uma classificação",
+        "not-fact": "Não é fato",
+        true: "Verdadeiro",
+        "true-but": "Verdadeiro, mas",
+        arguable: "Discutível",
+        misleading: "Enganoso",
+        false: "Falso",
+        unsustainable: "Insustentável",
+        exaggerated: "Exagerado",
+        unverifiable: "Inverificável",
+        errorMessage: "Erro ao enviar revisão",
+        successMessage: "Revisão concluída"
+    },
+    metrics: {
+        headerTitle: "Resumo das Avaliações",
+        header:
+        "As estatísticas abaixo consideram a classificação\n" +
+        "mais votada afirmações individuais. Este\n" +
+        "discurso contém {{totalClaims}} afirmações,\n" +
+        "das quais {{totalClaimsReviewed}}\n" +
+        "receberam um total de {{total}} (100%)\n" +
+        "avaliações:"
+    },
+    claim: {
+        cardOverallReviewPrefix: "Maioria",
+        cardReviewButton: "Revisar",
+        cardLinkToFullText: "veja o texto completo",
+        showHighlightsButton: "Mostrar destaques",
+        hideHighlightsButton: "Ocultar destaques",
+        metricsHeaderInfo: "{{totalReviews}} avaliações de sentenças",
+        dateFormat: "L",
+        info: "declarado em {{claimDate}}:"
+    },
+    claimForm: {
+        titleField: "Titulo",
+        titleFieldError: "Por favor, insira um titulo",
+        titleFieldPlaceholder: "Insira o titulo aqui",
+        contentField: "Conteudo",
+        contentFieldPlaceholder: "Insira conteudo aqui",
+        contentFieldError: "Por favor, insira o conteudo",
+        contentFieldHelp:
+        "Por favor, nao edite ou mude qualquer aspecto do texto original e escolha adicionar discursos completos ao inves de declaraçoes fora de contexto.",
+        dateField: "Data",
+        dateFieldPlaceholder: "Selecione Data",
+        dateFieldError: "Por favor, insira uma data",
+        dateFieldHelp: "Quando esse discurso foi dito ou publicado?",
+        disclaimer:
+        "* Essa ferramenta esta apenas disponivel para\n" +
+        "adicionar manualmente declaraçoes e discursos reais\n" +
+        "criados ou ditos por uma personalidade. Qualquer tentativa de\n" +
+        "dissiminar noticias falsas atraves dessa plataforma\n" +
+        "eh expressamente proibida e pode resultar em banimento\n" +
+        "do usuario e possivelmente açoa judicial.",
+        errorAcceptTerms:
+        "Voce precisa aceitar os termos para submeter o formulario",
+        checkboxAcceptTerms:
+        "Eu atesto pessoalmente que toda informaçao adicionada eh confiavel.",
+        cancelButton: "Cancelar",
+        updateButton: "Atualizar discurso",
+        saveButton: "Adicionar discurso"
+    },
+    login: {
+        formHeader: "Acesse sua conta",
+        emailLabel: "E-mail",
+        passwordLabel: "Senha",
+        submitButton: "Enviar",
+        emailErrorMessage: "Por favor, insira seu e-mail",
+        passwordErrorMessage: "Por favor, insira sua senha",
+        failedMessage: "Login não autorizado",
+        signup: "Registre-se"
+    },
+    CTARegistration: {
+        title: "Quer ser um revisor?",
+        body:
+        "Aletheia está atualmente em teste beta e estamos aceitando todos os jornalistas e profissionais de checagem de fatos para testar a plataforma!",
+        footer:
+        "Nosso objetivo é estar aberto para que todos os usuários adicionem e revisem alegações assim que os testes forem concluídos. Acompanhe-nos nas redes sociais!",
+        button: "Inscreva-se para ser um revisor"
+    }
+}
