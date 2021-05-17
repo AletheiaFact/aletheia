@@ -9,7 +9,8 @@ const resources = {
     en: {
         global: {
             loading: "Loading...",
-            back_button: "Back"
+            back_button: "Back",
+            registrationLink: "https://forms.gle/LrA8D9k6nod2hmPf8"
         },
         menu: {
             myAccountItem: "My Account"
@@ -158,7 +159,8 @@ const resources = {
     pt: {
         global: {
             loading: "Carregando...",
-            back_button: "Voltar"
+            back_button: "Voltar",
+            registrationLink: "https://forms.gle/xgCc9fRPKkkCKkkW8"
         },
         menu: {
             myAccountItem: "Minha conta"
