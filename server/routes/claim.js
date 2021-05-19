@@ -1,6 +1,4 @@
 import ClaimController from "../api/controller/claimController";
-import ClaimReviewRepository from "../api/repository/claimReview";
-import ClaimRepository from "../api/repository/claim";
 import SentenceControlle from "../api/controller/sentenceControlle";
 
 const captcha = require("../lib/captcha");

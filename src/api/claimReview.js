@@ -3,7 +3,7 @@ import { message } from "antd";
 
 const baseUrl = `${process.env.API_URL}/claimReview`;
 
-const save = (review = {}, t) => {
+const save = (review, t) => {
     return axios
         .post(`${baseUrl}`, review, { withCredentials: true })
         .then(response => {

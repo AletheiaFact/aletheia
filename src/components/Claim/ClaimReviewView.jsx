@@ -15,21 +15,9 @@ class ClaimReviewView extends Component {
         };
     }
 
-    showModal = () => {
+    toggleFormCollapse = () => {
         this.setState({
-            formCollapsed: false
-        });
-    };
-
-    handleOk = () => {
-        this.setState({
-            formCollapsed: true
-        });
-    };
-
-    handleCancel = () => {
-        this.setState({
-            formCollapsed: true
+            formCollapsed: !this.state.formCollapsed
         });
     };
 
@@ -106,7 +94,7 @@ class ClaimReviewView extends Component {
                                 <Button
                                     shape="round"
                                     type="primary"
-                                    onClick={this.showModal}
+                                    onClick={this.toggleFormCollapse}
                                 >
                                     Review
                                 </Button>
@@ -118,8 +106,8 @@ class ClaimReviewView extends Component {
                             <ClaimReviewForm
                                 claimId={claimId}
                                 personalityId={personalityId}
-                                handleOk={this.handleOk}
-                                handleCancel={this.handleCancel}
+                                handleOk={this.toggleFormCollapse}
+                                handleCancel={this.toggleFormCollapse}
                                 highlight={sentence}
                             />
                         </Row>

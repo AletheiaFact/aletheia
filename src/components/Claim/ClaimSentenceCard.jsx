@@ -1,9 +1,7 @@
-import { Avatar, Button, Col, Comment, Row, Tooltip, Typography } from "antd";
+import { Avatar, Col, Comment, Row, Tooltip, Typography } from "antd";
 import React, { Component } from "react";
 import "./ClaimCard.less";
 import { withTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import ReviewColors from "../../constants/reviewColors";
 
 const { Paragraph } = Typography;
 class ClaimCard extends Component {
