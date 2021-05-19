@@ -30,8 +30,8 @@ class ProfileView extends Component {
         this.props.history.push("/login");
     }
 
-    async updatePassword(data) {
-        return await api.updatePassword(
+    updatePassword(data) {
+        return api.updatePassword(
             {
                 userId: this.props.user._id,
                 ...data
