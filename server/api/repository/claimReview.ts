@@ -59,56 +59,75 @@ export default class ClaimReviewRepository {
             .populate("sources", "_id link classification");
     }
 
+    _topClassificationAccumulator() {
+        return {
+            $accumulator: {
+                init: function() {
+                    return {};
+                },
+                accumulate: function(state, classification) {
+                    if (!state[classification]) {
+                        state[classification] = 1;
+                    } else {
+                        state[classification]++;
+                    }
+
+                    return state;
+                },
+                accumulateArgs: ["$classification"],
+                merge: function(state1, state2) {
+                    return { ...state1, ...state2 };
+                },
+                finalize: function(state) {
+                    // Find the classification with bigger count
+                    const topClassification = Object.keys(state).reduce(
+                        (acc, classification) => {
+                            if (!state[acc]) {
+                                return classification;
+                            } else {
+                                return state[acc] >= state[classification]
+                                    ? acc
+                                    : classification;
+                            }
+                        },
+                        ""
+                    );
+                    // TODO: what can we do about ties?
+                    return {
+                        classification: topClassification,
+                        count: state[topClassification]
+                    };
+                },
+                lang: "js"
+            }
+        };
+    }
+
     getReviewsByClaimId(claimId) {
         return ClaimReview.aggregate([
             { $match: { claim: claimId } },
             {
                 $group: {
                     _id: "$sentence_hash",
-                    topClassification: {
-                        $accumulator: {
-                            init: function() {
-                                return {};
-                            },
-                            accumulate: function(state, classification) {
-                                if (!state[classification]) {
-                                    state[classification] = 1;
-                                } else {
-                                    state[classification]++;
-                                }
-
-                                return state;
-                            },
-                            accumulateArgs: ["$classification"],
-                            merge: function(state1, state2) {
-                                return { ...state1, ...state2 };
-                            },
-                            finalize: function(state) {
-                                // Find the classification with bigger count
-                                const topClassification = Object.keys(
-                                    state
-                                ).reduce((acc, classification) => {
-                                    if (!state[acc]) {
-                                        return classification;
-                                    } else {
-                                        return state[acc] >=
-                                            state[classification]
-                                            ? acc
-                                            : classification;
-                                    }
-                                }, "");
-                                // TODO: what can we do about ties?
-                                return {
-                                    classification: topClassification,
-                                    count: state[topClassification]
-                                };
-                            },
-                            lang: "js"
-                        }
-                    }
+                    topClassification: this._topClassificationAccumulator()
                 }
             }
         ]).option({ serializeFunctions: true });
+    }
+
+    getReviewsBySentenceHash(sentenceHash) {
+        return ClaimReview.aggregate([
+            { $match: { sentence_hash: sentenceHash } }
+        ]);
+    }
+
+    async getReviewStatsBySentenceHash(sentenceHash) {
+        const reviews = await ClaimReview.aggregate([
+            { $match: { sentence_hash: sentenceHash } },
+            { $group: { _id: "$classification", count: { $sum: 1 } } },
+            { $sort: { count: -1 } }
+        ]);
+        return util.formatStats(reviews);
     }
 
     async getReviewStatsByClaimId(claimId) {

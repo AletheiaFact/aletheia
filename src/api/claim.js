@@ -37,7 +37,18 @@ const getById = (id, params = {}) => {
             return response.data;
         })
         .catch(() => {
-            message.error("Error while fetching Personality");
+            message.error("Error while fetching Claim");
+        });
+};
+
+const getClaimSentence = (id, sentenceHash) => {
+    return axios
+        .get(`${baseUrl}/${id}/sentence/${sentenceHash}`)
+        .then(response => {
+            return response?.data;
+        })
+        .catch(e => {
+            console.log(e);
         });
 };
 
@@ -88,6 +99,7 @@ const update = (id, params = {}) => {
 export default {
     get,
     getById,
+    getClaimSentence,
     save,
     update
 };

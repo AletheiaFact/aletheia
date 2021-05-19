@@ -68,6 +68,7 @@
         "sourceLabel": "Forneça um link de uma fonte confiável",
         "sourcePlaceholder": "Cole uma URL",
         "addReviewButton": "Adicione revisão",
+        "cancelButton": "Cancelar",
         "placeholder": "Selecione uma classificação",
         "not-fact": "Não é fato",
         "true": "Verdadeiro",
@@ -94,7 +95,8 @@
         "hideHighlightsButton": "Ocultar destaques",
         "metricsHeaderInfo": "{{totalReviews}} avaliações de sentenças",
         "dateFormat": "L",
-        "info": "declarado em {{claimDate}}:"
+        "info": "declarado em {{claimDate}}:",
+        "initialInfo": "Clique em uma frase para iniciar uma revisão"
     },
     "claimForm": {
         "titleField": "Titulo",

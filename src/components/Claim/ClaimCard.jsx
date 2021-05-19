@@ -1,7 +1,6 @@
 import { Avatar, Button, Col, Comment, Row, Tooltip, Typography } from "antd";
 import React, { Component } from "react";
 import "./ClaimCard.less";
-import api from "../../api/claim";
 import { withTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import ReviewColors from "../../constants/reviewColors";
