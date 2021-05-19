@@ -68,6 +68,7 @@
         "sourceLabel": "Provide a link to a reliable source",
         "sourcePlaceholder": "Paste URL",
         "addReviewButton": "Add review",
+        "cancelButton": "Cancel",
         "placeholder": "Choose a classification",
         "not-fact": "Not fact",
         "true": "True",
@@ -94,7 +95,8 @@
         "hideHighlightsButton": "Hide highlights",
         "metricsHeaderInfo": "{{totalReviews}} claim reviews",
         "dateFormat": "l",
-        "info": "stated on {{claimDate}}:"
+        "info": "stated on {{claimDate}}:",
+        "initialInfo": "Choose a sentence to review by clicking on it"
     },
     "claimForm": {
         "titleField": "Title",

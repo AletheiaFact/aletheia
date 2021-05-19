@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
-import ClaimReviewForm from "./ClaimReview";
 import { Row, Col, Typography, Modal, message, Spin, Affix } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
@@ -10,6 +9,8 @@ import ToggleSection from "../ToggleSection";
 import moment from "moment";
 import "moment/locale/pt";
 import SocialMediaShare from "../SocialMediaShare";
+import claimApi from "../../api/claim";
+import personalityApi from "../../api/personality";
 
 const { Title } = Typography;
 
@@ -23,83 +24,30 @@ class Claim extends Component {
             showHighlights: true
         };
     }
+
     componentDidMount() {
-        const self = this;
-        self.getClaim();
-        self.getPersonality();
-        // @TODO i18n
-        message.info("Clique em uma frase para iniciar uma revisão");
-    }
+        claimApi.getById(this.props.match.params.claimId).then(response => {
+            const { content, title, stats, date, type } = response;
 
-    getClaim() {
-        axios
-            .get(
-                `${process.env.API_URL}/claim/${this.props.match.params.claimId}`
-            )
-            .then(response => {
-                const { content, title, stats, date, type } = response.data;
-
-                this.setState({
-                    title,
-                    body: content.object,
-                    stats,
-                    date: moment(new Date(date)),
-                    type,
-                    visible: false
-                });
-            })
-            .catch(() => {
-                console.log("Error while fetching claim");
+            this.setState({
+                title,
+                body: content.object,
+                stats,
+                date: moment(new Date(date)),
+                type,
+                visible: false
             });
-    }
-
-    getPersonality() {
-        axios
-            .get(
-                `${process.env.API_URL}/personality/${this.props.match.params.id}`,
-                {
-                    params: {
-                        language: this.props.i18n.languages[0]
-                    }
-                }
-            )
+        });
+        personalityApi
+            .getPersonality(this.props.match.params.id, {
+                language: this.props.i18n.languages[0]
+            })
             .then(response => {
-                const personality = response.data;
+                const personality = response;
                 this.setState({ personality });
-            })
-            .catch(() => {
-                console.log("Error while fetching Personality");
             });
+        message.info(this.props.t("claim:initialInfo"));
     }
-
-    handleClaimReviewForm = data => {
-        const body = this.state.body;
-        const highlight = {
-            ...data,
-            claim: this.props.match.params.claimId,
-            personality: this.props.match.params.id
-        };
-        this.setState({ body, highlight });
-        this.showModal();
-    };
-
-    showModal = () => {
-        this.setState({
-            visible: true
-        });
-    };
-
-    handleOk = e => {
-        this.setState({
-            visible: false
-        });
-    };
-
-    handleCancel = e => {
-        this.setState({
-            visible: false
-        });
-    };
 
     render() {
         const { t } = this.props;
@@ -107,26 +55,16 @@ class Claim extends Component {
             const body = this.state.body;
             const title = this.state.title;
             const personality = this.state.personality;
-
             return (
                 <>
-                    <Modal
-                        footer=""
-                        visible={this.state.visible}
-                        onCancel={this.handleCancel}
-                    >
-                        <ClaimReviewForm
-                            handleOk={this.handleOk}
-                            highlight={this.state.highlight}
-                        />
-                    </Modal>
                     {personality && (
                         <>
                             <PersonalityCard personality={personality} />
                             {this.state.date && (
                                 <Row style={{ marginTop: "20px" }}>
                                     <Col offset={2} span={18}>
-                                        <b>{personality.name}</b><br/>
+                                        <b>{personality.name}</b>
+                                        <br />
                                         {t("claim:info", {
                                             claimDate: this.state.date.format(
                                                 "L"
@@ -161,9 +99,11 @@ class Claim extends Component {
                                             showHighlights={
                                                 this.state.showHighlights
                                             }
-                                            onClaimReviewForm={
-                                                this.handleClaimReviewForm
-                                            }
+                                            onClaimReviewForm={data => {
+                                                this.props.history.push(
+                                                    `./${this.props.match.params.claimId}/sentence/${data.props["data-hash"]}`
+                                                );
+                                            }}
                                         />
                                     ))}
                                 </div>
@@ -191,7 +131,7 @@ class Claim extends Component {
                     {this.state.stats.total !== 0 && (
                         <MetricsOverview stats={this.state.stats} />
                     )}
-                    <SocialMediaShare quote={personality.name} />
+                    <SocialMediaShare quote={personality?.name} />
                 </>
             );
         } else {

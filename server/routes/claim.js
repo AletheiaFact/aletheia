@@ -1,4 +1,5 @@
 import ClaimController from "../api/controller/claimController";
+import SentenceControlle from "../api/controller/sentenceControlle";
 
 const captcha = require("../lib/captcha");
 const ensureLoggedIn = require("../api/middleware/ensureLoggedIn");
@@ -88,6 +89,17 @@ router.delete("/:id", ensureLoggedIn, (req, res, next) => {
         .catch(error => {
             next(Requester.internalError(res, error.message));
         });
+});
+
+/**
+ * GET {domain}/sentencehash
+ */
+router.get("/:claimId/sentence/:sentenceHash", async (req, res) => {
+    const { sentenceHash, claimId } = req.params;
+    const sentence = new SentenceControlle(app);
+    sentence.getByHashAndClaimId(sentenceHash, claimId).then(result => {
+        res.json(result);
+    });
 });
 
 module.exports = function(appObj) {

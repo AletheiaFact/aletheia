@@ -19,8 +19,9 @@ import SearchOverlay from "./components/SearchOverlay";
 import Sidebar from "./components/Sidebar";
 import LoginView from "./components/Login/LoginView";
 import ProfileView from "./components/Profile/ProfileView";
+import ClaimReviewView from "./components/Claim/ClaimReviewView";
 
-const { Footer, Content, Sider } = Layout;
+const { Footer, Content } = Layout;
 
 class App extends Component {
     setLogin(userData = {}) {
@@ -112,6 +113,11 @@ class App extends Component {
                                 exact
                                 path="/personality/:id/claim/:claimId"
                                 component={ClaimView}
+                            />
+                            <Route
+                                exact
+                                path="/personality/:personalityId/claim/:claimId/sentence/:sentenceHash"
+                                component={ClaimReviewView}
                             />
                             <Route
                                 exact
