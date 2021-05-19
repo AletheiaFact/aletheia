@@ -10,6 +10,7 @@ function BackButton(props) {
         if (props.callback) {
             props.callback();
         } else {
+            // TODO: check if the previous page in history is from Aletheia
             props.history.goBack();
         }
     };

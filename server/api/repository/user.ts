@@ -22,4 +22,25 @@ export default class UserRepository {
             user.password
         );
     }
+
+    async getById(userId) {
+        const user = await User.findById(userId);
+        this.logger.log("info", `Found user ${user._id}`);
+        return user;
+    }
+
+    async changePassword(userId, currentPassword, newPassword) {
+        const user = await this.getById(userId);
+        return user.changePassword(currentPassword, newPassword).then(() => {
+            if (user.firstPasswordChanged === false) {
+                this.logger.log(
+                    "info",
+                    `User ${user._id} changed first password`
+                );
+                user.firstPasswordChanged = true;
+            }
+            this.logger.log("info", `User ${user._id} changed password`);
+            user.save();
+        });
+    }
 }

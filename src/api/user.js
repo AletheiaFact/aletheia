@@ -32,7 +32,23 @@ const validateSession = (params, t) => {
         });
 };
 
+const updatePassword = (params, t) => {
+    return axios
+        .put(
+            `${process.env.API_URL}/user/${params.userId}/password`,
+            { ...params },
+            { withCredentials: true }
+        )
+        .then(response => {
+            return response?.data;
+        })
+        .catch(e => {
+            return e?.response?.data;
+        });
+};
+
 export default {
     login,
-    validateSession
+    validateSession,
+    updatePassword
 };

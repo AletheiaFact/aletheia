@@ -30,7 +30,7 @@ class AletheiaMenu extends Component {
                 selectable={false}
             >
                 <Menu.Item
-                    key="/login"
+                    key="/profile"
                     style={{
                         fontSize: "18px"
                     }}
@@ -41,6 +41,7 @@ class AletheiaMenu extends Component {
         );
     }
 }
+
 const mapStateToProps = state => {
     return {
         menuCollapsed:
