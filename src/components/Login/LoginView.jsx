@@ -1,18 +1,10 @@
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
-import { Form, Input, Button, Row, Col, Card } from "antd";
+import { Form, Input, Button, Row, Col, Card, message } from "antd";
 import api from "../../api/user";
 import BackButton from "../BackButton";
 import CTARegistration from "../Home/CTARegistration";
-import { connect } from "react-redux";
-
-const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 }
-};
-const tailLayout = {
-    wrapperCol: { offset: 8, span: 16 }
-};
+import { withRouter } from "react-router-dom";
 
 class LoginView extends Component {
     constructor() {
@@ -21,15 +13,37 @@ class LoginView extends Component {
             type: "login"
         };
     }
+
+    static getDerivedStateFromProps(props, state) {
+        if (props.location.pathname !== state.prevPath) {
+            return {
+                prevPath: props.location.pathname
+            };
+        }
+        return null;
+    }
+
     onFinish = async values => {
         const result = await api.login(values, this.props.t);
+
         if (!result.login) {
             this.onFinishFailed(result.message);
+        } else {
+            message.success(this.props.t("login:loginSuccessfulMessage"));
+            if (this.state.prevPath === this.props.location.pathname) {
+                this.props.history.push("/");
+            } else {
+                this.props.history.push(this.state.prevPath);
+            }
         }
     };
 
     onFinishFailed = errorInfo => {
-        console.log("Failed:", errorInfo);
+        if (typeof errorInfo === "string") {
+            message.error(errorInfo);
+        } else {
+            message.error(this.props.t("login:loginFailedMessage"));
+        }
     };
 
     render() {
@@ -37,7 +51,7 @@ class LoginView extends Component {
         return (
             <>
                 <Row justify="center">
-                    <Col xl={6} lg={8} md={10} sm={12} xs={24}>
+                    <Col span={24}>
                         <Card
                             style={{
                                 marginTop: 45,
@@ -48,14 +62,10 @@ class LoginView extends Component {
                         >
                             {this.state.type === "login" && (
                                 <>
-                                    <Col
-                                        span={24}
-                                        className="typo-grey typo-center"
-                                    >
+                                    <Row className="typo-grey typo-center">
                                         <h2>{t("login:formHeader")}</h2>
-                                    </Col>
+                                    </Row>
                                     <Form
-                                        {...layout}
                                         name="basic"
                                         initialValues={{ remember: true }}
                                         onFinish={this.onFinish}
@@ -90,25 +100,33 @@ class LoginView extends Component {
                                         >
                                             <Input.Password />
                                         </Form.Item>
-                                        <Form.Item {...tailLayout}>
-                                            <Button
-                                                type="primary"
-                                                htmlType="submit"
+                                        <Form.Item>
+                                            <div
+                                                style={{
+                                                    justifyContent:
+                                                        "space-between",
+                                                    display: "flex"
+                                                }}
                                             >
-                                                {t("login:submitButton")}
-                                            </Button>
+                                                <a
+                                                    onClick={() => {
+                                                        this.setState({
+                                                            type: "signup"
+                                                        });
+                                                    }}
+                                                    style={{}}
+                                                >
+                                                    {t("login:signup")}
+                                                </a>
+                                                <Button
+                                                    type="primary"
+                                                    htmlType="submit"
+                                                >
+                                                    {t("login:submitButton")}
+                                                </Button>
+                                            </div>
                                         </Form.Item>
                                     </Form>
-                                    <a
-                                        onClick={() => {
-                                            this.setState({
-                                                type: "signup"
-                                            });
-                                        }}
-                                        style={{}}
-                                    >
-                                        {t("login:signup")}
-                                    </a>
                                 </>
                             )}
                             {this.state.type === "signup" && (
@@ -135,11 +153,4 @@ class LoginView extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        menuCollapsed:
-            state?.menuCollapsed !== undefined ? state?.menuCollapsed : true
-    };
-};
-
-export default connect(mapStateToProps)(withTranslation()(LoginView));
+export default withRouter(withTranslation()(LoginView));
