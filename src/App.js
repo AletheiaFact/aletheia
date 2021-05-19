@@ -18,21 +18,27 @@ import { connect } from "react-redux";
 import SearchOverlay from "./components/SearchOverlay";
 import Sidebar from "./components/Sidebar";
 import LoginView from "./components/Login/LoginView";
+import ProfileView from "./components/Profile/ProfileView";
 
 const { Footer, Content, Sider } = Layout;
 
 class App extends Component {
-    setLogin(login) {
+    setLogin(userData = {}) {
         return {
             type: "SET_LOGIN_VALIDATION",
-            login
+            ...userData
         };
     }
     validateSession() {
         return dispatch => {
-            return api
-                .validateSession({}, this.props.t)
-                .then(result => dispatch(this.setLogin(result.login)));
+            return api.validateSession({}, this.props.t).then(result =>
+                dispatch(
+                    this.setLogin({
+                        login: result.login,
+                        user: result?.data?.user
+                    })
+                )
+            );
         };
     }
 
@@ -113,6 +119,11 @@ class App extends Component {
                                 render={props => (
                                     <ClaimCreate {...props} edit={true} />
                                 )}
+                            />
+                            <Route
+                                exact
+                                path="/profile"
+                                component={ProfileView}
                             />
                         </Switch>
                     </Content>

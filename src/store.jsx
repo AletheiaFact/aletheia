@@ -63,7 +63,8 @@ function appReducer(state, action) {
         case "SET_LOGIN_VALIDATION":
             return {
                 ...state,
-                login: action.login
+                login: action.login,
+                user: action.user
             };
         default:
             return state;

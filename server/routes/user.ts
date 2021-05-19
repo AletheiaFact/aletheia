@@ -20,13 +20,13 @@ router.post("/signin", (req, res, next) => {
         req.logIn(user, function(err) {
             if (err)
                 return next(Requester.authError(res, err.message, app.logger));
-            return res.send({ success: true });
+            return res.send();
         });
     })(req, res, next);
 });
 
 router.get("/validate", ensureLoggedIn, (req, res, next) => {
-    res.send({ success: true });
+    res.send({ login: true, user: req.user });
 });
 
 /**
@@ -55,13 +55,32 @@ router.get("/validate", ensureLoggedIn, (req, res, next) => {
 // });
 
 /**
- * POST {domain}/user/{id}/password
+ * Update user password
+ * PUT {domain}/user/{id}/password
  */
-router.post("/:id/password", async (req, res, next) => {
+router.put("/:id/password", ensureLoggedIn, async (req, res, next) => {
     const userRepository = new UserRepository(app.logger);
+    const { currentPassword, newPassword, repeatedNewPassword } = req.body;
+
     try {
-        // TODO: validate current user's password
-        // TODO: change the password and return success
+        if (req.params.id !== req.user._id.toString()) {
+            throw Error("Invalid user attempting to change password");
+        }
+        if (newPassword !== repeatedNewPassword) {
+            throw Error("Repeated password doesn't match");
+        }
+
+        userRepository
+            .changePassword(req.params.id, currentPassword, newPassword)
+            .then(() => {
+                res.status(200).json({
+                    success: true,
+                    message: "Password reset successful"
+                });
+            })
+            .catch(e => {
+                next(Requester.internalError(res, e.message, app.logger));
+            });
     } catch (e) {
         next(Requester.internalError(res, e.message, app.logger));
     }
