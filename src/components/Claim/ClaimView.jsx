@@ -107,7 +107,6 @@ class Claim extends Component {
             const body = this.state.body;
             const title = this.state.title;
             const personality = this.state.personality;
-
             return (
                 <>
                     <Modal
@@ -191,7 +190,7 @@ class Claim extends Component {
                     {this.state.stats.total !== 0 && (
                         <MetricsOverview stats={this.state.stats} />
                     )}
-                    <SocialMediaShare quote={personality.name} />
+                    <SocialMediaShare quote={personality?.name} />
                 </>
             );
         } else {
