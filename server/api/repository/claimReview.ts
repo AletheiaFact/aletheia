@@ -186,7 +186,7 @@ export default class ClaimReviewRepository {
 
     getUserReviewBySentenceHash(sentenceHash, userId) {
         if (!userId) {
-            return new Promise(resolve => resolve(undefined));
+            return Promise.resolve(undefined);
         }
         return ClaimReview.findOne(
             { sentence_hash: sentenceHash, user: userId },
