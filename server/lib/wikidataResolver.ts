@@ -1,11 +1,28 @@
+const WikidataCache = require("../api/model/wikidataCacheModel");
 const axios = require("axios");
-
 const languageVariantMap = {
     "pt-br": "pt"
 };
 
 class WikidataResolver {
     async fetchProperties(params) {
+        const wikidataCache = await WikidataCache.findOne({
+            wikidataId: params.wikidataId,
+            language: params.language
+        }).exec();
+        if (!wikidataCache) {
+            const props = await this.requestProperties(params);
+            const newWikidataCache = new WikidataCache({
+                ...params,
+                props
+            });
+            newWikidataCache.save();
+            return props;
+        }
+        return wikidataCache.props;
+    }
+
+    async requestProperties(params) {
         const { data } = await axios.get("https://www.wikidata.org/w/api.php", {
             params: {
                 action: "wbgetentities",

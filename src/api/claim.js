@@ -15,7 +15,7 @@ const get = (options = {}) => {
     };
 
     return request
-        .get("claim", { params })
+        .get("/", { params })
         .then(response => {
             const { claims, totalPages, totalClaims } = response.data;
             if (options.fetchOnly) {

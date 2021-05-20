@@ -4,7 +4,6 @@ import personalityApi from "../../api/personality";
 import ClaimSentenceCard from "./ClaimSentenceCard";
 import { Button, Col, Row } from "antd";
 import ClaimReviewForm from "./ClaimReviewForm";
-import ReviewColors from "../../constants/reviewColors";
 import { withTranslation } from "react-i18next";
 import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
@@ -29,7 +28,9 @@ class ClaimReviewView extends Component {
             claimId,
             sentenceHash
         } = this.props.match.params;
-        const personality = await personalityApi.getPersonality(personalityId);
+        const personality = await personalityApi.getPersonality(personalityId, {
+            language: this.props.i18n.languages[0]
+        });
         const sentence = await claimApi.getClaimSentence(claimId, sentenceHash);
         this.setState({
             personality,
