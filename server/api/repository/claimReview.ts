@@ -183,4 +183,19 @@ export default class ClaimReviewRepository {
     delete(claimReviewId) {
         return ClaimReview.findByIdAndRemove(claimReviewId);
     }
+
+    getUserReviewBySentenceHash(sentenceHash, userId) {
+        if (!userId) {
+            return new Promise(resolve => resolve(undefined));
+        }
+        return ClaimReview.findOne(
+            { sentence_hash: sentenceHash, user: userId },
+            {
+                sources: 1,
+                _id: 1,
+                classification: 1,
+                user: 1
+            }
+        );
+    }
 }

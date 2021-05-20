@@ -63,7 +63,9 @@
     },
     "claimReview": {
         "cardAuthor": "{{name}} reviewed this as:",
-        "anonymousUserName": "Anonymous"
+        "anonymousUserName": "Anonymous",
+        "userReviewPrefix": "You reviewed this claim as ",
+        "userReviewSuffix": "Mostly ({{count}}) reviewed as "
     },
     "claimReviewForm": {
         "titleEmpty": "Choose a sentence to review",
