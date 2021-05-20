@@ -61,6 +61,10 @@
         "footer": "And help us grow our database!",
         "button": "Add personality"
     },
+    "claimReview": {
+        "cardAuthor": "{{name}} reviewed this as:",
+        "anonymousUserName": "Anonymous"
+    },
     "claimReviewForm": {
         "titleEmpty": "Choose a sentence to review",
         "title": "Review the sentence",

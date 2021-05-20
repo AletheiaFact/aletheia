@@ -52,6 +52,29 @@ const getClaimSentence = (id, sentenceHash) => {
         });
 };
 
+const getClaimSentenceReviews = (options = {}) => {
+    const params = {
+        page: options.page - 1,
+        pageSize: options.pageSize
+    };
+    return axios
+        .get(
+            `${baseUrl}/${options.claim}/sentence/${options.sentenceHash}/reviews`,
+            { params }
+        )
+        .then(response => {
+            const { reviews, totalPages, totalReviews } = response.data;
+            return {
+                data: reviews,
+                total: totalReviews,
+                totalPages
+            };
+        })
+        .catch(e => {
+            console.log(e);
+        });
+};
+
 const save = (claim = {}) => {
     return axios
         .post(`${baseUrl}`, claim, { withCredentials: true })
@@ -100,6 +123,7 @@ export default {
     get,
     getById,
     getClaimSentence,
+    getClaimSentenceReviews,
     save,
     update
 };

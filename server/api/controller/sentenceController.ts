@@ -34,4 +34,37 @@ export default class SentenceController {
             ...sentenceObj
         };
     }
+
+    getReviewsByClaimIdAndSentenceHash(
+        sentenceHash,
+        page,
+        pageSize,
+        order = "desc"
+    ) {
+        return Promise.all([
+            this.claimReviewRepository.getReviewsBySentenceHash(
+                sentenceHash,
+                page,
+                pageSize,
+                order
+            ),
+            this.claimReviewRepository.countReviewsBySentenceHash(sentenceHash)
+        ]).then(([reviews, totalReviews]) => {
+            totalReviews = totalReviews[0]?.count;
+            const totalPages = Math.ceil(totalReviews / parseInt(pageSize, 10));
+
+            this.logger.log(
+                "info",
+                `Found ${totalReviews} reviews for sentence hash ${sentenceHash}. Page ${page} of ${totalPages}`
+            );
+
+            return {
+                reviews,
+                totalReviews,
+                totalPages,
+                page,
+                pageSize
+            };
+        });
+    }
 }

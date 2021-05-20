@@ -29,6 +29,18 @@ router.get("/validate", ensureLoggedIn, (req, res, next) => {
     res.send({ login: true, user: req.user });
 });
 
+router.get("/:userId", (req, res, next) => {
+    const userRepository = new UserRepository(app.logger);
+    userRepository
+        .getById(req.params.userId)
+        .then(user => {
+            res.send(user);
+        })
+        .catch(err => {
+            return next(Requester.authError(res, err.message, app.logger));
+        });
+});
+
 /**
  * TODO: this endpoint will be enabled when signup is ready
  * to be publicly available

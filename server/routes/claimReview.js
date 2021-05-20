@@ -28,7 +28,7 @@ router.post("/", ensureLoggedIn, async (req, res, next) => {
         );
     } else {
         claimReview
-            .create(req.body)
+            .create({ ...req.body, user: req.user._id })
             .then(result => res.send(result))
             .catch(error => {
                 app.logger.log("error/create", error);

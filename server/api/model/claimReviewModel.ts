@@ -46,9 +46,13 @@ const claimReviewSchema = new mongoose.Schema({
             type: mongoose.Schema.ObjectId,
             ref: "Source"
         }
-    ]
+    ],
+    user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+        required: true
+    }
     // TODO: user_id
-    // TODO: user_agent
     // TODO: revision_id
 });
 

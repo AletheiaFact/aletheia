@@ -1,7 +1,6 @@
-import axios from "axios";
 import React, { Component } from "react";
 import ClaimParagraph from "./ClaimParagraph";
-import { Row, Col, Typography, Modal, message, Spin, Affix } from "antd";
+import { Row, Col, Typography, message, Spin, Affix } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
 import MetricsOverview from "../Metrics/MetricsOverview";
@@ -51,29 +50,26 @@ class Claim extends Component {
 
     render() {
         const { t } = this.props;
-        if (this.state && this.state.body) {
+        const personality = this.state?.personality;
+
+        if (this.state && this.state.body && personality) {
             const body = this.state.body;
             const title = this.state.title;
-            const personality = this.state.personality;
             return (
                 <>
-                    {personality && (
-                        <>
-                            <PersonalityCard personality={personality} />
-                            {this.state.date && (
-                                <Row style={{ marginTop: "20px" }}>
-                                    <Col offset={2} span={18}>
-                                        <b>{personality.name}</b>
-                                        <br />
-                                        {t("claim:info", {
-                                            claimDate: this.state.date.format(
-                                                "L"
-                                            )
-                                        })}
-                                    </Col>
-                                </Row>
-                            )}
-                        </>
+                    <PersonalityCard personality={personality} />
+                    {this.state.date && (
+                        <Row style={{ marginTop: "20px" }}>
+                            <Col offset={2} span={18}>
+                                <b>{personality.name}</b>
+                                <br />
+                                {t("claim:info", {
+                                    claimDate: this.state.date.format(
+                                        "L"
+                                    )
+                                })}
+                            </Col>
+                        </Row>
                     )}
                     <Row
                         style={{

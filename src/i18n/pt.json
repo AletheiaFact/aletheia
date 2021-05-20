@@ -61,6 +61,10 @@
         "footer": "e ajude-nos a aumentar o nosso banco de dados!",
         "button": "Incluir personalidade"
     },
+    "claimReview": {
+        "cardAuthor": "{{name}} avaliou essa afirmaçao como:",
+        "anonymousUserName": "Anonimo"
+    },
     "claimReviewForm": {
         "titleEmpty": "Escolha uma frase para revisar",
         "title": "Classifique a frase",
