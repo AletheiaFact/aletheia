@@ -34,4 +34,11 @@ export default class SentenceController {
             ...sentenceObj
         };
     }
+
+    async getReviewsByClaimIdAndSentenceHash(sentenceHash) {
+        const reviews = await this.claimReviewRepository.getReviewsBySentenceHash(
+            sentenceHash
+        );
+        return reviews;
+    }
 }

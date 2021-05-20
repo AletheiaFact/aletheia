@@ -117,7 +117,15 @@ export default class ClaimReviewRepository {
 
     getReviewsBySentenceHash(sentenceHash) {
         return ClaimReview.aggregate([
-            { $match: { sentence_hash: sentenceHash } }
+            { $match: { sentence_hash: sentenceHash } },
+            {
+                $project: {
+                    _id: 1,
+                    sources: 1,
+                    classification: 1,
+                    user: 1
+                }
+            }
         ]);
     }
 

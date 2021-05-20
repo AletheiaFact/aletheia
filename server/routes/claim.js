@@ -1,5 +1,5 @@
 import ClaimController from "../api/controller/claimController";
-import SentenceControlle from "../api/controller/sentenceControlle";
+import SentenceController from "../api/controller/sentenceController";
 
 const captcha = require("../lib/captcha");
 const ensureLoggedIn = require("../api/middleware/ensureLoggedIn");
@@ -92,15 +92,30 @@ router.delete("/:id", ensureLoggedIn, (req, res, next) => {
 });
 
 /**
- * GET {domain}/sentencehash
+ * GET {domain}/claim/{claimId}/sentence/{sentenceHash}
  */
 router.get("/:claimId/sentence/:sentenceHash", async (req, res) => {
     const { sentenceHash, claimId } = req.params;
-    const sentence = new SentenceControlle(app);
+    const sentence = new SentenceController(app);
     sentence.getByHashAndClaimId(sentenceHash, claimId).then(result => {
         res.json(result);
     });
 });
+
+// TODO: list endpoint
+
+router.get(
+    "/:claimId/sentence/:sentenceHash/reviews",
+    async (req, res, next) => {
+        const { sentenceHash } = req.params;
+        const sentence = new SentenceController(app);
+        sentence
+            .getReviewsByClaimIdAndSentenceHash(sentenceHash)
+            .then(result => {
+                res.json(result);
+            });
+    }
+);
 
 module.exports = function(appObj) {
     app = appObj;
