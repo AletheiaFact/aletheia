@@ -6,6 +6,8 @@ import { Button, Col, Row } from "antd";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ReviewColors from "../../constants/reviewColors";
 import { withTranslation } from "react-i18next";
+import ClaimReviewList from "./ClaimReviewList";
+import BaseList from "../List/BaseList";
 
 class ClaimReviewView extends Component {
     constructor(props) {
@@ -38,7 +40,11 @@ class ClaimReviewView extends Component {
     render() {
         const { personality, sentence } = this.state;
         const { t } = this.props;
-        const { personalityId, claimId } = this.props.match.params;
+        const {
+            personalityId,
+            claimId,
+            sentenceHash
+        } = this.props.match.params;
         const stats = sentence?.stats;
         const review = sentence?.props?.topClassification;
         if (personality && sentence) {
@@ -112,6 +118,12 @@ class ClaimReviewView extends Component {
                             />
                         </Row>
                     )}
+                    <Row>
+                        <ClaimReviewList
+                            sentenceHash={sentenceHash}
+                            claimId={claimId}
+                        />
+                    </Row>
                 </>
             );
         } else {

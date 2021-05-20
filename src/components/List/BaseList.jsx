@@ -84,6 +84,7 @@ class BaseList extends Component {
                                 })}
                             </Row>
                         }
+                        style={this.props.style || {}}
                         loadMore={loadMore}
                         loading={loading}
                         dataSource={this.state.items}
