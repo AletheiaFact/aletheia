@@ -7,6 +7,7 @@ import ClaimReviewForm from "./ClaimReviewForm";
 import ReviewColors from "../../constants/reviewColors";
 import { withTranslation } from "react-i18next";
 import ClaimReviewList from "./ClaimReviewList";
+import ClassificationText from "../ClassificationText";
 
 class ClaimReviewView extends Component {
     constructor(props) {
@@ -46,6 +47,7 @@ class ClaimReviewView extends Component {
         } = this.props.match.params;
         const stats = sentence?.stats;
         const review = sentence?.props?.topClassification;
+
         if (personality && sentence) {
             return (
                 <>
@@ -55,55 +57,78 @@ class ClaimReviewView extends Component {
                             sentence={sentence}
                         />
                     </Row>
-
+                    {sentence.userReview && (
+                        <Row
+                            style={{
+                                justifyContent: "center"
+                            }}
+                        >
+                            <div>
+                                {t("claimReview:userReviewPrefix")}&nbsp;
+                                <ClassificationText
+                                    classification={
+                                        sentence.userReview?.classification
+                                    }
+                                    t={t}
+                                />
+                            </div>
+                            <div>
+                                {t("claimReview:userReviewSuffix", {
+                                    count: review.count
+                                })}
+                                &nbsp;
+                                <ClassificationText
+                                    classification={review?.classification}
+                                    t={t}
+                                />
+                            </div>
+                        </Row>
+                    )}
                     {this.state.formCollapsed && (
                         <Row>
-                            <Col span={16}>
-                                <span
-                                    style={{
-                                        fontSize: "14px"
-                                    }}
-                                >
-                                    {t("claim:metricsHeaderInfo", {
-                                        totalReviews: stats?.total
-                                    })}
-                                </span>{" "}
-                                <br />
-                                {review && (
-                                    <span
-                                        style={{
-                                            fontSize: "10px"
-                                        }}
-                                    >
-                                        {t("claim:cardOverallReviewPrefix")}{" "}
+                            {!sentence.userReview && (
+                                <>
+                                    <Col span={16}>
                                         <span
                                             style={{
-                                                color:
-                                                    ReviewColors[
-                                                        review?.classification
-                                                    ] || "#000",
-                                                fontWeight: "bold",
-                                                textTransform: "uppercase"
+                                                fontSize: "14px"
                                             }}
                                         >
-                                            {t(
-                                                `claimReviewForm:${review?.classification}`
-                                            )}{" "}
-                                        </span>
-                                        ({review.count})
-                                    </span>
-                                )}
-                            </Col>
-
-                            <Col span={8}>
-                                <Button
-                                    shape="round"
-                                    type="primary"
-                                    onClick={this.toggleFormCollapse}
-                                >
-                                    Review
-                                </Button>
-                            </Col>
+                                            {t("claim:metricsHeaderInfo", {
+                                                totalReviews: stats?.total
+                                            })}
+                                        </span>{" "}
+                                        <br />
+                                        {review && (
+                                            <span
+                                                style={{
+                                                    fontSize: "10px"
+                                                }}
+                                            >
+                                                {t(
+                                                    "claim:cardOverallReviewPrefix"
+                                                )}{" "}
+                                                <ClassificationText
+                                                    classification={
+                                                        review?.classification
+                                                    }
+                                                    t={t}
+                                                />
+                                                ({review.count})
+                                            </span>
+                                        )}
+                                    </Col>
+                                    <Col span={8}>
+                                        <Button
+                                            shape="round"
+                                            type="primary"
+                                            onClick={this.toggleFormCollapse}
+                                        >
+                                            Review
+                                        </Button>
+                                    </Col>
+                                </>
+                            )}
                         </Row>
                     )}
                     {!this.state.formCollapsed && (

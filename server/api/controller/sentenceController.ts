@@ -13,26 +13,34 @@ export default class SentenceController {
         this.claimReviewRepository = new ClaimReviewRepository(logger);
     }
 
-    async getByHashAndClaimId(sentenceHash, claimId) {
-        const stats = await this.claimReviewRepository.getReviewStatsBySentenceHash(
-            sentenceHash
-        );
-        const claimObj = await this.claimRepository.getById(claimId);
-        let sentenceObj;
+    getByHashAndClaimId(sentenceHash, claimId, user) {
+        return Promise.all([
+            this.claimReviewRepository.getReviewStatsBySentenceHash(
+                sentenceHash
+            ),
+            this.claimRepository.getById(claimId),
+            this.claimReviewRepository.getUserReviewBySentenceHash(
+                sentenceHash,
+                user?._id
+            )
+        ]).then(([stats, claimObj, userReview]) => {
+            let sentenceObj;
 
-        claimObj.content.object.forEach(p => {
-            p.content.forEach(sentence => {
-                if (sentence.props["data-hash"] === sentenceHash) {
-                    sentenceObj = sentence;
-                }
+            claimObj.content.object.forEach(p => {
+                p.content.forEach(sentence => {
+                    if (sentence.props["data-hash"] === sentenceHash) {
+                        sentenceObj = sentence;
+                    }
+                });
             });
+            return {
+                userReview,
+                date: claimObj.date,
+                personality: claimObj.personality,
+                stats,
+                ...sentenceObj
+            };
         });
-        return {
-            date: claimObj.date,
-            personality: claimObj.personality,
-            stats,
-            ...sentenceObj
-        };
     }
 
     getReviewsByClaimIdAndSentenceHash(

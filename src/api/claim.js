@@ -1,7 +1,10 @@
 import axios from "axios";
 import { message } from "antd";
 
-const baseUrl = `${process.env.API_URL}/claim`;
+const request = axios.create({
+    withCredentials: true,
+    baseURL: `${process.env.API_URL}/claim`
+});
 
 const get = (options = {}) => {
     const params = {
@@ -11,8 +14,8 @@ const get = (options = {}) => {
         personality: options.personality
     };
 
-    return axios
-        .get(`${process.env.API_URL}/claim`, { params })
+    return request
+        .get("claim", { params })
         .then(response => {
             const { claims, totalPages, totalClaims } = response.data;
             if (options.fetchOnly) {
@@ -29,10 +32,14 @@ const get = (options = {}) => {
 };
 
 const getById = (id, params = {}) => {
-    return axios
-        .get(`${baseUrl}/${id}`, {
-            params
-        })
+    return request
+        .get(
+            `${id}`,
+            {
+                params
+            },
+            { withCredentials: true }
+        )
         .then(response => {
             return response.data;
         })
@@ -42,8 +49,8 @@ const getById = (id, params = {}) => {
 };
 
 const getClaimSentence = (id, sentenceHash) => {
-    return axios
-        .get(`${baseUrl}/${id}/sentence/${sentenceHash}`)
+    return request
+        .get(`${id}/sentence/${sentenceHash}`)
         .then(response => {
             return response?.data;
         })
@@ -57,15 +64,20 @@ const getClaimSentenceReviews = (options = {}) => {
         page: options.page - 1,
         pageSize: options.pageSize
     };
-    return axios
-        .get(
-            `${baseUrl}/${options.claim}/sentence/${options.sentenceHash}/reviews`,
-            { params }
-        )
+    return request
+        .get(`${options.claim}/sentence/${options.sentenceHash}/reviews`, {
+            params
+        })
         .then(response => {
-            const { reviews, totalPages, totalReviews } = response.data;
+            const {
+                reviews,
+                totalPages,
+                totalReviews,
+                userReview
+            } = response.data;
             return {
                 data: reviews,
+                userReview,
                 total: totalReviews,
                 totalPages
             };
@@ -76,8 +88,8 @@ const getClaimSentenceReviews = (options = {}) => {
 };
 
 const save = (claim = {}) => {
-    return axios
-        .post(`${baseUrl}`, claim, { withCredentials: true })
+    return request
+        .post("/", claim)
         .then(response => {
             const { title, _id } = response.data;
             message.success(`"${title}" created with success`);
@@ -97,8 +109,8 @@ const save = (claim = {}) => {
 };
 
 const update = (id, params = {}) => {
-    return axios
-        .put(`${baseUrl}/${id}`, params)
+    return request
+        .put(`${id}`, params)
         .then(response => {
             const { title, _id } = response.data;
             message.success(`"${title}" updated with success`);

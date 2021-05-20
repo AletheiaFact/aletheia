@@ -97,12 +97,11 @@ router.delete("/:id", ensureLoggedIn, (req, res, next) => {
 router.get("/:claimId/sentence/:sentenceHash", async (req, res) => {
     const { sentenceHash, claimId } = req.params;
     const sentence = new SentenceController(app);
-    sentence.getByHashAndClaimId(sentenceHash, claimId).then(result => {
+    const user = req.user;
+    sentence.getByHashAndClaimId(sentenceHash, claimId, user).then(result => {
         res.json(result);
     });
 });
-
-// TODO: list endpoint
 
 router.get(
     "/:claimId/sentence/:sentenceHash/reviews",

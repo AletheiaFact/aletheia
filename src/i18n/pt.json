@@ -63,7 +63,9 @@
     },
     "claimReview": {
         "cardAuthor": "{{name}} avaliou essa afirmaçao como:",
-        "anonymousUserName": "Anonimo"
+        "anonymousUserName": "Anonimo",
+        "userReviewPrefix": "Voce avaliou essa afirmaçao como ",
+        "userReviewSuffix": "A maioria ({{count}}) foi avaliada como "
     },
     "claimReviewForm": {
         "titleEmpty": "Escolha uma frase para revisar",
