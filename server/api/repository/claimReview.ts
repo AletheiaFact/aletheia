@@ -129,8 +129,8 @@ export default class ClaimReviewRepository {
         ]);
     }
 
-    async countReviewsBySentenceHash(sentenceHash) {
-        return await this._reviewsBySentenceHashAggregated(sentenceHash).count(
+    countReviewsBySentenceHash(sentenceHash) {
+        return this._reviewsBySentenceHashAggregated(sentenceHash).count(
             "count"
         );
     }

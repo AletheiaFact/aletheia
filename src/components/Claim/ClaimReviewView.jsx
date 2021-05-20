@@ -7,7 +7,6 @@ import ClaimReviewForm from "./ClaimReviewForm";
 import ReviewColors from "../../constants/reviewColors";
 import { withTranslation } from "react-i18next";
 import ClaimReviewList from "./ClaimReviewList";
-import BaseList from "../List/BaseList";
 
 class ClaimReviewView extends Component {
     constructor(props) {

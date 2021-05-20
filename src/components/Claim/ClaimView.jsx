@@ -57,23 +57,19 @@ class Claim extends Component {
             const title = this.state.title;
             return (
                 <>
-                    {personality && (
-                        <>
-                            <PersonalityCard personality={personality} />
-                            {this.state.date && (
-                                <Row style={{ marginTop: "20px" }}>
-                                    <Col offset={2} span={18}>
-                                        <b>{personality.name}</b>
-                                        <br />
-                                        {t("claim:info", {
-                                            claimDate: this.state.date.format(
-                                                "L"
-                                            )
-                                        })}
-                                    </Col>
-                                </Row>
-                            )}
-                        </>
+                    <PersonalityCard personality={personality} />
+                    {this.state.date && (
+                        <Row style={{ marginTop: "20px" }}>
+                            <Col offset={2} span={18}>
+                                <b>{personality.name}</b>
+                                <br />
+                                {t("claim:info", {
+                                    claimDate: this.state.date.format(
+                                        "L"
+                                    )
+                                })}
+                            </Col>
+                        </Row>
                     )}
                     <Row
                         style={{
