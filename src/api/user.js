@@ -1,12 +1,24 @@
 import axios from "axios";
+import { message } from "antd";
+
+const baseUrl = `${process.env.API_URL}/user`;
+
+const getById = (id, params = {}) => {
+    return axios
+        .get(`${baseUrl}/${id}`, {
+            params
+        })
+        .then(response => {
+            return response.data;
+        })
+        .catch(() => {
+            message.error("Error while fetching User");
+        });
+};
 
 const login = (params, t) => {
     return axios
-        .post(
-            `${process.env.API_URL}/user/signin`,
-            { ...params },
-            { withCredentials: true }
-        )
+        .post(`${baseUrl}/signin`, { ...params }, { withCredentials: true })
         .then(response => {
             return { login: true, ...response };
         })
@@ -20,7 +32,7 @@ const login = (params, t) => {
 
 const validateSession = (params, t) => {
     return axios
-        .get(`${process.env.API_URL}/user/validate`, { withCredentials: true })
+        .get(`${baseUrl}/validate`, { withCredentials: true })
         .then(response => {
             return { login: true, ...response };
         })
@@ -35,7 +47,7 @@ const validateSession = (params, t) => {
 const updatePassword = (params, t) => {
     return axios
         .put(
-            `${process.env.API_URL}/user/${params.userId}/password`,
+            `${baseUrl}/${params.userId}/password`,
             { ...params },
             { withCredentials: true }
         )
@@ -50,5 +62,6 @@ const updatePassword = (params, t) => {
 export default {
     login,
     validateSession,
-    updatePassword
+    updatePassword,
+    getById
 };
