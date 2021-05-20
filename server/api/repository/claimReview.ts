@@ -115,7 +115,7 @@ export default class ClaimReviewRepository {
         ]).option({ serializeFunctions: true });
     }
 
-    getReviewsBySentenceHash(sentenceHash) {
+    _reviewsBySentenceHashAggregated(sentenceHash) {
         return ClaimReview.aggregate([
             { $match: { sentence_hash: sentenceHash } },
             {
@@ -127,6 +127,22 @@ export default class ClaimReviewRepository {
                 }
             }
         ]);
+    }
+
+    async countReviewsBySentenceHash(sentenceHash) {
+        return await this._reviewsBySentenceHashAggregated(sentenceHash).count(
+            "count"
+        );
+    }
+
+    getReviewsBySentenceHash(sentenceHash, page, pageSize, order) {
+        pageSize = parseInt(pageSize);
+        page = parseInt(page);
+
+        return this._reviewsBySentenceHashAggregated(sentenceHash)
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .sort({ _id: order });
     }
 
     async getReviewStatsBySentenceHash(sentenceHash) {

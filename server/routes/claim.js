@@ -110,7 +110,11 @@ router.get(
         const { sentenceHash } = req.params;
         const sentence = new SentenceController(app);
         sentence
-            .getReviewsByClaimIdAndSentenceHash(sentenceHash)
+            .getReviewsByClaimIdAndSentenceHash(
+                sentenceHash,
+                req.query.page,
+                req.query.pageSize
+            )
             .then(result => {
                 res.json(result);
             });

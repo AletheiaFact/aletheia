@@ -63,7 +63,12 @@ const getClaimSentenceReviews = (options = {}) => {
             { params }
         )
         .then(response => {
-            return response;
+            const { reviews, totalPages, totalReviews } = response.data;
+            return {
+                data: reviews,
+                total: totalReviews,
+                totalPages
+            };
         })
         .catch(e => {
             console.log(e);
