@@ -7,7 +7,12 @@ const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
 
 @Module({
     imports: [
-        MongooseModule.forRoot(`mongodb://${mongodb_host}/${mongodb_name}`),
+        MongooseModule.forRoot(`mongodb://${mongodb_host}/${mongodb_name}`, {
+            useUnifiedTopology: true,
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useFindAndModify: false,
+        }),
         UsersModule,
     ],
 })
