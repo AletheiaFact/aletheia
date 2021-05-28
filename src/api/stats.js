@@ -6,9 +6,9 @@ const baseUrl = `${process.env.API_URL}/stats`;
 const get = (id, params = {}) => {
     return axios
         .get(`${baseUrl}/home`, {
-            params
+            params,
         })
-        .then(response => {
+        .then((response) => {
             return response.data;
         })
         .catch(() => {
@@ -17,5 +17,5 @@ const get = (id, params = {}) => {
 };
 
 export default {
-    get
+    get,
 };

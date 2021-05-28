@@ -35,15 +35,15 @@ class Parser {
                 result.push({
                     element: "p",
                     props: {
-                        id: paragraphId
+                        id: paragraphId,
                     },
-                    content: sentences.map(sentence => {
+                    content: sentences.map((sentence) => {
                         return this.parseSentence(
                             document,
                             sentence,
                             newParagraph
                         );
-                    })
+                    }),
                 });
             }
         }
@@ -65,7 +65,7 @@ class Parser {
         text = text.replace(/\?/g, "?<stop>");
         text = text.replace(/!/g, "!<stop>");
         text = text.replace(/<prd>/g, ".");
-        return text.split("<stop>").filter(s => {
+        return text.split("<stop>").filter((s) => {
             return s && s.length !== 0;
         });
     }
@@ -85,9 +85,9 @@ class Parser {
             element: "span",
             props: {
                 id: sentenceId,
-                "data-hash": sentenceDataHash
+                "data-hash": sentenceDataHash,
             },
-            content: sentenceContent
+            content: sentenceContent,
         };
     }
 

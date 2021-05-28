@@ -34,12 +34,12 @@ router.get("/", (req, res, next) => {
     }
 });
 
-module.exports = appObj => {
+module.exports = (appObj) => {
     app = appObj;
 
     return {
         path: "/",
         skip_domain: true,
-        router
+        router,
     };
 };

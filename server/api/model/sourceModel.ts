@@ -6,34 +6,34 @@ import * as mongoose from "mongoose";
 const sourceSchema = new mongoose.Schema({
     link: {
         type: String,
-        required: true
+        required: true,
     },
     classification: {
         type: String,
         validate: {
-            validator: v => {
+            validator: (v) => {
                 return (
                     ["unclassified", "reliable", "unreliable", "fake"].indexOf(
                         v
                     ) !== -1
                 );
-            }
+            },
         },
-        message: tag => `${tag} is not a valid classification.`
+        message: (tag) => `${tag} is not a valid classification.`,
     },
     description: {
-        type: String
+        type: String,
     },
     targetId: {
         type: mongoose.Schema.ObjectId,
         required: true,
-        refPath: "onModel"
+        refPath: "onModel",
     },
     targetModel: {
         type: String,
         required: true,
-        enum: ["Claim", "ClaimReview"]
-    }
+        enum: ["Claim", "ClaimReview"],
+    },
     // TODO user_id
 });
 

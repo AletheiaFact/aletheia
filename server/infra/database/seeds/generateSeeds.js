@@ -10,8 +10,8 @@ const seeders = [
                 "./server/infra/database/seeds/personality.json",
                 "utf8"
             )
-        )
-    }
+        ),
+    },
 ];
 
 // Connect to MongoDB via Mongoose

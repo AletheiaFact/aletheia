@@ -29,8 +29,8 @@ router.post("/", ensureLoggedIn, async (req, res, next) => {
     } else {
         claimReview
             .create({ ...req.body, user: req.user._id })
-            .then(result => res.send(result))
-            .catch(error => {
+            .then((result) => res.send(result))
+            .catch((error) => {
                 app.logger.log("error/create", error);
                 next(Requester.internalError(res, error.message));
             });
@@ -44,8 +44,8 @@ router.get("/:id", (req, res, next) => {
     const claimReview = new ClaimReviewController(app);
     claimReview
         .getClaimReviewId(req.params.id)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             app.logger.log("error/update", error);
             next(Requester.internalError(res, error.message));
         });
@@ -58,18 +58,18 @@ router.delete("/:id", ensureLoggedIn, (req, res, next) => {
     const claimReview = new ClaimReviewController(app);
     claimReview
         .delete(req.params.id)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             app.logger.log("error/delete", error);
             next(Requester.internalError(res, error.message));
         });
 });
 
-module.exports = function(appObj) {
+module.exports = function (appObj) {
     app = appObj;
     return {
         path: "/claimreview",
         api_version: 1,
-        router
+        router,
     };
 };

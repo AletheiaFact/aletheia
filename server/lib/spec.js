@@ -4,7 +4,7 @@ const path = require("path");
 
 function mergeChunkedProperties(spec, chunk) {
     // Merge chunked properties into spec
-    Object.keys(chunk).forEach(prop => {
+    Object.keys(chunk).forEach((prop) => {
         // Check 2nd level of the object components
         if (prop === "components") {
             spec.components = spec.components || {};
@@ -28,7 +28,7 @@ function mergeChunkedProperties(spec, chunk) {
  */
 function load(dir, spec) {
     spec = spec || {};
-    fs.readdirSync(dir).forEach(filename => {
+    fs.readdirSync(dir).forEach((filename) => {
         const resolvedPath = path.resolve(dir, filename);
         const isDirectory = fs.statSync(resolvedPath).isDirectory();
         let chunk;
@@ -46,5 +46,5 @@ function load(dir, spec) {
 }
 
 module.exports = {
-    load
+    load,
 };

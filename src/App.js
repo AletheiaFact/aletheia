@@ -27,16 +27,16 @@ class App extends Component {
     setLogin(userData = {}) {
         return {
             type: "SET_LOGIN_VALIDATION",
-            ...userData
+            ...userData,
         };
     }
     validateSession() {
-        return dispatch => {
-            return api.validateSession({}, this.props.t).then(result =>
+        return (dispatch) => {
+            return api.validateSession({}, this.props.t).then((result) =>
                 dispatch(
                     this.setLogin({
                         login: result.login,
-                        user: result?.data?.user
+                        user: result?.data?.user,
                     })
                 )
             );
@@ -56,7 +56,7 @@ class App extends Component {
                     onToggleSidebar={() => {
                         this.props.dispatch({
                             type: "TOGGLE_MENU",
-                            menuCollapsed: !this.props.menuCollapsed
+                            menuCollapsed: !this.props.menuCollapsed,
                         });
                     }}
                 />
@@ -82,7 +82,7 @@ class App extends Component {
                             <Route
                                 exact
                                 path="/personality/search"
-                                render={props => (
+                                render={(props) => (
                                     <PersonalityCreateSearch
                                         {...props}
                                         withSuggestions={true}
@@ -97,7 +97,7 @@ class App extends Component {
                             <Route
                                 exact
                                 path="/personality/:id/edit"
-                                render={props => (
+                                render={(props) => (
                                     <PersonalityCreateForm
                                         {...props}
                                         edit={true}
@@ -122,7 +122,7 @@ class App extends Component {
                             <Route
                                 exact
                                 path="/personality/:id/claim/:claimId/edit"
-                                render={props => (
+                                render={(props) => (
                                     <ClaimCreate {...props} edit={true} />
                                 )}
                             />
@@ -143,12 +143,12 @@ class App extends Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         isLoggedIn: state?.login || false,
         enableOverlay: state?.search?.overlay,
         menuCollapsed:
-            state?.menuCollapsed !== undefined ? state?.menuCollapsed : true
+            state?.menuCollapsed !== undefined ? state?.menuCollapsed : true,
     };
 };
 export default connect(mapStateToProps)(withTranslation()(App));

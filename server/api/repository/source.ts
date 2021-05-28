@@ -16,11 +16,11 @@ export default class SourceRepository {
         this.logger = logger;
         this.models = {
             Claim,
-            ClaimReview
+            ClaimReview,
         };
         this.optionsToUpdate = {
             new: true,
-            upsert: true
+            upsert: true,
         };
     }
 
@@ -44,7 +44,7 @@ export default class SourceRepository {
                     { _id: source.targetId },
                     { $push: { sources: source } },
                     { new: true },
-                    err => {
+                    (err) => {
                         if (err) {
                             reject(err);
                         }

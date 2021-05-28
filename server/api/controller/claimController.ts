@@ -21,7 +21,7 @@ export default class ClaimController {
                 order,
                 queryInputs
             ),
-            this.claimRepository.count(queryInputs)
+            this.claimRepository.count(queryInputs),
         ])
             .then(([claims, totalClaims]) => {
                 const totalPages = Math.ceil(
@@ -38,10 +38,10 @@ export default class ClaimController {
                     totalClaims,
                     totalPages,
                     page,
-                    pageSize
+                    pageSize,
                 };
             })
-            .catch(error => this.logger.log("error", error));
+            .catch((error) => this.logger.log("error", error));
     }
 
     verifyInputsQuery(query) {

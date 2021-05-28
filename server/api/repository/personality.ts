@@ -18,7 +18,7 @@ export default class PersonalityRepository {
         this.wikidata = new WikidataResolver();
         this.optionsToUpdate = {
             new: true,
-            upsert: true
+            upsert: true,
         };
     }
 
@@ -46,7 +46,7 @@ export default class PersonalityRepository {
             );
         }
         return Promise.all(
-            personalities.map(async personality => {
+            personalities.map(async (personality) => {
                 return await this.postProcess(personality, language);
             })
         );
@@ -66,7 +66,7 @@ export default class PersonalityRepository {
     async getById(personalityId, language = "en") {
         const personality = await Personality.findById(personalityId).populate({
             path: "claims",
-            select: "_id title content"
+            select: "_id title content",
         });
         this.logger.log("info", `Found personality ${personality}`);
         return await this.postProcess(personality.toObject(), language);
@@ -77,7 +77,7 @@ export default class PersonalityRepository {
             // TODO: allow wikdiata resolver to fetch in batches
             const wikidataExtract = await this.wikidata.fetchProperties({
                 wikidataId: personality.wikidata,
-                language
+                language,
             });
 
             // bail out if wikidata property is not allowed
@@ -91,7 +91,7 @@ export default class PersonalityRepository {
                 ...wikidataExtract,
                 claims:
                     personality.claims &&
-                    this.extractClaimWithTextSummary(personality.claims)
+                    this.extractClaimWithTextSummary(personality.claims),
             });
         }
 
@@ -103,7 +103,7 @@ export default class PersonalityRepository {
         const reviews = await ClaimReview.aggregate([
             { $match: { personality: personality._id } },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
-            { $sort: { count: -1 } }
+            { $sort: { count: -1 } },
         ]);
         this.logger.log("info", `Got stats ${reviews}`);
         return util.formatStats(reviews, true);
@@ -139,7 +139,7 @@ export default class PersonalityRepository {
     }
 
     private extractClaimWithTextSummary(claims: any) {
-        return claims.map(claim => {
+        return claims.map((claim) => {
             if (!claim.content) {
                 return claim;
             }

@@ -18,7 +18,7 @@ export default class ClaimRepository {
         this.claimReviewRepository = new ClaimReviewRepository(logger);
         this.optionsToUpdate = {
             new: true,
-            upsert: true
+            upsert: true,
         };
     }
 
@@ -29,7 +29,7 @@ export default class ClaimRepository {
             .sort({ _id: order })
             .lean();
         return Promise.all(
-            claims.map(claim => {
+            claims.map((claim) => {
                 return this.postProcess(claim);
             })
         );
@@ -52,7 +52,7 @@ export default class ClaimRepository {
                     { _id: claim.personality },
                     { $push: { claims: claim } },
                     { new: true },
-                    err => {
+                    (err) => {
                         if (err) {
                             reject(err);
                         }
@@ -86,9 +86,10 @@ export default class ClaimRepository {
                     reviews
                 );
             }
-            const reviewStats = await this.claimReviewRepository.getReviewStatsByClaimId(
-                claim._id
-            );
+            const reviewStats =
+                await this.claimReviewRepository.getReviewStatsByClaimId(
+                    claim._id
+                );
             const overallStats = this.calculateOverallStats(claim);
             const stats = { ...reviewStats, ...overallStats };
             claim = Object.assign(claim, { stats });
@@ -101,9 +102,9 @@ export default class ClaimRepository {
         let totalClaims = 0;
         let totalClaimsReviewed = 0;
         if (claim?.content?.object) {
-            claim.content.object.forEach(p => {
+            claim.content.object.forEach((p) => {
                 totalClaims += p.content.length;
-                p.content.forEach(sentence => {
+                p.content.forEach((sentence) => {
                     if (sentence.props.topClassification) {
                         totalClaimsReviewed++;
                     }
@@ -112,7 +113,7 @@ export default class ClaimRepository {
         }
         return {
             totalClaims,
-            totalClaimsReviewed
+            totalClaimsReviewed,
         };
     }
 
@@ -122,15 +123,14 @@ export default class ClaimRepository {
         }
         claimContent.forEach((paragraph, paragraphIndex) => {
             paragraph.content.forEach((sentence, sentenceIndex) => {
-                const claimReview = reviews.find(review => {
+                const claimReview = reviews.find((review) => {
                     return review._id === sentence.props["data-hash"];
                 });
                 if (claimReview) {
-                    claimContent[paragraphIndex].content[
-                        sentenceIndex
-                    ].props = Object.assign(sentence.props, {
-                        topClassification: claimReview.topClassification
-                    });
+                    claimContent[paragraphIndex].content[sentenceIndex].props =
+                        Object.assign(sentence.props, {
+                            topClassification: claimReview.topClassification,
+                        });
                 }
             });
         });

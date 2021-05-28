@@ -8,35 +8,32 @@ const getPersonalities = (options = {}, dispatch) => {
         pageSize: options.pageSize,
         withSuggestions: options.withSuggestions,
         language:
-            options.i18n && options.i18n.languages && options.i18n.languages[0]
+            options.i18n && options.i18n.languages && options.i18n.languages[0],
     };
 
     return axios
         .get(`${process.env.API_URL}/personality`, { params })
-        .then(response => {
-            const {
-                personalities,
-                totalPages,
-                totalPersonalities
-            } = response.data;
+        .then((response) => {
+            const { personalities, totalPages, totalPersonalities } =
+                response.data;
             if (options.fetchOnly) {
                 return {
                     data: personalities,
                     total: totalPersonalities,
-                    totalPages
+                    totalPages,
                 };
             }
 
             dispatch({
                 type: "SEARCH_RESULTS",
-                results: personalities
+                results: personalities,
             });
             dispatch({
                 type: "SET_TOTAL_PAGES",
-                totalPages
+                totalPages,
             });
         })
-        .catch(e => {
+        .catch((e) => {
             throw e;
         });
 };
@@ -44,9 +41,9 @@ const getPersonalities = (options = {}, dispatch) => {
 const getPersonality = (id, params) => {
     return axios
         .get(`${process.env.API_URL}/personality/${id}`, {
-            params
+            params,
         })
-        .then(response => {
+        .then((response) => {
             return response.data;
         })
         .catch(() => {
@@ -57,16 +54,16 @@ const getPersonality = (id, params) => {
 const createPersonality = (personality, t) => {
     return axios
         .post(`${process.env.API_URL}/personality`, personality, {
-            withCredentials: true
+            withCredentials: true,
         })
-        .then(response => {
+        .then((response) => {
             const { name, _id } = response.data;
             message.success(
                 `"${name}" ${t("personalityCreateForm:successMessage")}`
             );
             return _id;
         })
-        .catch(err => {
+        .catch((err) => {
             const response = err && err.response;
             if (!response) {
                 // TODO: Track unknow errors
@@ -84,5 +81,5 @@ const createPersonality = (personality, t) => {
 export default {
     getPersonalities,
     getPersonality,
-    createPersonality
+    createPersonality,
 };

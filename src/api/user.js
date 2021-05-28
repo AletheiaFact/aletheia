@@ -6,9 +6,9 @@ const baseUrl = `${process.env.API_URL}/user`;
 const getById = (id, params = {}) => {
     return axios
         .get(`${baseUrl}/${id}`, {
-            params
+            params,
         })
-        .then(response => {
+        .then((response) => {
             return response.data;
         })
         .catch(() => {
@@ -19,12 +19,12 @@ const getById = (id, params = {}) => {
 const login = (params, t) => {
     return axios
         .post(`${baseUrl}/signin`, { ...params }, { withCredentials: true })
-        .then(response => {
+        .then((response) => {
             return { login: true, ...response };
         })
-        .catch(e => {
+        .catch((e) => {
             const response = e?.response?.data || {
-                message: t("login:failedMessage")
+                message: t("login:failedMessage"),
             };
             return { login: false, ...response };
         });
@@ -33,12 +33,12 @@ const login = (params, t) => {
 const validateSession = (params, t) => {
     return axios
         .get(`${baseUrl}/validate`, { withCredentials: true })
-        .then(response => {
+        .then((response) => {
             return { login: true, ...response };
         })
-        .catch(e => {
+        .catch((e) => {
             const response = e?.response?.data || {
-                message: t("login:failedMessage")
+                message: t("login:failedMessage"),
             };
             return { login: false, ...response };
         });
@@ -51,10 +51,10 @@ const updatePassword = (params, t) => {
             { ...params },
             { withCredentials: true }
         )
-        .then(response => {
+        .then((response) => {
             return response?.data;
         })
-        .catch(e => {
+        .catch((e) => {
             return e?.response?.data;
         });
 };
@@ -63,5 +63,5 @@ export default {
     login,
     validateSession,
     updatePassword,
-    getById
+    getById,
 };

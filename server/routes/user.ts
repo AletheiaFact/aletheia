@@ -17,7 +17,7 @@ router.post("/signin", (req, res, next) => {
         if (err) return next(Requester.authError(res, err.message, app.logger));
         if (!user)
             return next(Requester.authError(res, info.message, app.logger));
-        req.logIn(user, function(err) {
+        req.logIn(user, function (err) {
             if (err)
                 return next(Requester.authError(res, err.message, app.logger));
             return res.send();
@@ -33,10 +33,10 @@ router.get("/:userId", (req, res, next) => {
     const userRepository = new UserRepository(app.logger);
     userRepository
         .getById(req.params.userId)
-        .then(user => {
+        .then((user) => {
             res.send(user);
         })
-        .catch(err => {
+        .catch((err) => {
             return next(Requester.authError(res, err.message, app.logger));
         });
 });
@@ -87,10 +87,10 @@ router.put("/:id/password", ensureLoggedIn, async (req, res, next) => {
             .then(() => {
                 res.status(200).json({
                     success: true,
-                    message: "Password reset successful"
+                    message: "Password reset successful",
                 });
             })
-            .catch(e => {
+            .catch((e) => {
                 next(Requester.internalError(res, e.message, app.logger));
             });
     } catch (e) {
@@ -98,11 +98,11 @@ router.put("/:id/password", ensureLoggedIn, async (req, res, next) => {
     }
 });
 
-module.exports = function(appObj) {
+module.exports = function (appObj) {
     app = appObj;
     return {
         path: "/user",
         api_version: 1,
-        router
+        router,
     };
 };

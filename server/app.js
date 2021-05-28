@@ -14,7 +14,7 @@ const mongodb_host = process.env.MONGODB_HOST || "localhost";
 const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
 
 function loadModels(dir) {
-    fs.readdirSync(dir).map(fname => {
+    fs.readdirSync(dir).map((fname) => {
         const resolvedPath = path.resolve(dir, fname);
         const isDirectory = fs.statSync(resolvedPath).isDirectory();
         if (isDirectory) {
@@ -39,7 +39,7 @@ function loadDB(app) {
 
 function loadRoutes(app, dir) {
     return new Promise((resolve, reject) => {
-        fs.readdirSync(dir).map(fname => {
+        fs.readdirSync(dir).map((fname) => {
             const resolvedPath = path.resolve(dir, fname);
             const isDirectory = fs.statSync(resolvedPath).isDirectory();
             if (isDirectory) {
@@ -67,8 +67,9 @@ function createServer(app) {
         app.listen(app.config.port);
         app.logger.log(
             "info",
-            `${app.serviceName} with PID ${process.pid} listening on ${app
-                .config.interface || "*"}:${app.config.port}`
+            `${app.serviceName} with PID ${process.pid} listening on ${
+                app.config.interface || "*"
+            }:${app.config.port}`
         );
         resolve(app);
     });
@@ -103,7 +104,7 @@ function initApp(options) {
         app.config.spec.info = {
             version: app.info.version,
             title: app.info.name,
-            description: app.info.description
+            description: app.info.description,
         };
     }
     app.config.spec.info.version = app.info.version;
@@ -127,7 +128,7 @@ function initApp(options) {
             useUnifiedTopology: true,
             useNewUrlParser: true,
             useCreateIndex: true,
-            useFindAndModify: false
+            useFindAndModify: false,
         };
     }
 
@@ -168,7 +169,7 @@ function loadPassport(app) {
         session({
             secret: "replace_me",
             resave: false,
-            saveUninitialized: false
+            saveUninitialized: false,
         })
     );
     app.use(passport.initialize());
@@ -180,7 +181,7 @@ function loadClient(app) {
     app.use(
         "/assets",
         express.static(path.join(__dirname, "../assets"), {
-            index: false
+            index: false,
         })
     );
     // Always set root endpoint to serve client html
@@ -192,12 +193,12 @@ function loadClient(app) {
     return app;
 }
 
-module.exports = options => {
+module.exports = (options) => {
     // TODO: Promisify it all
     return initApp(options)
         .then(loadDB)
         .then(loadPassport)
-        .then(app => loadRoutes(app, `${__dirname}/routes`))
+        .then((app) => loadRoutes(app, `${__dirname}/routes`))
         .then(loadClient)
         .then(createServer);
 };

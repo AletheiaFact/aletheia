@@ -11,19 +11,19 @@ router.get("/:wikidataId", (req, res, next) => {
 
     wikidata
         .fetchProperties({ ...req.params, ...req.query })
-        .then(props => {
+        .then((props) => {
             // Check if personality already exists
             res.send({ ...props });
         })
-        .catch(error => {
+        .catch((error) => {
             next(Requester.internalError(res, error.message));
         });
 });
 
-module.exports = function(appObj) {
+module.exports = function (appObj) {
     return {
         path: "/wikidata",
         api_version: 1,
-        router
+        router,
     };
 };

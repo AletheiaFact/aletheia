@@ -19,8 +19,8 @@ router.get("/", (req, res, next) => {
     const claim = new ClaimController(app);
     claim
         .listAll(req.query)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message, app.logger));
         });
 });
@@ -44,8 +44,8 @@ router.post("/", ensureLoggedIn, async (req, res, next) => {
     } else {
         claim
             .create(req.body)
-            .then(result => res.send(result))
-            .catch(error => {
+            .then((result) => res.send(result))
+            .catch((error) => {
                 app.logger.log("error/create", error);
                 next(Requester.internalError(res, error.message));
             });
@@ -59,8 +59,8 @@ router.get("/:id", (req, res, next) => {
     const claim = new ClaimController(app);
     claim
         .getClaimId(req.params.id)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message));
         });
 });
@@ -72,8 +72,8 @@ router.put("/:id", ensureLoggedIn, (req, res, next) => {
     const claim = new ClaimController(app);
     claim
         .update(req.params.id, req.body)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message));
         });
 });
@@ -85,8 +85,8 @@ router.delete("/:id", ensureLoggedIn, (req, res, next) => {
     const claim = new ClaimController(app);
     claim
         .delete(req.params.id)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message));
         });
 });
@@ -98,7 +98,7 @@ router.get("/:claimId/sentence/:sentenceHash", async (req, res) => {
     const { sentenceHash, claimId } = req.params;
     const sentence = new SentenceController(app);
     const user = req.user;
-    sentence.getByHashAndClaimId(sentenceHash, claimId, user).then(result => {
+    sentence.getByHashAndClaimId(sentenceHash, claimId, user).then((result) => {
         res.json(result);
     });
 });
@@ -114,17 +114,17 @@ router.get(
                 req.query.page,
                 req.query.pageSize
             )
-            .then(result => {
+            .then((result) => {
                 res.json(result);
             });
     }
 );
 
-module.exports = function(appObj) {
+module.exports = function (appObj) {
     app = appObj;
     return {
         path: "/claim",
         api_version: 1,
-        router
+        router,
     };
 };

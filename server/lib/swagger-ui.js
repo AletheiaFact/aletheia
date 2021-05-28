@@ -22,12 +22,12 @@ function processRequest(app, req, res) {
             status: 404,
             type: "not_found",
             title: "File not found",
-            detail: `${reqPath} could not be found.`
+            detail: `${reqPath} could not be found.`,
         });
     }
 
     return readFileAsync(filePath)
-        .then(body => {
+        .then((body) => {
             if (reqPath === "/index.html") {
                 const css = `
                 /* Removes Swagger's image from the header bar */
@@ -111,12 +111,10 @@ function processRequest(app, req, res) {
             res.send(body.toString());
         })
         .catch({ code: "ENOENT" }, () => {
-            res.status(404)
-                .type("not_found")
-                .send("not found");
+            res.status(404).type("not_found").send("not found");
         });
 }
 
 module.exports = {
-    processRequest
+    processRequest,
 };

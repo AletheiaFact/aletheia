@@ -3,7 +3,7 @@ import { message } from "antd";
 
 const request = axios.create({
     withCredentials: true,
-    baseURL: `${process.env.API_URL}/claim`
+    baseURL: `${process.env.API_URL}/claim`,
 });
 
 const get = (options = {}) => {
@@ -11,22 +11,22 @@ const get = (options = {}) => {
         page: options.page - 1,
         name: options.searchName,
         pageSize: options.pageSize,
-        personality: options.personality
+        personality: options.personality,
     };
 
     return request
         .get("/", { params })
-        .then(response => {
+        .then((response) => {
             const { claims, totalPages, totalClaims } = response.data;
             if (options.fetchOnly) {
                 return {
                     data: claims,
                     total: totalClaims,
-                    totalPages
+                    totalPages,
                 };
             }
         })
-        .catch(e => {
+        .catch((e) => {
             throw e;
         });
 };
@@ -36,11 +36,11 @@ const getById = (id, params = {}) => {
         .get(
             `${id}`,
             {
-                params
+                params,
             },
             { withCredentials: true }
         )
-        .then(response => {
+        .then((response) => {
             return response.data;
         })
         .catch(() => {
@@ -51,10 +51,10 @@ const getById = (id, params = {}) => {
 const getClaimSentence = (id, sentenceHash) => {
     return request
         .get(`${id}/sentence/${sentenceHash}`)
-        .then(response => {
+        .then((response) => {
             return response?.data;
         })
-        .catch(e => {
+        .catch((e) => {
             console.log(e);
         });
 };
@@ -62,27 +62,23 @@ const getClaimSentence = (id, sentenceHash) => {
 const getClaimSentenceReviews = (options = {}) => {
     const params = {
         page: options.page - 1,
-        pageSize: options.pageSize
+        pageSize: options.pageSize,
     };
     return request
         .get(`${options.claim}/sentence/${options.sentenceHash}/reviews`, {
-            params
+            params,
         })
-        .then(response => {
-            const {
-                reviews,
-                totalPages,
-                totalReviews,
-                userReview
-            } = response.data;
+        .then((response) => {
+            const { reviews, totalPages, totalReviews, userReview } =
+                response.data;
             return {
                 data: reviews,
                 userReview,
                 total: totalReviews,
-                totalPages
+                totalPages,
             };
         })
-        .catch(e => {
+        .catch((e) => {
             console.log(e);
         });
 };
@@ -90,12 +86,12 @@ const getClaimSentenceReviews = (options = {}) => {
 const save = (claim = {}) => {
     return request
         .post("/", claim)
-        .then(response => {
+        .then((response) => {
             const { title, _id } = response.data;
             message.success(`"${title}" created with success`);
             return _id;
         })
-        .catch(err => {
+        .catch((err) => {
             const response = err && err.response;
             if (!response) {
                 // TODO: Track unknow errors
@@ -111,12 +107,12 @@ const save = (claim = {}) => {
 const update = (id, params = {}) => {
     return request
         .put(`${id}`, params)
-        .then(response => {
+        .then((response) => {
             const { title, _id } = response.data;
             message.success(`"${title}" updated with success`);
             return _id;
         })
-        .catch(err => {
+        .catch((err) => {
             const response = err && err.response;
             if (!response) {
                 // TODO: Track unknow errors
@@ -137,5 +133,5 @@ export default {
     getClaimSentence,
     getClaimSentenceReviews,
     save,
-    update
+    update,
 };

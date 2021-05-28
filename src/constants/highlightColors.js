@@ -7,5 +7,5 @@ export default {
     false: "#F5B3AF",
     unsustainable: "#EDB5C8",
     exaggerated: "#EEDCB0",
-    unverifiable: "#F4C8BA"
+    unverifiable: "#F4C8BA",
 };

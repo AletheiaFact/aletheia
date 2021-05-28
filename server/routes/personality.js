@@ -16,8 +16,8 @@ router.get("/", (req, res, next) => {
     const personality = new PersonalityController(app);
     personality
         .listAll(req.query)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message, app.logger));
         });
 });
@@ -29,8 +29,8 @@ router.post("/", ensureLoggedIn, (req, res, next) => {
     const personality = new PersonalityController(app);
     personality
         .create(req.body)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             if (
                 error.name === "MongoError" &&
                 error.keyPattern &&
@@ -49,10 +49,10 @@ router.get("/:id", (req, res, next) => {
     const personality = new PersonalityController(app);
     personality
         .getPersonalityId(req.params.id, req.query.language)
-        .then(async result => {
+        .then(async (result) => {
             res.send(result);
         })
-        .catch(error => {
+        .catch((error) => {
             next(Requester.internalError(res, error.message, app.logger));
         });
 });
@@ -65,10 +65,10 @@ router.get("/:id/reviews", (req, res, next) => {
 
     personality
         .getReviewStats(req.params.id)
-        .then(result => {
+        .then((result) => {
             res.send(result);
         })
-        .catch(error => {
+        .catch((error) => {
             next(Requester.internalError(res, error.message, app.logger));
         });
 });
@@ -80,8 +80,8 @@ router.put("/:id", ensureLoggedIn, (req, res, next) => {
     const personality = new PersonalityController(app);
     personality
         .update(req.params.id, req.body)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message));
         });
 });
@@ -93,17 +93,17 @@ router.delete("/:id", ensureLoggedIn, (req, res, next) => {
     const personality = new PersonalityController(app);
     personality
         .delete(req.params.id)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message));
         });
 });
 
-module.exports = function(appObj) {
+module.exports = function (appObj) {
     app = appObj;
     return {
         path: "/personality",
         api_version: 1,
-        router
+        router,
     };
 };
