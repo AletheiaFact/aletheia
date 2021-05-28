@@ -7,7 +7,7 @@ const express = require("express");
  */
 function createRouter(opts) {
     const options = {
-        mergeParams: true
+        mergeParams: true,
     };
 
     if (opts && opts.constructor === Object) {
@@ -22,12 +22,12 @@ function formatStats(reviews, slice = false) {
         agg += review.count;
         return agg;
     }, 0);
-    const result = reviews.map(review => {
+    const result = reviews.map((review) => {
         const percentage = (review.count / total) * 100;
         return {
             _id: review._id,
             percentage: percentage.toFixed(0),
-            count: review.count
+            count: review.count,
         };
     });
     return { total, reviews: slice ? result.slice(0, 3) : result };
@@ -46,7 +46,7 @@ function mergeObjectsInUnique<T>(array: T[], property: any): T[] {
         newArray.has(propertyValue)
             ? newArray.set(propertyValue, {
                   ...item,
-                  ...newArray.get(propertyValue)
+                  ...newArray.get(propertyValue),
               })
             : newArray.set(propertyValue, item);
     });
@@ -57,5 +57,5 @@ function mergeObjectsInUnique<T>(array: T[], property: any): T[] {
 module.exports = {
     router: createRouter,
     formatStats,
-    mergeObjectsInUnique
+    mergeObjectsInUnique,
 };

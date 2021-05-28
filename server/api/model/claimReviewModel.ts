@@ -5,7 +5,7 @@ const claimReviewSchema = new mongoose.Schema({
         type: String,
         required: true,
         validate: {
-            validator: v => {
+            validator: (v) => {
                 return (
                     [
                         "not-fact",
@@ -16,42 +16,42 @@ const claimReviewSchema = new mongoose.Schema({
                         "false",
                         "unsustainable",
                         "exaggerated",
-                        "unverifiable"
+                        "unverifiable",
                     ].indexOf(v) !== -1
                 );
-            }
+            },
         },
-        message: tag => `${tag} is not a valid classification.`
+        message: (tag) => `${tag} is not a valid classification.`,
     },
     claim: {
         type: mongoose.Schema.ObjectId,
         ref: "Claim",
-        required: true
+        required: true,
     },
     personality: {
         type: mongoose.Schema.ObjectId,
         ref: "Personality",
-        required: true
+        required: true,
     },
     sentence_hash: {
         type: String,
-        required: true
+        required: true,
     },
     sentence_content: {
         type: String,
-        required: true
+        required: true,
     },
     sources: [
         {
             type: mongoose.Schema.ObjectId,
-            ref: "Source"
-        }
+            ref: "Source",
+        },
     ],
     user: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
-        required: true
-    }
+        required: true,
+    },
     // TODO: user_id
     // TODO: revision_id
 });

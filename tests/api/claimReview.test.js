@@ -6,39 +6,39 @@ const initApp = require("../../app");
 
 let app;
 
-const clearDB = done => {
+const clearDB = (done) => {
     for (const i in mongoose.connection.collections) {
         if (mongoose.connection.collections[i]) {
             mongoose.connection.collections[i]
                 .drop()
                 // Catch err when try to drop unexistent collection
-                .catch(err => {});
+                .catch((err) => {});
         }
     }
     return done();
 };
 
-beforeAll(done => {
+beforeAll((done) => {
     // Init app before passing it to request
     app = initApp({
         conf: {
             db: {
                 path: "mongodb://localhost/test",
-                callback: err => {
+                callback: (err) => {
                     if (err) {
                         throw err;
                     }
                     return clearDB(done);
-                }
-            }
+                },
+            },
         },
-        env: "test"
+        env: "test",
     });
     return app;
 });
 
 describe.skip("Test claimReview CRUD", () => {
-    test("list all should return empty", async done => {
+    test("list all should return empty", async (done) => {
         const response = await request(await app).get("/claimreview");
         // console.log(Object.keys(response.res))
         expect(response.res.statusCode).toBe(200);
@@ -46,7 +46,7 @@ describe.skip("Test claimReview CRUD", () => {
         done();
     });
 
-    test("post invalid claim review", async done => {
+    test("post invalid claim review", async (done) => {
         const response = await request(await app)
             .post("/claimreview")
             .send({ classification: "banana" });
@@ -58,13 +58,13 @@ describe.skip("Test claimReview CRUD", () => {
     // Cache posted claim review to retrieve it later
     let claimReview;
 
-    test("post valid claim review and retrieve it", async done => {
+    test("post valid claim review and retrieve it", async (done) => {
         const body = {
             classification: "true",
             claim: "5d0c2a9d72c2686adf8bb9d1",
             sentence_hash: "76f3fad0dc83796c73d97837ab78098d",
             sentence_content:
-                " Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce id purus."
+                " Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce id purus.",
         };
         const response = await request(await app)
             .post("/claimreview")
@@ -76,7 +76,7 @@ describe.skip("Test claimReview CRUD", () => {
         done();
     });
 
-    test("get valid posted review", async done => {
+    test("get valid posted review", async (done) => {
         // expect(resObj).toEqual(body)
         const response = await request(await app).get(
             `/claimreview/${claimReview._id}`
@@ -87,7 +87,7 @@ describe.skip("Test claimReview CRUD", () => {
         done();
     });
 
-    afterAll(done => {
+    afterAll((done) => {
         request.end();
         mongoose.connection.disconnect();
         clearDB(done);

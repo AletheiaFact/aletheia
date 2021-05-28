@@ -5,15 +5,15 @@ const generatePassword = () => {
 };
 
 const generateSeeds = () => {
-    users.map(user => {
+    users.map((user) => {
         return {
             ...user,
-            password: generatePassword()
+            password: generatePassword(),
         };
     });
     return users;
 };
 
 module.exports = {
-    generateSeeds
+    generateSeeds,
 };

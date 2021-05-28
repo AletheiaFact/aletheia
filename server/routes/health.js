@@ -20,12 +20,12 @@ router.get("/", (req, res, next) => {
     res.json({ status: "ok" });
 });
 
-module.exports = appObj => {
+module.exports = (appObj) => {
     app = appObj;
 
     return {
         path: "/health",
         skip_domain: true,
-        router
+        router,
     };
 };

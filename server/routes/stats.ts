@@ -15,23 +15,23 @@ let app;
  */
 router.get("/home", (req, res, next) => {
     Promise.all([Claim.count(), Personality.count(), ClaimReview.count()])
-        .then(values => {
+        .then((values) => {
             res.send({
                 claims: values[0],
                 personalities: values[1],
-                reviews: values[2]
+                reviews: values[2],
             });
         })
-        .catch(e => {
+        .catch((e) => {
             Requester.internalError(e, "Error while fetching stats");
         });
 });
 
-module.exports = function(appObj) {
+module.exports = function (appObj) {
     app = appObj;
     return {
         path: "/stats",
         api_version: 1,
-        router
+        router,
     };
 };

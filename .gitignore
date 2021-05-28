@@ -26,6 +26,7 @@ yarn-error.log*
 dist
 
 config.yaml
+config.nest.yaml
 
 .idea/**/*
 

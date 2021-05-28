@@ -34,7 +34,7 @@ const generatePassword = () => {
 
 const seedSingleUser = (userData, password) => {
     return User.register(new User(userData), password)
-        .then(async user => {
+        .then(async (user) => {
             console.log(`${userData.email} seeded`);
             if (userData.sendAuthDetails && !SEED_TEST_ENVIRONMENT) {
                 const emailResponse = await sendEmail(
@@ -47,7 +47,7 @@ const seedSingleUser = (userData, password) => {
             }
             return user;
         })
-        .catch(e => {
+        .catch((e) => {
             console.error(e);
             console.log(`${userData.email} not seeded`);
             return null;
@@ -59,15 +59,15 @@ const seedSingleUser = (userData, password) => {
         useUnifiedTopology: true,
         useNewUrlParser: true,
         useCreateIndex: true,
-        useFindAndModify: false
+        useFindAndModify: false,
     });
     return Promise.all(
-        usersData.map(userData => {
+        usersData.map((userData) => {
             const password = generatePassword();
             return seedSingleUser(userData, password);
         })
     );
-})().then(result => {
+})().then((result) => {
     console.log(result);
     mongoose.disconnect();
     console.log("Seed script finished.");

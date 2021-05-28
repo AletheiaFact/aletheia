@@ -6,14 +6,14 @@ const baseUrl = `${process.env.API_URL}/claimReview`;
 const save = (review, t) => {
     return axios
         .post(`${baseUrl}`, review, { withCredentials: true })
-        .then(response => {
+        .then((response) => {
             message.success(t("claimReviewForm:successMessage"));
             return {
                 success: true,
-                data: response.data
+                data: response.data,
             };
         })
-        .catch(err => {
+        .catch((err) => {
             const response = err && err.response;
             if (!response) {
                 console.log(err);
@@ -27,11 +27,11 @@ const save = (review, t) => {
             );
             return {
                 success: false,
-                data
+                data,
             };
         });
 };
 
 export default {
-    save
+    save,
 };

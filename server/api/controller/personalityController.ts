@@ -23,7 +23,7 @@ export class PersonalityController {
                 query.language,
                 query.withSuggestions
             ),
-            this.personalityRepository.count(queryInputs)
+            this.personalityRepository.count(queryInputs),
         ])
             .then(([personalities, totalPersonalities]) => {
                 const totalPages = Math.ceil(
@@ -40,10 +40,10 @@ export class PersonalityController {
                     totalPersonalities,
                     totalPages,
                     page,
-                    pageSize
+                    pageSize,
                 };
             })
-            .catch(error => this.logger.log("error", error));
+            .catch((error) => this.logger.log("error", error));
     }
 
     verifyInputsQuery(query) {
@@ -65,21 +65,21 @@ export class PersonalityController {
     }
 
     getPersonalityId(id, language) {
-        return this.personalityRepository.getById(id, language).catch(err => {
+        return this.personalityRepository.getById(id, language).catch((err) => {
             this.logger.log("error", err);
             return err;
         });
     }
 
     getReviewStats(id) {
-        return this.personalityRepository.getReviewStats(id).catch(err => {
+        return this.personalityRepository.getReviewStats(id).catch((err) => {
             this.logger.log("error", err);
             return err;
         });
     }
 
     async update(id, body) {
-        return this.personalityRepository.update(id, body).catch(err => {
+        return this.personalityRepository.update(id, body).catch((err) => {
             this.logger.log("error", err);
             return err;
         });

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-beforeEach(done => {
+beforeEach((done) => {
     /*
     Define clearDB function that will loop through all
     the collections in our mongoose connection and drop them.
@@ -22,7 +22,7 @@ beforeEach(done => {
     if (mongoose.connection.readyState === 0) {
         mongoose.connect(
             `mongodb://localhost:27017/test`, // ${process.env.TEST_SUITE}`, // <------- IMPORTANT
-            err => {
+            (err) => {
                 if (err) {
                     throw err;
                 }
@@ -34,11 +34,11 @@ beforeEach(done => {
     }
 });
 
-afterEach(done => {
+afterEach((done) => {
     mongoose.disconnect();
     return done();
 });
 
-afterAll(done => {
+afterAll((done) => {
     return done();
 });

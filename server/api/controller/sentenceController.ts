@@ -22,12 +22,12 @@ export default class SentenceController {
             this.claimReviewRepository.getUserReviewBySentenceHash(
                 sentenceHash,
                 user?._id
-            )
+            ),
         ]).then(([stats, claimObj, userReview]) => {
             let sentenceObj;
 
-            claimObj.content.object.forEach(p => {
-                p.content.forEach(sentence => {
+            claimObj.content.object.forEach((p) => {
+                p.content.forEach((sentence) => {
                     if (sentence.props["data-hash"] === sentenceHash) {
                         sentenceObj = sentence;
                     }
@@ -38,7 +38,7 @@ export default class SentenceController {
                 date: claimObj.date,
                 personality: claimObj.personality,
                 stats,
-                ...sentenceObj
+                ...sentenceObj,
             };
         });
     }
@@ -56,7 +56,7 @@ export default class SentenceController {
                 pageSize,
                 order
             ),
-            this.claimReviewRepository.countReviewsBySentenceHash(sentenceHash)
+            this.claimReviewRepository.countReviewsBySentenceHash(sentenceHash),
         ]).then(([reviews, totalReviews]) => {
             totalReviews = totalReviews[0]?.count;
             const totalPages = Math.ceil(totalReviews / parseInt(pageSize, 10));
@@ -71,7 +71,7 @@ export default class SentenceController {
                 totalReviews,
                 totalPages,
                 page,
-                pageSize
+                pageSize,
             };
         });
     }

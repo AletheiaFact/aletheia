@@ -17,7 +17,7 @@ export default class UserRepository {
     register(user) {
         return User.register(
             new User({
-                email: user.email
+                email: user.email,
             }),
             user.password
         );

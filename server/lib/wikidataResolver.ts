@@ -1,20 +1,20 @@
 const WikidataCache = require("../api/model/wikidataCacheModel");
 const axios = require("axios");
 const languageVariantMap = {
-    "pt-br": "pt"
+    "pt-br": "pt",
 };
 
 class WikidataResolver {
     async fetchProperties(params) {
         const wikidataCache = await WikidataCache.findOne({
             wikidataId: params.wikidataId,
-            language: params.language
+            language: params.language,
         }).exec();
         if (!wikidataCache) {
             const props = await this.requestProperties(params);
             const newWikidataCache = new WikidataCache({
                 ...params,
-                props
+                props,
             });
             newWikidataCache.save();
             return props;
@@ -28,8 +28,8 @@ class WikidataResolver {
                 action: "wbgetentities",
                 ids: encodeURIComponent(params.wikidataId),
                 format: "json",
-                formatversion: "2"
-            }
+                formatversion: "2",
+            },
         });
         const entities = data && data.entities;
         return this.extractProperties(
@@ -44,7 +44,7 @@ class WikidataResolver {
             description: undefined,
             isAllowedProp: undefined,
             image: undefined,
-            wikipedia: undefined
+            wikipedia: undefined,
         };
         if (!wikidata) {
             return {};
@@ -116,21 +116,21 @@ class WikidataResolver {
             errorformat: "plaintext",
             language,
             type: "item",
-            origin: "*"
+            origin: "*",
         };
 
         return axios
             .get(`https://www.wikidata.org/w/api.php`, { params })
-            .then(response => {
+            .then((response) => {
                 const { search } = response && response.data;
-                return search.map(wbentity => {
+                return search.map((wbentity) => {
                     if (!wbentity.label) {
                         return;
                     }
                     return {
                         name: wbentity.label,
                         description: wbentity.description,
-                        wikidata: wbentity.id
+                        wikidata: wbentity.id,
                     };
                 });
             });
@@ -147,8 +147,8 @@ class WikidataResolver {
                     iiprop: "url",
                     iiurlwidth: 400,
                     format: "json",
-                    formatversion: "2"
-                }
+                    formatversion: "2",
+                },
             }
         );
         const { pages } = data && data.query;

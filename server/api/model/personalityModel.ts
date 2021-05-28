@@ -4,22 +4,22 @@ const Schema = mongoose.Schema;
 const personalitySchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
     },
     description: {
         type: String,
-        required: true
+        required: true,
     },
     wikidata: {
         type: String,
-        index: { unique: true, sparse: true }
+        index: { unique: true, sparse: true },
     },
     claims: [
         {
             type: mongoose.Schema.ObjectId,
-            ref: "Claim"
-        }
-    ]
+            ref: "Claim",
+        },
+    ],
 });
 
 module.exports = mongoose.model("Personality", personalitySchema);

@@ -14,8 +14,8 @@ const transporter = nodemailer.createTransport({
         type: "OAuth2",
         user: FROM_EMAIL,
         serviceClient: key.client_id,
-        privateKey: key.private_key
-    }
+        privateKey: key.private_key,
+    },
 });
 
 const sendEmail = async (to, subject, html) => {
@@ -26,7 +26,7 @@ const sendEmail = async (to, subject, html) => {
             to,
             subject,
             text: getEmailtText(),
-            html
+            html,
         });
     } catch (e) {
         console.error(e);
@@ -36,13 +36,13 @@ const sendEmail = async (to, subject, html) => {
 
 const getEmailBody = (email, password, templatePath = "./email.html") => {
     const html = fs.readFileSync(path.resolve(__dirname, templatePath), {
-        encoding: "utf-8"
+        encoding: "utf-8",
     });
     const template = handlebars.compile(html);
     return template({
         email,
         password,
-        baseUrl: process.env.WEB_URL
+        baseUrl: process.env.WEB_URL,
     });
 };
 
@@ -57,5 +57,5 @@ const getEmailSubject = () => {
 module.exports = {
     sendEmail,
     getEmailBody,
-    getEmailSubject
+    getEmailSubject,
 };

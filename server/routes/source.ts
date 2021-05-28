@@ -17,8 +17,8 @@ router.post("/", ensureLoggedIn, (req, res, next) => {
 
     source
         .create(req.body)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message, app.logger));
         });
 });
@@ -30,10 +30,10 @@ router.get("/:id", (req, res, next) => {
     const source = new SourceController(app);
     source
         .getSourceId(req.params.id)
-        .then(result => {
+        .then((result) => {
             res.send(result);
         })
-        .catch(error => {
+        .catch((error) => {
             next(Requester.internalError(res, error.message, app.logger));
         });
 });
@@ -45,8 +45,8 @@ router.put("/:id", ensureLoggedIn, (req, res, next) => {
     const source = new SourceController(app);
     source
         .update(req.params.id, req.body)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message, app.logger));
         });
 });
@@ -58,17 +58,17 @@ router.delete("/:id", ensureLoggedIn, (req, res, next) => {
     const source = new SourceController(app);
     source
         .delete(req.params.id)
-        .then(result => res.send(result))
-        .catch(error => {
+        .then((result) => res.send(result))
+        .catch((error) => {
             next(Requester.internalError(res, error.message, app.logger));
         });
 });
 
-module.exports = function(appObj) {
+module.exports = function (appObj) {
     app = appObj;
     return {
         path: "/source",
         api_version: 1,
-        router
+        router,
     };
 };

@@ -16,7 +16,7 @@ export default class ClaimReviewRepository {
         this.logger = logger;
         this.optionsToUpdate = {
             new: true,
-            upsert: true
+            upsert: true,
         };
     }
 
@@ -30,7 +30,7 @@ export default class ClaimReviewRepository {
             const source = new Source({
                 link: claimReview.source,
                 targetId: newClaimReview.id,
-                targetModel: "ClaimReview"
+                targetModel: "ClaimReview",
             });
             await source.save();
             newClaimReview.sources = [source];
@@ -44,7 +44,7 @@ export default class ClaimReviewRepository {
                 { _id: claimReview.claim },
                 { $push: { claimReviews: review } },
                 { new: true },
-                e => {
+                (e) => {
                     if (e) {
                         throw e;
                     }
@@ -62,10 +62,10 @@ export default class ClaimReviewRepository {
     _topClassificationAccumulator() {
         return {
             $accumulator: {
-                init: function() {
+                init: function () {
                     return {};
                 },
-                accumulate: function(state, classification) {
+                accumulate: function (state, classification) {
                     if (!state[classification]) {
                         state[classification] = 1;
                     } else {
@@ -75,10 +75,10 @@ export default class ClaimReviewRepository {
                     return state;
                 },
                 accumulateArgs: ["$classification"],
-                merge: function(state1, state2) {
+                merge: function (state1, state2) {
                     return { ...state1, ...state2 };
                 },
-                finalize: function(state) {
+                finalize: function (state) {
                     // Find the classification with bigger count
                     const topClassification = Object.keys(state).reduce(
                         (acc, classification) => {
@@ -95,11 +95,11 @@ export default class ClaimReviewRepository {
                     // TODO: what can we do about ties?
                     return {
                         classification: topClassification,
-                        count: state[topClassification]
+                        count: state[topClassification],
                     };
                 },
-                lang: "js"
-            }
+                lang: "js",
+            },
         };
     }
 
@@ -109,9 +109,9 @@ export default class ClaimReviewRepository {
             {
                 $group: {
                     _id: "$sentence_hash",
-                    topClassification: this._topClassificationAccumulator()
-                }
-            }
+                    topClassification: this._topClassificationAccumulator(),
+                },
+            },
         ]).option({ serializeFunctions: true });
     }
 
@@ -123,9 +123,9 @@ export default class ClaimReviewRepository {
                     _id: 1,
                     sources: 1,
                     classification: 1,
-                    user: 1
-                }
-            }
+                    user: 1,
+                },
+            },
         ]);
     }
 
@@ -149,7 +149,7 @@ export default class ClaimReviewRepository {
         const reviews = await ClaimReview.aggregate([
             { $match: { sentence_hash: sentenceHash } },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
-            { $sort: { count: -1 } }
+            { $sort: { count: -1 } },
         ]);
         return util.formatStats(reviews);
     }
@@ -158,7 +158,7 @@ export default class ClaimReviewRepository {
         const reviews = await ClaimReview.aggregate([
             { $match: { claim: claimId } },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
-            { $sort: { count: -1 } }
+            { $sort: { count: -1 } },
         ]);
         return util.formatStats(reviews);
     }
@@ -194,7 +194,7 @@ export default class ClaimReviewRepository {
                 sources: 1,
                 _id: 1,
                 classification: 1,
-                user: 1
+                user: 1,
             }
         );
     }
