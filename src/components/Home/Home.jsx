@@ -6,6 +6,7 @@ import statsApi from "../../api/stats";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { withTranslation } from "react-i18next";
 import SocialMediaShare from "../SocialMediaShare";
+import { ArrowRightOutlined } from "@ant-design/icons"
 
 class Home extends Component {
     constructor(props) {
@@ -190,8 +191,13 @@ class Home extends Component {
                                 padding: "10px"
                             }}
                         >
-                            <Button href="/personality">
+                            <Button href="/personality" style={{
+                                border: "2px solid #2D77A3",
+                                boxSizing: "borderBox",
+                                borderRadius: "30px",
+                            }}>
                                 {t("home:seeMorePersonalitiesButton")}
+                                <ArrowRightOutlined />
                             </Button>
                         </Row>
                     </Row>
