@@ -75,3 +75,8 @@ spec:
                 configMapKeyRef:
                   key: mongodb_name
                   name: aletheia-config
+          resources:
+            limits:
+              cpu: 25m
+            requests:
+              cpu: 10m
