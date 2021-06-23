@@ -11,8 +11,6 @@ export class WikidataController {
         @Query() query,
         @Response() res
     ): Promise<any> {
-        console.log("params", params);
-        console.log("query", query);
         this.wikidataService
             .fetchProperties({ ...params, ...query })
             .then((props) => {
