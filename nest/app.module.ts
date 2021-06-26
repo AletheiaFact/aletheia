@@ -3,6 +3,10 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
 import { WikidataModule } from "./wikidata/wikidata.module";
+import { PersonalityModule } from "./personality/personality.module";
+import { ClaimModule } from "./claim/claim.module";
+import { ClaimReviewModule } from "./claim-review/claim-review.module";
+import { SourceModule } from "./source/source.module";
 
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
 const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
@@ -18,6 +22,10 @@ const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
         UsersModule,
         AuthModule,
         WikidataModule,
+        PersonalityModule,
+        ClaimModule,
+        ClaimReviewModule,
+        SourceModule,
     ],
 })
 export class AppModule {}
