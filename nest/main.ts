@@ -12,8 +12,7 @@ const initApp = async (options) => {
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS",
         allowedHeaders: ["accept", "x-requested-with", "content-type"],
     };
-    // TODO: interface app with service-runner metrics interface
-    const app = await NestFactory.create(AppModule, {
+    const app = await NestFactory.create(AppModule.register(options), {
         logger: new Logger(options.logger) || undefined,
         cors: corsOptions,
     });
