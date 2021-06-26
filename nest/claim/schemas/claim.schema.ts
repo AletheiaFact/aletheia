@@ -4,6 +4,8 @@ import { Personality } from "../../personality/schemas/personality.schema";
 import { ClaimReview } from "../../claim-review/schemas/claim-review.schema";
 import { Source } from "../../source/schemas/source.schema";
 
+export type ClaimDocument = Claim & mongoose.Document;
+
 @Schema()
 export class Claim {
     @Prop({ required: true })

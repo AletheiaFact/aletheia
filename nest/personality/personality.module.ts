@@ -17,6 +17,7 @@ const PersonalityModel = MongooseModule.forFeature([
 
 @Module({
     imports: [PersonalityModel, WikidataModule, ClaimReviewModule],
+    exports: [PersonalityService],
     providers: [UtilService, PersonalityService, Logger],
     controllers: [PersonalityController],
 })

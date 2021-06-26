@@ -20,4 +20,8 @@ export class ClaimReviewService {
             { $sort: { count: -1 } },
         ]);
     }
+
+    count(query: any = {}) {
+        return this.ClaimReviewModel.countDocuments().where(query);
+    }
 }

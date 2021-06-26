@@ -7,6 +7,8 @@ import { PersonalityModule } from "./personality/personality.module";
 import { ClaimModule } from "./claim/claim.module";
 import { ClaimReviewModule } from "./claim-review/claim-review.module";
 import { SourceModule } from "./source/source.module";
+import { StatsController } from "./stats/stats.controller";
+import { StatsModule } from "./stats/stats.module";
 
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
 const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
@@ -26,6 +28,7 @@ const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
         ClaimModule,
         ClaimReviewModule,
         SourceModule,
+        StatsModule,
     ],
 })
 export class AppModule {}

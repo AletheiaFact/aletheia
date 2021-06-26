@@ -131,7 +131,7 @@ export class PersonalityService {
         return this.PersonalityModel.findByIdAndRemove(personalityId);
     }
 
-    count(query) {
+    count(query: any = {}) {
         return this.PersonalityModel.countDocuments().where(query);
     }
 
