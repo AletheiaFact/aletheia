@@ -24,6 +24,7 @@ const WikidataCacheModel = MongooseModule.forFeatureAsync([
 
 @Module({
     imports: [WikidataCacheModel],
+    exports: [WikidataService],
     providers: [WikidataService],
     controllers: [WikidataController],
 })

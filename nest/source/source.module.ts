@@ -2,10 +2,10 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Source, SourceSchema } from "./schemas/source.schema";
 
-const SourceModel = MongooseModule.forFeatureAsync([
+const SourceModel = MongooseModule.forFeature([
     {
         name: Source.name,
-        useFactory: () => SourceSchema,
+        schema: SourceSchema,
     },
 ]);
 

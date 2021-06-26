@@ -1,15 +1,18 @@
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
 import { ClaimReview, ClaimReviewSchema } from "./schemas/claim-review.schema";
+import { ClaimReviewService } from "./claim-review.service";
+import { MongooseModule } from "@nestjs/mongoose";
 
-const ClaimReviewModel = MongooseModule.forFeatureAsync([
+export const ClaimReviewModel = MongooseModule.forFeature([
     {
         name: ClaimReview.name,
-        useFactory: () => ClaimReviewSchema,
+        schema: ClaimReviewSchema,
     },
 ]);
 
 @Module({
     imports: [ClaimReviewModel],
+    providers: [ClaimReviewService],
+    exports: [ClaimReviewService],
 })
 export class ClaimReviewModule {}
