@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from "./users/users.module";
+import { AuthModule } from "./auth/auth.module";
+import { WikidataModule } from "./wikidata/wikidata.module";
 
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
 const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
@@ -14,6 +16,8 @@ const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
             useFindAndModify: false,
         }),
         UsersModule,
+        AuthModule,
+        WikidataModule,
     ],
 })
 export class AppModule {}

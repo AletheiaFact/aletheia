@@ -1,8 +1,11 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import Logger from "./logger";
+import * as passport from "passport";
+import * as session from "express-session";
+const cookieParser = require("cookie-parser");
 
-module.exports = async (options) => {
+const initApp = async (options) => {
     const corsOptions = {
         origin: options?.config?.cors || "*",
         credentials: true,
@@ -11,9 +14,21 @@ module.exports = async (options) => {
     };
     // TODO: interface app with service-runner metrics interface
     const app = await NestFactory.create(AppModule, {
-        logger: new Logger(options.logger),
+        logger: new Logger(options.logger) || undefined,
         cors: corsOptions,
     });
+
+    app.use(cookieParser());
+    app.use(
+        session({
+            secret: "replace_me",
+            resave: false,
+            saveUninitialized: false,
+        })
+    );
+    app.use(passport.initialize());
+    app.use(passport.session());
+
     app.setGlobalPrefix("api");
     await app.listen(options.config.port);
     options.logger.log(
@@ -24,3 +39,5 @@ module.exports = async (options) => {
     );
     return app;
 };
+
+module.exports = initApp;

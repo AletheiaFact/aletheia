@@ -15,7 +15,7 @@ export default class Logger implements LoggerService {
     }
 
     error(message: any, trace?: string, context?: string): any {
-        this.logger.log("error", message);
+        this.logger.log("error", message + trace);
     }
 
     verbose(message: any, context?: string): any {
