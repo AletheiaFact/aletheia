@@ -16,7 +16,7 @@ let app;
  * Instructs robots no indexing should occur on this domain.
  */
 router.get("/robots.txt", (req, res) => {
-    res.type("text/plain").end("User-agent: *\nDisallow: /\n");
+    res.type("text/plain").end("User-agent: *\nDisallow: /api\n");
 });
 
 /**

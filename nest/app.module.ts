@@ -9,6 +9,7 @@ import { ClaimReviewModule } from "./claim-review/claim-review.module";
 import { SourceModule } from "./source/source.module";
 import { StatsController } from "./stats/stats.controller";
 import { StatsModule } from "./stats/stats.module";
+import { RootController } from "./root/root.controller";
 
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
 const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
@@ -30,5 +31,6 @@ const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
         SourceModule,
         StatsModule,
     ],
+    controllers: [RootController],
 })
 export class AppModule {}
