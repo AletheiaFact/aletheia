@@ -7,9 +7,9 @@ import { PersonalityModule } from "./personality/personality.module";
 import { ClaimModule } from "./claim/claim.module";
 import { ClaimReviewModule } from "./claim-review/claim-review.module";
 import { SourceModule } from "./source/source.module";
-import { StatsController } from "./stats/stats.controller";
 import { StatsModule } from "./stats/stats.module";
 import { RootController } from "./root/root.controller";
+import { ConfigModule } from "@nestjs/config";
 
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
 const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
@@ -18,7 +18,6 @@ const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
 export class AppModule {
     static register(options): DynamicModule {
         // TODO: interface app with service-runner metrics interface
-        // TODO: interface service-runner config with ConfigService
         return {
             module: AppModule,
             imports: [
@@ -31,6 +30,9 @@ export class AppModule {
                         useFindAndModify: false,
                     }
                 ),
+                ConfigModule.forRoot({
+                    load: [() => options.config || {}],
+                }),
                 UsersModule,
                 AuthModule,
                 WikidataModule,
