@@ -144,4 +144,12 @@ export class PersonalityService {
             return { ...claim, content: claim.content.text };
         });
     }
+
+    findOneAndUpdate(query, push) {
+        return this.PersonalityModel.findOneAndUpdate(
+            { ...query },
+            { $push: { ...push } },
+            { new: true }
+        );
+    }
 }
