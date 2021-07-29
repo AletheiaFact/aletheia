@@ -6,12 +6,14 @@ import {
 } from "./schemas/claim-review.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UtilService } from "../util";
+import { SourceService } from "../source/source.service";
 
 @Injectable()
 export class ClaimReviewService {
     constructor(
         @InjectModel(ClaimReview.name)
         private ClaimReviewModel: Model<ClaimReviewDocument>,
+        private sourceService: SourceService,
         private util: UtilService
     ) {}
 
@@ -87,6 +89,7 @@ export class ClaimReviewService {
             .limit(pageSize)
             .sort({ _id: order });
     }
+
     _reviewsBySentenceHashAggregated(sentenceHash) {
         return this.ClaimReviewModel.aggregate([
             { $match: { sentence_hash: sentenceHash } },
@@ -143,5 +146,55 @@ export class ClaimReviewService {
                 lang: "js",
             },
         };
+    }
+
+    async create(claimReview) {
+        const newClaimReview = new this.ClaimReviewModel(claimReview);
+        if (claimReview.source) {
+            const source = this.sourceService.create({
+                link: claimReview.source,
+                targetId: newClaimReview.id,
+                targetModel: "ClaimReview",
+            });
+            newClaimReview.sources = [source];
+        }
+
+        return newClaimReview.save((err, review) => {
+            if (err) {
+                throw err;
+            }
+            // TODO: nestjs can't handle circular dependency
+            // this.claimService.findOneAndUpdate(
+            //     { _id: claimReview.claim },
+            //     { claimReviews: review }
+            // );
+        });
+    }
+
+    getById(claimReviewId) {
+        return this.ClaimReviewModel.findById(claimReviewId)
+            .populate("claims", "_id title")
+            .populate("sources", "_id link classification");
+    }
+
+    // async update(claimReviewId, claimReviewBody) {
+    //     // eslint-disable-next-line no-useless-catch
+    //     try {
+    //         const claimReview = await this.getById(claimReviewId);
+    //         const newClaimReview = Object.assign(claimReview, claimReviewBody);
+    //         const claimReviewUpdate = await ClaimReview.findByIdAndUpdate(
+    //             claimReviewId,
+    //             newClaimReview,
+    //             this.optionsToUpdate
+    //         );
+    //         return claimReviewUpdate;
+    //     } catch (error) {
+    //         // TODO: log to service-runner
+    //         throw error;
+    //     }
+    // }
+
+    delete(claimReviewId) {
+        return this.ClaimReviewModel.findByIdAndRemove(claimReviewId);
     }
 }

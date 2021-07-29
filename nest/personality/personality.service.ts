@@ -149,7 +149,12 @@ export class PersonalityService {
         return this.PersonalityModel.findOneAndUpdate(
             { ...query },
             { $push: { ...push } },
-            { new: true }
+            { new: true },
+            (e) => {
+                if (e) {
+                    throw e;
+                }
+            }
         );
     }
 }
