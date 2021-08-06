@@ -4,7 +4,7 @@ import qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 
-@Controller("claim-review")
+@Controller("api/claimreview")
 export class ClaimReviewController {
     constructor(
         private claimReviewService: ClaimReviewService,

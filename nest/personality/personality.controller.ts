@@ -13,7 +13,7 @@ import {
 import { PersonalityService } from "./personality.service";
 import { SessionGuard } from "../auth/session.guard";
 
-@Controller("personality")
+@Controller("api/personality")
 export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(private personalityService: PersonalityService) {}

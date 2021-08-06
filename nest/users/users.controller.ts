@@ -10,7 +10,7 @@ import { UsersService } from "./users.service";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
 import { SessionGuard } from "../auth/session.guard";
 
-@Controller("user")
+@Controller("api/user")
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 

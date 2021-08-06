@@ -28,7 +28,7 @@ const initApp = async (options) => {
     app.use(passport.initialize());
     app.use(passport.session());
 
-    app.setGlobalPrefix("api");
+    // app.setGlobalPrefix("api");
     await app.listen(options.config.port);
     options.logger.log(
         "info",

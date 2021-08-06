@@ -17,7 +17,7 @@ import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import { SessionGuard } from "../auth/session.guard";
 
-@Controller("claim")
+@Controller("api/claim")
 export class ClaimController {
     constructor(
         private claimReviewService: ClaimReviewService,

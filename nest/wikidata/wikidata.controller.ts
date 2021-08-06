@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query, Response } from "@nestjs/common";
 import { WikidataService } from "./wikidata.service";
 
-@Controller("wikidata")
+@Controller("api/wikidata")
 export class WikidataController {
     constructor(private readonly wikidataService: WikidataService) {}
 
