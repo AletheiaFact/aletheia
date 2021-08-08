@@ -9,10 +9,11 @@ export class ViewService implements OnModuleInit {
     constructor() {}
 
     async onModuleInit(): Promise<void> {
+        console.log(process.env.ENVIRONMENT);
         try {
             this.server = await createServer({
-                dev: true,
-                dir: "./next/src",
+                dev: process.env.ENVIRONMENT !== "production",
+                dir: "./next",
             });
             await this.server.prepare();
         } catch (error) {
