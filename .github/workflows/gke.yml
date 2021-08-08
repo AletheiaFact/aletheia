@@ -40,7 +40,7 @@ jobs:
           sed -i "s/ENVIRONMENT/$ENVIRONMENT/g" deployment.yml
 
       # Setup gcloud CLI
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@master
         with:
           version: "270.0.0"
           service_account_email: ${{ secrets.GKE_EMAIL }}
@@ -48,7 +48,7 @@ jobs:
 
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: gcloud auth configure-docker
-        
+
       # Setting up recaptcha based on environment
       - name: Set ReCaptcha
         env:
