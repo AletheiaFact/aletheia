@@ -1,0 +1,129 @@
+:root {
+    --grayish-blue: hsl(237, 18%, 59%);
+    --soft-red: hsl(345, 95%, 68%);
+    --blue500: hsl(236, 21%, 26%);
+    --blue600: hsl(235, 16%, 14%);
+    --blue700: hsl(234, 17%, 12%);
+    --white: hsl(0, 0%, 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 10px;
+}
+
+body {
+    font-family: "Red Hat Text", sans-serif;
+}
+
+.container {
+    background-image: linear-gradient(to bottom, var(--blue700), var(--blue500));
+    min-height: 100vh;
+}
+
+.counter-wrapper {
+    height: 80vh;
+
+    & .counter {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+
+    & .header {
+        color: var(--white);
+        text-align: center;
+        font-size: 2.6rem;
+        letter-spacing: 3px;
+        font-weight: 500;
+        word-spacing: 4px;
+        margin-bottom: 8rem;
+        text-transform: uppercase;
+    }
+
+    & .count {
+        color: var(--white);
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+
+        & .sec {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+
+            & h2 {
+                color: var(--soft-red);
+                font-size: 8rem;
+                background: var(--blue500);
+                padding: 2rem 3rem;
+                border-radius: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            & p {
+                font-size: 1.4rem;
+                text-transform: uppercase;
+                letter-spacing: 5px;
+            }
+        }
+    }
+}
+
+.social-icons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    min-height: 20vh;
+    color: var(--white);
+
+    & .icons {
+        display: flex;
+        margin: 0 auto;
+
+        & .icon {
+            list-style: none;
+            margin: 1rem;
+
+            & .icon-link {
+                text-decoration: none;
+                color: var(--grayish-blue);
+                transition: color 300ms ease;
+
+                & i {
+                    font-size: 2.4rem;
+                }
+
+                &:hover {
+                    color: var(--soft-red);
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    html {
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 600px) {
+    html {
+        font-size: 6px;
+    }
+}
+
+@media (max-width: 450px) {
+    html {
+        font-size: 4px;
+    }
+}

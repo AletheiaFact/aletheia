@@ -3,7 +3,7 @@ import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "../claim/claim.service";
 import { PersonalityService } from "../personality/personality.service";
 
-@Controller("stats")
+@Controller("api/stats")
 export class StatsController {
     constructor(
         private claimReviewService: ClaimReviewService,
