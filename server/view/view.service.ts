@@ -13,7 +13,7 @@ export class ViewService implements OnModuleInit {
         try {
             this.server = await createServer({
                 dev: process.env.ENVIRONMENT !== "production",
-                dir: "./next",
+                dir: "./",
             });
             await this.server.prepare();
         } catch (error) {
