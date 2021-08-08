@@ -1,20 +1,21 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "esModuleInterop": true,
+        "declaration": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
         "skipLibCheck": true,
-        "target": "es6",
-        "noImplicitAny": false,
-        "moduleResolution": "node",
+        "target": "es2017",
         "sourceMap": true,
-        "outDir": "dist/server",
-        "rootDir": "server",
-        "allowJs": true,
-        "baseUrl": ".",
-        "paths": {
-            "*": ["node_modules/*", "server/types/*"]
-        }
+        "outDir": "./dist/nest",
+        "rootDir": "nest",
+        "baseUrl": "./",
+        "incremental": true
     },
-    "include": ["server/**/*"]
+    "include": ["nest/**/*"],
+    "exclude": [
+        "node_modules"
+    ]
 }
