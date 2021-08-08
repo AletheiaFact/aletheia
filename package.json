@@ -134,7 +134,7 @@
         "@nestjs/cli": "^7.6.0",
         "@nestjs/schematics": "^7.3.1",
         "@nestjs/testing": "^7.6.17",
-        "@next/eslint-plugin-next": "^11.0.1",
+        "@next/eslint-plugin-next": "^11.0.2-canary.4",
         "@types/body-parser": "^1.19.0",
         "@types/chai": "^4.2.11",
         "@types/concurrently": "^5.2.0",
