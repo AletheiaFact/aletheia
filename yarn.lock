@@ -1658,6 +1658,11 @@
   resolved "https://registry.yarnpkg.com/@next/env/-/env-11.0.2-canary.27.tgz#c8c5af0d0301568e9a746c31759ceb8447b678fb"
   integrity sha512-4ZF70pJtQ5w968lwPkz+hgSJaTtoDd/AGeN5b+TFNB90fF6Siw8rf4oZalji2AInwIMZGH4URXE3sBslaQ/Fqw==
 
+"@next/eslint-plugin-next@^11.0.1":
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@next/eslint-plugin-next/-/eslint-plugin-next-11.0.1.tgz#5dd3264a40fadcf28eba00d914d69103422bb7e6"
+  integrity sha512-UzdX3y6XSrj9YuASUb/p4sRvfjP2klj2YgIOfMwrWoLTTPJQMh00hREB9Ftr7m7RIxjVSAaaLXIRLdxvq948GA==
+
 "@next/polyfill-module@11.0.2-canary.27":
   version "11.0.2-canary.27"
   resolved "https://registry.yarnpkg.com/@next/polyfill-module/-/polyfill-module-11.0.2-canary.27.tgz#e8c10738813b7e9ee4cf0e7f839c015b83551e32"

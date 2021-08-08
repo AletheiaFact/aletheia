@@ -1,4 +1,4 @@
-extends: ["wikimedia/server", "plugin:prettier/recommended", "react-app"]
+extends: ["wikimedia/server", "plugin:prettier/recommended", "react-app", "plugin:@next/next/recommended"]
 rules:
     {
         "array-bracket-spacing": 0,
