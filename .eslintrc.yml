@@ -1,4 +1,4 @@
-extends: ["plugin:prettier/recommended", "react-app", "plugin:@next/next/recommended"]
+extends: ["react-app", "plugin:@next/next/recommended"]
 rules:
     {
         "array-bracket-spacing": 0,
