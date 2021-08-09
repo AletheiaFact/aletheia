@@ -16,6 +16,7 @@ COPY ./scripts /app/scripts
 COPY ./tsconfig.json /app/tsconfig.json
 COPY ./server /app/server
 COPY ./src /app/src
+COPY ./public /app/public
 
 WORKDIR /app
 
