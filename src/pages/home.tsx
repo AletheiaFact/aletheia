@@ -52,7 +52,7 @@ const Home: NextPage<{ data: string }> = (props) => {
                         A contagem regressiva começou, estamos chegando!
                     </h2>
                     <Countdown
-                        date={new Date(2021, 10, 1)}
+                        date="2021-10-01T12:00:00"
                         renderer={CountdownRenderer}
                     />
                 </div>
