@@ -24,19 +24,19 @@ const claimSchema = new mongoose.Schema({
         required: true,
     },
     personality: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         ref: "Personality",
         required: true,
     },
     claimReviews: [
         {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "ClaimReview",
         },
     ],
     sources: [
         {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "Source",
         },
     ],

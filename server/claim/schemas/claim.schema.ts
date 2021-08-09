@@ -29,16 +29,16 @@ export class Claim {
     date: Date;
 
     @Prop({
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
         ref: "Personality",
     })
     personality: Personality;
 
-    @Prop({ type: mongoose.Schema.ObjectId, ref: "ClaimReview" })
+    @Prop({ type: mongoose.Types.ObjectId, ref: "ClaimReview" })
     claimReviews: ClaimReview;
 
-    @Prop({ type: mongoose.Schema.ObjectId, ref: "Source" })
+    @Prop({ type: mongoose.Types.ObjectId, ref: "Source" })
     sources: Source[];
 }
 

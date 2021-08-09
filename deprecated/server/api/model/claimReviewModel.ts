@@ -24,12 +24,12 @@ const claimReviewSchema = new mongoose.Schema({
         message: (tag) => `${tag} is not a valid classification.`,
     },
     claim: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         ref: "Claim",
         required: true,
     },
     personality: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         ref: "Personality",
         required: true,
     },
@@ -43,12 +43,12 @@ const claimReviewSchema = new mongoose.Schema({
     },
     sources: [
         {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "Source",
         },
     ],
     user: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         ref: "User",
         required: true,
     },

@@ -16,7 +16,7 @@ const personalitySchema = new Schema({
     },
     claims: [
         {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "Claim",
         },
     ],

@@ -156,6 +156,7 @@ export class ClaimReviewService {
                 targetId: newClaimReview.id,
                 targetModel: "ClaimReview",
             });
+            // @ts-ignore
             newClaimReview.sources = [source];
         }
 

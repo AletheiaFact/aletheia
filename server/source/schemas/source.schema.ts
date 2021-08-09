@@ -30,11 +30,11 @@ export class Source {
      * Use Dynamic ref https://mongoosejs.com/docs/populate.html#dynamic-ref
      */
     @Prop({
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
         refPath: "onModel",
     })
-    targetId: mongoose.Schema.ObjectId;
+    targetId: mongoose.Types.ObjectId;
 
     @Prop({
         required: true,
@@ -43,7 +43,7 @@ export class Source {
     targetModel: string;
 
     @Prop({
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
         ref: "User",
     })

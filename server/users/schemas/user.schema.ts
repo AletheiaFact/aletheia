@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 
-export type UserDocument = User & Document;
+export interface UserDocument extends User, Document {
+    authenticate(): any;
+}
 
 @Schema()
 export class User {

@@ -129,6 +129,7 @@ export class ClaimController {
             this.claimReviewService.countReviewsBySentenceHash(sentenceHash),
         ]).then(([reviews, totalReviews]) => {
             totalReviews = totalReviews[0]?.count;
+            // @ts-ignore
             const totalPages = Math.ceil(totalReviews / parseInt(pageSize, 10));
 
             // this.logger.log(

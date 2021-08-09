@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import * as md5 from "md5";
+import md5 from "md5";
 import * as dom from "domino";
 
 // TODO: regex for future rules

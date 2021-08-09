@@ -25,7 +25,7 @@ const sourceSchema = new mongoose.Schema({
         type: String,
     },
     targetId: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
         refPath: "onModel",
     },

@@ -10,6 +10,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     constructor(
         @InjectModel(User.name) private userModel: Model<UserDocument>
     ) {
+        // @ts-ignore
         super({ usernameField: "email" }, userModel.authenticate());
     }
 }

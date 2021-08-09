@@ -33,14 +33,14 @@ export class ClaimReview {
     classification: string;
 
     @Prop({
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
         ref: "Claim",
     })
     claim: Claim;
 
     @Prop({
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
         ref: "Personality",
     })
@@ -53,13 +53,13 @@ export class ClaimReview {
     sentence_content: string;
 
     @Prop({
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         ref: "Source",
     })
     sources: Source[];
 
     @Prop({
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
         ref: "User",
     })
