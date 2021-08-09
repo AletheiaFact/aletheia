@@ -6,7 +6,7 @@ import styled from "styled-components";
 import colors from "../styles/colors";
 import CountdownRenderer from "../components/CountdownRenderer";
 import Image from "next/image";
-import Logo from "../../public/images/logo1_white.svg";
+import Logo from "../public/images/logo1_white.svg";
 
 const Home: NextPage<{ data: string }> = (props) => {
     return (
