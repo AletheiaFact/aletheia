@@ -16,7 +16,7 @@
         "seed": "node ./deprecated/server/infra/database/seeds/generateSeeds.js",
         "seedUser:test": "SEED_TEST_ENVIRONMENT=true ts-node ./deprecated/server/infra/database/seeds/users/seedUsers.js",
         "seedUser": "ts-node ./deprecated/server/infra/database/seeds/users/seedUsers.js",
-        "build": "yarn build-ts && yarn build-nest && next build && yarn copy-static-assets",
+        "build": "yarn copy-static-assets && yarn build-ts && yarn build-nest && next build",
         "build-deprecated": "parcel build ./src/index.html --out-dir dist/assets --no-minify --public-url '/assets' && yarn build-ts && yarn build-nest && yarn copy-static-assets",
         "build-ts": "tsc",
         "build-nest": "nest build -p ./server/tsconfig.json",
