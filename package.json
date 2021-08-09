@@ -9,7 +9,7 @@
         "start": "yarn serve",
         "serve": "service-runner",
         "dev:server": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
-        "dev:nest": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-nest-ts\" \"yarn watch-nest\"",
+        "dev:nest": "ENVIRONMENT=watch-dev yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-nest-ts\" \"yarn watch-nest\"",
         "dev:front": "parcel ./src/index.html --out-dir dist/client",
         "test": "PREQ_CONNECT_TIMEOUT=15 mocha -r ts-node/register tests/**/*.ts",
         "coverage": "PREQ_CONNECT_TIMEOUT=15 nyc --reporter=lcov _mocha -r ts-node/register tests/**/*.ts",

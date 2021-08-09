@@ -4547,7 +4547,7 @@ kad-memstore@0.0.1:
   dependencies:
     readable-stream "^2.0.5"
 
-"kad@github:wikimedia/kad#master":
+kad@wikimedia/kad#master:
   version "1.3.6"
   resolved "https://codeload.github.com/wikimedia/kad/tar.gz/634a3fc7f60898ec541406d60ccf0d48556070e2"
   dependencies:
