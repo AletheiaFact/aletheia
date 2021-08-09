@@ -17,7 +17,7 @@ logging:
 services:
   - name: service-aletheia
     # path relative to the __dirname variable
-    module: dist/server/app.js
+    module: dist/server/main.js
     conf:
       port: 3000
       cors: '*'
