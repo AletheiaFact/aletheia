@@ -10,6 +10,7 @@ COPY config.$ENVIRONMENT.yaml /app/config.yaml
 COPY ./.eslintignore /app/.eslintignore
 COPY ./.eslintrc.yml /app/.eslintrc.yml
 COPY ./jest.config.js /app/jest.config.js
+COPY ./next.config.js /app/next.config.js
 COPY ./package.json /app/package.json
 COPY ./yarn.lock /app/yarn.lock
 COPY ./scripts /app/scripts
