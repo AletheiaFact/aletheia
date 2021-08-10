@@ -61,7 +61,7 @@ const Home: NextPage<{ data: string }> = (props) => {
                 style={{
                     display: "flex",
                     justifyContent: "space-evenly",
-                    padding: "35px 25% 0 25%",
+                    padding: "35px 25% 20px 25%",
                 }}
             >
                 <SocialIcon network="facebook" bgColor={colors.lightBlue} />
