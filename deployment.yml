@@ -15,6 +15,13 @@ spec:
             backend:
               serviceName: aletheia
               servicePort: aletheia
+    - host: www.aletheiafact.org
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: aletheia
+              servicePort: aletheia
 ---
 ### SERVICE  FRONTEND ###
 apiVersion: v1
