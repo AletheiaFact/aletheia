@@ -23,6 +23,15 @@ export class ViewController {
             .render(req, res, "/home", Object.assign(parsedUrl.query));
     }
 
+    @Get("newhome")
+    public async showHome(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        console.log("lalalaosl")
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/newhome", Object.assign(parsedUrl.query));
+    }
+
     @Get("_next*")
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);

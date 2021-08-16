@@ -1,0 +1,10 @@
+{
+    "profile_button": "See profile",
+    "errorFetch": "Error while fetching Personality",
+    "add_button": "Add",
+    "affixButtonTitle": "Click here to add a claim",
+    "wikipediaPage": "View Wikipedia Page",
+    "headerReviewsTotal": "{{totalReviews}} claim reviews",
+    "headerClaimsTotal": "{{totalClaims}} speeches added",
+    "toggleSectionSpeeches": "Speeches"
+}

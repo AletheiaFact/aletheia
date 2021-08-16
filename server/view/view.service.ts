@@ -9,6 +9,7 @@ export class ViewService implements OnModuleInit {
     constructor() {}
 
     async onModuleInit(): Promise<void> {
+        console.log(process.env.ENVIRONMENT);
         try {
             this.server = await createServer({
                 dev: process.env.ENVIRONMENT === "watch-dev",

@@ -1,0 +1,15 @@
+{
+    "errorMessage": "Error while saving personality",
+    "successMessage": "profile created with success",
+    "successUpdate": "updated successfully",
+    "errorNameRequired": "Please insert a name",
+    "errorDescriptionRequired": "Please insert a description",
+    "errorFetch": "Error while fetching personality",
+    "errorUpdate": "Error while updating personality",
+    "description": "Description",
+    "name": "Name",
+    "wikidata": "Wikidata ID",
+    "saveButton": "Save personality",
+    "updateButton": "Update personality",
+    "clearButton": "Clear fields"
+}
