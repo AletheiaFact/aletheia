@@ -51,7 +51,6 @@ const Home: NextPage<{ data: string }> = (props) => {
                     >
                         A contagem regressiva começou, estamos chegando!
                     </h2>
-                    <SubscriptionForm />
                     <Countdown
                         date="2021-10-01T12:00:00"
                         renderer={CountdownRenderer}
