@@ -1,0 +1,10 @@
+.claim-sentence {
+    color: #111111;
+    font-size: 18px;
+    line-height: 27px;
+}
+
+.claim-sentence:hover {
+    color: #111111;
+    text-decoration: underline;
+}

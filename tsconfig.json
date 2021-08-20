@@ -1,19 +1,37 @@
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true,
-      "target": "es6",
-      "noImplicitAny": false,
-      "moduleResolution": "node",
-      "sourceMap": true,
-      "outDir": "dist/server",
-      "rootDir": "server",
-      "allowJs": true,
-      "baseUrl": ".",
-      "paths": {
-        "*": ["node_modules/*", "server/types/*"]
-      }
-    },
-    "include": ["server/**/*"]
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist/server",
+    "rootDir": "server",
+    "baseUrl": "./",
+    "incremental": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  "include": [
+    "server/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

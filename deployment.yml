@@ -8,7 +8,14 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: dev.aletheia.opentesseract.org
+    - host: test.aletheiafact.org
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: aletheia
+              servicePort: aletheia
+    - host: www.aletheiafact.org
       http:
         paths:
           - path: /
@@ -32,13 +39,16 @@ spec:
       port: 80
 ---
 ### DEPLOYMENT FRONTEND ###
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: aletheia
   namespace: ENVIRONMENT
 spec:
   replicas: 2
+  selector:
+    matchLabels:
+      app: aletheia
   template:
     metadata:
       labels:
@@ -52,13 +62,13 @@ spec:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 30
+            initialDelaySeconds: 480
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 60
+            initialDelaySeconds: 600
             timeoutSeconds: 10
             failureThreshold: 10
           env:
@@ -72,3 +82,8 @@ spec:
                 configMapKeyRef:
                   key: mongodb_name
                   name: aletheia-config
+          resources:
+            limits:
+              cpu: 25m
+            requests:
+              cpu: 10m

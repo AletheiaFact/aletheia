@@ -31,16 +31,18 @@ jobs:
       - name: Check Environment
         if: endsWith(github.ref, '/master')
         run: |
-          sed -i '11{s/dev.//}' deployment.yml
-          echo "::set-env name=ENVIRONMENT::production"
-          echo "::set-env name=API_URL::${{ secrets.API_URL_PRODUCTION }}"
+          sed -i '11{s/test.//}' deployment.yml
+          echo "ENVIRONMENT=production" >> $GITHUB_ENV
+          echo "API_URL=${{ secrets.API_URL_PRODUCTION }}" >> $GITHUB_ENV
 
       - name: Set environment
         run: |
+          echo "${{ env.ENVIRONMENT }}"
+          echo "${{ env.API_URL }}"
           sed -i "s/ENVIRONMENT/$ENVIRONMENT/g" deployment.yml
 
       # Setup gcloud CLI
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@master
         with:
           version: "270.0.0"
           service_account_email: ${{ secrets.GKE_EMAIL }}
@@ -48,7 +50,7 @@ jobs:
 
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: gcloud auth configure-docker
-        
+
       # Setting up recaptcha based on environment
       - name: Set ReCaptcha
         env:
