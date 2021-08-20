@@ -29,7 +29,7 @@ const CountdownDiv = styled.div`
     flex-direction: row;
     justify-content: center;
     gap: 2.5rem;
-    @media (max-width: 380px) {
+    @media (max-width: 768px) {
         .hide {
             display: none;
         }
@@ -40,6 +40,14 @@ const CountdownDiv = styled.div`
 
         h2 {
             font-size: 4rem;
+        }
+    }
+
+    @media (max-height: 670px) {
+
+        h2 {
+            font-size: 2rem;
+            padding: 1rem 1rem 0.5rem 1rem;
         }
     }
 `;

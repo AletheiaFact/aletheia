@@ -2,11 +2,11 @@ import React from "react";
 import { NextPage } from "next";
 import Countdown from "react-countdown";
 import { SocialIcon } from "react-social-icons";
-import styled from "styled-components";
 import colors from "../styles/colors";
 import CountdownRenderer from "../components/CountdownRenderer";
 import Image from "next/image";
 import Logo from "../../public/images/logo1_white.svg";
+import SubscriptionForm from "../components/SubscriptionForm";
 
 const Home: NextPage<{ data: string }> = (props) => {
     return (
@@ -32,7 +32,7 @@ const Home: NextPage<{ data: string }> = (props) => {
                         style={{
                             position: "relative",
                             width: "100%",
-                            height: "30vh",
+                            height: "20vh",
                         }}
                     >
                         <Image src={Logo} layout="fill" />
@@ -57,15 +57,16 @@ const Home: NextPage<{ data: string }> = (props) => {
                     />
                 </div>
             </div>
+
             <div
                 style={{
                     display: "flex",
                     justifyContent: "space-evenly",
-                    padding: "35px 25% 0 25%",
+                    padding: "35px 25% 20px 25%",
                 }}
             >
-                <SocialIcon network="facebook" bgColor={colors.lightBlue} />
-                <SocialIcon network="instagram" bgColor={colors.lightBlue} />
+                <SocialIcon url="https://www.facebook.com/AletheiaFactorg-107521791638412" bgColor={colors.lightBlue} />
+                <SocialIcon url="https://www.instagram.com/aletheiafact" bgColor={colors.lightBlue} />
             </div>
         </main>
     );
