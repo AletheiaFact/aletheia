@@ -2,9 +2,23 @@ import {Col, Row} from "antd";
 import {MenuOutlined, SearchOutlined} from "@ant-design/icons";
 import React from "react";
 import styled from "styled-components";
-import {connect} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
-const HeaderContent = ({className, dispatch, menuCollapsed}) => {
+const mapStateToProps = () => {
+    return useSelector(
+        (state) => {
+            return {
+                menuCollapsed: state?.menuCollapsed !== undefined ? state?.menuCollapsed : true,
+            }
+        }
+    );
+};
+
+const HeaderContent = ({ className }) => {
+    const dispatch = useDispatch();
+    const router = useRouter();
+    const { menuCollapsed } = mapStateToProps();
     return <Row
         className={ className }
         style={{
@@ -35,7 +49,7 @@ const HeaderContent = ({className, dispatch, menuCollapsed}) => {
             </a>
         </Col>
         <Col span={20}>
-            <a onClick={() => {}/*this.props.history.push("/")*/}>
+            <a onClick={() => router.push("/")}>
                 <p
                     className="aletheia-logo"
                     style={{
@@ -54,9 +68,7 @@ const HeaderContent = ({className, dispatch, menuCollapsed}) => {
         <Col span={2}>
             <a
                 onClick={() => {
-                    // const pathname = this.props.history.location
-                    //     .pathname;
-                    const pathname = "";
+                    const pathname = router.pathname;
                     dispatch({
                         type: "ENABLE_SEARCH_OVERLAY",
                         overlay: {
@@ -78,20 +90,10 @@ const HeaderContent = ({className, dispatch, menuCollapsed}) => {
     </Row>
 };
 
-const mapStateToProps = state => {
-    return {
-        page: state?.search?.searchCurPage || 1,
-        pageSize: state?.search?.searchPageSize || 10,
-        searchName: state?.search?.searchInput || null,
-        menuCollapsed:
-            state?.menuCollapsed !== undefined ? state?.menuCollapsed : true
-    };
-};
-
-export default connect(mapStateToProps)(styled(HeaderContent)`
+export default styled(HeaderContent)`
     @media (min-width: 768px) {
         .aletheia-header {
             padding: 0 30%;
         }
     }
-`);
+`;
