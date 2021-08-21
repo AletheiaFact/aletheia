@@ -7,7 +7,7 @@ const Newhome: NextPage<{ data: any }> = (props) => {
         <Home {...props} />
     )
 }
-export async function getServerSideProps({ query, locale }) {
+export async function getServerSideProps({ query, locale, req }) {
     locale = locale || "en";
     return {
         props: {
@@ -16,6 +16,7 @@ export async function getServerSideProps({ query, locale }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personalities: JSON.parse(JSON.stringify(query.personalities)),
             stats: JSON.parse(JSON.stringify(query.stats)),
+            href: req.protocol + '://' + req.get('host') + req.originalUrl
         },
     };
 }

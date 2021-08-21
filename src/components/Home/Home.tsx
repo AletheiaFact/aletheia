@@ -5,7 +5,7 @@ import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from 'next-i18next';
 
-const Home = ({ personalities, stats }) => {
+const Home = ({ personalities, stats, href }) => {
     const { t } = useTranslation();
 
     const contentStyle = {
@@ -175,7 +175,7 @@ const Home = ({ personalities, stats }) => {
                 >
                     <CTARegistration></CTARegistration>
                 </Row>
-                <SocialMediaShare />
+                <SocialMediaShare href={href} />
             </>
         );
     } else {
