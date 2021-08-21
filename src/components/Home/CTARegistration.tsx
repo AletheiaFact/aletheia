@@ -1,9 +1,9 @@
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import React from "react";
 import { Button, Typography } from "antd";
 
-const { Title } = Typography;
-function CTARegistration(props) {
+function CTARegistration() {
+    const { t } = useTranslation();
     return (
         <div
             style={{
@@ -12,9 +12,9 @@ function CTARegistration(props) {
                 padding: "30px"
             }}
         >
-            <Title level={3} style={{ color: "#fff" }}>
-                {props.t("CTARegistration:title")}
-            </Title>
+            <Typography.Title level={3} style={{ color: "#fff" }}>
+                {t("CTARegistration:title")}
+            </Typography.Title>
             <div
                 style={{
                     color: "#fff",
@@ -24,7 +24,7 @@ function CTARegistration(props) {
                     marginBottom: "10px"
                 }}
             >
-                {props.t("CTARegistration:body")}
+                {t("CTARegistration:body")}
             </div>
             <div
                 style={{
@@ -35,13 +35,13 @@ function CTARegistration(props) {
                     marginBottom: "17px"
                 }}
             >
-                {props.t("CTARegistration:footer")}
+                {t("CTARegistration:footer")}
             </div>
             <Button
                 shape="round"
                 type="default"
                 target="_blank"
-                href={props.t("common:registrationLink")}
+                href={t("common:registrationLink")}
                 style={{
                     color: "#2D77A3",
                     borderColor: "#FFF",
@@ -52,11 +52,11 @@ function CTARegistration(props) {
                         fontSize: "14px"
                     }}
                 >
-                    {props.t("CTARegistration:button")}
+                    {t("CTARegistration:button")}
                 </b>
             </Button>
         </div>
     );
 }
 
-export default withTranslation()(CTARegistration);
+export default CTARegistration;
