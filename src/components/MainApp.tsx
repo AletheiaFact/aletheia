@@ -4,7 +4,7 @@ import Header from "./Header/Header";
 import BackButton from "./BackButton";
 import SearchOverlay from "./SearchOverlay";
 import React from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "next-i18next";
 import styled from "styled-components"
 import { useRouter } from 'next/router'
@@ -31,8 +31,9 @@ const ContentStyled = styled(Content)`
     }
 `;
 
-const MainApp = ({children, props}) => {
+const MainApp = ({children}) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch()
     const router = useRouter();
     const { enableOverlay, menuCollapsed, isLoggedIn } = mapStateToProps();
     // TODO: when we are ready to flip the switch and publish the app, remove this check
@@ -45,7 +46,7 @@ const MainApp = ({children, props}) => {
             <Sidebar
                 menuCollapsed={menuCollapsed}
                 onToggleSidebar={() => {
-                    props.dispatch({
+                    dispatch({
                         type: "TOGGLE_MENU",
                         menuCollapsed: !menuCollapsed,
                     });

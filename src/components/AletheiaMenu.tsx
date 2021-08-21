@@ -1,16 +1,32 @@
 import React from "react";
 import { Menu } from "antd";
 import { useTranslation } from 'next-i18next';
-import { connect } from "react-redux";
+import {connect, useDispatch, useSelector} from "react-redux";
+import {useRouter} from "next/router";
 
-const AletheiaMenu = ({ dispatch, menuCollapsed }) => {
-    const { t } = useTranslation("common");
+const mapStateToProps = () => {
+    return useSelector(
+        (state) => {
+            return {
+                menuCollapsed:
+                    state?.menuCollapsed !== undefined ? state?.menuCollapsed : true
+            };
+        }
+    );
+};
+
+const AletheiaMenu = () => {
+    const { t } = useTranslation();
+    const { menuCollapsed } = mapStateToProps();
+    const dispatch = useDispatch();
+    const router = useRouter();
+
     const handleClick = (menuItem) => {
         dispatch({
             type: "TOGGLE_MENU",
             menuCollapsed: !menuCollapsed
         });
-        // this.props.history.push(menuItem.key);
+        router.push(menuItem.key);
     }
 
     return (
@@ -30,16 +46,10 @@ const AletheiaMenu = ({ dispatch, menuCollapsed }) => {
                     fontSize: "18px"
                 }}
             >
-                {t("myAccountItem")}
+                {t("menu:myAccountItem")}
             </Menu.Item>
         </Menu>
     );
 }
 
-const mapStateToProps = state => {
-    return {
-        menuCollapsed:
-            state?.menuCollapsed !== undefined ? state?.menuCollapsed : true
-    };
-};
-export default connect(mapStateToProps)(AletheiaMenu);
+export default AletheiaMenu;
