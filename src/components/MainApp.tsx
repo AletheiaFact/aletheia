@@ -7,6 +7,7 @@ import React from "react";
 import {useSelector} from "react-redux";
 import {useTranslation} from "next-i18next";
 import styled from "styled-components"
+import { useRouter } from 'next/router'
 
 const { Footer, Content } = Layout;
 
@@ -32,6 +33,7 @@ const ContentStyled = styled(Content)`
 
 const MainApp = ({children, props}) => {
     const { t } = useTranslation();
+    const router = useRouter();
     const { enableOverlay, menuCollapsed, isLoggedIn } = mapStateToProps();
     return <Layout style={{ minHeight: "100vh" }}>
         {/* Note that the path doesn't include "public" */}
@@ -48,7 +50,7 @@ const MainApp = ({children, props}) => {
             <Header />
             <ContentStyled>
                 <Row style={{ padding: "0 30px", marginTop: "10px" }}>
-                    <BackButton />
+                    {router.pathname !== "/newhome" && <BackButton/>}
                 </Row>
                 {children}
             </ContentStyled>
