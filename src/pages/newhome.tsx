@@ -4,17 +4,18 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const Newhome: NextPage<{ data: any }> = (props) => {
     return (
-        <Home />
+        <Home {...props} />
     )
 }
-
-export async function getStaticProps({ locale }) {
-    const i18n = await serverSideTranslations(locale || "en", ['common'])
-    console.log(i18n._nextI18Next.initialI18nStore);
+export async function getServerSideProps({ query, locale }) {
+    locale = locale || "en";
     return {
         props: {
-            ...(await serverSideTranslations(locale || "en", ['home', 'footer', 'menu'])),
-            // Will be passed to the page component as props
+            ...(await serverSideTranslations(locale)),
+            // Nextjs have problems with client re-hydration for some serialized objects
+            // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
+            personalities: JSON.parse(JSON.stringify(query.personalities)),
+            stats: JSON.parse(JSON.stringify(query.stats)),
         },
     };
 }

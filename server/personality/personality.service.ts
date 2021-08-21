@@ -157,4 +157,48 @@ export class PersonalityService {
             }
         );
     }
+
+    verifyInputsQuery(query) {
+        const queryInputs = {};
+        if (query.name) {
+            // @ts-ignore
+            queryInputs.name = { $regex: query.name, $options: "i" };
+        }
+        return queryInputs;
+    }
+
+    combinedListAll(query) {
+        const { page = 0, pageSize = 10, order = "asc" } = query;
+        const queryInputs = this.verifyInputsQuery(query);
+
+        return Promise.all([
+            this.listAll(
+                page,
+                parseInt(pageSize, 10),
+                order,
+                queryInputs,
+                query.language,
+                query.withSuggestions
+            ),
+            this.count(queryInputs),
+        ])
+            .then(([personalities, totalPersonalities]) => {
+                const totalPages = Math.ceil(
+                    totalPersonalities / parseInt(pageSize, 10)
+                );
+
+                this.logger.log(
+                    `Found ${totalPersonalities} personalities. Page ${page} of ${totalPages}`
+                );
+
+                return {
+                    personalities,
+                    totalPersonalities,
+                    totalPages,
+                    page,
+                    pageSize,
+                };
+            })
+            .catch((error) => this.logger.error(error));
+    }
 }
