@@ -4,8 +4,9 @@ import { useTranslation } from 'next-i18next';
 import {connect, useDispatch, useSelector} from "react-redux";
 import {useRouter} from "next/router";
 
-const mapStateToProps = () => {
-    return useSelector(
+const AletheiaMenu = () => {
+    const { t } = useTranslation();
+    const { menuCollapsed } = useSelector(
         (state) => {
             return {
                 menuCollapsed:
@@ -13,11 +14,6 @@ const mapStateToProps = () => {
             };
         }
     );
-};
-
-const AletheiaMenu = () => {
-    const { t } = useTranslation();
-    const { menuCollapsed } = mapStateToProps();
     const dispatch = useDispatch();
     const router = useRouter();
 

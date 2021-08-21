@@ -5,20 +5,16 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 
-const mapStateToProps = () => {
-    return useSelector(
+const HeaderContent = ({ className }) => {
+    const dispatch = useDispatch();
+    const router = useRouter();
+    const { menuCollapsed } = useSelector(
         (state) => {
             return {
                 menuCollapsed: state?.menuCollapsed !== undefined ? state?.menuCollapsed : true,
             }
         }
     );
-};
-
-const HeaderContent = ({ className }) => {
-    const dispatch = useDispatch();
-    const router = useRouter();
-    const { menuCollapsed } = mapStateToProps();
     return <Row
         className={ className }
         style={{

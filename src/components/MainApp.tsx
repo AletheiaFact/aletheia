@@ -11,18 +11,6 @@ import { useRouter } from 'next/router'
 
 const { Footer, Content } = Layout;
 
-const mapStateToProps = () => {
-    return useSelector(
-        (state) => {
-            return {
-                isLoggedIn: state?.login || false,
-                enableOverlay: state?.search?.overlay,
-                menuCollapsed: state?.menuCollapsed !== undefined ? state?.menuCollapsed : true,
-            }
-        }
-    );
-};
-
 const ContentStyled = styled(Content)`
     padding: 0 15px;
 
@@ -35,7 +23,15 @@ const MainApp = ({children}) => {
     const { t } = useTranslation();
     const dispatch = useDispatch()
     const router = useRouter();
-    const { enableOverlay, menuCollapsed, isLoggedIn } = mapStateToProps();
+    const { enableOverlay, menuCollapsed, isLoggedIn } = useSelector(
+        (state) => {
+            return {
+                isLoggedIn: state?.login || false,
+                enableOverlay: state?.search?.overlay,
+                menuCollapsed: state?.menuCollapsed !== undefined ? state?.menuCollapsed : true,
+            }
+        }
+    );
     // TODO: when we are ready to flip the switch and publish the app, remove this check
     if (router.pathname === "/home") {
         return <>

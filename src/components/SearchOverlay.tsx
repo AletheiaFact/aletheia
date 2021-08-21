@@ -8,19 +8,6 @@ import api from "../api/personality";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 
-const mapStateToProps = () => {
-    return useSelector(
-        (state) => {
-            return {
-                personalities: state?.search?.searchResults || [],
-                page: state?.search?.searchCurPage || 1,
-                pageSize: state?.search?.searchPageSize || 10,
-                searchName: state?.search?.searchInput || null
-            };
-        }
-    );
-};
-
 const OverlayDiv = styled.div`
     width: 100%;
     height: 100%;
@@ -46,7 +33,16 @@ const OverlayDiv = styled.div`
 `;
 
 const SearchOverlay = ({ overlay }) => {
-    const { personalities, page, pageSize, searchName } = mapStateToProps();
+    const { personalities, page, pageSize, searchName } = useSelector(
+        (state) => {
+            return {
+                personalities: state?.search?.searchResults || [],
+                page: state?.search?.searchCurPage || 1,
+                pageSize: state?.search?.searchPageSize || 10,
+                searchName: state?.search?.searchInput || null
+            };
+        }
+    );;
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const router = useRouter();
