@@ -56,7 +56,7 @@ const MainApp = ({children}) => {
                 <Header />
                 <ContentStyled>
                     <Row style={{ padding: "0 30px", marginTop: "10px" }}>
-                        {router.pathname !== "/newhome" && <BackButton/>}
+                        <BackButton />
                     </Row>
                     {children}
                 </ContentStyled>
