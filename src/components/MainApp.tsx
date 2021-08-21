@@ -35,31 +35,37 @@ const MainApp = ({children, props}) => {
     const { t } = useTranslation();
     const router = useRouter();
     const { enableOverlay, menuCollapsed, isLoggedIn } = mapStateToProps();
-    return <Layout style={{ minHeight: "100vh" }}>
-        {/* Note that the path doesn't include "public" */}
-        <Sidebar
-            menuCollapsed={menuCollapsed}
-            onToggleSidebar={() => {
-                props.dispatch({
-                    type: "TOGGLE_MENU",
-                    menuCollapsed: !menuCollapsed,
-                });
-            }}
-        />
-        <Layout>
-            <Header />
-            <ContentStyled>
-                <Row style={{ padding: "0 30px", marginTop: "10px" }}>
-                    {router.pathname !== "/newhome" && <BackButton/>}
-                </Row>
-                {children}
-            </ContentStyled>
-            <Footer style={{ textAlign: "center" }}>
-                {t("footer:copyright")}
-            </Footer>
-            {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
+    // TODO: when we are ready to flip the switch and publish the app, remove this check
+    if (router.pathname === "/home") {
+        return <>
+            {children}
+        </>
+    } else {
+        return <Layout style={{ minHeight: "100vh" }}>
+            <Sidebar
+                menuCollapsed={menuCollapsed}
+                onToggleSidebar={() => {
+                    props.dispatch({
+                        type: "TOGGLE_MENU",
+                        menuCollapsed: !menuCollapsed,
+                    });
+                }}
+            />
+            <Layout>
+                <Header />
+                <ContentStyled>
+                    <Row style={{ padding: "0 30px", marginTop: "10px" }}>
+                        {router.pathname !== "/newhome" && <BackButton/>}
+                    </Row>
+                    {children}
+                </ContentStyled>
+                <Footer style={{ textAlign: "center" }}>
+                    {t("footer:copyright")}
+                </Footer>
+                {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
+            </Layout>
         </Layout>
-    </Layout>
-}
+    }
+};
 
 export default MainApp;
