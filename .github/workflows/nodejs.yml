@@ -5,9 +5,9 @@ name: Aletheia CI
 
 on:
   push:
-    branches: [ stage ]
+    branches: [ stage, develop ]
   pull_request:
-    branches: [ stage ]
+    branches: [ stage, develop ]
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x]
+        node-version: [12.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -27,6 +27,6 @@ jobs:
     - run: yarn install
     - run: yarn build
     - run: yarn lint
-    - run: yarn test
-      env:
-        CI: true
+#    - run: yarn test
+#      env:
+#        CI: true

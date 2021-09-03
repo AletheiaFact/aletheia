@@ -1,0 +1,12 @@
+{
+    "formHeader": "Login to your account",
+    "emailLabel": "E-mail",
+    "passwordLabel": "Password",
+    "submitButton": "Submit",
+    "emailErrorMessage": "Please, insert your e-mail",
+    "passwordErrorMessage": "Please, insert your password",
+    "loginFailedMessage": "Error while logging in",
+    "loginSuccessfulMessage": "Login successful",
+    "failed": "Unauthorized",
+    "signup": "Sign-up"
+}

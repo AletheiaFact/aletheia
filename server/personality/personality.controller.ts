@@ -20,38 +20,7 @@ export class PersonalityController {
 
     @Get()
     async listAll(@Query() query) {
-        const { page = 0, pageSize = 10, order = "asc" } = query;
-        const queryInputs = await this.verifyInputsQuery(query);
-
-        return Promise.all([
-            this.personalityService.listAll(
-                page,
-                parseInt(pageSize, 10),
-                order,
-                queryInputs,
-                query.language,
-                query.withSuggestions
-            ),
-            this.personalityService.count(queryInputs),
-        ])
-            .then(([personalities, totalPersonalities]) => {
-                const totalPages = Math.ceil(
-                    totalPersonalities / parseInt(pageSize, 10)
-                );
-
-                this.logger.log(
-                    `Found ${totalPersonalities} personalities. Page ${page} of ${totalPages}`
-                );
-
-                return {
-                    personalities,
-                    totalPersonalities,
-                    totalPages,
-                    page,
-                    pageSize,
-                };
-            })
-            .catch((error) => this.logger.error(error));
+        return this.personalityService.combinedListAll(query);
     }
 
     @UseGuards(SessionGuard)
@@ -106,14 +75,5 @@ export class PersonalityController {
             .catch((err) => {
                 this.logger.error(err);
             });
-    }
-
-    verifyInputsQuery(query) {
-        const queryInputs = {};
-        if (query.name) {
-            // @ts-ignore
-            queryInputs.name = { $regex: query.name, $options: "i" };
-        }
-        return queryInputs;
     }
 }
