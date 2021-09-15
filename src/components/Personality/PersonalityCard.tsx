@@ -8,10 +8,10 @@ const { Title, Paragraph } = Typography;
 
 const PersonalityCard = ({
     personality,
-    summarized,
-    hrefBase,
-    suggestion,
-    onClick
+    summarized = false,
+    hrefBase = '',
+    suggestion = 'default',
+    onClick = () => {}
 }) => {
     const { t } = useTranslation();
     const style = {

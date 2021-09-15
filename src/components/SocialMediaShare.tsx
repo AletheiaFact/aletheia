@@ -12,7 +12,7 @@ import {
     } from "react-share";
 import { useTranslation } from "next-i18next";
 
-const SocialMediaShare = ({ quote, href }) => {
+const SocialMediaShare = ({ quote = null, href = '' }) => {
     const { t } = useTranslation();
     quote = quote || t("share:quote");
     return (
