@@ -7,6 +7,7 @@ const PersonalityPage: NextPage<{ personality: any, href: any }> = ({ personalit
         <PersonalityView personality={personality} href={href} />
     )
 }
+
 export async function getServerSideProps({ query, locale, req }) {
     locale = locale || "en";
     return {

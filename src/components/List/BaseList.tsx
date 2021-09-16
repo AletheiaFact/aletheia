@@ -18,29 +18,21 @@ const BaseList = ({
     const [ totalItems, setTotalItems ] = useState(0)
     const [ items, setItems ] = useState([])
     const [ query, setQuery ] = useState({
-        page: 0,
+        page: 1,
         pageSize: 10,
         fetchOnly: true,
         ...filter
     })
 
     useEffect(() => {
-        console.log('useeffect')
-        apiCall(query).then(items => {
+        apiCall(query).then(newItems => {
             setInitLoading(false)
             setLoading(false)
-            setTotalPages(items.totalPages)
-            setTotalItems(items.total)
-            setItems([...items, ...items.data])
+            setTotalPages(newItems.totalPages)
+            setTotalItems(newItems.total)
+            setItems(items => [...items, ...newItems.data])
         });
     }, [query, apiCall]);
-
-    // useEffect(() => {
-    //     setQuery({
-    //         ...query,
-    //         page: 1
-    //     })
-    // }, [])
 
     const loadMoreData = () => {
         setLoading(true);
@@ -127,7 +119,7 @@ const BaseList = ({
                 ></Spin>
             );
         } else {
-            return emptyFallback || null;
+            return emptyFallback;
         }
     }
 }

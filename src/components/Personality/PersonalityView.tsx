@@ -1,10 +1,7 @@
 import { useState }  from "react";
 import { useRouter } from "next/router";
-// import CTARegistration from "./CTARegistration";
 import {
-    // Button,
     Row,
-    // Carousel,
     Spin
 } from "antd";
 import PersonalityCard from "./PersonalityCard";
@@ -12,6 +9,7 @@ import SocialMediaShare from "../SocialMediaShare";
 import AffixButton from "../Form/AffixButton";
 import ToggleSection from "../ToggleSection"
 import ClaimList from "../Claim/ClaimList";
+import MetricsOverview from "../Metrics/MetricsOverview";
 import { useTranslation } from 'next-i18next';
 
 const PersonalityView = ({ personality, href }) => {
@@ -67,8 +65,7 @@ const PersonalityView = ({ personality, href }) => {
             {showSpeechesSection ? (
                 <ClaimList personality={personality}></ClaimList>
             ) : (
-                <h1>MetricsOverview</h1>
-                // <MetricsOverview stats={personality.stats} />
+                <MetricsOverview stats={personality.stats} />
             )}
             <SocialMediaShare quote={personality.name} />
         </>
