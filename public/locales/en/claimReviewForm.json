@@ -1,0 +1,21 @@
+{
+    "titleEmpty": "Choose a sentence to review",
+    "title": "Review the sentence",
+    "selectLabel": "Review this claim",
+    "sourceLabel": "Provide a link to a reliable source",
+    "sourcePlaceholder": "Paste URL",
+    "addReviewButton": "Add review",
+    "cancelButton": "Cancel",
+    "placeholder": "Choose a classification",
+    "not-fact": "Not fact",
+    "true": "True",
+    "true-but": "True, but",
+    "arguable": "Arguable",
+    "misleading": "Misleading",
+    "false": "False",
+    "unsustainable": "Unsustainable",
+    "exaggerated": "Exaggerated",
+    "unverifiable": "Unverifiable",
+    "errorMessage": "Error while sending review",
+    "successMessage": "Review succeeded"
+}
