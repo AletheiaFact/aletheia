@@ -3,7 +3,7 @@ import { message } from "antd";
 
 const request = axios.create({
     withCredentials: true,
-    baseURL: `api/claim`,
+    baseURL: `/api/claim`,
 });
 
 const get = (options = {}) => {
