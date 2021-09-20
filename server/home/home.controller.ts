@@ -31,26 +31,4 @@ export class HomeController {
                 Object.assign(parsedUrl.query, { personalities, stats })
             );
     }
-
-    @Get("personality/:id")
-    public async personalityPage(@Req() req: Request, @Res() res: Response) {
-        const parsedUrl = parse(req.url, true);
-        const language = "en";
-
-        console.log(req.params)
-
-        const personality = await this.personalityService.getById(
-            req.params.id,
-            language
-        );
-
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/personality-page",
-                Object.assign(parsedUrl.query, { personality })
-            );
-    }
 }
