@@ -67,7 +67,7 @@ const PersonalityView = ({ personality, href }) => {
             ) : (
                 <MetricsOverview stats={personality.stats} />
             )}
-            <SocialMediaShare quote={personality.name} />
+            <SocialMediaShare href={href} quote={personality.name} />
         </>
     );
 }
