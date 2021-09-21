@@ -16,6 +16,7 @@ import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import { SessionGuard } from "../auth/session.guard";
+import * as mongoose from "mongoose";
 
 @Controller("api/claim")
 export class ClaimController {
@@ -40,7 +41,7 @@ export class ClaimController {
         const queryInputs = {};
         if (query.personality) {
             // @ts-ignore
-            queryInputs.personality = query.personality;
+            queryInputs.personality = new mongoose.Types.ObjectId(query.personality);
         }
         return queryInputs;
     }

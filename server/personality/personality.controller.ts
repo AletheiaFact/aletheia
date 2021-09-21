@@ -12,9 +12,8 @@ import {
     Req,
     Res
 } from "@nestjs/common";
-import {parse} from "url";
-import {Request, Response} from "express";
-
+import { parse } from "url";
+import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { PersonalityService } from "./personality.service";
 import { SessionGuard } from "../auth/session.guard";
@@ -90,8 +89,6 @@ export class PersonalityController {
     public async personalityPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const language = "en";
-
-        console.log(req.params)
 
         const personality = await this.personalityService.getById(
             req.params.id,
