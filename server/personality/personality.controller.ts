@@ -104,4 +104,18 @@ export class PersonalityController {
                 Object.assign(parsedUrl.query, { personality })
             );
     }
+
+    @Get("personality")
+    public async personalityList(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/personality-list",
+                Object.assign(parsedUrl.query, {})
+            );
+    }
 }
