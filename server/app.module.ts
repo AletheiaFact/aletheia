@@ -11,6 +11,7 @@ import { StatsModule } from "./stats/stats.module";
 import { RootController } from "./root/root.controller";
 import { ConfigModule } from "@nestjs/config";
 import { ViewModule } from "./view/view.module";
+import { HomeModule } from "./home/home.module";
 
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
 const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
@@ -43,6 +44,7 @@ export class AppModule {
                 SourceModule,
                 StatsModule,
                 ViewModule,
+                HomeModule,
             ],
             controllers: [RootController],
         };
