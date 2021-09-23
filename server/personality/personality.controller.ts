@@ -118,6 +118,4 @@ export class PersonalityController {
                 Object.assign(parsedUrl.query, { personality })
             );
     }
-
-
 }
