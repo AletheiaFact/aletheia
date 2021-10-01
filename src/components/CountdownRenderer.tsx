@@ -29,6 +29,11 @@ const CountdownDiv = styled.div`
     flex-direction: row;
     justify-content: center;
     gap: 2.5rem;
+
+    h2 {
+        margin: 15px 0px;
+    }
+
     @media (max-width: 768px) {
         .hide {
             display: none;
