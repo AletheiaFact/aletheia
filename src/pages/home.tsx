@@ -44,22 +44,50 @@ const Home: NextPage<{ data: string }> = (props) => {
                         style={{
                             color: colors.lightBlue,
                             textAlign: "center",
-                            fontSize: "1.8rem",
+                            fontSize: "1.6rem",
                             letterSpacing: "3px",
                             fontWeight: 500,
                             wordSpacing: "4px",
                             textTransform: "uppercase",
                         }}
                     >
-                        A contagem regressiva começou, estamos chegando!
+                        Estamos quase lá!
                     </h2>
+                    <div
+                        style={{
+                            color: colors.lightBlue,
+                            textAlign: "center",
+                            fontSize: "1rem",
+                            letterSpacing: "3px",
+                            fontWeight: 500,
+                            padding: "0 20px"
+                        }}
+                    >
+                        <p>
+                            Aumentamos a contagem regressiva para que possamos entregar checagens ainda mais confiáveis para todos e todas.
+                        </p>
+                        <p>
+                            Muito em breve, estaremos no ar 🚀
+                        </p>
+                    </div>
                     <Countdown
-                        date="2021-10-01T12:00:00"
+                        date="2021-10-31T12:00:00"
                         renderer={CountdownRenderer}
                     />
                 </div>
             </div>
-
+            <div
+                style={{
+                    color: colors.lightBlue,
+                    textAlign: "center",
+                    fontSize: "1rem",
+                    letterSpacing: "3px",
+                    fontWeight: 500,
+                    padding: "5px 20px"
+                }}
+            >
+                Enquanto isso, acompanhe os nossos conteúdos nas redes sociais
+            </div>
             <div
                 style={{
                     display: "flex",
