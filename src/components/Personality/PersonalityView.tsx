@@ -43,7 +43,7 @@ const PersonalityView = ({ personality, href }) => {
 
     return (
         <>
-            <PersonalityCard personality={personality} />
+            <PersonalityCard personality={personality} header={true} />
             <br />
             <AffixButton
                 tooltipTitle={t("personality:affixButtonTitle")}

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { message } from "antd";
 
-const baseUrl = `api/personality`;
+const baseUrl = `/api/personality`;
 const getPersonalities = (options = {}, dispatch) => {
     const params = {
         page: options.page - 1,
