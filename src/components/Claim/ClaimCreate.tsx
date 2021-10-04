@@ -93,8 +93,11 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
         router.push(path);
     }
 
-    const onChange = (editorState) => {
-        setEditorState(editorState);
+    const onChange = (newEditorState) => {
+        setEditorState(newEditorState);
+    }
+
+    useEffect(() => {
         if (formRef.current) {
             formRef.current.setFieldsValue({
                 content: stateToHTML(
@@ -102,7 +105,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                 )
             });
         }
-    }
+    }, [editorState]);
 
     const onExpiredCaptcha = () => {
         return new Promise<void>(resolve => {

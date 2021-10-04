@@ -104,8 +104,7 @@ export class ClaimController {
             //     Requester.internalError(res, "Error with your reCaptcha response")
             // );
         }
-        const claim = await this.claimService.create(body);
-        return claim;
+        return await this.claimService.create(body);
     }
 
     @Get("api/claim/:id")
