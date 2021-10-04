@@ -1,4 +1,5 @@
 import {
+    Body,
     Controller,
     Delete,
     Get,
@@ -35,13 +36,15 @@ export class ClaimController {
 
     async _checkCaptchaResponse(secret, response) {
         const RECAPTCHA_API_URL = "https://www.google.com/recaptcha/api";
-        return this.httpService.post(
+        const { data } = await this.httpService.post(
             `${RECAPTCHA_API_URL}/siteverify`,
             qs.stringify({
                 secret,
                 response,
             })
-        );
+        ).toPromise();
+
+        return data;
     }
     _verifyInputsQuery(query) {
         const queryInputs = {};
@@ -84,12 +87,13 @@ export class ClaimController {
         // .catch((error) => this.logger.log("error", error));
     }
 
-    @UseGuards(SessionGuard)
+    // @UseGuards(SessionGuard)
     @Post("api/claim")
-    async create(@Req() req, @Res() res) {
+    async create(@Body() body) {
+        const secret = this.configService.get<string>("recaptcha_secret");
         const recaptchaCheck = await this._checkCaptchaResponse(
-            this.configService.get<string>("recaptcha_secret"),
-            req.body && req.body.recaptcha
+            secret,
+            body && body.recaptcha
         );
 
         // @ts-ignore
@@ -99,9 +103,8 @@ export class ClaimController {
             // next(
             //     Requester.internalError(res, "Error with your reCaptcha response")
             // );
-        } else {
-            return this.claimService.create(req.body);
         }
+        return await this.claimService.create(body);
     }
 
     @Get("api/claim/:id")
@@ -184,6 +187,29 @@ export class ClaimController {
                 ...sentenceObj,
             };
         });
+    }
+
+    @Get("personality/:id/claim/create/")
+    public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        const language = "en";
+
+        const personality = await this.personalityService.getById(
+            req.params.id,
+            language
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-create",
+                Object.assign(parsedUrl.query, {
+                    personality,
+                    sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                })
+            );
     }
 
     @Get("personality/:id/claim/:claimId/")

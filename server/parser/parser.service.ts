@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import md5 from "md5";
 import * as dom from "domino";
+const md5 = require("md5");
 
 // TODO: regex for future rules
 // const alphabets = /([A-Za-z])/g;
