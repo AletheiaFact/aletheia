@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Form, Row } from "antd";
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
@@ -12,7 +12,7 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
     const dispatch = useDispatch();
     const router = useRouter();
 
-    const { personalities, searchName } = useSelector(
+    const { personalities } = useSelector(
         (state) => {
             return {
                 personalities: state?.search?.searchResults || [],
@@ -33,7 +33,6 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
             type: "SET_SEARCH_NAME",
             searchName: name
         });
-        console.log(name);
         api.getPersonalities({ withSuggestions, personalities, searchName: name }, dispatch);
     }
 

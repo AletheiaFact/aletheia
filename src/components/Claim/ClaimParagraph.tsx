@@ -1,5 +1,5 @@
 import ClaimSentence from "./ClaimSentence";
-import React, { Component } from "react";
+import React from "react";
 
 const ClaimParagraph = ({ paragraph, showHighlights, onClaimReviewForm }) => {
     const sentences = paragraph.content;

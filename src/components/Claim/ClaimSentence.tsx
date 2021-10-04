@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import colors from "../../constants/highlightColors";
 import styled from "styled-components";
 

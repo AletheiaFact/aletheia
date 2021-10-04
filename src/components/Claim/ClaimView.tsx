@@ -17,12 +17,11 @@ const Claim = ({ personality, claim, href }) => {
     const router = useRouter();
     moment.locale(i18n.language);
 
-    const { content, title, stats, type } = claim;
+    const { content, title, stats } = claim;
 
     let { date } = claim;
     const body = content.object;
     date = moment(new Date(date));
-    const [ visible, setVisible ] = useState(false);
     const [ showHighlights, setShowHighlights ] = useState(true);
 
     useEffect(() => {
