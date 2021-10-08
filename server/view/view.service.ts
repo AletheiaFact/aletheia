@@ -1,15 +1,15 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import {Injectable, Logger, OnModuleInit} from "@nestjs/common";
 import createServer from "next";
 import { NextServer } from "next/dist/server/next";
 
 @Injectable()
 export class ViewService implements OnModuleInit {
     private server: NextServer;
+    private readonly logger = new Logger("ViewService");
 
     constructor() {}
 
     async onModuleInit(): Promise<void> {
-        console.log(process.env.ENVIRONMENT);
         try {
             this.server = await createServer({
                 dev: process.env.ENVIRONMENT === "watch-dev",
@@ -17,7 +17,7 @@ export class ViewService implements OnModuleInit {
             });
             await this.server.prepare();
         } catch (error) {
-            console.error(error);
+            this.logger.error("Failed to load NextServer", error);
         }
     }
 
