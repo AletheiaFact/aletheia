@@ -108,7 +108,6 @@ export class PersonalityController {
             req.params.slug,
             language
         );
-
         await this.viewService
             .getNextServer()
             .render(
