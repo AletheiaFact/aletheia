@@ -1,0 +1,12 @@
+{
+    "pageTitle": "My Account",
+    "changePasswordSectionTitle": "Change password",
+    "successMessage": "Password updated with success",
+    "userUnauthenticated": "User unauthenticated",
+    "warningMessage": "Welcome to Aletheia! For you security, please change your password at least once.",
+    "currentPasswordLabel": "Current password",
+    "newPasswordLabel": "New password",
+    "repeatedNewPasswordLabel": "Confirm new password",
+    "passwordMatchErrorMessage": "The two passwords that you entered do not match!",
+    "requiredFieldError": "Field is required"
+}

@@ -6,5 +6,6 @@ import { ViewService } from "./view.service";
     imports: [],
     providers: [ViewService],
     controllers: [ViewController],
+    exports: [ViewService]
 })
 export class ViewModule {}

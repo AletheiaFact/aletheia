@@ -1,11 +1,16 @@
 import React from "react";
 import Head from "next/head";
 import "../styles/app.css"
+import "antd/dist/antd.css";
+import { appWithTranslation } from 'next-i18next';
+import {Provider} from "react-redux";
+import { useStore } from "../store/store";
+import MainApp from "../components/MainApp";
 
 function MyApp({ Component, pageProps }) {
+    const store = useStore();
     return (
         <>
-            {/* Add the favicon */}
             <Head>
                 <title>AletheiaFact.org</title>
                 <meta
@@ -13,12 +18,13 @@ function MyApp({ Component, pageProps }) {
                     content="width=device-width, initial-scale=1.0"
                 />
             </Head>
-            {/* Add the favicon */}
-            {/* Note that the path doesn't include "public" */}
-
-            <Component {...pageProps} />
+            <Provider store={store}>
+                <MainApp>
+                    <Component {...pageProps} />
+                </MainApp>
+            </Provider>
         </>
     );
 }
 
-export default MyApp;
+export default appWithTranslation(MyApp);

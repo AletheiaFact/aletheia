@@ -1,0 +1,23 @@
+{
+    "titleField": "Title",
+    "titleFieldError": "Please insert a title",
+    "titleFieldPlaceholder": "Insert the title here",
+    "contentField": "Content",
+    "contentFieldPlaceholder": "Insert content here",
+    "contentFieldError": "Please insert the content",
+    "contentFieldHelp":
+    "Please do not edit or change any aspect of the original text and choose to add full speeches instead of out of context claims (Twitter and general social media posts are OK).",
+    "dateField": "Date",
+    "dateFieldPlaceholder": "Select date",
+    "dateFieldError": "Please, insert a date",
+    "dateFieldHelp":
+    "When was this speech released or told? Not the date you are adding it to Aletheia.",
+    "disclaimer":
+    "* The Add speech tool is only available for manually adding real speeches and claims made by said personality. Any attempt to dissiminate fake news through this platform is utterly forbidden and will result on user ban and possible lawsuit.",
+    "errorAcceptTerms": "You need to accept the terms to submit the form",
+    "checkboxAcceptTerms":
+    "I personally atest that all information added is truthful.",
+    "cancelButton": "Cancel",
+    "updateButton": "Update speech",
+    "saveButton": "Add speech"
+}
