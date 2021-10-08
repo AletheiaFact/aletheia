@@ -10,12 +10,11 @@ const ClaimReviewList = ({ claimId, sentenceHash }) => {
                 width: "100%"
             }}
             apiCall={claimApi.getClaimSentenceReviews}
-            query={{
+            filter={{
                 claimId,
                 sentenceHash
             }}
             renderItem={claimReview => {
-                console.log(claimReview);
                 return claimReview && (
                     <ClaimReviewCard
                         key={claimReview._id}
@@ -23,8 +22,7 @@ const ClaimReviewList = ({ claimId, sentenceHash }) => {
                         classification={claimReview.classification}
                     />
                 )
-            }
-            }
+            }}
         />
     );
 }
