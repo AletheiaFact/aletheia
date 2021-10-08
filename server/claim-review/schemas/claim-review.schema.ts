@@ -53,8 +53,10 @@ export class ClaimReview {
     sentence_content: string;
 
     @Prop({
-        type: mongoose.Types.ObjectId,
-        ref: "Source",
+        type: [{
+            type: mongoose.Types.ObjectId,
+            ref: "Source",
+        }]
     })
     sources: Source[];
 

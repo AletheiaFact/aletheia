@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import {forwardRef, Module} from "@nestjs/common";
 import { ClaimReview, ClaimReviewSchema } from "./schemas/claim-review.schema";
 import { ClaimReviewService } from "./claim-review.service";
 import { MongooseModule } from "@nestjs/mongoose";
@@ -7,6 +7,7 @@ import { UtilService } from "../util";
 import { SourceModule } from "../source/source.module";
 import { HttpModule } from "@nestjs/axios";
 import { ConfigModule } from "@nestjs/config";
+import {ClaimModule} from "../claim/claim.module";
 
 export const ClaimReviewModel = MongooseModule.forFeature([
     {

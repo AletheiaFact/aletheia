@@ -10,6 +10,7 @@ const PersonalityPage: NextPage<{ personality: any, href: any }> = ({ personalit
 
 export async function getServerSideProps({ query, locale, req }) {
     locale = locale || "en";
+    console.log(query.personality);
     return {
         props: {
             ...(await serverSideTranslations(locale)),

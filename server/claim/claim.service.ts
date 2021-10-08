@@ -24,11 +24,13 @@ export class ClaimService {
     }
 
     async listAll(page, pageSize, order, query) {
+        console.log("listAll", query);
         const claims = await this.ClaimModel.find(query)
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
+        console.log(claims);
         return Promise.all(
             claims.map((claim) => {
                 return this.postProcess(claim);
