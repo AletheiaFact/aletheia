@@ -160,16 +160,7 @@ export class ClaimReviewService {
             newClaimReview.sources = [source];
         }
 
-        return newClaimReview.save((err, review) => {
-            if (err) {
-                throw err;
-            }
-            // TODO: nestjs can't handle circular dependency
-            // this.claimService.findOneAndUpdate(
-            //     { _id: claimReview.claim },
-            //     { claimReviews: review }
-            // );
-        });
+        return newClaimReview.save();
     }
 
     getById(claimReviewId) {

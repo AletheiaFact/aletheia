@@ -63,9 +63,6 @@ export class PersonalityService {
     }
 
     async getById(personalityId, language = "en") {
-        console.log(await this.PersonalityModel.findById(
-            personalityId
-        ).populate("claims"))
         const personality = await this.PersonalityModel.findById(
             personalityId
         ).populate({

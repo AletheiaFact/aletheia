@@ -2,22 +2,14 @@ import React, { useState } from "react";
 import { Avatar, Comment } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ReviewColors from "../../constants/reviewColors";
-import userApi from "../../api/user";
 import {useTranslation} from "next-i18next";
 
-const ClaimReviewCard = ({ classification, userId = null }) => {
+const ClaimReviewCard = ({ classification, userName }) => {
     const { t } = useTranslation();
 
     const [ username, setUsername ] = useState("");
 
-    const anonymousName = t("claimReview:anonymousUserName");
-    // Get user data
-    if (!userId) {
-        setUsername(anonymousName);
-    } else {
-        // const user = await userApi.getById(userId);
-        // setUsername(user.name || anonymousName);
-    }
+    setUsername(userName || t("claimReview:anonymousUserName"));
 
     return (
         <Comment
