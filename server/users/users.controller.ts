@@ -9,8 +9,8 @@ import {
 import { UsersService } from "./users.service";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
 import { SessionGuard } from "../auth/session.guard";
-import {parse} from "url";
-import {ViewService} from "../view/view.service";
+import { parse } from "url";
+import { ViewService } from "../view/view.service";
 
 @Controller()
 export class UsersController {
@@ -36,7 +36,6 @@ export class UsersController {
     @Get("login")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        console.log("login");
 
         await this.viewService
             .getNextServer()

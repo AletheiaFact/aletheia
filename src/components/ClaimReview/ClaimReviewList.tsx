@@ -14,14 +14,16 @@ const ClaimReviewList = ({ claimId, sentenceHash }) => {
                 claimId,
                 sentenceHash
             }}
-            renderItem={claimReview =>
-                claimReview && (
+            renderItem={claimReview => {
+                console.log(claimReview);
+                return claimReview && (
                     <ClaimReviewCard
                         key={claimReview._id}
-                        userId={claimReview.user}
+                        userName={claimReview?.user?.name}
                         classification={claimReview.classification}
                     />
                 )
+            }
             }
         />
     );

@@ -17,7 +17,6 @@ import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import { SessionGuard } from "../auth/session.guard";
-import * as mongoose from "mongoose";
 import {Request, Response} from "express";
 import {parse} from "url";
 import {PersonalityService} from "../personality/personality.service";
@@ -60,7 +59,6 @@ export class ClaimController {
     listAll(@Query() query) {
         const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = this._verifyInputsQuery(query);
-        console.log(queryInputs);
         return Promise.all([
             this.claimService.listAll(
                 page,
@@ -199,8 +197,8 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
         const language = "en";
 
-
         const claim = await this.claimService.getById(req.params.claimId);
+        console.log(claim);
 
         const personality = await this.personalityService.getById(
             claim.personality._id,
