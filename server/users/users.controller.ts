@@ -2,10 +2,10 @@ import {
     Controller,
     Get,
     Post, Req,
-    Request, Res,
-    Response,
+    Res,
     UseGuards,
 } from "@nestjs/common";
+import {Request, Response} from "express";
 import { UsersService } from "./users.service";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
 import { SessionGuard } from "../auth/session.guard";
@@ -21,13 +21,13 @@ export class UsersController {
 
     @UseGuards(SessionGuard)
     @Get("api/user/validate")
-    async findAll(@Request() req): Promise<any> {
+    async findAll(@Req() req): Promise<any> {
         return { login: true, user: req.user };
     }
 
     @UseGuards(LocalAuthGuard)
     @Post("api/user/signin")
-    async login(@Request() req, @Response() res) {
+    async login(@Req() req, @Res() res) {
         return req.logIn(req.user, (err) => {
             return res.send({ login: true });
         });
