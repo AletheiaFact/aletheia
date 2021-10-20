@@ -49,7 +49,7 @@ export class ClaimController {
         const queryInputs = {};
         if (query.personality) {
             // @ts-ignore
-            queryInputs.personality = query.personality // new mongoose.Types.ObjectId(query.personality);
+            queryInputs.personality = query.personality;
         }
 
         return queryInputs;
