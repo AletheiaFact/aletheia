@@ -1,8 +1,9 @@
-import { Controller, Delete, Get, Param, Post, Req } from "@nestjs/common";
+import {Controller, Delete, Get, Param, Post, Req, UseGuards} from "@nestjs/common";
 import { ClaimReviewService } from "./claim-review.service";
-import qs from "querystring";
+import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
+import {SessionGuard} from "../auth/session.guard";
 
 @Controller("api/claimreview")
 export class ClaimReviewController {
@@ -14,19 +15,23 @@ export class ClaimReviewController {
 
     async _checkCaptchaResponse(secret, response) {
         const RECAPTCHA_API_URL = "https://www.google.com/recaptcha/api";
-        return this.httpService.post(
+        const { data } = await this.httpService.post(
             `${RECAPTCHA_API_URL}/siteverify`,
             qs.stringify({
                 secret,
                 response,
             })
-        );
+        ).toPromise();
+
+        return data;
     }
 
+    @UseGuards(SessionGuard)
     @Post()
     async create(@Req() req) {
+        const secret = this.configService.get<string>("recaptcha_secret");
         const recaptchaCheck = await this._checkCaptchaResponse(
-            this.configService.get<string>("recaptcha_secret"),
+            secret,
             req.body && req.body.recaptcha
         );
 
@@ -40,7 +45,7 @@ export class ClaimReviewController {
         } else {
             return this.claimReviewService.create({
                 ...req.body,
-                user: req.user._id,
+                user: req?.user?._id,
             });
         }
     }
@@ -50,6 +55,7 @@ export class ClaimReviewController {
         return this.claimReviewService.getById(params.id);
     }
 
+    @UseGuards(SessionGuard)
     @Delete(":id")
     delete(@Param() params) {
         return this.claimReviewService.delete(params.id);
