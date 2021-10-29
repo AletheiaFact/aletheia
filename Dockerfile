@@ -18,6 +18,7 @@ COPY ./tsconfig.json /app/tsconfig.json
 COPY ./server /app/server
 COPY ./src /app/src
 COPY ./public /app/public
+COPY ./next-i18next.config.js /app/next-i18next.config.js
 
 WORKDIR /app
 

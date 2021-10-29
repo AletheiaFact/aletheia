@@ -1,11 +1,14 @@
 import axios from "axios";
 import { message } from "antd";
 
-const baseUrl = `${process.env.API_URL}/user`;
+const request = axios.create({
+    withCredentials: true,
+    baseURL: `/api/user`,
+});
 
 const getById = (id, params = {}) => {
-    return axios
-        .get(`${baseUrl}/${id}`, {
+    return request
+        .get(`/${id}`, {
             params,
         })
         .then((response) => {
@@ -17,8 +20,8 @@ const getById = (id, params = {}) => {
 };
 
 const login = (params, t) => {
-    return axios
-        .post(`${baseUrl}/signin`, { ...params }, { withCredentials: true })
+    return request
+        .post(`/signin`, { ...params }, { withCredentials: true })
         .then((response) => {
             return { login: true, ...response };
         })
@@ -31,8 +34,8 @@ const login = (params, t) => {
 };
 
 const validateSession = (params, t) => {
-    return axios
-        .get(`${baseUrl}/validate`, { withCredentials: true })
+    return request
+        .get(`/validate`, { withCredentials: true })
         .then((response) => {
             return { login: true, ...response };
         })
@@ -45,9 +48,9 @@ const validateSession = (params, t) => {
 };
 
 const updatePassword = (params, t) => {
-    return axios
+    return request
         .put(
-            `${baseUrl}/${params.userId}/password`,
+            `/${params.userId}/password`,
             { ...params },
             { withCredentials: true }
         )

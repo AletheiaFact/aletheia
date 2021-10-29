@@ -48,10 +48,15 @@ const MainApp = ({children}) => {
                     });
                 }}
             />
-            <Layout>
+            <Layout style={{ background: "#FFF" }}>
                 <Header />
                 <ContentStyled>
-                    <Row style={{ padding: "0 30px", marginTop: "10px" }}>
+                    <Row style={{
+                        padding: "10px 30px",
+                        background: "#FFFFFF",
+                        boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
+                        margin: "0px -15px"
+                    }}>
                         <BackButton />
                     </Row>
                     {children}

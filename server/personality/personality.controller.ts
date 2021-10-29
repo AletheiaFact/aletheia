@@ -31,7 +31,7 @@ export class PersonalityController {
         return this.personalityService.combinedListAll(query);
     }
 
-    @UseGuards(SessionGuard)
+    // @UseGuards(SessionGuard)
     @Post("api/personality")
     async create(@Body() body) {
         try {
@@ -57,7 +57,7 @@ export class PersonalityController {
             });
     }
 
-    @UseGuards(SessionGuard)
+    // @UseGuards(SessionGuard)
     @Put("api/personality/:id")
     async update(@Param() params, @Body() body) {
         return this.personalityService.update(params.id, body).catch((err) => {
@@ -65,7 +65,7 @@ export class PersonalityController {
         });
     }
 
-    @UseGuards(SessionGuard)
+    // @UseGuards(SessionGuard)
     @Delete("api/personality/:id")
     async delete(@Param() params) {
         try {
@@ -85,6 +85,20 @@ export class PersonalityController {
             });
     }
 
+    @Get("personality/search")
+    public async personalityCreateSearch(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/personality-create-search",
+                Object.assign(parsedUrl.query)
+            );
+    }
+
     @Get("personality/:id")
     public async personalityPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -94,7 +108,6 @@ export class PersonalityController {
             req.params.id,
             language
         );
-
         await this.viewService
             .getNextServer()
             .render(
@@ -102,6 +115,20 @@ export class PersonalityController {
                 res,
                 "/personality-page",
                 Object.assign(parsedUrl.query, { personality })
+            );
+    }
+
+    @Get("personality")
+    public async personalityList(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/personality-list",
+                Object.assign(parsedUrl.query, {})
             );
     }
 }

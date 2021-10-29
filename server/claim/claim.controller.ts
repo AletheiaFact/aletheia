@@ -1,4 +1,5 @@
 import {
+    Body,
     Controller,
     Delete,
     Get,
@@ -16,41 +17,48 @@ import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import { SessionGuard } from "../auth/session.guard";
-import * as mongoose from "mongoose";
+import {Request, Response} from "express";
+import {parse} from "url";
+import {PersonalityService} from "../personality/personality.service";
+import {ViewService} from "../view/view.service";
 
-@Controller("api/claim")
+@Controller()
 export class ClaimController {
     constructor(
         private claimReviewService: ClaimReviewService,
+        private personalityService: PersonalityService,
         private claimService: ClaimService,
         private configService: ConfigService,
-        private httpService: HttpService
+        private httpService: HttpService,
+        private viewService: ViewService,
     ) {}
 
     async _checkCaptchaResponse(secret, response) {
         const RECAPTCHA_API_URL = "https://www.google.com/recaptcha/api";
-        return this.httpService.post(
+        const { data } = await this.httpService.post(
             `${RECAPTCHA_API_URL}/siteverify`,
             qs.stringify({
                 secret,
                 response,
             })
-        );
+        ).toPromise();
+
+        return data;
     }
     _verifyInputsQuery(query) {
         const queryInputs = {};
         if (query.personality) {
             // @ts-ignore
-            queryInputs.personality = new mongoose.Types.ObjectId(query.personality);
+            queryInputs.personality = query.personality;
         }
+
         return queryInputs;
     }
 
-    @Get()
+    @Get("api/claim")
     listAll(@Query() query) {
         const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = this._verifyInputsQuery(query);
-
         return Promise.all([
             this.claimService.listAll(
                 page,
@@ -78,12 +86,13 @@ export class ClaimController {
         // .catch((error) => this.logger.log("error", error));
     }
 
-    @UseGuards(SessionGuard)
-    @Post()
-    async create(@Req() req, @Res() res) {
+    // @UseGuards(SessionGuard)
+    @Post("api/claim")
+    async create(@Body() body) {
+        const secret = this.configService.get<string>("recaptcha_secret");
         const recaptchaCheck = await this._checkCaptchaResponse(
-            this.configService.get<string>("recaptcha_secret"),
-            req.body && req.body.recaptcha
+            secret,
+            body && body.recaptcha
         );
 
         // @ts-ignore
@@ -93,29 +102,28 @@ export class ClaimController {
             // next(
             //     Requester.internalError(res, "Error with your reCaptcha response")
             // );
-        } else {
-            return this.claimService.create(req.body);
         }
+        return await this.claimService.create(body);
     }
 
-    @Get(":id")
+    @Get("api/claim/:id")
     getById(@Param() params) {
         return this.claimService.getById(params.id);
     }
 
     @UseGuards(SessionGuard)
-    @Put(":id")
+    @Put("api/claim/:id")
     update(@Req() req) {
         return this.claimService.update(req.params.id, req.body);
     }
 
     @UseGuards(SessionGuard)
-    @Delete(":id")
+    @Delete("api/claim/:id")
     delete(@Param() params) {
         return this.claimService.delete(params.id);
     }
 
-    @Get(":claimId/sentence/:sentenceHash/reviews")
+    @Get("api/claim/:claimId/sentence/:sentenceHash/reviews")
     getSentenceReviewsByHash(@Req() req) {
         const { sentenceHash } = req.params;
         const { page, pageSize, order } = req.query;
@@ -148,11 +156,8 @@ export class ClaimController {
         });
     }
 
-    @Get(":claimId/sentence/:sentenceHash")
-    getSentenceByHash(@Req() req) {
-        const { sentenceHash, claimId } = req.params;
+    _getSentenceByHashAndClaimId(sentenceHash, claimId, req) {
         const user = req.user;
-
         return Promise.all([
             this.claimReviewService.getReviewStatsBySentenceHash(sentenceHash),
             this.claimService.getById(claimId),
@@ -178,5 +183,86 @@ export class ClaimController {
                 ...sentenceObj,
             };
         });
+    }
+
+    @Get("api/claim/:claimId/sentence/:sentenceHash")
+    getSentenceByHash(@Req() req) {
+        const { sentenceHash, claimId } = req.params;
+        return this._getSentenceByHashAndClaimId(sentenceHash, claimId, req);
+    }
+
+    @Get("claim/:claimId/sentence/:sentenceHash")
+    public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
+        const { sentenceHash, claimId } = req.params;
+        const parsedUrl = parse(req.url, true);
+        const language = "en";
+
+        const claim = await this.claimService.getById(req.params.claimId);
+        console.log(claim);
+
+        const personality = await this.personalityService.getById(
+            claim.personality._id,
+            language
+        );
+        const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claimId, req);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-review",
+                Object.assign(parsedUrl.query, {
+                    personality,
+                    claim,
+                    sentence,
+                    sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                })
+            );
+    }
+
+    @Get("personality/:id/claim/create/")
+    public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        const language = "en";
+
+        const personality = await this.personalityService.getById(
+            req.params.id,
+            language
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-create",
+                Object.assign(parsedUrl.query, {
+                    personality,
+                    sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                })
+            );
+    }
+
+    @Get("personality/:id/claim/:claimId/")
+    public async personalityPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        const language = "en";
+
+        const personality = await this.personalityService.getById(
+            req.params.id,
+            language
+        );
+
+        const claim = await this.claimService.getById(req.params.claimId);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim",
+                Object.assign(parsedUrl.query, { personality, claim })
+            );
     }
 }
