@@ -11,6 +11,9 @@ export class Claim {
     @Prop({ required: true })
     title: string;
 
+    @Prop({ required: true })
+    slug: string;
+
     @Prop({ type: Object, required: true })
     content: object;
 

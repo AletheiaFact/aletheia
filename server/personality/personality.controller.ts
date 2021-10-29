@@ -16,12 +16,14 @@ import { parse } from "url";
 import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { PersonalityService } from "./personality.service";
+import { ClaimService } from "../claim/claim.service";
 import { SessionGuard } from "../auth/session.guard";
 
 @Controller()
 export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(
+        private claimService: ClaimService,
         private personalityService: PersonalityService,
         private viewService: ViewService
     ) {}
@@ -116,6 +118,31 @@ export class PersonalityController {
                 res,
                 "/personality-page",
                 Object.assign(parsedUrl.query, { personality })
+            );
+    }
+
+    @Get("personality/:personalitySlug/claim/:claimSlug")
+    public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        const language = "en";
+
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug,
+            language
+        );
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-page",
+                Object.assign(parsedUrl.query, { personality, claim })
             );
     }
 

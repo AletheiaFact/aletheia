@@ -129,10 +129,6 @@ export class PersonalityService {
         try {
             const personality = await this.getById(personalityId);
             const newPersonality = Object.assign(personality, personalityBody);
-            newPersonality.slug = slugify(newPersonality.name, {
-                lower: true,     // convert to lower case, defaults to `false`
-                strict: true     // strip special characters except replacement, defaults to `false`
-            })
             const personalityUpdate =
                 await this.PersonalityModel.findByIdAndUpdate(
                     personalityId,
