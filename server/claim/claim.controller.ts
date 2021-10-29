@@ -216,7 +216,7 @@ export class ClaimController {
                     personality,
                     claim,
                     sentence,
-                    sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                    sitekey: this.configService.get<string>("recaptcha_sitekey") || "",
                 })
             );
     }
@@ -239,29 +239,32 @@ export class ClaimController {
                 "/claim-create",
                 Object.assign(parsedUrl.query, {
                     personality,
-                    sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                    sitekey: this.configService.get<string>("recaptcha_sitekey") || "",
                 })
             );
     }
 
-    @Get("personality/:id/claim/:claimId/")
-    public async personalityPage(@Req() req: Request, @Res() res: Response) {
+    @Get("personality/:personalitySlug/claim/:claimSlug")
+    public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const language = "en";
 
-        const personality = await this.personalityService.getById(
-            req.params.id,
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug,
             language
         );
 
-        const claim = await this.claimService.getById(req.params.claimId);
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
 
         await this.viewService
             .getNextServer()
             .render(
                 req,
                 res,
-                "/claim",
+                "/claim-page",
                 Object.assign(parsedUrl.query, { personality, claim })
             );
     }

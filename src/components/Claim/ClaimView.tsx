@@ -8,13 +8,13 @@ import ToggleSection from "../ToggleSection";
 import moment from "moment";
 import "moment/locale/pt";
 import SocialMediaShare from "../SocialMediaShare";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 
 const { Title } = Typography;
 
 const Claim = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
-    const router = useRouter();
+    // const router = useRouter();
     moment.locale(i18n.language);
 
     const { content, title, stats } = claim;
@@ -27,6 +27,8 @@ const Claim = ({ personality, claim, href }) => {
     useEffect(() => {
         message.info(t("claim:initialInfo"));
     });
+
+    const generateHref = (data) => `/claim/${claim._id}/sentence/${data.properties["data-hash"]}`
 
     if (body && personality) {
         return (
@@ -69,11 +71,12 @@ const Claim = ({ personality, claim, href }) => {
                                         showHighlights={
                                             showHighlights
                                         }
-                                        onClaimReviewForm={data => {
-                                            router.push(
-                                                `/claim/${claim._id}/sentence/${data.properties["data-hash"]}`
-                                            );
-                                        }}
+                                        generateHref={generateHref}
+                                        // onClaimReviewForm={data => {
+                                        //     router.push(
+                                        //         `/claim/${claim._id}/sentence/${data.properties["data-hash"]}`
+                                        //     );
+                                        // }}
                                     />
                                 ))}
                             </div>

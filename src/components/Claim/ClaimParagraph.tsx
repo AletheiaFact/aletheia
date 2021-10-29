@@ -1,7 +1,7 @@
 import ClaimSentence from "./ClaimSentence";
 import React from "react";
 
-const ClaimParagraph = ({ paragraph, showHighlights, onClaimReviewForm }) => {
+const ClaimParagraph = ({ paragraph, showHighlights, generateHref }) => {
     const sentences = paragraph.content;
     return (
         <p id={paragraph.props.id}>
@@ -11,7 +11,8 @@ const ClaimParagraph = ({ paragraph, showHighlights, onClaimReviewForm }) => {
                     content={sentence.content}
                     properties={sentence.props}
                     showHighlights={showHighlights}
-                    onClaimReviewForm={onClaimReviewForm}
+                    generateHref={generateHref}
+                    // onClaimReviewForm={onClaimReviewForm}
                 />
             ))}
         </p>

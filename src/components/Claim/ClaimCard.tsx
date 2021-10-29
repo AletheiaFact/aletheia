@@ -1,21 +1,21 @@
 import { Avatar, Button, Col, Comment, Row, Tooltip, Typography } from "antd";
 import React from "react";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import "./ClaimCard.less";
 import { useTranslation } from "react-i18next";
 import ReviewColors from "../../constants/reviewColors";
 
 const { Paragraph } = Typography;
 
-const ClaimCard = ({ personality, claim, viewClaim }) => {
+const ClaimCard = ({ personality, claim /*, viewClaim */ }) => {
     const { t } = useTranslation();
-    const router = useRouter();
+    // const router = useRouter();
     const review = claim?.stats?.reviews[0];
 
-    const onClickViewClaim = () => {
-        const claimUrl = viewClaim(claim._id, true)
-        router.push(claimUrl)
-    }
+    // const onClickViewClaim = () => {
+    //     viewClaim(claim.slug)
+    //     // router.push(claimUrl)
+    // }
 
     if (!claim) {
         return <div></div>;
@@ -48,7 +48,8 @@ const ClaimCard = ({ personality, claim, viewClaim }) => {
                                     "
                                 </Paragraph>
                                 <a
-                                    onClick={onClickViewClaim}
+                                    // onClick={onClickViewClaim}
+                                    href={`/personality/${personality.slug}/claim/${claim.slug}`}
                                     style={{
                                         textDecoration: "underline"
                                     }}
@@ -112,15 +113,18 @@ const ClaimCard = ({ personality, claim, viewClaim }) => {
                                 )}
                             </Col>
                             <Col span={8}>
-                                <Button
+                                {/* <Button
                                     shape="round"
                                     type="primary"
                                     onClick={e => {
                                         e.stopPropagation();
-                                        viewClaim(
-                                            claim._id
-                                        );
+                                        onClickViewClaim();
                                     }}
+                                > */}
+                                <Button
+                                    shape="round"
+                                    type="primary"
+                                    href={`/personality/${personality.slug}/claim/${claim.slug}`}
                                 >
                                     {t("claim:cardReviewButton")}
                                 </Button>

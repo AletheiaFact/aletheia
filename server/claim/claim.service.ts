@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import slugify from 'slugify'
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
@@ -25,6 +25,9 @@ export class ClaimService {
     }
 
     async listAll(page, pageSize, order, query) {
+        if (query.personality) {
+            query.personality = new Types.ObjectId(query.personality)
+        }
         const claims = await this.ClaimModel.find(query)
             .skip(page * pageSize)
             .limit(pageSize)

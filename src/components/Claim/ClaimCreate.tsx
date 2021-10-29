@@ -69,7 +69,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
             recaptchaRef.current.reset();
         }
 
-        const _id = await claimApi.save({
+        const { slug } = await claimApi.save({
             content: stateToHTML(editorState.getCurrentContent()),
             title,
             personality: personality._id,
@@ -79,7 +79,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
             recaptcha
         });
         // Redirect to personality profile in case _id is not present
-        const path = _id ? `/personality/${personality._id}/claim/${_id}` : `/personality/${personality._id}`;
+        const path = slug ? `/personality/${personality.slug}/claim/${slug}` : `/personality/${personality.slug}`;
         router.push(path);
     }
 

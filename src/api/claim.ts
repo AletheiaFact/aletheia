@@ -87,9 +87,9 @@ const save = (claim = {}) => {
     return request
         .post("/", claim)
         .then((response) => {
-            const { title, _id } = response.data;
+            const { title } = response.data;
             message.success(`"${title}" created with success`);
-            return _id;
+            return response.data;
         })
         .catch((err) => {
             const response = err && err.response;
