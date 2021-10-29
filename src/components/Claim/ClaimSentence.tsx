@@ -15,24 +15,25 @@ const ClaimSentence = styled.a`
     }
 `;
 
-const Sentence = ({ showHighlights, properties, content, onClaimReviewForm}) => {
+const Sentence = ({ showHighlights, properties, content, generateHref}) => {
     let style = {};
     if (properties.topClassification && showHighlights) {
         style = {
             backgroundColor: colors[properties.topClassification.classification]
         };
     }
+    const href = generateHref({ properties });
     return (
         <>
             <ClaimSentence
-                href="#"
+                href={href}
                 id={properties.id}
                 data-hash={properties["data-hash"]}
                 style={style}
                 className="claim-sentence"
-                onClick={() =>
-                    onClaimReviewForm({ properties, content })
-                }
+                // onClick={() =>
+                //     onClaimReviewForm({ properties, content })
+                // }
             >
                 {content}
             </ClaimSentence>
