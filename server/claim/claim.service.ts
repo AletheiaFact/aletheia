@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import slugify from 'slugify'
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { PersonalityService } from "../personality/personality.service";
@@ -43,6 +44,10 @@ export class ClaimService {
     create(claim) {
         return new Promise((resolve, reject) => {
             claim.content = this.parserService.parse(claim.content);
+            claim.slug = slugify(claim.title, {
+                lower: true,     // convert to lower case, defaults to `false`
+                strict: true     // strip special characters except replacement, defaults to `false`
+            })
             const newClaim = new this.ClaimModel(claim);
             newClaim.save((err, claim) => {
                 if (err) {
@@ -80,6 +85,22 @@ export class ClaimService {
 
     async getById(claimId) {
         const claim = await this.ClaimModel.findById(claimId)
+            .populate("personality", "_id name")
+            .populate("sources", "_id link classification");
+        if (!claim) {
+            // TODO: handle 404 for claim not found
+            return {};
+        }
+
+        return this.postProcess(claim.toObject());
+    }
+
+    async getByPersonalityIdAndClaimSlug(personalityId, claimSlug) {
+        const claim =
+            await this.ClaimModel.findOne({
+                slug: claimSlug,
+                personality: personalityId
+            })
             .populate("personality", "_id name")
             .populate("sources", "_id link classification");
         if (!claim) {

@@ -4,7 +4,7 @@ import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 
 const ClaimPage: NextPage<{ personality, claim, href }> = ({ personality, claim, href }) => {
     return (
-        <ClaimView personality={personality} claim={claim} />
+        <ClaimView personality={personality} claim={claim} href={href}/>
     );
 }
 
@@ -22,4 +22,3 @@ export async function getServerSideProps({ query, locale, req }) {
     };
 }
 export default ClaimPage;
-
