@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Col, Layout, Row } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import AletheiaMenu from "./AletheiaMenu";

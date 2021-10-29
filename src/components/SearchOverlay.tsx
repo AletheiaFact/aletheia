@@ -42,7 +42,7 @@ const SearchOverlay = ({ overlay }) => {
                 searchName: state?.search?.searchInput || null
             };
         }
-    );;
+    );
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const router = useRouter();
