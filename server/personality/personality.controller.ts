@@ -85,13 +85,33 @@ export class PersonalityController {
             });
     }
 
-    @Get("personality/:id")
+    @Get("personality/:slug")
     public async personalityPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const language = "en";
 
-        const personality = await this.personalityService.getById(
-            req.params.id,
+        const personality = await this.personalityService.getBySlug(
+            req.params.slug,
+            language
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/personality-page",
+                Object.assign(parsedUrl.query, { personality })
+            );
+    }
+
+    @Get("personality/:slug")
+    public async personalityPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        const language = "en";
+
+        const personality = await this.personalityService.getBySlug(
+            req.params.slug,
             language
         );
 

@@ -10,6 +10,9 @@ export class Personality {
     name: string;
 
     @Prop({ required: true })
+    slug: string;
+
+    @Prop({ required: true })
     description: string;
 
     @Prop({ unique: true, sparse: true })

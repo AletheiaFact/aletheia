@@ -100,7 +100,7 @@ const PersonalityCard = ({
                                             : "primary"
                                     }
                                     href={`${hrefBase ||
-                                    "personality/"}${personality._id}`}
+                                    "personality/"}${personality.slug}`}
                                 >
                                     {t("personality:profile_button")}
                                 </Button>
