@@ -19,7 +19,7 @@ const PersonalityView = ({ personality, href }) => {
     const [showSpeechesSection, setShowSpeechesSection] = useState(true);
 
     const createClaim = () => {
-        const path = `/personality/${personality._id}/claim/create`;
+        const path = `/personality/${personality.slug}/claim/create`;
         router.push(path)
     }
 

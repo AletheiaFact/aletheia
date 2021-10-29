@@ -136,7 +136,7 @@ const SearchOverlay = ({ overlay }) => {
                                                     overlay: false
                                                 });
                                                 router.push(
-                                                    `/personality/${p._id}`
+                                                    `/personality/${p.slug}`
                                                 );
                                             }}
                                         >

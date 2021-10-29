@@ -8,7 +8,7 @@ const ClaimList = ({ personality }) => {
     const router = useRouter();
 
     const viewClaim = (id, link = false) => {
-        const path = `/personality/${personality._id}/claim/${id}`;
+        const path = `/personality/${personality.slug}/claim/${id}`;
         if (!link) {
             router.push(path);
         } else {
