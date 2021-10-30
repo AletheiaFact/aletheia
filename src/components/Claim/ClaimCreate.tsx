@@ -78,7 +78,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
             date,
             recaptcha
         });
-        // Redirect to personality profile in case _id is not present
+        // Redirect to personality profile in case slug is not present
         const path = slug ? `/personality/${personality.slug}/claim/${slug}` : `/personality/${personality.slug}`;
         router.push(path);
     }
