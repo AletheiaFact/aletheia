@@ -26,7 +26,7 @@ const Claim = ({ personality, claim, href }) => {
         message.info(t("claim:initialInfo"));
     });
 
-    const generateHref = (data) => `/claim/${claim._id}/sentence/${data.properties["data-hash"]}`
+    const generateHref = (data) => `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.properties["data-hash"]}`
 
     if (body && personality) {
         return (
