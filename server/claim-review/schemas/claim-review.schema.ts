@@ -53,14 +53,6 @@ export class ClaimReview {
     sentence_content: string;
 
     @Prop({
-        type: [{
-            type: mongoose.Types.ObjectId,
-            ref: "Source",
-        }]
-    })
-    sources: Source[];
-
-    @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
         ref: "User",
@@ -70,4 +62,12 @@ export class ClaimReview {
     // TODO: revision_id
 }
 
-export const ClaimReviewSchema = SchemaFactory.createForClass(ClaimReview);
+const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);
+
+ClaimReviewSchemaRaw.virtual('sources', {
+    ref: 'Source',
+    localField: '_id',
+    foreignField: 'targetId'
+});
+
+export const ClaimReviewSchema = ClaimReviewSchemaRaw;

@@ -7,9 +7,7 @@ import {useTranslation} from "next-i18next";
 const ClaimReviewCard = ({ classification, userName }) => {
     const { t } = useTranslation();
 
-    const [ username, setUsername ] = useState("");
-
-    setUsername(userName || t("claimReview:anonymousUserName"));
+    const username = userName || t("claimReview:anonymousUserName");
 
     return (
         <Comment

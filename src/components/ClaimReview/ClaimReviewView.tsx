@@ -10,7 +10,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
     const { t } = useTranslation();
     const personalityId = personality._id;
     const claimId = claim._id;
-    const sentenceHash = sentence.sentenceHash;
+    const sentenceHash = sentence?.props["data-hash"];
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
 

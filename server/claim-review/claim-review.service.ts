@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import {
     ClaimReview,
     ClaimReviewDocument,
@@ -149,15 +149,17 @@ export class ClaimReviewService {
     }
 
     async create(claimReview) {
+        // Cast ObjectId
+        claimReview.personality = new Types.ObjectId(claimReview.personality);
+        claimReview.claim = new Types.ObjectId(claimReview.claim);
+        claimReview.user = new Types.ObjectId(claimReview.user);
         const newClaimReview = new this.ClaimReviewModel(claimReview);
         if (claimReview.source) {
-            const source = this.sourceService.create({
+            this.sourceService.create({
                 link: claimReview.source,
                 targetId: newClaimReview.id,
                 targetModel: "ClaimReview",
             });
-            // @ts-ignore
-            newClaimReview.sources = [source];
         }
 
         return newClaimReview.save();
