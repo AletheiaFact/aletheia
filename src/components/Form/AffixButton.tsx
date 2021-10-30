@@ -20,6 +20,7 @@ const AffixButton = (props) => {
                     }}
                     size="large"
                     shape="circle"
+                    href={props.href}
                     onClick={props.onClick}
                     type="primary"
                     icon={<PlusOutlined />}
