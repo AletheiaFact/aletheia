@@ -108,7 +108,6 @@ export class ClaimService {
             .populate("personality", "_id name")
             .populate("sources", "_id link classification");
         if (!claim) {
-            // TODO: handle 404 for claim not found
             return {};
         }
 

@@ -31,9 +31,6 @@ const Sentence = ({ showHighlights, properties, content, generateHref}) => {
                 data-hash={properties["data-hash"]}
                 style={style}
                 className="claim-sentence"
-                // onClick={() =>
-                //     onClaimReviewForm({ properties, content })
-                // }
             >
                 {content}
             </ClaimSentence>

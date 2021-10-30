@@ -12,7 +12,6 @@ const ClaimParagraph = ({ paragraph, showHighlights, generateHref }) => {
                     properties={sentence.props}
                     showHighlights={showHighlights}
                     generateHref={generateHref}
-                    // onClaimReviewForm={onClaimReviewForm}
                 />
             ))}
         </p>

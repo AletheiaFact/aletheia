@@ -48,7 +48,6 @@ const PersonalityView = ({ personality, href }) => {
             <AffixButton
                 tooltipTitle={t("personality:affixButtonTitle")}
                 href={`/personality/${personality.slug}/claim/create`}
-                // onClick={createClaim}
             />
             <Row
                 style={{

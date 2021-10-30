@@ -2,19 +2,8 @@ import React from "react";
 import claimApi from "../../api/claim";
 import BaseList from "../List/BaseList";
 import ClaimCard from "./ClaimCard";
-// import { useRouter } from "next/router";
 
 const ClaimList = ({ personality }) => {
-    // const router = useRouter();
-
-    // const viewClaim = (claimSlug, link = false) => {
-    //     const path = `/personality/${personality.slug}/claim/${claimSlug}`;
-    //     if (!link) {
-    //         router.push(path);
-    //     } else {
-    //         return path;
-    //     }
-    // }
 
     return (
         <BaseList
@@ -26,7 +15,6 @@ const ClaimList = ({ personality }) => {
                         key={claim._id}
                         personality={personality}
                         claim={claim}
-                        // viewClaim={viewClaim}
                     />
                 )
             }
