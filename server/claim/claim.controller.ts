@@ -191,20 +191,23 @@ export class ClaimController {
         return this._getSentenceByHashAndClaimId(sentenceHash, claimId, req);
     }
 
-    @Get("claim/:claimId/sentence/:sentenceHash")
+    @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:sentenceHash")
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
-        const { sentenceHash, claimId } = req.params;
+        const { sentenceHash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
         const language = "en";
 
-        const claim = await this.claimService.getById(req.params.claimId);
-        console.log(claim);
-
-        const personality = await this.personalityService.getById(
-            claim.personality._id,
+        const personality = await this.personalityService.getBySlug(
+            personalitySlug,
             language
         );
-        const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claimId, req);
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            claimSlug
+        );
+
+        const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
 
         await this.viewService
             .getNextServer()
