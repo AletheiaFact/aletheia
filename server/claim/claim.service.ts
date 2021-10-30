@@ -51,6 +51,7 @@ export class ClaimService {
                 lower: true,     // convert to lower case, defaults to `false`
                 strict: true     // strip special characters except replacement, defaults to `false`
             })
+            claim.personality = new Types.ObjectId(claim.personality);
             const newClaim = new this.ClaimModel(claim);
             newClaim.save((err, claim) => {
                 if (err) {
