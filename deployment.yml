@@ -84,6 +84,6 @@ spec:
                   name: aletheia-config
           resources:
             limits:
-              cpu: 25m
+              cpu: 50m
             requests:
-              cpu: 10m
+              cpu: 20m
