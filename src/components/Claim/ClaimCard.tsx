@@ -1,21 +1,14 @@
 import { Avatar, Button, Col, Comment, Row, Tooltip, Typography } from "antd";
 import React from "react";
-import { useRouter } from "next/router";
 import "./ClaimCard.less";
 import { useTranslation } from "react-i18next";
 import ReviewColors from "../../constants/reviewColors";
 
 const { Paragraph } = Typography;
 
-const ClaimCard = ({ personality, claim, viewClaim }) => {
+const ClaimCard = ({ personality, claim }) => {
     const { t } = useTranslation();
-    const router = useRouter();
     const review = claim?.stats?.reviews[0];
-
-    const onClickViewClaim = () => {
-        const claimUrl = viewClaim(claim._id, true)
-        router.push(claimUrl)
-    }
 
     if (!claim) {
         return <div></div>;
@@ -48,26 +41,13 @@ const ClaimCard = ({ personality, claim, viewClaim }) => {
                                     "
                                 </Paragraph>
                                 <a
-                                    onClick={onClickViewClaim}
+                                    href={`/personality/${personality.slug}/claim/${claim.slug}`}
                                     style={{
                                         textDecoration: "underline"
                                     }}
                                 >
                                     {t("claim:cardLinkToFullText")}
                                 </a>
-                                {/* <Link
-                                    to={location =>
-                                        viewClaim(
-                                            claim._id,
-                                            true
-                                        )
-                                    }
-                                    style={{
-                                        textDecoration: "underline"
-                                    }}
-                                >
-                                    {t("claim:cardLinkToFullText")}
-                                </Link> */}
                             </Col>
                         </Row>
                         <Row>
@@ -115,12 +95,7 @@ const ClaimCard = ({ personality, claim, viewClaim }) => {
                                 <Button
                                     shape="round"
                                     type="primary"
-                                    onClick={e => {
-                                        e.stopPropagation();
-                                        viewClaim(
-                                            claim._id
-                                        );
-                                    }}
+                                    href={`/personality/${personality.slug}/claim/${claim.slug}`}
                                 >
                                     {t("claim:cardReviewButton")}
                                 </Button>

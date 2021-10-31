@@ -1,11 +1,14 @@
 import axios from "axios";
 import { message } from "antd";
 
-const baseUrl = `api/claimReview`;
+const request = axios.create({
+    withCredentials: true,
+    baseURL: `/api/claimReview`,
+});
 
 const save = (review, t) => {
-    return axios
-        .post(`${baseUrl}`, review, { withCredentials: true })
+    return request
+        .post("/", review)
         .then((response) => {
             message.success(t("claimReviewForm:successMessage"));
             return {

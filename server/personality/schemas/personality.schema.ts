@@ -10,12 +10,15 @@ export class Personality {
     name: string;
 
     @Prop({ required: true })
+    slug: string;
+
+    @Prop({ required: true })
     description: string;
 
     @Prop({ unique: true, sparse: true })
     wikidata: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Claim" })
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Claim" }] })
     claims: Claim[];
 }
 

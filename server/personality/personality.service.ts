@@ -1,6 +1,7 @@
 import { Model } from "mongoose";
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import slugify from 'slugify'
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { UtilService } from "../util";
@@ -54,6 +55,10 @@ export class PersonalityService {
 
     create(personality) {
         try {
+            personality.slug = slugify(personality.name, {
+                lower: true,     // convert to lower case, defaults to `false`
+                strict: true     // strip special characters except replacement, defaults to `false`
+            })
             const newPersonality = new this.PersonalityModel(personality);
             this.logger.log(
                 `Attempting to create new personality with data ${personality}`
@@ -66,6 +71,17 @@ export class PersonalityService {
         const personality = await this.PersonalityModel.findById(
             personalityId
         ).populate({
+            path: "claims",
+            select: "_id title content",
+        });
+        this.logger.log(`Found personality ${personality._id}`);
+        return await this.postProcess(personality.toObject(), language);
+    }
+
+    async getBySlug(personalitySlug, language = "en") {
+        const personality = await this.PersonalityModel.findOne({
+            slug: personalitySlug
+        }).populate({
             path: "claims",
             select: "_id title content",
         });

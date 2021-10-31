@@ -11,6 +11,9 @@ export class Claim {
     @Prop({ required: true })
     title: string;
 
+    @Prop({ required: true })
+    slug: string;
+
     @Prop({ type: Object, required: true })
     content: object;
 
@@ -35,10 +38,10 @@ export class Claim {
     })
     personality: Personality;
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: "ClaimReview" })
-    claimReviews: ClaimReview;
+    @Prop({ type: [{ type: mongoose.Types.ObjectId, ref: "ClaimReview" }] })
+    claimReviews: ClaimReview[];
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: "Source" })
+    @Prop({ type: [{ type: mongoose.Types.ObjectId, ref: "Source" }] })
     sources: Source[];
 }
 

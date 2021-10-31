@@ -17,7 +17,6 @@ import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import { SessionGuard } from "../auth/session.guard";
-import * as mongoose from "mongoose";
 import {Request, Response} from "express";
 import {parse} from "url";
 import {PersonalityService} from "../personality/personality.service";
@@ -50,8 +49,9 @@ export class ClaimController {
         const queryInputs = {};
         if (query.personality) {
             // @ts-ignore
-            queryInputs.personality = new mongoose.Types.ObjectId(query.personality);
+            queryInputs.personality = query.personality;
         }
+
         return queryInputs;
     }
 
@@ -59,7 +59,6 @@ export class ClaimController {
     listAll(@Query() query) {
         const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = this._verifyInputsQuery(query);
-
         return Promise.all([
             this.claimService.listAll(
                 page,
@@ -157,11 +156,8 @@ export class ClaimController {
         });
     }
 
-    @Get("api/claim/:claimId/sentence/:sentenceHash")
-    getSentenceByHash(@Req() req) {
-        const { sentenceHash, claimId } = req.params;
+    _getSentenceByHashAndClaimId(sentenceHash, claimId, req) {
         const user = req.user;
-
         return Promise.all([
             this.claimReviewService.getReviewStatsBySentenceHash(sentenceHash),
             this.claimService.getById(claimId),
@@ -189,13 +185,52 @@ export class ClaimController {
         });
     }
 
-    @Get("personality/:id/claim/create/")
+    @Get("api/claim/:claimId/sentence/:sentenceHash")
+    getSentenceByHash(@Req() req) {
+        const { sentenceHash, claimId } = req.params;
+        return this._getSentenceByHashAndClaimId(sentenceHash, claimId, req);
+    }
+
+    @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:sentenceHash")
+    public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
+        const { sentenceHash, personalitySlug, claimSlug } = req.params;
+        const parsedUrl = parse(req.url, true);
+        const language = "en";
+
+        const personality = await this.personalityService.getBySlug(
+            personalitySlug,
+            language
+        );
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            claimSlug
+        );
+
+        const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-review",
+                Object.assign(parsedUrl.query, {
+                    personality,
+                    claim,
+                    sentence,
+                    sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                })
+            );
+    }
+
+    @Get("personality/:slug/claim/create/")
     public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const language = "en";
 
-        const personality = await this.personalityService.getById(
-            req.params.id,
+        const personality = await this.personalityService.getBySlug(
+            req.params.slug,
             language
         );
 
@@ -212,24 +247,27 @@ export class ClaimController {
             );
     }
 
-    @Get("personality/:id/claim/:claimId/")
-    public async personalityPage(@Req() req: Request, @Res() res: Response) {
+    @Get("personality/:personalitySlug/claim/:claimSlug")
+    public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const language = "en";
 
-        const personality = await this.personalityService.getById(
-            req.params.id,
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug,
             language
         );
 
-        const claim = await this.claimService.getById(req.params.claimId);
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
 
         await this.viewService
             .getNextServer()
             .render(
                 req,
                 res,
-                "/claim",
+                "/claim-page",
                 Object.assign(parsedUrl.query, { personality, claim })
             );
     }
