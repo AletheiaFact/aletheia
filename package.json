@@ -6,8 +6,7 @@
     "license": "MIT",
     "main": "./dist/server/main.js",
     "scripts": {
-        "start": "yarn serve",
-        "serve": "service-runner",
+        "start": "service-runner",
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
         "test": "PREQ_CONNECT_TIMEOUT=15 mocha -r ts-node/register tests/**/*.ts",
         "coverage": "PREQ_CONNECT_TIMEOUT=15 nyc --reporter=lcov _mocha -r ts-node/register tests/**/*.ts",
