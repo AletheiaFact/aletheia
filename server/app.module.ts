@@ -13,9 +13,6 @@ import { ConfigModule } from "@nestjs/config";
 import { ViewModule } from "./view/view.module";
 import { HomeModule } from "./home/home.module";
 
-const mongodb_host = process.env.MONGODB_HOST || "localhost";
-const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
-
 @Module({})
 export class AppModule {
     static register(options): DynamicModule {
@@ -24,13 +21,8 @@ export class AppModule {
             module: AppModule,
             imports: [
                 MongooseModule.forRoot(
-                    `mongodb://${mongodb_host}/${mongodb_name}`,
-                    {
-                        useUnifiedTopology: true,
-                        useNewUrlParser: true,
-                        useCreateIndex: true,
-                        useFindAndModify: false,
-                    }
+                    options.db.connection_uri,
+                    options.db.options
                 ),
                 ConfigModule.forRoot({
                     load: [() => options.config || {}],

@@ -45,7 +45,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                     </div>
                     <div>
                         {t("claimReview:userReviewSuffix", {
-                            count: review.count
+                            count: review?.count
                         })}
                         &nbsp;
                         <ClassificationText
@@ -85,7 +85,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                                             }
                                             t={t}
                                         />
-                                                ({review.count})
+                                                ({review?.count})
                                             </span>
                                 )}
                             </Col>
