@@ -5,7 +5,7 @@ import Logger from "./logger";
 import * as passport from "passport";
 import * as session from "express-session";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import * as MongoStore from "connect-mongo";
+const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 
 const mongodb_host = process.env.MONGODB_HOST || "localhost";
