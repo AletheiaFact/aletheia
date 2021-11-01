@@ -58,11 +58,11 @@ const createPersonality = (personality, t) => {
             withCredentials: true,
         })
         .then((response) => {
-            const { name, _id } = response.data;
+            const { name } = response.data;
             message.success(
                 `"${name}" ${t("personalityCreateForm:successMessage")}`
             );
-            return _id;
+            return response.data;
         })
         .catch((err) => {
             const response = err && err.response;
