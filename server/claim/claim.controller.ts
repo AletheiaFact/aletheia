@@ -97,11 +97,11 @@ export class ClaimController {
 
         // @ts-ignore
         if (!recaptchaCheck.success) {
-            throw Error();
             this.logger.error(`error/recaptcha ${recaptchaCheck}`);
             // next(
             //     Requester.internalError(res, "Error with your reCaptcha response")
             // );
+            throw Error();
         }
         return await this.claimService.create(body);
     }
