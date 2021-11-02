@@ -32,6 +32,7 @@ const initApp = async (options) => {
     const configService = app.get(ConfigService);
     const userService = app.get(UsersService);
     const users = configService.get<any>("users");
+    const disableSMTP = configService.get<any>("disable_smtp");
 
     const generatePassword = (isTestUser = false) => {
         const buf = randomBytes(8);
@@ -47,7 +48,7 @@ const initApp = async (options) => {
         return userService.register({ ...userData, password})
             .then(async (user) => {
                 options.logger.log("info", `${userData.email} seeded`);
-                if (userData.sendAuthDetails) {
+                if (userData.sendAuthDetails && !disableSMTP) {
                     const emailResponse = await emailService.sendEmail(
                         userData.email,
                         "Bem-vinda(o) a Aletheia",
