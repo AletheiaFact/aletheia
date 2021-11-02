@@ -1,8 +1,8 @@
 import React from "react";
 import { Menu } from "antd";
 import { useTranslation } from 'next-i18next';
-import {connect, useDispatch, useSelector} from "react-redux";
-import {useRouter} from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();

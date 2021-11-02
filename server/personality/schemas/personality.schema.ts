@@ -4,7 +4,7 @@ import { Claim } from "../../claim/schemas/claim.schema";
 
 export type PersonalityDocument = Personality & mongoose.Document;
 
-@Schema()
+@Schema({ toJSON: { virtuals: true }, toObject: { virtuals: true }})
 export class Personality {
     @Prop({ required: true })
     name: string;
@@ -17,9 +17,15 @@ export class Personality {
 
     @Prop({ unique: true, sparse: true })
     wikidata: string;
-
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Claim" }] })
-    claims: Claim[];
 }
 
-export const PersonalitySchema = SchemaFactory.createForClass(Personality);
+
+const PersonalitySchemaRaw = SchemaFactory.createForClass(Personality);
+
+PersonalitySchemaRaw.virtual('claims', {
+    ref: 'Claim',
+    localField: '_id',
+    foreignField: 'personality'
+});
+
+export const PersonalitySchema = PersonalitySchemaRaw;

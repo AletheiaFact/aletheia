@@ -2,7 +2,7 @@ import {
     Body,
     Controller,
     Delete,
-    Get,
+    Get, Logger,
     Param,
     Post,
     Put,
@@ -21,9 +21,11 @@ import {Request, Response} from "express";
 import {parse} from "url";
 import {PersonalityService} from "../personality/personality.service";
 import {ViewService} from "../view/view.service";
+import * as mongoose from "mongoose";
 
 @Controller()
 export class ClaimController {
+    private readonly logger = new Logger("ClaimController");
     constructor(
         private claimReviewService: ClaimReviewService,
         private personalityService: PersonalityService,
@@ -49,7 +51,7 @@ export class ClaimController {
         const queryInputs = {};
         if (query.personality) {
             // @ts-ignore
-            queryInputs.personality = query.personality;
+            queryInputs.personality = new mongoose.Types.ObjectId(query.personality);
         }
 
         return queryInputs;
@@ -70,10 +72,9 @@ export class ClaimController {
         ]).then(([claims, totalClaims]) => {
             const totalPages = Math.ceil(totalClaims / parseInt(pageSize, 10));
 
-            // this.logger.log(
-            //     "info",
-            //     `Found ${totalClaims} claims. Page ${page} of ${totalPages}`
-            // );
+            this.logger.log(
+                `Found ${totalClaims} claims. Page ${page} of ${totalPages}`
+            );
 
             return {
                 claims,
@@ -82,11 +83,10 @@ export class ClaimController {
                 page,
                 pageSize,
             };
-        });
-        // .catch((error) => this.logger.log("error", error));
+        }).catch((error) => this.logger.error(error));
     }
 
-    // @UseGuards(SessionGuard)
+    @UseGuards(SessionGuard)
     @Post("api/claim")
     async create(@Body() body) {
         const secret = this.configService.get<string>("recaptcha_secret");
@@ -97,11 +97,11 @@ export class ClaimController {
 
         // @ts-ignore
         if (!recaptchaCheck.success) {
-            throw Error();
-            // app.logger.log("error/recaptcha", recaptchaCheck);
+            this.logger.error(`error/recaptcha ${recaptchaCheck}`);
             // next(
             //     Requester.internalError(res, "Error with your reCaptcha response")
             // );
+            throw Error();
         }
         return await this.claimService.create(body);
     }
@@ -141,10 +141,9 @@ export class ClaimController {
             // @ts-ignore
             const totalPages = Math.ceil(totalReviews / parseInt(pageSize, 10));
 
-            // this.logger.log(
-            //     "info",
-            //     `Found ${totalReviews} reviews for sentence hash ${sentenceHash}. Page ${page} of ${totalPages}`
-            // );
+            this.logger.log(
+                `Found ${totalReviews} reviews for sentence hash ${sentenceHash}. Page ${page} of ${totalPages}`
+            );
 
             return {
                 reviews,

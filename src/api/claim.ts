@@ -60,12 +60,13 @@ const getClaimSentence = (id, sentenceHash) => {
 };
 
 const getClaimSentenceReviews = (options = {}) => {
+    console.log(options)
     const params = {
         page: options.page - 1,
         pageSize: options.pageSize,
     };
     return request
-        .get(`${options.claim}/sentence/${options.sentenceHash}/reviews`, {
+        .get(`${options.claimId}/sentence/${options.sentenceHash}/reviews`, {
             params,
         })
         .then((response) => {

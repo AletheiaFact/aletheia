@@ -37,12 +37,19 @@ export class Claim {
         ref: "Personality",
     })
     personality: Personality;
-
-    @Prop({ type: [{ type: mongoose.Types.ObjectId, ref: "ClaimReview" }] })
-    claimReviews: ClaimReview[];
-
-    @Prop({ type: [{ type: mongoose.Types.ObjectId, ref: "Source" }] })
-    sources: Source[];
 }
+const ClaimSchemaRaw = SchemaFactory.createForClass(Claim);
 
-export const ClaimSchema = SchemaFactory.createForClass(Claim);
+ClaimSchemaRaw.virtual('reviews', {
+    ref: 'ClaimReview',
+    localField: '_id',
+    foreignField: 'claim'
+});
+
+ClaimSchemaRaw.virtual('sources', {
+    ref: 'Source',
+    localField: '_id',
+    foreignField: 'targetId'
+});
+
+export const ClaimSchema = ClaimSchemaRaw;
