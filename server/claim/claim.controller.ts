@@ -194,10 +194,12 @@ export class ClaimController {
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
         const { sentenceHash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
+        // @ts-ignore
         req.language = req.headers["accept-language"] || "en";
 
         const personality = await this.personalityService.getBySlug(
             personalitySlug,
+            // @ts-ignore
             req.language
         );
 
@@ -226,10 +228,12 @@ export class ClaimController {
     @Get("personality/:slug/claim/create/")
     public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        // @ts-ignore
         req.language = req.headers["accept-language"] || "en";
 
         const personality = await this.personalityService.getBySlug(
             req.params.slug,
+            // @ts-ignore
             req.language
         );
 
@@ -249,10 +253,12 @@ export class ClaimController {
     @Get("personality/:personalitySlug/claim/:claimSlug")
     public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        // @ts-ignore
         req.language = req.headers["accept-language"] || "en";
 
         const personality = await this.personalityService.getBySlug(
             req.params.personalitySlug,
+            // @ts-ignore
             req.language
         );
 
