@@ -1,0 +1,11 @@
+{
+    "cardOverallReviewPrefix": "Maioria",
+    "cardReviewButton": "Revisar",
+    "cardLinkToFullText": "veja o texto completo",
+    "showHighlightsButton": "Mostrar destaques",
+    "hideHighlightsButton": "Ocultar destaques",
+    "metricsHeaderInfo": "{{totalReviews}} avaliações de sentenças",
+    "dateFormat": "L",
+    "info": "declarado em {{claimDate}}:",
+    "initialInfo": "Clique em uma frase para iniciar uma revisão"
+}

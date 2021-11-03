@@ -22,9 +22,9 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
     );
 
     const createPersonality = async (personality) => {
-        const _id = await api.createPersonality(personality, t);
+        const { slug } = await api.createPersonality(personality, t);
         // Redirect to personality list in case _id is not present
-        const path = _id ? `/personality/${_id}` : "/personality";
+        const path = slug ? `/personality/${slug}` : "/personality";
         router.push(path);
     }
 

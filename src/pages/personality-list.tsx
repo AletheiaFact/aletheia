@@ -9,7 +9,7 @@ const PersonalityListPage: NextPage<{}> = () => {
 }
 
 export async function getServerSideProps({ query, locale, req }) {
-    locale = locale || "en";
+    locale = req.language || locale || "en";
     return {
         props: {
             ...(await serverSideTranslations(locale)),

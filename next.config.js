@@ -10,7 +10,7 @@ module.exports = withAntdLess({
     // optional https://github.com/webpack-contrib/css-loader#object
     cssLoaderOptions: {},
     distDir: "./dist/.next",
-    // i18n,
+    i18n,
     webpack(config) {
         return config;
     }

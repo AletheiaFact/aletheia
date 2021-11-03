@@ -5,7 +5,11 @@ import Logger from "./logger";
 import * as passport from "passport";
 import * as session from "express-session";
 import { NestExpressApplication } from "@nestjs/platform-express";
+const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
+
+const mongodb_host = process.env.MONGODB_HOST || "localhost";
+const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
 
 const initApp = async (options) => {
     const corsOptions = {
@@ -14,6 +18,16 @@ const initApp = async (options) => {
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS",
         allowedHeaders: ["accept", "x-requested-with", "content-type"],
     };
+
+    options.db = {
+        connection_uri: `mongodb://${mongodb_host}/${mongodb_name}`,
+        options: {
+            useUnifiedTopology: true,
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useFindAndModify: false,
+        }
+    }
     const app = await NestFactory.create<NestExpressApplication>(
         AppModule.register(options),
         {
@@ -28,6 +42,10 @@ const initApp = async (options) => {
             secret: "replace_me",
             resave: false,
             saveUninitialized: false,
+            store: MongoStore.create({
+                mongoUrl: options.db.connection_uri,
+                mongoOptions: options.db.options
+            })
         })
     );
     app.use(passport.initialize());

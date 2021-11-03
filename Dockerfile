@@ -7,6 +7,7 @@ ENV PARCEL_WORKERS=1
 
 COPY ./.babelrc /app/.babelrc
 COPY config.$ENVIRONMENT.yaml /app/config.yaml
+COPY config.seed.example.yaml /app/config.seed.yaml
 COPY ./.eslintignore /app/.eslintignore
 COPY ./.eslintrc.yml /app/.eslintrc.yml
 COPY ./jest.config.js /app/jest.config.js

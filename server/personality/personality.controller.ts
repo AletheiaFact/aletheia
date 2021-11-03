@@ -31,7 +31,7 @@ export class PersonalityController {
         return this.personalityService.combinedListAll(query);
     }
 
-    // @UseGuards(SessionGuard)
+    @UseGuards(SessionGuard)
     @Post("api/personality")
     async create(@Body() body) {
         try {
@@ -57,7 +57,7 @@ export class PersonalityController {
             });
     }
 
-    // @UseGuards(SessionGuard)
+    @UseGuards(SessionGuard)
     @Put("api/personality/:id")
     async update(@Param() params, @Body() body) {
         return this.personalityService.update(params.id, body).catch((err) => {
@@ -65,7 +65,7 @@ export class PersonalityController {
         });
     }
 
-    // @UseGuards(SessionGuard)
+    @UseGuards(SessionGuard)
     @Delete("api/personality/:id")
     async delete(@Param() params) {
         try {
@@ -88,6 +88,8 @@ export class PersonalityController {
     @Get("personality/search")
     public async personalityCreateSearch(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        // @ts-ignore
+        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -102,11 +104,13 @@ export class PersonalityController {
     @Get("personality/:slug")
     public async personalityPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        const language = "en";
+        // @ts-ignore
+        req.language = req.headers["accept-language"] || "en";
 
         const personality = await this.personalityService.getBySlug(
             req.params.slug,
-            language
+            // @ts-ignore
+            req.language
         );
         await this.viewService
             .getNextServer()
@@ -121,6 +125,8 @@ export class PersonalityController {
     @Get("personality")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        // @ts-ignore
+        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()

@@ -1,0 +1,21 @@
+{
+    "titleEmpty": "Escolha uma frase para revisar",
+    "title": "Classifique a frase",
+    "selectLabel": "Revise essa frase",
+    "sourceLabel": "Forneça um link de uma fonte confiável",
+    "sourcePlaceholder": "Cole uma URL",
+    "addReviewButton": "Adicione revisão",
+    "cancelButton": "Cancelar",
+    "placeholder": "Selecione uma classificação",
+    "not-fact": "Não é fato",
+    "true": "Confiável",
+    "true-but": "Confiável, mas",
+    "arguable": "Discutível",
+    "misleading": "Enganoso",
+    "false": "Falso",
+    "unsustainable": "Insustentável",
+    "exaggerated": "Exagerado",
+    "unverifiable": "Inverificável",
+    "errorMessage": "Erro ao enviar revisão",
+    "successMessage": "Revisão concluída"
+}

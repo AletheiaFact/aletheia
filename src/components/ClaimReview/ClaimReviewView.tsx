@@ -10,7 +10,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
     const { t } = useTranslation();
     const personalityId = personality._id;
     const claimId = claim._id;
-    const sentenceHash = sentence.sentenceHash;
+    const sentenceHash = sentence?.props["data-hash"];
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
 
@@ -45,7 +45,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                     </div>
                     <div>
                         {t("claimReview:userReviewSuffix", {
-                            count: review.count
+                            count: review?.count
                         })}
                         &nbsp;
                         <ClassificationText
@@ -85,7 +85,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                                             }
                                             t={t}
                                         />
-                                                ({review.count})
+                                                ({review?.count})
                                             </span>
                                 )}
                             </Col>
