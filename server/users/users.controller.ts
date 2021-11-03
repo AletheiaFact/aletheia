@@ -36,6 +36,7 @@ export class UsersController {
     @Get("login")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()

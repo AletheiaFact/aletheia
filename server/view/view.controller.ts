@@ -9,6 +9,8 @@ export class ViewController {
 
     async handler(req: Request, res: Response) {
         const parsedUrl = parse(req.url, true);
+        req.language = req.headers["accept-language"] || "en";
+
         await this.viewService
             .getNextServer()
             .render(req, res, parsedUrl.pathname, parsedUrl.query);
@@ -17,6 +19,7 @@ export class ViewController {
     @Get()
     public async showHome(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -26,6 +29,8 @@ export class ViewController {
     @Get("_next*")
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        req.language = req.headers["accept-language"] || "en";
+
         await this.viewService
             .getNextServer()
             .render(req, res, parsedUrl.pathname, parsedUrl.query);
