@@ -1,0 +1,12 @@
+{
+    "pageTitle": "Minha conta",
+    "changePasswordSectionTitle": "Mudar senha",
+    "successMessage": "Senha atualizada com sucesso",
+    "userUnauthenticated": "Usuário nao autenticado",
+    "warningMessage": "Bem-vinda(o) a Aletheia! Para sua segurança, por favor mude sua senha pelo menos uma vez.",
+    "currentPasswordLabel": "Senha atual",
+    "newPasswordLabel": "Nova senha",
+    "repeatedNewPasswordLabel": "Confirme nova senha",
+    "passwordMatchErrorMessage": "A senha confirmada não é a mesma que a senha escolhida",
+    "requiredFieldError": "Campo obrigatório"
+}

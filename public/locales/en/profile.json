@@ -7,6 +7,6 @@
     "currentPasswordLabel": "Current password",
     "newPasswordLabel": "New password",
     "repeatedNewPasswordLabel": "Confirm new password",
-    "passwordMatchErrorMessage": "The two passwords that you entered do not match!",
+    "passwordMatchErrorMessage": "The two passwords that you entered do not match",
     "requiredFieldError": "Field is required"
 }
