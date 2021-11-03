@@ -16,8 +16,11 @@ export class HomeController {
     @Get("newhome")
     public async showHome(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        // @ts-ignore
+        req.language = req.headers["accept-language"] || "en";
         const { personalities } = await this.personalityService.combinedListAll({
-            language: "en",
+            // @ts-ignore
+            language: req.language,
             pageSize: 5,
             fetchOnly: true
         });
