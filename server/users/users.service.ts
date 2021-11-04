@@ -23,13 +23,15 @@ export class UsersService {
     }
 
     async getById(userId) {
-        const user = await this.UserModel.findById(userId, { name: 1 });
+        const user = await this.UserModel.findById(userId);
         this.logger.log(`Found user ${user._id}`);
         return user;
     }
 
     async changePassword(userId, currentPassword, newPassword) {
         const user = await this.getById(userId);
+        console.log(user);
+        console.log(currentPassword, newPassword)
         // @ts-ignore
         return user.changePassword(currentPassword, newPassword).then(() => {
             if (user.firstPasswordChanged === false) {
