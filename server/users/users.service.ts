@@ -30,8 +30,6 @@ export class UsersService {
 
     async changePassword(userId, currentPassword, newPassword) {
         const user = await this.getById(userId);
-        console.log(user);
-        console.log(currentPassword, newPassword)
         // @ts-ignore
         return user.changePassword(currentPassword, newPassword).then(() => {
             if (user.firstPasswordChanged === false) {
