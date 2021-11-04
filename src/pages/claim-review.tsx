@@ -1,6 +1,7 @@
 import {NextPage} from "next";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+const parser = require('accept-language-parser');
 
 const ClaimPage: NextPage<{ personality, claim, sentence, sitekey }> = ({ personality, claim, sentence, sitekey }) => {
     return (
@@ -8,8 +9,8 @@ const ClaimPage: NextPage<{ personality, claim, sentence, sitekey }> = ({ person
     );
 }
 
-export async function getServerSideProps({ query, locale, req }) {
-    locale = req.language || locale || "en";
+export async function getServerSideProps({ query, locale, locales, req }) {
+    locale = parser.pick(locales, req.language) || locale || "en";
     return {
         props: {
             ...(await serverSideTranslations(locale)),
