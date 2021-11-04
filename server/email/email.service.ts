@@ -41,10 +41,8 @@ export class EmailService {
         const transporter = await this.createTransport();
         const html = this.getEmailBody(templateOptions, templatePath);
         const from = this.configService.get<string>("smtp_email_user")
-        console.log(from);
         this.logger.log(`Sending e-mail to ${to} ...`);
         const emailResult = await transporter.sendMail({ from, to, subject, text, html })//.then(() => transporter.close());
-        console.log(emailResult);
         return emailResult;
     }
 }

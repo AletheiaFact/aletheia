@@ -25,5 +25,6 @@ services:
       users:
         - name: Test User
           email: test@aletheiafact.org
+          password: TEST_USER_PASS
           sendAuthDetails: false
           isTestUser: true

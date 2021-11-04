@@ -34,11 +34,11 @@ const initApp = async (options) => {
     const users = configService.get<any>("users");
     const disableSMTP = configService.get<any>("disable_smtp");
 
-    const generatePassword = (isTestUser = false) => {
+    const generatePassword = (isTestUser = false, forcePassword = null) => {
         const buf = randomBytes(8);
 
         if (isTestUser) {
-            return process.env.DEVELOPMENT_PASSWORD;
+            return forcePassword ? `${forcePassword}` : process.env.DEVELOPMENT_PASSWORD;
         }
 
         return buf.toString("hex");
@@ -70,7 +70,7 @@ const initApp = async (options) => {
     // Using await Promise.all to force loop to finish before continuing
     await Promise.all(
         users.map(async (userData) => {
-            const password = generatePassword(userData.isTestUser);
+            const password = generatePassword(userData.isTestUser, userData.password);
             return seedSingleUser(userData, password);
         })
     );

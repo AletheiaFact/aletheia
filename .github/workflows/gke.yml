@@ -66,11 +66,13 @@ jobs:
             SMTP_PORT: ${{ secrets.SMTP_PORT }}
             SMTP_EMAIL_USER: ${{ secrets.SMTP_EMAIL_USER }}
             SMTP_EMAIL_PASS: ${{ secrets.SMTP_EMAIL_PASS }}
+            TEST_USER_PASS: ${{ secrets.TEST_USER_PASS }}
         run: |
             sed -i "s/SMTP_HOST/$SMTP_HOST/g" config.seed.example.yaml
             sed -i "s/SMTP_PORT/$SMTP_PORT/g" config.seed.example.yaml
             sed -i "s/SMTP_EMAIL_USER/$SMTP_EMAIL_USER/g" config.seed.example.yaml
             sed -i "s/SMTP_EMAIL_PASS/$SMTP_EMAIL_PASS/g" config.seed.example.yaml
+            sed -i "s/TEST_USER_PASS/$TEST_USER_PASS/g" config.seed.example.yaml
 
       # Build the Docker image
       - name: Build
