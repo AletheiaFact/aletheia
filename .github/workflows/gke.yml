@@ -32,7 +32,7 @@ jobs:
         if: endsWith(github.ref, '/master')
         run: |
           sed -i '11{s/test.//}' deployment.yml
-          sed -i '11{s/test.//}' config.seed.yaml
+          sed -i '11{s/test.//}' config.seed.example.yaml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
           echo "API_URL=${{ secrets.API_URL_PRODUCTION }}" >> $GITHUB_ENV
 
@@ -60,17 +60,17 @@ jobs:
             sed -i "s/RECAPTCHA_SECRET/$RECAPTCHA_SECRET/g" config.$ENVIRONMENT.yaml
 
       # Setting user seed config
-      - name: Set config.seed.yaml
+      - name: Set config.seed.example.yaml
         env:
             SMTP_HOST: ${{ secrets.SMTP_HOST }}
             SMTP_PORT: ${{ secrets.SMTP_PORT }}
             SMTP_EMAIL_USER: ${{ secrets.SMTP_EMAIL_USER }}
             SMTP_EMAIL_PASS: ${{ secrets.SMTP_EMAIL_PASS }}
         run: |
-            sed -i "s/SMTP_HOST/$SMTP_HOST/g" config.seed.yaml
-            sed -i "s/SMTP_PORT/$SMTP_PORT/g" config.seed.yaml
-            sed -i "s/SMTP_EMAIL_USER/$SMTP_EMAIL_USER/g" config.seed.yaml
-            sed -i "s/SMTP_EMAIL_PASS/$SMTP_EMAIL_PASS/g" config.seed.yaml
+            sed -i "s/SMTP_HOST/$SMTP_HOST/g" config.seed.example.yaml
+            sed -i "s/SMTP_PORT/$SMTP_PORT/g" config.seed.example.yaml
+            sed -i "s/SMTP_EMAIL_USER/$SMTP_EMAIL_USER/g" config.seed.example.yaml
+            sed -i "s/SMTP_EMAIL_PASS/$SMTP_EMAIL_PASS/g" config.seed.example.yaml
 
       # Build the Docker image
       - name: Build
