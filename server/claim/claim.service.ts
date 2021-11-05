@@ -1,19 +1,23 @@
-import { Injectable } from "@nestjs/common";
+import {Injectable, Logger} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import slugify from 'slugify'
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ParserService } from "../parser/parser.service";
+import {SourceService} from "../source/source.service";
+import * as mongoose from "mongoose";
 
 @Injectable()
 export class ClaimService {
     private optionsToUpdate: { new: boolean; upsert: boolean };
+    private readonly logger = new Logger("ClaimService");
 
     constructor(
         @InjectModel(Claim.name)
         private ClaimModel: Model<ClaimDocument>,
         private claimReviewService: ClaimReviewService,
+        private sourceService: SourceService,
         private parserService: ParserService
     ) {
         this.optionsToUpdate = {
@@ -42,20 +46,31 @@ export class ClaimService {
         return this.ClaimModel.countDocuments().where(query);
     }
 
-    create(claim) {
-        return new Promise((resolve, reject) => {
-            claim.content = this.parserService.parse(claim.content);
-
-            claim.slug = slugify(claim.title, {
-                lower: true,     // convert to lower case, defaults to `false`
-                strict: true     // strip special characters except replacement, defaults to `false`
-            })
-            claim.personality = new Types.ObjectId(claim.personality);
-            const newClaim = new this.ClaimModel(claim);
-            newClaim.save();
-            resolve(newClaim);
-        });
+    async create(claim) {
+        claim.content = this.parserService.parse(claim.content);
+        claim.slug = slugify(claim.title, {
+            lower: true,     // convert to lower case, defaults to `false`
+            strict: true     // strip special characters except replacement, defaults to `false`
+        })
+        claim.personality = new Types.ObjectId(claim.personality);
+        const newClaim = new this.ClaimModel(claim);
+        if (claim.sources && Array.isArray(claim.sources)) {
+            try {
+                for (let i = 0; i < claim.sources.length ; i++) {
+                    await this.sourceService.create({
+                        link: claim.sources[i],
+                        targetId: newClaim.id,
+                        targetModel: "Claim",
+                    });
+                }
+            } catch (e) {
+                this.logger.error(e);
+                throw e;
+            }
+        }
+        return newClaim.save();
     }
+
     async update(claimId, claimBody) {
         // eslint-disable-next-line no-useless-catch
         try {
