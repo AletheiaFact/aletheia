@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import {Injectable, Logger} from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import {
     ClaimReview,
@@ -10,6 +10,7 @@ import { SourceService } from "../source/source.service";
 
 @Injectable()
 export class ClaimReviewService {
+    private readonly logger = new Logger("ClaimReviewService");
     constructor(
         @InjectModel(ClaimReview.name)
         private ClaimReviewModel: Model<ClaimReviewDocument>,
@@ -154,12 +155,19 @@ export class ClaimReviewService {
         claimReview.claim = new Types.ObjectId(claimReview.claim);
         claimReview.user = new Types.ObjectId(claimReview.user);
         const newClaimReview = new this.ClaimReviewModel(claimReview);
-        if (claimReview.source) {
-            this.sourceService.create({
-                link: claimReview.source,
-                targetId: newClaimReview.id,
-                targetModel: "ClaimReview",
-            });
+        if (claimReview.sources && Array.isArray(claimReview.sources)) {
+            try {
+                for (let i = 0; i < claimReview.sources.length ; i++) {
+                    await this.sourceService.create({
+                        link: claimReview.sources[i],
+                        targetId: newClaimReview.id,
+                        targetModel: "ClaimReview",
+                    });
+                }
+            } catch (e) {
+                this.logger.error(e);
+                throw e;
+            }
         }
 
         return newClaimReview.save();

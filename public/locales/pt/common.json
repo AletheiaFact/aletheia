@@ -1,5 +1,6 @@
 {
     "loading": "Carregando...",
     "back_button": "Voltar",
-    "registrationLink": "https://forms.gle/xgCc9fRPKkkCKkkW8"
+    "registrationLink": "https://forms.gle/xgCc9fRPKkkCKkkW8",
+    "requiredFieldError": "Campo obrigatório"
 }

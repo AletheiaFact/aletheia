@@ -17,6 +17,7 @@ import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import PersonalityCard from "../Personality/PersonalityCard";
+import SourceInput from "../Source/SourceInput";
 
 const recaptchaRef = React.createRef();
 const formRef = React.createRef();
@@ -41,6 +42,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     const [ recaptcha, setRecaptcha ] = useState("")
     const [ editorState, setEditorState ] = useState(EditorState.createEmpty())
     const [ disableSubmit, setDisableSubmit ] = useState(true);
+    const [ sources, setSources ] = useState([""]);
 
     useEffect(async () => {
         if (edit) {
@@ -76,6 +78,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
             // TODO: add a new input when twitter is supported
             type: "speech",
             date,
+            sources,
             recaptcha
         });
         // Redirect to personality profile in case slug is not present
@@ -220,6 +223,25 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         }
                     />
                 </Form.Item>
+                <SourceInput
+                    name="source"
+                    label={t("sourceForm:label")}
+                    onChange={(e, index) => {
+                        setSources(sources.map((source, i) => {
+                            return i === index ? e.target.value : source;
+                        }));
+                    }}
+                    addSource={() => {
+                        setSources(sources.concat(""));
+                    }}
+                    removeSource={(index) => {
+                        setSources(sources.filter((source, i) => {
+                            return i !== index
+                        }))
+                    }}
+                    placeholder={t("sourceForm:placeholder")}
+                    sources={sources}
+                />
                 <Form.Item
                     style={{
                         color: "#973A3A"

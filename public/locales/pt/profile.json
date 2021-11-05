@@ -7,6 +7,5 @@
     "currentPasswordLabel": "Senha atual",
     "newPasswordLabel": "Nova senha",
     "repeatedNewPasswordLabel": "Confirme nova senha",
-    "passwordMatchErrorMessage": "A senha confirmada não é a mesma que a senha escolhida",
-    "requiredFieldError": "Campo obrigatório"
+    "passwordMatchErrorMessage": "A senha confirmada não é a mesma que a senha escolhida"
 }

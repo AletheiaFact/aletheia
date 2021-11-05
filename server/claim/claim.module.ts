@@ -8,7 +8,8 @@ import { ParserModule } from "../parser/parser.module";
 import { PersonalityModule } from "../personality/personality.module";
 import { ConfigModule } from "@nestjs/config";
 import { HttpModule } from "@nestjs/axios";
-import {ViewModule} from "../view/view.module";
+import { ViewModule } from "../view/view.module";
+import { SourceModule } from "../source/source.module";
 
 const ClaimModel = MongooseModule.forFeature([
     {
@@ -26,6 +27,7 @@ const ClaimModel = MongooseModule.forFeature([
         ConfigModule,
         HttpModule,
         ViewModule,
+        SourceModule,
     ],
     exports: [ClaimService],
     providers: [ClaimService],

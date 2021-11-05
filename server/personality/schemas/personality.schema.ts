@@ -4,7 +4,7 @@ import { Claim } from "../../claim/schemas/claim.schema";
 
 export type PersonalityDocument = Personality & mongoose.Document;
 
-@Schema({ toJSON: { virtuals: true }, toObject: { virtuals: true }})
+@Schema({ toJSON: { virtuals: true }, toObject: { virtuals: true } })
 export class Personality {
     @Prop({ required: true })
     name: string;

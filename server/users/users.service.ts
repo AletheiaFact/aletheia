@@ -23,7 +23,7 @@ export class UsersService {
     }
 
     async getById(userId) {
-        const user = await this.UserModel.findById(userId, { name: 1 });
+        const user = await this.UserModel.findById(userId);
         this.logger.log(`Found user ${user._id}`);
         return user;
     }
