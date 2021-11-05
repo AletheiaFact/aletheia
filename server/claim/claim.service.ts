@@ -5,8 +5,7 @@ import slugify from 'slugify'
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ParserService } from "../parser/parser.service";
-import {SourceService} from "../source/source.service";
-import * as mongoose from "mongoose";
+import { SourceService } from "../source/source.service";
 
 @Injectable()
 export class ClaimService {

@@ -2,7 +2,6 @@ import {Button, Col, Form, Input, Row} from "antd";
 import React from "react";
 import {DeleteOutlined} from "@ant-design/icons";
 import {useTranslation} from "next-i18next";
-const validURLRegex = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/g)
 
 const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, label, sources }) => {
     const { t } = useTranslation();
@@ -20,7 +19,7 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                         rules={[
                             {
                                 message: t("sourceForm:errorMessageValidURL"),
-                                pattern: validURLRegex
+                                type: "url"
                             },
                             {
                                 required: true,
