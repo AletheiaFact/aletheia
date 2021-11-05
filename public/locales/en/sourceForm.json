@@ -1,0 +1,6 @@
+{
+    "addNewSourceButton": "Add another link",
+    "errorMessageValidURL": "Please insert a valid URL",
+    "sourceLabel": "Provide at least one link to a reliable source",
+    "sourcePlaceholder": "Paste URL"
+}

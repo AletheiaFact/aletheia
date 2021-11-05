@@ -6,7 +6,7 @@ import { Source } from "../../source/schemas/source.schema";
 
 export type ClaimDocument = Claim & mongoose.Document;
 
-@Schema()
+@Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class Claim {
     @Prop({ required: true })
     title: string;

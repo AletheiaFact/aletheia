@@ -65,7 +65,7 @@ const ProfileView = ({ user }) => {
                     rules={[
                         {
                             required: true,
-                            message: t("profile:requiredFieldError")
+                            message: t("common:requiredFieldError")
                         }
                     ]}
                     wrapperCol={{ sm: 24 }}
@@ -81,7 +81,7 @@ const ProfileView = ({ user }) => {
                     rules={[
                         {
                             required: true,
-                            message: t("profile:requiredFieldError")
+                            message: t("common:requiredFieldError")
                         }
                     ]}
                     wrapperCol={{ sm: 24 }}
@@ -97,7 +97,7 @@ const ProfileView = ({ user }) => {
                     rules={[
                         {
                             required: true,
-                            message: t("profile:requiredFieldError")
+                            message: t("common:requiredFieldError")
                         },
                         ({ getFieldValue }) => ({
                             validator(_, value) {

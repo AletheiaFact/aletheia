@@ -4,11 +4,14 @@ import { Form, Button, Input } from "antd";
 import ClaimReviewSelect from "../Form/ClaimReviewSelect";
 import claimReviewApi from "../../api/claimReview";
 import {useTranslation} from "next-i18next";
+import SourceInput from "../Source/SourceInput";
+import { useRouter } from "next/router";
 
 const recaptchaRef = React.createRef();
 
 const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk, handleCancel }) => {
     const { t } = useTranslation();
+    const router = useRouter();
     const claim = claimId;
     const personality = personalityId;
     const sentence_hash = highlight.props["data-hash"];
@@ -16,7 +19,7 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
 
     const [ classification, setClassification ] =  useState("");
     const [ recaptcha, setRecaptcha ] = useState("");
-    const [ source, setSource ] = useState("");
+    const [ sources, setSources ] = useState([""]);
     const [ disableSubmit, setDisableSubmit ] = useState(true);
 
 
@@ -70,10 +73,11 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
             sentence_hash,
             sentence_content,
             recaptcha,
-            source
+            sources
         }, t).then(response => {
             if (response.success) {
                 handleOk();
+                router.reload();
             }
         });
 
@@ -92,18 +96,25 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
                         defaultValue=""
                     />
                 </Form.Item>
-                <Form.Item
+                <SourceInput
                     name="source"
-                    label={t("claimReviewForm:sourceLabel")}
-                >
-                    <Input
-                        value={source || ""}
-                        onChange={e =>
-                            setSource(e.target.value)
-                        }
-                        placeholder={t("claimReviewForm:sourcePlaceholder")}
-                    />
-                </Form.Item>
+                    label={t("sourceForm:label")}
+                    onChange={(e, index) => {
+                        setSources(sources.map((source, i) => {
+                            return i === index ? e.target.value : source;
+                        }));
+                    }}
+                    addSource={() => {
+                        setSources(sources.concat(""));
+                    }}
+                    removeSource={(index) => {
+                        setSources(sources.filter((source, i) => {
+                            return i !== index
+                        }))
+                    }}
+                    placeholder={t("sourceForm:placeholder")}
+                    sources={sources}
+                />
                 <Form.Item>
                     <ReCAPTCHA
                         ref={recaptchaRef}
