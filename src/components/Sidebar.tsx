@@ -2,6 +2,7 @@ import React from "react";
 import { Col, Layout, Row } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import AletheiaMenu from "./AletheiaMenu";
+import Logo from "./Header/Logo";
 
 const { Sider } = Layout;
 const Sidebar = ({menuCollapsed, onToggleSidebar}) => {
@@ -33,7 +34,7 @@ const Sidebar = ({menuCollapsed, onToggleSidebar}) => {
                 }}
             >
                 <Col span={20}>
-                    <p>AletheiaFact</p>
+                    <Logo color="blue" />
                 </Col>
                 <Col span={4}>
                     <a onClick={onToggleSidebar}>

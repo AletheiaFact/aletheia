@@ -4,6 +4,8 @@ import React from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import colors from "../../styles/colors";
+import Logo from "./Logo";
 
 const HeaderContent = ({ className }) => {
     const dispatch = useDispatch();
@@ -18,7 +20,7 @@ const HeaderContent = ({ className }) => {
     return <Row
         className={ className }
         style={{
-            backgroundColor: "#2d77a3",
+            backgroundColor: colors.bluePrimary,
             boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
             height: "70px",
             padding: "0 15px",
@@ -46,19 +48,7 @@ const HeaderContent = ({ className }) => {
         </Col>
         <Col span={20}>
             <a onClick={() => router.push("/")}>
-                <p
-                    className="aletheia-logo"
-                    style={{
-                        fontFamily: "Noticia Text",
-                        fontStyle: "normal",
-                        fontWeight: "normal",
-                        fontSize: "26px",
-                        lineHeight: 1,
-                        marginBottom: "9px",
-                        textAlign: "center",
-                        color: "#ffffff",
-                    }}
-                >AletheiaFact</p>
+                <Logo color="white" />
             </a>
         </Col>
         <Col span={2}>
