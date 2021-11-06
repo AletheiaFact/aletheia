@@ -1,13 +1,15 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { Button, Typography } from "antd";
+import { Typography } from "antd";
+import colors from "../../styles/colors";
+import Button from "../Button";
 
 function CTARegistration() {
     const { t } = useTranslation();
     return (
         <div
             style={{
-                backgroundColor: "#2D77A3",
+                backgroundColor: colors.bluePrimary,
                 textAlign: "center",
                 padding: "30px"
             }}
@@ -38,14 +40,9 @@ function CTARegistration() {
                 {t("CTARegistration:footer")}
             </div>
             <Button
-                shape="round"
-                type="default"
+                type="white"
                 target="_blank"
                 href={t("common:registrationLink")}
-                style={{
-                    color: "#2D77A3",
-                    borderColor: "#FFF",
-                }}
             >
                 <b
                     style={{
