@@ -1,9 +1,9 @@
 import React from "react";
-import { Avatar, Spin, Col, Row, Typography, Button } from "antd";
+import { Avatar, Spin, Col, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import { ArrowRightOutlined } from "@ant-design/icons";
+import {ArrowRightOutlined, PlusOutlined} from "@ant-design/icons";
 import ReviewStats from "../Metrics/ReviewStats";
-
+import Button from "../Button";
 const { Title, Paragraph } = Typography;
 
 const PersonalityCard = ({
@@ -17,19 +17,20 @@ const PersonalityCard = ({
 }) => {
     const { t } = useTranslation();
     const style = {
-        titleSpan: 15,
+        titleSpan: 13,
         avatarSpan: 6,
+        buttonSpan: 5,
         avatarSize: 90
     };
     if (summarized) {
-        style.titleSpan = 11;
+        style.titleSpan = 10;
         style.avatarSpan = 2;
+        style.buttonSpan = 9;
         style.avatarSize = 45;
     }
     let cardStyle;
     if (!header) {
         cardStyle = {
-
             background: "#FFFFFF",
             border: "1px solid #EEEEEE",
             boxSizing: "border-box",
@@ -62,7 +63,7 @@ const PersonalityCard = ({
                     </Col>
                     <Col span={3}></Col>
                     <Col span={style.titleSpan}>
-                        <Title level={4} style={{ fontSize: "18px", marginBottom: 0 }}>
+                        <Title level={4} style={{ fontSize: "16px", marginBottom: 0 }}>
                             {personality.name}
                         </Title>
                         <Paragraph
@@ -107,7 +108,7 @@ const PersonalityCard = ({
                     </Col>
                     {summarized && (
                         <Col
-                            span={8}
+                            span={style.buttonSpan}
                             style={{
                                 display: "flex",
                                 justifyContent: "flex-end",
@@ -115,11 +116,7 @@ const PersonalityCard = ({
                         >
                             {personality._id ? (
                                 <Button
-                                    type={
-                                        suggestion
-                                            ? ""
-                                            : "primary"
-                                    }
+                                    type="blue"
                                     href={`${hrefBase ||
                                     "personality/"}${personality.slug}`}
                                 >
@@ -132,7 +129,7 @@ const PersonalityCard = ({
                                         onClick(personality)
                                     }
                                 >
-                                    + {t("personality:add_button")}
+                                    <PlusOutlined /> {t("personality:add_button")}
                                 </Button>
                             )}
                         </Col>

@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useTranslation} from "next-i18next";
 import styled from "styled-components"
 import { useRouter } from 'next/router'
+import colors from "../styles/colors";
 
 const { Footer, Content } = Layout;
 
@@ -61,7 +62,12 @@ const MainApp = ({children}) => {
                     </Row>
                     {children}
                 </ContentStyled>
-                <Footer style={{ textAlign: "center" }}>
+                <Footer style={{
+                    textAlign: "center",
+                    background: colors.grayPrimary,
+                    color: colors.lightBlue
+                }}
+                >
                     {t("footer:copyright")}
                 </Footer>
                 {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
