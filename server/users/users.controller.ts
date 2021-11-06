@@ -47,7 +47,6 @@ export class UsersController {
             if (newPassword !== repeatedNewPassword) {
                 throw Error("Repeated password doesn't match");
             }
-            console.log(req.params.id, typeof currentPassword, typeof newPassword);
             this.usersService
                 .changePassword(new mongoose.Types.ObjectId(req.params.id), currentPassword, newPassword)
                 .then(() => {

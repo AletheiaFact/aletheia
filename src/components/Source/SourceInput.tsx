@@ -1,6 +1,6 @@
 import {Button, Col, Form, Input, Row} from "antd";
 import React from "react";
-import {DeleteOutlined} from "@ant-design/icons";
+import {DeleteOutlined, PlusOutlined} from "@ant-design/icons";
 import {useTranslation} from "next-i18next";
 
 const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, label, sources }) => {
@@ -16,6 +16,7 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                         key={index}
                         name={`source-${index}`}
                         label={index === 0 ? label : null}
+                        extra={index === (sources.length - 1) ? t("sourceForm:extra") : null}
                         rules={[
                             {
                                 message: t("sourceForm:errorMessageValidURL"),
@@ -44,7 +45,22 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                 )
                 })
             }
-            <Button onClick={addSource}>+ {t("sourceForm:addNewSourceButton")}</Button>
+            <div
+                style={{
+                    width: "100%",
+                    textAlign: "right",
+                    paddingBottom: "15px"
+                }}
+            >
+                <a
+                    onClick={addSource}
+                    style={{
+                        textDecoration: "underline"
+                    }}
+                >
+                    <PlusOutlined /> {t("sourceForm:addNewSourceButton")}
+                </a>
+            </div>
         </>
     );
 }

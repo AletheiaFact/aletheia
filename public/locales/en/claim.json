@@ -7,5 +7,8 @@
     "metricsHeaderInfo": "{{totalReviews}} claim reviews",
     "dateFormat": "l",
     "info": "stated on {{claimDate}}:",
-    "initialInfo": "Choose a sentence to review by clicking on it"
+    "initialInfo": "Choose a sentence to review by clicking on it",
+    "sourceSectionTitle": "Fontes:",
+    "sourceFooter": "Unable to find reliable source linking this speech to this personality?",
+    "sourceFooterReport": "Please, report here. "
 }

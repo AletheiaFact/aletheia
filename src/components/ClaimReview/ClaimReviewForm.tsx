@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, {
+    useEffect, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Form, Button, Input } from "antd";
 import ClaimReviewSelect from "../Form/ClaimReviewSelect";
