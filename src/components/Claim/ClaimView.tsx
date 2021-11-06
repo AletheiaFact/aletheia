@@ -8,13 +8,13 @@ import ToggleSection from "../ToggleSection";
 import moment from "moment";
 import "moment/locale/pt";
 import SocialMediaShare from "../SocialMediaShare";
+import { LinkPreview } from '@dhaiwat10/react-link-preview';
 
 const { Title } = Typography;
 
 const Claim = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
     moment.locale(i18n.language);
-
     const { content, title, stats } = claim;
 
     let { date } = claim;
@@ -26,7 +26,7 @@ const Claim = ({ personality, claim, href }) => {
         message.info(t("claim:initialInfo"));
     });
 
-    const generateHref = (data) => `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.properties["data-hash"]}`
+    const generateHref = (data) => `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.properties["data-hash"]}`;
 
     if (body && personality) {
         return (
@@ -50,7 +50,7 @@ const Claim = ({ personality, claim, href }) => {
                         background: "#F5F5F5",
                         boxShadow: "0px 3px 5px rgba(0, 0, 0, 0.15)",
                         borderRadius: "30px 30px 0px 0px",
-                        margin: "15px -15px 15px -15px",
+                        margin: "15px -15px 0px -15px",
                         paddingBottom: "15px"
                     }}
                 >
@@ -92,6 +92,47 @@ const Claim = ({ personality, claim, href }) => {
                         />
                     </Affix>
                 </Row>
+                {claim.sources && Array.isArray(claim.sources) && claim.sources.length > 0 && <Row
+                    style={{
+                        background: "#F5F5F5",
+                        boxShadow: "0px 3px 5px rgba(0, 0, 0, 0.15)",
+                        margin: "0px -15px 5px -15px",
+                        padding: "15px"
+                    }}
+                >
+                    <div
+                        style={{
+                            fontSize: "14px",
+                            lineHeight: "21px",
+                            color: "#111111",
+                            paddingBottom: "15px"
+                        }}
+                    >
+                        {t("claim:sourceSectionTitle")}
+                    </div>
+                    {claim.sources && claim.sources.map(
+                        (source) => <LinkPreview
+                            url={source.link}
+                            borderRadius="10px"
+                            borderColor="transparent"
+                            imageHeight="156px"
+                            secondaryTextColor="#515151"
+                            width="100%"
+                        />
+                    )}
+                    <span
+                        style={{
+                            fontSize: "10px",
+                            lineHeight: "15px",
+                            textAlign: "center",
+                            color: "#515151",
+                            padding: "20px 30px 0px 30px"
+                        }}
+                    >
+                        {t("claim:sourceFooter")} <a
+                        href={`mailto:${t("common:supportEmail")}`}>{t("claim:sourceFooterReport")}</a>
+                    </span>
+                </Row>}
                 {stats.total !== 0 && (
                     <MetricsOverview stats={stats} />
                 )}

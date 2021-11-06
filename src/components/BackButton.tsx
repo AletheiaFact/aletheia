@@ -11,7 +11,6 @@ function BackButton({ style, callback }) {
     if (pathname !== "/" && pathname !== "/newhome") {
         return (
             <a
-                className="back-button"
                 style={{
                     fontWeight: "bold",
                     ...style
