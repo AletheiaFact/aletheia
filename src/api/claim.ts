@@ -60,7 +60,6 @@ const getClaimSentence = (id, sentenceHash) => {
 };
 
 const getClaimSentenceReviews = (options = {}) => {
-    console.log(options)
     const params = {
         page: options.page - 1,
         pageSize: options.pageSize,

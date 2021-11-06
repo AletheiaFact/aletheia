@@ -40,7 +40,6 @@ beforeAll((done) => {
 describe.skip("Test claimReview CRUD", () => {
     test("list all should return empty", async (done) => {
         const response = await request(await app).get("/claimreview");
-        // console.log(Object.keys(response.res))
         expect(response.res.statusCode).toBe(200);
         expect(JSON.parse(response.res.text)).toEqual([]);
         done();

@@ -1,6 +1,5 @@
 import axios from "axios";
 import { message } from "antd";
-console.log(process.env.API_URL)
 const baseUrl = `api/stats`;
 
 const get = (id, params = {}) => {

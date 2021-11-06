@@ -58,6 +58,7 @@
         "@ant-design/icons": "^4.6.2",
         "@ant-design/icons-svg": "^4.1.0",
         "@babel/polyfill": "^7.12.1",
+        "@dhaiwat10/react-link-preview": "^1.9.1",
         "@nestjs/axios": "^0.0.1",
         "@nestjs/common": "^8.0.6",
         "@nestjs/config": "^1.0.1",
