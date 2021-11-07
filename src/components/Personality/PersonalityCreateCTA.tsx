@@ -1,6 +1,7 @@
-import { Button } from "antd";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import Button from "../Button";
+import { PlusOutlined } from "@ant-design/icons";
 
 const PersonalityCreateCTA = ({ href }) => {
     const { t } = useTranslation();
@@ -13,7 +14,7 @@ const PersonalityCreateCTA = ({ href }) => {
 
             <p>
                 <Button type="primary" href={href || `./create`}>
-                    + {t("personalityCTA:button")}
+                    <PlusOutlined /> {t("personalityCTA:button")}
                 </Button>
             </p>
             <p>{t("personalityCTA:footer")}</p>

@@ -19,7 +19,7 @@ const SocialMediaShare = ({ quote = null, href = '' }) => {
     return (
         <Row
             style={{
-                background: colors.lightBlue,
+                background: colors.grayTertiary,
                 borderRadius: "30px",
                 margin: "45px 15px",
                 padding: "20px 0px"

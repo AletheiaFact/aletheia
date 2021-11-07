@@ -2,6 +2,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import {useRouter} from "next/router";
+import colors from "../styles/colors";
 
 function BackButton({ style, callback }) {
     const { t } = useTranslation();
@@ -13,6 +14,7 @@ function BackButton({ style, callback }) {
             <a
                 style={{
                     fontWeight: "bold",
+                    color: colors.blueSecondary,
                     ...style
                 }}
                 onClick={() => {
