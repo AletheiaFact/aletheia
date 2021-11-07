@@ -1,9 +1,11 @@
 import React from "react";
 import CTARegistration from "./CTARegistration";
-import { Button, Row, Carousel, Spin } from "antd";
+import { Row, Carousel, Spin, Col } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from 'next-i18next';
+import Button from '../Button';
+import {ArrowRightOutlined} from "@ant-design/icons";
 
 const Home = ({ personalities, stats, href }) => {
     const { t } = useTranslation();
@@ -23,7 +25,7 @@ const Home = ({ personalities, stats, href }) => {
                 <Row
                     style={{
                         position: "relative",
-                        margin: "-10px -15px 0px -15px"
+                        margin: "-20px -15px 0px -15px"
                     }}
                 >
                     <div
@@ -62,7 +64,6 @@ const Home = ({ personalities, stats, href }) => {
                             position: "absolute",
                             zIndex: "2",
                             width: "100%",
-                            height: "100%",
                             padding: "7%"
                         }}
                     >
@@ -86,9 +87,7 @@ const Home = ({ personalities, stats, href }) => {
                         </Row>
                         <Row
                             style={{
-                                height: "60%",
                                 color: "#fff",
-
                                 flexDirection: "column"
                             }}
                         >
@@ -138,15 +137,25 @@ const Home = ({ personalities, stats, href }) => {
                                 color: "#fff",
                                 justifyContent: "space-between"
                             }}
+                            gutter="3"
                         >
-                            <span>{t("home:statsFooter")}</span>
-                            <Button href="#create_account">
-                                {t("home:createAccountButton")}
-                            </Button>
+                            <Col span="14">
+
+                                <span>{t("home:statsFooter")}</span>
+                            </Col>
+                            <Col span="10">
+                                <Button href="#create_account" type="white">
+                                    {t("home:createAccountButton")}
+                                </Button>
+                            </Col>
                         </Row>
                     </div>
                 </Row>
-                <Row>
+                <Row
+                    style={{
+                        padding: "20px 0px"
+                    }}
+                >
                     {personalities.map(
                         (p, i) =>
                             p && (
@@ -159,11 +168,13 @@ const Home = ({ personalities, stats, href }) => {
                     )}
                     <Row
                         style={{
-                            padding: "10px"
+                            padding: "20px",
+                            width: "100%",
+                            flexDirection: "column"
                         }}
                     >
-                        <Button href="/personality">
-                            {t("home:seeMorePersonalitiesButton")}
+                        <Button href="/personality" type="whiteBlue">
+                            {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
                         </Button>
                     </Row>
                 </Row>

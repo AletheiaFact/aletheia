@@ -3,6 +3,7 @@ import { Progress } from "antd";
 import ReviewColors from "../../constants/reviewColors";
 import StatsReviewColors from "../../constants/statsReviewColors";
 import { useTranslation } from "next-i18next";
+import colors from "../../styles/colors";
 
 const ReviewStats = (props) => {
     const { reviews } = props?.stats || {};
@@ -13,7 +14,7 @@ const ReviewStats = (props) => {
             strokeWidth: props.strokeWidth || 18,
             width: props.width || 80,
             strokeLinecap: props.type === "circle" ? "square" : "round",
-            trailColor: "#cccccc"
+            trailColor: colors.grayTertiary
         };
 
         return {

@@ -11,6 +11,7 @@ import {
     TelegramIcon
     } from "react-share";
 import { useTranslation } from "next-i18next";
+import colors from "../styles/colors";
 
 const SocialMediaShare = ({ quote = null, href = '' }) => {
     const { t } = useTranslation();
@@ -18,7 +19,7 @@ const SocialMediaShare = ({ quote = null, href = '' }) => {
     return (
         <Row
             style={{
-                background: "#F5F5F5",
+                background: colors.grayTertiary,
                 borderRadius: "30px",
                 margin: "45px 15px",
                 padding: "20px 0px"
@@ -29,7 +30,8 @@ const SocialMediaShare = ({ quote = null, href = '' }) => {
                     width: "100%",
                     textAlign: "center",
                     fontSize: "26px",
-                    lineHeight: "39px"
+                    lineHeight: "39px",
+                    color: colors.bluePrimary
                 }}
             >
                 {t("share:title")}
