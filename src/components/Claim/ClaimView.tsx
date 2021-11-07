@@ -9,6 +9,7 @@ import moment from "moment";
 import "moment/locale/pt";
 import SocialMediaShare from "../SocialMediaShare";
 import { LinkPreview } from '@dhaiwat10/react-link-preview';
+import colors from "../../styles/colors";
 
 const { Title } = Typography;
 
@@ -125,12 +126,17 @@ const Claim = ({ personality, claim, href }) => {
                             fontSize: "10px",
                             lineHeight: "15px",
                             textAlign: "center",
-                            color: "#515151",
+                            color: colors.bluePrimary,
                             padding: "20px 30px 0px 30px"
                         }}
                     >
-                        {t("claim:sourceFooter")} <a
-                        href={`mailto:${t("common:supportEmail")}`}>{t("claim:sourceFooterReport")}</a>
+                        {t("claim:sourceFooter")}
+                        <a
+                            href={`mailto:${t("common:supportEmail")}`}
+                            style={{
+                                color: colors.blueSecondary
+                            }}
+                        > {t("claim:sourceFooterReport")}</a>
                     </span>
                 </Row>}
                 {stats.total !== 0 && (

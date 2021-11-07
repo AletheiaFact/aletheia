@@ -1,7 +1,9 @@
-import {Button, Col, Form, Input, Row} from "antd";
+import { Col, Form, Row } from "antd";
 import React from "react";
 import {DeleteOutlined, PlusOutlined} from "@ant-design/icons";
 import {useTranslation} from "next-i18next";
+import Input from "../Input";
+import Button from "../Button";
 
 const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, label, sources }) => {
     const { t } = useTranslation();
@@ -29,7 +31,7 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                         ]}
                     >
                         <Row>
-                            <Col span={index > 0 ? 21 : 24}>
+                            <Col span={index > 0 ? 20 : 24}>
                                 <Input
                                     key={index}
                                     value={source || ""}
@@ -37,8 +39,8 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                                     placeholder={placeholder}
                                 />
                             </Col>
-                            <Col span={3}>
-                                {index > 0 && <Button style={{ width: "100%" }} onClick={() => removeSource(index)}><DeleteOutlined /></Button>}
+                            <Col span={4}>
+                                {index > 0 && <Button style={{ width: "100%", height:"40px" }} onClick={() => removeSource(index)}><DeleteOutlined /></Button>}
                             </Col>
                         </Row>
                     </Form.Item>

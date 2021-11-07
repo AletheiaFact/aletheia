@@ -1,16 +1,15 @@
 import React from "react";
-import colors from "../../constants/highlightColors";
+import highlightColors from "../../constants/highlightColors";
 import styled from "styled-components";
+import colors from "../../styles/colors";
 
 const ClaimSentence = styled.a`
-    .claim-sentence {
-        color: #111111;
-        font-size: 18px;
-        line-height: 27px;
-    }
+    color: ${colors.bluePrimary};
+    font-size: 18px;
+    line-height: 27px;
 
-    .claim-sentence:hover {
-        color: #111111;
+    :hover {
+        color: ${colors.bluePrimary};
         text-decoration: underline;
     }
 `;
@@ -19,7 +18,8 @@ const Sentence = ({ showHighlights, properties, content, generateHref}) => {
     let style = {};
     if (properties.topClassification && showHighlights) {
         style = {
-            backgroundColor: colors[properties.topClassification.classification]
+            ...style,
+            backgroundColor: highlightColors[properties.topClassification.classification]
         };
     }
     const href = generateHref({ properties });
@@ -38,7 +38,7 @@ const Sentence = ({ showHighlights, properties, content, generateHref}) => {
                 <sup
                     style={{
                         color:
-                            colors[properties.topClassification.classification],
+                            highlightColors[properties.topClassification.classification],
                         fontWeight: "600",
                         fontSize: "14px",
                         lineHeight: "22px",
