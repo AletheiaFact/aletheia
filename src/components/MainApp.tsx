@@ -65,7 +65,7 @@ const MainApp = ({children}) => {
                 <Footer style={{
                     textAlign: "center",
                     background: colors.grayPrimary,
-                    color: colors.lightBlue
+                    color: colors.white
                 }}
                 >
                     {t("footer:copyright")}

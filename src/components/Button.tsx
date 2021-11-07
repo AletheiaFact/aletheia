@@ -13,45 +13,48 @@ const AletheiaButton: (
     {
         children,
         href,
-        type
+        type,
+        style
     }: {
         target: any,
         children: any;
         href: any;
-        type: ButtonType
-    }) => JSX.Element = ({ target, children, href, type }) => {
-    let style = {
+        type: ButtonType,
+        style: any
+    }) => JSX.Element = ({ target, children, href, type, style }) => {
+    let buttonStyle = {
+        ...style,
         borderWidth: "2px",
         borderRadius: "30px",
     };
     switch (type) {
         case ButtonType.white:
-            style = {
-                ...style,
+            buttonStyle = {
+                ...buttonStyle,
                 background: colors.white,
                 borderColor: colors.white,
                 color: colors.bluePrimary
             }
             break;
         case ButtonType.gray:
-            style = {
-                ...style,
+            buttonStyle = {
+                ...buttonStyle,
                 background: colors.graySecondary,
                 borderColor: colors.graySecondary,
                 color: colors.white
             }
             break;
         case ButtonType.whiteBlue:
-            style = {
-                ...style,
+            buttonStyle = {
+                ...buttonStyle,
                 background: colors.white,
                 borderColor: colors.bluePrimary,
                 color: colors.bluePrimary
             }
             break;
         case ButtonType.whiteBlack:
-            style = {
-                ...style,
+            buttonStyle = {
+                ...buttonStyle,
                 background: colors.white,
                 borderColor: colors.black,
                 color: colors.black
@@ -59,10 +62,10 @@ const AletheiaButton: (
             break;
         case ButtonType.blue:
         default:
-            style = {
-                ...style,
-                background: colors.bluePrimary,
-                borderColor: colors.bluePrimary,
+            buttonStyle = {
+                ...buttonStyle,
+                background: colors.blueSecondary,
+                borderColor: colors.blueSecondary,
                 color: colors.white
             }
             break;
@@ -70,7 +73,7 @@ const AletheiaButton: (
 
     return (
         <Button
-            style={style}
+            style={buttonStyle}
             href={href}
             target={target}
         >

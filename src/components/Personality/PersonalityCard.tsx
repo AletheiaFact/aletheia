@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import {ArrowRightOutlined, PlusOutlined} from "@ant-design/icons";
 import ReviewStats from "../Metrics/ReviewStats";
 import Button from "../Button";
+import colors from "../../styles/colors";
 const { Title, Paragraph } = Typography;
 
 const PersonalityCard = ({
@@ -96,7 +97,8 @@ const PersonalityCard = ({
                         {!summarized && personality.wikipedia && (
                             <a
                                 style={{
-                                    fontWeight: "bold"
+                                    fontWeight: "bold",
+                                    color: colors.blueSecondary
                                 }}
                                 target="_blank"
                                 href={personality.wikipedia}
@@ -155,7 +157,7 @@ const PersonalityCard = ({
                                     <span>
                                             <span
                                                 style={{
-                                                    color: "#70b0d6",
+                                                    color: colors.blueSecondary,
                                                     fontSize: "20px"
                                                 }}
                                             >
@@ -168,7 +170,7 @@ const PersonalityCard = ({
                                     <span>
                                             <span
                                                 style={{
-                                                    color: "#70b0d6",
+                                                    color: colors.blueSecondary,
                                                     fontSize: "20px"
                                                 }}
                                             >
