@@ -9,8 +9,7 @@ const ClaimSummary = styled(Row)`
     margin: 1em auto;
     border-radius:10px;
 
-    &:after
-    {
+    &:after {
         content: " ";
         position: absolute;
         left: 10px;
@@ -19,6 +18,13 @@ const ClaimSummary = styled(Row)`
         border-right: 12px solid transparent;
         border-left: 12px solid transparent;
         border-bottom: 12px solid #EEEEEE;
+    }
+
+    &.claim-review {
+        background: rgba(219, 159, 13, 0.3);
+        &:after {
+            border-bottom-color: rgba(219, 159, 13, 0.3);
+        }
     }
 `;
 
