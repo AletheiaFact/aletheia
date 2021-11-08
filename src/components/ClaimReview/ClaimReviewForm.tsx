@@ -1,13 +1,13 @@
 import React, {
     useEffect, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Form, Button, Input } from "antd";
+import { Form } from "antd";
 import ClaimReviewSelect from "../Form/ClaimReviewSelect";
 import claimReviewApi from "../../api/claimReview";
 import {useTranslation} from "next-i18next";
 import SourceInput from "../Source/SourceInput";
 import { useRouter } from "next/router";
-
+import Button from "../Button";
 const recaptchaRef = React.createRef();
 
 const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk, handleCancel }) => {
@@ -125,7 +125,7 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
                     />
                 </Form.Item>
                 <Form.Item>
-                    <Button onClick={handleCancel}>
+                    <Button type="white" onClick={handleCancel}>
                         {t("claimReviewForm:cancelButton")}
                     </Button>
                     <Button

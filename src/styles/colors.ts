@@ -5,6 +5,7 @@ export default {
     grayPrimary: "rgb(76, 77, 78)",
     graySecondary: "rgb(151, 154, 155)",
     grayTertiary: "rgb(194, 200, 204)",
+    lightGray: "rgb(245,245,245)",
     lightBlue: "rgb(218, 232, 234)",
     white: "rgb(255, 255, 255)",
     black: "rgb(81, 81, 81)",

@@ -6,8 +6,6 @@ import "draft-js/dist/Draft.css";
 import {
     DatePicker,
     Form,
-    Input,
-    Button,
     Row,
     Checkbox,
 } from "antd";
@@ -18,7 +16,8 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SourceInput from "../Source/SourceInput";
-
+import Button from "../Button";
+import Input from "../Input";
 const recaptchaRef = React.createRef();
 const formRef = React.createRef();
 
@@ -29,6 +28,57 @@ const ClaimForm = styled(Form)`
 
     #createClaim .ant-form-item-extra {
         margin-bottom: 10px;
+    }
+`;
+
+const DatePickerInput = styled(DatePicker)`
+    background: #F5F5F5;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 30px;
+    border: none;
+    height: 40px;
+
+    input::placeholder {
+        color: #515151;
+    }
+
+    :focus {
+        border: none;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    }
+
+    :active {
+        border: none;
+    }
+
+    :hover {
+        border: none;
+    }
+`;
+
+const EditorInput = styled.div`
+    background: #F5F5F5;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 30px;
+    border: none;
+    height: 40px;
+    padding:10px;
+
+    ::placeholder {
+        color: #515151;
+    }
+
+    :focus {
+        border: none;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    }
+
+    :active {
+        border: none;
+    }
+
+    :hover {
+        border: none;
     }
 `;
 
@@ -183,7 +233,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         marginBottom: "24px"
                     }}
                 >
-                    <div className="ant-input">
+                    <EditorInput>
                         <Editor
                             placeholder={t(
                                 "claimForm:contentFieldPlaceholder"
@@ -191,7 +241,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                             editorState={editorState}
                             onChange={onChange}
                         />
-                    </div>
+                    </EditorInput>
                 </Form.Item>
                 <Form.Item
                     name="date"
@@ -211,7 +261,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         marginBottom: "24px"
                     }}
                 >
-                    <DatePicker
+                    <DatePickerInput
                         style={{
                             width: "100%"
                         }}
@@ -280,12 +330,12 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         marginBottom: "20px"
                     }}
                 >
-                    <Button onClick={() => router.back()}>
+                    <Button type="white" onClick={() => router.back()}>
                         {t("claimForm:cancelButton")}
                     </Button>
                     {edit ? (
                         <Button
-                            type="primary"
+                            type="blue"
                             htmlType="submit"
                             disabled={disableSubmit}
                         >
@@ -293,7 +343,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         </Button>
                     ) : (
                         <Button
-                            type="primary"
+                            type="blue"
                             htmlType="submit"
                             disabled={disableSubmit}
                         >

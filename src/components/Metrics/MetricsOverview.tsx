@@ -9,7 +9,10 @@ const MetricsOverview = ({ stats }) => {
     const { t } = useTranslation();
 
     return (
-        <Row style={{ background: "white" }}>
+        <Row style={{
+            background: "white",
+            marginTop: "15px"
+        }}>
             <Col
                 style={{
                     width: "100%",

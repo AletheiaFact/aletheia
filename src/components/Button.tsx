@@ -11,17 +11,24 @@ enum ButtonType {
 
 const AletheiaButton: (
     {
+        target,
         children,
         href,
         type,
-        style
+        style,
+        onClick,
+        disabled,
+        htmlType
     }: {
         target: any,
         children: any;
         href: any;
         type: ButtonType,
         style: any
-    }) => JSX.Element = ({ target, children, href, type, style }) => {
+        onClick: any,
+        disabled: any,
+        htmlType: any
+    }) => JSX.Element = ({ target, children, href, type, style, onClick, disabled, htmlType }) => {
     let buttonStyle = {
         ...style,
         borderWidth: "2px",
@@ -76,6 +83,9 @@ const AletheiaButton: (
             style={buttonStyle}
             href={href}
             target={target}
+            onClick={onClick}
+            disabled={disabled}
+            htmlType={htmlType}
         >
             {children}
         </Button>

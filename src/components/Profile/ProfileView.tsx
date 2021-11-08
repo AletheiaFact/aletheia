@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import {
     Alert,
-    Button,
     Form,
     Input,
     message,
@@ -10,6 +9,8 @@ import {
 } from "antd";
 import api from "../../api/user";
 import { useTranslation } from "next-i18next";
+import Button from "../Button";
+import InputPassword from "../InputPassword";
 
 const ProfileView = ({ user }) => {
     const formRef = useRef();
@@ -73,7 +74,7 @@ const ProfileView = ({ user }) => {
                         width: "100%"
                     }}
                 >
-                    <Input.Password />
+                    <InputPassword />
                 </Form.Item>
                 <Form.Item
                     name="newPassword"
@@ -89,7 +90,7 @@ const ProfileView = ({ user }) => {
                         width: "100%"
                     }}
                 >
-                    <Input.Password />
+                    <InputPassword />
                 </Form.Item>
                 <Form.Item
                     name="repeatedNewPassword"
@@ -123,7 +124,7 @@ const ProfileView = ({ user }) => {
                         width: "100%"
                     }}
                 >
-                    <Input.Password />
+                    <InputPassword />
                 </Form.Item>
                 <Form.Item>
                     <Button
