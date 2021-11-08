@@ -62,13 +62,13 @@ spec:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 400
+            initialDelaySeconds: 60
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 400
+            initialDelaySeconds: 60
             timeoutSeconds: 10
             failureThreshold: 10
           env:
@@ -84,6 +84,6 @@ spec:
                   name: aletheia-config
           resources:
             limits:
-              cpu: 200m
-            requests:
               cpu: 150m
+            requests:
+              cpu: 120m
