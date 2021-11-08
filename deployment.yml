@@ -62,13 +62,13 @@ spec:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 400
+            initialDelaySeconds: 60
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /api/health
               port: 3000
-            initialDelaySeconds: 400
+            initialDelaySeconds: 60
             timeoutSeconds: 10
             failureThreshold: 10
           env:

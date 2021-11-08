@@ -4,7 +4,7 @@ import ClaimSummary from "../Claim/ClaimSummary";
 
 
 const { Paragraph } = Typography;
-const ClaimSentenceCard = ({ personality, sentence}) => {
+const ClaimSentenceCard = ({ personality, sentence, summaryClassName = "" }) => {
     const content = sentence?.content;
     if (content) {
         return (
@@ -20,7 +20,7 @@ const ClaimSentenceCard = ({ personality, sentence}) => {
                     }
                     content={
                         <>
-                            <ClaimSummary>
+                            <ClaimSummary className={summaryClassName}>
                                 <Col>
                                     <Paragraph
                                         ellipsis={{
@@ -40,7 +40,6 @@ const ClaimSentenceCard = ({ personality, sentence}) => {
                         </Tooltip>
                     }
                 />
-                <hr style={{ opacity: "20%" }} />
             </Col>
         );
     } else {

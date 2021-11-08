@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Row, Col, Card, message } from "antd";
+import { Form, Row, Col, Card, message } from "antd";
 import api from "../../api/user";
 import BackButton from "../BackButton";
 import CTARegistration from "../Home/CTARegistration";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import InputPassword from "../InputPassword";
+import Input from "../Input";
+import Button from "../Button";
+import colors from "../../styles/colors";
 
 const LoginView = () => {
     const { t } = useTranslation();
@@ -39,7 +43,7 @@ const LoginView = () => {
                         style={{
                             marginTop: 45,
                             ...(formType === "signup" && {
-                                backgroundColor: "#2D77A3"
+                                backgroundColor: colors.bluePrimary
                             })
                         }}
                     >
@@ -81,7 +85,7 @@ const LoginView = () => {
                                             }
                                         ]}
                                     >
-                                        <Input.Password />
+                                        <InputPassword />
                                     </Form.Item>
                                     <Form.Item>
                                         <div
@@ -95,7 +99,9 @@ const LoginView = () => {
                                                 onClick={() => {
                                                     setFormType("signup");
                                                 }}
-                                                style={{}}
+                                                style={{
+                                                    color: colors.bluePrimary
+                                                }}
                                             >
                                                 {t("login:signup")}
                                             </a>
