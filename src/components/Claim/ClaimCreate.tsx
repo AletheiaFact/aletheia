@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Editor, EditorState } from "draft-js";
-import { stateToHTML } from "draft-js-export-html";
-import { stateFromHTML } from "draft-js-import-html";
 import "draft-js/dist/Draft.css";
 import {
     DatePicker,
@@ -18,6 +15,7 @@ import PersonalityCard from "../Personality/PersonalityCard";
 import SourceInput from "../Source/SourceInput";
 import Button from "../Button";
 import Input from "../Input";
+import TextArea from "../TextArea";
 const recaptchaRef = React.createRef();
 const formRef = React.createRef();
 
@@ -89,8 +87,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     const [ title, setTitle ] = useState("");
     const [ content, setContent ] = useState("");
     const [ date, setDate ] = useState("");
-    const [ recaptcha, setRecaptcha ] = useState("")
-    const [ editorState, setEditorState ] = useState(EditorState.createEmpty())
+    const [ recaptcha, setRecaptcha ] = useState("");
     const [ disableSubmit, setDisableSubmit ] = useState(true);
     const [ sources, setSources ] = useState([""]);
 
@@ -98,14 +95,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
         if (edit) {
             const { content, title } = await claimApi.getById(claim._id);
             setTitle(title);
-            setEditorState(
-                EditorState.createWithContent(
-                    stateFromHTML(content.html)
-                )
-            );
-            setContent(stateToHTML(
-                editorState.getCurrentContent()
-            ));
+            setContent(content.text);
         }
     }, []);
 
@@ -122,7 +112,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
         }
 
         const { slug } = await claimApi.save({
-            content: stateToHTML(editorState.getCurrentContent()),
+            content,
             title,
             personality: personality._id,
             // TODO: add a new input when twitter is supported
@@ -139,26 +129,18 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     const updateClaim = async () => {
         await claimApi.update(claim._id, {
             title,
-            content: stateToHTML(editorState.getCurrentContent())
+            content
         });
         // Redirect to personality profile in case _id is not present
         const path = `/personality/${personality._id}`;
         router.push(path);
     }
 
-    const onChange = (newEditorState) => {
-        setEditorState(newEditorState);
-    }
-
     useEffect(() => {
         if (formRef.current) {
-            formRef.current.setFieldsValue({
-                content: stateToHTML(
-                    editorState.getCurrentContent()
-                )
-            });
+            formRef.current.setFieldsValue({ content });
         }
-    }, [editorState]);
+    }, [content]);
 
     const onExpiredCaptcha = () => {
         return new Promise<void>(resolve => {
@@ -233,15 +215,16 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         marginBottom: "24px"
                     }}
                 >
-                    <EditorInput>
-                        <Editor
-                            placeholder={t(
-                                "claimForm:contentFieldPlaceholder"
-                            )}
-                            editorState={editorState}
-                            onChange={onChange}
-                        />
-                    </EditorInput>
+                    <TextArea
+                        rows={4}
+                        value={content || ""}
+                        onChange={e =>
+                            setContent(e.target.value)
+                        }
+                        placeholder={t(
+                            "claimForm:contentFieldPlaceholder"
+                        )}
+                    />
                 </Form.Item>
                 <Form.Item
                     name="date"

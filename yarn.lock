@@ -2835,6 +2835,23 @@ commondir@^1.0.1:
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
   integrity sha1-3dgA2gxmEnOTzKWVDqloo6rxJTs=
 
+compromise-paragraphs@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/compromise-paragraphs/-/compromise-paragraphs-0.0.5.tgz#e5a869b2d2ad9ddb4361724d5f1437578ee9a802"
+  integrity sha512-jrchGs2a1havj1NYPNvU+JuIW4Tboo64Hq7zY8Bd0CNNOIwG/CVzrjcqaRW7khaxApOFvWJ0WZv/IGMtn+GNFA==
+
+compromise-sentences@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/compromise-sentences/-/compromise-sentences-0.3.0.tgz#61d34039323155bc20dad10f24340daaabf86e26"
+  integrity sha512-L6d5PXmmyPyWRMoJURYOM0yILhtV37zCOy9ZW8Xd6KgY+2qQBTwuokekaGL9MDpSH3/grRDL+AHKytYpGrTEmA==
+
+compromise@^13.11.4:
+  version "13.11.4"
+  resolved "https://registry.yarnpkg.com/compromise/-/compromise-13.11.4.tgz#3136e6d2c2cca822ba7cebd140c9f27f405b67f1"
+  integrity sha512-nBITcNdqIHSVDDluaG6guyFFCSNXN+Hu87fU8VlhkE5Z0PwTZN1nro2O7a8JcUH88nB5EOzrxd9zKfXLSNFqcg==
+  dependencies:
+    efrt-unpack "2.2.0"
+
 compute-scroll-into-view@^1.0.17:
   version "1.0.17"
   resolved "https://registry.yarnpkg.com/compute-scroll-into-view/-/compute-scroll-into-view-1.0.17.tgz#6a88f18acd9d42e9cf4baa6bec7e0522607ab7ab"
@@ -3442,6 +3459,11 @@ ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
+
+efrt-unpack@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/efrt-unpack/-/efrt-unpack-2.2.0.tgz#b05dbec0fb8cb346a27840e00c969df9c72fee52"
+  integrity sha512-9xUSSj7qcUxz+0r4X3+bwUNttEfGfK5AH+LVa1aTpqdAfrN5VhROYCfcF+up4hp5OL7IUKcZJJrzAGipQRDoiQ==
 
 electron-to-chromium@^1.3.723, electron-to-chromium@^1.3.793:
   version "1.3.799"

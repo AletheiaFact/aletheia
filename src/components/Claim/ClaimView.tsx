@@ -19,7 +19,7 @@ const Claim = ({ personality, claim, href }) => {
     const { content, title, stats } = claim;
 
     let { date } = claim;
-    const body = content.object;
+    const paragraphs = content.object;
     date = moment(new Date(date));
     const [ showHighlights, setShowHighlights ] = useState(true);
 
@@ -29,7 +29,7 @@ const Claim = ({ personality, claim, href }) => {
 
     const generateHref = (data) => `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.properties["data-hash"]}`;
 
-    if (body && personality) {
+    if (paragraphs && personality) {
         return (
             <>
                 <PersonalityCard personality={personality} header={true} />
@@ -63,10 +63,10 @@ const Claim = ({ personality, claim, href }) => {
                     <Row>
                         <Col offset={2} span={18}>
                             <div>
-                                {body.map(p => (
+                                {paragraphs.map(paragraph => (
                                     <ClaimParagraph
-                                        key={p.props.id}
-                                        paragraph={p}
+                                        key={paragraph.props.id}
+                                        paragraph={paragraph}
                                         showHighlights={
                                             showHighlights
                                         }

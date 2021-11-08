@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import * as dom from "domino";
 const md5 = require("md5");
+const nlp = require('compromise')
+nlp.extend(require('compromise-sentences'))
+nlp.extend(require('compromise-paragraphs'))
 
 // TODO: regex for future rules
 // const alphabets = /([A-Za-z])/g;
@@ -16,38 +18,33 @@ export class ParserService {
     paragraphSequence: number;
     sentenceSequence: number;
 
-    parse(html: string) {
+    parse(content: string) {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
-        const document = dom.createDocument(html);
-        const text = document.body.textContent;
         const result = [];
-        const paragraphs = document.querySelectorAll("p");
+        const nlpContent = nlp(content)
+        const nlpOptions = { trim:true };
+        const paragraphs = nlpContent.paragraphs()
 
-        for (let i = 0; i < paragraphs.length; i++) {
+        paragraphs.forEach((paragraph) => {
             const paragraphId = this.createParagraphId();
-            const paragraphContent = paragraphs[i].innerHTML;
-            const newParagraph = document.createElement("p");
-            const sentences = this.extractSentences(paragraphContent);
+            const sentences = paragraph.sentences();
 
-            if (Array.isArray(sentences) && sentences.length) {
+            if (sentences && sentences.length) {
                 result.push({
-                    element: "p",
+                    type: "paragraph",
                     props: {
                         id: paragraphId,
                     },
-                    content: sentences.map((sentence) => {
-                        return this.parseSentence(
-                            document,
-                            sentence,
-                            newParagraph
-                        );
-                    }),
+                    content: sentences.map((sentence) => this.parseSentence(sentence.text(nlpOptions))),
                 });
             }
-        }
-        // TODO: check security for html content
-        return { object: result, text, html };
+        });
+
+        return {
+            object: result,
+            text: nlpContent.text(nlpOptions),
+        };
     }
 
     /**
@@ -69,19 +66,14 @@ export class ParserService {
         });
     }
 
-    parseSentence(document, sentenceContent, newParagraph) {
-        const span = document.createElement("span");
+    parseSentence(sentenceContent) {
         const sentenceId = this.createSentenceId();
-        span.setAttribute("id", sentenceId);
         const sentenceDataHash = md5(
             `${this.paragraphSequence}${this.sentenceSequence}${sentenceContent}`
         );
-        span.setAttribute("data-hash", sentenceDataHash);
-        span.innerHTML = sentenceContent;
 
-        newParagraph.appendChild(span);
         return {
-            element: "span",
+            type: "sentence",
             props: {
                 id: sentenceId,
                 "data-hash": sentenceDataHash,
