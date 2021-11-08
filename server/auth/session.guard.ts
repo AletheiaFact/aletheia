@@ -13,7 +13,11 @@ export class SessionGuard implements CanActivate {
             if (request.isAuthenticated && request.isAuthenticated()) {
                 return true;
             } else {
-                response.redirect("/login");
+                if (request.url.startsWith("/api")) {
+                    return false;
+                } else {
+                    response.redirect("/login");
+                }
             }
         } catch (e) {
             throw new UnauthorizedException();

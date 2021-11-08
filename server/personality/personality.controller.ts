@@ -85,6 +85,7 @@ export class PersonalityController {
             });
     }
 
+    @UseGuards(SessionGuard)
     @Get("personality/search")
     public async personalityCreateSearch(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
