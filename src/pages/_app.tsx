@@ -17,6 +17,7 @@ function MyApp({ Component, pageProps }) {
                     name="viewport"
                     content="width=device-width, initial-scale=1.0"
                 />
+                <script async defer data-website-id="0c969da4-1502-4923-99e8-f70edd82957c" src="https://analytics.aletheiafact.org/umami.js"></script>
             </Head>
             <Provider store={store}>
                 <MainApp>
