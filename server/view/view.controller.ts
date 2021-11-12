@@ -25,7 +25,7 @@ export class ViewController {
 
         await this.viewService
             .getNextServer()
-            .render(req, res, "/home", Object.assign(parsedUrl.query));
+            .render(req, res, "/landing-page", Object.assign(parsedUrl.query));
     }
 
     @Get("_next*")

@@ -13,7 +13,7 @@ export class HomeController {
         private statsService: StatsService
     ) {}
 
-    @Get("newhome")
+    @Get("home")
     public async showHome(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
@@ -30,7 +30,7 @@ export class HomeController {
             .render(
                 req,
                 res,
-                "/newhome",
+                "/home-page",
                 Object.assign(parsedUrl.query, { personalities, stats })
             );
     }
