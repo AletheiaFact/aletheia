@@ -23,3 +23,4 @@ services:
       cors: '*'
       debug: true
       recaptcha_secret: RECAPTCHA_SECRET
+      recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
