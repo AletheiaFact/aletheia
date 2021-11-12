@@ -9,7 +9,7 @@ function BackButton({ style, callback }) {
     const router = useRouter();
     const pathname = router.pathname || "";
 
-    if (pathname !== "/" && pathname !== "/newhome") {
+    if (pathname !== "/" && pathname !== "/home-page") {
         return (
             <a
                 style={{

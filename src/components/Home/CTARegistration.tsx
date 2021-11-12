@@ -4,15 +4,17 @@ import { Typography } from "antd";
 import colors from "../../styles/colors";
 import Button from "../Button";
 
-function CTARegistration() {
+function CTARegistration({ style = {} }) {
     const { t } = useTranslation();
+    const componentStyle = {
+        backgroundColor: colors.bluePrimary,
+        textAlign: "center",
+        padding: "30px",
+        ...style
+    }
     return (
         <div
-            style={{
-                backgroundColor: colors.bluePrimary,
-                textAlign: "center",
-                padding: "30px"
-            }}
+            style={componentStyle}
         >
             <Typography.Title level={3} style={{ color: "#fff" }}>
                 {t("CTARegistration:title")}
