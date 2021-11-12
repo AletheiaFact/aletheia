@@ -31,7 +31,7 @@ const Home = ({ personalities, stats, href }) => {
                     <div
                         style={{
                             width: "100%",
-                            height: "50vh",
+                            height: "55vh",
                             overflow: "hidden",
                             position: "relative"
                         }}
@@ -39,7 +39,7 @@ const Home = ({ personalities, stats, href }) => {
                         <div
                             style={{
                                 width: "100%",
-                                height: "50vh",
+                                height: "55vh",
                                 position: "absolute",
                                 zIndex: "1",
                                 backgroundColor: "rgba(0,0,0,0.6)"

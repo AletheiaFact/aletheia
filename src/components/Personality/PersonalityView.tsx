@@ -14,14 +14,8 @@ import { useTranslation } from 'next-i18next';
 
 const PersonalityView = ({ personality, href }) => {
     const { t } = useTranslation();
-    const router = useRouter();
 
     const [showSpeechesSection, setShowSpeechesSection] = useState(true);
-
-    const createClaim = () => {
-        const path = `/personality/${personality.slug}/claim/create`;
-        router.push(path)
-    }
 
     const onSectionChange = (event) => {
         setShowSpeechesSection(event.target.value);

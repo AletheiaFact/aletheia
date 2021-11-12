@@ -34,7 +34,7 @@ const MainApp = ({children}) => {
         }
     );
     // TODO: when we are ready to flip the switch and publish the app, remove this check
-    if (router.pathname === "/home") {
+    if (router.pathname === "/landing-page") {
         return <>
             {children}
         </>
