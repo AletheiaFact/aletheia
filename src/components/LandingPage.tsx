@@ -5,7 +5,6 @@ import React from "react";
 import {Row} from "antd";
 import Logo from "./Header/Logo";
 import CTARegistration from "./Home/CTARegistration";
-import About from "./About/About";
 import Button from "./Button";
 
 const LandingPageComponent = () => {
