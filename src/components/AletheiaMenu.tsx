@@ -44,6 +44,14 @@ const AletheiaMenu = () => {
             >
                 {t("menu:myAccountItem")}
             </Menu.Item>
+            <Menu.Item
+                key="/about"
+                style={{
+                    fontSize: "18px"
+                }}
+            >
+                {t("menu:aboutItem")}
+            </Menu.Item>
         </Menu>
     );
 }
