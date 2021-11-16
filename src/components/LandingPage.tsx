@@ -5,6 +5,7 @@ import React from "react";
 import {Row} from "antd";
 import Logo from "./Header/Logo";
 import CTARegistration from "./Home/CTARegistration";
+import Button from "./Button";
 
 const LandingPageComponent = () => {
     const { t } = useTranslation();
@@ -22,7 +23,58 @@ const LandingPageComponent = () => {
                 width: "100%",
                 justifyContent: "center"
             }}>
-                <Logo color="white" />
+                <Row
+                    style={{
+                        width: "100%",
+                        marginBottom: "20px"
+                    }}
+                >
+                    <Logo
+
+                        color="white"
+                    />
+                </Row>
+                <Row
+                    style={{
+                        color: colors.bluePrimary,
+                        backgroundColor: colors.white,
+                        justifyContent: "center",
+                        width: "100%",
+                        fontSize: "1rem",
+                        letterSpacing: "1px",
+                        fontWeight: 500,
+                        padding: "20px"
+                    }}
+                >
+                    <Row
+                        style={{
+                            justifyContent: "center",
+                            textAlign: "center",
+                            width: "100%",
+                            fontSize: "1rem",
+                            letterSpacing: "1px",
+                            fontWeight: 500,
+                            padding: "5px 20px",
+                            marginBottom: "10px"
+                        }}
+                    >
+                        {t("landingPage:description")}
+                    </Row>
+                    <Row
+                        style={{
+                            justifyContent: "center",
+                            width: "100%",
+                            fontSize: "1rem",
+                            letterSpacing: "1px",
+                            fontWeight: 500,
+                            padding: "5px 20px"
+                        }}
+                    >
+                        <Button type="blue" href="/about">{t("landingPage:learnMoreButton")}</Button>
+                    </Row>
+
+
+                </Row>
                 <CTARegistration style={{
                     backgroundColor: "unset"
                 }}
@@ -49,11 +101,13 @@ const LandingPageComponent = () => {
                 style={{
                     display: "flex",
                     justifyContent: "space-evenly",
-                    padding: "35px 25% 20px 25%",
+                    padding: "35px 10% 20px 10%",
                 }}
             >
                 <SocialIcon url="https://www.facebook.com/AletheiaFactorg-107521791638412" bgColor={colors.white} />
                 <SocialIcon url="https://www.instagram.com/aletheiafact" bgColor={colors.white} />
+                <SocialIcon url="https://www.linkedin.com/in/aletheiafact-org" bgColor={colors.white} />
+                <SocialIcon url="https://www.github.com/in/aletheiafact" bgColor={colors.white} />
             </Row>
         </main>
     );
