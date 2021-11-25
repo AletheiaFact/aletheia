@@ -39,6 +39,17 @@ export class ViewController {
             .render(req, res, "/about-page", Object.assign(parsedUrl.query));
     }
 
+    @Get("privacy-policy")
+    public async showPrivacyPolicyPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        // @ts-ignore
+        req.language = req.headers["accept-language"] || "en";
+
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/privacy-policy-page", Object.assign(parsedUrl.query));
+    }
+
     @Get("_next*")
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);

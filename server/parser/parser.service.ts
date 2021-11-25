@@ -17,18 +17,18 @@ const phdRegex = /Ph\.D\./g;
 export class ParserService {
     paragraphSequence: number;
     sentenceSequence: number;
+    nlpOptions: object = { trim:true };
 
     parse(content: string) {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
         const result = [];
-        const nlpContent = nlp(content)
-        const nlpOptions = { trim:true };
-        const paragraphs = nlpContent.paragraphs()
+        const nlpContent = nlp(content);
+        const paragraphs = nlpContent.paragraphs();
 
         paragraphs.forEach((paragraph) => {
             const paragraphId = this.createParagraphId();
-            const sentences = paragraph.sentences();
+            const sentences = this.postProcessSentences(paragraph.sentences());
 
             if (sentences && sentences.length) {
                 result.push({
@@ -36,34 +36,35 @@ export class ParserService {
                     props: {
                         id: paragraphId,
                     },
-                    content: sentences.map((sentence) => this.parseSentence(sentence.text(nlpOptions))),
+                    content: sentences.map((sentence) => this.parseSentence(sentence)),
                 });
             }
         });
 
         return {
             object: result,
-            text: nlpContent.text(nlpOptions),
+            text: nlpContent.text(this.nlpOptions),
         };
     }
 
-    /**
-     * Extract sentences from a string text
-     * Source: https://stackoverflow.com/questions/4576077/how-can-i-split-a-text-into-sentences
-     * @param {String} text
-     */
-    extractSentences(text: string) {
-        text = text.replace(/<br>/g, "");
-        // TODO: there are more rules that should be applied in the future, see source
-        text = text.replace(phdRegex, "Ph<prd>D<prd>");
-        text = text.replace(prefixes, "$1<prd>");
-        text = text.replace(/\./g, ".<stop>");
-        text = text.replace(/\?/g, "?<stop>");
-        text = text.replace(/!/g, "!<stop>");
-        text = text.replace(/<prd>/g, ".");
-        return text.split("<stop>").filter((s) => {
-            return s && s.length !== 0;
+    postProcessSentences(sentences) {
+        let newSentences = [];
+        sentences.forEach(sentence => {
+            const sentenceText = sentence.text(this.nlpOptions);
+            // Extract semicolon sentences
+            let semicolonSentences = sentenceText.split(";");
+            if (sentenceText.includes(";")) {
+                semicolonSentences = semicolonSentences.map(
+                    (semicolonSentence, index) => {
+                        return index !== (semicolonSentences.length - 1)
+                            ? `${semicolonSentence};`.trim()
+                            : semicolonSentence.trim();
+                    }
+                );
+            }
+            newSentences = newSentences.concat(semicolonSentences);
         });
+        return newSentences;
     }
 
     parseSentence(sentenceContent) {

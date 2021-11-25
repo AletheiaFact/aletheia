@@ -94,6 +94,7 @@
         "passport-local": "^1.0.0",
         "passport-local-mongoose": "^6.1.0",
         "react": "^17.0.2",
+        "react-cookie-consent": "^6.4.1",
         "react-countdown": "^2.3.2",
         "react-dom": "^17.0.2",
         "react-google-recaptcha": "^2.1.0",
