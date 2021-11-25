@@ -82,6 +82,8 @@ spec:
                 configMapKeyRef:
                   key: mongodb_name
                   name: aletheia-config
+            - name: NEXT_PUBLIC_UMAMI_SITE_ID
+              value: UMAMI_SITE_ID_STUB
           resources:
             limits:
               cpu: 150m
