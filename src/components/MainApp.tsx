@@ -9,6 +9,7 @@ import {Trans, useTranslation} from "next-i18next";
 import styled from "styled-components"
 import { useRouter } from 'next/router'
 import colors from "../styles/colors";
+import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 
 const { Footer, Content } = Layout;
 
@@ -68,19 +69,31 @@ const MainApp = ({children}) => {
                     color: colors.white
                 }}
                 >
-                    {t("footer:copyright")}
-                    <div style={{ marginTop: "10px" }}>
-                        <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+                    <AletheiaSocialMediaFooter />
+                    <Row style={{ marginTop: "10px", width: "100%" }}>
+                        <a style={{ width: "100%" }} rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
                             <img alt="Creative Commons License" style={{ borderWidth: 0 }} src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
                         </a>
-                        <br />
+                    </Row>
+                    <Row style={{
+                        marginTop: "10px",
+                        width: "100%",
+                        textAlign: "center",
+                        flexDirection: "column"
+                    }}>
                         <Trans
                             i18nKey={"footer:creativeCommons"}
                             components={[
-                                <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"></a>,
+                                <a style={{whiteSpace: "pre-wrap"}} rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"></a>,
                             ]}
                         />
-                    </div>
+                    </Row>
+                    <Row style={{
+                        width: "100%",
+                        textAlign: "center",
+                        marginTop: "20px",
+                        flexDirection: "column"
+                    }}>{t("footer:copyright")}</Row>
                 </Footer>
                 {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
             </Layout>

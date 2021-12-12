@@ -1,11 +1,11 @@
 import {useTranslation} from "next-i18next";
 import colors from "../styles/colors";
-import {SocialIcon} from "react-social-icons";
 import React from "react";
 import {Row} from "antd";
 import Logo from "./Header/Logo";
 import CTARegistration from "./Home/CTARegistration";
 import Button from "./Button";
+import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 
 const LandingPageComponent = () => {
     const { t } = useTranslation();
@@ -97,18 +97,7 @@ const LandingPageComponent = () => {
                     {t("landingPage:socialNetworksCTA")}
                 </div>
             </Row>
-            <Row
-                style={{
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    padding: "35px 10% 20px 10%",
-                }}
-            >
-                <SocialIcon url="https://www.facebook.com/AletheiaFactorg-107521791638412" bgColor={colors.white} />
-                <SocialIcon url="https://www.instagram.com/aletheiafact" bgColor={colors.white} />
-                <SocialIcon url="https://www.linkedin.com/in/aletheiafact-org" bgColor={colors.white} />
-                <SocialIcon url="https://www.github.com/in/aletheiafact" bgColor={colors.white} />
-            </Row>
+            <AletheiaSocialMediaFooter />
         </main>
     );
 };
