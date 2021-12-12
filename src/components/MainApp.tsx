@@ -5,7 +5,7 @@ import BackButton from "./BackButton";
 import SearchOverlay from "./SearchOverlay";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {Trans, useTranslation} from "next-i18next";
+import {useTranslation} from "next-i18next";
 import styled from "styled-components"
 import { useRouter } from 'next/router'
 import colors from "../styles/colors";
