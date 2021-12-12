@@ -44,6 +44,7 @@ function CTARegistration({ style = {} }) {
             <Button
                 type="white"
                 target="_blank"
+                className={"umami--click--registration-button"}
                 href={t("common:registrationLink")}
             >
                 <b
