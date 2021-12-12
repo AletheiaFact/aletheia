@@ -71,7 +71,7 @@ const MainApp = ({children}) => {
                 >
                     <AletheiaSocialMediaFooter />
                     <Row style={{ marginTop: "10px", width: "100%" }}>
-                        <a style={{ width: "100%" }} rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+                        <a style={{ width: "100%" }} rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">
                             <img alt="Creative Commons License" style={{ borderWidth: 0 }} src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
                         </a>
                     </Row>
@@ -84,7 +84,7 @@ const MainApp = ({children}) => {
                         <Trans
                             i18nKey={"footer:creativeCommons"}
                             components={[
-                                <a style={{whiteSpace: "pre-wrap"}} rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"></a>,
+                                <a style={{whiteSpace: "pre-wrap"}} rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/"></a>,
                             ]}
                         />
                     </Row>
