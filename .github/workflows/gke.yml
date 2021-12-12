@@ -19,6 +19,7 @@ env:
   REGISTRY_HOSTNAME: us.gcr.io
   API_URL: ${{ secrets.API_URL }}
   ENVIRONMENT: development
+  UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
 
 jobs:
   setup-build-publish-deploy:
@@ -34,6 +35,7 @@ jobs:
           sed -i '11{s/test.//}' deployment.yml
           sed -i '11{s/test.//}' config.seed.example.yaml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
+          echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
           echo "API_URL=${{ secrets.API_URL_PRODUCTION }}" >> $GITHUB_ENV
 
       - name: Set environment
@@ -41,6 +43,7 @@ jobs:
           echo "${{ env.ENVIRONMENT }}"
           echo "${{ env.API_URL }}"
           sed -i "s/ENVIRONMENT/$ENVIRONMENT/g" deployment.yml
+          sed -i "s/UMAMI_SITE_ID_STUB/$UMAMI_SITE_ID/g" deployment.yml
 
       # Setup gcloud CLI
       - uses: google-github-actions/setup-gcloud@master
