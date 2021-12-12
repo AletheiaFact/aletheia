@@ -5,7 +5,7 @@ import BackButton from "./BackButton";
 import SearchOverlay from "./SearchOverlay";
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useTranslation} from "next-i18next";
+import {Trans, useTranslation} from "next-i18next";
 import styled from "styled-components"
 import { useRouter } from 'next/router'
 import colors from "../styles/colors";
@@ -69,6 +69,18 @@ const MainApp = ({children}) => {
                 }}
                 >
                     {t("footer:copyright")}
+                    <div style={{ marginTop: "10px" }}>
+                        <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+                            <img alt="Creative Commons License" style={{ borderWidth: 0 }} src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
+                        </a>
+                        <br />
+                        <Trans
+                            i18nKey={"footer:creativeCommons"}
+                            components={[
+                                <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"></a>,
+                            ]}
+                        />
+                    </div>
                 </Footer>
                 {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
             </Layout>
