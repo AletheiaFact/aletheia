@@ -47,7 +47,8 @@ function MyApp({ Component, pageProps }) {
                         <Trans
                             i18nKey={"cookieConsent:text"}
                             components={[
-                                <a style={{whiteSpace: "pre-wrap"}} href="/privacy-policy"></a>
+                                <a style={{whiteSpace: "pre-wrap"}} href="/privacy-policy"></a>,
+                                <a style={{whiteSpace: "pre-wrap"}} href="/code-of-conduct"></a>
                             ]}
                         />
                     </CookieConsent>

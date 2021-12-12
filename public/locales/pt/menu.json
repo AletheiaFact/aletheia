@@ -1,4 +1,6 @@
 {
     "myAccountItem": "Minha conta",
-    "aboutItem": "Sobre nós"
+    "aboutItem": "Sobre nós",
+    "privacyPolicyItem": "Política de Privacidade",
+    "codeOfConductItem": "Código de Conduta"
 }

@@ -60,6 +60,14 @@ const AletheiaMenu = () => {
             >
                 {t("menu:privacyPolicyItem")}
             </Menu.Item>
+            <Menu.Item
+                key="/code-of-conduct"
+                style={{
+                    fontSize: "18px"
+                }}
+            >
+                {t("menu:codeOfConductItem")}
+            </Menu.Item>
         </Menu>
     );
 }
