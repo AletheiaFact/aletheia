@@ -1,6 +1,6 @@
-import {Collapse, Row, Typography} from "antd";
+import {Row, Typography} from "antd";
 import colors from "../../styles/colors";
-import {Trans, useTranslation} from "next-i18next";
+import {useTranslation} from "next-i18next";
 
 const { Title } = Typography;
 
