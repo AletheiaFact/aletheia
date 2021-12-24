@@ -3,5 +3,6 @@
     "back_button": "Back",
     "registrationLink": "https://forms.gle/LrA8D9k6nod2hmPf8",
     "requiredFieldError": "Field is required",
-    "supportEmail": "support@aletheifact.org"
+    "supportEmail": "support@aletheifact.org",
+    "contactEmail": "contact@aletheiafact.org"
 }

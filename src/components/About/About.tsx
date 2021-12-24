@@ -5,7 +5,8 @@ import { Trans, useTranslation } from "next-i18next";
 const About = () => {
     const { t } = useTranslation();
     const paragraphStyle = {
-        margin: "10px 0px"
+        margin: "10px 0px",
+        width: "100%"
     }
     return (
         <Row
@@ -19,9 +20,32 @@ const About = () => {
                 padding: "20px"
             }}
         >
-            <Typography.Title>
-                {t("about:title")}
-            </Typography.Title>
+            <Row style={{width: "100%", textAlign: "center"}}>
+                <Typography.Title style={{ width: "100%" }}>
+                    {t("about:title")}
+                </Typography.Title>
+            </Row>
+            <Row style={paragraphStyle}>
+                {t("about:intro")}
+            </Row>
+            <Row style={{width: "100%", textAlign: "center"}}>
+                <Typography.Title style={{ width: "100%" }} level={3}>{t("about:visionTitle")}</Typography.Title>
+            </Row>
+            <Row style={paragraphStyle}>{t("about:visionContent")}</Row>
+            <Row style={{width: "100%", textAlign: "center"}}>
+                <Typography.Title style={{ width: "100%" }} level={3}>{t("about:missionTitle")}</Typography.Title>
+            </Row>
+            <Row style={paragraphStyle}>{t("about:missionContent")}</Row>
+            <Row style={{width: "100%", textAlign: "center"}}>
+                <Typography.Title style={{ width: "100%" }} level={3}>{t("about:valuesTitle")}</Typography.Title>
+            </Row>
+            <Row style={paragraphStyle}>
+                <ul>
+                    <li key={1}>{t("about:valueAccessibility")}</li>
+                    <li key={2}>{t("about:valueCredibility")}</li>
+                    <li key={3}>{t("about:valueAutonomy")}</li>
+                </ul>
+            </Row>
             <Row style={paragraphStyle}>
                 <Trans
                     i18nKey={"about:firstParagraph"}
