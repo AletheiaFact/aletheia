@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-{"mongoUri":"mongodb://127.0.0.1:57051/"}
-=======
-{"mongoUri":"mongodb://127.0.0.1:63449/"}
->>>>>>> cf64486 (Restore ParserService tests after NestJS migration)
