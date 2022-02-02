@@ -30,3 +30,6 @@ jobs:
     - run: yarn test
       env:
         CI: true
+    -   name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v1.6
+
