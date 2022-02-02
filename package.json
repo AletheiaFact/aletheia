@@ -11,7 +11,6 @@
         "seed": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/server.js -c config.seed.yaml",
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
         "test": "jest",
-        "coverage": "PREQ_CONNECT_TIMEOUT=15 nyc --reporter=lcov _mocha -r ts-node/register tests/**/*.ts",
         "seedUser:test": "SEED_TEST_ENVIRONMENT=true ts-node ./deprecated/server/infra/database/seeds/users/seedUsers.js",
         "seedUser": "ts-node ./deprecated/server/infra/database/seeds/users/seedUsers.js",
         "build": "yarn build-ts && yarn build-nest && yarn copy-static-assets && yarn copy-html-files && next build",
@@ -163,6 +162,13 @@
     "jest": {
         "projects": [
             "./server/jest.config.json"
-        ]
+        ],
+        "collectCoverage": true,
+        "collectCoverageFrom": [
+            "./**/*.(tsx|ts|js)",
+            "!**/node_modules/**",
+            "!**/dist/**"
+        ],
+        "coverageReporters": ["lcov"]
     }
 }
