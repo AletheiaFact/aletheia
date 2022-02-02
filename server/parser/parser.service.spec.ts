@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { ParserService } from "./parser.service";
-import assert from "assert";
 import * as fs from "fs";
 
 describe('ParserService', () => {
@@ -13,14 +12,6 @@ describe('ParserService', () => {
         }).compile()
         parserService = module.get<ParserService>(ParserService)
     })
-    // describe("extractSentence()", () => {
-    //     it("One line claim should return 1 sentence", async () => {
-    //         const text = "This is a claim";
-    //         const sentences = await parserService.parseSentence(text);
-    //         expect(Array.isArray(sentences)).toBe(true);
-    //         expect(sentences.length).toEqual( 1);
-    //     });
-    // });
 
     describe("parse()", () => {
         it("Claim is parsed correctly", async () => {
