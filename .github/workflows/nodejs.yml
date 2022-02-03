@@ -27,6 +27,11 @@ jobs:
     - run: yarn install
     - run: yarn build
     - run: yarn lint
-#    - run: yarn test
-#      env:
-#        CI: true
+    - run: yarn test
+      env:
+        CI: true
+    -   name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v1.6
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

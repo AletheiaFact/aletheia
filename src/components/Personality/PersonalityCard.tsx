@@ -101,7 +101,7 @@ const PersonalityCard = ({
                                     color: colors.blueSecondary
                                 }}
                                 target="_blank"
-                                href={personality.wikipedia}
+                                href={personality.wikipedia} rel="noreferrer"
                             >
                                 {t("personality:wikipediaPage")}{" "}
                                 <ArrowRightOutlined />
