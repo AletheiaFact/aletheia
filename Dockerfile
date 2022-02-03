@@ -1,4 +1,4 @@
-FROM node:12.13.1-alpine AS package
+FROM node:14.18.3-alpine AS package
 
 ARG API_URL
 ARG RECAPTCHA_SITEKEY
@@ -27,7 +27,7 @@ RUN apk add --no-cache git python make g++
 RUN yarn install
 RUN yarn build
 
-FROM node:12.13.1-alpine
+FROM node:14.18.3-alpine
 
 LABEL maintainer="Giovanni Rossini <giovannijrrossini@gmail.com>"
 
