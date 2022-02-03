@@ -1,4 +1,4 @@
-FROM node:14.18.3-alpine AS package
+FROM node:14.19.0-alpine AS package
 
 ARG API_URL
 ARG RECAPTCHA_SITEKEY
@@ -23,11 +23,11 @@ COPY ./next-i18next.config.js /app/next-i18next.config.js
 
 WORKDIR /app
 
-RUN apk add --no-cache git python make g++
+RUN apk add --no-cache git python3 make g++
 RUN yarn install
 RUN yarn build
 
-FROM node:14.18.3-alpine
+FROM node:14.19.0-alpine
 
 LABEL maintainer="Giovanni Rossini <giovannijrrossini@gmail.com>"
 
