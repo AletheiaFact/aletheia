@@ -52,7 +52,7 @@ const ClaimReviewCard = ({ classification, userName, sources, report }) => {
                                     width: "100%"
                                 }}
                             >
-                                <Collapse.Panel header="Fact-checking Report" key="2">
+                                <Collapse.Panel header={t("claimReviewForm:reportHeading")} key="2">
                                     <ReactMarkdown rehypePlugins={[rehypeRaw]} children={report} />
                                 </Collapse.Panel>
                             </Collapse>
@@ -64,7 +64,7 @@ const ClaimReviewCard = ({ classification, userName, sources, report }) => {
                                     width: "100%"
                                 }}
                             >
-                                <Collapse.Panel header="Sources" key="3">
+                                <Collapse.Panel header={t("claimReviewForm:sourcesHeading")} key="3">
                                     {sources.map(
                                         (source) => <LinkPreview
                                             key={source._id}
