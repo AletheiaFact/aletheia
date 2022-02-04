@@ -5,6 +5,6 @@
     "affixButtonTitle": "Click here to add a claim",
     "wikipediaPage": "View Wikipedia Page",
     "headerReviewsTotal": "{{totalReviews}} claim reviews",
-    "headerClaimsTotal": "{{totalClaims}} speeches added",
+    "headerClaimsTotal": "speeches added",
     "toggleSectionSpeeches": "Speeches"
 }

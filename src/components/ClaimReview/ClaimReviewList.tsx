@@ -20,6 +20,8 @@ const ClaimReviewList = ({ claimId, sentenceHash }) => {
                         key={claimReview._id}
                         userName={claimReview?.user?.name}
                         classification={claimReview.classification}
+                        sources={claimReview.sources}
+                        report={claimReview.report}
                     />
                 )
             }}

@@ -54,32 +54,6 @@ const DatePickerInput = styled(DatePicker)`
     }
 `;
 
-const EditorInput = styled.div`
-    background: #F5F5F5;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    border-radius: 30px;
-    border: none;
-    height: 40px;
-    padding:10px;
-
-    ::placeholder {
-        color: #515151;
-    }
-
-    :focus {
-        border: none;
-        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    }
-
-    :active {
-        border: none;
-    }
-
-    :hover {
-        border: none;
-    }
-`;
-
 const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();

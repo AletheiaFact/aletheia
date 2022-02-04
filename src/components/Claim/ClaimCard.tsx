@@ -1,6 +1,6 @@
 import { Avatar, Col, Comment, Row, Tooltip, Typography } from "antd";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
 import CardBase from "../CardBase";
 import ClaimSummary from "./ClaimSummary";
