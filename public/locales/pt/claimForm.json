@@ -7,6 +7,9 @@
     "contentFieldError": "Por favor, insira o conteúdo",
     "contentFieldHelp":
     "Por favor, não edite ou mude qualquer aspecto do texto original e escolha adicionar discursos completos ao invés de declarações fora de contexto.",
+    "reportField": "Relatório",
+    "reportFieldPlaceholder": "Insira o conteúdo do relatório aqui",
+    "reportFieldError": "Por favor, insira o conteúdo do relatório",
     "dateField": "Data",
     "dateFieldPlaceholder": "Selecione Data",
     "dateFieldError": "Por favor, insira uma data",
