@@ -8,6 +8,7 @@ import {useTranslation} from "next-i18next";
 import SourceInput from "../Source/SourceInput";
 import { useRouter } from "next/router";
 import Button from "../Button";
+import TextArea from "../TextArea";
 const recaptchaRef = React.createRef();
 
 const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk, handleCancel }) => {
@@ -18,6 +19,7 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
     const sentence_hash = highlight.props["data-hash"];
     const sentence_content = highlight.content;
 
+    const [ report, setReport ] = useState("");
     const [ classification, setClassification ] =  useState("");
     const [ recaptcha, setRecaptcha ] = useState("");
     const [ sources, setSources ] = useState([""]);
@@ -73,6 +75,7 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
             personality,
             sentence_hash,
             sentence_content,
+            report,
             recaptcha,
             sources
         }, t).then(response => {
@@ -116,6 +119,35 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
                     placeholder={t("sourceForm:placeholder")}
                     sources={sources}
                 />
+
+                <Form.Item
+                    name="report"
+                    label={t("claimForm:reportField")}
+                    rules={[
+                        {
+                            required: true,
+                            message: t(
+                                "claimForm:reportFieldError"
+                            )
+                        }
+                    ]}
+                    wrapperCol={{ sm: 24 }}
+                    style={{
+                        width: "100%",
+                        marginBottom: "24px"
+                    }}
+                >
+                    <TextArea
+                        rows={4}
+                        value={report || ""}
+                        onChange={e =>
+                            setReport(e.target.value)
+                        }
+                        placeholder={t(
+                            "claimForm:reportFieldPlaceholder"
+                        )}
+                    />
+                </Form.Item>
                 <Form.Item>
                     <ReCAPTCHA
                         ref={recaptchaRef}

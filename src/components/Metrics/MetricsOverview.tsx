@@ -1,7 +1,7 @@
 import React from "react";
 import ReviewStats from "./ReviewStats";
 import { Col, Row, Typography } from "antd";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 const { Title } = Typography;
 

@@ -52,6 +52,9 @@ export class ClaimReview {
     @Prop({ required: true })
     sentence_content: string;
 
+    @Prop({ required: true })
+    report: string;
+
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,

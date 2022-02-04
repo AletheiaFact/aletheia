@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { List, Button, Spin, Row } from "antd";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 const BaseList = ({
     apiCall,

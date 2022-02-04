@@ -32,7 +32,8 @@ const AffixButton = (props) => {
                     type="primary"
                     icon={<PlusOutlined style={{
                         padding: "21px",
-                        fontSize: "27px"
+                        fontSize: "27px",
+                        display: "block",
                     }} />}
                 ></Button>
             </Tooltip>
