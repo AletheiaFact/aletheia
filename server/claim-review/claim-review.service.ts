@@ -94,10 +94,21 @@ export class ClaimReviewService {
     _reviewsBySentenceHashAggregated(sentenceHash) {
         return this.ClaimReviewModel.aggregate([
             { $match: { sentence_hash: sentenceHash } },
+            // Virtual Populates doesn't work with aggregate
+            // https://stackoverflow.com/questions/47669178/mongoose-virtual-populate-and-aggregates
+            {
+                $lookup: {
+                    from: 'sources',
+                    localField: '_id',
+                    foreignField: 'targetId',
+                    as: 'sources'
+                }
+            },
             {
                 $project: {
                     _id: 1,
                     sources: 1,
+                    report: 1,
                     classification: 1,
                     user: 1,
                 },
