@@ -15,5 +15,7 @@
     "exaggerated": "Exagerado",
     "unverifiable": "Inverificável",
     "errorMessage": "Erro ao enviar revisão",
-    "successMessage": "Revisão concluída"
+    "successMessage": "Revisão concluída",
+    "reportHeading": "Relatório da checagem",
+    "sourcesHeading": "Fontes"
 }

@@ -15,5 +15,7 @@
     "exaggerated": "Exaggerated",
     "unverifiable": "Unverifiable",
     "errorMessage": "Error while sending review",
-    "successMessage": "Review succeeded"
+    "successMessage": "Review succeeded",
+    "reportHeading": "Fact-checking Report",
+    "sourcesHeading": "Sources"
 }
