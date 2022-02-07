@@ -22,7 +22,7 @@
   yarn dev:server
   yarn dev:front
   ```
-- Access http://localhost:1234 in your browser.
+- Access http://localhost:3000 in your browser.
 
 ## Development DB
 
