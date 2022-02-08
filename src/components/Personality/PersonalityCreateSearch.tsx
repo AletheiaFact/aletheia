@@ -4,15 +4,16 @@ import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
 import PersonalityCard from "./PersonalityCard";
 import { useTranslation } from "next-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
+import { useAppSelector } from "../../store/store";
 
 const PersonalityCreateSearch = ({ withSuggestions }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const router = useRouter();
 
-    const { personalities } = useSelector(
+    const { personalities } = useAppSelector(
         (state) => {
             return {
                 personalities: state?.search?.searchResults || [],

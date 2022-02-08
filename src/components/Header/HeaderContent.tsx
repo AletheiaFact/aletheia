@@ -1,16 +1,17 @@
-import {Col, Row} from "antd";
-import {MenuOutlined, SearchOutlined} from "@ant-design/icons";
+import { Col, Row } from "antd";
+import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
 import React from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import colors from "../../styles/colors";
 import Logo from "./Logo";
+import { useAppSelector } from "../../store/store";
 
 const HeaderContent = ({ className }) => {
     const dispatch = useDispatch();
     const router = useRouter();
-    const { menuCollapsed } = useSelector(
+    const { menuCollapsed } = useAppSelector(
         (state) => {
             return {
                 menuCollapsed: state?.menuCollapsed !== undefined ? state?.menuCollapsed : true,
@@ -18,7 +19,7 @@ const HeaderContent = ({ className }) => {
         }
     );
     return <Row
-        className={ className }
+        className={className}
         style={{
             backgroundColor: colors.bluePrimary,
             boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
