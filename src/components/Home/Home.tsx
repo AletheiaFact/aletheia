@@ -10,15 +10,6 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 const Home = ({ personalities, stats, href }) => {
     const { t } = useTranslation();
 
-    const contentStyle = {
-        height: "auto",
-        color: "#fff",
-        lineHeight: "160px",
-        textAlign: "center",
-        background: "#364d79",
-        width: "100%",
-        filter: "grayscale(100%)"
-    };
     if (stats) {
         return (
             <>
@@ -41,7 +32,7 @@ const Home = ({ personalities, stats, href }) => {
                                 width: "100%",
                                 height: "55vh",
                                 position: "absolute",
-                                zIndex: "1",
+                                zIndex: 1,
                                 backgroundColor: "rgba(0,0,0,0.6)"
                             }}
                         ></div>
@@ -51,7 +42,15 @@ const Home = ({ personalities, stats, href }) => {
                                     p && (
                                         <div key={i}>
                                             <img
-                                                style={contentStyle}
+                                                style={{
+                                                    height: "auto",
+                                                    color: "#fff",
+                                                    lineHeight: "160px",
+                                                    textAlign: "center",
+                                                    background: "#364d79",
+                                                    width: "100%",
+                                                    filter: "grayscale(100%)"
+                                                }}
                                                 src={p.image}
                                             />
                                         </div>
@@ -62,7 +61,7 @@ const Home = ({ personalities, stats, href }) => {
                     <div
                         style={{
                             position: "absolute",
-                            zIndex: "2",
+                            zIndex: 2,
                             width: "100%",
                             padding: "7%"
                         }}
@@ -137,7 +136,7 @@ const Home = ({ personalities, stats, href }) => {
                                 color: "#fff",
                                 justifyContent: "space-between"
                             }}
-                            gutter="3"
+                            gutter={3}
                         >
                             <Col span="14">
 

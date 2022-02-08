@@ -6,15 +6,15 @@ import Button, { ButtonType } from "../Button";
 
 function CTARegistration({ style = {} }) {
     const { t } = useTranslation();
-    const componentStyle = {
-        backgroundColor: colors.bluePrimary,
-        textAlign: "center",
-        padding: "30px",
-        ...style
-    }
+
     return (
         <div
-            style={componentStyle}
+            style={{
+                backgroundColor: colors.bluePrimary,
+                textAlign: "center",
+                padding: "30px",
+                ...style
+            }}
         >
             <Typography.Title level={3} style={{ color: "#fff" }}>
                 {t("CTARegistration:title")}
@@ -23,9 +23,10 @@ function CTARegistration({ style = {} }) {
                 style={{
                     color: "#fff",
                     fontSize: "14px",
-                    textWeight: "600",
+                    fontWeight: 600,
                     lineHeight: "21px",
-                    marginBottom: "10px"
+                    marginBottom: "10px",
+                    textAlign: 'center'
                 }}
             >
                 {t("CTARegistration:body")}
@@ -34,7 +35,7 @@ function CTARegistration({ style = {} }) {
                 style={{
                     color: "#fff",
                     fontSize: "10px",
-                    textWeight: "600",
+                    fontWeight: 600,
                     lineHeight: "15px",
                     marginBottom: "17px"
                 }}
