@@ -6,7 +6,7 @@ import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 
 const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
     const { t } = useTranslation();
@@ -16,7 +16,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
 
-    const [ formCollapsed, setFormCollapsed ] = useState(true);
+    const [formCollapsed, setFormCollapsed] = useState(true);
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
@@ -68,15 +68,15 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                         {!sentence.userReview && (
                             <>
                                 <Col span={14}>
-                                        <span
-                                            style={{
-                                                fontSize: "14px"
-                                            }}
-                                        >
-                                            {t("claim:metricsHeaderInfo", {
-                                                totalReviews: stats?.total
-                                            })}
-                                        </span>{" "}
+                                    <span
+                                        style={{
+                                            fontSize: "14px"
+                                        }}
+                                    >
+                                        {t("claim:metricsHeaderInfo", {
+                                            totalReviews: stats?.total
+                                        })}
+                                    </span>{" "}
                                     <br />
                                     {review && (
                                         <span
@@ -99,8 +99,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                                 </Col>
                                 <Col span={10}>
                                     <Button
-                                        shape="round"
-                                        type="primary"
+                                        type={ButtonType.blue}
                                         onClick={toggleFormCollapse}
                                     >
                                         {t("claimReviewForm:addReviewButton")}

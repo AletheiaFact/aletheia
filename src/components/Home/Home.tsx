@@ -4,8 +4,8 @@ import { Row, Carousel, Spin, Col } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from 'next-i18next';
-import Button from '../Button';
-import {ArrowRightOutlined} from "@ant-design/icons";
+import Button, { ButtonType } from '../Button';
+import { ArrowRightOutlined } from "@ant-design/icons";
 
 const Home = ({ personalities, stats, href }) => {
     const { t } = useTranslation();
@@ -75,13 +75,13 @@ const Home = ({ personalities, stats, href }) => {
                                 textAlign: "center"
                             }}
                         >
-                                <span
-                                    style={{
-                                        fontSize: "26px"
-                                    }}
-                                >
-                                    {t("home:title")}
-                                </span>{" "}
+                            <span
+                                style={{
+                                    fontSize: "26px"
+                                }}
+                            >
+                                {t("home:title")}
+                            </span>{" "}
                             <br />
                             <span>{t("home:subtitle")}</span>
                         </Row>
@@ -93,40 +93,40 @@ const Home = ({ personalities, stats, href }) => {
                         >
                             <Row>
                                 <p>
-                                        <span
-                                            style={{
-                                                color: "#67BEF2",
-                                                fontSize: "34px"
-                                            }}
-                                        >
-                                            {stats.personalities}
-                                        </span>{" "}
+                                    <span
+                                        style={{
+                                            color: "#67BEF2",
+                                            fontSize: "34px"
+                                        }}
+                                    >
+                                        {stats.personalities}
+                                    </span>{" "}
                                     {t("home:statsPersonalities")}
                                 </p>
                             </Row>
                             <Row>
                                 <p>
-                                        <span
-                                            style={{
-                                                color: "#67BEF2",
-                                                fontSize: "34px"
-                                            }}
-                                        >
-                                            {stats.claims}
-                                        </span>{" "}
+                                    <span
+                                        style={{
+                                            color: "#67BEF2",
+                                            fontSize: "34px"
+                                        }}
+                                    >
+                                        {stats.claims}
+                                    </span>{" "}
                                     {t("home:statsClaims")}
                                 </p>
                             </Row>
                             <Row>
                                 <p>
-                                        <span
-                                            style={{
-                                                color: "#67BEF2",
-                                                fontSize: "34px"
-                                            }}
-                                        >
-                                            {stats.reviews}
-                                        </span>{" "}
+                                    <span
+                                        style={{
+                                            color: "#67BEF2",
+                                            fontSize: "34px"
+                                        }}
+                                    >
+                                        {stats.reviews}
+                                    </span>{" "}
                                     {t("home:statsClaimReviews")}
                                 </p>
                             </Row>
@@ -144,7 +144,7 @@ const Home = ({ personalities, stats, href }) => {
                                 <span>{t("home:statsFooter")}</span>
                             </Col>
                             <Col span="10">
-                                <Button href="#create_account" type="white">
+                                <Button href="#create_account" type={ButtonType.white}>
                                     {t("home:createAccountButton")}
                                 </Button>
                             </Col>
@@ -173,7 +173,7 @@ const Home = ({ personalities, stats, href }) => {
                             flexDirection: "column"
                         }}
                     >
-                        <Button href="/personality" type="whiteBlue">
+                        <Button href="/personality" type={ButtonType.whiteBlue}>
                             {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
                         </Button>
                     </Row>

@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
 import CardBase from "../CardBase";
 import ClaimSummary from "./ClaimSummary";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 
 const { Paragraph } = Typography;
 
@@ -93,26 +93,26 @@ const ClaimCard = ({ personality, claim }) => {
                                 fontSize: "10px"
                             }}
                         >
-                                        {t(
-                                            "claim:cardOverallReviewPrefix"
-                                        )}{" "}
+                            {t(
+                                "claim:cardOverallReviewPrefix"
+                            )}{" "}
                             <span
                                 style={{
                                     color:
                                         ReviewColors[
-                                            review?._id
-                                            ] || "#000",
+                                        review?._id
+                                        ] || "#000",
                                     fontWeight: "bold",
                                     textTransform:
                                         "uppercase"
                                 }}
                             >
-                                            {t(
-                                                `claimReviewForm:${review?._id}`
-                                            )}{" "}
-                                        </span>
-                                        ({review.count})
-                                    </span>
+                                {t(
+                                    `claimReviewForm:${review?._id}`
+                                )}{" "}
+                            </span>
+                            ({review.count})
+                        </span>
                     )}
                 </Col>
                 <Col span={8}>
@@ -120,15 +120,15 @@ const ClaimCard = ({ personality, claim }) => {
                         style={{
                             width: "100%"
                         }}
-                        type="primary"
+                        type={ButtonType.blue}
                         href={`/personality/${personality.slug}/claim/${claim.slug}`}
                     >
                         {t("claim:cardReviewButton")}
                     </Button>
                 </Col>
             </Row>
-      </CardBase>
-  );
+        </CardBase>
+    );
 }
 
 export default ClaimCard;

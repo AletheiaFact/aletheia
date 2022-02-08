@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import { Typography } from "antd";
 import colors from "../../styles/colors";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 
 function CTARegistration({ style = {} }) {
     const { t } = useTranslation();
@@ -42,7 +42,7 @@ function CTARegistration({ style = {} }) {
                 {t("CTARegistration:footer")}
             </div>
             <Button
-                type="white"
+                type={ButtonType.white}
                 target="_blank"
                 className={"umami--click--registration-button"}
                 href={t("common:registrationLink")}

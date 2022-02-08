@@ -1,7 +1,7 @@
-import { Button } from "antd";
+import { Button, ButtonProps } from "antd";
 import colors from "../styles/colors";
 
-enum ButtonType {
+export enum ButtonType {
     blue = "blue",
     white = "white",
     gray = "gray",
@@ -9,87 +9,69 @@ enum ButtonType {
     whiteBlack = "whiteBlack",
 }
 
-const AletheiaButton: (
-    {
-        target,
-        children,
-        href,
-        type,
-        style,
-        onClick,
-        disabled,
-        htmlType
-    }: {
-        target: any,
-        children: any;
-        href: any;
-        type: ButtonType,
-        style: any
-        onClick: any,
-        disabled: any,
-        htmlType: any
-    }) => JSX.Element = ({ target, children, href, type, style, onClick, disabled, htmlType }) => {
-    let buttonStyle = {
-        ...style,
-        borderWidth: "2px",
-        borderRadius: "30px",
-    };
-    switch (type) {
-        case ButtonType.white:
-            buttonStyle = {
-                ...buttonStyle,
-                background: colors.white,
-                borderColor: colors.white,
-                color: colors.bluePrimary
-            }
-            break;
-        case ButtonType.gray:
-            buttonStyle = {
-                ...buttonStyle,
-                background: colors.graySecondary,
-                borderColor: colors.graySecondary,
-                color: colors.white
-            }
-            break;
-        case ButtonType.whiteBlue:
-            buttonStyle = {
-                ...buttonStyle,
-                background: colors.white,
-                borderColor: colors.bluePrimary,
-                color: colors.bluePrimary
-            }
-            break;
-        case ButtonType.whiteBlack:
-            buttonStyle = {
-                ...buttonStyle,
-                background: colors.white,
-                borderColor: colors.black,
-                color: colors.black
-            }
-            break;
-        case ButtonType.blue:
-        default:
-            buttonStyle = {
-                ...buttonStyle,
-                background: colors.blueSecondary,
-                borderColor: colors.blueSecondary,
-                color: colors.white
-            }
-            break;
-    }
-
-    return (
-        <Button
-            style={buttonStyle}
-            href={href}
-            target={target}
-            onClick={onClick}
-            disabled={disabled}
-            htmlType={htmlType}
-        >
-            {children}
-        </Button>
-    )
+type AletheiaButtonProps = Omit<ButtonProps, 'type'>
+interface IAletheiaButtonProps extends AletheiaButtonProps {
+    type?: ButtonType;
 }
+
+const AletheiaButton: (
+    props: IAletheiaButtonProps) => JSX.Element = (
+        props: IAletheiaButtonProps) => {
+        let buttonStyle = {
+            ...props.style,
+            borderWidth: "2px",
+            borderRadius: "30px",
+        };
+        switch (props.type) {
+            case ButtonType.white:
+                buttonStyle = {
+                    ...buttonStyle,
+                    background: colors.white,
+                    borderColor: colors.white,
+                    color: colors.bluePrimary
+                }
+                break;
+            case ButtonType.gray:
+                buttonStyle = {
+                    ...buttonStyle,
+                    background: colors.graySecondary,
+                    borderColor: colors.graySecondary,
+                    color: colors.white
+                }
+                break;
+            case ButtonType.whiteBlue:
+                buttonStyle = {
+                    ...buttonStyle,
+                    background: colors.white,
+                    borderColor: colors.bluePrimary,
+                    color: colors.bluePrimary
+                }
+                break;
+            case ButtonType.whiteBlack:
+                buttonStyle = {
+                    ...buttonStyle,
+                    background: colors.white,
+                    borderColor: colors.black,
+                    color: colors.black
+                }
+                break;
+            case ButtonType.blue:
+            default:
+                buttonStyle = {
+                    ...buttonStyle,
+                    background: colors.blueSecondary,
+                    borderColor: colors.blueSecondary,
+                    color: colors.white
+                }
+                break;
+        }
+
+        return (
+            <Button {...props} type='default' style={buttonStyle}
+            >
+                {props.children}
+            </Button>
+        )
+    }
 
 export default AletheiaButton;

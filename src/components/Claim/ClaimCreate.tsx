@@ -13,9 +13,10 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SourceInput from "../Source/SourceInput";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 import Input from "../Input";
 import TextArea from "../TextArea";
+
 const recaptchaRef = React.createRef();
 const formRef = React.createRef();
 
@@ -58,12 +59,12 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();
 
-    const [ title, setTitle ] = useState("");
-    const [ content, setContent ] = useState("");
-    const [ date, setDate ] = useState("");
-    const [ recaptcha, setRecaptcha ] = useState("");
-    const [ disableSubmit, setDisableSubmit ] = useState(true);
-    const [ sources, setSources ] = useState([""]);
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [date, setDate] = useState("");
+    const [recaptcha, setRecaptcha] = useState("");
+    const [disableSubmit, setDisableSubmit] = useState(true);
+    const [sources, setSources] = useState([""]);
 
     useEffect(async () => {
         if (edit) {
@@ -287,12 +288,12 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         marginBottom: "20px"
                     }}
                 >
-                    <Button type="white" onClick={() => router.back()}>
+                    <Button type={ButtonType.white} onClick={() => router.back()}>
                         {t("claimForm:cancelButton")}
                     </Button>
                     {edit ? (
                         <Button
-                            type="blue"
+                            type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit}
                         >
@@ -300,7 +301,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         </Button>
                     ) : (
                         <Button
-                            type="blue"
+                            type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit}
                         >
