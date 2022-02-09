@@ -1,12 +1,12 @@
 import React from "react";
 import { NextPage } from "next";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import PrivacyPolicy from "../components/PrivacyPolicy/PrivacyPolicy";
 const parser = require('accept-language-parser');
 
-const AboutPage: NextPage<{ data: string }> = (props) => {
+const AboutPage: NextPage<{ data: string }> = () => {
     return (
-        <PrivacyPolicy {...props} />
+        <PrivacyPolicy />
     );
 };
 

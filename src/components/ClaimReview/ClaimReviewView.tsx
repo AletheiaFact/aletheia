@@ -48,7 +48,6 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                                 classification={
                                     sentence.userReview?.classification
                                 }
-                                t={t}
                             />
                         </div>
                         <div>
@@ -58,7 +57,6 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                             &nbsp;
                             <ClassificationText
                                 classification={review?.classification}
-                                t={t}
                             />
                         </div>
                     </Row>
@@ -84,17 +82,16 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                                                 fontSize: "10px"
                                             }}
                                         >
-                                                {t(
-                                                    "claim:cardOverallReviewPrefix"
-                                                )}{" "}
+                                            {t(
+                                                "claim:cardOverallReviewPrefix"
+                                            )}{" "}
                                             <ClassificationText
                                                 classification={
                                                     review?.classification
                                                 }
-                                                t={t}
                                             />
-                                                ({review?.count})
-                                            </span>
+                                            ({review?.count})
+                                        </span>
                                     )}
                                 </Col>
                                 <Col span={10}>
