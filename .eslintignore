@@ -15,3 +15,4 @@ coverage/*
 **/public/**
 **/report/**
 **/webpack.config*.js
+**/documentation/**

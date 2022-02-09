@@ -32,7 +32,8 @@
         "ignore": [
             "test/**/*",
             "src/**/*",
-            "dist/client/**/*"
+            "dist/client/**/*",
+            "documentation/**/*"
         ]
     },
     "keywords": [
@@ -169,7 +170,8 @@
         "collectCoverageFrom": [
             "./**/*.(tsx|ts|js)",
             "!**/node_modules/**",
-            "!**/dist/**"
+            "!**/dist/**",
+            "!**/documentation/**"
         ],
         "coverageReporters": [
             "lcov"
