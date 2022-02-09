@@ -14,7 +14,7 @@ const PersonalityCard = ({
     header = false,
     hrefBase = '',
     suggestion = 'default',
-    onClick = () => { }
+    onClick = (personality) => { }
 }) => {
     const { t } = useTranslation();
     const style = {

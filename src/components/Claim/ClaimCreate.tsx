@@ -67,12 +67,16 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     const [disableSubmit, setDisableSubmit] = useState(true);
     const [sources, setSources] = useState([""]);
 
-    useEffect(async () => {
-        if (edit) {
-            const { content, title } = await claimApi.getById(claim._id);
-            setTitle(title);
-            setContent(content.text);
+    useEffect(() => {
+        const setTitleAndContent = async () => {
+            if (edit) {
+                const { content, title } = await claimApi.getById(claim._id);
+                setTitle(title);
+                setContent(content.text);
+            }
+
         }
+        setTitleAndContent()
     }, []);
 
     const toggleDisabledSubmit = () => {

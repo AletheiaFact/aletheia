@@ -30,7 +30,7 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
     const toggleDisabledSubmit = () => {
         const hasRecaptcha = !!recaptcha;
         const hasClassification = !!classification;
-        if (hasClassification && hasClassification.length === "") {
+        if (hasClassification && classification.length === 0) {
             setDisableSubmit(true);
         } else {
             if (hasRecaptcha && hasClassification) {
@@ -163,7 +163,7 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
                     </Button>
                     <Button
                         type={ButtonType.blue}
-                        htmlType="Submit"
+                        htmlType="submit"
                         disabled={disableSubmit}
                     >
                         {t("claimReviewForm:addReviewButton")}
