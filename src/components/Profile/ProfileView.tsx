@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import {
     Alert,
     Form,
+    FormInstance,
     message,
     Row,
     Typography
@@ -12,7 +13,7 @@ import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
 
 const ProfileView = ({ user }) => {
-    const formRef = useRef();
+    const formRef = useRef<FormInstance>();
     const { t } = useTranslation();
 
     const [loadingFinish, setLoadingFinish] = useState(false);

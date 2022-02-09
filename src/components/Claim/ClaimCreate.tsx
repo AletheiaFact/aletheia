@@ -5,6 +5,7 @@ import {
     Form,
     Row,
     Checkbox,
+    FormInstance,
 } from "antd";
 import claimApi from "../../api/claim";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -17,8 +18,8 @@ import Button, { ButtonType } from "../Button";
 import Input from "../Input";
 import TextArea from "../TextArea";
 
-const recaptchaRef = React.createRef();
-const formRef = React.createRef();
+const recaptchaRef = React.createRef<ReCAPTCHA>();
+const formRef = React.createRef<FormInstance>();
 
 const ClaimForm = styled(Form)`
     #createClaim .ant-form-item-control {

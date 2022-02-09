@@ -10,7 +10,7 @@ import SourceInput from "../Source/SourceInput";
 import { useRouter } from "next/router";
 import Button, { ButtonType } from "../Button";
 import TextArea from "../TextArea";
-const recaptchaRef = React.createRef();
+const recaptchaRef = React.createRef<ReCAPTCHA>();
 
 const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk, handleCancel }) => {
     const { t } = useTranslation();
