@@ -17,10 +17,9 @@
   ``` sh
   yarn install
   ```
-- To run in dev mode, you should run server and front separately:
+- To run in dev mode
   ``` sh
-  yarn dev:server
-  yarn dev:front
+  yarn dev
   ```
 - Access http://localhost:1234 in your browser.
 
