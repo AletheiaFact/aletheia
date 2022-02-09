@@ -92,9 +92,8 @@ export const initializeStore = (preloadedState) => {
     return _store
 }
 
-export function useStore(initialState) {
-    const store = useMemo(() => initializeStore(initialState), [initialState])
-    return store
+export function useStore() {
+    return useMemo(() => initializeStore({}), [])
 }
 
 export interface RootState {

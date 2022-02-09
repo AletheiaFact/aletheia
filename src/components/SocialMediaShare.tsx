@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import { Row } from "antd";
 import {
     FacebookShareButton,
@@ -9,7 +9,7 @@ import {
     WhatsappIcon,
     TelegramShareButton,
     TelegramIcon
-    } from "react-share";
+} from "react-share";
 import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
 
@@ -54,19 +54,19 @@ const SocialMediaShare = ({ quote = null, href = '' }) => {
                 </FacebookShareButton>
                 <TwitterShareButton
                     url={href}
-                    quote={quote}
+                    title={quote}
                 >
                     <TwitterIcon size={32} round />
                 </TwitterShareButton>
                 <WhatsappShareButton
                     url={href}
-                    quote={quote}
+                    title={quote}
                 >
                     <WhatsappIcon size={32} round />
                 </WhatsappShareButton>
                 <TelegramShareButton
                     url={href}
-                    quote={quote}
+                    title={quote}
                 >
                     <TelegramIcon size={32} round />
                 </TelegramShareButton>

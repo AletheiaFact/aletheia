@@ -26,7 +26,7 @@ const MainApp = ({ children }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch()
     const router = useRouter();
-    const { enableOverlay, menuCollapsed, isLoggedIn } = useAppSelector(
+    const { enableOverlay, menuCollapsed } = useAppSelector(
         (state) => {
             return {
                 isLoggedIn: state?.login || false,

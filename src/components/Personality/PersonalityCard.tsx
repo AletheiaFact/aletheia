@@ -13,8 +13,14 @@ const PersonalityCard = ({
     enableStats = true,
     header = false,
     hrefBase = '',
-    suggestion = 'default',
-    onClick = (personality) => { }
+    onClick
+}: {
+    personality: any;
+    summarized?: boolean;
+    enableStats?: boolean;
+    header?: boolean;
+    hrefBase?: string;
+    onClick?: (personality: any) => {};
 }) => {
     const { t } = useTranslation();
     const style = {

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { Avatar, Col, Row } from "antd";
 import { CloseOutlined, RightOutlined } from "@ant-design/icons";
@@ -34,7 +34,7 @@ const OverlayDiv = styled.div`
 `;
 
 const SearchOverlay = ({ overlay }) => {
-    const { personalities, page, pageSize, searchName } = useAppSelector(
+    const { personalities, page, pageSize } = useAppSelector(
         (state) => {
             return {
                 personalities: state?.search?.searchResults || [],
@@ -149,10 +149,9 @@ const SearchOverlay = ({ overlay }) => {
                                                 </Col>
                                                 <Col span={18}>
                                                     <span
-                                                        level={4}
                                                         style={{
                                                             marginBottom: 0,
-                                                            textSize: "14px"
+                                                            fontSize: "14px"
                                                         }}
                                                     >
                                                         {p.name}
