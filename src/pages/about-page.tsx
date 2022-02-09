@@ -1,12 +1,12 @@
 import React from "react";
 import { NextPage } from "next";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import About from "../components/About/About";
 const parser = require('accept-language-parser');
 
-const AboutPage: NextPage<{ data: string }> = (props) => {
+const AboutPage: NextPage<{ data: string }> = () => {
     return (
-        <About {...props} />
+        <About />
     );
 };
 

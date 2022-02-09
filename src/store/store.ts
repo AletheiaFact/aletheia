@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { TypedUseSelectorHook, useSelector } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 
 let store;
@@ -91,7 +92,23 @@ export const initializeStore = (preloadedState) => {
     return _store
 }
 
-export function useStore(initialState) {
-    const store = useMemo(() => initializeStore(initialState), [initialState])
-    return store
+export function useStore() {
+    return useMemo(() => initializeStore({}), [])
 }
+
+export interface RootState {
+    menuCollapsed: boolean;
+    search: {
+        overlay: any;
+        searchResults: any;
+        searchTotalPages: any;
+        searchCurPage: number;
+        searchInput: string;
+        searchPageSize: number
+    }
+    login: boolean
+    user: any
+
+
+}
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector

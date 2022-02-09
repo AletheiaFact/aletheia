@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { Avatar, Col, Row } from "antd";
 import { CloseOutlined, RightOutlined } from "@ant-design/icons";
 import InputSearch from "./Form/InputSearch";
@@ -7,6 +7,7 @@ import { useTranslation } from "next-i18next";
 import api from "../api/personality";
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import { useAppSelector } from "../store/store";
 
 const OverlayDiv = styled.div`
     width: 100%;
@@ -33,7 +34,7 @@ const OverlayDiv = styled.div`
 `;
 
 const SearchOverlay = ({ overlay }) => {
-    const { personalities, page, pageSize, searchName } = useSelector(
+    const { personalities, page, pageSize } = useAppSelector(
         (state) => {
             return {
                 personalities: state?.search?.searchResults || [],
@@ -63,14 +64,14 @@ const SearchOverlay = ({ overlay }) => {
     return (
         <OverlayDiv>
             <Row className="aletheia-header"
-                 style={{
-                     backgroundColor: "#2d77a3",
-                     boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
-                     height: "70px",
-                     padding: "0 15px",
-                     alignItems: "center",
-                     justifyContent: "center",
-                 }}
+                style={{
+                    backgroundColor: "#2d77a3",
+                    boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
+                    height: "70px",
+                    padding: "0 15px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
             >
                 <Col span={20}>
                     <InputSearch
@@ -114,57 +115,56 @@ const SearchOverlay = ({ overlay }) => {
                     }}
                 >
                     {personalities &&
-                    Array.isArray(personalities) &&
-                    personalities.length > 0 && (
-                        <>
-                            {personalities.map(
-                                (p, i) =>
-                                    p && (
-                                        <Row
-                                            key={i}
-                                            style={{
-                                                background: "#fff",
-                                                padding: "10px 10%",
-                                                boxShadow:
-                                                    "0 2px 2px rgba(0, 0, 0, 0.1)",
-                                                cursor: "pointer"
-                                            }}
-                                            onClick={() => {
-                                                dispatch({
-                                                    type:
-                                                        "ENABLE_SEARCH_OVERLAY",
-                                                    overlay: false
-                                                });
-                                                router.push(
-                                                    `/personality/${p.slug}`
-                                                );
-                                            }}
-                                        >
-                                            <Col span={4}>
-                                                <Avatar
-                                                    size={30}
-                                                    src={p.image}
-                                                />
-                                            </Col>
-                                            <Col span={18}>
-                                                <span
-                                                    level={4}
-                                                    style={{
-                                                        marginBottom: 0,
-                                                        textSize: "14px"
-                                                    }}
-                                                >
-                                                    {p.name}
-                                                </span>
-                                            </Col>
-                                            <Col span={2}>
-                                                <RightOutlined />
-                                            </Col>
-                                        </Row>
-                                    )
-                            )}
-                        </>
-                    )}
+                        Array.isArray(personalities) &&
+                        personalities.length > 0 && (
+                            <>
+                                {personalities.map(
+                                    (p, i) =>
+                                        p && (
+                                            <Row
+                                                key={i}
+                                                style={{
+                                                    background: "#fff",
+                                                    padding: "10px 10%",
+                                                    boxShadow:
+                                                        "0 2px 2px rgba(0, 0, 0, 0.1)",
+                                                    cursor: "pointer"
+                                                }}
+                                                onClick={() => {
+                                                    dispatch({
+                                                        type:
+                                                            "ENABLE_SEARCH_OVERLAY",
+                                                        overlay: false
+                                                    });
+                                                    router.push(
+                                                        `/personality/${p.slug}`
+                                                    );
+                                                }}
+                                            >
+                                                <Col span={4}>
+                                                    <Avatar
+                                                        size={30}
+                                                        src={p.image}
+                                                    />
+                                                </Col>
+                                                <Col span={18}>
+                                                    <span
+                                                        style={{
+                                                            marginBottom: 0,
+                                                            fontSize: "14px"
+                                                        }}
+                                                    >
+                                                        {p.name}
+                                                    </span>
+                                                </Col>
+                                                <Col span={2}>
+                                                    <RightOutlined />
+                                                </Col>
+                                            </Row>
+                                        )
+                                )}
+                            </>
+                        )}
                 </Row>
             )}
         </OverlayDiv>

@@ -1,12 +1,13 @@
 import React from "react";
 import { Menu } from "antd";
 import { useTranslation } from 'next-i18next';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
+import { useAppSelector } from "../store/store";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
-    const { menuCollapsed } = useSelector(
+    const { menuCollapsed } = useAppSelector(
         (state) => {
             return {
                 menuCollapsed:

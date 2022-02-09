@@ -4,21 +4,12 @@ import { Row, Carousel, Spin, Col } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from 'next-i18next';
-import Button from '../Button';
-import {ArrowRightOutlined} from "@ant-design/icons";
+import Button, { ButtonType } from '../Button';
+import { ArrowRightOutlined } from "@ant-design/icons";
 
 const Home = ({ personalities, stats, href }) => {
     const { t } = useTranslation();
 
-    const contentStyle = {
-        height: "auto",
-        color: "#fff",
-        lineHeight: "160px",
-        textAlign: "center",
-        background: "#364d79",
-        width: "100%",
-        filter: "grayscale(100%)"
-    };
     if (stats) {
         return (
             <>
@@ -41,7 +32,7 @@ const Home = ({ personalities, stats, href }) => {
                                 width: "100%",
                                 height: "55vh",
                                 position: "absolute",
-                                zIndex: "1",
+                                zIndex: 1,
                                 backgroundColor: "rgba(0,0,0,0.6)"
                             }}
                         ></div>
@@ -51,7 +42,15 @@ const Home = ({ personalities, stats, href }) => {
                                     p && (
                                         <div key={i}>
                                             <img
-                                                style={contentStyle}
+                                                style={{
+                                                    height: "auto",
+                                                    color: "#fff",
+                                                    lineHeight: "160px",
+                                                    textAlign: "center",
+                                                    background: "#364d79",
+                                                    width: "100%",
+                                                    filter: "grayscale(100%)"
+                                                }}
                                                 src={p.image}
                                             />
                                         </div>
@@ -62,7 +61,7 @@ const Home = ({ personalities, stats, href }) => {
                     <div
                         style={{
                             position: "absolute",
-                            zIndex: "2",
+                            zIndex: 2,
                             width: "100%",
                             padding: "7%"
                         }}
@@ -75,13 +74,13 @@ const Home = ({ personalities, stats, href }) => {
                                 textAlign: "center"
                             }}
                         >
-                                <span
-                                    style={{
-                                        fontSize: "26px"
-                                    }}
-                                >
-                                    {t("home:title")}
-                                </span>{" "}
+                            <span
+                                style={{
+                                    fontSize: "26px"
+                                }}
+                            >
+                                {t("home:title")}
+                            </span>{" "}
                             <br />
                             <span>{t("home:subtitle")}</span>
                         </Row>
@@ -93,40 +92,40 @@ const Home = ({ personalities, stats, href }) => {
                         >
                             <Row>
                                 <p>
-                                        <span
-                                            style={{
-                                                color: "#67BEF2",
-                                                fontSize: "34px"
-                                            }}
-                                        >
-                                            {stats.personalities}
-                                        </span>{" "}
+                                    <span
+                                        style={{
+                                            color: "#67BEF2",
+                                            fontSize: "34px"
+                                        }}
+                                    >
+                                        {stats.personalities}
+                                    </span>{" "}
                                     {t("home:statsPersonalities")}
                                 </p>
                             </Row>
                             <Row>
                                 <p>
-                                        <span
-                                            style={{
-                                                color: "#67BEF2",
-                                                fontSize: "34px"
-                                            }}
-                                        >
-                                            {stats.claims}
-                                        </span>{" "}
+                                    <span
+                                        style={{
+                                            color: "#67BEF2",
+                                            fontSize: "34px"
+                                        }}
+                                    >
+                                        {stats.claims}
+                                    </span>{" "}
                                     {t("home:statsClaims")}
                                 </p>
                             </Row>
                             <Row>
                                 <p>
-                                        <span
-                                            style={{
-                                                color: "#67BEF2",
-                                                fontSize: "34px"
-                                            }}
-                                        >
-                                            {stats.reviews}
-                                        </span>{" "}
+                                    <span
+                                        style={{
+                                            color: "#67BEF2",
+                                            fontSize: "34px"
+                                        }}
+                                    >
+                                        {stats.reviews}
+                                    </span>{" "}
                                     {t("home:statsClaimReviews")}
                                 </p>
                             </Row>
@@ -137,14 +136,14 @@ const Home = ({ personalities, stats, href }) => {
                                 color: "#fff",
                                 justifyContent: "space-between"
                             }}
-                            gutter="3"
+                            gutter={3}
                         >
                             <Col span="14">
 
                                 <span>{t("home:statsFooter")}</span>
                             </Col>
                             <Col span="10">
-                                <Button href="#create_account" type="white">
+                                <Button href="#create_account" type={ButtonType.white}>
                                     {t("home:createAccountButton")}
                                 </Button>
                             </Col>
@@ -173,7 +172,7 @@ const Home = ({ personalities, stats, href }) => {
                             flexDirection: "column"
                         }}
                     >
-                        <Button href="/personality" type="whiteBlue">
+                        <Button href="/personality" type={ButtonType.whiteBlue}>
                             {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
                         </Button>
                     </Row>

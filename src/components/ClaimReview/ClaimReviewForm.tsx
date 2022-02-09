@@ -1,15 +1,16 @@
 import React, {
-    useEffect, useState } from "react";
+    useEffect, useState
+} from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Form } from "antd";
 import ClaimReviewSelect from "../Form/ClaimReviewSelect";
 import claimReviewApi from "../../api/claimReview";
-import {useTranslation} from "next-i18next";
+import { useTranslation } from "next-i18next";
 import SourceInput from "../Source/SourceInput";
 import { useRouter } from "next/router";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 import TextArea from "../TextArea";
-const recaptchaRef = React.createRef();
+const recaptchaRef = React.createRef<ReCAPTCHA>();
 
 const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk, handleCancel }) => {
     const { t } = useTranslation();
@@ -19,17 +20,17 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
     const sentence_hash = highlight.props["data-hash"];
     const sentence_content = highlight.content;
 
-    const [ report, setReport ] = useState("");
-    const [ classification, setClassification ] =  useState("");
-    const [ recaptcha, setRecaptcha ] = useState("");
-    const [ sources, setSources ] = useState([""]);
-    const [ disableSubmit, setDisableSubmit ] = useState(true);
+    const [report, setReport] = useState("");
+    const [classification, setClassification] = useState("");
+    const [recaptcha, setRecaptcha] = useState("");
+    const [sources, setSources] = useState([""]);
+    const [disableSubmit, setDisableSubmit] = useState(true);
 
 
     const toggleDisabledSubmit = () => {
         const hasRecaptcha = !!recaptcha;
         const hasClassification = !!classification;
-        if (hasClassification && hasClassification.length === "") {
+        if (hasClassification && classification.length === 0) {
             setDisableSubmit(true);
         } else {
             if (hasRecaptcha && hasClassification) {
@@ -157,12 +158,12 @@ const ClaimReviewForm = ({ claimId, personalityId, highlight, sitekey, handleOk,
                     />
                 </Form.Item>
                 <Form.Item>
-                    <Button type="white" onClick={handleCancel}>
+                    <Button type={ButtonType.white} onClick={handleCancel}>
                         {t("claimReviewForm:cancelButton")}
                     </Button>
                     <Button
-                        type="primary"
-                        htmlType="Submit"
+                        type={ButtonType.blue}
+                        htmlType="submit"
                         disabled={disableSubmit}
                     >
                         {t("claimReviewForm:addReviewButton")}
