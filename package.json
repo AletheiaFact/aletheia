@@ -26,14 +26,14 @@
         "watch-node": "nodemon dist/server/server.js  --signal SIGTERM",
         "serve-debug": "nodemon --inspect dist/server/server.js  --signal SIGTERM",
         "clean": "rimraf **/{node_modules,dist}",
-        "compodoc": "npx compodoc -p tsconfig.json -s -d documentation"
+        "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs"
     },
     "nodemonConfig": {
         "ignore": [
             "test/**/*",
             "src/**/*",
             "dist/client/**/*",
-            "documentation/**/*"
+            "docs/**/*"
         ]
     },
     "keywords": [
@@ -171,7 +171,7 @@
             "./**/*.(tsx|ts|js)",
             "!**/node_modules/**",
             "!**/dist/**",
-            "!**/documentation/**"
+            "!**/docs/**"
         ],
         "coverageReporters": [
             "lcov"
