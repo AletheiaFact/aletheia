@@ -12,10 +12,11 @@ const AletheiaSocialMediaFooter = () => {
                 padding: "35px 10% 20px 10%",
             }}
         >
-            <SocialIcon url="https://www.facebook.com/AletheiaFactorg-107521791638412" bgColor={colors.white} />
-            <SocialIcon url="https://www.instagram.com/aletheiafact" bgColor={colors.white} />
-            <SocialIcon url="https://www.linkedin.com/company/aletheiafact-org" bgColor={colors.white} />
-            <SocialIcon url="https://github.com/AletheiaFact/aletheia" bgColor={colors.white} />
+            <SocialIcon url="https://www.facebook.com/AletheiaFactorg-107521791638412" bgColor={colors.white} target='_blank' />
+            <SocialIcon url="https://www.instagram.com/aletheiafact" bgColor={colors.white} target='_blank' />
+            <SocialIcon url="https://www.linkedin.com/company/aletheiafact-org" bgColor={colors.white} target='_blank' />
+            <SocialIcon url="https://github.com/AletheiaFact/aletheia" bgColor={colors.white} target='_blank' />
+
         </Row>
     );
 }
