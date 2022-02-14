@@ -5,6 +5,7 @@ import Logger from "./logger";
 import * as passport from "passport";
 import * as session from "express-session";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import { ValidationPipe } from "@nestjs/common";
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 
@@ -35,6 +36,15 @@ const initApp = async (options) => {
             cors: corsOptions,
         }
     );
+
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true,
+            disableErrorMessages: true,
+            whitelist: true,
+            forbidNonWhitelisted: true,
+        }),
+    )
 
     app.use(cookieParser());
     app.use(
