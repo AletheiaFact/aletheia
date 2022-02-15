@@ -71,4 +71,19 @@ export class ViewController {
             .getNextServer()
             .render(req, res, parsedUrl.pathname, parsedUrl.query);
     }
+
+    /**
+     * Redirects to our custom 404 page.
+     * The render404() method was not used here as it conflicts with our i18n strategy.
+     */
+    @Get("404")
+    public async show404(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        // @ts-ignore
+        req.language = req.headers["accept-language"] || "en";
+
+        await this.viewService
+            .getNextServer()
+            .render(req,res, '/404-page', Object.assign(parsedUrl.query))
+    }
 }

@@ -13,6 +13,8 @@ import { ConfigModule } from "@nestjs/config";
 import { ViewModule } from "./view/view.module";
 import { HomeModule } from "./home/home.module";
 import { EmailModule } from "./email/email.module";
+import { APP_FILTER } from "@nestjs/core";
+import { NotFoundFilter } from "./filters/not-found.filter";
 
 @Module({})
 export class AppModule {
@@ -41,6 +43,12 @@ export class AppModule {
                 EmailModule
             ],
             controllers: [RootController],
+            providers: [
+                {
+                  provide: APP_FILTER,
+                  useClass: NotFoundFilter,
+                },
+              ],
         };
     }
 }
