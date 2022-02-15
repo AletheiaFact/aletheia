@@ -40,7 +40,6 @@ const initApp = async (options) => {
     app.useGlobalPipes(
         new ValidationPipe({
             transform: true,
-            disableErrorMessages: true,
             whitelist: true,
             forbidNonWhitelisted: true,
         }),

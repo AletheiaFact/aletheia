@@ -17,6 +17,9 @@ import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { PersonalityService } from "./personality.service";
 import { SessionGuard } from "../auth/session.guard";
+import { GetPersonalities } from "./dto/get-personalities.dto";
+import { CreatePersonality } from "./dto/create-personality.dto";
+import { UpdatePersonality } from "./dto/update-personality.dto";
 
 @Controller()
 export class PersonalityController {
@@ -27,15 +30,15 @@ export class PersonalityController {
     ) {}
 
     @Get("api/personality")
-    async listAll(@Query() query) {
-        return this.personalityService.combinedListAll(query);
+    async listAll(@Query() getPersonalities: GetPersonalities) {
+        return this.personalityService.combinedListAll(getPersonalities);
     }
 
     @UseGuards(SessionGuard)
     @Post("api/personality")
-    async create(@Body() body) {
+    async create(@Body() createPersonality: CreatePersonality) {
         try {
-            return this.personalityService.create(body);
+            return this.personalityService.create(createPersonality);
         } catch (error) {
             if (
                 error.name === "MongoError" &&
@@ -51,7 +54,7 @@ export class PersonalityController {
     @Get("api/personality/:id")
     async get(@Param() params, @Query() query) {
         return this.personalityService
-            .getById(params.id, query.language)
+            .getById(params.id, query.language) // TODO: get language for request object in the future
             .catch((err) => {
                 this.logger.error(err);
             });
@@ -59,8 +62,8 @@ export class PersonalityController {
 
     @UseGuards(SessionGuard)
     @Put("api/personality/:id")
-    async update(@Param() params, @Body() body) {
-        return this.personalityService.update(params.id, body).catch((err) => {
+    async update(@Param() params, @Body() updatePersonality: UpdatePersonality) {
+        return this.personalityService.update(params.id, updatePersonality).catch((err) => {
             this.logger.error(err);
         });
     }

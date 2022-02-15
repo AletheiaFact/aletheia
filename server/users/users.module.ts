@@ -1,14 +1,13 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { UserSchema } from "./schemas/user.schema";
-import { UserDto } from "./dto/create-user.dto"
+import { User, UserSchema } from "./schemas/user.schema";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
 import { ViewModule } from "../view/view.module";
 
 const UserModel = MongooseModule.forFeatureAsync([
     {
-        name: UserDto.name,
+        name: User.name,
         useFactory: () => {
             const schema = UserSchema;
             schema.plugin(require("passport-local-mongoose"), {
