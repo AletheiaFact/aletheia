@@ -43,7 +43,7 @@ const BaseList = ({
     }
 
     const loadMoreButton =
-        totalPages >= query.page ? (
+        totalPages > query.page ? (
             <div
                 style={{
                     textAlign: "center",
