@@ -3,7 +3,6 @@ import { message } from "antd";
 
 const baseUrl = `/api/personality`;
 const getPersonalities = (options = {}, dispatch) => {
-    console.log(options)
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || 'asc',

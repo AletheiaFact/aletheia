@@ -19,7 +19,6 @@ import { PersonalityService } from "./personality.service";
 import { SessionGuard } from "../auth/session.guard";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonality } from "./dto/create-personality.dto";
-import { UpdatePersonality } from "./dto/update-personality.dto";
 
 @Controller()
 export class PersonalityController {
@@ -62,8 +61,8 @@ export class PersonalityController {
 
     @UseGuards(SessionGuard)
     @Put("api/personality/:id")
-    async update(@Param() params, @Body() updatePersonality: UpdatePersonality) {
-        return this.personalityService.update(params.id, updatePersonality).catch((err) => {
+    async update(@Param() params, @Body() body) {
+        return this.personalityService.update(params.id, body).catch((err) => {
             this.logger.error(err);
         });
     }
