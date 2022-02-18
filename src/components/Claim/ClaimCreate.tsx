@@ -5,6 +5,7 @@ import {
     Form,
     Row,
     Checkbox,
+    FormInstance,
 } from "antd";
 import claimApi from "../../api/claim";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -13,11 +14,12 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SourceInput from "../Source/SourceInput";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 import Input from "../Input";
 import TextArea from "../TextArea";
-const recaptchaRef = React.createRef();
-const formRef = React.createRef();
+
+const recaptchaRef = React.createRef<ReCAPTCHA>();
+const formRef = React.createRef<FormInstance>();
 
 const ClaimForm = styled(Form)`
     #createClaim .ant-form-item-control {
@@ -58,19 +60,23 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();
 
-    const [ title, setTitle ] = useState("");
-    const [ content, setContent ] = useState("");
-    const [ date, setDate ] = useState("");
-    const [ recaptcha, setRecaptcha ] = useState("");
-    const [ disableSubmit, setDisableSubmit ] = useState(true);
-    const [ sources, setSources ] = useState([""]);
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [date, setDate] = useState("");
+    const [recaptcha, setRecaptcha] = useState("");
+    const [disableSubmit, setDisableSubmit] = useState(true);
+    const [sources, setSources] = useState([""]);
 
-    useEffect(async () => {
-        if (edit) {
-            const { content, title } = await claimApi.getById(claim._id);
-            setTitle(title);
-            setContent(content.text);
+    useEffect(() => {
+        const setTitleAndContent = async () => {
+            if (edit) {
+                const { content, title } = await claimApi.getById(claim._id);
+                setTitle(title);
+                setContent(content.text);
+            }
+
         }
+        setTitleAndContent()
     }, []);
 
     const toggleDisabledSubmit = () => {
@@ -287,12 +293,12 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         marginBottom: "20px"
                     }}
                 >
-                    <Button type="white" onClick={() => router.back()}>
+                    <Button type={ButtonType.white} onClick={() => router.back()}>
                         {t("claimForm:cancelButton")}
                     </Button>
                     {edit ? (
                         <Button
-                            type="blue"
+                            type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit}
                         >
@@ -300,7 +306,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         </Button>
                     ) : (
                         <Button
-                            type="blue"
+                            type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit}
                         >

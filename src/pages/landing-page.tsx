@@ -1,12 +1,12 @@
 import React from "react";
 import { NextPage } from "next";
 import LandingPageComponent from "../components/LandingPage";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 const parser = require('accept-language-parser');
 
-const LandingPage: NextPage<{ data: string }> = (props) => {
+const LandingPage: NextPage<{ data: string }> = () => {
     return (
-        <LandingPageComponent {...props} />
+        <LandingPageComponent />
     );
 };
 

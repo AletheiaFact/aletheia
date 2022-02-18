@@ -2,21 +2,21 @@ import React, { useRef, useState } from "react";
 import {
     Alert,
     Form,
-    Input,
+    FormInstance,
     message,
     Row,
     Typography
 } from "antd";
 import api from "../../api/user";
 import { useTranslation } from "next-i18next";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
 
 const ProfileView = ({ user }) => {
-    const formRef = useRef();
+    const formRef = useRef<FormInstance>();
     const { t } = useTranslation();
 
-    const [ loadingFinish, setLoadingFinish ] = useState(false);
+    const [loadingFinish, setLoadingFinish] = useState(false);
 
     const updatePassword = (data) => {
         return api.updatePassword(
@@ -128,7 +128,7 @@ const ProfileView = ({ user }) => {
                 </Form.Item>
                 <Form.Item>
                     <Button
-                        type="primary"
+                        type={ButtonType.blue}
                         htmlType="submit"
                         loading={loadingFinish}
                     >

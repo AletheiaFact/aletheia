@@ -25,13 +25,15 @@
         "watch-debug": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn serve-debug\"",
         "watch-node": "nodemon dist/server/server.js  --signal SIGTERM",
         "serve-debug": "nodemon --inspect dist/server/server.js  --signal SIGTERM",
-        "clean": "rimraf **/{node_modules,dist}"
+        "clean": "rimraf **/{node_modules,dist}",
+        "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs"
     },
     "nodemonConfig": {
         "ignore": [
             "test/**/*",
             "src/**/*",
-            "dist/client/**/*"
+            "dist/client/**/*",
+            "docs/**/*"
         ]
     },
     "keywords": [
@@ -57,6 +59,7 @@
         "@ant-design/icons": "^4.6.2",
         "@ant-design/icons-svg": "^4.1.0",
         "@babel/polyfill": "^7.12.1",
+        "@compodoc/compodoc": "^1.1.18",
         "@dhaiwat10/react-link-preview": "^1.9.1",
         "@nestjs/axios": "^0.0.1",
         "@nestjs/common": "^8.0.6",
@@ -167,7 +170,8 @@
         "collectCoverageFrom": [
             "./**/*.(tsx|ts|js)",
             "!**/node_modules/**",
-            "!**/dist/**"
+            "!**/dist/**",
+            "!**/docs/**"
         ],
         "coverageReporters": [
             "lcov"

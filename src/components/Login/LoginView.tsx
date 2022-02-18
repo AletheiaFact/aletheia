@@ -7,14 +7,15 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import InputPassword from "../InputPassword";
 import Input from "../Input";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
 
-const LoginView = () => {
+const LoginView = (props) => {
     const { t } = useTranslation();
+    const { previousUrl, host } = props
     const router = useRouter();
-
-    const [ formType, setFormType ] = useState("login");
+    const [formType, setFormType] = useState("login");
+    const shouldGoBack = previousUrl.startsWith(host)
 
     const onFinishFailed = errorInfo => {
         if (typeof errorInfo === "string") {
@@ -31,7 +32,12 @@ const LoginView = () => {
             onFinishFailed(result.message);
         } else {
             message.success(t("login:loginSuccessfulMessage"));
-            router.back();
+            if (shouldGoBack) {
+                router.back()
+            }
+            else {
+                router.push('/home')
+            }
         }
     };
 
@@ -106,7 +112,7 @@ const LoginView = () => {
                                                 {t("login:signup")}
                                             </a>
                                             <Button
-                                                type="primary"
+                                                type={ButtonType.blue}
                                                 htmlType="submit"
                                             >
                                                 {t("login:submitButton")}
