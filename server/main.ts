@@ -40,6 +40,7 @@ const initApp = async (options) => {
     app.useGlobalPipes(
         new ValidationPipe({
             transform: true,
+            transformOptions: {enableImplicitConversion: true},
             whitelist: true,
             forbidNonWhitelisted: true,
         }),

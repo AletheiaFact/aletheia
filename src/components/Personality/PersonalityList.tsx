@@ -4,8 +4,10 @@ import { Row } from "antd";
 import PersonalityCard from "./PersonalityCard";
 import PersonalityCreateCTA from "./PersonalityCreateCTA";
 import BaseList from "../List/BaseList";
+import { useTranslation } from "next-i18next";
 
 const PersonalityList = () => {
+    const { i18n } = useTranslation()
     const createPersonalityCTA = (
         <Row
             style={{
@@ -20,6 +22,9 @@ const PersonalityList = () => {
     return (
         <BaseList
             apiCall={api.getPersonalities}
+            filter={{
+                i18n
+            }}
             emptyFallback={createPersonalityCTA}
             renderItem={p =>
                 p && (

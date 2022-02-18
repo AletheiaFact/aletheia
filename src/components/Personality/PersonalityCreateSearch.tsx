@@ -10,7 +10,7 @@ import Label from "../Label";
 import PersonalitySearchResultSection from "./PersonalitySearchResultSection";
 
 const PersonalityCreateSearch = ({ withSuggestions }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
 
     const { personalities } = useAppSelector((state) => {
@@ -27,7 +27,7 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
             searchName: trimmedName
         });
         api.getPersonalities(
-            { withSuggestions, personalities, searchName: trimmedName },
+            { withSuggestions, personalities, searchName: trimmedName, i18n },
             dispatch
         );
     }

@@ -1,42 +1,26 @@
-import { IsAlpha, IsBoolean, IsInt, IsNotEmpty, IsNotEmptyObject, IsNumber, IsObject, IsPositive, IsString, Max, ValidateNested } from 'class-validator';
-
+import { IsAlpha, IsBoolean, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 export class GetPersonalities {
-    @IsNotEmpty()
     @IsNumber()
     @IsInt()
-    @IsPositive()
-    @Max(10) // número hipotetico
+    @Min(0)
     page: number;
 
-    @IsNotEmpty()
     @IsNumber()
-    @IsPositive()
-    pageSize: number;
+    @Min(0)
+    pageSize: number;//error /personality/search, 10 by default
 
-    @IsNotEmpty()
     @IsString()
-    order: string; //asc desc
+    order: string;
 
-    @IsNotEmpty()
     @IsString()
     @IsAlpha()
     language: string;
 
-    @IsNotEmpty()
     @IsBoolean()
-    withSuggestions: boolean;
+    @IsOptional()
+    withSuggestions?: boolean;
 
-    @IsNotEmptyObject()
-    @IsObject()
-    @ValidateNested()
-    query: object;
+    @IsString()
+    @IsOptional()
+    name?: string;
 }
-
-//     @IsNotEmptyObject()
-//     @IsObject()
-//     @ValidateNested()
-//     query: {
-//         language: string;
-//         withSuggestions: boolean;
-//     };
-// }

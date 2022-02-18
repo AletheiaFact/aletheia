@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Claim } from "../../claim/schemas/claim.schema";
 
 export type PersonalityDocument = Personality & mongoose.Document;
 
