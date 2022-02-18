@@ -1,7 +1,7 @@
 import React from "react";
 
 
-const HighlightedText = ({ text = '', highlight = '' }) => {
+const HighlightedSearchText = ({ text = '', highlight = '' }) => {
     if (!highlight?.trim()) {
         return <span>{text}</span>
     }
@@ -18,4 +18,4 @@ const HighlightedText = ({ text = '', highlight = '' }) => {
 }
 
 
-export default HighlightedText
+export default HighlightedSearchText
