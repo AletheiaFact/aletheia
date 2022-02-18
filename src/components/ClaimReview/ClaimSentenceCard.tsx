@@ -1,4 +1,4 @@
-import { Avatar, Col, Comment, Row, Tooltip, Typography } from "antd";
+import { Avatar, Col, Comment, Tooltip, Typography } from "antd";
 import React from "react";
 import ClaimSummary from "../Claim/ClaimSummary";
 
@@ -10,7 +10,6 @@ const ClaimSentenceCard = ({ personality, sentence, summaryClassName = "" }) => 
         return (
             <Col span={24}>
                 <Comment
-                    review="true"
                     author={personality.name}
                     avatar={
                         <Avatar
@@ -22,12 +21,7 @@ const ClaimSentenceCard = ({ personality, sentence, summaryClassName = "" }) => 
                         <>
                             <ClaimSummary className={summaryClassName}>
                                 <Col>
-                                    <Paragraph
-                                        ellipsis={{
-                                            rows: 4,
-                                            expandable: false
-                                        }}
-                                    >
+                                    <Paragraph>
                                         {content}
                                     </Paragraph>
                                 </Col>
