@@ -1,13 +1,15 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Avatar, Col, Row } from "antd";
-import { CloseOutlined, RightOutlined } from "@ant-design/icons";
+import { LeftCircleFilled, RightOutlined, SearchOutlined } from "@ant-design/icons";
 import InputSearch from "./Form/InputSearch";
 import { useTranslation } from "next-i18next";
 import api from "../api/personality";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import { useAppSelector } from "../store/store";
+import colors from "../styles/colors";
+import HighlightedText from "./HighlightedSearchText";
 
 const OverlayDiv = styled.div`
     width: 100%;
@@ -16,6 +18,10 @@ const OverlayDiv = styled.div`
 
     .ant-input-search.ant-input-affix-wrapper-lg {
         padding: 9px 14px;
+    }
+
+    .ant-input-lg {
+        font-weight: 600;
     }
 
     .ant-input::placeholder {
@@ -34,7 +40,7 @@ const OverlayDiv = styled.div`
 `;
 
 const SearchOverlay = ({ overlay }) => {
-    const { personalities, page, pageSize } = useAppSelector(
+    const { personalities, page, pageSize, searchName } = useAppSelector(
         (state) => {
             return {
                 personalities: state?.search?.searchResults || [],
@@ -61,11 +67,12 @@ const SearchOverlay = ({ overlay }) => {
             searchName: name
         }, dispatch);
     }
+
     return (
         <OverlayDiv>
             <Row className="aletheia-header"
                 style={{
-                    backgroundColor: "#2d77a3",
+                    backgroundColor: colors.bluePrimary,
                     boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
                     height: "70px",
                     padding: "0 15px",
@@ -73,14 +80,9 @@ const SearchOverlay = ({ overlay }) => {
                     justifyContent: "center",
                 }}
             >
-                <Col span={20}>
-                    <InputSearch
-                        placeholder={t("header:search_personality")}
-                        callback={handleInputSearch}
-                    />
-                </Col>
+
                 <Col
-                    span={4}
+                    span={3}
                     style={{
                         textAlign: "center"
                     }}
@@ -93,14 +95,21 @@ const SearchOverlay = ({ overlay }) => {
                             });
                         }}
                     >
-                        <CloseOutlined
+                        <LeftCircleFilled
                             style={{
-                                fontSize: "16px",
+                                fontSize: "24px",
                                 color: "white",
                                 padding: "8px"
                             }}
                         />
                     </a>
+                </Col>
+                <Col span={20}>
+                    <InputSearch
+                        placeholder={t("header:search_personality")}
+                        callback={handleInputSearch}
+                        suffix={<SearchOutlined />}
+                    />
                 </Col>
             </Row>
             {overlay.results && (
@@ -154,7 +163,7 @@ const SearchOverlay = ({ overlay }) => {
                                                             fontSize: "14px"
                                                         }}
                                                     >
-                                                        {p.name}
+                                                        <HighlightedText text={p.name} highlight={searchName} />
                                                     </span>
                                                 </Col>
                                                 <Col span={2}>
