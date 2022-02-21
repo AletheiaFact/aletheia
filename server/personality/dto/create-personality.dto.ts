@@ -1,5 +1,6 @@
-import { IsBoolean, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 export class CreatePersonality {
+    @IsNotEmpty()
     @IsString()
     @MinLength(3)
     name: string;
