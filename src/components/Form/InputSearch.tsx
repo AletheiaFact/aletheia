@@ -1,13 +1,14 @@
 import React from "react";
 import { Input } from "antd";
 import styled from "styled-components";
+import colors from "../../styles/colors";
 
 const InputSearchStyled = styled(Input.Search)`
     span.ant-input-group-addon {
         display: none;
     }
     span.ant-input-affix-wrapper {
-        background: #F5F5F5;
+        background: ${colors.lightGray};
         box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
         border-radius: 30px!important;
         &:focus-within {
@@ -15,10 +16,10 @@ const InputSearchStyled = styled(Input.Search)`
         }
     }
     input.ant-input {
-        background: #F5F5F5;
-        color: #515151;
+        background: ${colors.lightGray};
+        color: ${colors.black};
         &::placeholder {
-            color: #515151;
+            color: ${colors.black};
         }
     }
 `
