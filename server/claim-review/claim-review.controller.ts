@@ -1,9 +1,10 @@
-import {Controller, Delete, Get, Param, Post, Req, UseGuards} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Post, Req, UseGuards} from "@nestjs/common";
 import { ClaimReviewService } from "./claim-review.service";
 import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import {SessionGuard} from "../auth/session.guard";
+import { createClaimReview } from "./dto/create-claim-review.dto";
 
 @Controller("api/claimreview")
 export class ClaimReviewController {
@@ -28,11 +29,11 @@ export class ClaimReviewController {
 
     @UseGuards(SessionGuard)
     @Post()
-    async create(@Req() req) {
+    async create(@Body() createClaimReview: createClaimReview, @Req() req) {
         const secret = this.configService.get<string>("recaptcha_secret");
         const recaptchaCheck = await this._checkCaptchaResponse(
             secret,
-            req.body && req.body.recaptcha
+            createClaimReview && createClaimReview.recaptcha
         );
 
         // @ts-ignore
@@ -44,7 +45,7 @@ export class ClaimReviewController {
             // );
         } else {
             return this.claimReviewService.create({
-                ...req.body,
+                ...createClaimReview,
                 user: req?.user?._id,
             });
         }

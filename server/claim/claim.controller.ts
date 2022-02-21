@@ -24,6 +24,7 @@ import {ViewService} from "../view/view.service";
 import * as mongoose from "mongoose";
 import { CreateClaim } from "./dto/create-claim.dto";
 import { GetClaims } from "./dto/get-claims.dto";
+import { GetClaimsByHash } from "./dto/get-reviews-by-hash.dto";
 
 @Controller()
 export class ClaimController {
@@ -126,9 +127,9 @@ export class ClaimController {
     }
 
     @Get("api/claim/:claimId/sentence/:sentenceHash/reviews")
-    getSentenceReviewsByHash(@Req() req) {
-        const { sentenceHash } = req.params;
-        const { page, pageSize, order } = req.query;
+    getSentenceReviewsByHash(@Param() params, @Query() getClaimsByHash: GetClaimsByHash) {
+        const { sentenceHash } = params;
+        const { page, pageSize, order } = getClaimsByHash;
 
         return Promise.all([
             this.claimReviewService.getReviewsBySentenceHash(

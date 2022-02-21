@@ -1,5 +1,6 @@
-import { IsAlpha, IsInt, IsNumber, IsString, Min } from 'class-validator';
-export class GetClaims {
+import { IsAlpha, IsArray, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+
+export class GetClaimsByHash {
     @IsNumber()
     @IsInt()
     @Min(0)
@@ -16,6 +17,7 @@ export class GetClaims {
     @IsAlpha()
     language: string;
 
-    @IsString()
-    personality: string;
+    @IsOptional()
+    @IsArray()
+    reviews?: string[];
 }

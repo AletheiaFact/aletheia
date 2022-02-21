@@ -64,8 +64,13 @@ const getClaimSentence = (id, sentenceHash) => {
 
 const getClaimSentenceReviews = (options = {}) => {
     const params = {
-        page: options.page - 1,
-        pageSize: options.pageSize,
+        page: options.page ? options.page - 1 : 0,
+        order: options.order || 'asc',
+        name: options.searchName,
+        pageSize: options.pageSize ? options.pageSize : 0,
+        personality: options.personality,
+        language:
+            options.i18n && options.i18n.languages && options.i18n.languages[0],
     };
     return request
         .get(`${options.claimId}/sentence/${options.sentenceHash}/reviews`, {
