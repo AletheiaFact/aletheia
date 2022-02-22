@@ -1,13 +1,11 @@
 import React from "react";
 
-const regex = (highlight: string) => new RegExp(`(${highlight})`, 'gi')
-
 const HighlightedSearchText = ({ text = '', highlight = '' }) => {
     if (!highlight?.trim()) {
         return <span>{text}</span>
     }
 
-    const pattern = regex(highlight)
+    const pattern = new RegExp(`(${highlight})`, 'gi')
     const parts = text.split(pattern)
 
     return (
