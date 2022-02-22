@@ -7,6 +7,7 @@ import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
+import { PlusOutlined } from "@ant-design/icons";
 
 const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
     const { t } = useTranslation();
@@ -28,7 +29,8 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                 style={{
                     background: colors.lightGray,
                     margin: "2px -15px 0px -15px",
-                    padding: "0px 15px"
+                    padding: "0px 15px",
+                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)"
                 }}
             >
                 <ClaimSentenceCard
@@ -98,6 +100,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                                     <Button
                                         type={ButtonType.blue}
                                         onClick={toggleFormCollapse}
+                                        icon={<PlusOutlined />}
                                     >
                                         {t("claimReviewForm:addReviewButton")}
                                     </Button>
