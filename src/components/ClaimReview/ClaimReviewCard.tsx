@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import {Avatar, Collapse, Comment, Row} from "antd";
+import React from "react";
+import { Avatar, Collapse, Comment, Row } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ReviewColors from "../../constants/reviewColors";
-import {useTranslation} from "next-i18next";
+import { useTranslation } from "next-i18next";
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
-import {LinkPreview} from "@dhaiwat10/react-link-preview";
+import { LinkPreview } from "@dhaiwat10/react-link-preview";
+import colors from "../../styles/colors";
 
 const ClaimReviewCard = ({ classification, userName, sources, report }) => {
     const { t } = useTranslation();
@@ -15,12 +16,19 @@ const ClaimReviewCard = ({ classification, userName, sources, report }) => {
     return (
         <Comment
             style={{
-                width: "100%"
+                width: "100%",
+                border: `1px solid ${colors.lightGray}`,
+                boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.2)",
+                borderRadius: "10px",
+                padding: 16
+
             }}
             avatar={<Avatar size={45} icon={<UserOutlined />} />}
-            author={t("claimReview:cardAuthor", {
-                name: username
-            })}
+            author={
+                <span style={{ fontSize: 14 }}>{t("claimReview:cardAuthor", {
+                    name: username
+                })}</span>
+            }
             content={
                 <Row>
                     <Row style={{
@@ -72,7 +80,7 @@ const ClaimReviewCard = ({ classification, userName, sources, report }) => {
                                             borderRadius="10px"
                                             borderColor="transparent"
                                             imageHeight="156px"
-                                            secondaryTextColor="#515151"
+                                            secondaryTextColor={colors.black}
                                             width="100%"
                                         />
                                     )}

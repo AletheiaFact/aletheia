@@ -2,5 +2,6 @@
     "cardAuthor": "{{name}} avaliou essa afirmação como:",
     "anonymousUserName": "Anônimo",
     "userReviewPrefix": "Você avaliou essa afirmação como ",
-    "userReviewSuffix": "A maioria ({{count}}) foi avaliada como "
+    "userReviewSuffix": "A maioria ({{count}}) foi avaliada como ",
+    "listTitle": "Avaliações"
 }

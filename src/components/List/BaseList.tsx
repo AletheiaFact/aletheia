@@ -8,7 +8,8 @@ const BaseList = ({
     filter = {}, // replaced 'query' parameter
     emptyFallback = <></>,
     style = {},
-    footer = <></>
+    footer = <></>,
+    title = ''
 }) => {
     const { t } = useTranslation();
 
@@ -30,7 +31,7 @@ const BaseList = ({
             setLoading(false)
             setTotalPages(newItems.totalPages)
             setTotalItems(newItems.total)
-            setItems(items => [...items, ...newItems.data])
+            setItems(currentItems => [...currentItems, ...newItems.data])
         });
     }, [query, apiCall]);
 
@@ -68,16 +69,20 @@ const BaseList = ({
                 <List
                     itemLayout="horizontal"
                     header={
-                        <Row
-                            style={{
-                                textAlign: "center",
-                                display: "block"
-                            }}
-                        >
-                            {t("list:totalItems", {
-                                total: totalItems
-                            })}
-                        </Row>
+                        <>
+                            <Row
+                                style={{
+                                    fontSize: 18,
+                                }}
+                            >
+                                <span>{title}</span>
+                            </Row>
+                            <Row>
+                                {t("list:totalItems", {
+                                    total: totalItems
+                                })}
+                            </Row>
+                        </>
                     }
                     style={style || {}}
                     loadMore={loadMoreButton}
