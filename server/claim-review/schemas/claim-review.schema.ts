@@ -3,10 +3,20 @@ import { Claim } from "../../claim/schemas/claim.schema";
 import { Personality } from "../../personality/schemas/personality.schema";
 import * as mongoose from "mongoose";
 import { User } from "../../users/schemas/user.schema";
-import { Source } from "../../source/schemas/source.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
+export enum ClassificationEnum {
+    "not-fact",
+    "true",
+    "true-but",
+    "arguable",
+    "misleading",
+    "false",
+    "unsustainable",
+    "exaggerated",
+    "unverifiable",
+};
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class ClaimReview {
     @Prop({

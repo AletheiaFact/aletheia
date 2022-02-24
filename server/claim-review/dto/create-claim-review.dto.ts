@@ -1,15 +1,11 @@
-import { Contains, Equals, IsAlphanumeric, IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsAlphanumeric, IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { Personality } from "../../personality/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
-
+import { ClassificationEnum } from "../schemas/claim-review.schema"
 export class createClaimReview {
     @IsNotEmpty()
     @IsString()
-    @Equals(
-      "not-fact" || "true" || "true-but" || "arguable" || "misleading" || 
-      "false" || "unsustainable" || "exaggerated" || "unverifiable"
-    ) /*utilizei contains e equals e nenhum trouxe o resultado certo, aparentemente
-    não há um validator*/
+    @IsEnum(ClassificationEnum)
     classification: string;
 
     @IsString()

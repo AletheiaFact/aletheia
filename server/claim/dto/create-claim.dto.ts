@@ -1,4 +1,4 @@
-import { IsAlpha, IsArray, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ArrayNotEmpty, IsAlpha, IsArray, IsDateString, IsNotEmpty, IsString } from 'class-validator';
 import { Personality } from "../../personality/schemas/personality.schema";
 
 export class CreateClaim {
@@ -15,18 +15,20 @@ export class CreateClaim {
     @IsDateString()
     date: string;
 
+    @IsNotEmpty()
     @IsString()
     @IsAlpha()
     type: string;
 
-    @IsOptional()
     @IsArray()
+    @ArrayNotEmpty()
     sources: string[];
 
+    @IsNotEmpty()
     @IsString()
     recaptcha: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
-    personality?: Personality;
+    personality: Personality;
 }

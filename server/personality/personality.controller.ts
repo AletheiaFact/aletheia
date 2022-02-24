@@ -53,7 +53,7 @@ export class PersonalityController {
     @Get("api/personality/:id")
     async get(@Param() params, @Query() query) {
         return this.personalityService
-            .getById(params.id, query.language) // TODO: get language for request object in the future
+            .getById(params.id, query.language) // TODO: get language from request object in the future
             .catch((err) => {
                 this.logger.error(err);
             });
