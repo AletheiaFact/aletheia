@@ -1,9 +1,10 @@
 import styled from "styled-components"
 import { Input } from "antd";
+import colors from "../styles/colors";
 
 
 const AletheiaInput = styled(Input)`
-    background: #FFF;
+    background: ${colors.white};
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
     border-radius: 30px;
     border: none;
