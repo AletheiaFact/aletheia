@@ -10,5 +10,9 @@
     "initialInfo": "Choose a sentence to review by clicking on it",
     "sourceSectionTitle": "Fontes:",
     "sourceFooter": "Unable to find reliable source linking this speech to this personality?",
-    "sourceFooterReport": "Please, report here. "
+    "sourceFooterReport": "Please, report here. ",
+    "cardHeader1": "Stated on",
+    "cardHeader2": "in",
+    "typeSpeech": "Oficial speech",
+    "typeTwitter": "Twitter post"
 }

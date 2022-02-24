@@ -1,10 +1,11 @@
-import { Avatar, Col, Comment, Row, Tooltip, Typography } from "antd";
+import { Avatar, Col, Comment, Row, Typography } from "antd";
 import React from "react";
 import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
 import CardBase from "../CardBase";
 import ClaimSummary from "./ClaimSummary";
 import Button, { ButtonType } from "../Button";
+import ClaimCardHeader from "./ClaimCardHeader";
 
 const { Paragraph } = Typography;
 
@@ -15,16 +16,20 @@ const ClaimCard = ({ personality, claim }) => {
     if (!claim) {
         return <div></div>;
     }
-
     return (
         <CardBase>
             <Row>
                 <Comment
-                    // review="true"
                     style={{
                         padding: "15px 15px 0px 15px"
                     }}
-                    author={personality.name}
+                    author={
+                        <ClaimCardHeader
+                            personality={personality}
+                            date={claim?.date}
+                            claimType={claim?.type}
+                        />
+                    }
                     avatar={
                         <Avatar
                             src={personality.image}
@@ -32,40 +37,33 @@ const ClaimCard = ({ personality, claim }) => {
                         />
                     }
                     content={
-                        <>
-                            <ClaimSummary
-                                style={{
-                                    padding: "15px"
-                                }}
-                            >
+                        <ClaimSummary
+                            style={{
+                                padding: "15px"
+                            }}
+                        >
+                            <Col>
                                 <Col>
-                                    <Col>
-                                        <Paragraph
-                                            ellipsis={{
-                                                rows: 4,
-                                                expandable: false
-                                            }}
-                                        >
-                                            {claim.content.text || claim.title}
-                                        </Paragraph>
-                                    </Col>
-                                    <a
-                                        href={`/personality/${personality.slug}/claim/${claim.slug}`}
-                                        style={{
-                                            textDecoration: "underline"
+                                    <Paragraph
+                                        ellipsis={{
+                                            rows: 4,
+                                            expandable: false
                                         }}
                                     >
-                                        {t("claim:cardLinkToFullText")}
-                                    </a>
+                                        {claim.content.text || claim.title}
+                                    </Paragraph>
                                 </Col>
-                            </ClaimSummary>
+                                <a
+                                    href={`/personality/${personality.slug}/claim/${claim.slug}`}
+                                    style={{
+                                        textDecoration: "underline"
+                                    }}
+                                >
+                                    {t("claim:cardLinkToFullText")}
+                                </a>
+                            </Col>
+                        </ClaimSummary>
 
-                        </>
-                    }
-                    datetime={
-                        <Tooltip title={claim?.date}>
-                            <span>{claim?.date}</span>
-                        </Tooltip>
                     }
                 />
             </Row>
