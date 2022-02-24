@@ -7,7 +7,7 @@ import ClassificationText from "../ClassificationText";
 const { Option } = Select;
 
 const SelectInput = styled(Select)`
-    background: ${colors.lightGray};
+    background: ${colors.white};
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
     border-radius: 30px;
     border: none;
