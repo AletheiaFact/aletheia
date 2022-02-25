@@ -37,6 +37,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                     personality={personality}
                     sentence={sentence}
                     summaryClassName="claim-review"
+                    claimType={claim?.type}
                 />
                 {sentence.userReview && (
                     <Row
