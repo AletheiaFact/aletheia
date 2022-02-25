@@ -3,7 +3,6 @@ import React from "react";
 import claimApi from "../../api/claim";
 import BaseList from "../List/BaseList";
 import ClaimReviewCard from "./ClaimReviewCard";
-import { useTranslation } from "next-i18next";
 
 const ClaimReviewList = ({ claimId, sentenceHash }) => {
     const { t, i18n } = useTranslation()
