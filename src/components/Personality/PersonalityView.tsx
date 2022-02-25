@@ -13,7 +13,7 @@ import MetricsOverview from "../Metrics/MetricsOverview";
 import { useTranslation } from 'next-i18next';
 
 const PersonalityView = ({ personality, href }) => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const [showSpeechesSection, setShowSpeechesSection] = useState(true);
 

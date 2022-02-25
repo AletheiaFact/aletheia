@@ -4,7 +4,7 @@ import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import {SessionGuard} from "../auth/session.guard";
-import { createClaimReview } from "./dto/create-claim-review.dto";
+import { CreateClaimReview } from "./dto/create-claim-review.dto";
 
 @Controller("api/claimreview")
 export class ClaimReviewController {
@@ -29,7 +29,7 @@ export class ClaimReviewController {
 
     @UseGuards(SessionGuard)
     @Post()
-    async create(@Body() createClaimReview: createClaimReview, @Req() req) {
+    async create(@Body() createClaimReview: CreateClaimReview, @Req() req) {
         const secret = this.configService.get<string>("recaptcha_secret");
         const recaptchaCheck = await this._checkCaptchaResponse(
             secret,

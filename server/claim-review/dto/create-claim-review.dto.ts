@@ -2,7 +2,7 @@ import { IsAlphanumeric, IsArray, IsEnum, IsNotEmpty, IsString } from 'class-val
 import { Personality } from "../../personality/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { ClassificationEnum } from "../schemas/claim-review.schema"
-export class createClaimReview {
+export class CreateClaimReview {
     @IsNotEmpty()
     @IsString()
     @IsEnum(ClassificationEnum)

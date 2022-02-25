@@ -25,7 +25,6 @@ import * as mongoose from "mongoose";
 import { CreateClaim } from "./dto/create-claim.dto";
 import { GetClaims } from "./dto/get-claims.dto";
 import { GetClaimsByHash } from "./dto/get-reviews-by-hash.dto";
-
 @Controller()
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
@@ -106,7 +105,7 @@ export class ClaimController {
             // );
             throw Error();
         }
-        return await this.claimService.create(createClaim);
+        return this.claimService.create(createClaim);
     }
 
     @Get("api/claim/:id")
