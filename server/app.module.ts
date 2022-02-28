@@ -16,16 +16,10 @@ import { EmailModule } from "./email/email.module";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
-@Module({
-    imports: [
-        ThrottlerModule.forRoot({
-            ttl: 60,
-            limit: 100,
-        }),
-    ],
-})
+@Module({})
 export class AppModule {
     static register(options): DynamicModule {
+        console.log(options)
         // TODO: interface app with service-runner metrics interface
         return {
             module: AppModule,
@@ -36,6 +30,10 @@ export class AppModule {
                 ),
                 ConfigModule.forRoot({
                     load: [() => options.config || {}],
+                }),
+                ThrottlerModule.forRoot({
+                    ttl: options.config.throttle.ttl,
+                    limit: options.config.throttle.limit,
                 }),
                 UsersModule,
                 AuthModule,
