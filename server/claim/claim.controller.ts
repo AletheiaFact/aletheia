@@ -22,7 +22,9 @@ import {parse} from "url";
 import {PersonalityService} from "../personality/personality.service";
 import {ViewService} from "../view/view.service";
 import * as mongoose from "mongoose";
-
+import { CreateClaim } from "./dto/create-claim.dto";
+import { GetClaims } from "./dto/get-claims.dto";
+import { GetClaimsByHash } from "./dto/get-reviews-by-hash.dto";
 @Controller()
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
@@ -58,19 +60,19 @@ export class ClaimController {
     }
 
     @Get("api/claim")
-    listAll(@Query() query) {
-        const { page = 0, pageSize = 10, order = "asc" } = query;
-        const queryInputs = this._verifyInputsQuery(query);
+    listAll(@Query() getClaims: GetClaims) {
+        const { page = 0, pageSize = 10, order = "asc" } = getClaims;
+        const queryInputs = this._verifyInputsQuery(getClaims);
         return Promise.all([
             this.claimService.listAll(
                 page,
-                parseInt(pageSize, 10),
+                pageSize,
                 order,
                 queryInputs
             ),
             this.claimService.count(queryInputs),
         ]).then(([claims, totalClaims]) => {
-            const totalPages = Math.ceil(totalClaims / parseInt(pageSize, 10));
+            const totalPages = Math.ceil(totalClaims / pageSize);
 
             this.logger.log(
                 `Found ${totalClaims} claims. Page ${page} of ${totalPages}`
@@ -88,11 +90,11 @@ export class ClaimController {
 
     @UseGuards(SessionGuard)
     @Post("api/claim")
-    async create(@Body() body) {
+    async create(@Body() createClaim: CreateClaim) {
         const secret = this.configService.get<string>("recaptcha_secret");
         const recaptchaCheck = await this._checkCaptchaResponse(
             secret,
-            body && body.recaptcha
+            createClaim && createClaim.recaptcha
         );
 
         // @ts-ignore
@@ -103,7 +105,7 @@ export class ClaimController {
             // );
             throw Error();
         }
-        return await this.claimService.create(body);
+        return this.claimService.create(createClaim);
     }
 
     @Get("api/claim/:id")
@@ -124,9 +126,9 @@ export class ClaimController {
     }
 
     @Get("api/claim/:claimId/sentence/:sentenceHash/reviews")
-    getSentenceReviewsByHash(@Req() req) {
-        const { sentenceHash } = req.params;
-        const { page, pageSize, order } = req.query;
+    getSentenceReviewsByHash(@Param() params, @Query() getClaimsByHash: GetClaimsByHash) {
+        const { sentenceHash } = params;
+        const { page, pageSize, order } = getClaimsByHash;
 
         return Promise.all([
             this.claimReviewService.getReviewsBySentenceHash(
