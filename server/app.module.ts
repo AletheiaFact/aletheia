@@ -16,10 +16,10 @@ import { EmailModule } from "./email/email.module";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
+
 @Module({})
 export class AppModule {
     static register(options): DynamicModule {
-        console.log(options)
         // TODO: interface app with service-runner metrics interface
         return {
             module: AppModule,
