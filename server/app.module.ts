@@ -16,11 +16,7 @@ import { EmailModule } from "./email/email.module";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
-<<<<<<< HEAD
-
-=======
 import { ClaimRevisionModule } from "./claimRevision/claim-revision.module";
->>>>>>> Create claim revision inicial structure
 @Module({})
 export class AppModule {
     static register(options): DynamicModule {
