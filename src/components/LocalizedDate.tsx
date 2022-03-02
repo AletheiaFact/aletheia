@@ -1,6 +1,6 @@
 import React from "react"
 
-const ClaimDate = ( {date} ) => {
+const LocalizedDate = ( {date} ) => {
   const localizedDate = new Date(date).toLocaleDateString() 
 return (
   <>
@@ -9,4 +9,4 @@ return (
   )
 }
 
-export default ClaimDate
+export default LocalizedDate
