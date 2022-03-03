@@ -22,7 +22,7 @@ const ClaimCardHeader = ({ personality, date, claimType = 'speech' }) => {
             <Row>{personality.description}</Row>
             <Row>
                 {t('claim:cardHeader1')}&nbsp;
-                <LocalizedDate date={date} />
+                <LocalizedDate date={date} />&nbsp;
                 {t('claim:cardHeader2')}&nbsp;
                 <strong>{speechTypeTranslation}</strong>
             </Row>
