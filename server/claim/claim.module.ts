@@ -10,6 +10,7 @@ import { ConfigModule } from "@nestjs/config";
 import { HttpModule } from "@nestjs/axios";
 import { ViewModule } from "../view/view.module";
 import { SourceModule } from "../source/source.module";
+import { ClaimRevisionModule } from "../claim-revision/claim-revision.module"
 
 const ClaimModel = MongooseModule.forFeature([
     {
@@ -22,6 +23,7 @@ const ClaimModel = MongooseModule.forFeature([
     imports: [
         ClaimModel,
         ClaimReviewModule,
+        ClaimRevisionModule,
         ParserModule,
         PersonalityModule,
         ConfigModule,
