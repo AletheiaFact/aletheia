@@ -1,11 +1,11 @@
 import {Injectable, Logger} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import slugify from 'slugify'
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ParserService } from "../parser/parser.service";
 import { SourceService } from "../source/source.service";
+import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 
 @Injectable()
 export class ClaimService {
@@ -16,6 +16,8 @@ export class ClaimService {
         @InjectModel(Claim.name)
         private ClaimModel: Model<ClaimDocument>,
         private claimReviewService: ClaimReviewService,
+        // TODO: inject ClaimRevisionService
+        private claimRevisionService: ClaimRevisionService,
         private sourceService: SourceService,
         private parserService: ParserService
     ) {
@@ -30,6 +32,7 @@ export class ClaimService {
             query.personality = new Types.ObjectId(query.personality)
         }
         const claims = await this.ClaimModel.find(query)
+            // TODO: get latest revision
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
@@ -46,31 +49,11 @@ export class ClaimService {
     }
 
     async create(claim) {
-        claim.content = this.parserService.parse(claim.content);
-        claim.slug = slugify(claim.title, {
-            lower: true,     // convert to lower case, defaults to `false`
-            strict: true     // strip special characters except replacement, defaults to `false`
-        })
-        claim.personality = new Types.ObjectId(claim.personality);
-        const newClaim = new this.ClaimModel(claim);
-        if (claim.sources && Array.isArray(claim.sources)) {
-            try {
-                for (let i = 0; i < claim.sources.length ; i++) {
-                    await this.sourceService.create({
-                        link: claim.sources[i],
-                        targetId: newClaim.id,
-                        targetModel: "Claim",
-                    });
-                }
-            } catch (e) {
-                this.logger.error(e);
-                throw e;
-            }
-        }
-        return newClaim.save();
+        // TODO: replace this function logic with this.claimRevisionService.create(claim)
     }
 
     async update(claimId, claimBody) {
+        // TODO: when updating a claim a new claimRevision should be created as well
         // eslint-disable-next-line no-useless-catch
         try {
             const claim = await this.getById(claimId);
@@ -89,13 +72,18 @@ export class ClaimService {
     }
 
     delete(claimId) {
+        // TODO: use soft-delete instead
+        // this means that when deleting it should actually update
+        // the deleted field with the boolean value 'true'
         return this.ClaimModel.findByIdAndRemove(claimId);
     }
 
+    // TODO: add optional revisionId that will fetch a specifc revision that matches
     async getById(claimId) {
         const claim = await this.ClaimModel.findById(claimId)
             .populate("personality", "_id name")
             .populate("sources", "_id link classification");
+            // TODO: get the latest revision
         if (!claim) {
             // TODO: handle 404 for claim not found
             return {};
@@ -112,6 +100,7 @@ export class ClaimService {
             })
             .populate("personality", "_id name")
             .populate("sources", "_id link classification");
+            // TODO: get latest revision
         if (!claim) {
             return {};
         }
@@ -120,6 +109,7 @@ export class ClaimService {
     }
 
     private async postProcess(claim) {
+        // TODO: this will break when fetching the revision content
         const reviews = await this.claimReviewService.getReviewsByClaimId(
             claim._id
         );
@@ -143,6 +133,7 @@ export class ClaimService {
     }
 
     private calculateOverallStats(claim) {
+        // TODO: this will break when fetching the revision content
         let totalClaims = 0;
         let totalClaimsReviewed = 0;
         if (claim?.content?.object) {
