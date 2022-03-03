@@ -1,9 +1,7 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ClaimRevision, ClaimRevisionSchema } from "./schema/claim-revision.schema";
-// import { ClaimService } from "./claim.service";
 import { ClaimRevisionController } from "./claim-revision.controller"
-// import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ParserModule } from "../parser/parser.module";
 import { PersonalityModule } from "../personality/personality.module";
 import { ConfigModule } from "@nestjs/config";
@@ -20,6 +18,7 @@ const ClaimRevisionModel = MongooseModule.forFeature([
 ]);
 
 @Module({
+    // TODO: clean-up Claim module after logic is fully migrated to ClaimRevision
     imports: [
         ClaimRevisionModel,
         ParserModule,
