@@ -6,6 +6,7 @@ import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { UtilService } from "../util";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 
 @Injectable()
 export class PersonalityService {
@@ -19,6 +20,7 @@ export class PersonalityService {
         @InjectModel(Personality.name)
         private PersonalityModel: Model<PersonalityDocument>,
         private claimReview: ClaimReviewService,
+        private claimRevisionService: ClaimRevisionService,
         private wikidata: WikidataService,
         private util: UtilService
     ) {}
@@ -79,12 +81,20 @@ export class PersonalityService {
     }
 
     async getBySlug(personalitySlug, language = "en") {
-        const personality = await this.PersonalityModel.findOne({
+        const personality: any = await this.PersonalityModel.findOne({
             slug: personalitySlug
         }).populate({
             path: "claims",
             select: "_id title content",
         });
+        personality.claims = await Promise.all(personality.claims.map(async (claim) => {
+            const claimRevision = await this.claimRevisionService.getRevision(claim._id)
+            return {
+                ...claim,
+                ...claimRevision
+            }
+        }))
+
         this.logger.log(`Found personality ${personality._id}`);
         return await this.postProcess(personality.toObject(), language);
     }
