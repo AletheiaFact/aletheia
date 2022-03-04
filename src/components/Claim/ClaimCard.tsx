@@ -50,7 +50,7 @@ const ClaimCard = ({ personality, claim }) => {
                                             expandable: false
                                         }}
                                     >
-                                        {claim.content.text || claim.title}
+                                        {claim?.content?.text || claim?.title}
                                     </Paragraph>
                                 </Col>
                                 <a
