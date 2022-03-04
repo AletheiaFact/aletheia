@@ -103,6 +103,7 @@ export class PersonalityService {
             path: "claims",
             select: "_id title content",
         });
+        /** Se puder explicar essa função */
         personality.claims = await Promise.all(personality.claims.map(async (claim) => {
             const claimRevision = await this.claimRevisionService.getRevision(claim._id)
             return {
