@@ -1,9 +1,7 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ClaimRevision, ClaimRevisionSchema } from "./schema/claim-revision.schema";
-import { ClaimRevisionController } from "./claim-revision.controller"
 import { ParserModule } from "../parser/parser.module";
-import { PersonalityModule } from "../personality/personality.module";
 import { ConfigModule } from "@nestjs/config";
 import { HttpModule } from "@nestjs/axios";
 import { ViewModule } from "../view/view.module";
@@ -22,7 +20,6 @@ const ClaimRevisionModel = MongooseModule.forFeature([
     imports: [
         ClaimRevisionModel,
         ParserModule,
-        PersonalityModule,
         ConfigModule,
         HttpModule,
         ViewModule,
@@ -30,7 +27,6 @@ const ClaimRevisionModel = MongooseModule.forFeature([
     ],
     exports: [ClaimRevisionService],
     providers: [ClaimRevisionService],
-    controllers: [ClaimRevisionController],
 })
 export class ClaimRevisionModule {}
 
