@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Claim } from "../../claim/schemas/claim.schema";
-import { Source } from "../../source/schemas/source.schema";
-import { ClaimReview } from "../../claim-review/schemas/claim-review.schema";
 
 export type ClaimRevisionDocument = ClaimRevision & mongoose.Document;
 
@@ -25,7 +23,7 @@ export class ClaimRevision {
         required: true,
         ref: "Claim",
     })
-    claim: Claim;
+    claimId: Claim;
 
     @Prop({
         required: true,
@@ -39,13 +37,12 @@ export class ClaimRevision {
     type: string;
 
     // TODO: Let's not use the auto-increment yet
-    // mongodb will create a default _id field and 
-    // we can use it for the first version
-    @Prop({ required: true })
-    revisionId: number;
+    // mongodb will create a default _id field and we can use it for the first version
+    // @Prop({ required: true })
+    // revisionId: number;
 }
 
-const ClaimRevisionSchemaRaw = SchemaFactory.createForClass(ClaimRevision);;
+const ClaimRevisionSchemaRaw = SchemaFactory.createForClass(ClaimRevision);
 
 ClaimRevisionSchemaRaw.virtual('reviews', {
     ref: 'ClaimReview',
