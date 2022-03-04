@@ -7,9 +7,6 @@ export type ClaimDocument = Claim & mongoose.Document;
 
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class Claim {
-    @Prop({ required: true })
-    title: string;
-
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
@@ -18,7 +15,7 @@ export class Claim {
     personality: Personality;
 
     // TODO: add a deleted field of type boolean
-    @Prop({ required: true })
+    @Prop({ default: false })
     deleted: boolean
 }
 const ClaimSchemaRaw = SchemaFactory.createForClass(Claim);
