@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Claim } from "../../claim/schemas/claim.schema";
 import { Personality } from "../../personality/schemas/personality.schema";
 import * as mongoose from "mongoose";
 import { User } from "../../users/schemas/user.schema";
+import { ClaimRevision } from "../../claim-revision/schema/claim-revision.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
@@ -45,9 +45,9 @@ export class ClaimReview {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: "Claim",
+        ref: "ClaimRevision",
     })
-    claim: Claim;
+    claimRevision: ClaimRevision;
 
     @Prop({
         type: mongoose.Types.ObjectId,
