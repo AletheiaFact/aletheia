@@ -32,14 +32,19 @@ export class ClaimService {
             query.personality = new Types.ObjectId(query.personality)
         }
         const claims = await this.ClaimModel.find(query)
-            // TODO: get latest revision
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
         return Promise.all(
-            claims.map((claim) => {
-                return this.postProcess(claim);
+            /** Get lastest revision for each claim */
+            claims.map(async (claim) => {
+                let claimRevision = await this.claimRevisionService.getRevision(claim._id)
+                claimRevision = claimRevision?.toObject() || {}
+                return this.postProcess({
+                    ...claim,
+                    ...claimRevision
+                });
             })
         );
     }
@@ -50,7 +55,21 @@ export class ClaimService {
 
     async create(claim) {
         // TODO: replace this function logic with this.claimRevisionService.create(claim)
+        /** create an ID to claim */
+        claim.personality = new Types.ObjectId(claim.personality);
+        /** create a new schema to claim */
+        const newClaim = new this.ClaimModel(claim);
+        /** Save claim in database */
+        newClaim.save();
+        /** Create a new claimRevision passing claim ID and the props received from the req/dto */
+        const newClaimRevision = await this.claimRevisionService.create(newClaim._id, claim)
+        /**Return an object with claim and claimReview props */
+        return {
+            ...newClaim.toObject(),
+            ...newClaimRevision.toObject()
+        }
     }
+    
 
     async update(claimId, claimBody) {
         // TODO: when updating a claim a new claimRevision should be created as well
@@ -80,16 +99,22 @@ export class ClaimService {
 
     // TODO: add optional revisionId that will fetch a specifc revision that matches
     async getById(claimId) {
+        /** get ClaimRevision by id */
+        const claimRevision = await this.claimRevisionService.getRevision(claimId)
         const claim = await this.ClaimModel.findById(claimId)
             .populate("personality", "_id name")
             .populate("sources", "_id link classification");
-            // TODO: get the latest revision
-        if (!claim) {
+        // TODO: get the latest revision
+        /** If claim and claimRevision are false, nothing is returned */
+        if (!claim && !claimRevision) {
             // TODO: handle 404 for claim not found
-            return {};
+            return {}; // TODO: this conditional is being used in other parts of the code
         }
 
-        return this.postProcess(claim.toObject());
+        return this.postProcess({
+            ...claim.toObject(),
+            ...claimRevision.toObject()
+        });
     }
 
     async getByPersonalityIdAndClaimSlug(personalityId, claimSlug) {
@@ -101,15 +126,21 @@ export class ClaimService {
             .populate("personality", "_id name")
             .populate("sources", "_id link classification");
             // TODO: get latest revision
-        if (!claim) {
-            return {};
+        /** get ClaimRevision by id */
+        const claimRevision = await this.claimRevisionService.getRevision(claim._id)
+        if (!claim && !claimRevision) {
+            return {}; // TODO: this conditional is being used in other parts of the code
         }
 
-        return this.postProcess(claim.toObject());
+        /**Return an object with claim and claimReview props */
+        return this.postProcess({
+            ...claim.toObject(),
+            ...claimRevision.toObject()
+        });
     }
 
     private async postProcess(claim) {
-        // TODO: this will break when fetching the revision content
+        /** Claim param return personality and all claims */
         const reviews = await this.claimReviewService.getReviewsByClaimId(
             claim._id
         );

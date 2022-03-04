@@ -107,7 +107,7 @@ export class ClaimController {
             // );
             throw Error();
         }
-        return this.claimRevisionService.create(createClaim)
+        return this.claimService.create(createClaim)
 
     }
 
