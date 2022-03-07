@@ -48,6 +48,11 @@ export class ClaimReviewService {
         return this.util.formatStats(reviews);
     }
 
+    /**
+     * get all personality claim claimIDs
+     * @param claimId claim Id
+     * @returns 
+     */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
             { $match: { claim: claimId } },
