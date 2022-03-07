@@ -5,9 +5,9 @@ const baseUrl = `/api/personality`;
 const getPersonalities = (options = {}, dispatch) => {
     const params = {
         page: options.page ? options.page - 1 : 0,
-        order: options.order || 'asc',
         name: options.searchName,
-        pageSize: options.pageSize ? options.pageSize : 5,
+        pageSize: options.pageSize,
+        order: options.order || 'asc',
         withSuggestions: options.withSuggestions,
         language: options?.i18n?.languages[0],
     };
