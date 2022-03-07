@@ -160,11 +160,11 @@ export class ClaimController {
         });
     }
 
-    _getSentenceByHashAndClaimId(sentenceHash, claimId, req) {
+    _getSentenceByHashAndClaimRevisionId(sentenceHash, claimRevisionId, req) {
         const user = req.user;
         return Promise.all([
             this.claimReviewService.getReviewStatsBySentenceHash(sentenceHash),
-            this.claimService.getById(claimId),
+            this.claimRevisionService.getRevisionById(claimRevisionId),
             this.claimReviewService.getUserReviewBySentenceHash(
                 sentenceHash,
                 user?._id
@@ -192,7 +192,7 @@ export class ClaimController {
     @Get("api/claim/:claimId/sentence/:sentenceHash")
     getSentenceByHash(@Req() req) {
         const { sentenceHash, claimId } = req.params;
-        return this._getSentenceByHashAndClaimId(sentenceHash, claimId, req);
+        return this._getSentenceByHashAndClaimRevisionId(sentenceHash, claimId, req);
     }
 
     @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:sentenceHash")
@@ -213,8 +213,8 @@ export class ClaimController {
             claimSlug
         );
 
-        const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
-
+        const sentence = await this._getSentenceByHashAndClaimRevisionId(sentenceHash, claim._id, req);
+        
         await this.viewService
             .getNextServer()
             .render(
