@@ -184,6 +184,7 @@ export class PersonalityService {
     }
 
     combinedListAll(query) : any {
+        console.log(query)
         const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = this.verifyInputsQuery(query);
 

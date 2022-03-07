@@ -28,6 +28,7 @@ export class PersonalityController {
 
     @Get("api/personality")
     async listAll(@Query() query) {
+        console.log(query)
         return this.personalityService.combinedListAll(query);
     }
 

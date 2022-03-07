@@ -7,6 +7,7 @@ const getPersonalities = (options = {}, dispatch) => {
         page: options.page - 1,
         name: options.searchName,
         pageSize: options.pageSize,
+        order: options.order || 'asc',
         withSuggestions: options.withSuggestions,
         language:
             options.i18n && options.i18n.languages && options.i18n.languages[0],
