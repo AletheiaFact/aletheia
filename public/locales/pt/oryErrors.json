@@ -1,0 +1,5 @@
+{
+    "flowExpired": "Sua interação expirou, por favor, preencha o formulário novamente",
+    "csrfViolation": "Foi detectada uma violação de segurança, por favor, preencha o formulário novamente",
+    "returnAddressForbidden": "O endereço de retorno não é permitido"
+}

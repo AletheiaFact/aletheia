@@ -70,6 +70,8 @@
         "@nestjs/passport": "^8.0.1",
         "@nestjs/platform-express": "^8.0.6",
         "@nestjs/throttler": "^2.0.0",
+        "@ory/client": "0.0.1-alpha.111",
+        "@ory/integrations": "^0.2.2",
         "@types/jest": "^27.4.0",
         "@typescript-eslint/eslint-plugin": "^4.29.0",
         "accept-language-parser": "^1.5.0",
