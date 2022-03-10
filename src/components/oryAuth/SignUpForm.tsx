@@ -25,7 +25,11 @@ const SignUpForm = ({ flow, onSubmit }: ISignUpForm) => {
         traits: { email: '' }
     }
 
-    const initializeCsrf = () => {
+    console.log(flow)
+
+    const onFinish = (values) => {
+        const { password, email } = values
+        // Initialize CSRF
         if (flow?.ui?.nodes) {
             const { nodes } = flow?.ui
             const csrfNode = nodes.find(
@@ -34,14 +38,10 @@ const SignUpForm = ({ flow, onSubmit }: ISignUpForm) => {
                     node.attributes.name === "csrf_token"
             ).attributes as UiNodeInputAttributes
             if (csrfNode) {
+                console.log(csrfNode.value)
                 flowValues.csrf_token = csrfNode.value
             }
         }
-    }
-
-    const onFinish = (values) => {
-        const { password, email } = values
-        initializeCsrf()
         flowValues = {
             ...flowValues,
             password,

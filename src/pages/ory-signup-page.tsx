@@ -7,11 +7,12 @@ const OrySignUpPage: NextPage<{ data: any }> = (props) => {
     return <OrySignUpView {...props} />
 }
 
-export async function getServerSideProps({ locale, locales, req }) {
+export async function getServerSideProps({ locale, locales, req, query }) {
     locale = parser.pick(locales, req.language) || locale || "en";
     return {
         props: {
             ...(await serverSideTranslations(locale)),
+            flow: query.flow
         },
     };
 }

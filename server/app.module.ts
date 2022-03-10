@@ -20,6 +20,7 @@ import { SitemapModule } from "./sitemap/sitemap.module";
 import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
 import { LoggerMiddleware } from "./middleware/logger.middleware";
+import OryModule from "./ory/ory.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -56,6 +57,7 @@ export class AppModule implements NestModule {
                 HomeModule,
                 EmailModule,
                 SitemapModule,
+                OryModule
             ],
             controllers: [RootController],
             providers: [
