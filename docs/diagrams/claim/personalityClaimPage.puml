@@ -1,0 +1,39 @@
+@startuml personalityClaimPage
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 150
+skinparam sequenceParticipant underline
+
+!theme mars
+title Personality Claim Page\n\npersonality/:personalitySlug/claim/:claimSlug
+
+actor User
+participant "Claim Controller" as A
+participant "Personality Service" as B
+participant "Claim Service" as C
+database "MongoDB" as D
+
+User -> A ++: //Request personality claim page// :personalityClaimPage()
+
+note right
+  receive personalitySlug and claimSlug
+  from the endpoint of the URL
+end note
+
+A -> A: //Indentify Language//
+||15||
+A -> B++: //get personality by the personality slug of the endpoint//\n:getBySlug(\nreq.params.slug, req.language\n)
+||15||
+B ->> D++: //find personality by the slug//
+||15||
+D -->> B --: //return personality//
+||15||
+B ->> C ++: :getByPersonalityIdAndClaimSlug(\n    personality._id, claimSlug\n)
+||15||
+C -->> B --: //return claim.//
+||15||
+B -> A --: //return claim as object//
+||15||
+A -->> User --: //Response create claim page//
+deactivate A
+@enduml
