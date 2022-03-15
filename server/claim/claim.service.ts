@@ -77,13 +77,8 @@ export class ClaimService {
         try {
             const claim = await this.getById(claimId);
             claimBody.content = this.parserService.parse(claimBody.content);
-            const newClaim = Object.assign(claim, claimBody);
-            const claimUpdate = await this.ClaimModel.findByIdAndUpdate(
-                claimId,
-                newClaim,
-                this.optionsToUpdate
-            );
-            return claimUpdate;
+            const newClaimRevision = await this.claimRevisionService.create(claim._id, claimBody)
+            return newClaimRevision;
         } catch (error) {
             // TODO: log to service-runner
             throw error;
@@ -107,7 +102,7 @@ export class ClaimService {
                 path: "revisions",
                 options: { sort: { 'createdAt': -1}, limit: 1},
             })
-            
+
         if (!claim) {
             // TODO: handle 404 for claim not found
             return {};

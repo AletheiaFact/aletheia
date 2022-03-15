@@ -26,7 +26,7 @@ import { CreateClaim } from "./dto/create-claim.dto";
 import { GetClaims } from "./dto/get-claims.dto";
 import { GetClaimsByHash } from "./dto/get-reviews-by-hash.dto";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service"
-
+import { UpdateClaimDTO } from "./dto/update-claim.dto"
 @Controller()
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
@@ -118,9 +118,9 @@ export class ClaimController {
     }
 
     @UseGuards(SessionGuard)
-    @Put("api/claim/:id")
-    update(@Req() req) {
-        return this.claimService.update(req.params.id, req.body);
+    @Put("api/claim")
+    update(@Body() updateClaimDTO: UpdateClaimDTO) {
+        return this.claimService.update(updateClaimDTO.id, updateClaimDTO);
     }
 
     @UseGuards(SessionGuard)
@@ -172,7 +172,7 @@ export class ClaimController {
             ),
         ]).then(([stats, claimObj, userReview]) => {
             let sentenceObj;
-            
+
             claimObj.content.object.forEach((p) => {
                 p.content.forEach((sentence) => {
                     if (sentence.props["data-hash"] === sentenceHash) {
