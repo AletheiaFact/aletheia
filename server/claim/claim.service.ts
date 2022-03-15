@@ -6,6 +6,7 @@ import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ParserService } from "../parser/parser.service";
 import { SourceService } from "../source/source.service";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
+import { ClaimRevision, ClaimRevisionDocument } from "../claim-revision/schema/claim-revision.schema"
 
 @Injectable()
 export class ClaimService {
@@ -15,6 +16,8 @@ export class ClaimService {
     constructor(
         @InjectModel(Claim.name)
         private ClaimModel: Model<ClaimDocument>,
+        @InjectModel(ClaimRevision.name)
+        private ClaimRevisionModel: Model<ClaimRevisionDocument>,
         private claimReviewService: ClaimReviewService,
         private claimRevisionService: ClaimRevisionService,
         private sourceService: SourceService,
@@ -96,39 +99,48 @@ export class ClaimService {
 
     // TODO: add optional revisionId that will fetch a specifc revision that matches
     async getById(claimId) {
-        const claimRevision = await this.claimRevisionService.getRevision(claimId)
-        const claim = await this.ClaimModel.findById(claimId)
+        //tive que trocar pra claimRevisionModel por causa de mudança na getByPersonalityIdAndClaimSlug
+        const claim = await this.ClaimRevisionModel.findById(claimId)
             .populate("personality", "_id name")
-            .populate("sources", "_id link classification");
-        // TODO: get the latest revision
-        /** If claim and claimRevision are false, nothing is returned */
-        if (!claim && !claimRevision) {
+            .populate("sources", "_id link classification")
+            .populate({
+                path: "revisions",
+                options: { sort: { 'createdAt': -1}, limit: 1},
+            })
+            
+        if (!claim) {
             // TODO: handle 404 for claim not found
             return {};
         }
 
         return this.postProcess({
             ...claim.toObject(),
-            ...claimRevision.toObject()
         });
     }
 
     async getByPersonalityIdAndClaimSlug(personalityId, claimSlug) {
-        const claimRevision = await this.claimRevisionService.getRevisionBySlug(claimSlug)
+        const { claimId } = await this.ClaimRevisionModel.findOne({slug: claimSlug})
         const claim = 
             await this.ClaimModel.findOne({
                 personality: personalityId,
+                _id: claimId
             })
             .populate("personality", "_id name")
-            .populate("sources", "_id link classification");
-            // TODO: get latest revision
-        if (!claim && !claimRevision) {
-            return {}; // TODO: this conditional is being used in other parts of the code
+            .populate("sources", "_id link classification")
+            .populate({
+                strictPopulate: false,
+                path: "revisions",
+                select: "_id title content slug claimId date",
+                options: { sort: { 'createdAt': -1}, limit: 1},
+            })
+
+        if (!claim) {
+            return {};
         }
-        /**Return an object with claim and claimReview props */
+
         return this.postProcess({
             ...claim.toObject(),
-            ...claimRevision.toObject()
+            ...claim.toObject().revisions[0]
         });
     }
 
@@ -162,7 +174,6 @@ export class ClaimService {
     }
 
     private calculateOverallStats(claim) {
-        // TODO: this will break when fetching the revision content
         let totalClaims = 0;
         let totalClaimsReviewed = 0;
         if (claim?.content?.object) {

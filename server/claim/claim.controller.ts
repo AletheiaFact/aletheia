@@ -26,6 +26,7 @@ import { CreateClaim } from "./dto/create-claim.dto";
 import { GetClaims } from "./dto/get-claims.dto";
 import { GetClaimsByHash } from "./dto/get-reviews-by-hash.dto";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service"
+
 @Controller()
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
@@ -160,18 +161,18 @@ export class ClaimController {
         });
     }
 
-    _getSentenceByHashAndClaimRevisionId(sentenceHash, claimRevisionId, req) {
+    _getSentenceByHashAndClaimId(sentenceHash, claimId, req) {
         const user = req.user;
         return Promise.all([
             this.claimReviewService.getReviewStatsBySentenceHash(sentenceHash),
-            this.claimRevisionService.getRevisionById(claimRevisionId),
+            this.claimService.getById(claimId),
             this.claimReviewService.getUserReviewBySentenceHash(
                 sentenceHash,
                 user?._id
             ),
         ]).then(([stats, claimObj, userReview]) => {
             let sentenceObj;
-
+            
             claimObj.content.object.forEach((p) => {
                 p.content.forEach((sentence) => {
                     if (sentence.props["data-hash"] === sentenceHash) {
@@ -189,19 +190,13 @@ export class ClaimController {
         });
     }
 
-    @Get("api/claim/:claimId/sentence/:sentenceHash")
-    getSentenceByHash(@Req() req) {
-        const { sentenceHash, claimId } = req.params;
-        return this._getSentenceByHashAndClaimRevisionId(sentenceHash, claimId, req);
-    }
-
     @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:sentenceHash")
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
         const { sentenceHash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
         req.language = req.headers["accept-language"] || "en";
-
+        
         const personality = await this.personalityService.getBySlug(
             personalitySlug,
             // @ts-ignore
@@ -213,7 +208,7 @@ export class ClaimController {
             claimSlug
         );
 
-        const sentence = await this._getSentenceByHashAndClaimRevisionId(sentenceHash, claim._id, req);
+        const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
         
         await this.viewService
             .getNextServer()

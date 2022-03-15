@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Claim } from "../../claim/schemas/claim.schema";
+import { Personality } from "../../personality/schemas/personality.schema"
 
 export type ClaimRevisionDocument = ClaimRevision & mongoose.Document;
 
@@ -35,6 +36,13 @@ export class ClaimRevision {
         message: (tag) => `${tag} is not a valid claim type.`,
     })
     type: string;
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "Personality",
+    })
+    personality: Personality;
 
     // TODO: Let's not use the auto-increment yet
     // mongodb will create a default _id field and we can use it for the first version

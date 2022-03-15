@@ -3,7 +3,7 @@ import * as mongoose from "mongoose";
 import { Personality } from "../../personality/schemas/personality.schema"
 import { ClaimRevision } from "../../claim-revision/schema/claim-revision.schema"
 
-export type ClaimDocument = Claim & mongoose.Document;
+export type ClaimDocument = Claim & mongoose.Document & { revisions: any };
 
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class Claim {
@@ -14,7 +14,6 @@ export class Claim {
     })
     personality: Personality;
 
-    // TODO: add a deleted field of type boolean
     @Prop({ default: false })
     deleted: boolean
 }

@@ -101,17 +101,19 @@ export class PersonalityService {
             slug: personalitySlug
         }).populate({
             path: "claims",
-            select: "_id title content",
+            populate: {
+                path: "revisions",
+                options: { sort: { 'createdAt': -1}, limit: 1},
+                select: "_id title content"
+            },
+            select: "_id",
         });
-        /** Se puder explicar essa função */
-        personality.claims = await Promise.all(personality.claims.map(async (claim) => {
-            const claimRevision = await this.claimRevisionService.getRevision(claim._id)
+        personality.claims = await Promise.all(personality.claims.map((claim) => {
             return {
                 ...claim,
-                ...claimRevision
+                ...claim.revisions[0]
             }
-        }))
-
+        })) 
         this.logger.log(`Found personality ${personality._id}`);
         return await this.postProcess(personality.toObject(), language);
     }
