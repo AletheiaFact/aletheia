@@ -31,11 +31,19 @@ export class PersonalityService {
         language,
         withSuggestions = false
     ) {
-        let personalities = await this.PersonalityModel.find(query)
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .sort({ _id: order })
-            .lean();
+        let personalities;
+
+        order === 'random' ? personalities = await this.PersonalityModel
+            .aggregate([
+                { $match: query },
+                { $sample: { size: pageSize } },
+            ])
+            : personalities = await this.PersonalityModel.find(query)
+                .skip(page * pageSize)
+                .limit(pageSize)
+                .sort({ _id: order })
+                .lean();
+
         if (withSuggestions) {
             const wbentities = await this.wikidata.queryWikibaseEntities(
                 query.name.$regex,
