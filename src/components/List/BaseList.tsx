@@ -19,7 +19,7 @@ const BaseList = ({
     const [ totalPages, setTotalPages ] = useState(0)
     const [ totalItems, setTotalItems ] = useState(0)
     const [ items, setItems ] = useState([])
-    const [ sortBy, setSortBy ] = useState('asc')
+    const [ sortBy ] = useState('asc')
     const [ execLoadMore, setExecLoadMore ] = useState<boolean>(true)
 
     const [ query, setQuery ] = useState({
