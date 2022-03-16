@@ -7,6 +7,7 @@ import OryService from "./ory.service";
 @Module({
     imports: [ ViewModule ],
     controllers: [ OryController ],
-    providers: [ OryService, ConfigService ]
+    providers: [ OryService, ConfigService ],
+    exports: [OryService]
 })
 export default class OryModule {}

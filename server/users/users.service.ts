@@ -2,24 +2,32 @@ import { Model } from "mongoose";
 import {Injectable, Logger} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "./schemas/user.schema";
+import OryService from "../ory/ory.service";
 
 @Injectable()
 export class UsersService {
     private readonly logger = new Logger("UserService");
     constructor(
-        @InjectModel(User.name) private UserModel: Model<UserDocument>
+        @InjectModel(User.name) private UserModel: Model<UserDocument>,
+        private oryService: OryService
     ) {}
 
     async findAll(): Promise<User[]> {
         return this.UserModel.find().exec();
     }
 
-    register(user) {
-        // @ts-ignore
-        return this.UserModel.register(
-            new this.UserModel(user),
-            user.password
-        );
+    async register(user) {
+        const { data: oryUser } = await this.oryService.createIdentity(user.email, user.password);
+        user.oryId = oryUser.id;
+        try {
+            // @ts-ignore
+            return this.UserModel.register(
+                new this.UserModel(user),
+                user.password
+            );
+        } catch (e) {
+            // TODO: rollback and delete created ory user
+        }
     }
 
     async getById(userId) {
