@@ -25,8 +25,6 @@ const initApp = async (options) => {
         options: {
             useUnifiedTopology: true,
             useNewUrlParser: true,
-            useCreateIndex: true,
-            useFindAndModify: false,
         }
     }
     const app = await NestFactory.create<NestExpressApplication>(
