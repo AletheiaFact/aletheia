@@ -15,7 +15,8 @@ import { HomeModule } from "./home/home.module";
 import { EmailModule } from "./email/email.module";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
-import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { SitemapModule } from "./sitemap/sitemap.module";
 
 @Module({})
 export class AppModule {
@@ -45,7 +46,8 @@ export class AppModule {
                 StatsModule,
                 ViewModule,
                 HomeModule,
-                EmailModule
+                EmailModule,
+                SitemapModule,
             ],
             controllers: [RootController],
             providers: [
