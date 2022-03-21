@@ -9,6 +9,7 @@ export class SitemapController {
         res.set("Content-Type", "text/xml");
         const host = req.protocol + "://" + req.get("host");
         const sitemapXml = await this.sitemapService.getSitemap(host);
+        this.sitemapService.submitSitemap(host);
         res.send(sitemapXml);
     }
 }

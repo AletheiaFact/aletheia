@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { SitemapStream, streamToPromise } from "sitemap";
 import { PersonalityService } from "../personality/personality.service";
 import { ClaimService } from "../claim/claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+const axios = require("axios");
 
 @Injectable()
 export class SitemapService {
@@ -11,6 +12,7 @@ export class SitemapService {
         private claimService: ClaimService,
         private claimReviewService: ClaimReviewService
     ) {}
+    private readonly logger = new Logger("SitemapService");
 
     async getSitemap(hostname) {
         const sites: any[] = [
@@ -44,6 +46,7 @@ export class SitemapService {
                 sites.push({
                     url: `/personality/${personality.slug}/claim/${claim.slug}`,
                 });
+                // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
                 const reviews =
                     await this.claimReviewService.getReviewsByClaimId(
                         claim._id
@@ -63,7 +66,18 @@ export class SitemapService {
             sitemapStream.write(site);
         }
         sitemapStream.end();
-        const xml = await streamToPromise(sitemapStream);
-        return xml;
+
+        return await streamToPromise(sitemapStream);
+    }
+
+    async submitSitemap(hostname) {
+        try {
+            await axios.get(
+                `https://google.com/ping?sitemap=${hostname}/sitemaps.xml`
+            );
+        } catch (e) {
+            this.logger.log("error", e);
+            this.logger.log(`Error while submitting sitemap to search engine`);
+        }
     }
 }
