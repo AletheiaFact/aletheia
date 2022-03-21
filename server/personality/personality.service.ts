@@ -34,14 +34,14 @@ export class PersonalityService {
         let personalities;
 
         if (order === 'random') {
-            personalities = this.PersonalityModel.aggregate([
+            personalities = await this.PersonalityModel.aggregate([
                 { $match: query },
                 { $sample: { size: pageSize } },
             ])
 
             
         } else {
-            personalities = this.PersonalityModel.find(query)
+            personalities = await this.PersonalityModel.find(query)
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order })
