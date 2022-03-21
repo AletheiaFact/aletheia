@@ -33,18 +33,20 @@ export class PersonalityService {
     ) {
         let personalities;
 
-        order === 'random'
-            ? Promise.all(personalities = await this.PersonalityModel.aggregate([
-                    { $match: query },
-                    { $sample: { size: pageSize } },
-                ]))
+        if (order === 'random') {
+            personalities = await this.PersonalityModel.aggregate([
+                { $match: query },
+                { $sample: { size: pageSize } },
+            ])
 
-            : Promise.all(personalities = await this.PersonalityModel.find(query)
+            
+        } else {
+            personalities = await this.PersonalityModel.find(query)
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order })
                 .lean()
-            )
+        }
 
         if (withSuggestions) {
             const wbentities = await this.wikidata.queryWikibaseEntities(
