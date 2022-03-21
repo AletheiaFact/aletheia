@@ -34,19 +34,21 @@ export class PersonalityService {
         let personalities;
 
         if (order === 'random') {
-            personalities = await this.PersonalityModel.aggregate([
+            personalities = this.PersonalityModel.aggregate([
                 { $match: query },
                 { $sample: { size: pageSize } },
             ])
 
             
         } else {
-            personalities = await this.PersonalityModel.find(query)
+            personalities = this.PersonalityModel.find(query)
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order })
                 .lean()
         }
+
+        console.log(personalities)
 
         if (withSuggestions) {
             const wbentities = await this.wikidata.queryWikibaseEntities(
