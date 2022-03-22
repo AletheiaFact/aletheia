@@ -3,3 +3,68 @@ body {
     padding: 0;
     margin: 0;
 }
+
+div.ant-modal-content {
+    border-radius: 30px;
+    background-color: #f5f5f5;
+    width: 300px;
+    height: 388px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
+    margin: 0 auto;
+}
+
+div.ant-modal-body {
+    padding: 19px 34px 34px 34px;
+    height: 100%;
+}
+
+div.ant-space-item {
+    height: 25px;
+    margin-bottom: 17px;
+}
+
+.ant-radio-checked .ant-radio-inner{
+    border: 2px solid #2D77A3;
+    width: 25px;
+    height: 25px;
+}
+
+.ant-radio-checked .ant-radio-inner:after{
+    background-color: #2D77A3;
+    position: relative;
+    top: 3px;
+    left: 3px;
+    width: 31px;
+    height: 31px;
+}
+
+span .ant-radio-inner{
+    padding: 0;
+    margin: 0;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.25);
+    width: 25px;
+    height: 25px;
+}
+
+label.ant-radio-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+span.ant-radio + * {
+    padding-top: 7px;
+}
+
+.ant-space-item label.ant-radio-wrapper-checked span{
+    font-size: 18px;
+    font-weight: 700;
+    color: #3d3d3d;
+    line-height: 18px;
+}
+
+label.ant-radio-wrapper span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #515151;
+    line-height: 18px;
+}
