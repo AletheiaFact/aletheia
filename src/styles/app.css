@@ -68,3 +68,11 @@ label.ant-radio-wrapper span {
     color: #515151;
     line-height: 18px;
 }
+
+svg[data-icon="close"] {
+    margin-top: 23px;
+    width: 20px;
+    height: 20px;
+    color: #353535;
+    margin-right: 20px;
+}
