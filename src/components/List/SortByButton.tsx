@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Button } from "antd";
 import { SortAscendingOutlined } from "@ant-design/icons";
 import OrderModal from '../Modal/OrderModal'
+import { useTranslation } from "next-i18next";
 
 const SortByButton = ({ refreshListItems }) => {
-    const [visible, setVisible] = useState(false)
+    const { t } = useTranslation();
+    const [ visible, setVisible ] = useState(false)
     const [ value, setValue ] = useState('asc')
 
     return (
@@ -36,7 +38,7 @@ const SortByButton = ({ refreshListItems }) => {
                         color: "#515151",
                     }}
                 >
-                    Sort By
+                    {t("orderModal:title")}
                 </span>
             </Button>
 
