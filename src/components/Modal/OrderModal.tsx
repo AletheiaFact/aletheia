@@ -7,6 +7,7 @@ const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
         <Modal
             visible={visible}
             footer={false}
+            onCancel={handleCancel}
         >
             <p
                 style={{
