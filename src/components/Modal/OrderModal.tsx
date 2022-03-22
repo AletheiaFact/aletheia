@@ -1,5 +1,5 @@
 import React from "react"
-import { Button, Modal, Radio, Space } from "antd";
+import { Button, Modal } from "antd";
 import OrderRadio from "../Radio/orderRadio";
 
 const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {

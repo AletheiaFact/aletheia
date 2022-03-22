@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Button, Modal, Radio, Space } from "antd";
+import { Button } from "antd";
 import { SortAscendingOutlined } from "@ant-design/icons";
 import OrderModal from '../Modal/OrderModal'
 
-const SortByButton = ({sortBy, refreshListItems}) => {
+const SortByButton = ({ refreshListItems }) => {
     const [visible, setVisible] = useState(false)
     const [ value, setValue ] = useState('asc')
 

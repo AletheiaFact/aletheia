@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { List, Button, Spin, Row, Col } from "antd";
 import { useTranslation } from "next-i18next";
-import SortByButton from "./SortBySelect";
+import SortByButton from "./SortByButton";
 
 const BaseList = ({
     apiCall,
@@ -29,7 +29,6 @@ const BaseList = ({
         order: sortByOrder,
         ...filter
     })
-    console.log(query)
 
     useEffect(() => {
         apiCall(query).then(newItems => {
@@ -53,11 +52,10 @@ const BaseList = ({
     }
 
     const refreshListItems = (sortBy) => {
-        console.log(sortBy)
         const newQuery = {
             order: sortBy
         }
-        console.log(newQuery)
+
         if (execLoadMore !== false) {
             setExecLoadMore(false)
         }
@@ -115,7 +113,6 @@ const BaseList = ({
                                 </Col>
                                 <Col>
                                     <SortByButton
-                                        sortBy={sortByOrder}
                                         refreshListItems={refreshListItems}
                                     />
                                 </Col>
