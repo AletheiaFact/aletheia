@@ -34,6 +34,7 @@ export class PersonalityService {
         let personalities;
 
         if (order === 'random') {
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             personalities = await this.PersonalityModel.aggregate([
                 { $match: query },
                 { $sample: { size: pageSize } },
@@ -41,6 +42,7 @@ export class PersonalityService {
 
             
         } else {
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             personalities = await this.PersonalityModel.find(query)
                 .skip(page * pageSize)
                 .limit(pageSize)
