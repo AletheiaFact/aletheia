@@ -39,7 +39,7 @@ const SortByButton = ({ refreshListItems }) => {
                         color: "#515151",
                     }}
                 >
-                    {t("orderModal:title")}
+                    {t("sortButton:title")}
                 </span>
             </Button>
 
