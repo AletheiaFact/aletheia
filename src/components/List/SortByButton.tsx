@@ -3,7 +3,6 @@ import { Button } from "antd";
 import { SortAscendingOutlined } from "@ant-design/icons";
 import OrderModal from '../Modal/OrderModal'
 import { useTranslation } from "next-i18next";
-import "../../styles/colors"
 import colors from "../../styles/colors";
 
 const SortByButton = ({ refreshListItems }) => {

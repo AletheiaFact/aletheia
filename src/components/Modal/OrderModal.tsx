@@ -98,7 +98,6 @@ const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
                             fontSize: 14,
                         }}
                     >
-                        {/* {t("list:loadMoreButton")} */}
                         Cancel
                     </span>
                 </ModalCancelButton>
