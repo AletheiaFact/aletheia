@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from "@nestjs/common";
+import { DynamicModule, MiddlewareConsumer, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
@@ -17,6 +17,12 @@ import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
+import { GetLanguageMiddleware } from "./middleware/language.middleware";
+import { PersonalityController } from "./personality/personality.controller";
+import { HomeController } from "./home/home.controller";
+import { ClaimController } from "./claim/claim.controller";
+import { UsersController } from "./users/users.controller";
+import { ViewController } from "./view/view.controller";
 
 @Module({})
 export class AppModule {
@@ -61,5 +67,17 @@ export class AppModule {
                 }
             ],
         };
+    }
+
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(GetLanguageMiddleware)
+            .forRoutes(
+                PersonalityController,
+                HomeController,
+                ClaimController,
+                UsersController,
+                ViewController
+            )
     }
 }
