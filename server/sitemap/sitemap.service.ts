@@ -26,6 +26,7 @@ export class SitemapService {
             { url: "/personality" },
         ];
 
+        // TODO: Add a loop strategy that paginates the results to improve performance
         const personalities = await this.personalityService.listAll(
             0,
             0,
@@ -37,7 +38,6 @@ export class SitemapService {
 
         for (const personality of personalities) {
             sites.push({ url: `/personality/${personality.slug}` });
-
             const claims = await this.claimService.listAll(0, 0, "asc", {
                 personality: personality._id,
             });
@@ -67,17 +67,12 @@ export class SitemapService {
         }
         sitemapStream.end();
 
-        return await streamToPromise(sitemapStream);
+        return streamToPromise(sitemapStream);
     }
 
     async submitSitemap(hostname) {
-        try {
-            await axios.get(
-                `https://google.com/ping?sitemap=${hostname}/sitemaps.xml`
-            );
-        } catch (e) {
-            this.logger.log("error", e);
-            this.logger.log(`Error while submitting sitemap to search engine`);
-        }
+        await axios.get(
+            `https://google.com/ping?sitemap=${hostname}/sitemap.xml`
+        );
     }
 }
