@@ -3,6 +3,8 @@ import { Button } from "antd";
 import { SortAscendingOutlined } from "@ant-design/icons";
 import OrderModal from '../Modal/OrderModal'
 import { useTranslation } from "next-i18next";
+import "../../styles/colors"
+import colors from "../../styles/colors";
 
 const SortByButton = ({ refreshListItems }) => {
     const { t } = useTranslation();
@@ -16,14 +18,14 @@ const SortByButton = ({ refreshListItems }) => {
                 icon={
                     <SortAscendingOutlined style={{
                         fontSize: '16px',
-                        fontWeight: 900,
+                        color: colors.black
                         }}
                     />
                 }
                 onClick={() => setVisible(!visible)}
                 style={{
                     borderWidth: "2px",
-                    borderColor: '#515151',
+                    borderColor: colors.black,
                     height: '40px',
                     paddingLeft: 10,
                     paddingRight: 10,

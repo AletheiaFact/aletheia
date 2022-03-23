@@ -27,6 +27,10 @@ const RadioInput = styled(Radio)`
       width: 25px;
       height: 25px;
     }
+
+    .ant-radio-wrapper-checked > span:nth-child(2) { //TODO: order by checked input label isn't bold
+        font-weight: 700;
+    }
 `
 
 
