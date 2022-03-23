@@ -23,23 +23,6 @@ const OryLoginView = (props) => {
     } = router.query
 
     useEffect(() => {
-        // If the router is not ready yet, or we already have a flow, do nothing.
-        if (!router.isReady || flow) {
-            return
-        }
-
-        // If ?flow=.. was in the URL, we fetch it
-        if (flowId) {
-            ory
-                .getSelfServiceLoginFlow(String(flowId))
-                .then(({ data }) => {
-                    setFlow(data as SelfServiceLoginFlow)
-                })
-                .catch(handleFlowError(router, 'login', setFlow, t))
-            return
-        }
-
-        // Otherwise we initialize it
         ory
             .initializeSelfServiceLoginFlowForBrowsers(
                 Boolean(refresh),
@@ -55,28 +38,26 @@ const OryLoginView = (props) => {
     console.log('login flow object ', flow)
 
     const onSubmit = (values: SubmitSelfServiceLoginFlowBody) => {
-        router
-            .push(`/ory-login?flow=${flow?.id || ''}`, undefined, { shallow: true })
-            .then(() =>
-                ory
-                    .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
-                    .then((res) => {
-                        if (flow?.return_to) {
-                            window.location.href = flow?.return_to
-                            return
-                        }
-                        router.push('/home')
-                    })
-                    .then(() => { })
-                    .catch(handleFlowError(router, 'login', setFlow, t))
-                    .catch((err: AxiosError) => {
-                        if (err.response?.status === 400) {
-                            setFlow(err.response?.data)
-                            return
-                        }
-                        return Promise.reject(err)
-                    })
-            )
+
+        ory
+            .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
+            .then((res) => {
+                if (flow?.return_to) {
+                    window.location.href = flow?.return_to
+                    return
+                }
+                router.push('/home')
+            })
+            .then(() => { })
+            .catch(handleFlowError(router, 'login', setFlow, t))
+            .catch((err: AxiosError) => {
+                if (err.response?.status === 400) {
+                    setFlow(err.response?.data)
+                    return
+                }
+                return Promise.reject(err)
+            })
+
     }
 
     if (!flow) {
