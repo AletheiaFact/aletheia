@@ -22,7 +22,7 @@ export class ClaimRevisionService {
             upsert: true,
         };
     }
-    
+
     /** get ClaimRevision by ID */
     getRevision(claimId) {
         return this.ClaimRevisionModel.findOne({ claimId })
@@ -37,7 +37,7 @@ export class ClaimRevisionService {
     }
 
     /**
-     * 
+     *
      * @param claimId an unique claim id
      * @param claim Claim Content
      * @returns Save the claimRevision in database

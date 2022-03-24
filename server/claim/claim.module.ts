@@ -20,17 +20,9 @@ const ClaimModel = MongooseModule.forFeature([
     },
 ]);
 
-const ClaimRevisionModel = MongooseModule.forFeature([
-    {
-        name: ClaimRevision.name,
-        schema: ClaimRevisionSchema,
-    },
-]);
-
 @Module({
     imports: [
         ClaimModel,
-        ClaimRevisionModel,
         ClaimReviewModule,
         ClaimRevisionModule,
         ParserModule,

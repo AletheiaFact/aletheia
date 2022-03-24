@@ -16,6 +16,16 @@ export class Claim {
 
     @Prop({ default: false })
     deleted: boolean
+
+    @Prop({ required: true })
+    slug: string;
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "ClaimRevision",
+    })
+    latestRevision: ClaimRevision
 }
 const ClaimSchemaRaw = SchemaFactory.createForClass(Claim);
 

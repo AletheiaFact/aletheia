@@ -117,10 +117,10 @@ export class ClaimController {
         return this.claimService.getById(params.id);
     }
 
-    @UseGuards(SessionGuard)
-    @Put("api/claim")
-    update(@Body() updateClaimDTO: UpdateClaimDTO) {
-        return this.claimService.update(updateClaimDTO.id, updateClaimDTO);
+    // @UseGuards(SessionGuard)
+    @Put("api/claim/:id")
+    update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
+        return this.claimService.update(claimId, updateClaimDTO);
     }
 
     @UseGuards(SessionGuard)
@@ -172,7 +172,6 @@ export class ClaimController {
             ),
         ]).then(([stats, claimObj, userReview]) => {
             let sentenceObj;
-
             claimObj.content.object.forEach((p) => {
                 p.content.forEach((sentence) => {
                     if (sentence.props["data-hash"] === sentenceHash) {
@@ -196,7 +195,7 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
         req.language = req.headers["accept-language"] || "en";
-        
+
         const personality = await this.personalityService.getBySlug(
             personalitySlug,
             // @ts-ignore
@@ -209,7 +208,7 @@ export class ClaimController {
         );
 
         const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
-        
+
         await this.viewService
             .getNextServer()
             .render(

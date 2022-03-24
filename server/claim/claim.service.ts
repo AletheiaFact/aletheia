@@ -1,12 +1,13 @@
 import {Injectable, Logger} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import {FilterQuery, Model, Types} from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ParserService } from "../parser/parser.service";
 import { SourceService } from "../source/source.service";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
-import { ClaimRevision, ClaimRevisionDocument } from "../claim-revision/schema/claim-revision.schema"
+
+type ClaimMatchParameters = ({ _id: string } | { personality: string, slug: string }) & FilterQuery<ClaimDocument>;
 
 @Injectable()
 export class ClaimService {
@@ -16,8 +17,6 @@ export class ClaimService {
     constructor(
         @InjectModel(Claim.name)
         private ClaimModel: Model<ClaimDocument>,
-        @InjectModel(ClaimRevision.name)
-        private ClaimRevisionModel: Model<ClaimRevisionDocument>,
         private claimReviewService: ClaimReviewService,
         private claimRevisionService: ClaimRevisionService,
         private sourceService: SourceService,
@@ -55,34 +54,34 @@ export class ClaimService {
     }
 
     async create(claim) {
-        /** create an ID to claim */
         claim.personality = new Types.ObjectId(claim.personality);
-        /** create a new schema to claim */
         const newClaim = new this.ClaimModel(claim);
-        /** Save claim in database */
-        newClaim.save();
-        /** Create a new claimRevision passing claim ID and the props received from the req/dto */
         const newClaimRevision = await this.claimRevisionService.create(newClaim._id, claim)
-        /**Return an object with claim and claimReview props */
+        newClaim.latestRevision = newClaimRevision._id
+        newClaim.slug = newClaimRevision.slug
+        newClaim.save();
+
         return {
             ...newClaim.toObject(),
             ...newClaimRevision.toObject()
         }
     }
-    
 
-    async update(claimId, claimBody) {
-        // TODO: when updating a claim a new claimRevision should be created as well
-        // eslint-disable-next-line no-useless-catch
-        try {
-            const claim = await this.getById(claimId);
-            claimBody.content = this.parserService.parse(claimBody.content);
-            const newClaimRevision = await this.claimRevisionService.create(claim._id, claimBody)
-            return newClaimRevision;
-        } catch (error) {
-            // TODO: log to service-runner
-            throw error;
-        }
+    async update(claimId, claimRevisionUpdate) {
+        // console.log(claimId, claimRevisionUpdate)
+        const claim = await this._getClaim({ _id: claimId }, false);
+        // console.log(claim.latestRevision)
+        const latestRevision = claim.toObject().latestRevision
+        delete latestRevision._id
+        const newClaimRevision =
+            await this.claimRevisionService.create(claim._id, {
+                ...latestRevision,
+                ...claimRevisionUpdate
+            })
+        claim.latestRevision = newClaimRevision._id
+        claim.slug = newClaimRevision.slug
+        claim.save()
+        return newClaimRevision;
     }
 
     delete(claimId) {
@@ -94,49 +93,26 @@ export class ClaimService {
 
     // TODO: add optional revisionId that will fetch a specifc revision that matches
     async getById(claimId) {
-        //tive que trocar pra claimRevisionModel por causa de mudança na getByPersonalityIdAndClaimSlug
-        const claim = await this.ClaimRevisionModel.findById(claimId)
-            .populate("personality", "_id name")
-            .populate("sources", "_id link classification")
-            .populate({
-                path: "revisions",
-                options: { sort: { 'createdAt': -1}, limit: 1},
-            })
-
-        if (!claim) {
-            // TODO: handle 404 for claim not found
-            return {};
-        }
-
-        return this.postProcess({
-            ...claim.toObject(),
-        });
+        return this._getClaim({_id: claimId})
     }
 
     async getByPersonalityIdAndClaimSlug(personalityId, claimSlug) {
-        const { claimId } = await this.ClaimRevisionModel.findOne({slug: claimSlug})
-        const claim = 
-            await this.ClaimModel.findOne({
-                personality: personalityId,
-                _id: claimId
-            })
-            .populate("personality", "_id name")
-            .populate("sources", "_id link classification")
-            .populate({
-                strictPopulate: false,
-                path: "revisions",
-                select: "_id title content slug claimId date",
-                options: { sort: { 'createdAt': -1}, limit: 1},
-            })
+        return this._getClaim({personality: personalityId, slug: claimSlug})
+    }
+
+    private async _getClaim(match: ClaimMatchParameters, postprocess = true) {
+        const claim =
+            await this.ClaimModel.findOne(match)
+                .populate("personality", "_id name")
+                .populate("sources", "_id link classification")
+                .populate("latestRevision")
 
         if (!claim) {
             return {};
         }
 
-        return this.postProcess({
-            ...claim.toObject(),
-            ...claim.toObject().revisions[0]
-        });
+
+        return postprocess === true ? this.postProcess(claim.toObject()) : claim;
     }
 
     /**
@@ -145,7 +121,12 @@ export class ClaimService {
      * @returns return all claims
      */
     private async postProcess(claim) {
-        /** Claim param return all claims */
+        // TODO: we should not transform the object in this function
+        claim = {
+            ...claim.latestRevision, // the order matters
+            ...claim,
+            latestRevision: undefined
+        }
         const reviews = await this.claimReviewService.getReviewsByClaimId(
             claim._id
         );
