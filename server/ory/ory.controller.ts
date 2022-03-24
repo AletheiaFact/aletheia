@@ -2,11 +2,7 @@ import {
     Controller,
     Get,
     Req,
-    Param,
-    Query,
     Res,
-    Post,
-    Body,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Request, Response } from "express";
@@ -40,7 +36,7 @@ export default class OryController {
     }
 
     @Get("api/.ory/*")
-    public async oryPaths(@Req() req: NextApiReqsuest, @Res() res: NextApiResponse) {
+    public async oryPaths(@Req() req: NextApiRequest, @Res() res: NextApiResponse) {
         const parsedUrl = parse(req.url, true);
         await this.viewService
             .getNextServer()
