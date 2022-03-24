@@ -71,8 +71,16 @@ export class SitemapService {
     }
 
     async submitSitemap(hostname) {
-        await axios.get(
-            `https://google.com/ping?sitemap=${hostname}/sitemap.xml`
-        );
+        try {
+            await axios.get(
+                `https://google.com/ping?sitemap=${hostname}/sitemap.xml`
+            );
+            return "Sitemap submitted";
+        } catch (e) {
+            const message =
+                "Error while submitting sitemap to search engine: " + e.message;
+            this.logger.error(message);
+            return message;
+        }
     }
 }
