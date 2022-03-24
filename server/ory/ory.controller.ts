@@ -10,6 +10,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Request, Response } from "express";
+import { NextApiRequest, NextApiResponse } from 'next'
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import OryService from "./ory.service";
@@ -39,21 +40,14 @@ export default class OryController {
     }
 
     @Get("api/.ory/*")
-    public async oryPaths(@Req() req: Request, @Res() res: Response) {
+    public async oryPaths(@Req() req: NextApiReqsuest, @Res() res: NextApiResponse) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
-
-        console.log("chegou no ory paths");
-
-        req.query = { ...req.query, paths: req.params };
         await this.viewService
             .getNextServer()
-            .render(
+            .getRequestHandler()(
                 req,
                 res,
-                "/api/.ory/[...paths]",
-                Object.assign(parsedUrl.query, { paths: req.params })
-            );
+                parsedUrl,
+            )
     }
 }

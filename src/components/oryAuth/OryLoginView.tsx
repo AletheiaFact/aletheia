@@ -33,7 +33,7 @@ const OryLoginView = (props) => {
                 setFlow(data as SelfServiceLoginFlow)
             })
             .catch(handleFlowError(router, 'login', setFlow, t))
-    }, [flowId, router, router.isReady, aal, refresh, returnTo, flow, t])
+    }, [])
 
     console.log('login flow object ', flow)
 
