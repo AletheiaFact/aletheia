@@ -1,9 +1,9 @@
-import {Controller, Get, Req, Res} from "@nestjs/common";
-import {ViewService} from "../view/view.service";
-import {Request, Response} from "express";
-import {parse} from "url";
-import {PersonalityService} from "../personality/personality.service";
-import {StatsService} from "../stats/stats.service";
+import { Controller, Get, Req, Res } from "@nestjs/common";
+import { ViewService } from "../view/view.service";
+import { Request, Response } from "express";
+import { parse } from "url";
+import { PersonalityService } from "../personality/personality.service";
+import { StatsService } from "../stats/stats.service";
 
 @Controller("/")
 export class HomeController {
@@ -21,6 +21,7 @@ export class HomeController {
         const { personalities } = await this.personalityService.combinedListAll({
             // @ts-ignore
             language: req.language,
+            order: 'random',
             pageSize: 5,
             fetchOnly: true
         });

@@ -31,11 +31,27 @@ export class PersonalityService {
         language,
         withSuggestions = false
     ) {
-        let personalities = await this.PersonalityModel.find(query)
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .sort({ _id: order })
-            .lean();
+        let personalities;
+
+        if (order === 'random') {
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            personalities = await this.PersonalityModel.aggregate([
+                { $match: query },
+                { $sample: { size: pageSize } },
+            ])
+
+            
+        } else {
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            personalities = await this.PersonalityModel.find(query)
+                .skip(page * pageSize)
+                .limit(pageSize)
+                .sort({ _id: order })
+                .lean()
+        }
+
+        console.log(personalities)
+
         if (withSuggestions) {
             const wbentities = await this.wikidata.queryWikibaseEntities(
                 query.name.$regex,
