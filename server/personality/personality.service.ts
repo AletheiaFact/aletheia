@@ -95,6 +95,7 @@ export class PersonalityService {
     }
 
     async getBySlug(personalitySlug, language = "en") {
+        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const personality: any = await this.PersonalityModel.findOne({
             slug: personalitySlug
         }).populate({

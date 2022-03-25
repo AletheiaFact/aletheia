@@ -16,7 +16,7 @@ const { Title } = Typography;
 const Claim = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
     moment.locale(i18n.language);
-    const { title, stats, revisions } = claim;
+    const { title, stats } = claim;
 
     let date = claim.date;
     const paragraphs = claim.content.object;

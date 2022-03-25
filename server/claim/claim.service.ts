@@ -39,6 +39,7 @@ export class ClaimService {
             .lean();
         return Promise.all(
             claims.map(async (claim) => {
+                // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
                 let claimRevision = await this.claimRevisionService.getRevision(claim._id)
                 return this.postProcess({
                     ...claim,
@@ -98,6 +99,7 @@ export class ClaimService {
     }
 
     private async _getClaim(match: ClaimMatchParameters, postprocess = true) {
+        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claim =
             await this.ClaimModel.findOne(match)
                 .populate("personality", "_id name")

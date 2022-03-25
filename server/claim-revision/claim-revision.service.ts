@@ -43,7 +43,7 @@ export class ClaimRevisionService {
         const newClaimRevision = new this.ClaimRevisionModel(claim);
         if (claim.sources && Array.isArray(claim.sources)) {
             try {
-                for (let i = 0; i < claim.sources.length ; i++) {
+                for (let i of claim.sources) {
                     await this.sourceService.create({
                         link: claim.sources[i],
                         targetId: newClaimRevision.id,
