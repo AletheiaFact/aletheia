@@ -6,7 +6,6 @@ import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { UtilService } from "../util";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 
 @Injectable()
 export class PersonalityService {
@@ -20,7 +19,6 @@ export class PersonalityService {
         @InjectModel(Personality.name)
         private PersonalityModel: Model<PersonalityDocument>,
         private claimReview: ClaimReviewService,
-        private claimRevisionService: ClaimRevisionService,
         private wikidata: WikidataService,
         private util: UtilService
     ) {}
@@ -111,7 +109,7 @@ export class PersonalityService {
         personality.claims = await Promise.all(personality.claims.map((claim) => {
             return {
                 ...claim,
-                ...claim.revisions[0]
+                ...claim.lastestRevision
             }
         })) 
         this.logger.log(`Found personality ${personality._id}`);

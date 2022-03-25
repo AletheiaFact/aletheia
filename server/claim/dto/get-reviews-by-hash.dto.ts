@@ -1,6 +1,6 @@
 import { IsAlpha, IsArray, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
-export class GetClaimsByHash {
+export class GetClaimsByHashDTO {
     @IsNumber()
     @IsInt()
     @Min(0)

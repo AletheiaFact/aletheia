@@ -29,11 +29,3 @@ const ClaimRevisionModel = MongooseModule.forFeature([
     providers: [ClaimRevisionService],
 })
 export class ClaimRevisionModule {}
-
-//campo novo revision:id auto increment
-//nova versão uptade, ao atualizar uma afirmação. Ḿanterá a antiga, porém irá criar
-//outra com as alterações
-//Claim revision irá se basear na Claim, porém apenas com os dados necessários e um novo ID,
-//que seria seu ID de revisão. Sempre que essa mesma claim for alterada ela obterá um novo ID de revisão
-//A claimRevision terá o claim-id que é o mesmo id da Claim que se referencia, e o revision-id
-//Fazer um module, criar um controller com get e post para realizar o teste

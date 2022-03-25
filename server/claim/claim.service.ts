@@ -1,6 +1,6 @@
 import {Injectable, Logger} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import {FilterQuery, Model, Types} from "mongoose";
+import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ParserService } from "../parser/parser.service";
@@ -38,7 +38,6 @@ export class ClaimService {
             .sort({ _id: order })
             .lean();
         return Promise.all(
-            /** Get lastest revision for each claim */
             claims.map(async (claim) => {
                 let claimRevision = await this.claimRevisionService.getRevision(claim._id)
                 return this.postProcess({
@@ -68,9 +67,7 @@ export class ClaimService {
     }
 
     async update(claimId, claimRevisionUpdate) {
-        // console.log(claimId, claimRevisionUpdate)
         const claim = await this._getClaim({ _id: claimId }, false);
-        // console.log(claim.latestRevision)
         const latestRevision = claim.toObject().latestRevision
         delete latestRevision._id
         const newClaimRevision =

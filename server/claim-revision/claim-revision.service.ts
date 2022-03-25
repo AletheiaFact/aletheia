@@ -27,15 +27,6 @@ export class ClaimRevisionService {
     getRevision(claimId) {
         return this.ClaimRevisionModel.findOne({ claimId })
     }
-
-    getRevisionById(id) {
-        return this.ClaimRevisionModel.findOne(id)
-    }
-
-    getRevisionBySlug(slug) {
-        return this.ClaimRevisionModel.findOne({ slug })
-    }
-
     /**
      *
      * @param claimId an unique claim id
