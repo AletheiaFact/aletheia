@@ -109,8 +109,8 @@ export class PersonalityService {
         });
         personality.claims = await Promise.all(personality.claims.map((claim) => {
             return {
-                ...claim,
-                ...claim.lastestRevision
+                ...claim.lastestRevision,
+                ...claim
             }
         })) 
         this.logger.log(`Found personality ${personality._id}`);
