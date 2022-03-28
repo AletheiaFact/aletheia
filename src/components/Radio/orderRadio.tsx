@@ -8,24 +8,24 @@ const RadioInput = styled(Radio)`
     margin: 10px 0 0 0;
 
     .ant-radio-checked .ant-radio-inner{
-      border: 2px solid #2D77A3;
-      width: 25px;
-      height: 25px;
+        border: 2px solid ${colors.blueSecondary};
+        width: 25px;
+        height: 25px;
     }
 
     .ant-radio-checked .ant-radio-inner:after{
-      background-color: #2D77A3;
-      position: relative;
-      top: 3px;
-      left: 3px;
-      width: 31px;
-      height: 31px;
+        background-color: ${colors.blueSecondary};
+        position: relative;
+        top: 3px;
+        left: 3px;
+        width: 31px;
+        height: 31px;
     }
 
     span .ant-radio-inner{
-      box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.25);
-      width: 25px;
-      height: 25px;
+        box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.25);
+        width: 25px;
+        height: 25px;
     }
 
     .ant-radio-wrapper-checked > span:nth-child(2) { //TODO: order by checked input label isn't bold
@@ -51,11 +51,11 @@ const OrderRadio = ({ value, setValue }) => {
                     value='asc'
                 >
                     <span
-                      style={{
-                          fontSize: 18,
-                          marginLeft: 10,
-                          color: colors.black,
-                      }}
+                        style={{
+                            fontSize: 18,
+                            marginLeft: 10,
+                            color: colors.blackSecondary,
+                        }}
                     >
                         {t("orderModal:radioAsc")}
                     </span>
@@ -67,7 +67,7 @@ const OrderRadio = ({ value, setValue }) => {
                         style={{
                             fontSize: 18,
                             marginLeft:10,
-                            color: colors.black,
+                            color: colors.blackSecondary,
                         }}
                     >
                         {t("orderModal:radioDesc")}

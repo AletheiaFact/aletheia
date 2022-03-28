@@ -18,12 +18,12 @@ const SelectInput = styled(Select)`
         border: none !important;
         top: 6px;
         .ant-select-selection-item {
-            color: ${colors.black};
+            color: ${colors.blackSecondary};
         }
     }
 
     ::placeholder {
-        color: ${colors.black};
+        color: ${colors.blackSecondary};
     }
 
     :focus {

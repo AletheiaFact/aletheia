@@ -11,24 +11,23 @@ const AletheiaModal = styled(Modal)`
     padding: 0;
 
     .ant-modal-content {
-      width: 300px;
-      margin: 0 auto;
-      border-radius: 30px;
-      background-color: ${colors.lightGray};
-      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
-      padding: 19px 34px 24px 34px;
-      
+        width: 300px;
+        margin: 0 auto;
+        border-radius: 30px;
+        background-color: ${colors.lightGray};
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
+        padding: 19px 34px 24px 34px;
     }
 
     .ant-modal-body {
-      padding: 0;
+        padding: 0;
     }
 
     svg[data-icon="close"] {
         margin-top: 24px;
         width: 20px;
         height: 20px;
-        color: #353535;
+        color: ${colors.blackPrimary};
         margin-right: 20px;
     }
 `
@@ -45,7 +44,7 @@ const ModalOkButton = styled(Button)`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #2D77A3;
+    background: ${colors.blueSecondary};
     width: 120px;
     height: 40px;
 `
@@ -63,12 +62,12 @@ const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
         >
             <span
                 style={{
-                    color: '#111111', //doesn't has this color in ./colors
+                    display: 'block',
+                    color: colors.blackPrimary,
                     marginLeft: 10,
                     fontWeight: 700,
                     fontSize: '18px',
                     textAlign: 'center',
-                    
                 }}
             >
                 {t("orderModal:title")}
@@ -91,7 +90,7 @@ const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
                 >
                     <span
                         style={{
-                            color: '#2D77A3', //doesn't has this color in ./colors
+                            color: colors.blueSecondary,
                             textDecorationLine: 'underline',
                             textAlign: 'center',
                             fontWeight: 700,
@@ -108,7 +107,7 @@ const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
                 >
                     <span
                         style={{
-                            color: '#fff',
+                            color: colors.white,
                             textAlign: 'center',
                             fontWeight: 700,
                             fontSize: 14,

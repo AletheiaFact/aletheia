@@ -5,7 +5,7 @@ const { Text } = Typography
 
 const Label: React.FC = ({ children }) => {
     return (
-        <Text strong style={{ color: colors.black }}>{children}</Text>
+        <Text strong style={{ color: colors.blackSecondary }}>{children}</Text>
     )
 }
 

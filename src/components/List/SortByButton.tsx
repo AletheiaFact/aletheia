@@ -17,14 +17,14 @@ const SortByButton = ({ refreshListItems }) => {
                 icon={
                     <SortAscendingOutlined style={{
                         fontSize: '16px',
-                        color: colors.black
+                        color: colors.blackSecondary
                         }}
                     />
                 }
                 onClick={() => setVisible(!visible)}
                 style={{
                     borderWidth: "2px",
-                    borderColor: colors.black,
+                    borderColor: colors.blackSecondary,
                     height: '40px',
                     paddingLeft: 10,
                     paddingRight: 10,
@@ -36,7 +36,7 @@ const SortByButton = ({ refreshListItems }) => {
                         margin: 0,
                         fontSize: '14px',
                         fontWeight: 900,
-                        color: "#515151",
+                        color: colors.blackSecondary,
                     }}
                 >
                     {t("sortButton:title")}

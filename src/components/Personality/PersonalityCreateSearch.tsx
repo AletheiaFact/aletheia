@@ -55,7 +55,7 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
                     }
                     style={{
                         width: "100%",
-                        color: colors.black,
+                        color: colors.blackSecondary,
                         fontSize: "14px",
                         lineHeight: "21px",
                     }}
