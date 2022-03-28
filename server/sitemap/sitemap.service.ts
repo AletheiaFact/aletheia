@@ -27,7 +27,7 @@ export class SitemapService {
         ];
 
         // TODO: Add a loop strategy that paginates the results to improve performance
-        const personalities = await this.personalityService.listAll(
+        const personalities: any[] = await this.personalityService.listAll(
             0,
             0,
             "asc",

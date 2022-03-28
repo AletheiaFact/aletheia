@@ -6,6 +6,7 @@ import * as passport from "passport";
 import * as session from "express-session";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
+import { GetLanguageMiddleware } from "./middleware/language.middleware";
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 
@@ -35,6 +36,7 @@ const initApp = async (options) => {
         }
     );
 
+    app.use(GetLanguageMiddleware);
     app.useGlobalPipes(
         new ValidationPipe({
             transform: true,
