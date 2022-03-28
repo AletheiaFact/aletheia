@@ -68,16 +68,4 @@ export class AppModule {
             ],
         };
     }
-
-    configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(GetLanguageMiddleware)
-            .forRoutes(
-                PersonalityController,
-                HomeController,
-                ClaimController,
-                UsersController,
-                ViewController
-            )
-    }
 }
