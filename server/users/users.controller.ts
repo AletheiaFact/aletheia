@@ -68,7 +68,6 @@ export class UsersController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -85,7 +84,6 @@ export class UsersController {
     public async profile(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()

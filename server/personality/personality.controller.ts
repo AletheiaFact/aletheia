@@ -92,7 +92,6 @@ export class PersonalityController {
     public async personalityCreateSearch(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -108,7 +107,6 @@ export class PersonalityController {
     public async personalityPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         const personality = await this.personalityService.getBySlug(
             req.params.slug,
@@ -129,8 +127,7 @@ export class PersonalityController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
-
+        
         await this.viewService
             .getNextServer()
             .render(

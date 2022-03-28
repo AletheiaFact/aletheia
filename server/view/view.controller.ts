@@ -10,7 +10,6 @@ export class ViewController {
     async handler(req: Request, res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -21,7 +20,6 @@ export class ViewController {
     public async showHome(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -32,7 +30,6 @@ export class ViewController {
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -43,7 +40,6 @@ export class ViewController {
     public async showPrivacyPolicyPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -54,7 +50,6 @@ export class ViewController {
     public async codeOfConductPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -65,7 +60,6 @@ export class ViewController {
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
@@ -80,7 +74,6 @@ export class ViewController {
     public async show404(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()
