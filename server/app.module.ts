@@ -17,6 +17,7 @@ import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
+
 @Module({})
 export class AppModule {
     static register(options): DynamicModule {
