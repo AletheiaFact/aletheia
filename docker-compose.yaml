@@ -8,4 +8,4 @@ services:
       - ${DATA_PATH}/mongodb:/data:delegated
       - ${DATA_PATH}/mongodb/db:/data/db:delegated
     ports:
-      - "${MONGODB_PORT}:27017"
+      - "${MONGODB_PORT:-27017}:27017"
