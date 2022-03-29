@@ -16,10 +16,11 @@ const { Title } = Typography;
 const Claim = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
     moment.locale(i18n.language);
-    const { content, title, stats } = claim;
+    const { title, stats } = claim;
 
-    let { date } = claim;
-    const paragraphs = content.object;
+    let date = claim.date;
+    const paragraphs = claim.content.object;
+
     date = moment(new Date(date));
     const [ showHighlights, setShowHighlights ] = useState(true);
 

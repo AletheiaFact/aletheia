@@ -1,5 +1,5 @@
 import { IsAlpha, IsInt, IsNumber, IsString, Min } from 'class-validator';
-export class GetClaims {
+export class GetClaimsDTO {
     @IsNumber()
     @IsInt()
     @Min(0)

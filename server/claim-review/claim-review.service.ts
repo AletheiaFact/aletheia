@@ -48,6 +48,11 @@ export class ClaimReviewService {
         return this.util.formatStats(reviews);
     }
 
+    /**
+     * get all personality claim claimIDs
+     * @param claimId claim Id
+     * @returns 
+     */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
             { $match: { claim: claimId } },
@@ -189,23 +194,6 @@ export class ClaimReviewService {
             .populate("claims", "_id title")
             .populate("sources", "_id link classification");
     }
-
-    // async update(claimReviewId, claimReviewBody) {
-    //     // eslint-disable-next-line no-useless-catch
-    //     try {
-    //         const claimReview = await this.getById(claimReviewId);
-    //         const newClaimReview = Object.assign(claimReview, claimReviewBody);
-    //         const claimReviewUpdate = await ClaimReview.findByIdAndUpdate(
-    //             claimReviewId,
-    //             newClaimReview,
-    //             this.optionsToUpdate
-    //         );
-    //         return claimReviewUpdate;
-    //     } catch (error) {
-    //         // TODO: log to service-runner
-    //         throw error;
-    //     }
-    // }
 
     delete(claimReviewId) {
         return this.ClaimReviewModel.findByIdAndRemove(claimReviewId);

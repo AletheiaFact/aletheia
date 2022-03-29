@@ -17,14 +17,16 @@ import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
 import { SessionGuard } from "../auth/session.guard";
-import {Request, Response} from "express";
-import {parse} from "url";
-import {PersonalityService} from "../personality/personality.service";
-import {ViewService} from "../view/view.service";
+import { Request, Response } from "express";
+import { parse } from "url";
+import { PersonalityService } from "../personality/personality.service";
+import { ClaimRevisionService } from "../claim-revision/claim-revision.service"
+import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
-import { CreateClaim } from "./dto/create-claim.dto";
-import { GetClaims } from "./dto/get-claims.dto";
-import { GetClaimsByHash } from "./dto/get-reviews-by-hash.dto";
+import { CreateClaimDTO } from "./dto/create-claim.dto";
+import { GetClaimsDTO } from "./dto/get-claims.dto";
+import { GetClaimsByHashDTO } from "./dto/get-reviews-by-hash.dto";
+import { UpdateClaimDTO } from "./dto/update-claim.dto"
 @Controller()
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
@@ -60,9 +62,9 @@ export class ClaimController {
     }
 
     @Get("api/claim")
-    listAll(@Query() getClaims: GetClaims) {
-        const { page = 0, pageSize = 10, order = "asc" } = getClaims;
-        const queryInputs = this._verifyInputsQuery(getClaims);
+    listAll(@Query() getClaimsDTO: GetClaimsDTO) {
+        const { page = 0, pageSize = 10, order = "asc" } = getClaimsDTO;
+        const queryInputs = this._verifyInputsQuery(getClaimsDTO);
         return Promise.all([
             this.claimService.listAll(
                 page,
@@ -90,11 +92,11 @@ export class ClaimController {
 
     @UseGuards(SessionGuard)
     @Post("api/claim")
-    async create(@Body() createClaim: CreateClaim) {
+    async create(@Body() createClaimDTO: CreateClaimDTO) {
         const secret = this.configService.get<string>("recaptcha_secret");
         const recaptchaCheck = await this._checkCaptchaResponse(
             secret,
-            createClaim && createClaim.recaptcha
+            createClaimDTO && createClaimDTO.recaptcha
         );
 
         // @ts-ignore
@@ -105,18 +107,19 @@ export class ClaimController {
             // );
             throw Error();
         }
-        return this.claimService.create(createClaim);
+        return this.claimService.create(createClaimDTO)
+
     }
 
     @Get("api/claim/:id")
     getById(@Param() params) {
         return this.claimService.getById(params.id);
     }
-
+    
     @UseGuards(SessionGuard)
-    @Put("api/claim/:id")
-    update(@Req() req) {
-        return this.claimService.update(req.params.id, req.body);
+    @Put("api/claim")
+    update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
+        return this.claimService.update(claimId, updateClaimDTO);
     }
 
     @UseGuards(SessionGuard)
@@ -126,9 +129,9 @@ export class ClaimController {
     }
 
     @Get("api/claim/:claimId/sentence/:sentenceHash/reviews")
-    getSentenceReviewsByHash(@Param() params, @Query() getClaimsByHash: GetClaimsByHash) {
+    getSentenceReviewsByHash(@Param() params, @Query() getClaimsByHashDTO: GetClaimsByHashDTO) {
         const { sentenceHash } = params;
-        const { page, pageSize, order } = getClaimsByHash;
+        const { page, pageSize, order } = getClaimsByHashDTO;
 
         return Promise.all([
             this.claimReviewService.getReviewsBySentenceHash(
@@ -186,18 +189,10 @@ export class ClaimController {
         });
     }
 
-    @Get("api/claim/:claimId/sentence/:sentenceHash")
-    getSentenceByHash(@Req() req) {
-        const { sentenceHash, claimId } = req.params;
-        return this._getSentenceByHashAndClaimId(sentenceHash, claimId, req);
-    }
-
     @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:sentenceHash")
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
         const { sentenceHash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-
         const personality = await this.personalityService.getBySlug(
             personalitySlug,
             // @ts-ignore
@@ -210,7 +205,7 @@ export class ClaimController {
         );
 
         const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
-
+        
         await this.viewService
             .getNextServer()
             .render(

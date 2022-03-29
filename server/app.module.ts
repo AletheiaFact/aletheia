@@ -17,7 +17,7 @@ import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
-
+import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 @Module({})
 export class AppModule {
     static register(options): DynamicModule {
@@ -42,6 +42,7 @@ export class AppModule {
                 PersonalityModule,
                 ClaimModule,
                 ClaimReviewModule,
+                ClaimRevisionModule,
                 SourceModule,
                 StatsModule,
                 ViewModule,

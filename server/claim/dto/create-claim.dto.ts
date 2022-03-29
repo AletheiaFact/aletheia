@@ -1,7 +1,7 @@
 import { ArrayNotEmpty, IsAlpha, IsArray, IsDateString, IsNotEmpty, IsString } from 'class-validator';
 import { Personality } from "../../personality/schemas/personality.schema";
 
-export class CreateClaim {
+export class CreateClaimDTO {
     @IsNotEmpty()
     @IsString()
     title: string;

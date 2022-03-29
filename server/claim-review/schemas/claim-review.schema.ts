@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Claim } from "../../claim/schemas/claim.schema";
 import { Personality } from "../../personality/schemas/personality.schema";
 import * as mongoose from "mongoose";
 import { User } from "../../users/schemas/user.schema";
+import { Claim } from "../../claim/schemas/claim.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
@@ -45,7 +45,7 @@ export class ClaimReview {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: "Claim",
+        ref: "ClaimRevision",
     })
     claim: Claim;
 
@@ -71,8 +71,6 @@ export class ClaimReview {
         ref: "User",
     })
     user: User;
-
-    // TODO: revision_id
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);
