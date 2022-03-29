@@ -17,9 +17,9 @@ const InputSearchStyled = styled(Input.Search)`
     }
     input.ant-input {
         background: ${colors.lightGray};
-        color: ${colors.black};
+        color: ${colors.blackSecondary};
         &::placeholder {
-            color: ${colors.black};
+            color: ${colors.blackSecondary};
         }
     }
 `

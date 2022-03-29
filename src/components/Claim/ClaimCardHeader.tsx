@@ -13,7 +13,7 @@ const ClaimCardHeader = ({ personality, date, claimType = 'speech' }) => {
             : t('claim:typeTwitter')
     return (
         <Col span={24} style={{
-            color: colors.black,
+            color: colors.blackSecondary,
             width: '100%'
         }}>
             <Text style={{ fontSize: 16 }}>

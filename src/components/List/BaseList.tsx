@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { List, Button, Spin, Row } from "antd";
+import { List, Button, Spin, Row, Col } from "antd";
 import { useTranslation } from "next-i18next";
+import SortByButton from "./SortByButton";
 
 const BaseList = ({
     apiCall,
@@ -18,10 +19,14 @@ const BaseList = ({
     const [ totalPages, setTotalPages ] = useState(0)
     const [ totalItems, setTotalItems ] = useState(0)
     const [ items, setItems ] = useState([])
+    const [ sortByOrder ] = useState('asc')
+    const [ execLoadMore, setExecLoadMore ] = useState<boolean>(true)
+
     const [ query, setQuery ] = useState({
         page: 1,
         pageSize: 10,
         fetchOnly: true,
+        order: sortByOrder,
         ...filter
     })
 
@@ -31,15 +36,34 @@ const BaseList = ({
             setLoading(false)
             setTotalPages(newItems.totalPages)
             setTotalItems(newItems.total)
-            setItems(currentItems => [...currentItems, ...newItems.data])
+            setItems(execLoadMore ? [...items, ...newItems.data] : newItems.data)
         });
     }, [query, apiCall]);
 
     const loadMoreData = () => {
+        if (execLoadMore !== true) {
+            setExecLoadMore(true)
+        }
         setLoading(true);
         setQuery({
             ...query,
             page: query.page + 1
+        })
+    }
+
+    const refreshListItems = (sortBy) => {
+        const newQuery = {
+            order: sortBy
+        }
+
+        if (execLoadMore !== false) {
+            setExecLoadMore(false)
+        }
+        setLoading(true);
+        setQuery({
+            ...query,
+            ...newQuery,
+            page: 1
         })
     }
 
@@ -69,7 +93,7 @@ const BaseList = ({
                 <List
                     itemLayout="horizontal"
                     header={
-                        <>
+                        <Row style={{width: "100%"}}>
                             <Row
                                 style={{
                                     fontSize: 18,
@@ -77,12 +101,23 @@ const BaseList = ({
                             >
                                 <span>{title}</span>
                             </Row>
-                            <Row>
-                                {t("list:totalItems", {
-                                    total: totalItems
-                                })}
+                            <Row
+                                style={{
+                                    width: "100%"
+                                }}
+                            >
+                                <Col>
+                                    {t("list:totalItems", {
+                                        total: totalItems
+                                    })}
+                                </Col>
+                                <Col>
+                                    <SortByButton
+                                        refreshListItems={refreshListItems}
+                                    />
+                                </Col>
                             </Row>
-                        </>
+                        </Row>
                     }
                     style={style || {}}
                     loadMore={loadMoreButton}

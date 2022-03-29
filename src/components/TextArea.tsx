@@ -11,7 +11,7 @@ const TextArea = styled(Input.TextArea)`
     padding: 10px;
 
     ::placeholder {
-        color: ${colors.black};
+        color: ${colors.blackSecondary};
     }
 
     :focus {

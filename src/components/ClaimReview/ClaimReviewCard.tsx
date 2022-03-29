@@ -80,7 +80,7 @@ const ClaimReviewCard = ({ classification, userName, sources, report }) => {
                                             borderRadius="10px"
                                             borderColor="transparent"
                                             imageHeight="156px"
-                                            secondaryTextColor={colors.black}
+                                            secondaryTextColor={colors.blackSecondary}
                                             width="100%"
                                         />
                                     )}

@@ -98,7 +98,7 @@ const ClaimReviewForm = ({
                     label={
                         <span
                             style={{
-                                color: colors.black,
+                                color: colors.blackSecondary,
                                 fontWeight: 600,
                                 paddingLeft: 10,
                             }}
@@ -118,7 +118,7 @@ const ClaimReviewForm = ({
                     label={
                         <span
                             style={{
-                                color: colors.black,
+                                color: colors.blackSecondary,
                                 fontWeight: 600,
                             }}
                         >
@@ -151,7 +151,7 @@ const ClaimReviewForm = ({
                     label={
                         <span
                             style={{
-                                color: colors.black,
+                                color: colors.blackSecondary,
                                 fontWeight: 600,
                             }}
                         >
