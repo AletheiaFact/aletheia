@@ -4,7 +4,6 @@ import { Typography } from "antd";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 
-
 function CTARegistration({ style = {} }) {
     const { t } = useTranslation();
     
@@ -62,3 +61,5 @@ function CTARegistration({ style = {} }) {
 }
 
 export default CTARegistration;
+
+
