@@ -19,7 +19,7 @@ export class ClaimRevision {
     @Prop({ required: true })
     date: Date;
 
-    @Prop({ 
+    @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
         ref: "Claim",
@@ -56,12 +56,6 @@ ClaimRevisionSchemaRaw.virtual('reviews', {
     ref: 'ClaimReview',
     localField: '_id',
     foreignField: 'claim'
-});
-
-ClaimRevisionSchemaRaw.virtual('sources', {
-    ref: 'Source',
-    localField: '_id',
-    foreignField: 'targetId'
 });
 
 export const ClaimRevisionSchema = ClaimRevisionSchemaRaw;

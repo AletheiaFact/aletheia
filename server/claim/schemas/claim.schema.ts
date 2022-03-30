@@ -34,4 +34,10 @@ ClaimSchemaRaw.virtual('revisions', {
     localField: '_id',
     foreignField: 'claimId'
 })
+
+ClaimSchemaRaw.virtual('sources', {
+    ref: 'Source',
+    localField: '_id',
+    foreignField: 'targetId'
+})
 export const ClaimSchema = ClaimSchemaRaw;
