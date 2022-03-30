@@ -4,17 +4,18 @@ import { Typography } from "antd";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 
+
 function CTARegistration({ style = {} }) {
     const { t } = useTranslation();
-
+    
     return (
         <div
-            style={{
-                backgroundColor: colors.bluePrimary,
-                textAlign: "center",
-                padding: "30px",
-                ...style
-            }}
+        style={{
+            backgroundColor: colors.bluePrimary,
+            textAlign: "center",
+            padding: "30px",
+            ...style
+        }}
         >
             <Typography.Title level={3} style={{ color: "#fff" }}>
                 {t("CTARegistration:title")}
@@ -28,7 +29,7 @@ function CTARegistration({ style = {} }) {
                     marginBottom: "10px",
                     textAlign: 'center'
                 }}
-            >
+                >
                 {t("CTARegistration:body")}
             </div>
             <div
@@ -39,20 +40,20 @@ function CTARegistration({ style = {} }) {
                     lineHeight: "15px",
                     marginBottom: "17px"
                 }}
-            >
+                >
                 {t("CTARegistration:footer")}
             </div>
-            <Button
+            <Button 
+                onClick={() => {umami?.trackEvent('cta-registration-button', 'registration')}}
                 type={ButtonType.white}
                 target="_blank"
-                className={"umami--click--registration-button"}
                 href={t("common:registrationLink")}
-            >
+                >
                 <b
                     style={{
                         fontSize: "14px"
                     }}
-                >
+                    >
                     {t("CTARegistration:button")}
                 </b>
             </Button>
