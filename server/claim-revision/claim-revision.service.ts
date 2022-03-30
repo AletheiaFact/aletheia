@@ -46,7 +46,7 @@ export class ClaimRevisionService {
                 for (let source of claim.sources) {
                     await this.sourceService.create({
                         link: source,
-                        targetId: newClaimRevision.id,
+                        targetId: claimId,
                         targetModel: "Claim",
                     });
                 }
