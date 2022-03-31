@@ -64,19 +64,6 @@ export class ClaimService {
         return this.ClaimModel.countDocuments().where(query);
     }
 
-    private _getHistoryParams(dataId, user, type, latestRevision, previousRevision = null) {
-        return {
-            targetId: new Types.ObjectId(dataId),
-            targetModel: 'Claim',
-            type: type,
-            user: user._id,
-            details: {
-                after: latestRevision,
-                before: previousRevision
-            },
-        }
-    }
-
     async create(claim) {
         claim.personality = new Types.ObjectId(claim.personality);
         const newClaim = new this.ClaimModel(claim);
@@ -84,7 +71,7 @@ export class ClaimService {
         newClaim.latestRevision = newClaimRevision._id
         newClaim.slug = newClaimRevision.slug
         
-        const history = this._getHistoryParams(newClaim._id, this.req.user, HistoryType.Create, newClaim.latestRevision)
+        const history = this.historyService.getHistoryParams(newClaim._id, 'Claim' , this.req.user, HistoryType.Create, newClaim.latestRevision)
         await this.historyService.createHistory(history)
 
         newClaim.save();
@@ -97,17 +84,17 @@ export class ClaimService {
 
     async update(claimId, claimRevisionUpdate) {
         const claim = await this._getClaim({ _id: claimId }, false);
-        const latestRevision = claim.toObject().latestRevision
-        delete latestRevision._id
+        const previousRevision = claim.toObject().latestRevision
+        delete previousRevision._id
         const newClaimRevision =
             await this.claimRevisionService.create(claim._id, {
-                ...latestRevision,
+                ...previousRevision,
                 ...claimRevisionUpdate
             })
         claim.latestRevision = newClaimRevision._id
         claim.slug = newClaimRevision.slug
         
-        const history = this._getHistoryParams(claimId, this.req.user, HistoryType.Update, newClaimRevision, latestRevision)
+        const history = this.historyService.getHistoryParams(claimId, 'Claim', this.req.user, HistoryType.Update, newClaimRevision, previousRevision)
         await this.historyService.createHistory(history)
         
         claim.save()

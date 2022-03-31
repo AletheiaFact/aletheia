@@ -18,6 +18,19 @@ export class HistoryService {
         };
     }
 
+    getHistoryParams(dataId, target, user, type, latestRevision, previousRevision = null) {
+        return {
+            targetId: new Types.ObjectId(dataId),
+            targetModel: target,
+            type: type,
+            user: user._id,
+            details: {
+                after: latestRevision,
+                before: previousRevision
+            },
+        }
+    }
+
     async createHistory(data) {
         const newHistory = new this.HistoryModel(data);
         return newHistory.save();

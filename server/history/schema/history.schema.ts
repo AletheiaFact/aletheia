@@ -30,7 +30,7 @@ export class History {
     @Prop({
       required: true,
     })
-    type: HistoryType
+    type: HistoryType //TODO: Validate if details field(after, before) it's optional or required based on type
 
     @Prop({
       type: Object,
@@ -40,5 +40,3 @@ export class History {
 }
 
 export const HistorySchema = SchemaFactory.createForClass(History);
-
-//ter uma validação dos tipos, caso seja um tipo create, é obrigatório um after
