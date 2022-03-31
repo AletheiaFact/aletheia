@@ -1,4 +1,4 @@
-import {Injectable, Logger} from "@nestjs/common";
+import { Injectable, Inject, Logger, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
@@ -6,18 +6,29 @@ import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ParserService } from "../parser/parser.service";
 import { SourceService } from "../source/source.service";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
+import { HistoryService } from "../history/history.service"
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
 type ClaimMatchParameters = ({ _id: string } | { personality: string, slug: string }) & FilterQuery<ClaimDocument>;
 
-@Injectable()
+export enum HistoryType { 
+    Create = 'create',
+    Update = 'update',
+    Delete = 'delete'
+}
+
+@Injectable({ scope: Scope.REQUEST })
 export class ClaimService {
     private optionsToUpdate: { new: boolean; upsert: boolean };
     private readonly logger = new Logger("ClaimService");
 
     constructor(
+        @Inject(REQUEST) private req: Request,
         @InjectModel(Claim.name)
         private ClaimModel: Model<ClaimDocument>,
         private claimReviewService: ClaimReviewService,
+        private historyService: HistoryService,
         private claimRevisionService: ClaimRevisionService,
         private sourceService: SourceService,
         private parserService: ParserService
@@ -53,12 +64,29 @@ export class ClaimService {
         return this.ClaimModel.countDocuments().where(query);
     }
 
+    private _getHistoryParams(dataId, user, type, latestRevision, previousRevision = null) {
+        return {
+            targetId: new Types.ObjectId(dataId),
+            targetModel: 'Claim',
+            type: type,
+            user: user._id,
+            details: {
+                after: latestRevision,
+                before: previousRevision
+            },
+        }
+    }
+
     async create(claim) {
         claim.personality = new Types.ObjectId(claim.personality);
         const newClaim = new this.ClaimModel(claim);
         const newClaimRevision = await this.claimRevisionService.create(newClaim._id, claim)
         newClaim.latestRevision = newClaimRevision._id
         newClaim.slug = newClaimRevision.slug
+        
+        const history = this._getHistoryParams(newClaim._id, this.req.user, HistoryType.Create, newClaim.latestRevision)
+        await this.historyService.createHistory(history)
+
         newClaim.save();
 
         return {
@@ -78,6 +106,10 @@ export class ClaimService {
             })
         claim.latestRevision = newClaimRevision._id
         claim.slug = newClaimRevision.slug
+        
+        const history = this._getHistoryParams(claimId, this.req.user, HistoryType.Update, newClaimRevision, latestRevision)
+        await this.historyService.createHistory(history)
+        
         claim.save()
         return newClaimRevision;
     }

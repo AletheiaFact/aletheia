@@ -117,7 +117,7 @@ export class ClaimController {
     }
     
     @UseGuards(SessionGuard)
-    @Put("api/claim")
+    @Put("api/claim/:id")
     update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
         return this.claimService.update(claimId, updateClaimDTO);
     }

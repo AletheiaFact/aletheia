@@ -18,6 +18,8 @@ import { NotFoundFilter } from "./filters/not-found.filter";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
 import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
+import { HistoryModule } from "./history/history.module";
+
 @Module({})
 export class AppModule {
     static register(options): DynamicModule {
@@ -43,6 +45,7 @@ export class AppModule {
                 ClaimModule,
                 ClaimReviewModule,
                 ClaimRevisionModule,
+                HistoryModule,
                 SourceModule,
                 StatsModule,
                 ViewModule,
