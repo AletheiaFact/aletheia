@@ -4,6 +4,7 @@
     "cardLinkToFullText": "see full speech",
     "showHighlightsButton": "Show highlights",
     "hideHighlightsButton": "Hide highlights",
+    "seeSourcesButton": "See all sources",
     "metricsHeaderInfo": "{{totalReviews}} claim reviews",
     "dateFormat": "l",
     "info": "stated on {{claimDate}}:",

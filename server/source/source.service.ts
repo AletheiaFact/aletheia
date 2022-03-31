@@ -19,10 +19,10 @@ export class SourceService {
 
     async getByTargetId(targetId, page, pageSize, order = "asc") {
         targetId = new Types.ObjectId(targetId);
-        const sources = await this.SourceModel.find({ targetId })
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .sort({ _id: order });
-        return sources;
+
+        return this.SourceModel.find({ targetId })
+        .skip(page * pageSize)
+        .limit(pageSize)
+        .sort({ _id: order });
     }
 }

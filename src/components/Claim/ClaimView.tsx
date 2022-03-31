@@ -114,29 +114,31 @@ const Claim = ({ personality, claim, href }) => {
                     >
                         {t("claim:sourceSectionTitle")}
                     </div>
-                    <LinkPreview
-                        url={claim.sources[0].link}
-                        borderRadius="10px"
-                        borderColor="transparent"
-                        imageHeight="156px"
-                        secondaryTextColor="#515151"
-                        fallback={
-                            <Link href={claim.sources[0].link}>
-                                {claim.sources[0].link}
-                            </Link>
-                        }
-                        width="100%"
-                    />
-                    <AletheiaButton
-                        style={{
-                            width: "100%",
-                            marginTop: "21px",
-                        }}
-                        type={ButtonType.blue}
-                        href={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
-                    >
-                        Ver todas as fontes
-                    </AletheiaButton>
+                    {claim.sources && <>
+                        <LinkPreview
+                            url={claim.sources[0].link}
+                            borderRadius="10px"
+                            borderColor="transparent"
+                            imageHeight="156px"
+                            secondaryTextColor="#515151"
+                            fallback={
+                                <Link href={claim.sources[0].link}>
+                                    {claim.sources[0].link}
+                                </Link>
+                            }
+                            width="100%"
+                        />
+                        <AletheiaButton
+                            style={{
+                                width: "100%",
+                                marginTop: "21px",
+                            }}
+                            type={ButtonType.blue}
+                            href={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
+                        >
+                            {t('claim:seeSourcesButton')}
+                        </AletheiaButton>
+                    </>}
                     <span
                         style={{
                             fontSize: "10px",
