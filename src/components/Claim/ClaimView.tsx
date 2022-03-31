@@ -8,8 +8,10 @@ import ToggleSection from "../ToggleSection";
 import moment from "moment";
 import "moment/locale/pt";
 import SocialMediaShare from "../SocialMediaShare";
-import { LinkPreview } from '@dhaiwat10/react-link-preview';
+import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import colors from "../../styles/colors";
+import Link from "next/link";
+import AletheiaButton, { ButtonType } from "../Button";
 
 const { Title } = Typography;
 
@@ -22,7 +24,7 @@ const Claim = ({ personality, claim, href }) => {
     const paragraphs = claim.content.object;
 
     date = moment(new Date(date));
-    const [ showHighlights, setShowHighlights ] = useState(true);
+    const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
         message.info(t("claim:initialInfo"));
@@ -112,16 +114,29 @@ const Claim = ({ personality, claim, href }) => {
                     >
                         {t("claim:sourceSectionTitle")}
                     </div>
-                    {claim.sources && claim.sources.map(
-                        (source) => <LinkPreview
-                            url={source.link}
-                            borderRadius="10px"
-                            borderColor="transparent"
-                            imageHeight="156px"
-                            secondaryTextColor="#515151"
-                            width="100%"
-                        />
-                    )}
+                    <LinkPreview
+                        url={claim.sources[0].link}
+                        borderRadius="10px"
+                        borderColor="transparent"
+                        imageHeight="156px"
+                        secondaryTextColor="#515151"
+                        fallback={
+                            <Link href={claim.sources[0].link}>
+                                {claim.sources[0].link}
+                            </Link>
+                        }
+                        width="100%"
+                    />
+                    <AletheiaButton
+                        style={{
+                            width: "100%",
+                            marginTop: "21px",
+                        }}
+                        type={ButtonType.blue}
+                        href={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
+                    >
+                        Ver todas as fontes
+                    </AletheiaButton>
                     <span
                         style={{
                             fontSize: "10px",

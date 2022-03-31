@@ -20,7 +20,6 @@ import { SessionGuard } from "../auth/session.guard";
 import { Request, Response } from "express";
 import { parse } from "url";
 import { PersonalityService } from "../personality/personality.service";
-import { ClaimRevisionService } from "../claim-revision/claim-revision.service"
 import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
 import { CreateClaimDTO } from "./dto/create-claim.dto";
@@ -115,7 +114,7 @@ export class ClaimController {
     getById(@Param() params) {
         return this.claimService.getById(params.id);
     }
-    
+
     @UseGuards(SessionGuard)
     @Put("api/claim")
     update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
@@ -205,7 +204,7 @@ export class ClaimController {
         );
 
         const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
-        
+
         await this.viewService
             .getNextServer()
             .render(
@@ -268,6 +267,29 @@ export class ClaimController {
                 res,
                 "/claim-page",
                 Object.assign(parsedUrl.query, { personality, claim })
+            );
+    }
+
+    @Get("personality/:personalitySlug/claim/:claimSlug/sources")
+    public async sourcesClaimPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug
+        );
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-sources-page",
+                Object.assign(parsedUrl.query, { claimId: claim._id })
             );
     }
 }
