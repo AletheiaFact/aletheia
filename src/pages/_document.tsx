@@ -1,5 +1,8 @@
 import Document from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
+import React from 'react';
+
+React.useLayoutEffect = typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect;
 
 export default class MyDocument extends Document {
     static async getInitialProps(ctx) {
