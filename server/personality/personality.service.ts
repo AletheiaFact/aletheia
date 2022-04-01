@@ -72,6 +72,12 @@ export class PersonalityService {
         );
     }
 
+    /**
+     * This function will create a new personality and save it to the dataBase.
+     * Also creates a History Module that tracks creation of personalities.
+     * @param personality PersonalityBody received of the client.
+     * @returns Return a new personality.
+     */
     create(personality) {
         try {
             personality.slug = slugify(personality.name, {
@@ -166,6 +172,14 @@ export class PersonalityService {
         return this.util.formatStats(reviews, true);
     }
 
+    /**
+     * This function overwrites personality data with the new data,
+     * keeping data that has not changed.
+     * Also creates a History Module that tracks updation of personalities.
+     * @param personalityId Personality id which wants updated.
+     * @param newPersonalityBody PersonalityBody received of the client.
+     * @returns Return changed personality.
+     */
     async update(personalityId, newPersonalityBody) {
         // eslint-disable-next-line no-useless-catch
         if(newPersonalityBody.name) {

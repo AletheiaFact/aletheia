@@ -100,6 +100,11 @@
                         <ul class="index-list">
                             <li>
                                     <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#_getClaim" >_getClaim</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
                                 <a href="#calculateOverallStats" >calculateOverallStats</a>
                             </li>
                             <li>
@@ -158,12 +163,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(ClaimModel: <a href="../classes/Claim.html" target="_self">Model&lt;ClaimDocument&gt;</a>, claimReviewService: <a href="../injectables/ClaimReviewService.html" target="_self">ClaimReviewService</a>, sourceService: <a href="../injectables/SourceService.html" target="_self">SourceService</a>, parserService: <a href="../injectables/ParserService.html" target="_self">ParserService</a>)</code>
+<code>constructor(req: Request, ClaimModel: <a href="../classes/Claim.html" target="_self">Model&lt;ClaimDocument&gt;</a>, claimReviewService: <a href="../injectables/ClaimReviewService.html" target="_self">ClaimReviewService</a>, historyService: <a href="../injectables/HistoryService.html" target="_self">HistoryService</a>, claimRevisionService: <a href="../injectables/ClaimRevisionService.html" target="_self">ClaimRevisionService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">server/claim/claim.service.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">server/claim/claim.service.ts:17</a></div>
                             </td>
                         </tr>
 
@@ -180,6 +185,18 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                                <tr>
+                                                        <td>req</td>
+                                                  
+                                                        <td>
+                                                                    <code>Request</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
                                                 <tr>
                                                         <td>ClaimModel</td>
                                                   
@@ -205,10 +222,10 @@
                                                     
                                                 </tr>
                                                 <tr>
-                                                        <td>sourceService</td>
+                                                        <td>historyService</td>
                                                   
                                                         <td>
-                                                                        <code><a href="../injectables/SourceService.html" target="_self" >SourceService</a></code>
+                                                                        <code><a href="../injectables/HistoryService.html" target="_self" >HistoryService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -217,10 +234,10 @@
                                                     
                                                 </tr>
                                                 <tr>
-                                                        <td>parserService</td>
+                                                        <td>claimRevisionService</td>
                                                   
                                                         <td>
-                                                                        <code><a href="../injectables/ParserService.html" target="_self" >ParserService</a></code>
+                                                                        <code><a href="../injectables/ClaimRevisionService.html" target="_self" >ClaimRevisionService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -246,6 +263,95 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="_getClaim"></a>
+                    <span class="name">
+                        <span class="modifier">Private</span>
+                        <span class="modifier">Async</span>
+                        <span ><b>_getClaim</b></span>
+                        <a href="#_getClaim"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>_getClaim(match: <a href="../classes/Claim.html" target="_self">ClaimMatchParameters</a>, postprocess)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="145"
+                            class="link-to-prism">server/claim/claim.service.ts:145</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Default value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>match</td>
+                                    <td>
+                                                <code><a href="../classes/Claim.html" target="_self" >ClaimMatchParameters</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>postprocess</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>true</code>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="calculateOverallStats"></a>
                     <span class="name">
                         <span class="modifier">Private</span>
@@ -264,8 +370,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="145"
-                            class="link-to-prism">server/claim/claim.service.ts:145</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="195"
+                            class="link-to-prism">server/claim/claim.service.ts:195</a></div>
                 </td>
             </tr>
 
@@ -329,8 +435,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="44"
-                            class="link-to-prism">server/claim/claim.service.ts:44</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="55"
+                            class="link-to-prism">server/claim/claim.service.ts:55</a></div>
                 </td>
             </tr>
 
@@ -404,14 +510,17 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="48"
-                            class="link-to-prism">server/claim/claim.service.ts:48</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="65"
+                            class="link-to-prism">server/claim/claim.service.ts:65</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>This function will create a new claim and claim Revision and save it to the dataBase.
+Also creates a History Module that tracks creation of claims.</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -421,6 +530,7 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -432,6 +542,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>ClaimBody received of the client.</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -443,7 +557,8 @@
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>Return a new claim object.</p>
+
                     </div>
                 </td>
             </tr>
@@ -469,8 +584,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="91"
-                            class="link-to-prism">server/claim/claim.service.ts:91</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="129"
+                            class="link-to-prism">server/claim/claim.service.ts:129</a></div>
                 </td>
             </tr>
 
@@ -534,8 +649,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="184"
-                            class="link-to-prism">server/claim/claim.service.ts:184</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="234"
+                            class="link-to-prism">server/claim/claim.service.ts:234</a></div>
                 </td>
             </tr>
 
@@ -610,8 +725,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="95"
-                            class="link-to-prism">server/claim/claim.service.ts:95</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="137"
+                            class="link-to-prism">server/claim/claim.service.ts:137</a></div>
                 </td>
             </tr>
 
@@ -677,8 +792,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="107"
-                            class="link-to-prism">server/claim/claim.service.ts:107</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="141"
+                            class="link-to-prism">server/claim/claim.service.ts:141</a></div>
                 </td>
             </tr>
 
@@ -753,8 +868,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="28"
-                            class="link-to-prism">server/claim/claim.service.ts:28</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="33"
+                            class="link-to-prism">server/claim/claim.service.ts:33</a></div>
                 </td>
             </tr>
 
@@ -848,14 +963,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="122"
-                            class="link-to-prism">server/claim/claim.service.ts:122</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="166"
+                            class="link-to-prism">server/claim/claim.service.ts:166</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>This function return all personality claims</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -865,6 +982,7 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -876,6 +994,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>all personality claims</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -887,7 +1009,8 @@
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>return all claims</p>
+
                     </div>
                 </td>
             </tr>
@@ -915,8 +1038,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="164"
-                            class="link-to-prism">server/claim/claim.service.ts:164</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="214"
+                            class="link-to-prism">server/claim/claim.service.ts:214</a></div>
                 </td>
             </tr>
 
@@ -984,21 +1107,25 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>update(claimId, claimBody)</code>
+                    <code>update(claimId, claimRevisionUpdate)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="73"
-                            class="link-to-prism">server/claim/claim.service.ts:73</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="100"
+                            class="link-to-prism">server/claim/claim.service.ts:100</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>This function creates a new claim with the old claim data
+and overwrite with the new data, keeping data that hasn&#39;t changed.
+Also creates a History Module that tracks updation of claims.</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -1008,6 +1135,7 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1019,15 +1147,23 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>Claim id which wants updated.</p>
+
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>claimBody</td>
+                                    <td>claimRevisionUpdate</td>
 
                                     <td>
                                         No
                                     </td>
 
 
+                                    <td>
+                                        <p>ClaimBody received of the client.</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1039,7 +1175,8 @@
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>Return a new claim object.</p>
+
                     </div>
                 </td>
             </tr>
@@ -1071,7 +1208,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">server/claim/claim.service.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">server/claim/claim.service.ts:17</a></div>
                         </td>
                     </tr>
 
@@ -1098,7 +1235,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">server/claim/claim.service.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">server/claim/claim.service.ts:16</a></div>
                         </td>
                     </tr>
 
@@ -1111,26 +1248,31 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {Injectable, Logger} from &quot;@nestjs/common&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Inject, Logger, Scope } from &quot;@nestjs/common&quot;;
 import { InjectModel } from &quot;@nestjs/mongoose&quot;;
-import { Model, Types } from &quot;mongoose&quot;;
-import slugify from &#x27;slugify&#x27;
+import { FilterQuery, Model, Types } from &quot;mongoose&quot;;
 import { Claim, ClaimDocument } from &quot;../claim/schemas/claim.schema&quot;;
 import { ClaimReviewService } from &quot;../claim-review/claim-review.service&quot;;
-import { ParserService } from &quot;../parser/parser.service&quot;;
-import { SourceService } from &quot;../source/source.service&quot;;
+import { ClaimRevisionService } from &quot;../claim-revision/claim-revision.service&quot;;
+import { HistoryService } from &quot;../history/history.service&quot;
+import { HistoryType, TargetModel } from &quot;../history/schema/history.schema&quot;;
+import { REQUEST } from &#x27;@nestjs/core&#x27;;
+import { Request } from &#x27;express&#x27;;
 
-@Injectable()
+type ClaimMatchParameters &#x3D; ({ _id: string } | { personality: string, slug: string }) &amp; FilterQuery&lt;ClaimDocument&gt;;
+
+@Injectable({ scope: Scope.REQUEST })
 export class ClaimService {
     private optionsToUpdate: { new: boolean; upsert: boolean };
     private readonly logger &#x3D; new Logger(&quot;ClaimService&quot;);
 
     constructor(
+        @Inject(REQUEST) private req: Request,
         @InjectModel(Claim.name)
         private ClaimModel: Model&lt;ClaimDocument&gt;,
         private claimReviewService: ClaimReviewService,
-        private sourceService: SourceService,
-        private parserService: ParserService
+        private historyService: HistoryService,
+        private claimRevisionService: ClaimRevisionService,
     ) {
         this.optionsToUpdate &#x3D; {
             new: true,
@@ -1143,13 +1285,19 @@ export class ClaimService {
             query.personality &#x3D; new Types.ObjectId(query.personality)
         }
         const claims &#x3D; await this.ClaimModel.find(query)
+            .populate(&quot;latestRevision&quot;)    
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
+            
         return Promise.all(
-            claims.map((claim) &#x3D;&gt; {
-                return this.postProcess(claim);
+            claims.map(async (claim) &#x3D;&gt; {
+                // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+                return this.postProcess({
+                    ...claim.latestRevision,
+                    ...claim
+                });
             })
         );
     }
@@ -1158,81 +1306,120 @@ export class ClaimService {
         return this.ClaimModel.countDocuments().where(query);
     }
 
+    /**
+     * This function will create a new claim and claim Revision and save it to the dataBase.
+     * Also creates a History Module that tracks creation of claims.
+     * @param claim ClaimBody received of the client.
+     * @returns Return a new claim object.
+     */
     async create(claim) {
-        claim.content &#x3D; this.parserService.parse(claim.content);
-        claim.slug &#x3D; slugify(claim.title, {
-            lower: true,     // convert to lower case, defaults to &#x60;false&#x60;
-            strict: true     // strip special characters except replacement, defaults to &#x60;false&#x60;
-        })
         claim.personality &#x3D; new Types.ObjectId(claim.personality);
         const newClaim &#x3D; new this.ClaimModel(claim);
-        if (claim.sources &amp;&amp; Array.isArray(claim.sources)) {
-            try {
-                for (let i &#x3D; 0; i &lt; claim.sources.length ; i++) {
-                    await this.sourceService.create({
-                        link: claim.sources[i],
-                        targetId: newClaim.id,
-                        targetModel: &quot;Claim&quot;,
-                    });
-                }
-            } catch (e) {
-                this.logger.error(e);
-                throw e;
-            }
+        const newClaimRevision &#x3D; await this.claimRevisionService.create(newClaim._id, claim)
+        newClaim.latestRevision &#x3D; newClaimRevision._id
+        newClaim.slug &#x3D; newClaimRevision.slug
+        
+        const user &#x3D; this.req.user
+
+        const history &#x3D;
+            this.historyService.getHistoryParams(
+                newClaim._id,
+                TargetModel.Claim,
+                user,
+                HistoryType.Create,
+                newClaim.latestRevision
+            )
+        await this.historyService.createHistory(history)
+
+        newClaim.save();
+
+        return {
+            ...newClaim.toObject(),
+            ...newClaimRevision.toObject()
         }
-        return newClaim.save();
     }
 
-    async update(claimId, claimBody) {
-        // eslint-disable-next-line no-useless-catch
-        try {
-            const claim &#x3D; await this.getById(claimId);
-            claimBody.content &#x3D; this.parserService.parse(claimBody.content);
-            const newClaim &#x3D; Object.assign(claim, claimBody);
-            const claimUpdate &#x3D; await this.ClaimModel.findByIdAndUpdate(
+    /**
+     * This function creates a new claim with the old claim data 
+     * and overwrite with the new data, keeping data that hasn&#x27;t changed.
+     * Also creates a History Module that tracks updation of claims.
+     * @param claimId Claim id which wants updated.
+     * @param claimRevisionUpdate ClaimBody received of the client.
+     * @returns Return a new claim object.
+     */
+    async update(claimId, claimRevisionUpdate) {
+        const claim &#x3D; await this._getClaim({ _id: claimId }, false);
+        const previousRevision &#x3D; claim.toObject().latestRevision
+        delete previousRevision._id
+        const newClaimRevision &#x3D;
+            await this.claimRevisionService.create(claim._id, {
+                ...previousRevision,
+                ...claimRevisionUpdate
+            })
+        claim.latestRevision &#x3D; newClaimRevision._id
+        claim.slug &#x3D; newClaimRevision.slug
+        
+        const user &#x3D; this.req.user
+
+        const history &#x3D;
+            this.historyService.getHistoryParams(
                 claimId,
-                newClaim,
-                this.optionsToUpdate
-            );
-            return claimUpdate;
-        } catch (error) {
-            // TODO: log to service-runner
-            throw error;
-        }
+                TargetModel.Claim,
+                user,
+                HistoryType.Update,
+                newClaimRevision,
+                previousRevision
+            )
+        await this.historyService.createHistory(history)
+        
+        claim.save()
+        return newClaimRevision;
     }
 
     delete(claimId) {
+        // TODO: use soft-delete instead
+        // this means that when deleting it should actually update
+        // the deleted field with the boolean value &#x27;true&#x27;
         return this.ClaimModel.findByIdAndRemove(claimId);
     }
 
+    // TODO: add optional revisionId that will fetch a specifc revision that matches
     async getById(claimId) {
-        const claim &#x3D; await this.ClaimModel.findById(claimId)
-            .populate(&quot;personality&quot;, &quot;_id name&quot;)
-            .populate(&quot;sources&quot;, &quot;_id link classification&quot;);
-        if (!claim) {
-            // TODO: handle 404 for claim not found
-            return {};
-        }
-
-        return this.postProcess(claim.toObject());
+        return this._getClaim({_id: claimId})
     }
 
     async getByPersonalityIdAndClaimSlug(personalityId, claimSlug) {
+        return this._getClaim({personality: personalityId, slug: claimSlug})
+    }
+
+    private async _getClaim(match: ClaimMatchParameters, postprocess &#x3D; true) {
+        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claim &#x3D;
-            await this.ClaimModel.findOne({
-                slug: claimSlug,
-                personality: personalityId
-            })
-            .populate(&quot;personality&quot;, &quot;_id name&quot;)
-            .populate(&quot;sources&quot;, &quot;_id link classification&quot;);
+            await this.ClaimModel.findOne(match)
+                .populate(&quot;personality&quot;, &quot;_id name&quot;)
+                .populate(&quot;sources&quot;, &quot;_id link classification&quot;)
+                .populate(&quot;latestRevision&quot;)
+
         if (!claim) {
             return {};
         }
 
-        return this.postProcess(claim.toObject());
+
+        return postprocess &#x3D;&#x3D;&#x3D; true ? this.postProcess(claim.toObject()) : claim;
     }
 
+    /**
+     * This function return all personality claims
+     * @param claim all personality claims
+     * @returns return all claims
+     */
     private async postProcess(claim) {
+        // TODO: we should not transform the object in this function
+        claim &#x3D; {
+            ...claim.latestRevision, // the order matters
+            ...claim,
+            latestRevision: undefined
+        }
         const reviews &#x3D; await this.claimReviewService.getReviewsByClaimId(
             claim._id
         );

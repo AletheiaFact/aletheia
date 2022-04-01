@@ -200,12 +200,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {Controller, Get, Req, Res} from &quot;@nestjs/common&quot;;
-import {ViewService} from &quot;../view/view.service&quot;;
-import {Request, Response} from &quot;express&quot;;
-import {parse} from &quot;url&quot;;
-import {PersonalityService} from &quot;../personality/personality.service&quot;;
-import {StatsService} from &quot;../stats/stats.service&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Req, Res } from &quot;@nestjs/common&quot;;
+import { ViewService } from &quot;../view/view.service&quot;;
+import { Request, Response } from &quot;express&quot;;
+import { parse } from &quot;url&quot;;
+import { PersonalityService } from &quot;../personality/personality.service&quot;;
+import { StatsService } from &quot;../stats/stats.service&quot;;
 
 @Controller(&quot;/&quot;)
 export class HomeController {
@@ -219,10 +219,10 @@ export class HomeController {
     public async showHome(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
         // @ts-ignore
-        req.language &#x3D; req.headers[&quot;accept-language&quot;] || &quot;en&quot;;
         const { personalities } &#x3D; await this.personalityService.combinedListAll({
             // @ts-ignore
             language: req.language,
+            order: &#x27;random&#x27;,
             pageSize: 5,
             fetchOnly: true
         });

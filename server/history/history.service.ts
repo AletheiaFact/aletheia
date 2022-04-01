@@ -18,7 +18,17 @@ export class HistoryService {
         };
     }
 
-    getHistoryParams(dataId, targetModel, user, type, latestRevision, previousRevision = null) {
+    /**
+     * This function return an history object.
+     * @param dataId Target Id.
+     * @param targetModel The model of the target(claim or personality ).
+     * @param user User who made the change.
+     * @param type Type of the change(create, personality or delete).
+     * @param latestChange Model latest change .
+     * @param previousChange Model previous change.
+     * @returns Returns an object with de params necessary to create an history.
+     */
+    getHistoryParams(dataId, targetModel, user, type, latestChange, previousChange = null) {
         const date = new Date()
         return {
             targetId: new Types.ObjectId(dataId),
@@ -26,13 +36,18 @@ export class HistoryService {
             user: user._id,
             type,
             details: {
-                after: latestRevision,
-                before: previousRevision
+                after: latestChange,
+                before: previousChange
             },
             date,
         }
     }
 
+    /**
+     * This function create a new history document to database
+     * @param data Object with the history data
+     * @returns Returns a new history document to database
+     */
     async createHistory(data) {
         const newHistory = new this.HistoryModel(data);
         return newHistory.save();

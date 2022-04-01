@@ -144,13 +144,13 @@
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @Prop({type: undefined, required: true, ref: &#x27;Claim&#x27;})<br />
+                            @Prop({type: undefined, required: true, ref: &#x27;ClaimRevision&#x27;})<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:40</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:50</a></div>
                         </td>
                     </tr>
 
@@ -185,7 +185,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:33</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:43</a></div>
                         </td>
                     </tr>
 
@@ -220,7 +220,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:47</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:57</a></div>
                         </td>
                     </tr>
 
@@ -255,7 +255,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:56</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -290,7 +290,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:53</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:63</a></div>
                         </td>
                     </tr>
 
@@ -325,7 +325,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:50</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -360,7 +360,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:63</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:73</a></div>
                         </td>
                     </tr>
 
@@ -380,14 +380,24 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Prop, Schema, SchemaFactory } from &quot;@nestjs/mongoose&quot;;
-import { Claim } from &quot;../../claim/schemas/claim.schema&quot;;
 import { Personality } from &quot;../../personality/schemas/personality.schema&quot;;
 import * as mongoose from &quot;mongoose&quot;;
 import { User } from &quot;../../users/schemas/user.schema&quot;;
-import { Source } from &quot;../../source/schemas/source.schema&quot;;
+import { Claim } from &quot;../../claim/schemas/claim.schema&quot;;
 
 export type ClaimReviewDocument &#x3D; ClaimReview &amp; mongoose.Document;
 
+export enum ClassificationEnum {
+    &quot;not-fact&quot;,
+    &quot;true&quot;,
+    &quot;true-but&quot;,
+    &quot;arguable&quot;,
+    &quot;misleading&quot;,
+    &quot;false&quot;,
+    &quot;unsustainable&quot;,
+    &quot;exaggerated&quot;,
+    &quot;unverifiable&quot;,
+};
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class ClaimReview {
     @Prop({
@@ -416,7 +426,7 @@ export class ClaimReview {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: &quot;Claim&quot;,
+        ref: &quot;ClaimRevision&quot;,
     })
     claim: Claim;
 
@@ -442,8 +452,6 @@ export class ClaimReview {
         ref: &quot;User&quot;,
     })
     user: User;
-
-    // TODO: revision_id
 }
 
 const ClaimReviewSchemaRaw &#x3D; SchemaFactory.createForClass(ClaimReview);

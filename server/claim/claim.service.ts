@@ -56,6 +56,12 @@ export class ClaimService {
         return this.ClaimModel.countDocuments().where(query);
     }
 
+    /**
+     * This function will create a new claim and claim Revision and save it to the dataBase.
+     * Also creates a History Module that tracks creation of claims.
+     * @param claim ClaimBody received of the client.
+     * @returns Return a new claim object.
+     */
     async create(claim) {
         claim.personality = new Types.ObjectId(claim.personality);
         const newClaim = new this.ClaimModel(claim);
@@ -83,6 +89,14 @@ export class ClaimService {
         }
     }
 
+    /**
+     * This function creates a new claim with the old claim data 
+     * and overwrite with the new data, keeping data that hasn't changed.
+     * Also creates a History Module that tracks updation of claims.
+     * @param claimId Claim id which wants updated.
+     * @param claimRevisionUpdate ClaimBody received of the client.
+     * @returns Return a new claim object.
+     */
     async update(claimId, claimRevisionUpdate) {
         const claim = await this._getClaim({ _id: claimId }, false);
         const previousRevision = claim.toObject().latestRevision
