@@ -35,17 +35,18 @@ export class ClaimService {
             query.personality = new Types.ObjectId(query.personality)
         }
         const claims = await this.ClaimModel.find(query)
+            .populate("latestRevision")    
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
+            
         return Promise.all(
             claims.map(async (claim) => {
                 // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-                let claimRevision = await this.claimRevisionService.getRevision(claim._id)
                 return this.postProcess({
-                    ...claim,
-                    ...claimRevision.toObject()
+                    ...claim.latestRevision,
+                    ...claim
                 });
             })
         );

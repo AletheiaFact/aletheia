@@ -23,10 +23,16 @@ export class ClaimRevisionService {
         };
     }
 
+    /** get ClaimRevision by ID */
     getRevision(claimId) {
         return this.ClaimRevisionModel.findOne({ claimId })
     }
-    
+    /**
+     *
+     * @param claimId an unique claim id
+     * @param claim Claim Content
+     * @returns Save the claimRevision in database
+     */
     async create(claimId, claim) {
         claim.claimId = claimId;
         claim.content = this.parserService.parse(claim.content);
