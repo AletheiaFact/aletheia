@@ -37,6 +37,12 @@ export class History {
       required: true,
     })
     details: object
+
+    @Prop({
+      type: Date,
+      required: true,
+    })
+    date: mongoose.Date
 }
 
 export const HistorySchema = SchemaFactory.createForClass(History);

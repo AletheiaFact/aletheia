@@ -1,7 +1,7 @@
 import {Injectable, Logger} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import { History, HistoryDocument } from "./schema/history.schema";
+import { HistoryDocument } from "./schema/history.schema";
 
 @Injectable()
 export class HistoryService {
@@ -9,7 +9,7 @@ export class HistoryService {
     private readonly logger = new Logger("HistoryService");
 
     constructor(
-        @InjectModel(History.name)
+        @InjectModel('HISTORY_MODEL')
         private HistoryModel: Model<HistoryDocument>,
     ) {
         this.optionsToUpdate = {
@@ -18,16 +18,18 @@ export class HistoryService {
         };
     }
 
-    getHistoryParams(dataId, target, user, type, latestRevision, previousRevision = null) {
+    getHistoryParams(dataId, targetModel, user, type, latestRevision, previousRevision = null) {
+        const date = new Date()
         return {
             targetId: new Types.ObjectId(dataId),
-            targetModel: target,
-            type: type,
+            targetModel,
             user: user._id,
+            type,
             details: {
                 after: latestRevision,
                 before: previousRevision
             },
+            date,
         }
     }
 

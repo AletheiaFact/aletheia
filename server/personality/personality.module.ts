@@ -6,6 +6,7 @@ import { UtilService } from "../util";
 import { WikidataModule } from "../wikidata/wikidata.module";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ClaimRevisionModule } from "../claim-revision/claim-revision.module";
+import { HistoryModule } from "../history/history.module";
 import { PersonalityController } from "./personality.controller";
 import Logger from "../logger";
 import { ViewModule } from "../view/view.module";
@@ -18,7 +19,14 @@ const PersonalityModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [PersonalityModel, WikidataModule, ClaimReviewModule, ClaimRevisionModule, ViewModule],
+    imports: [
+        PersonalityModel,
+        WikidataModule,
+        ClaimReviewModule,
+        ClaimRevisionModule,
+        HistoryModule,
+        ViewModule
+    ],
     exports: [PersonalityService],
     providers: [UtilService, PersonalityService, Logger],
     controllers: [PersonalityController],
