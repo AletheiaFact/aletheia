@@ -1,10 +1,19 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { User } from "../../users/schemas/user.schema";
-import { HistoryType } from "../../claim/claim.service";
 
 export type HistoryDocument = History & mongoose.Document;
 
+export enum TargetModel { 
+  Claim = 'claim',
+  Personality = 'personality',
+}
+
+export enum HistoryType { 
+  Create = 'create',
+  Update = 'update',
+  Delete = 'delete'
+}
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class History {
     @Prop({
@@ -16,9 +25,8 @@ export class History {
 
     @Prop({
         required: true,
-        enum: ["Claim", "Personality"],
     })
-    targetModel: string;
+    targetModel: TargetModel;
 
     @Prop({
       type: mongoose.Types.ObjectId,

@@ -3,20 +3,13 @@ import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ParserService } from "../parser/parser.service";
-import { SourceService } from "../source/source.service";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 import { HistoryService } from "../history/history.service"
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 
 type ClaimMatchParameters = ({ _id: string } | { personality: string, slug: string }) & FilterQuery<ClaimDocument>;
-
-export enum HistoryType { 
-    Create = 'create',
-    Update = 'update',
-    Delete = 'delete'
-}
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimService {
@@ -30,8 +23,6 @@ export class ClaimService {
         private claimReviewService: ClaimReviewService,
         private historyService: HistoryService,
         private claimRevisionService: ClaimRevisionService,
-        private sourceService: SourceService,
-        private parserService: ParserService
     ) {
         this.optionsToUpdate = {
             new: true,
@@ -71,7 +62,16 @@ export class ClaimService {
         newClaim.latestRevision = newClaimRevision._id
         newClaim.slug = newClaimRevision.slug
         
-        const history = this.historyService.getHistoryParams(newClaim._id, 'Claim' , this.req.user, HistoryType.Create, newClaim.latestRevision)
+        const user = this.req.user
+
+        const history =
+            this.historyService.getHistoryParams(
+                newClaim._id,
+                TargetModel.Claim,
+                user,
+                HistoryType.Create,
+                newClaim.latestRevision
+            )
         await this.historyService.createHistory(history)
 
         newClaim.save();
@@ -94,7 +94,17 @@ export class ClaimService {
         claim.latestRevision = newClaimRevision._id
         claim.slug = newClaimRevision.slug
         
-        const history = this.historyService.getHistoryParams(claimId, 'Claim', this.req.user, HistoryType.Update, newClaimRevision, previousRevision)
+        const user = this.req.user
+
+        const history =
+            this.historyService.getHistoryParams(
+                claimId,
+                TargetModel.Claim,
+                user,
+                HistoryType.Update,
+                newClaimRevision,
+                previousRevision
+            )
         await this.historyService.createHistory(history)
         
         claim.save()

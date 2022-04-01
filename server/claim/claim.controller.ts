@@ -20,7 +20,6 @@ import { SessionGuard } from "../auth/session.guard";
 import { Request, Response } from "express";
 import { parse } from "url";
 import { PersonalityService } from "../personality/personality.service";
-import { ClaimRevisionService } from "../claim-revision/claim-revision.service"
 import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
 import { CreateClaimDTO } from "./dto/create-claim.dto";

@@ -7,7 +7,7 @@ import { WikidataService } from "../wikidata/wikidata.service";
 import { UtilService } from "../util";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { HistoryService } from "../history/history.service";
-import { HistoryType } from "../claim/claim.service";
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 
@@ -28,7 +28,6 @@ export class PersonalityService {
         private wikidata: WikidataService,
         private util: UtilService
     ) {}
-
     async listAll(
         page,
         pageSize,
@@ -83,11 +82,13 @@ export class PersonalityService {
             this.logger.log(
                 `Attempting to create new personality with data ${personality}`
             );
-            
+
+            const user = this.req.user
+
             const history = this.history.getHistoryParams(
                 newPersonality._id,
-                'Personality',
-                this.req.user,
+                TargetModel.Personality,
+                user,
                 HistoryType.Create,
                 personality
             )
@@ -183,11 +184,14 @@ export class PersonalityService {
                 this.optionsToUpdate
             );
         this.logger.log(`Updated personality with data ${newPersonality}`);
+
+        const user = this.req.user;
+
         const history =
             this.history.getHistoryParams(
                 personalityId,
-                "Personality",
-                this.req.user,
+                TargetModel.Personality,
+                user,
                 HistoryType.Update,
                 personalityUpdate,
                 previousPersonality
