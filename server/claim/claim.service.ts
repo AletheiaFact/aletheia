@@ -1,6 +1,6 @@
 import { Injectable, Inject, Logger, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { FilterQuery, Types } from "mongoose";
+import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
@@ -20,7 +20,7 @@ export class ClaimService {
     constructor(
         @Inject(REQUEST) private req: Request,
         @InjectModel(Claim.name)
-        private ClaimModel: ISoftDeletedModel<ClaimDocument>,
+        private ClaimModel: ISoftDeletedModel<ClaimDocument> & Model<ClaimDocument>,
         private claimReviewService: ClaimReviewService,
         private historyService: HistoryService,
         private claimRevisionService: ClaimRevisionService,
