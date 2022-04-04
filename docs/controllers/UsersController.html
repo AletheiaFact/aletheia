@@ -477,8 +477,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="85"
-                            class="link-to-prism">server/users/users.controller.ts:85</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="84"
+                            class="link-to-prism">server/users/users.controller.ts:84</a></div>
                 </td>
             </tr>
 
@@ -612,7 +612,6 @@ export class UsersController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
         // @ts-ignore
-        req.language &#x3D; req.headers[&quot;accept-language&quot;] || &quot;en&quot;;
 
         await this.viewService
             .getNextServer()
@@ -629,7 +628,6 @@ export class UsersController {
     public async profile(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
         // @ts-ignore
-        req.language &#x3D; req.headers[&quot;accept-language&quot;] || &quot;en&quot;;
 
         await this.viewService
             .getNextServer()

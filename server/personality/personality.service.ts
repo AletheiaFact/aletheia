@@ -1,13 +1,17 @@
 import { Model } from "mongoose";
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Inject, Logger, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import slugify from 'slugify'
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { UtilService } from "../util";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { HistoryService } from "../history/history.service";
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class PersonalityService {
     private readonly logger = new Logger("PersonalityService");
     private readonly optionsToUpdate = {
@@ -16,13 +20,14 @@ export class PersonalityService {
     };
 
     constructor(
+        @Inject(REQUEST) private req: Request,
         @InjectModel(Personality.name)
         private PersonalityModel: Model<PersonalityDocument>,
         private claimReview: ClaimReviewService,
+        private history: HistoryService,
         private wikidata: WikidataService,
         private util: UtilService
     ) {}
-
     async listAll(
         page,
         pageSize,
@@ -50,8 +55,6 @@ export class PersonalityService {
                 .lean()
         }
 
-        console.log(personalities)
-
         if (withSuggestions) {
             const wbentities = await this.wikidata.queryWikibaseEntities(
                 query.name.$regex,
@@ -69,6 +72,12 @@ export class PersonalityService {
         );
     }
 
+    /**
+     * This function will create a new personality and save it to the dataBase.
+     * Also creates a History Module that tracks creation of personalities.
+     * @param personality PersonalityBody received of the client.
+     * @returns Return a new personality.
+     */
     create(personality) {
         try {
             personality.slug = slugify(personality.name, {
@@ -79,6 +88,19 @@ export class PersonalityService {
             this.logger.log(
                 `Attempting to create new personality with data ${personality}`
             );
+
+            const user = this.req.user
+
+            const history = this.history.getHistoryParams(
+                newPersonality._id,
+                TargetModel.Personality,
+                user,
+                HistoryType.Create,
+                personality
+            )
+
+            this.history.createHistory(history)
+
             return newPersonality.save();
         } catch (err) {}
     }
@@ -101,8 +123,7 @@ export class PersonalityService {
         }).populate({
             path: "claims",
             populate: {
-                path: "revisions",
-                options: { sort: { 'createdAt': -1}, limit: 1},
+                path: "latestRevision",
                 select: "_id title content"
             },
             select: "_id",
@@ -124,22 +145,21 @@ export class PersonalityService {
                 wikidataId: personality.wikidata,
                 language,
             });
-
             // bail out if wikidata property is not allowed
             if (wikidataExtract.isAllowedProp === false) {
                 return;
             }
-            return Object.assign(personality, {
+            return Object.assign(
+                wikidataExtract,
+                personality, {
                 stats:
                     personality._id &&
                     (await this.getReviewStats(personality._id)),
-                ...wikidataExtract,
                 claims:
                     personality.claims &&
                     this.extractClaimWithTextSummary(personality.claims),
             });
         }
-
         return personality;
     }
 
@@ -152,23 +172,47 @@ export class PersonalityService {
         return this.util.formatStats(reviews, true);
     }
 
-    async update(personalityId, personalityBody) {
+    /**
+     * This function overwrites personality data with the new data,
+     * keeping data that has not changed.
+     * Also creates a History Module that tracks updation of personalities.
+     * @param personalityId Personality id which wants updated.
+     * @param newPersonalityBody PersonalityBody received of the client.
+     * @returns Return changed personality.
+     */
+    async update(personalityId, newPersonalityBody) {
         // eslint-disable-next-line no-useless-catch
-        try {
-            const personality = await this.getById(personalityId);
-            const newPersonality = Object.assign(personality, personalityBody);
-            const personalityUpdate =
-                await this.PersonalityModel.findByIdAndUpdate(
-                    personalityId,
-                    newPersonality,
-                    this.optionsToUpdate
-                );
-            this.logger.log(`Updated personality with data ${newPersonality}`);
-            return personalityUpdate;
-        } catch (error) {
-            // TODO: log to service-runner
-            throw error;
+        if(newPersonalityBody.name) {
+            newPersonalityBody.slug = slugify(newPersonalityBody.name, {
+                lower: true,
+                strict: true
+            })
         }
+        const personality = await this.getById(personalityId);
+        const previousPersonality = {...personality}
+        const newPersonality = Object.assign(personality, newPersonalityBody);
+        const personalityUpdate =
+            await this.PersonalityModel.findByIdAndUpdate(
+                personalityId,
+                newPersonality,
+                this.optionsToUpdate
+            );
+        this.logger.log(`Updated personality with data ${newPersonality}`);
+
+        const user = this.req.user;
+
+        const history =
+            this.history.getHistoryParams(
+                personalityId,
+                TargetModel.Personality,
+                user,
+                HistoryType.Update,
+                personalityUpdate,
+                previousPersonality
+            )
+        await this.history.createHistory(history)
+        
+        return personalityUpdate;
     }
 
     delete(personalityId) {
@@ -187,19 +231,6 @@ export class PersonalityService {
             }
             return { ...claim, content: claim.content.text };
         });
-    }
-
-    findOneAndUpdate(query, push) {
-        return this.PersonalityModel.findOneAndUpdate(
-            { ...query },
-            { $push: { ...push } },
-            { new: true },
-            (e) => {
-                if (e) {
-                    throw e;
-                }
-            }
-        );
     }
 
     verifyInputsQuery(query) {

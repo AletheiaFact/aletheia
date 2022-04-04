@@ -60,6 +60,9 @@
                 <td class="col-md-4">
                     <ul class="index-list">
                         <li>
+                            <a href="#axios" title="server/sitemap/sitemap.service.ts" ><b>axios</b>&nbsp;&nbsp;&nbsp;(server/.../sitemap.service.ts)</a>
+                        </li>
+                        <li>
                             <a href="#axios" title="server/wikidata/wikidata.service.ts" ><b>axios</b>&nbsp;&nbsp;&nbsp;(server/.../wikidata.service.ts)</a>
                         </li>
                         <li>
@@ -75,6 +78,15 @@
                             <a href="#ClaimReviewSchemaRaw" title="server/claim-review/schemas/claim-review.schema.ts" ><b>ClaimReviewSchemaRaw</b>&nbsp;&nbsp;&nbsp;(server/.../claim-review.schema.ts)</a>
                         </li>
                         <li>
+                            <a href="#ClaimRevisionModel" title="server/claim-revision/claim-revision.module.ts" ><b>ClaimRevisionModel</b>&nbsp;&nbsp;&nbsp;(server/.../claim-revision.module.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ClaimRevisionSchema" title="server/claim-revision/schema/claim-revision.schema.ts" ><b>ClaimRevisionSchema</b>&nbsp;&nbsp;&nbsp;(server/.../claim-revision.schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ClaimRevisionSchemaRaw" title="server/claim-revision/schema/claim-revision.schema.ts" ><b>ClaimRevisionSchemaRaw</b>&nbsp;&nbsp;&nbsp;(server/.../claim-revision.schema.ts)</a>
+                        </li>
+                        <li>
                             <a href="#ClaimSchema" title="server/claim/schemas/claim.schema.ts" ><b>ClaimSchema</b>&nbsp;&nbsp;&nbsp;(server/.../claim.schema.ts)</a>
                         </li>
                         <li>
@@ -88,6 +100,12 @@
                         </li>
                         <li>
                             <a href="#handlebars" title="server/email/email.service.ts" ><b>handlebars</b>&nbsp;&nbsp;&nbsp;(server/.../email.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#HistoryModel" title="server/history/history.module.ts" ><b>HistoryModel</b>&nbsp;&nbsp;&nbsp;(server/.../history.module.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#HistorySchema" title="server/history/schema/history.schema.ts" ><b>HistorySchema</b>&nbsp;&nbsp;&nbsp;(server/.../history.schema.ts)</a>
                         </li>
                         <li>
                             <a href="#initApp" title="server/main.ts" ><b>initApp</b>&nbsp;&nbsp;&nbsp;(server/.../main.ts)</a>
@@ -168,6 +186,29 @@
     </table>
 </section>
 
+    <h3>server/sitemap/sitemap.service.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="axios"></a>
+                    <span class="name">
+                        <span ><b>axios</b></span>
+                        <a href="#axios"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>require(&quot;axios&quot;)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
     <h3>server/wikidata/wikidata.service.ts</h3>
     <section>
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -318,6 +359,77 @@
         </tbody>
     </table>
 </section>
+    <h3>server/claim-revision/claim-revision.module.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ClaimRevisionModel"></a>
+                    <span class="name">
+                        <span ><b>ClaimRevisionModel</b></span>
+                        <a href="#ClaimRevisionModel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>MongooseModule.forFeature([
+    {
+        name: ClaimRevision.name,
+        schema: ClaimRevisionSchema,
+    },
+])</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>server/claim-revision/schema/claim-revision.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ClaimRevisionSchema"></a>
+                    <span class="name">
+                        <span ><b>ClaimRevisionSchema</b></span>
+                        <a href="#ClaimRevisionSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>ClaimRevisionSchemaRaw</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ClaimRevisionSchemaRaw"></a>
+                    <span class="name">
+                        <span ><b>ClaimRevisionSchemaRaw</b></span>
+                        <a href="#ClaimRevisionSchemaRaw"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>SchemaFactory.createForClass(ClaimRevision)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
     <h3>server/claim/schemas/claim.schema.ts</h3>
     <section>
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -409,8 +521,6 @@
         options: {
             useUnifiedTopology: true,
             useNewUrlParser: true,
-            useCreateIndex: true,
-            useFindAndModify: false,
         }
     }
     const app &#x3D; await NestFactory.create&lt;NestExpressApplication&gt;(
@@ -420,6 +530,16 @@
             cors: corsOptions,
         }
     );
+
+    app.use(GetLanguageMiddleware);
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true,
+            transformOptions: {enableImplicitConversion: true},
+            whitelist: true,
+            forbidNonWhitelisted: true,
+        }),
+    )
 
     app.use(cookieParser());
     app.use(
@@ -596,6 +716,57 @@
         </tbody>
     </table>
 </section>
+    <h3>server/history/history.module.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="HistoryModel"></a>
+                    <span class="name">
+                        <span ><b>HistoryModel</b></span>
+                        <a href="#HistoryModel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>MongooseModule.forFeature([
+    {
+        name: &quot;HISTORY_MODEL&quot;,
+        schema: HistorySchema,
+    },
+])</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>server/history/schema/history.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="HistorySchema"></a>
+                    <span class="name">
+                        <span ><b>HistorySchema</b></span>
+                        <a href="#HistorySchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>SchemaFactory.createForClass(History)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
     <h3>server/seed.ts</h3>
     <section>
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -617,8 +788,6 @@
         options: {
             useUnifiedTopology: true,
             useNewUrlParser: true,
-            useCreateIndex: true,
-            useFindAndModify: false,
         }
     }
     options.logger.log(&quot;info&quot;, &#x60;Loading AppModule&#x60;);

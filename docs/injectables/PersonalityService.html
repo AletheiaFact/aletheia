@@ -115,9 +115,6 @@
                                 <a href="#extractClaimWithTextSummary" >extractClaimWithTextSummary</a>
                             </li>
                             <li>
-                                <a href="#findOneAndUpdate" >findOneAndUpdate</a>
-                            </li>
-                            <li>
                                     <span class="modifier">Async</span>
                                 <a href="#getById" >getById</a>
                             </li>
@@ -162,12 +159,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(PersonalityModel: <a href="../classes/Personality.html" target="_self">Model&lt;PersonalityDocument&gt;</a>, claimReview: <a href="../injectables/ClaimReviewService.html" target="_self">ClaimReviewService</a>, wikidata: <a href="../injectables/WikidataService.html" target="_self">WikidataService</a>, util: <a href="../injectables/UtilService.html" target="_self">UtilService</a>)</code>
+<code>constructor(req: Request, PersonalityModel: <a href="../classes/Personality.html" target="_self">Model&lt;PersonalityDocument&gt;</a>, claimReview: <a href="../injectables/ClaimReviewService.html" target="_self">ClaimReviewService</a>, history: <a href="../injectables/HistoryService.html" target="_self">HistoryService</a>, wikidata: <a href="../injectables/WikidataService.html" target="_self">WikidataService</a>, util: <a href="../injectables/UtilService.html" target="_self">UtilService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">server/personality/personality.service.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">server/personality/personality.service.ts:20</a></div>
                             </td>
                         </tr>
 
@@ -185,6 +182,18 @@
                                         </thead>
                                         <tbody>
                                                 <tr>
+                                                        <td>req</td>
+                                                  
+                                                        <td>
+                                                                    <code>Request</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
                                                         <td>PersonalityModel</td>
                                                   
                                                         <td>
@@ -201,6 +210,18 @@
                                                   
                                                         <td>
                                                                         <code><a href="../injectables/ClaimReviewService.html" target="_self" >ClaimReviewService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>history</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/HistoryService.html" target="_self" >HistoryService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -266,8 +287,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="186"
-                            class="link-to-prism">server/personality/personality.service.ts:186</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="245"
+                            class="link-to-prism">server/personality/personality.service.ts:245</a></div>
                 </td>
             </tr>
 
@@ -331,8 +352,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="150"
-                            class="link-to-prism">server/personality/personality.service.ts:150</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="222"
+                            class="link-to-prism">server/personality/personality.service.ts:222</a></div>
                 </td>
             </tr>
 
@@ -404,14 +425,17 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="56"
-                            class="link-to-prism">server/personality/personality.service.ts:56</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="81"
+                            class="link-to-prism">server/personality/personality.service.ts:81</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>This function will create a new personality and save it to the dataBase.
+Also creates a History Module that tracks creation of personalities.</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -421,6 +445,7 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -432,6 +457,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>PersonalityBody received of the client.</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -443,7 +472,8 @@
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>Return a new personality.</p>
+
                     </div>
                 </td>
             </tr>
@@ -469,8 +499,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="146"
-                            class="link-to-prism">server/personality/personality.service.ts:146</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="218"
+                            class="link-to-prism">server/personality/personality.service.ts:218</a></div>
                 </td>
             </tr>
 
@@ -534,8 +564,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="154"
-                            class="link-to-prism">server/personality/personality.service.ts:154</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="226"
+                            class="link-to-prism">server/personality/personality.service.ts:226</a></div>
                 </td>
             </tr>
 
@@ -587,80 +617,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="findOneAndUpdate"></a>
-                    <span class="name">
-                        <span ><b>findOneAndUpdate</b></span>
-                        <a href="#findOneAndUpdate"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>findOneAndUpdate(query, push)</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="164"
-                            class="link-to-prism">server/personality/personality.service.ts:164</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>query</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>push</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="getById"></a>
                     <span class="name">
                         <span class="modifier">Async</span>
@@ -679,8 +635,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="70"
-                            class="link-to-prism">server/personality/personality.service.ts:70</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="108"
+                            class="link-to-prism">server/personality/personality.service.ts:108</a></div>
                 </td>
             </tr>
 
@@ -767,8 +723,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="81"
-                            class="link-to-prism">server/personality/personality.service.ts:81</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="119"
+                            class="link-to-prism">server/personality/personality.service.ts:119</a></div>
                 </td>
             </tr>
 
@@ -855,8 +811,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="118"
-                            class="link-to-prism">server/personality/personality.service.ts:118</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="166"
+                            class="link-to-prism">server/personality/personality.service.ts:166</a></div>
                 </td>
             </tr>
 
@@ -922,8 +878,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="26"
-                            class="link-to-prism">server/personality/personality.service.ts:26</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="31"
+                            class="link-to-prism">server/personality/personality.service.ts:31</a></div>
                 </td>
             </tr>
 
@@ -1048,8 +1004,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="92"
-                            class="link-to-prism">server/personality/personality.service.ts:92</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="141"
+                            class="link-to-prism">server/personality/personality.service.ts:141</a></div>
                 </td>
             </tr>
 
@@ -1129,21 +1085,25 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>update(personalityId, personalityBody)</code>
+                    <code>update(personalityId, newPersonalityBody)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="127"
-                            class="link-to-prism">server/personality/personality.service.ts:127</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="183"
+                            class="link-to-prism">server/personality/personality.service.ts:183</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>This function overwrites personality data with the new data,
+keeping data that has not changed.
+Also creates a History Module that tracks updation of personalities.</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -1153,6 +1113,7 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1164,15 +1125,23 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>Personality id which wants updated.</p>
+
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>personalityBody</td>
+                                    <td>newPersonalityBody</td>
 
                                     <td>
                                         No
                                     </td>
 
 
+                                    <td>
+                                        <p>PersonalityBody received of the client.</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1184,7 +1153,8 @@
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>Return changed personality.</p>
+
                     </div>
                 </td>
             </tr>
@@ -1210,8 +1180,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="177"
-                            class="link-to-prism">server/personality/personality.service.ts:177</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="236"
+                            class="link-to-prism">server/personality/personality.service.ts:236</a></div>
                 </td>
             </tr>
 
@@ -1281,7 +1251,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">server/personality/personality.service.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">server/personality/personality.service.ts:16</a></div>
                         </td>
                     </tr>
 
@@ -1317,7 +1287,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">server/personality/personality.service.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">server/personality/personality.service.ts:17</a></div>
                         </td>
                     </tr>
 
@@ -1331,15 +1301,19 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Model } from &quot;mongoose&quot;;
-import { Injectable, Logger } from &quot;@nestjs/common&quot;;
+import { Injectable, Inject, Logger, Scope } from &quot;@nestjs/common&quot;;
 import { InjectModel } from &quot;@nestjs/mongoose&quot;;
 import slugify from &#x27;slugify&#x27;
 import { Personality, PersonalityDocument } from &quot;./schemas/personality.schema&quot;;
 import { WikidataService } from &quot;../wikidata/wikidata.service&quot;;
 import { UtilService } from &quot;../util&quot;;
 import { ClaimReviewService } from &quot;../claim-review/claim-review.service&quot;;
+import { HistoryService } from &quot;../history/history.service&quot;;
+import { HistoryType, TargetModel } from &quot;../history/schema/history.schema&quot;;
+import { REQUEST } from &#x27;@nestjs/core&#x27;;
+import { Request } from &#x27;express&#x27;;
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class PersonalityService {
     private readonly logger &#x3D; new Logger(&quot;PersonalityService&quot;);
     private readonly optionsToUpdate &#x3D; {
@@ -1348,13 +1322,14 @@ export class PersonalityService {
     };
 
     constructor(
+        @Inject(REQUEST) private req: Request,
         @InjectModel(Personality.name)
         private PersonalityModel: Model&lt;PersonalityDocument&gt;,
         private claimReview: ClaimReviewService,
+        private history: HistoryService,
         private wikidata: WikidataService,
         private util: UtilService
     ) {}
-
     async listAll(
         page,
         pageSize,
@@ -1363,11 +1338,25 @@ export class PersonalityService {
         language,
         withSuggestions &#x3D; false
     ) {
-        let personalities &#x3D; await this.PersonalityModel.find(query)
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .sort({ _id: order })
-            .lean();
+        let personalities;
+
+        if (order &#x3D;&#x3D;&#x3D; &#x27;random&#x27;) {
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            personalities &#x3D; await this.PersonalityModel.aggregate([
+                { $match: query },
+                { $sample: { size: pageSize } },
+            ])
+
+            
+        } else {
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            personalities &#x3D; await this.PersonalityModel.find(query)
+                .skip(page * pageSize)
+                .limit(pageSize)
+                .sort({ _id: order })
+                .lean()
+        }
+
         if (withSuggestions) {
             const wbentities &#x3D; await this.wikidata.queryWikibaseEntities(
                 query.name.$regex,
@@ -1385,6 +1374,12 @@ export class PersonalityService {
         );
     }
 
+    /**
+     * This function will create a new personality and save it to the dataBase.
+     * Also creates a History Module that tracks creation of personalities.
+     * @param personality PersonalityBody received of the client.
+     * @returns Return a new personality.
+     */
     create(personality) {
         try {
             personality.slug &#x3D; slugify(personality.name, {
@@ -1395,6 +1390,19 @@ export class PersonalityService {
             this.logger.log(
                 &#x60;Attempting to create new personality with data ${personality}&#x60;
             );
+
+            const user &#x3D; this.req.user
+
+            const history &#x3D; this.history.getHistoryParams(
+                newPersonality._id,
+                TargetModel.Personality,
+                user,
+                HistoryType.Create,
+                personality
+            )
+
+            this.history.createHistory(history)
+
             return newPersonality.save();
         } catch (err) {}
     }
@@ -1411,12 +1419,23 @@ export class PersonalityService {
     }
 
     async getBySlug(personalitySlug, language &#x3D; &quot;en&quot;) {
-        const personality &#x3D; await this.PersonalityModel.findOne({
+        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+        const personality: any &#x3D; await this.PersonalityModel.findOne({
             slug: personalitySlug
         }).populate({
             path: &quot;claims&quot;,
-            select: &quot;_id title content&quot;,
+            populate: {
+                path: &quot;latestRevision&quot;,
+                select: &quot;_id title content&quot;
+            },
+            select: &quot;_id&quot;,
         });
+        personality.claims &#x3D; await Promise.all(personality.claims.map((claim) &#x3D;&gt; {
+            return {
+                ...claim.lastestRevision,
+                ...claim
+            }
+        })) 
         this.logger.log(&#x60;Found personality ${personality._id}&#x60;);
         return await this.postProcess(personality.toObject(), language);
     }
@@ -1428,22 +1447,21 @@ export class PersonalityService {
                 wikidataId: personality.wikidata,
                 language,
             });
-
             // bail out if wikidata property is not allowed
             if (wikidataExtract.isAllowedProp &#x3D;&#x3D;&#x3D; false) {
                 return;
             }
-            return Object.assign(personality, {
+            return Object.assign(
+                wikidataExtract,
+                personality, {
                 stats:
                     personality._id &amp;&amp;
                     (await this.getReviewStats(personality._id)),
-                ...wikidataExtract,
                 claims:
                     personality.claims &amp;&amp;
                     this.extractClaimWithTextSummary(personality.claims),
             });
         }
-
         return personality;
     }
 
@@ -1456,23 +1474,47 @@ export class PersonalityService {
         return this.util.formatStats(reviews, true);
     }
 
-    async update(personalityId, personalityBody) {
+    /**
+     * This function overwrites personality data with the new data,
+     * keeping data that has not changed.
+     * Also creates a History Module that tracks updation of personalities.
+     * @param personalityId Personality id which wants updated.
+     * @param newPersonalityBody PersonalityBody received of the client.
+     * @returns Return changed personality.
+     */
+    async update(personalityId, newPersonalityBody) {
         // eslint-disable-next-line no-useless-catch
-        try {
-            const personality &#x3D; await this.getById(personalityId);
-            const newPersonality &#x3D; Object.assign(personality, personalityBody);
-            const personalityUpdate &#x3D;
-                await this.PersonalityModel.findByIdAndUpdate(
-                    personalityId,
-                    newPersonality,
-                    this.optionsToUpdate
-                );
-            this.logger.log(&#x60;Updated personality with data ${newPersonality}&#x60;);
-            return personalityUpdate;
-        } catch (error) {
-            // TODO: log to service-runner
-            throw error;
+        if(newPersonalityBody.name) {
+            newPersonalityBody.slug &#x3D; slugify(newPersonalityBody.name, {
+                lower: true,
+                strict: true
+            })
         }
+        const personality &#x3D; await this.getById(personalityId);
+        const previousPersonality &#x3D; {...personality}
+        const newPersonality &#x3D; Object.assign(personality, newPersonalityBody);
+        const personalityUpdate &#x3D;
+            await this.PersonalityModel.findByIdAndUpdate(
+                personalityId,
+                newPersonality,
+                this.optionsToUpdate
+            );
+        this.logger.log(&#x60;Updated personality with data ${newPersonality}&#x60;);
+
+        const user &#x3D; this.req.user;
+
+        const history &#x3D;
+            this.history.getHistoryParams(
+                personalityId,
+                TargetModel.Personality,
+                user,
+                HistoryType.Update,
+                personalityUpdate,
+                previousPersonality
+            )
+        await this.history.createHistory(history)
+        
+        return personalityUpdate;
     }
 
     delete(personalityId) {
@@ -1491,19 +1533,6 @@ export class PersonalityService {
             }
             return { ...claim, content: claim.content.text };
         });
-    }
-
-    findOneAndUpdate(query, push) {
-        return this.PersonalityModel.findOneAndUpdate(
-            { ...query },
-            { $push: { ...push } },
-            { new: true },
-            (e) &#x3D;&gt; {
-                if (e) {
-                    throw e;
-                }
-            }
-        );
     }
 
     verifyInputsQuery(query) {

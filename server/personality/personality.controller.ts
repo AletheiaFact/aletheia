@@ -51,9 +51,9 @@ export class PersonalityController {
     }
 
     @Get("api/personality/:id")
-    async get(@Param() params, @Query() query) {
+    async get(@Param("id") personalityId, @Query() query) {
         return this.personalityService
-            .getById(params.id, query.language) // TODO: get language from request object in the future
+            .getById(personalityId, query.language) // TODO: get language from request object in the future
             .catch((err) => {
                 this.logger.error(err);
             });
@@ -61,17 +61,15 @@ export class PersonalityController {
 
     @UseGuards(SessionGuard)
     @Put("api/personality/:id")
-    async update(@Param() params, @Body() body) {
-        return this.personalityService.update(params.id, body).catch((err) => {
-            this.logger.error(err);
-        });
+    async update(@Param("id") personalityId, @Body() body) {
+        return this.personalityService.update(personalityId, body)
     }
 
     @UseGuards(SessionGuard)
     @Delete("api/personality/:id")
-    async delete(@Param() params) {
+    async delete(@Param("id") personalityId) {
         try {
-            await this.personalityService.delete(params.id);
+            await this.personalityService.delete(personalityId);
             return { message: "Personality successfully deleted" };
         } catch (error) {
             this.logger.error(error);
@@ -79,9 +77,9 @@ export class PersonalityController {
     }
 
     @Get("api/personality/:id/reviews")
-    getReviewStats(@Param() params) {
+    getReviewStats(@Param("id") personalityId) {
         return this.personalityService
-            .getReviewStats(params.id)
+            .getReviewStats(personalityId)
             .catch((err) => {
                 this.logger.error(err);
             });

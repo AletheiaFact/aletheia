@@ -246,8 +246,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="94"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:94</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="99"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:99</a></div>
                 </td>
             </tr>
 
@@ -311,8 +311,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="119"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:119</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="124"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:124</a></div>
                 </td>
             </tr>
 
@@ -490,8 +490,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="78"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:78</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="83"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:83</a></div>
                 </td>
             </tr>
 
@@ -557,8 +557,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="163"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:163</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="168"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:168</a></div>
                 </td>
             </tr>
 
@@ -622,8 +622,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="210"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:210</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="198"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:198</a></div>
                 </td>
             </tr>
 
@@ -687,8 +687,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="187"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:187</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="192"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:192</a></div>
                 </td>
             </tr>
 
@@ -752,14 +752,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="51"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:51</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="56"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:56</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>get all personality claim claimIDs</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -769,6 +771,7 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -780,6 +783,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>claim Id</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -817,8 +824,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="84"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:84</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="89"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:89</a></div>
                 </td>
             </tr>
 
@@ -1043,8 +1050,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="63"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:63</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="68"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:68</a></div>
                 </td>
             </tr>
 
@@ -1186,6 +1193,11 @@ export class ClaimReviewService {
         return this.util.formatStats(reviews);
     }
 
+    /**
+     * get all personality claim claimIDs
+     * @param claimId claim Id
+     * @returns 
+     */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
             { $match: { claim: claimId } },
@@ -1327,23 +1339,6 @@ export class ClaimReviewService {
             .populate(&quot;claims&quot;, &quot;_id title&quot;)
             .populate(&quot;sources&quot;, &quot;_id link classification&quot;);
     }
-
-    // async update(claimReviewId, claimReviewBody) {
-    //     // eslint-disable-next-line no-useless-catch
-    //     try {
-    //         const claimReview &#x3D; await this.getById(claimReviewId);
-    //         const newClaimReview &#x3D; Object.assign(claimReview, claimReviewBody);
-    //         const claimReviewUpdate &#x3D; await ClaimReview.findByIdAndUpdate(
-    //             claimReviewId,
-    //             newClaimReview,
-    //             this.optionsToUpdate
-    //         );
-    //         return claimReviewUpdate;
-    //     } catch (error) {
-    //         // TODO: log to service-runner
-    //         throw error;
-    //     }
-    // }
 
     delete(claimReviewId) {
         return this.ClaimReviewModel.findByIdAndRemove(claimReviewId);
