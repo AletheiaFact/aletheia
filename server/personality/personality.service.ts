@@ -1,5 +1,6 @@
 import { Injectable, Inject, Logger, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 import slugify from 'slugify'
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../wikidata/wikidata.service";
@@ -22,7 +23,7 @@ export class PersonalityService {
     constructor(
         @Inject(REQUEST) private req: Request,
         @InjectModel(Personality.name)
-        private PersonalityModel: ISoftDeletedModel<PersonalityDocument>,
+        private PersonalityModel: ISoftDeletedModel<PersonalityDocument> & Model<PersonalityDocument>,
         private claimReview: ClaimReviewService,
         private history: HistoryService,
         private wikidata: WikidataService,
