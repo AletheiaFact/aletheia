@@ -216,6 +216,13 @@ export class PersonalityService {
         return personalityUpdate;
     }
 
+    /**
+     * This function does a soft deletion, doesn't delete claim in DataBase,
+     * but omit its in the front page
+     * Also creates a History Module that tracks deletion of personalities.
+     * @param personalityId Personality Id which wants to delete
+     * @returns Returns the personality with the param isDeleted equal to true
+     */
     async delete(personalityId) {
         const user = this.req.user
         const previousPersonality = await this.getById(personalityId)
@@ -228,7 +235,7 @@ export class PersonalityService {
             previousPersonality
         )
         await this.history.createHistory(history)
-        return await this.PersonalityModel.softDelete({ _id: personalityId });
+        return this.PersonalityModel.softDelete({ _id: personalityId });
     }
 
     count(query: any = {}) {

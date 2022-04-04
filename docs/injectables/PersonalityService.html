@@ -109,6 +109,7 @@
                                 <a href="#create" >create</a>
                             </li>
                             <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#delete" >delete</a>
                             </li>
                             <li>
@@ -159,12 +160,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(req: Request, PersonalityModel: <a href="../classes/Personality.html" target="_self">Model&lt;PersonalityDocument&gt;</a>, claimReview: <a href="../injectables/ClaimReviewService.html" target="_self">ClaimReviewService</a>, history: <a href="../injectables/HistoryService.html" target="_self">HistoryService</a>, wikidata: <a href="../injectables/WikidataService.html" target="_self">WikidataService</a>, util: <a href="../injectables/UtilService.html" target="_self">UtilService</a>)</code>
+<code>constructor(req: Request, PersonalityModel, claimReview: <a href="../injectables/ClaimReviewService.html" target="_self">ClaimReviewService</a>, history: <a href="../injectables/HistoryService.html" target="_self">HistoryService</a>, wikidata: <a href="../injectables/WikidataService.html" target="_self">WikidataService</a>, util: <a href="../injectables/UtilService.html" target="_self">UtilService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">server/personality/personality.service.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">server/personality/personality.service.ts:21</a></div>
                             </td>
                         </tr>
 
@@ -197,7 +198,6 @@
                                                         <td>PersonalityModel</td>
                                                   
                                                         <td>
-                                                                        <code><a href="../classes/Personality.html" target="_self" >Model&lt;PersonalityDocument&gt;</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -287,8 +287,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="245"
-                            class="link-to-prism">server/personality/personality.service.ts:245</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="264"
+                            class="link-to-prism">server/personality/personality.service.ts:264</a></div>
                 </td>
             </tr>
 
@@ -352,8 +352,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="222"
-                            class="link-to-prism">server/personality/personality.service.ts:222</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="241"
+                            class="link-to-prism">server/personality/personality.service.ts:241</a></div>
                 </td>
             </tr>
 
@@ -425,8 +425,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="81"
-                            class="link-to-prism">server/personality/personality.service.ts:81</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="82"
+                            class="link-to-prism">server/personality/personality.service.ts:82</a></div>
                 </td>
             </tr>
 
@@ -485,6 +485,7 @@ Also creates a History Module that tracks creation of personalities.</p>
                 <td class="col-md-4">
                     <a name="delete"></a>
                     <span class="name">
+                        <span class="modifier">Async</span>
                         <span ><b>delete</b></span>
                         <a href="#delete"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -492,21 +493,26 @@ Also creates a History Module that tracks creation of personalities.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>delete(personalityId)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>delete(personalityId)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="218"
-                            class="link-to-prism">server/personality/personality.service.ts:218</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="226"
+                            class="link-to-prism">server/personality/personality.service.ts:226</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>This function does a soft deletion, doesn&#39;t delete claim in DataBase,
+but omit its in the front page
+Also creates a History Module that tracks deletion of personalities.</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -516,6 +522,7 @@ Also creates a History Module that tracks creation of personalities.</p>
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -527,6 +534,10 @@ Also creates a History Module that tracks creation of personalities.</p>
                                     </td>
 
 
+                                    <td>
+                                        <p>Personality Id which wants to delete</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -534,11 +545,12 @@ Also creates a History Module that tracks creation of personalities.</p>
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                        <b>Returns : </b>    <code>unknown</code>
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>Returns the personality with the param isDeleted equal to true</p>
+
                     </div>
                 </td>
             </tr>
@@ -564,8 +576,8 @@ Also creates a History Module that tracks creation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="226"
-                            class="link-to-prism">server/personality/personality.service.ts:226</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="245"
+                            class="link-to-prism">server/personality/personality.service.ts:245</a></div>
                 </td>
             </tr>
 
@@ -635,8 +647,8 @@ Also creates a History Module that tracks creation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="108"
-                            class="link-to-prism">server/personality/personality.service.ts:108</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="109"
+                            class="link-to-prism">server/personality/personality.service.ts:109</a></div>
                 </td>
             </tr>
 
@@ -723,8 +735,8 @@ Also creates a History Module that tracks creation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="119"
-                            class="link-to-prism">server/personality/personality.service.ts:119</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="120"
+                            class="link-to-prism">server/personality/personality.service.ts:120</a></div>
                 </td>
             </tr>
 
@@ -811,8 +823,8 @@ Also creates a History Module that tracks creation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="166"
-                            class="link-to-prism">server/personality/personality.service.ts:166</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="167"
+                            class="link-to-prism">server/personality/personality.service.ts:167</a></div>
                 </td>
             </tr>
 
@@ -878,8 +890,8 @@ Also creates a History Module that tracks creation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="31"
-                            class="link-to-prism">server/personality/personality.service.ts:31</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="32"
+                            class="link-to-prism">server/personality/personality.service.ts:32</a></div>
                 </td>
             </tr>
 
@@ -1004,8 +1016,8 @@ Also creates a History Module that tracks creation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="141"
-                            class="link-to-prism">server/personality/personality.service.ts:141</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="142"
+                            class="link-to-prism">server/personality/personality.service.ts:142</a></div>
                 </td>
             </tr>
 
@@ -1092,8 +1104,8 @@ Also creates a History Module that tracks creation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="183"
-                            class="link-to-prism">server/personality/personality.service.ts:183</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="184"
+                            class="link-to-prism">server/personality/personality.service.ts:184</a></div>
                 </td>
             </tr>
 
@@ -1180,8 +1192,8 @@ Also creates a History Module that tracks updation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="236"
-                            class="link-to-prism">server/personality/personality.service.ts:236</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="255"
+                            class="link-to-prism">server/personality/personality.service.ts:255</a></div>
                 </td>
             </tr>
 
@@ -1251,7 +1263,7 @@ Also creates a History Module that tracks updation of personalities.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">server/personality/personality.service.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">server/personality/personality.service.ts:17</a></div>
                         </td>
                     </tr>
 
@@ -1287,7 +1299,7 @@ Also creates a History Module that tracks updation of personalities.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">server/personality/personality.service.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">server/personality/personality.service.ts:18</a></div>
                         </td>
                     </tr>
 
@@ -1300,9 +1312,9 @@ Also creates a History Module that tracks updation of personalities.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Model } from &quot;mongoose&quot;;
-import { Injectable, Inject, Logger, Scope } from &quot;@nestjs/common&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Inject, Logger, Scope } from &quot;@nestjs/common&quot;;
 import { InjectModel } from &quot;@nestjs/mongoose&quot;;
+import { Model } from &quot;mongoose&quot;;
 import slugify from &#x27;slugify&#x27;
 import { Personality, PersonalityDocument } from &quot;./schemas/personality.schema&quot;;
 import { WikidataService } from &quot;../wikidata/wikidata.service&quot;;
@@ -1310,6 +1322,7 @@ import { UtilService } from &quot;../util&quot;;
 import { ClaimReviewService } from &quot;../claim-review/claim-review.service&quot;;
 import { HistoryService } from &quot;../history/history.service&quot;;
 import { HistoryType, TargetModel } from &quot;../history/schema/history.schema&quot;;
+import { ISoftDeletedModel } from &#x27;mongoose-softdelete-typescript&#x27;;
 import { REQUEST } from &#x27;@nestjs/core&#x27;;
 import { Request } from &#x27;express&#x27;;
 
@@ -1324,7 +1337,7 @@ export class PersonalityService {
     constructor(
         @Inject(REQUEST) private req: Request,
         @InjectModel(Personality.name)
-        private PersonalityModel: Model&lt;PersonalityDocument&gt;,
+        private PersonalityModel: ISoftDeletedModel&lt;PersonalityDocument&gt; &amp; Model&lt;PersonalityDocument&gt;,
         private claimReview: ClaimReviewService,
         private history: HistoryService,
         private wikidata: WikidataService,
@@ -1517,8 +1530,26 @@ export class PersonalityService {
         return personalityUpdate;
     }
 
-    delete(personalityId) {
-        return this.PersonalityModel.findByIdAndRemove(personalityId);
+    /**
+     * This function does a soft deletion, doesn&#x27;t delete claim in DataBase,
+     * but omit its in the front page
+     * Also creates a History Module that tracks deletion of personalities.
+     * @param personalityId Personality Id which wants to delete
+     * @returns Returns the personality with the param isDeleted equal to true
+     */
+    async delete(personalityId) {
+        const user &#x3D; this.req.user
+        const previousPersonality &#x3D; await this.getById(personalityId)
+        const history &#x3D; this.history.getHistoryParams(
+            personalityId,
+            TargetModel.Personality,
+            user,
+            HistoryType.Delete,
+            null,
+            previousPersonality
+        )
+        await this.history.createHistory(history)
+        return this.PersonalityModel.softDelete({ _id: personalityId });
     }
 
     count(query: any &#x3D; {}) {

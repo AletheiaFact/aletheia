@@ -127,6 +127,13 @@ export class ClaimService {
         return newClaimRevision;
     }
 
+    /**
+     * This function does a soft deletion, doesn't delete claim in DataBase,
+     * but omit its in the front page
+     * Also creates a History Module that tracks deletion of claims.
+     * @param claimId Claim id which wants to delete
+     * @returns Returns the claim with the param isDeleted equal to true
+     */
     async delete(claimId) {
         const user = this.req.user
         const previousClaim = await this.getById(claimId)
@@ -139,7 +146,7 @@ export class ClaimService {
             previousClaim
         )
         await this.historyService.createHistory(history)
-        return await this.ClaimModel.softDelete({ _id: claimId });
+        return this.ClaimModel.softDelete({ _id: claimId });
     }
 
     // TODO: add optional revisionId that will fetch a specifc revision that matches

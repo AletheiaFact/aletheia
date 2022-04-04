@@ -119,6 +119,11 @@
                                 <a href="#personalityClaimPage" >personalityClaimPage</a>
                             </li>
                             <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#sourcesClaimPage" >sourcesClaimPage</a>
+                            </li>
+                            <li>
                                 <a href="#update" >update</a>
                             </li>
                         </ul>
@@ -544,7 +549,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>delete(params)</code>
+<code>delete(claimId)</code>
                 </td>
             </tr>
 
@@ -579,7 +584,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>params</td>
+                                    <td>claimId</td>
 
                                     <td>
                                         No
@@ -616,7 +621,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getById(params)</code>
+<code>getById(claimId)</code>
                 </td>
             </tr>
 
@@ -651,7 +656,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>params</td>
+                                    <td>claimId</td>
 
                                     <td>
                                         No
@@ -1024,6 +1029,97 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="sourcesClaimPage"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span class="modifier">Async</span>
+                        <span ><b>sourcesClaimPage</b></span>
+                        <a href="#sourcesClaimPage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sourcesClaimPage(req: Request, res: Response)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Get(&#x27;personality/:personalitySlug/claim/:claimSlug/sources&#x27;)<br /></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="279"
+                            class="link-to-prism">server/claim/claim.controller.ts:279</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>req</td>
+                                    <td>
+                                            <code>Request</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>res</td>
+                                    <td>
+                                            <code>Response</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="update"></a>
                     <span class="name">
                         <span ><b>update</b></span>
@@ -1224,10 +1320,10 @@ export class ClaimController {
     }
 
     @Get(&quot;api/claim/:id&quot;)
-    getById(@Param() params) {
-        return this.claimService.getById(params.id);
+    getById(@Param(&quot;id&quot;) claimId) {
+        return this.claimService.getById(claimId);
     }
-    
+
     @UseGuards(SessionGuard)
     @Put(&quot;api/claim/:id&quot;)
     update(@Param(&quot;id&quot;) claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
@@ -1236,8 +1332,8 @@ export class ClaimController {
 
     @UseGuards(SessionGuard)
     @Delete(&quot;api/claim/:id&quot;)
-    delete(@Param() params) {
-        return this.claimService.delete(params.id);
+    delete(@Param(&quot;id&quot;) claimId) {
+        return this.claimService.delete(claimId);
     }
 
     @Get(&quot;api/claim/:claimId/sentence/:sentenceHash/reviews&quot;)
@@ -1317,7 +1413,7 @@ export class ClaimController {
         );
 
         const sentence &#x3D; await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
-        
+
         await this.viewService
             .getNextServer()
             .render(
@@ -1361,11 +1457,39 @@ export class ClaimController {
     public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
         // @ts-ignore
+        try{
+            const personality &#x3D; await this.personalityService.getBySlug(
+                req.params.personalitySlug,
+                // @ts-ignore
+                req.language
+            );
+
+            const claim &#x3D; await this.claimService.getByPersonalityIdAndClaimSlug(
+                personality._id,
+                req.params.claimSlug
+            );
+
+            await this.viewService
+                .getNextServer()
+                .render(
+                    req,
+                    res,
+                    &quot;/claim-page&quot;,
+                    Object.assign(parsedUrl.query, { personality, claim })
+                );
+        } catch {
+            await this.viewService
+                .getNextServer()
+                .render(req,res, &#x27;/404-page&#x27;, Object.assign(parsedUrl.query))
+        }
+    }
+
+    @Get(&quot;personality/:personalitySlug/claim/:claimSlug/sources&quot;)
+    public async sourcesClaimPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl &#x3D; parse(req.url, true);
 
         const personality &#x3D; await this.personalityService.getBySlug(
-            req.params.personalitySlug,
-            // @ts-ignore
-            req.language
+            req.params.personalitySlug
         );
 
         const claim &#x3D; await this.claimService.getByPersonalityIdAndClaimSlug(
@@ -1378,8 +1502,8 @@ export class ClaimController {
             .render(
                 req,
                 res,
-                &quot;/claim-page&quot;,
-                Object.assign(parsedUrl.query, { personality, claim })
+                &quot;/claim-sources-page&quot;,
+                Object.assign(parsedUrl.query, { claimId: claim._id })
             );
     }
 }

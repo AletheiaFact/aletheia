@@ -295,15 +295,29 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="modules/SourceModule.html" data-type="entity-link" >SourceModule</a>
+                                    <li class="chapter inner">
+                                        <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
+                                            'data-target="#controllers-links-module-SourceModule-8be76b5bb0d98b2ed76c42cd81b91a6a84fd66e326b07a904dd432d567933ccb30c4cff3f299f0e31ab593fc12d33887c8dbf3883d0699b11495f507f25e3f15"' : 'data-target="#xs-controllers-links-module-SourceModule-8be76b5bb0d98b2ed76c42cd81b91a6a84fd66e326b07a904dd432d567933ccb30c4cff3f299f0e31ab593fc12d33887c8dbf3883d0699b11495f507f25e3f15"' }>
+                                            <span class="icon ion-md-swap"></span>
+                                            <span>Controllers</span>
+                                            <span class="icon ion-ios-arrow-down"></span>
+                                        </div>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="controllers-links-module-SourceModule-8be76b5bb0d98b2ed76c42cd81b91a6a84fd66e326b07a904dd432d567933ccb30c4cff3f299f0e31ab593fc12d33887c8dbf3883d0699b11495f507f25e3f15"' :
+                                            'id="xs-controllers-links-module-SourceModule-8be76b5bb0d98b2ed76c42cd81b91a6a84fd66e326b07a904dd432d567933ccb30c4cff3f299f0e31ab593fc12d33887c8dbf3883d0699b11495f507f25e3f15"' }>
+                                            <li class="link">
+                                                <a href="controllers/SourceController.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >SourceController</a>
+                                            </li>
+                                        </ul>
+                                    </li>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                        'data-target="#injectables-links-module-SourceModule-0f9257ccdc1301b4203d8df59687162d5477f257d5eb312c50a7a0165c13d74a69c071cbfab2dafd12b9c08af4e65e77312dac32c58500a85585c25e7b689062"' : 'data-target="#xs-injectables-links-module-SourceModule-0f9257ccdc1301b4203d8df59687162d5477f257d5eb312c50a7a0165c13d74a69c071cbfab2dafd12b9c08af4e65e77312dac32c58500a85585c25e7b689062"' }>
+                                        'data-target="#injectables-links-module-SourceModule-8be76b5bb0d98b2ed76c42cd81b91a6a84fd66e326b07a904dd432d567933ccb30c4cff3f299f0e31ab593fc12d33887c8dbf3883d0699b11495f507f25e3f15"' : 'data-target="#xs-injectables-links-module-SourceModule-8be76b5bb0d98b2ed76c42cd81b91a6a84fd66e326b07a904dd432d567933ccb30c4cff3f299f0e31ab593fc12d33887c8dbf3883d0699b11495f507f25e3f15"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-SourceModule-0f9257ccdc1301b4203d8df59687162d5477f257d5eb312c50a7a0165c13d74a69c071cbfab2dafd12b9c08af4e65e77312dac32c58500a85585c25e7b689062"' :
-                                        'id="xs-injectables-links-module-SourceModule-0f9257ccdc1301b4203d8df59687162d5477f257d5eb312c50a7a0165c13d74a69c071cbfab2dafd12b9c08af4e65e77312dac32c58500a85585c25e7b689062"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-SourceModule-8be76b5bb0d98b2ed76c42cd81b91a6a84fd66e326b07a904dd432d567933ccb30c4cff3f299f0e31ab593fc12d33887c8dbf3883d0699b11495f507f25e3f15"' :
+                                        'id="xs-injectables-links-module-SourceModule-8be76b5bb0d98b2ed76c42cd81b91a6a84fd66e326b07a904dd432d567933ccb30c4cff3f299f0e31ab593fc12d33887c8dbf3883d0699b11495f507f25e3f15"' }>
                                         <li class="link">
                                             <a href="injectables/SourceService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >SourceService</a>
                                         </li>
