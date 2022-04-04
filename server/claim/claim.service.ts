@@ -1,11 +1,12 @@
 import { Injectable, Inject, Logger, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { FilterQuery, Model, Types } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 import { HistoryService } from "../history/history.service"
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 
@@ -19,7 +20,7 @@ export class ClaimService {
     constructor(
         @Inject(REQUEST) private req: Request,
         @InjectModel(Claim.name)
-        private ClaimModel: Model<ClaimDocument>,
+        private ClaimModel: ISoftDeletedModel<ClaimDocument>,
         private claimReviewService: ClaimReviewService,
         private historyService: HistoryService,
         private claimRevisionService: ClaimRevisionService,
@@ -126,11 +127,19 @@ export class ClaimService {
         return newClaimRevision;
     }
 
-    delete(claimId) {
-        // TODO: use soft-delete instead
-        // this means that when deleting it should actually update
-        // the deleted field with the boolean value 'true'
-        return this.ClaimModel.findByIdAndRemove(claimId);
+    async delete(claimId) {
+        const user = this.req.user
+        const previousClaim = await this.getById(claimId)
+        const history = this.historyService.getHistoryParams(
+            claimId,
+            TargetModel.Claim,
+            user,
+            HistoryType.Delete,
+            null,
+            previousClaim
+        )
+        await this.historyService.createHistory(history)
+        return await this.ClaimModel.softDelete({ _id: claimId });
     }
 
     // TODO: add optional revisionId that will fetch a specifc revision that matches
