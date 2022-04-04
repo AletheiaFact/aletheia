@@ -8889,6 +8889,11 @@ mongoose-legacy-pluralize@1.0.2:
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
+mongoose-softdelete-typescript@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/mongoose-softdelete-typescript/-/mongoose-softdelete-typescript-0.0.3.tgz#ee403050edf661ccea7273a52e98a6afce9dfccb"
+  integrity sha512-eSZOZW3CyrL6jTYlSfe7JJA+OMg9YDx7Ol8Mn/xWEg0R1GIDSQwyQouPcgmGyTlSGdWM+WmY747NRXQed0Au7w==
+
 "mongoose@^  5.13.5":
   version "5.13.5"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.13.5.tgz#9c8c0b46d35116dd4ea47683dfa836137e475243"

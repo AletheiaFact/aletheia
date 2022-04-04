@@ -92,6 +92,7 @@
         "i18next": "^21.6.10",
         "md5": "^2.3.0",
         "mongoose": "^  5.13.5",
+        "mongoose-softdelete-typescript": "^0.0.3",
         "next": "^12.1.0",
         "next-i18next": "^10.2.0",
         "next-plugin-antd-less": "^1.8.0",

@@ -1,4 +1,3 @@
-import { Model } from "mongoose";
 import { Injectable, Inject, Logger, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import slugify from 'slugify'
@@ -8,6 +7,7 @@ import { UtilService } from "../util";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 
@@ -22,7 +22,7 @@ export class PersonalityService {
     constructor(
         @Inject(REQUEST) private req: Request,
         @InjectModel(Personality.name)
-        private PersonalityModel: Model<PersonalityDocument>,
+        private PersonalityModel: ISoftDeletedModel<PersonalityDocument>,
         private claimReview: ClaimReviewService,
         private history: HistoryService,
         private wikidata: WikidataService,
@@ -215,8 +215,19 @@ export class PersonalityService {
         return personalityUpdate;
     }
 
-    delete(personalityId) {
-        return this.PersonalityModel.findByIdAndRemove(personalityId);
+    async delete(personalityId) {
+        const user = this.req.user
+        const previousPersonality = await this.getById(personalityId)
+        const history = this.history.getHistoryParams(
+            personalityId,
+            TargetModel.Personality,
+            user,
+            HistoryType.Delete,
+            null,
+            previousPersonality
+        )
+        await this.history.createHistory(history)
+        return await this.PersonalityModel.softDelete({ _id: personalityId });
     }
 
     count(query: any = {}) {
