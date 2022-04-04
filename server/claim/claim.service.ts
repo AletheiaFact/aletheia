@@ -239,17 +239,4 @@ export class ClaimService {
         });
         return claimContent;
     }
-
-    findOneAndUpdate(query, push) {
-        return this.ClaimModel.findOneAndUpdate(
-            { ...query },
-            { $push: { ...push } },
-            { new: true },
-            (e) => {
-                if (e) {
-                    throw e;
-                }
-            }
-        );
-    }
 }

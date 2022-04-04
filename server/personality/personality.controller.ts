@@ -105,20 +105,25 @@ export class PersonalityController {
     public async personalityPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-
-        const personality = await this.personalityService.getBySlug(
-            req.params.slug,
-            // @ts-ignore
-            req.language
-        );
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/personality-page",
-                Object.assign(parsedUrl.query, { personality })
+        try {
+            const personality = await this.personalityService.getBySlug(
+                req.params.slug,
+                // @ts-ignore
+                req.language
             );
+            await this.viewService
+                .getNextServer()
+                .render(
+                    req,
+                    res,
+                    "/personality-page",
+                    Object.assign(parsedUrl.query, { personality })
+                );
+        } catch {
+            await this.viewService
+                .getNextServer()
+                .render(req,res, '/404-page', Object.assign(parsedUrl.query))
+        }
     }
 
     @Get("personality")

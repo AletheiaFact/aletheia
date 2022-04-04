@@ -28,7 +28,14 @@ export class HistoryService {
      * @param previousChange Model previous change.
      * @returns Returns an object with de params necessary to create an history.
      */
-    getHistoryParams(dataId, targetModel, user, type, latestChange, previousChange = null) {
+    getHistoryParams(
+        dataId,
+        targetModel,
+        user,
+        type,
+        latestChange,
+        previousChange = null
+    ) {
         const date = new Date()
         return {
             targetId: new Types.ObjectId(dataId),
