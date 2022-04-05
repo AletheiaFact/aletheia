@@ -1,4 +1,4 @@
-import { Injectable, Inject, Logger, Scope } from "@nestjs/common";
+import { Injectable, Inject, Logger, Scope, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
@@ -167,7 +167,7 @@ export class ClaimService {
                 .populate("latestRevision")
 
         if (!claim) {
-            return {};
+            throw new NotFoundException()
         }
 
 

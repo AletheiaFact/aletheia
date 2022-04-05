@@ -248,31 +248,25 @@ export class ClaimController {
     public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        try{
-            const personality = await this.personalityService.getBySlug(
-                req.params.personalitySlug,
-                // @ts-ignore
-                req.language
-            );
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug,
+            // @ts-ignore
+            req.language
+        );
 
-            const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
-                personality._id,
-                req.params.claimSlug
-            );
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
 
-            await this.viewService
-                .getNextServer()
-                .render(
-                    req,
-                    res,
-                    "/claim-page",
-                    Object.assign(parsedUrl.query, { personality, claim })
-                );
-        } catch {
-            await this.viewService
-                .getNextServer()
-                .render(req,res, '/404-page', Object.assign(parsedUrl.query))
-        }
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-page",
+                Object.assign(parsedUrl.query, { personality, claim })
+            );
     }
 
     @Get("personality/:personalitySlug/claim/:claimSlug/sources")
