@@ -1,6 +1,6 @@
 import {
     Controller,
-    Get,
+    Get, Post,
     Req,
     Res,
 } from "@nestjs/common";
@@ -36,6 +36,18 @@ export default class OryController {
     }
 
     @Get("api/.ory/*")
+    public async getOryPaths(@Req() req: NextApiRequest, @Res() res: NextApiResponse) {
+        const parsedUrl = parse(req.url, true);
+        await this.viewService
+            .getNextServer()
+            .getRequestHandler()(
+                req,
+                res,
+                parsedUrl,
+            )
+    }
+
+    @Post("api/.ory/*")
     public async oryPaths(@Req() req: NextApiRequest, @Res() res: NextApiResponse) {
         const parsedUrl = parse(req.url, true);
         await this.viewService

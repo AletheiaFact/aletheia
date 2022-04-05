@@ -1760,10 +1760,10 @@
   dependencies:
     binwrap "^0.2.3"
 
-"@ory/client@0.0.1-alpha.111":
-  version "0.0.1-alpha.111"
-  resolved "https://registry.yarnpkg.com/@ory/client/-/client-0.0.1-alpha.111.tgz#ae13bba0caec248ef0e7fd0e3f103b64235bbdf7"
-  integrity sha512-y1jty07OXgwlghTIq8POjXZbWKQ3PTjIL6THn0mVvNmd1c1XwYFHz9jFEmBP8qUOrvKigDwspUXnQMPgxwPBlw==
+"@ory/client@0.0.1-alpha.153":
+  version "0.0.1-alpha.153"
+  resolved "https://registry.yarnpkg.com/@ory/client/-/client-0.0.1-alpha.153.tgz#1405850925e60257e5f617910b6a806222bfd0a4"
+  integrity sha512-qvvStiY9s4foHc6/DegXv0ewF+vR8m3ThnNszAJCntMDaKBtOxvUXn+LwsZhEtdHnkh/uICZmILoW2PhFG0Lkg==
   dependencies:
     axios "^0.21.4"
 
@@ -1774,7 +1774,7 @@
   dependencies:
     axios "^0.21.4"
 
-"@ory/integrations@^0.2.2":
+"@ory/integrations@^0.2.5":
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/@ory/integrations/-/integrations-0.2.5.tgz#15a0d2ea54d94f1428893bfb8ee7158270eb3814"
   integrity sha512-fX++VtRJZEA4FUBfdEl574KTtjm6lsbqqNtCxrHMX+paj7M4i01pjKU1TK69+Upe9aqdYJjCQf3qidwIPsDTNg==
