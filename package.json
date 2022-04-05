@@ -28,6 +28,8 @@
         "proxy": "ory proxy --no-jwt --port 4000 http://localhost:3000/",
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook -o ./docs/storybook"
+        "cypress-open": "cypress open",
+        "cypress-run": "cypress run"
     },
     "nodemonConfig": {
         "ignore": [
@@ -154,6 +156,7 @@
         "babel-plugin-styled-components": "^1.13.2",
         "concurrently": "^6.2.1",
         "copyfiles": "^2.4.1",
+        "cypress": "4.1",
         "eslint": "7.0.0",
         "eslint-config-next": "^12.0.10",
         "eslint-config-prettier": "8.3.0",
