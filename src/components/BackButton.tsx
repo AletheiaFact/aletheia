@@ -17,6 +17,7 @@ function BackButton({ style, callback }: { style?: CSSProperties; callback?: () 
                     color: colors.blueSecondary,
                     ...style
                 }}
+                data-cy="testBackButton"
                 onClick={() => {
                     if (callback) {
                         callback();

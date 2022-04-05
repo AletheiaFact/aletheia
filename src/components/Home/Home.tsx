@@ -173,7 +173,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                             flexDirection: "column"
                         }}
                     >
-                        <Button href="/personality" type={ButtonType.whiteBlue}>
+                        <Button href="/personality" data-cy="testSeeMorePersonality" type={ButtonType.whiteBlue} >
                             {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
                         </Button>
                     </Row>
