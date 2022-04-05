@@ -35,7 +35,9 @@ export class ClaimRevisionService {
      */
     async create(claimId, claim) {
         claim.claimId = claimId;
-        claim.content = this.parserService.parse(claim.content);
+        if (typeof claim.content === "string") {
+            claim.content = this.parserService.parse(claim.content);
+        }
         claim.slug = slugify(claim.title, {
             lower: true,     // convert to lower case, defaults to `false`
             strict: true     // strip special characters except replacement, defaults to `false`

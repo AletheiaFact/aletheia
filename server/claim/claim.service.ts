@@ -35,12 +35,12 @@ export class ClaimService {
             query.personality = new Types.ObjectId(query.personality)
         }
         const claims = await this.ClaimModel.find(query)
-            .populate("latestRevision")    
+            .populate("latestRevision")
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
-            
+
         return Promise.all(
             claims.map(async (claim) => {
                 // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
@@ -68,7 +68,7 @@ export class ClaimService {
         const newClaimRevision = await this.claimRevisionService.create(newClaim._id, claim)
         newClaim.latestRevision = newClaimRevision._id
         newClaim.slug = newClaimRevision.slug
-        
+
         const user = this.req.user
 
         const history =
@@ -90,7 +90,7 @@ export class ClaimService {
     }
 
     /**
-     * This function creates a new claim with the old claim data 
+     * This function creates a new claim with the old claim data
      * and overwrite with the new data, keeping data that hasn't changed.
      * Also creates a History Module that tracks updation of claims.
      * @param claimId Claim id which wants updated.
@@ -108,7 +108,7 @@ export class ClaimService {
             })
         claim.latestRevision = newClaimRevision._id
         claim.slug = newClaimRevision.slug
-        
+
         const user = this.req.user
 
         const history =
@@ -121,7 +121,7 @@ export class ClaimService {
                 previousRevision
             )
         await this.historyService.createHistory(history)
-        
+
         claim.save()
         return newClaimRevision;
     }

@@ -33,7 +33,7 @@ export class HistoryService {
         return {
             targetId: new Types.ObjectId(dataId),
             targetModel,
-            user: user._id,
+            user: user?._id,
             type,
             details: {
                 after: latestChange,
