@@ -14,15 +14,15 @@ const BaseList = ({
 }) => {
     const { t } = useTranslation();
 
-    const [ loading, setLoading ] = useState(false)
-    const [ initLoading, setInitLoading ] = useState(true)
-    const [ totalPages, setTotalPages ] = useState(0)
-    const [ totalItems, setTotalItems ] = useState(0)
-    const [ items, setItems ] = useState([])
-    const [ sortByOrder ] = useState('asc')
-    const [ execLoadMore, setExecLoadMore ] = useState<boolean>(true)
+    const [loading, setLoading] = useState(false)
+    const [initLoading, setInitLoading] = useState(true)
+    const [totalPages, setTotalPages] = useState(0)
+    const [totalItems, setTotalItems] = useState(0)
+    const [items, setItems] = useState([])
+    const [sortByOrder] = useState('asc')
+    const [execLoadMore, setExecLoadMore] = useState<boolean>(true)
 
-    const [ query, setQuery ] = useState({
+    const [query, setQuery] = useState({
         page: 1,
         pageSize: 10,
         fetchOnly: true,
@@ -93,7 +93,7 @@ const BaseList = ({
                 <List
                     itemLayout="horizontal"
                     header={
-                        <Row style={{width: "100%"}}>
+                        <Row style={{ width: "100%" }}>
                             <Row
                                 style={{
                                     fontSize: 18,
@@ -103,7 +103,8 @@ const BaseList = ({
                             </Row>
                             <Row
                                 style={{
-                                    width: "100%"
+                                    width: "100%",
+                                    alignItems: "center",
                                 }}
                             >
                                 <Col>
