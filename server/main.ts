@@ -31,6 +31,7 @@ const initApp = async (options) => {
     const app = await NestFactory.create<NestExpressApplication>(
         AppModule.register(options),
         {
+            bodyParser: false,
             logger: new Logger(options.logger) || undefined,
             cors: corsOptions,
         }

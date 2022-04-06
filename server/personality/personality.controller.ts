@@ -85,7 +85,7 @@ export class PersonalityController {
             });
     }
 
-    @UseGuards(SessionGuard)
+    @UseGuards(new SessionGuard('ory'))
     @Get("personality/search")
     public async personalityCreateSearch(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
