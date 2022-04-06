@@ -77,7 +77,7 @@ export class ClaimService {
                 TargetModel.Claim,
                 user,
                 HistoryType.Create,
-                newClaim.latestRevision
+                newClaimRevision
             )
         await this.historyService.createHistory(history)
 
