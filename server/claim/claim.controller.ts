@@ -292,4 +292,27 @@ export class ClaimController {
                 Object.assign(parsedUrl.query, { claimId: claim._id })
             );
     }
+
+    @Get("personality/:personalitySlug/claim/:claimSlug/history")
+    public async personalityHistoryPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug
+        );
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/history-page",
+                Object.assign(parsedUrl.query, { targetId: claim._id, targetModel: "claim" })
+            );
+    }
 }

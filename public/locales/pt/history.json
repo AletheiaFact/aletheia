@@ -1,0 +1,9 @@
+{
+    "anonymousUserName": "Anônimo",
+    "create": "criou",
+    "update": "atualizou",
+    "delete": "deletou",
+    "personality": "o perfil de",
+    "claim": "a afirmação",
+    "historyItem": "{{username}} {{type}} {{targetModel}} {{title}}"
+}
