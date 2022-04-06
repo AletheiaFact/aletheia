@@ -26,7 +26,6 @@ const HistoryListItem = ({ history }: IHistoryListItemProps) => {
     if (history.type === "delete") {
         title = oldTitle
     }
-    console.log(history)
     return (
         <div>
             <LocalizedDate date={history.date} showTime />{` - `}
