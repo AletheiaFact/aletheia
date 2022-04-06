@@ -1,6 +1,6 @@
 import React from "react";
 import BaseList from "../List/BaseList";
-import HistoryApi from "../../api/history";
+import HistoryApi from "../../api/historyApi";
 import HistoryListItem from "./HistoryListItem";
 
 const HistoryView = ({ targetId, targetModel }) => {

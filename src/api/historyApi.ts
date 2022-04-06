@@ -36,7 +36,7 @@ const getByTargetId = (options: optionsType) => {
 
 };
 
-const history = {
+const HistoryApi = {
     getByTargetId,
 };
-export default history;
+export default HistoryApi;
