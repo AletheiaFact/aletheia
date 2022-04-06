@@ -7,6 +7,7 @@ export type HistoryDocument = History & mongoose.Document;
 export enum TargetModel { 
   Claim = 'claim',
   Personality = 'personality',
+  ClaimReview = 'claim-review'
 }
 
 export enum HistoryType { 

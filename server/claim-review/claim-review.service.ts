@@ -1,19 +1,20 @@
-import {Injectable, Logger} from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Model, Types } from "mongoose";
-import {
-    ClaimReview,
-    ClaimReviewDocument,
-} from "./schemas/claim-review.schema";
+import { ClaimReview, ClaimReviewDocument } from "./schemas/claim-review.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UtilService } from "../util";
 import { SourceService } from "../source/source.service";
+import { HistoryService } from "../history/history.service";
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
 
 @Injectable()
 export class ClaimReviewService {
     private readonly logger = new Logger("ClaimReviewService");
     constructor(
         @InjectModel(ClaimReview.name)
-        private ClaimReviewModel: Model<ClaimReviewDocument>,
+        private ClaimReviewModel: Model<ClaimReviewDocument> & ISoftDeletedModel<ClaimReviewDocument>,
+        private historyService: HistoryService,
         private sourceService: SourceService,
         private util: UtilService
     ) {}
@@ -167,6 +168,8 @@ export class ClaimReviewService {
 
     async create(claimReview) {
         // Cast ObjectId
+        //verificar id da claim review
+        //a claim review está referenciando a claim, não à claim revision está certo ?
         claimReview.personality = new Types.ObjectId(claimReview.personality);
         claimReview.claim = new Types.ObjectId(claimReview.claim);
         claimReview.user = new Types.ObjectId(claimReview.user);
@@ -186,6 +189,17 @@ export class ClaimReviewService {
             }
         }
 
+        const history = 
+            this.historyService.getHistoryParams(
+                newClaimReview._id,
+                TargetModel.ClaimReview,
+                claimReview.user,
+                HistoryType.Create,
+                newClaimReview
+            )
+
+        this.historyService.createHistory(history)
+
         return newClaimReview.save();
     }
 
@@ -195,7 +209,19 @@ export class ClaimReviewService {
             .populate("sources", "_id link classification");
     }
 
-    delete(claimReviewId) {
-        return this.ClaimReviewModel.findByIdAndRemove(claimReviewId);
+    async delete(claimReviewId) {
+        const claimReview = await this.getById(claimReviewId)
+        const history = 
+            this.historyService.getHistoryParams(
+                claimReview._id,
+                TargetModel.ClaimReview,
+                claimReview.user,
+                HistoryType.Delete,
+                null,
+                claimReview
+            )
+        console.log(claimReview)
+        this.historyService.createHistory(history)
+        return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }
 }

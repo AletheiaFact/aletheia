@@ -7,6 +7,7 @@ import { UtilService } from "../util";
 import { SourceModule } from "../source/source.module";
 import { HttpModule } from "@nestjs/axios";
 import { ConfigModule } from "@nestjs/config";
+import { HistoryModule } from "../history/history.module";
 
 export const ClaimReviewModel = MongooseModule.forFeature([
     {
@@ -16,7 +17,13 @@ export const ClaimReviewModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [ClaimReviewModel, SourceModule, HttpModule, ConfigModule],
+    imports: [
+        ClaimReviewModel,
+        HistoryModule,
+        SourceModule,
+        HttpModule,
+        ConfigModule
+    ],
     providers: [UtilService, ClaimReviewService],
     exports: [ClaimReviewService],
     controllers: [ClaimReviewController],

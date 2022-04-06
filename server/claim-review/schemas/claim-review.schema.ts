@@ -3,6 +3,7 @@ import { Personality } from "../../personality/schemas/personality.schema";
 import * as mongoose from "mongoose";
 import { User } from "../../users/schemas/user.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
+import { softDeletePlugin } from 'mongoose-softdelete-typescript';
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
@@ -80,5 +81,7 @@ ClaimReviewSchemaRaw.virtual('sources', {
     localField: '_id',
     foreignField: 'targetId'
 });
+
+ClaimReviewSchemaRaw.plugin(softDeletePlugin)
 
 export const ClaimReviewSchema = ClaimReviewSchemaRaw;
