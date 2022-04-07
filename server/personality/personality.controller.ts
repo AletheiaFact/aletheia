@@ -67,9 +67,9 @@ export class PersonalityController {
 
     @UseGuards(SessionGuard)
     @Delete("api/personality/:id")
-    async delete(@Param("id") personalityId) {
+    delete(@Param("id") personalityId) {
         try {
-            await this.personalityService.delete(personalityId);
+            this.personalityService.delete(personalityId);
             return { message: "Personality successfully deleted" };
         } catch (error) {
             this.logger.error(error);
@@ -124,8 +124,7 @@ export class PersonalityController {
     @Get("personality")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-        
+
         await this.viewService
             .getNextServer()
             .render(
@@ -135,4 +134,22 @@ export class PersonalityController {
                 Object.assign(parsedUrl.query, {})
             );
     }
+
+    @Get("personality/:slug/history")
+    public async personalityHistoryPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        const personality = await this.personalityService.getBySlug(
+            req.params.slug
+        );
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/history-page",
+                Object.assign(parsedUrl.query, { targetId: personality._id, targetModel: "personality" })
+            );
+    }
+
 }

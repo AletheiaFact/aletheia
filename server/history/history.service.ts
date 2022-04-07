@@ -52,4 +52,25 @@ export class HistoryService {
         const newHistory = new this.HistoryModel(data);
         return newHistory.save();
     }
+
+
+    /**
+     * This function queries the database for the history of changes on a target.
+     * @param targetId The id of the target.
+     * @param targetModel The model of the target (claim or personality).
+     * @param page The page of results, used in combination with pageSize to paginate results.
+     * @param pageSize How many results per page.
+     * @param order asc or desc.
+     * @returns The paginated history of a target.
+     */
+    async getByTargetIdAndModel(targetId, targetModel, page, pageSize, order = "asc") {
+        return this.HistoryModel.find({
+            targetId: new Types.ObjectId(targetId),
+            targetModel,
+        })
+        .populate("user", "_id name")
+        .skip(page * pageSize)
+        .limit(pageSize)
+        .sort({ date: order });
+    }
 }

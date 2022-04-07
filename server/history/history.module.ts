@@ -3,6 +3,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { HistorySchema } from "./schema/history.schema";
 import { ConfigModule } from "@nestjs/config";
 import { HistoryService } from "./history.service";
+import { HistoryController } from "./history.controller";
 
 const HistoryModel = MongooseModule.forFeature([
     {
@@ -14,10 +15,11 @@ const HistoryModel = MongooseModule.forFeature([
 @Module({
     imports: [
         HistoryModel,
-        ConfigModule,
+        ConfigModule
     ],
     exports: [HistoryService],
     providers: [HistoryService],
+    controllers:[HistoryController]
 })
 
 export class HistoryModule {}
