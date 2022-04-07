@@ -31,9 +31,9 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.countDocuments().where(query);
     }
 
-    async getReviewStatsBySentenceHash(sentenceHash) {
+    async getReviewStatsBySentenceHash(match: any) {
         const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash: sentenceHash } },
+            { $match: match },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
@@ -42,7 +42,7 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId } },
+            { $match: { claim: claimId, isDeleted: false } },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
@@ -56,7 +56,7 @@ export class ClaimReviewService {
      */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId } },
+            { $match: { claim: claimId, isDeleted: false } },
             {
                 $group: {
                     _id: "$sentence_hash",
@@ -71,7 +71,7 @@ export class ClaimReviewService {
             return Promise.resolve(undefined);
         }
         return this.ClaimReviewModel.findOne(
-            { sentence_hash: sentenceHash, user: userId },
+            { sentence_hash: sentenceHash, user: userId, isDeleted: false },
             {
                 sources: 1,
                 _id: 1,
@@ -99,7 +99,7 @@ export class ClaimReviewService {
 
     _reviewsBySentenceHashAggregated(sentenceHash) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash: sentenceHash } },
+            { $match: { sentence_hash: sentenceHash, isDeleted: false } },
             // Virtual Populates doesn't work with aggregate
             // https://stackoverflow.com/questions/47669178/mongoose-virtual-populate-and-aggregates
             {
@@ -220,7 +220,6 @@ export class ClaimReviewService {
                 null,
                 claimReview
             )
-        console.log(claimReview)
         this.historyService.createHistory(history)
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }

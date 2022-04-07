@@ -72,6 +72,9 @@ export class ClaimReview {
         ref: "User",
     })
     user: User;
+
+    @Prop({ required: false })
+    isDeleted: boolean;
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);

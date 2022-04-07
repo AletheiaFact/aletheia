@@ -172,6 +172,7 @@ export class PersonalityService {
         const personality = await this.PersonalityModel.findById(id);
         const reviews = await this.claimReview.agreggateClassification({
             personality: personality._id,
+            isDeleted: false,
         });
         this.logger.log(`Got stats ${reviews}`);
         return this.util.formatStats(reviews, true);

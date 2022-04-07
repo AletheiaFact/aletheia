@@ -204,7 +204,6 @@ export class ClaimService {
             const stats = { ...reviewStats, ...overallStats };
             claim = Object.assign(claim, { stats });
         }
-        console.log(claim.stats.reviews)
         return claim;
     }
 
