@@ -367,8 +367,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="211"
-                            class="link-to-prism">server/claim/claim.service.ts:211</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="210"
+                            class="link-to-prism">server/claim/claim.service.ts:210</a></div>
                 </td>
             </tr>
 
@@ -973,8 +973,8 @@ Also creates a History Module that tracks deletion of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="230"
-                            class="link-to-prism">server/claim/claim.service.ts:230</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="229"
+                            class="link-to-prism">server/claim/claim.service.ts:229</a></div>
                 </td>
             </tr>
 
@@ -1183,7 +1183,7 @@ Also creates a History Module that tracks updation of claims.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Inject, Logger, Scope } from &quot;@nestjs/common&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Inject, Logger, Scope, NotFoundException } from &quot;@nestjs/common&quot;;
 import { InjectModel } from &quot;@nestjs/mongoose&quot;;
 import { FilterQuery, Model, Types } from &quot;mongoose&quot;;
 import { Claim, ClaimDocument } from &quot;../claim/schemas/claim.schema&quot;;
@@ -1221,12 +1221,12 @@ export class ClaimService {
             query.personality &#x3D; new Types.ObjectId(query.personality)
         }
         const claims &#x3D; await this.ClaimModel.find(query)
-            .populate(&quot;latestRevision&quot;)    
+            .populate(&quot;latestRevision&quot;)
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
-            
+
         return Promise.all(
             claims.map(async (claim) &#x3D;&gt; {
                 // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
@@ -1254,7 +1254,7 @@ export class ClaimService {
         const newClaimRevision &#x3D; await this.claimRevisionService.create(newClaim._id, claim)
         newClaim.latestRevision &#x3D; newClaimRevision._id
         newClaim.slug &#x3D; newClaimRevision.slug
-        
+
         const user &#x3D; this.req.user
 
         const history &#x3D;
@@ -1276,7 +1276,7 @@ export class ClaimService {
     }
 
     /**
-     * This function creates a new claim with the old claim data 
+     * This function creates a new claim with the old claim data
      * and overwrite with the new data, keeping data that hasn&#x27;t changed.
      * Also creates a History Module that tracks updation of claims.
      * @param claimId Claim id which wants updated.
@@ -1294,7 +1294,7 @@ export class ClaimService {
             })
         claim.latestRevision &#x3D; newClaimRevision._id
         claim.slug &#x3D; newClaimRevision.slug
-        
+
         const user &#x3D; this.req.user
 
         const history &#x3D;
@@ -1307,7 +1307,7 @@ export class ClaimService {
                 previousRevision
             )
         await this.historyService.createHistory(history)
-        
+
         claim.save()
         return newClaimRevision;
     }
@@ -1352,7 +1352,7 @@ export class ClaimService {
                 .populate(&quot;latestRevision&quot;)
 
         if (!claim) {
-            return {};
+            throw new NotFoundException()
         }
 
 

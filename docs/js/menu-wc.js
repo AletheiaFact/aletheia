@@ -179,15 +179,29 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="modules/HistoryModule.html" data-type="entity-link" >HistoryModule</a>
+                                    <li class="chapter inner">
+                                        <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
+                                            'data-target="#controllers-links-module-HistoryModule-2f0635066319ec61a972dbf2d889d4c861675ad83856eaf301ccaf57d95b36e0b8d1b5129d519dd4f477aa09bca9169a9b27ed9e6be273c721881bcc7e1ad6dc"' : 'data-target="#xs-controllers-links-module-HistoryModule-2f0635066319ec61a972dbf2d889d4c861675ad83856eaf301ccaf57d95b36e0b8d1b5129d519dd4f477aa09bca9169a9b27ed9e6be273c721881bcc7e1ad6dc"' }>
+                                            <span class="icon ion-md-swap"></span>
+                                            <span>Controllers</span>
+                                            <span class="icon ion-ios-arrow-down"></span>
+                                        </div>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="controllers-links-module-HistoryModule-2f0635066319ec61a972dbf2d889d4c861675ad83856eaf301ccaf57d95b36e0b8d1b5129d519dd4f477aa09bca9169a9b27ed9e6be273c721881bcc7e1ad6dc"' :
+                                            'id="xs-controllers-links-module-HistoryModule-2f0635066319ec61a972dbf2d889d4c861675ad83856eaf301ccaf57d95b36e0b8d1b5129d519dd4f477aa09bca9169a9b27ed9e6be273c721881bcc7e1ad6dc"' }>
+                                            <li class="link">
+                                                <a href="controllers/HistoryController.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >HistoryController</a>
+                                            </li>
+                                        </ul>
+                                    </li>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                        'data-target="#injectables-links-module-HistoryModule-a4c2d56d4ca2df302d1beec952b6a19f0132fea432628f0283aace748c5c312c4b4940c9c5fe4b6b02e05c36d583b33a41b8e0cc39faf7d9570164b38f0b5048"' : 'data-target="#xs-injectables-links-module-HistoryModule-a4c2d56d4ca2df302d1beec952b6a19f0132fea432628f0283aace748c5c312c4b4940c9c5fe4b6b02e05c36d583b33a41b8e0cc39faf7d9570164b38f0b5048"' }>
+                                        'data-target="#injectables-links-module-HistoryModule-2f0635066319ec61a972dbf2d889d4c861675ad83856eaf301ccaf57d95b36e0b8d1b5129d519dd4f477aa09bca9169a9b27ed9e6be273c721881bcc7e1ad6dc"' : 'data-target="#xs-injectables-links-module-HistoryModule-2f0635066319ec61a972dbf2d889d4c861675ad83856eaf301ccaf57d95b36e0b8d1b5129d519dd4f477aa09bca9169a9b27ed9e6be273c721881bcc7e1ad6dc"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-HistoryModule-a4c2d56d4ca2df302d1beec952b6a19f0132fea432628f0283aace748c5c312c4b4940c9c5fe4b6b02e05c36d583b33a41b8e0cc39faf7d9570164b38f0b5048"' :
-                                        'id="xs-injectables-links-module-HistoryModule-a4c2d56d4ca2df302d1beec952b6a19f0132fea432628f0283aace748c5c312c4b4940c9c5fe4b6b02e05c36d583b33a41b8e0cc39faf7d9570164b38f0b5048"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-HistoryModule-2f0635066319ec61a972dbf2d889d4c861675ad83856eaf301ccaf57d95b36e0b8d1b5129d519dd4f477aa09bca9169a9b27ed9e6be273c721881bcc7e1ad6dc"' :
+                                        'id="xs-injectables-links-module-HistoryModule-2f0635066319ec61a972dbf2d889d4c861675ad83856eaf301ccaf57d95b36e0b8d1b5129d519dd4f477aa09bca9169a9b27ed9e6be273c721881bcc7e1ad6dc"' }>
                                         <li class="link">
                                             <a href="injectables/HistoryService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >HistoryService</a>
                                         </li>

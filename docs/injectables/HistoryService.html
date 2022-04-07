@@ -103,6 +103,10 @@
                                 <a href="#createHistory" >createHistory</a>
                             </li>
                             <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getByTargetIdAndModel" >getByTargetIdAndModel</a>
+                            </li>
+                            <li>
                                 <a href="#getHistoryParams" >getHistoryParams</a>
                             </li>
                         </ul>
@@ -240,6 +244,157 @@
                     </div>
                     <div class="io-description">
                         <p>Returns a new history document to database</p>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getByTargetIdAndModel"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>getByTargetIdAndModel</b></span>
+                        <a href="#getByTargetIdAndModel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getByTargetIdAndModel(targetId, targetModel, page, pageSize, order: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="73"
+                            class="link-to-prism">server/history/history.service.ts:73</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>This function queries the database for the history of changes on a target.</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Default value</td>
+                                    <td>Description</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>targetId</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        <p>The id of the target.</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>targetModel</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        <p>The model of the target (claim or personality).</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>page</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        <p>The page of results, used in combination with pageSize to paginate results.</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>pageSize</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        <p>How many results per page.</p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>order</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>&quot;asc&quot;</code>
+                                    </td>
+
+                                    <td>
+                                        <p>asc or desc.</p>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        <p>The paginated history of a target.</p>
 
                     </div>
                 </td>
@@ -520,7 +675,7 @@ export class HistoryService {
         return {
             targetId: new Types.ObjectId(dataId),
             targetModel,
-            user: user._id,
+            user: user?._id,
             type,
             details: {
                 after: latestChange,
@@ -539,7 +694,29 @@ export class HistoryService {
         const newHistory &#x3D; new this.HistoryModel(data);
         return newHistory.save();
     }
-}</code></pre>
+
+
+    /**
+     * This function queries the database for the history of changes on a target.
+     * @param targetId The id of the target.
+     * @param targetModel The model of the target (claim or personality).
+     * @param page The page of results, used in combination with pageSize to paginate results.
+     * @param pageSize How many results per page.
+     * @param order asc or desc.
+     * @returns The paginated history of a target.
+     */
+    async getByTargetIdAndModel(targetId, targetModel, page, pageSize, order &#x3D; &quot;asc&quot;) {
+        return this.HistoryModel.find({
+            targetId: new Types.ObjectId(targetId),
+            targetModel,
+        })
+        .populate(&quot;user&quot;, &quot;_id name&quot;)
+        .skip(page * pageSize)
+        .limit(pageSize)
+        .sort({ date: order });
+    }
+}
+</code></pre>
     </div>
 
 </div>
