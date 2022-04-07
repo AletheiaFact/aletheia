@@ -4,6 +4,7 @@ import { Model } from "mongoose";
 import slugify from 'slugify'
 import { ParserService } from "../parser/parser.service";
 import { SourceService } from "../source/source.service";
+import { SourceTargetModel } from "../source/schemas/source.schema";
 import { ClaimRevision, ClaimRevisionDocument } from "./schema/claim-revision.schema";
 
 @Injectable()
@@ -49,7 +50,7 @@ export class ClaimRevisionService {
                     await this.sourceService.create({
                         link: source,
                         targetId: claimId,
-                        targetModel: "Claim",
+                        targetModel: SourceTargetModel.Claim,
                     });
                 }
             } catch (e) {

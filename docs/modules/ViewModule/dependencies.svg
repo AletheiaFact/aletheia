@@ -14,13 +14,13 @@
 <title>cluster_ViewModule</title>
 <polygon fill="none" stroke="black" stroke-dasharray="1,5" points="8,-32.8 8,-230.8 162,-230.8 162,-32.8 8,-32.8"/>
 </g>
-<g id="clust6" class="cluster">
-<title>cluster_ViewModule_providers</title>
-<polygon fill="none" stroke="black" points="16,-40.8 16,-92.8 154,-92.8 154,-40.8 16,-40.8"/>
-</g>
 <g id="clust4" class="cluster">
 <title>cluster_ViewModule_exports</title>
 <polygon fill="none" stroke="black" points="31,-170.8 31,-222.8 139,-222.8 139,-170.8 31,-170.8"/>
+</g>
+<g id="clust6" class="cluster">
+<title>cluster_ViewModule_providers</title>
+<polygon fill="none" stroke="black" points="16,-40.8 16,-92.8 154,-92.8 154,-40.8 16,-40.8"/>
 </g>
 <!-- ViewService  -->
 <g id="node1" class="node">

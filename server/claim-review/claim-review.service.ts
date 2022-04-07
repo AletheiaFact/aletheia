@@ -1,19 +1,21 @@
-import {Injectable, Logger} from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Model, Types } from "mongoose";
-import {
-    ClaimReview,
-    ClaimReviewDocument,
-} from "./schemas/claim-review.schema";
+import { ClaimReview, ClaimReviewDocument } from "./schemas/claim-review.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UtilService } from "../util";
 import { SourceService } from "../source/source.service";
+import { HistoryService } from "../history/history.service";
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
+import { SourceTargetModel } from '../source/schemas/source.schema'
 
 @Injectable()
 export class ClaimReviewService {
     private readonly logger = new Logger("ClaimReviewService");
     constructor(
         @InjectModel(ClaimReview.name)
-        private ClaimReviewModel: Model<ClaimReviewDocument>,
+        private ClaimReviewModel: Model<ClaimReviewDocument> & ISoftDeletedModel<ClaimReviewDocument>,
+        private historyService: HistoryService,
         private sourceService: SourceService,
         private util: UtilService
     ) {}
@@ -30,9 +32,9 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.countDocuments().where(query);
     }
 
-    async getReviewStatsBySentenceHash(sentenceHash) {
+    async getReviewStatsBySentenceHash(match: any) {
         const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash: sentenceHash } },
+            { $match: match },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
@@ -41,7 +43,7 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId } },
+            { $match: { claim: claimId, isDeleted: false } },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
@@ -55,7 +57,7 @@ export class ClaimReviewService {
      */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId } },
+            { $match: { claim: claimId, isDeleted: false } },
             {
                 $group: {
                     _id: "$sentence_hash",
@@ -70,7 +72,7 @@ export class ClaimReviewService {
             return Promise.resolve(undefined);
         }
         return this.ClaimReviewModel.findOne(
-            { sentence_hash: sentenceHash, user: userId },
+            { sentence_hash: sentenceHash, user: userId, isDeleted: false },
             {
                 sources: 1,
                 _id: 1,
@@ -98,7 +100,7 @@ export class ClaimReviewService {
 
     _reviewsBySentenceHashAggregated(sentenceHash) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash: sentenceHash } },
+            { $match: { sentence_hash: sentenceHash, isDeleted: false } },
             // Virtual Populates doesn't work with aggregate
             // https://stackoverflow.com/questions/47669178/mongoose-virtual-populate-and-aggregates
             {
@@ -165,6 +167,12 @@ export class ClaimReviewService {
         };
     }
 
+    /**
+     * This function creates a new claim review.
+     * Also creates a History Module that tracks creation of claim reviews.
+     * @param claimReview ClaimReviewBody received of the client.
+     * @returns Return a new claim review object.
+     */
     async create(claimReview) {
         // Cast ObjectId
         claimReview.personality = new Types.ObjectId(claimReview.personality);
@@ -177,7 +185,7 @@ export class ClaimReviewService {
                     await this.sourceService.create({
                         link: claimReview.sources[i],
                         targetId: newClaimReview.id,
-                        targetModel: "ClaimReview",
+                        targetModel: SourceTargetModel.ClaimReview,
                     });
                 }
             } catch (e) {
@@ -185,6 +193,17 @@ export class ClaimReviewService {
                 throw e;
             }
         }
+
+        const history = 
+            this.historyService.getHistoryParams(
+                newClaimReview._id,
+                TargetModel.ClaimReview,
+                claimReview.user,
+                HistoryType.Create,
+                newClaimReview
+            )
+
+        this.historyService.createHistory(history)
 
         return newClaimReview.save();
     }
@@ -195,7 +214,26 @@ export class ClaimReviewService {
             .populate("sources", "_id link classification");
     }
 
-    delete(claimReviewId) {
-        return this.ClaimReviewModel.findByIdAndRemove(claimReviewId);
+    /**
+     * This function does a soft deletion, doesn't delete claim review in DataBase,
+     * but omit its in the front page
+     * Also creates a History Module that tracks deletion of claim reviews.
+     * @param claimReviewId claimId Claim id which wants to delete
+     * @returns Returns the claim review with the param isDeleted equal to true
+     */
+    async delete(claimReviewId) {
+        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+        const claimReview = await this.getById(claimReviewId)
+        const history = 
+            this.historyService.getHistoryParams(
+                claimReview._id,
+                TargetModel.ClaimReview,
+                claimReview.user,
+                HistoryType.Delete,
+                null,
+                claimReview
+            )
+        this.historyService.createHistory(history)
+        return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }
 }

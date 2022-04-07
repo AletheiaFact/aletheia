@@ -5,8 +5,9 @@ import { User } from "../../users/schemas/user.schema";
 export type HistoryDocument = History & mongoose.Document;
 
 export enum TargetModel { 
-  Claim = 'claim',
-  Personality = 'personality',
+  Claim = 'Claim',
+  Personality = 'Personality',
+  ClaimReview = 'ClaimReview'
 }
 
 export enum HistoryType { 

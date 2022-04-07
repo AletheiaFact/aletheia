@@ -287,8 +287,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="264"
-                            class="link-to-prism">server/personality/personality.service.ts:264</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="269"
+                            class="link-to-prism">server/personality/personality.service.ts:269</a></div>
                 </td>
             </tr>
 
@@ -352,8 +352,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="241"
-                            class="link-to-prism">server/personality/personality.service.ts:241</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="246"
+                            class="link-to-prism">server/personality/personality.service.ts:246</a></div>
                 </td>
             </tr>
 
@@ -501,8 +501,8 @@ Also creates a History Module that tracks creation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="226"
-                            class="link-to-prism">server/personality/personality.service.ts:226</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="231"
+                            class="link-to-prism">server/personality/personality.service.ts:231</a></div>
                 </td>
             </tr>
 
@@ -576,8 +576,8 @@ Also creates a History Module that tracks deletion of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="245"
-                            class="link-to-prism">server/personality/personality.service.ts:245</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="250"
+                            class="link-to-prism">server/personality/personality.service.ts:250</a></div>
                 </td>
             </tr>
 
@@ -823,8 +823,8 @@ Also creates a History Module that tracks deletion of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="167"
-                            class="link-to-prism">server/personality/personality.service.ts:167</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="171"
+                            class="link-to-prism">server/personality/personality.service.ts:171</a></div>
                 </td>
             </tr>
 
@@ -1016,8 +1016,8 @@ Also creates a History Module that tracks deletion of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="142"
-                            class="link-to-prism">server/personality/personality.service.ts:142</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="146"
+                            class="link-to-prism">server/personality/personality.service.ts:146</a></div>
                 </td>
             </tr>
 
@@ -1104,8 +1104,8 @@ Also creates a History Module that tracks deletion of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="184"
-                            class="link-to-prism">server/personality/personality.service.ts:184</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="189"
+                            class="link-to-prism">server/personality/personality.service.ts:189</a></div>
                 </td>
             </tr>
 
@@ -1192,8 +1192,8 @@ Also creates a History Module that tracks updation of personalities.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="255"
-                            class="link-to-prism">server/personality/personality.service.ts:255</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="260"
+                            class="link-to-prism">server/personality/personality.service.ts:260</a></div>
                 </td>
             </tr>
 
@@ -1312,7 +1312,7 @@ Also creates a History Module that tracks updation of personalities.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Inject, Logger, Scope } from &quot;@nestjs/common&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Inject, Logger, Scope, NotFoundException } from &quot;@nestjs/common&quot;;
 import { InjectModel } from &quot;@nestjs/mongoose&quot;;
 import { Model } from &quot;mongoose&quot;;
 import slugify from &#x27;slugify&#x27;
@@ -1432,25 +1432,29 @@ export class PersonalityService {
     }
 
     async getBySlug(personalitySlug, language &#x3D; &quot;en&quot;) {
-        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const personality: any &#x3D; await this.PersonalityModel.findOne({
-            slug: personalitySlug
-        }).populate({
-            path: &quot;claims&quot;,
-            populate: {
-                path: &quot;latestRevision&quot;,
-                select: &quot;_id title content&quot;
-            },
-            select: &quot;_id&quot;,
-        });
-        personality.claims &#x3D; await Promise.all(personality.claims.map((claim) &#x3D;&gt; {
-            return {
-                ...claim.lastestRevision,
-                ...claim
-            }
-        })) 
-        this.logger.log(&#x60;Found personality ${personality._id}&#x60;);
-        return await this.postProcess(personality.toObject(), language);
+        try {
+             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            const personality: any &#x3D; await this.PersonalityModel.findOne({
+                slug: personalitySlug
+            }).populate({
+                path: &quot;claims&quot;,
+                populate: {
+                    path: &quot;latestRevision&quot;,
+                    select: &quot;_id title content&quot;
+                },
+                select: &quot;_id&quot;,
+            });
+            personality.claims &#x3D; await Promise.all(personality.claims.map((claim) &#x3D;&gt; {
+                return {
+                    ...claim.lastestRevision,
+                    ...claim
+                }
+            })) 
+            this.logger.log(&#x60;Found personality ${personality._id}&#x60;);
+            return await this.postProcess(personality.toObject(), language);
+        } catch {
+            throw new NotFoundException()
+        }
     }
 
     async postProcess(personality, language: string &#x3D; &quot;en&quot;) {
@@ -1482,6 +1486,7 @@ export class PersonalityService {
         const personality &#x3D; await this.PersonalityModel.findById(id);
         const reviews &#x3D; await this.claimReview.agreggateClassification({
             personality: personality._id,
+            isDeleted: false,
         });
         this.logger.log(&#x60;Got stats ${reviews}&#x60;);
         return this.util.formatStats(reviews, true);
