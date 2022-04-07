@@ -7,6 +7,7 @@ import { SourceService } from "../source/source.service";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
+import { SourceTargetModel } from '../source/schemas/source.schema'
 
 @Injectable()
 export class ClaimReviewService {
@@ -174,8 +175,6 @@ export class ClaimReviewService {
      */
     async create(claimReview) {
         // Cast ObjectId
-        //verificar id da claim review
-        //a claim review está referenciando a claim, não à claim revision está certo ?
         claimReview.personality = new Types.ObjectId(claimReview.personality);
         claimReview.claim = new Types.ObjectId(claimReview.claim);
         claimReview.user = new Types.ObjectId(claimReview.user);
@@ -186,7 +185,7 @@ export class ClaimReviewService {
                     await this.sourceService.create({
                         link: claimReview.sources[i],
                         targetId: newClaimReview.id,
-                        targetModel: "ClaimReview",
+                        targetModel: SourceTargetModel.ClaimReview,
                     });
                 }
             } catch (e) {
