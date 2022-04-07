@@ -166,6 +166,12 @@ export class ClaimReviewService {
         };
     }
 
+    /**
+     * This function creates a new claim review.
+     * Also creates a History Module that tracks creation of claim reviews.
+     * @param claimReview ClaimReviewBody received of the client.
+     * @returns Return a new claim review object.
+     */
     async create(claimReview) {
         // Cast ObjectId
         //verificar id da claim review
@@ -209,6 +215,13 @@ export class ClaimReviewService {
             .populate("sources", "_id link classification");
     }
 
+    /**
+     * This function does a soft deletion, doesn't delete claim review in DataBase,
+     * but omit its in the front page
+     * Also creates a History Module that tracks deletion of claim reviews.
+     * @param claimReviewId claimId Claim id which wants to delete
+     * @returns Returns the claim review with the param isDeleted equal to true
+     */
     async delete(claimReviewId) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claimReview = await this.getById(claimReviewId)

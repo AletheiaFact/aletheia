@@ -1371,7 +1371,7 @@ export class ClaimController {
     _getSentenceByHashAndClaimId(sentenceHash, claimId, req) {
         const user &#x3D; req.user;
         return Promise.all([
-            this.claimReviewService.getReviewStatsBySentenceHash(sentenceHash),
+            this.claimReviewService.getReviewStatsBySentenceHash({sentenceHash, isDeleted: false}),
             this.claimService.getById(claimId),
             this.claimReviewService.getUserReviewBySentenceHash(
                 sentenceHash,
@@ -1482,6 +1482,29 @@ export class ClaimController {
                 .getNextServer()
                 .render(req,res, &#x27;/404-page&#x27;, Object.assign(parsedUrl.query))
         }
+    }
+
+    @Get(&quot;personality/:personalitySlug/claim/:claimSlug/sources&quot;)
+    public async sourcesClaimPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl &#x3D; parse(req.url, true);
+
+        const personality &#x3D; await this.personalityService.getBySlug(
+            req.params.personalitySlug
+        );
+
+        const claim &#x3D; await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                &quot;/claim-sources-page&quot;,
+                Object.assign(parsedUrl.query, { claimId: claim._id })
+            );
     }
 
     @Get(&quot;personality/:personalitySlug/claim/:claimSlug/sources&quot;)

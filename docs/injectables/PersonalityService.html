@@ -355,10 +355,6 @@
                     <div class="io-line">Defined in <a href="" data-line="241"
                             class="link-to-prism">server/personality/personality.service.ts:241</a></div>
                 </td>
-            </tr>
-
-
-            <tr>
                 <td class="col-md-4">
 
                     <div class="io-description">
@@ -1482,6 +1478,7 @@ export class PersonalityService {
         const personality &#x3D; await this.PersonalityModel.findById(id);
         const reviews &#x3D; await this.claimReview.agreggateClassification({
             personality: personality._id,
+            isDeleted: false,
         });
         this.logger.log(&#x60;Got stats ${reviews}&#x60;);
         return this.util.formatStats(reviews, true);

@@ -113,13 +113,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/ClaimReviewModule.html" data-type="entity-link" >ClaimReviewModule</a>
                                     <li class="chapter inner">
                                         <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                            'data-target="#controllers-links-module-ClaimReviewModule-0f6eefa566a37b6d8781d31f64835edf1b34911a4978d7b1d6b9078fd2ae97b4772ef6ea2e9cc2fd90e175922fa540a16796527d540afc4e82213ef4dc8a6d92"' : 'data-target="#xs-controllers-links-module-ClaimReviewModule-0f6eefa566a37b6d8781d31f64835edf1b34911a4978d7b1d6b9078fd2ae97b4772ef6ea2e9cc2fd90e175922fa540a16796527d540afc4e82213ef4dc8a6d92"' }>
+                                            'data-target="#controllers-links-module-ClaimReviewModule-25cf8c16f1953af1b8e546a984650b33cd10546c7c3811e6e667aff17c83bf349818319d5114e1b89e55cfb9865d713c2855ee8c0e3b0359b15e55b7faceaf30"' : 'data-target="#xs-controllers-links-module-ClaimReviewModule-25cf8c16f1953af1b8e546a984650b33cd10546c7c3811e6e667aff17c83bf349818319d5114e1b89e55cfb9865d713c2855ee8c0e3b0359b15e55b7faceaf30"' }>
                                             <span class="icon ion-md-swap"></span>
                                             <span>Controllers</span>
                                             <span class="icon ion-ios-arrow-down"></span>
                                         </div>
-                                        <ul class="links collapse" ${ isNormalMode ? 'id="controllers-links-module-ClaimReviewModule-0f6eefa566a37b6d8781d31f64835edf1b34911a4978d7b1d6b9078fd2ae97b4772ef6ea2e9cc2fd90e175922fa540a16796527d540afc4e82213ef4dc8a6d92"' :
-                                            'id="xs-controllers-links-module-ClaimReviewModule-0f6eefa566a37b6d8781d31f64835edf1b34911a4978d7b1d6b9078fd2ae97b4772ef6ea2e9cc2fd90e175922fa540a16796527d540afc4e82213ef4dc8a6d92"' }>
+                                        <ul class="links collapse" ${ isNormalMode ? 'id="controllers-links-module-ClaimReviewModule-25cf8c16f1953af1b8e546a984650b33cd10546c7c3811e6e667aff17c83bf349818319d5114e1b89e55cfb9865d713c2855ee8c0e3b0359b15e55b7faceaf30"' :
+                                            'id="xs-controllers-links-module-ClaimReviewModule-25cf8c16f1953af1b8e546a984650b33cd10546c7c3811e6e667aff17c83bf349818319d5114e1b89e55cfb9865d713c2855ee8c0e3b0359b15e55b7faceaf30"' }>
                                             <li class="link">
                                                 <a href="controllers/ClaimReviewController.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >ClaimReviewController</a>
                                             </li>
@@ -127,13 +127,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     </li>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-toggle="collapse" ${ isNormalMode ?
-                                        'data-target="#injectables-links-module-ClaimReviewModule-0f6eefa566a37b6d8781d31f64835edf1b34911a4978d7b1d6b9078fd2ae97b4772ef6ea2e9cc2fd90e175922fa540a16796527d540afc4e82213ef4dc8a6d92"' : 'data-target="#xs-injectables-links-module-ClaimReviewModule-0f6eefa566a37b6d8781d31f64835edf1b34911a4978d7b1d6b9078fd2ae97b4772ef6ea2e9cc2fd90e175922fa540a16796527d540afc4e82213ef4dc8a6d92"' }>
+                                        'data-target="#injectables-links-module-ClaimReviewModule-25cf8c16f1953af1b8e546a984650b33cd10546c7c3811e6e667aff17c83bf349818319d5114e1b89e55cfb9865d713c2855ee8c0e3b0359b15e55b7faceaf30"' : 'data-target="#xs-injectables-links-module-ClaimReviewModule-25cf8c16f1953af1b8e546a984650b33cd10546c7c3811e6e667aff17c83bf349818319d5114e1b89e55cfb9865d713c2855ee8c0e3b0359b15e55b7faceaf30"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-ClaimReviewModule-0f6eefa566a37b6d8781d31f64835edf1b34911a4978d7b1d6b9078fd2ae97b4772ef6ea2e9cc2fd90e175922fa540a16796527d540afc4e82213ef4dc8a6d92"' :
-                                        'id="xs-injectables-links-module-ClaimReviewModule-0f6eefa566a37b6d8781d31f64835edf1b34911a4978d7b1d6b9078fd2ae97b4772ef6ea2e9cc2fd90e175922fa540a16796527d540afc4e82213ef4dc8a6d92"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-ClaimReviewModule-25cf8c16f1953af1b8e546a984650b33cd10546c7c3811e6e667aff17c83bf349818319d5114e1b89e55cfb9865d713c2855ee8c0e3b0359b15e55b7faceaf30"' :
+                                        'id="xs-injectables-links-module-ClaimReviewModule-25cf8c16f1953af1b8e546a984650b33cd10546c7c3811e6e667aff17c83bf349818319d5114e1b89e55cfb9865d713c2855ee8c0e3b0359b15e55b7faceaf30"' }>
                                         <li class="link">
                                             <a href="injectables/ClaimReviewService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >ClaimReviewService</a>
                                         </li>
