@@ -67,9 +67,9 @@ export class PersonalityController {
 
     @UseGuards(SessionGuard)
     @Delete("api/personality/:id")
-    delete(@Param("id") personalityId) {
+    async delete(@Param("id") personalityId) {
         try {
-            this.personalityService.delete(personalityId);
+            await this.personalityService.delete(personalityId);
             return { message: "Personality successfully deleted" };
         } catch (error) {
             this.logger.error(error);
