@@ -1,6 +1,6 @@
-import { Model } from "mongoose";
-import { Injectable, Inject, Logger, Scope } from "@nestjs/common";
+import { Injectable, Inject, Logger, Scope, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 import slugify from 'slugify'
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../wikidata/wikidata.service";
@@ -8,6 +8,7 @@ import { UtilService } from "../util";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 
@@ -22,7 +23,7 @@ export class PersonalityService {
     constructor(
         @Inject(REQUEST) private req: Request,
         @InjectModel(Personality.name)
-        private PersonalityModel: Model<PersonalityDocument>,
+        private PersonalityModel: ISoftDeletedModel<PersonalityDocument> & Model<PersonalityDocument>,
         private claimReview: ClaimReviewService,
         private history: HistoryService,
         private wikidata: WikidataService,
@@ -117,25 +118,29 @@ export class PersonalityService {
     }
 
     async getBySlug(personalitySlug, language = "en") {
-        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const personality: any = await this.PersonalityModel.findOne({
-            slug: personalitySlug
-        }).populate({
-            path: "claims",
-            populate: {
-                path: "latestRevision",
-                select: "_id title content"
-            },
-            select: "_id",
-        });
-        personality.claims = await Promise.all(personality.claims.map((claim) => {
-            return {
-                ...claim.lastestRevision,
-                ...claim
-            }
-        })) 
-        this.logger.log(`Found personality ${personality._id}`);
-        return await this.postProcess(personality.toObject(), language);
+        try {
+             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            const personality: any = await this.PersonalityModel.findOne({
+                slug: personalitySlug
+            }).populate({
+                path: "claims",
+                populate: {
+                    path: "latestRevision",
+                    select: "_id title content"
+                },
+                select: "_id",
+            });
+            personality.claims = await Promise.all(personality.claims.map((claim) => {
+                return {
+                    ...claim.lastestRevision,
+                    ...claim
+                }
+            })) 
+            this.logger.log(`Found personality ${personality._id}`);
+            return await this.postProcess(personality.toObject(), language);
+        } catch {
+            throw new NotFoundException()
+        }
     }
 
     async postProcess(personality, language: string = "en") {
@@ -215,8 +220,26 @@ export class PersonalityService {
         return personalityUpdate;
     }
 
-    delete(personalityId) {
-        return this.PersonalityModel.findByIdAndRemove(personalityId);
+    /**
+     * This function does a soft deletion, doesn't delete claim in DataBase,
+     * but omit its in the front page
+     * Also creates a History Module that tracks deletion of personalities.
+     * @param personalityId Personality Id which wants to delete
+     * @returns Returns the personality with the param isDeleted equal to true
+     */
+    async delete(personalityId) {
+        const user = this.req.user
+        const previousPersonality = await this.getById(personalityId)
+        const history = this.history.getHistoryParams(
+            personalityId,
+            TargetModel.Personality,
+            user,
+            HistoryType.Delete,
+            null,
+            previousPersonality
+        )
+        await this.history.createHistory(history)
+        return this.PersonalityModel.softDelete({ _id: personalityId });
     }
 
     count(query: any = {}) {

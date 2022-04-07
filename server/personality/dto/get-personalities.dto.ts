@@ -7,7 +7,7 @@ export class GetPersonalities {
 
     @IsNumber()
     @Min(0)
-    pageSize: number;//error /personality/search, 10 by default
+    pageSize: number;
 
     @IsString()
     order: string;

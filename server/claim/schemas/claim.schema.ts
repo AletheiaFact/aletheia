@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Personality } from "../../personality/schemas/personality.schema"
 import { ClaimRevision } from "../../claim-revision/schema/claim-revision.schema"
+import { softDeletePlugin } from 'mongoose-softdelete-typescript';
 
 export type ClaimDocument = Claim & mongoose.Document & { revisions: any };
 
@@ -13,10 +14,7 @@ export class Claim {
         ref: "Personality",
     })
     personality: Personality;
-
-    @Prop({ default: false })
-    deleted: boolean
-
+    
     @Prop({ required: true })
     slug: string;
 
@@ -40,4 +38,7 @@ ClaimSchemaRaw.virtual('sources', {
     localField: '_id',
     foreignField: 'targetId'
 })
+
+ClaimSchemaRaw.plugin(softDeletePlugin)
+
 export const ClaimSchema = ClaimSchemaRaw;

@@ -638,8 +638,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="125"
-                            class="link-to-prism">server/personality/personality.controller.ts:125</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="130"
+                            class="link-to-prism">server/personality/personality.controller.ts:130</a></div>
                 </td>
             </tr>
 
@@ -984,20 +984,25 @@ export class PersonalityController {
     public async personalityPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
         // @ts-ignore
-
-        const personality &#x3D; await this.personalityService.getBySlug(
-            req.params.slug,
-            // @ts-ignore
-            req.language
-        );
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                &quot;/personality-page&quot;,
-                Object.assign(parsedUrl.query, { personality })
+        try {
+            const personality &#x3D; await this.personalityService.getBySlug(
+                req.params.slug,
+                // @ts-ignore
+                req.language
             );
+            await this.viewService
+                .getNextServer()
+                .render(
+                    req,
+                    res,
+                    &quot;/personality-page&quot;,
+                    Object.assign(parsedUrl.query, { personality })
+                );
+        } catch {
+            await this.viewService
+                .getNextServer()
+                .render(req,res, &#x27;/404-page&#x27;, Object.assign(parsedUrl.query))
+        }
     }
 
     @Get(&quot;personality&quot;)

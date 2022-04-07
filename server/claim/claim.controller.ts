@@ -111,8 +111,8 @@ export class ClaimController {
     }
 
     @Get("api/claim/:id")
-    getById(@Param() params) {
-        return this.claimService.getById(params.id);
+    getById(@Param("id") claimId) {
+        return this.claimService.getById(claimId);
     }
 
     @UseGuards(SessionGuard)
@@ -123,8 +123,8 @@ export class ClaimController {
 
     @UseGuards(SessionGuard)
     @Delete("api/claim/:id")
-    delete(@Param() params) {
-        return this.claimService.delete(params.id);
+    delete(@Param("id") claimId) {
+        return this.claimService.delete(claimId);
     }
 
     @Get("api/claim/:claimId/sentence/:sentenceHash/reviews")
@@ -248,7 +248,6 @@ export class ClaimController {
     public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-
         const personality = await this.personalityService.getBySlug(
             req.params.personalitySlug,
             // @ts-ignore

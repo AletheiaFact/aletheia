@@ -115,10 +115,8 @@
                                 <a href="#create" >create</a>
                             </li>
                             <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#delete" >delete</a>
-                            </li>
-                            <li>
-                                <a href="#findOneAndUpdate" >findOneAndUpdate</a>
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
@@ -163,12 +161,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(req: Request, ClaimModel: <a href="../classes/Claim.html" target="_self">Model&lt;ClaimDocument&gt;</a>, claimReviewService: <a href="../injectables/ClaimReviewService.html" target="_self">ClaimReviewService</a>, historyService: <a href="../injectables/HistoryService.html" target="_self">HistoryService</a>, claimRevisionService: <a href="../injectables/ClaimRevisionService.html" target="_self">ClaimRevisionService</a>)</code>
+<code>constructor(req: Request, ClaimModel, claimReviewService: <a href="../injectables/ClaimReviewService.html" target="_self">ClaimReviewService</a>, historyService: <a href="../injectables/HistoryService.html" target="_self">HistoryService</a>, claimRevisionService: <a href="../injectables/ClaimRevisionService.html" target="_self">ClaimRevisionService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">server/claim/claim.service.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">server/claim/claim.service.ts:18</a></div>
                             </td>
                         </tr>
 
@@ -201,7 +199,6 @@
                                                         <td>ClaimModel</td>
                                                   
                                                         <td>
-                                                                        <code><a href="../classes/Claim.html" target="_self" >Model&lt;ClaimDocument&gt;</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -282,8 +279,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="145"
-                            class="link-to-prism">server/claim/claim.service.ts:145</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="161"
+                            class="link-to-prism">server/claim/claim.service.ts:161</a></div>
                 </td>
             </tr>
 
@@ -370,8 +367,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="195"
-                            class="link-to-prism">server/claim/claim.service.ts:195</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="211"
+                            class="link-to-prism">server/claim/claim.service.ts:211</a></div>
                 </td>
             </tr>
 
@@ -435,8 +432,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="55"
-                            class="link-to-prism">server/claim/claim.service.ts:55</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="56"
+                            class="link-to-prism">server/claim/claim.service.ts:56</a></div>
                 </td>
             </tr>
 
@@ -510,8 +507,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="65"
-                            class="link-to-prism">server/claim/claim.service.ts:65</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="66"
+                            class="link-to-prism">server/claim/claim.service.ts:66</a></div>
                 </td>
             </tr>
 
@@ -570,6 +567,7 @@ Also creates a History Module that tracks creation of claims.</p>
                 <td class="col-md-4">
                     <a name="delete"></a>
                     <span class="name">
+                        <span class="modifier">Async</span>
                         <span ><b>delete</b></span>
                         <a href="#delete"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -577,21 +575,26 @@ Also creates a History Module that tracks creation of claims.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>delete(claimId)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>delete(claimId)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="129"
-                            class="link-to-prism">server/claim/claim.service.ts:129</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="137"
+                            class="link-to-prism">server/claim/claim.service.ts:137</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>This function does a soft deletion, doesn&#39;t delete claim in DataBase,
+but omit its in the front page
+Also creates a History Module that tracks deletion of claims.</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -601,6 +604,7 @@ Also creates a History Module that tracks creation of claims.</p>
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -612,6 +616,10 @@ Also creates a History Module that tracks creation of claims.</p>
                                     </td>
 
 
+                                    <td>
+                                        <p>Claim id which wants to delete</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -619,85 +627,12 @@ Also creates a History Module that tracks creation of claims.</p>
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                        <b>Returns : </b>    <code>unknown</code>
 
                     </div>
                     <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="findOneAndUpdate"></a>
-                    <span class="name">
-                        <span ><b>findOneAndUpdate</b></span>
-                        <a href="#findOneAndUpdate"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>findOneAndUpdate(query, push)</code>
-                </td>
-            </tr>
+                        <p>Returns the claim with the param isDeleted equal to true</p>
 
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="234"
-                            class="link-to-prism">server/claim/claim.service.ts:234</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>query</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>push</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
                     </div>
                 </td>
             </tr>
@@ -725,8 +660,8 @@ Also creates a History Module that tracks creation of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="137"
-                            class="link-to-prism">server/claim/claim.service.ts:137</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="153"
+                            class="link-to-prism">server/claim/claim.service.ts:153</a></div>
                 </td>
             </tr>
 
@@ -792,8 +727,8 @@ Also creates a History Module that tracks creation of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="141"
-                            class="link-to-prism">server/claim/claim.service.ts:141</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="157"
+                            class="link-to-prism">server/claim/claim.service.ts:157</a></div>
                 </td>
             </tr>
 
@@ -868,8 +803,8 @@ Also creates a History Module that tracks creation of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="33"
-                            class="link-to-prism">server/claim/claim.service.ts:33</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="34"
+                            class="link-to-prism">server/claim/claim.service.ts:34</a></div>
                 </td>
             </tr>
 
@@ -963,8 +898,8 @@ Also creates a History Module that tracks creation of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="166"
-                            class="link-to-prism">server/claim/claim.service.ts:166</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="182"
+                            class="link-to-prism">server/claim/claim.service.ts:182</a></div>
                 </td>
             </tr>
 
@@ -1038,8 +973,8 @@ Also creates a History Module that tracks creation of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="214"
-                            class="link-to-prism">server/claim/claim.service.ts:214</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="230"
+                            class="link-to-prism">server/claim/claim.service.ts:230</a></div>
                 </td>
             </tr>
 
@@ -1114,8 +1049,8 @@ Also creates a History Module that tracks creation of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="100"
-                            class="link-to-prism">server/claim/claim.service.ts:100</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="101"
+                            class="link-to-prism">server/claim/claim.service.ts:101</a></div>
                 </td>
             </tr>
 
@@ -1208,7 +1143,7 @@ Also creates a History Module that tracks updation of claims.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">server/claim/claim.service.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">server/claim/claim.service.ts:18</a></div>
                         </td>
                     </tr>
 
@@ -1235,7 +1170,7 @@ Also creates a History Module that tracks updation of claims.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">server/claim/claim.service.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">server/claim/claim.service.ts:17</a></div>
                         </td>
                     </tr>
 
@@ -1256,6 +1191,7 @@ import { ClaimReviewService } from &quot;../claim-review/claim-review.service&qu
 import { ClaimRevisionService } from &quot;../claim-revision/claim-revision.service&quot;;
 import { HistoryService } from &quot;../history/history.service&quot;
 import { HistoryType, TargetModel } from &quot;../history/schema/history.schema&quot;;
+import { ISoftDeletedModel } from &#x27;mongoose-softdelete-typescript&#x27;;
 import { REQUEST } from &#x27;@nestjs/core&#x27;;
 import { Request } from &#x27;express&#x27;;
 
@@ -1269,7 +1205,7 @@ export class ClaimService {
     constructor(
         @Inject(REQUEST) private req: Request,
         @InjectModel(Claim.name)
-        private ClaimModel: Model&lt;ClaimDocument&gt;,
+        private ClaimModel: ISoftDeletedModel&lt;ClaimDocument&gt; &amp; Model&lt;ClaimDocument&gt;,
         private claimReviewService: ClaimReviewService,
         private historyService: HistoryService,
         private claimRevisionService: ClaimRevisionService,
@@ -1376,11 +1312,26 @@ export class ClaimService {
         return newClaimRevision;
     }
 
-    delete(claimId) {
-        // TODO: use soft-delete instead
-        // this means that when deleting it should actually update
-        // the deleted field with the boolean value &#x27;true&#x27;
-        return this.ClaimModel.findByIdAndRemove(claimId);
+    /**
+     * This function does a soft deletion, doesn&#x27;t delete claim in DataBase,
+     * but omit its in the front page
+     * Also creates a History Module that tracks deletion of claims.
+     * @param claimId Claim id which wants to delete
+     * @returns Returns the claim with the param isDeleted equal to true
+     */
+    async delete(claimId) {
+        const user &#x3D; this.req.user
+        const previousClaim &#x3D; await this.getById(claimId)
+        const history &#x3D; this.historyService.getHistoryParams(
+            claimId,
+            TargetModel.Claim,
+            user,
+            HistoryType.Delete,
+            null,
+            previousClaim
+        )
+        await this.historyService.createHistory(history)
+        return this.ClaimModel.softDelete({ _id: claimId });
     }
 
     // TODO: add optional revisionId that will fetch a specifc revision that matches
@@ -1479,19 +1430,6 @@ export class ClaimService {
             });
         });
         return claimContent;
-    }
-
-    findOneAndUpdate(query, push) {
-        return this.ClaimModel.findOneAndUpdate(
-            { ...query },
-            { $push: { ...push } },
-            { new: true },
-            (e) &#x3D;&gt; {
-                if (e) {
-                    throw e;
-                }
-            }
-        );
     }
 }
 </code></pre>
