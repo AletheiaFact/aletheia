@@ -38,7 +38,7 @@ export class HistoryService {
     ) {
         const date = new Date()
         return {
-            targetId: new Types.ObjectId(dataId),
+            targetId: Types.ObjectId(dataId),
             targetModel,
             user: user?._id,
             type,
