@@ -21,13 +21,23 @@ import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
 import { LoggerMiddleware } from "./middleware/logger.middleware";
 import OryModule from "./ory/ory.module";
-import {SessionGuard} from "./auth/session.guard";
+import { SessionGuard } from "./auth/session.guard";
+import { DisableBodyParserMiddleware } from "./middleware/disable-body-parser.middleware";
+import OryController from "./ory/ory.controller";
+import { JsonBodyMiddleware } from "./middleware/json-body.middleware";
 
 @Module({})
 export class AppModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(LoggerMiddleware).forRoutes('*');
+    public configure(consumer: MiddlewareConsumer): void {
+        consumer
+            .apply(DisableBodyParserMiddleware)
+            .forRoutes(OryController)
+            .apply(JsonBodyMiddleware)
+            .forRoutes('*')
+            .apply(LoggerMiddleware)
+            .forRoutes('*');
     }
+
     static register(options): DynamicModule {
         // TODO: interface app with service-runner metrics interface
         return {
