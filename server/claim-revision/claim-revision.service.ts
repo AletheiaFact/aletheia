@@ -1,4 +1,4 @@
-import {Injectable, Logger} from "@nestjs/common";
+import {Injectable, Logger, NotFoundException} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import slugify from 'slugify'
@@ -26,7 +26,11 @@ export class ClaimRevisionService {
 
     /** get ClaimRevision by ID */
     getRevision(claimId) {
-        return this.ClaimRevisionModel.findOne({ claimId })
+        try {
+            return this.ClaimRevisionModel.findById(claimId)
+        } catch {
+            throw new NotFoundException()
+        }
     }
     /**
      *

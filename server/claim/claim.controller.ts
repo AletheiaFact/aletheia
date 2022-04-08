@@ -26,6 +26,7 @@ import { CreateClaimDTO } from "./dto/create-claim.dto";
 import { GetClaimsDTO } from "./dto/get-claims.dto";
 import { GetClaimsByHashDTO } from "./dto/get-reviews-by-hash.dto";
 import { UpdateClaimDTO } from "./dto/update-claim.dto"
+import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 @Controller()
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
@@ -36,6 +37,7 @@ export class ClaimController {
         private configService: ConfigService,
         private httpService: HttpService,
         private viewService: ViewService,
+        private claimRevisionService: ClaimRevisionService,
     ) {}
 
     async _checkCaptchaResponse(secret, response) {
@@ -125,6 +127,11 @@ export class ClaimController {
     @Delete("api/claim/:id")
     delete(@Param("id") claimId) {
         return this.claimService.delete(claimId);
+    }
+
+    @Get("api/claim/revision/:revisionId")
+    getRevisionById(@Param("revisionId") revisionId:string) {
+        return this.claimRevisionService.getRevision(revisionId)
     }
 
     @Get("api/claim/:claimId/sentence/:sentenceHash/reviews")
