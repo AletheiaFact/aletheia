@@ -21,6 +21,7 @@ import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
 import { LoggerMiddleware } from "./middleware/logger.middleware";
 import OryModule from "./ory/ory.module";
+import {SessionGuard} from "./auth/session.guard";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -68,6 +69,10 @@ export class AppModule implements NestModule {
                 {
                     provide: APP_GUARD,
                     useClass: ThrottlerGuard
+                },
+                {
+                    provide: APP_GUARD,
+                    useClass: SessionGuard
                 }
             ],
         };

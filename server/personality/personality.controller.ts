@@ -8,7 +8,6 @@ import {
     Post,
     Put,
     Query,
-    UseGuards,
     Req,
     Res
 } from "@nestjs/common";
@@ -16,9 +15,9 @@ import { parse } from "url";
 import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { PersonalityService } from "./personality.service";
-import { SessionGuard } from "../auth/session.guard";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonality } from "./dto/create-personality.dto";
+import {IsPublic} from "../decorators/is-public.decorator";
 
 @Controller()
 export class PersonalityController {
@@ -28,12 +27,12 @@ export class PersonalityController {
         private viewService: ViewService
     ) {}
 
+    @IsPublic()
     @Get("api/personality")
     async listAll(@Query() getPersonalities: GetPersonalities) {
         return this.personalityService.combinedListAll(getPersonalities);
     }
 
-    @UseGuards(SessionGuard)
     @Post("api/personality")
     async create(@Body() createPersonality: CreatePersonality) {
         try {
@@ -50,6 +49,7 @@ export class PersonalityController {
         }
     }
 
+    @IsPublic()
     @Get("api/personality/:id")
     async get(@Param("id") personalityId, @Query() query) {
         return this.personalityService
@@ -59,13 +59,11 @@ export class PersonalityController {
             });
     }
 
-    @UseGuards(SessionGuard)
     @Put("api/personality/:id")
     async update(@Param("id") personalityId, @Body() body) {
         return this.personalityService.update(personalityId, body)
     }
 
-    @UseGuards(SessionGuard)
     @Delete("api/personality/:id")
     async delete(@Param("id") personalityId) {
         try {
@@ -76,6 +74,7 @@ export class PersonalityController {
         }
     }
 
+    @IsPublic()
     @Get("api/personality/:id/reviews")
     getReviewStats(@Param("id") personalityId) {
         return this.personalityService
@@ -85,7 +84,6 @@ export class PersonalityController {
             });
     }
 
-    @UseGuards(new SessionGuard('ory'))
     @Get("personality/search")
     public async personalityCreateSearch(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -101,6 +99,7 @@ export class PersonalityController {
             );
     }
 
+    @IsPublic()
     @Get("personality/:slug")
     public async personalityPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -121,6 +120,7 @@ export class PersonalityController {
             );
     }
 
+    @IsPublic()
     @Get("personality")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);

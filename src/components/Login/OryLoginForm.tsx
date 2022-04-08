@@ -1,28 +1,42 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Form, message, Row } from "antd";
 import InputPassword from "../InputPassword";
 import Input from "../Input";
 import Button, { ButtonType } from "../Button";
 import {
-    SelfServiceLoginFlow,
+    SelfServiceLoginFlow, SubmitSelfServiceLoginFlowBody,
     SubmitSelfServiceLoginFlowWithPasswordMethodBody as ValuesType,
     UiNodeInputAttributes
 } from "@ory/client";
 import { isUiNodeInputAttributes } from "@ory/integrations/ui"
 import { useTranslation } from "next-i18next";
+import {useRouter} from "next/router";
+import {oryGetLoginFlow, orySubmitLogin} from "../../api/ory";
+import {LoadingOutlined} from "@ant-design/icons";
 
-interface ILoginForm {
-    flow?: SelfServiceLoginFlow
-    onSubmit: (values: ValuesType) => void
-}
-
-const LoginForm = ({ flow, onSubmit }: ILoginForm) => {
+const OryLoginForm = () => {
+    const [flow, setFlow] = useState<SelfServiceLoginFlow>()
     const { t } = useTranslation()
+    const router = useRouter()
+
+    useEffect(() => {
+        oryGetLoginFlow({ router, setFlow, t })
+    }, [])
+
+    const onSubmit = (values: SubmitSelfServiceLoginFlowBody) => {
+        orySubmitLogin({router, flow, setFlow, t, values})
+    }
+
+    if (!flow) {
+        return <LoadingOutlined />
+    }
+
     let flowValues: ValuesType = {
         csrf_token: "",
         method: "password",
         password: "",
-        password_identifier: ""
+        password_identifier: "",
+        identifier: ""
     }
 
     const initializeCsrf = () => {
@@ -111,4 +125,4 @@ const LoginForm = ({ flow, onSubmit }: ILoginForm) => {
     );
 };
 
-export default LoginForm;
+export default OryLoginForm;
