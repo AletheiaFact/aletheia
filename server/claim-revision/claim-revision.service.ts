@@ -28,6 +28,7 @@ export class ClaimRevisionService {
     getRevision(claimId) {
         try {
             return this.ClaimRevisionModel.findById(claimId)
+                .populate("personality", "_id name")
         } catch {
             throw new NotFoundException()
         }
