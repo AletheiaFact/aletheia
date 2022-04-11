@@ -83,7 +83,7 @@ export class PersonalityService {
         try {
             const personalityExists = 
                 await this.getDeletedPersonalityByWikidata(personality.wikidata)
-                
+
             if(personalityExists) {
                 return personalityExists.restore()
             } else {
@@ -113,8 +113,8 @@ export class PersonalityService {
         } catch (err) {}
     }
 
-    async getDeletedPersonalityByWikidata(wikidata) {
-        return await this.PersonalityModel.findOne({
+    getDeletedPersonalityByWikidata(wikidata) {
+        return this.PersonalityModel.findOne({
             isDeleted: true,
             wikidata
         })
