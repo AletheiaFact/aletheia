@@ -244,7 +244,7 @@ export class ClaimController {
             );
     }
 
-    @Get("personality/:personalitySlug/claim/:claimSlug")
+    @Get("personality/:personalitySlug/claim/:claimSlug/:revision?")
     public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
@@ -256,7 +256,8 @@ export class ClaimController {
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
-            req.params.claimSlug
+            req.params.claimSlug,
+            req?.params?.revisionId
         );
 
         await this.viewService
