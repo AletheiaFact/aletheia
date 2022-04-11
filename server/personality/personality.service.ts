@@ -81,9 +81,11 @@ export class PersonalityService {
      */
     async create(personality) {
         try {
-            const personalityExisted = await this.getDeletedPersonalityByWikidata(personality.wikidata)
-            if(personalityExisted) {
-                return personalityExisted
+            const personalityExists = 
+                await this.getDeletedPersonalityByWikidata(personality.wikidata)
+                
+            if(personalityExists) {
+                return personalityExists.restore()
             } else {
                 personality.slug = slugify(personality.name, {
                     lower: true,     // convert to lower case, defaults to `false`
@@ -112,16 +114,10 @@ export class PersonalityService {
     }
 
     async getDeletedPersonalityByWikidata(wikidata) {
-        const deletedPersonalities = await this.PersonalityModel.findDeleted(true)
-        if (deletedPersonalities.length) {
-            const deletedPersonality = deletedPersonalities
-                .filter((personality) => personality.wikidata === wikidata)
-            
-            if (deletedPersonality.length) {
-                return deletedPersonality[0].restore()
-            }
-            return undefined
-        }
+        return await this.PersonalityModel.findOne({
+            isDeleted: true,
+            wikidata
+        })
     }
 
     async getById(personalityId, language = "en") {
