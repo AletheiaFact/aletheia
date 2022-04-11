@@ -23,14 +23,14 @@ export default class OryService {
         );
     }
 
-    createIdentity(email, password): Promise<any> {
+    createIdentity(user, password): Promise<any> {
         const { access_token: token, url } = this.configService.get("ory");
         return axios({
             method: "post",
             url: `${url}/${this.adminEndpoint}/identities`,
             data: {
-                schema_id: "preset://email",
-                traits: { email },
+                schema_id: "preset://aletheia-v1",
+                traits: { email: user.email, user_id: user._id },
                 credentials: {
                     password: {
                         config: { password },

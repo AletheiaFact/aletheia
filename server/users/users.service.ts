@@ -17,12 +17,13 @@ export class UsersService {
     }
 
     async register(user) {
-        const { data: oryUser } = await this.oryService.createIdentity(user.email, user.password);
-        user.oryId = oryUser.id;
+        const newUser = new this.UserModel(user)
+        const { data: oryUser } = await this.oryService.createIdentity(newUser, user.password);
+        newUser.oryId = oryUser.id;
         try {
             // @ts-ignore
             return this.UserModel.register(
-                new this.UserModel(user),
+                newUser,
                 user.password
             );
         } catch (e) {
