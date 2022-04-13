@@ -42,6 +42,7 @@ const Home = ({ personalities, stats, href }) => {
                                     p && (
                                         <div key={i}>
                                             <img
+                                                alt={t('seo:personalityImageAlt', { name: p.name })}
                                                 style={{
                                                     height: "auto",
                                                     color: "#fff",
@@ -74,14 +75,14 @@ const Home = ({ personalities, stats, href }) => {
                                 textAlign: "center"
                             }}
                         >
-                            <span
+                            <h1
                                 style={{
+                                    color: "#fff",
                                     fontSize: "26px"
                                 }}
                             >
                                 {t("home:title")}
-                            </span>{" "}
-                            <br />
+                            </h1>
                             <span>{t("home:subtitle")}</span>
                         </Row>
                         <Row

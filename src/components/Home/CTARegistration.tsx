@@ -6,17 +6,17 @@ import Button, { ButtonType } from "../Button";
 
 function CTARegistration({ style = {} }) {
     const { t } = useTranslation();
-    
+
     return (
         <div
-        style={{
-            backgroundColor: colors.bluePrimary,
-            textAlign: "center",
-            padding: "30px",
-            ...style
-        }}
+            style={{
+                backgroundColor: colors.bluePrimary,
+                textAlign: "center",
+                padding: "30px",
+                ...style
+            }}
         >
-            <Typography.Title level={3} style={{ color: "#fff" }}>
+            <Typography.Title level={2} style={{ color: "#fff", fontSize: '24px' }}>
                 {t("CTARegistration:title")}
             </Typography.Title>
             <div
@@ -28,7 +28,7 @@ function CTARegistration({ style = {} }) {
                     marginBottom: "10px",
                     textAlign: 'center'
                 }}
-                >
+            >
                 {t("CTARegistration:body")}
             </div>
             <div
@@ -39,20 +39,20 @@ function CTARegistration({ style = {} }) {
                     lineHeight: "15px",
                     marginBottom: "17px"
                 }}
-                >
+            >
                 {t("CTARegistration:footer")}
             </div>
-            <Button 
-                onClick={() => {umami?.trackEvent('cta-registration-button', 'registration')}}
+            <Button
+                onClick={() => { umami?.trackEvent('cta-registration-button', 'registration') }}
                 type={ButtonType.white}
                 target="_blank"
                 href={t("common:registrationLink")}
-                >
+            >
                 <b
                     style={{
                         fontSize: "14px"
                     }}
-                    >
+                >
                     {t("CTARegistration:button")}
                 </b>
             </Button>
@@ -61,5 +61,3 @@ function CTARegistration({ style = {} }) {
 }
 
 export default CTARegistration;
-
-
