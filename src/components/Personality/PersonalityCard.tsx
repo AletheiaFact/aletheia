@@ -66,11 +66,12 @@ const PersonalityCard = ({
                         <Avatar
                             size={style.avatarSize}
                             src={personality.image}
+                            alt={t('seo:personalityImageAlt', { name: personality.name })}
                         />
                     </Col>
                     <Col span={3}></Col>
                     <Col span={style.titleSpan}>
-                        <Title level={4} style={{ fontSize: "16px", marginBottom: 0 }}>
+                        <Title level={summarized ? 2 : 1} style={{ fontSize: "16px", marginBottom: 0 }}>
                             {personality.name}
                         </Title>
                         <Paragraph
@@ -172,7 +173,7 @@ const PersonalityCard = ({
                                         {t("personality:headerClaimsTotal")}
                                     </span>
                                 )}
-                                {personality.stats?.total && (
+                                {personality.stats?.total !== undefined && (
                                     <span>
                                         <span
                                             style={{
