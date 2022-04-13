@@ -269,7 +269,7 @@ export class ClaimController {
             );
     }
 
-    @Get("personality/:personalitySlug/claim/:claimSlug/:revisionId?")
+    @Get("personality/:personalitySlug/claim/:claimSlug/:revisionId")
     public async personalityClaimPageWithRevision(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
