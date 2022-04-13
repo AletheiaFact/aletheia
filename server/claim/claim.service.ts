@@ -160,28 +160,28 @@ export class ClaimService {
 
     private async _getClaim(match: ClaimMatchParameters, revisionId = undefined, postprocess = true) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+        let claim
         if(revisionId) {
-            const findedClaim = await this.ClaimModel.aggregate([
+            const rawClaim = await this.ClaimModel.aggregate([
                 { $match: match },
                 { $project: { "latestRevision": 0}}
             ])
-            const revision = await this.claimRevisionService.getRevision(revisionId)
-            const claim = {
-                ...revision.toObject(),
-                ...findedClaim[0],
+            const revision = (await this.claimRevisionService.getRevision(revisionId)).toObject()
+            claim = {
+                ...rawClaim[0],
+                revision
             }
-            return this.postProcess(claim)
         } else {
-            const claim =
-            await this.ClaimModel.findOne(match)
+            claim = await this.ClaimModel.findOne(match)
                 .populate("personality", "_id name")
                 .populate("sources", "_id link classification")
                 .populate("latestRevision")
-            if (!claim) {
-                throw new NotFoundException()
-            }
-            return postprocess === true ? this.postProcess(claim.toObject()) : claim;
+            claim = claim.toObject()
         }
+        if (!claim) {
+                throw new NotFoundException()
+        }
+        return postprocess === true ? this.postProcess(claim) : claim;
     }
 
     /**
@@ -192,8 +192,7 @@ export class ClaimService {
     private async postProcess(claim) {
         // TODO: we should not transform the object in this function
         claim = {
-            ...claim?.latestRevision,// the order matters
-            ...claim?.revision, 
+            ...(claim?.latestRevision || claim?.revision),
             ...claim,
             latestRevision: undefined
         }

@@ -244,8 +244,33 @@ export class ClaimController {
             );
     }
 
-    @Get("personality/:personalitySlug/claim/:claimSlug/:revision?")
+    @Get("personality/:personalitySlug/claim/:claimSlug")
     public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        // @ts-ignore
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug,
+            // @ts-ignore
+            req.language
+        );
+        
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
+        
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-page",
+                Object.assign(parsedUrl.query, { personality, claim })
+            );
+    }
+
+    @Get("personality/:personalitySlug/claim/:claimSlug/:revisionId?")
+    public async personalityClaimPageWithRevision(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
         const personality = await this.personalityService.getBySlug(

@@ -7,7 +7,6 @@ import { HttpModule } from "@nestjs/axios";
 import { ViewModule } from "../view/view.module";
 import { SourceModule } from "../source/source.module";
 import { ClaimRevisionService } from "./claim-revision.service";
-import { ClaimRevisionController } from "./claim-revision-controller";
 
 const ClaimRevisionModel = MongooseModule.forFeature([
     {
@@ -26,7 +25,6 @@ const ClaimRevisionModel = MongooseModule.forFeature([
         ViewModule,
         SourceModule,
     ],
-    controllers: [ClaimRevisionController],
     exports: [ClaimRevisionService],
     providers: [ClaimRevisionService],
 })
