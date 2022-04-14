@@ -15,9 +15,7 @@ export class SessionGuard implements CanActivate {
 
     // @ts-ignore
     async canActivate(context: ExecutionContext): Promise<boolean | Promise<boolean>> {
-        if (this.reflector.get<boolean>('public', context.getHandler())) {
-            return true
-        }
+        const isPublic = this.reflector.get<boolean>('public', context.getHandler());
 
         const httpContext = context.switchToHttp();
         const request = httpContext.getRequest();
@@ -42,6 +40,9 @@ export class SessionGuard implements CanActivate {
             }
             this.redirect(request, response);
         } catch (e) {
+            if (isPublic) {
+                return true
+            }
             // TODO: logging
             this.redirect(request, response);
         }
