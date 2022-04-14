@@ -51,17 +51,19 @@ const ClaimCard = ({ personality, claim }) => {
                                             expandable: false
                                         }}
                                     >
-                                        <Title
-                                            level={3}
-                                            style={{
-                                                fontSize: 14,
-                                                color: colors.blackPrimary,
-                                                fontWeight: 400,
-                                                margin: 0,
-                                                lineHeight: 1.5715,
-                                            }}>
-                                            {claim?.content?.text || claim?.title}
-                                        </Title>
+                                        <cite style={{ fontStyle: "normal" }}>
+                                            <Title
+                                                level={3}
+                                                style={{
+                                                    fontSize: 14,
+                                                    color: colors.blackPrimary,
+                                                    fontWeight: 400,
+                                                    margin: 0,
+                                                    lineHeight: 1.5715,
+                                                }}>
+                                                {claim?.content?.text || claim?.title}
+                                            </Title>
+                                        </cite>
                                     </Paragraph>
                                 </Col>
                                 <a
@@ -91,7 +93,7 @@ const ClaimCard = ({ personality, claim }) => {
                         flexWrap: "wrap",
                     }}
                 >
-                    <Paragraph
+                    <p
                         style={{
                             width: '100%',
                             fontSize: "14px",
@@ -102,20 +104,22 @@ const ClaimCard = ({ personality, claim }) => {
                             totalReviews: claim
                                 ?.stats?.total
                         })}
-                    </Paragraph>{" "}
+                    </p>{" "}
                     {review && (
                         <Paragraph
                             style={{
                                 fontSize: "10px",
                                 marginTop: 5,
                                 marginBottom: 0,
-                                display: 'flex',
+                                display: 'flex'
                             }}
                         >
-                            {t(
-                                "claim:cardOverallReviewPrefix"
-                            )}{" "}
-                            <Paragraph
+                            <p style={{ margin: 0}}>
+                                {t(
+                                    "claim:cardOverallReviewPrefix"
+                                )}
+                            </p>
+                            <p
                                 style={{
                                     color:
                                         ReviewColors[
@@ -130,20 +134,38 @@ const ClaimCard = ({ personality, claim }) => {
                                 {t(
                                     `claimReviewForm:${review?._id}`
                                 )}{" "}
-                            </Paragraph>
-                            ({review.count})
+                            </p>
+                            <p style={{ margin: 0 }}>
+                                ({review.count})
+                            </p>
                         </Paragraph>
                     )}
                 </Col>
                 <Col span={8}>
                     <Button
                         style={{
-                            width: "100%"
+                            width: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            paddingBottom: 0,
                         }}
                         type={ButtonType.blue}
                         href={`/personality/${personality.slug}/claim/${claim.slug}`}
                     >
-                        {t("claim:cardReviewButton")}
+                        <Title
+                            level={4}
+                            style={{
+                                color: colors.white,
+                                fontSize: 14,
+                                fontWeight: 400,
+                                margin: 0,
+                                padding: 0,
+                                lineHeight: '32px',
+                            }}
+                        >
+                            {t("claim:cardReviewButton")}
+                        </Title>
                     </Button>
                 </Col>
             </Row>
