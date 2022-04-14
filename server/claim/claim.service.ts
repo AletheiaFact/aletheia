@@ -99,7 +99,7 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async update(claimId, claimRevisionUpdate) {
-        const claim = await this._getClaim({ _id: claimId }, false);
+        const claim = await this._getClaim({ _id: claimId }, undefined, false);
         const previousRevision = claim.toObject().latestRevision
         delete previousRevision._id
         const newClaimRevision =
@@ -154,24 +154,35 @@ export class ClaimService {
         return this._getClaim({_id: claimId})
     }
 
-    async getByPersonalityIdAndClaimSlug(personalityId, claimSlug) {
-        return this._getClaim({personality: personalityId, slug: claimSlug})
+    async getByPersonalityIdAndClaimSlug(personalityId, claimSlug, revisionId = undefined) {
+        return this._getClaim({personality: personalityId, slug: claimSlug}, revisionId)
     }
 
-    private async _getClaim(match: ClaimMatchParameters, postprocess = true) {
-        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const claim =
-            await this.ClaimModel.findOne(match)
+    private async _getClaim(match: ClaimMatchParameters, revisionId = undefined, postprocess = true) {
+        let claim
+        if(revisionId) {
+            const rawClaim = await this.ClaimModel.aggregate([
+                { $match: match },
+                { $project: { "latestRevision": 0}}
+            ])
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            const revision = (await this.claimRevisionService.getRevision(revisionId)).toObject()
+            claim = {
+                ...rawClaim[0],
+                revision
+            }
+        } else {
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            claim = await this.ClaimModel.findOne(match)
                 .populate("personality", "_id name")
                 .populate("sources", "_id link classification")
                 .populate("latestRevision")
-
+            claim = claim.toObject()
+        }
         if (!claim) {
             throw new NotFoundException()
         }
-
-
-        return postprocess === true ? this.postProcess(claim.toObject()) : claim;
+        return postprocess === true ? this.postProcess(claim) : claim;
     }
 
     /**
@@ -182,7 +193,7 @@ export class ClaimService {
     private async postProcess(claim) {
         // TODO: we should not transform the object in this function
         claim = {
-            ...claim.latestRevision, // the order matters
+            ...(claim?.latestRevision || claim?.revision),
             ...claim,
             latestRevision: undefined
         }
