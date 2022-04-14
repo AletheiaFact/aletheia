@@ -1,6 +1,8 @@
-import {Collapse, Row, Typography} from "antd";
+/* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable jsx-a11y/heading-has-content */
+import { Collapse, Row, Typography } from "antd";
 import colors from "../../styles/colors";
-import {Trans, useTranslation} from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 
 const { Title } = Typography;
 
@@ -19,7 +21,7 @@ const PrivacyPolicy = () =>{
             }}
         >
             <Title>{t("privacyPolicy:title")}</Title>
-            {t("privacyPolicy:leadParagraph")}
+            <p>{t("privacyPolicy:leadParagraph")}</p>
             <ul>
                 <li key={1}>{t("privacyPolicy:tableOfContentsItem1")}</li>
                 <li key={2}>{t("privacyPolicy:tableOfContentsItem2")}</li>
@@ -33,15 +35,15 @@ const PrivacyPolicy = () =>{
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
             <Title level={3}>{t("privacyPolicy:subTitleItem1")}</Title>
-            {t("privacyPolicy:item1")}
+            <p>{t("privacyPolicy:item1")}</p>
             <Title level={3}>{t("privacyPolicy:subTitleItem2")}</Title>
-            {t("privacyPolicy:item2")}
+            <p>{t("privacyPolicy:item2")}</p>
             <Title level={3}>{t("privacyPolicy:subTitleItem3")}</Title>
-            {t("privacyPolicy:item3")}
+            <p>{t("privacyPolicy:item3")}</p>
             <Title level={3}>{t("privacyPolicy:subTitleItem4")}</Title>
-            {t("privacyPolicy:item4")}
+            <p>{t("privacyPolicy:item4")}</p>
             <Title level={3}>{t("privacyPolicy:subTitleItem5")}</Title>
-            {t("privacyPolicy:item5")}
+            <p>{t("privacyPolicy:item5")}</p>
             <Collapse
                 style={{
                     width: "100%",
@@ -52,8 +54,8 @@ const PrivacyPolicy = () =>{
                     <Trans
                         i18nKey={"privacyPolicy:trackingToolsPanelReCaptchaContent"}
                         components={[
-                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/privacy?hl=en" target="_blank" rel="noreferrer">{t("privacyPolicy:trackingToolsPanelReCaptchaContentLink0")}</a>,
-                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/terms?hl=en" target="_blank" rel="noreferrer">{t("privacyPolicy:trackingToolsPanelReCaptchaContentLink1")}</a>
+                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/privacy?hl=en" target="_blank" rel="noreferrer"></a>,
+                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/terms?hl=en" target="_blank" rel="noreferrer"></a>
                         ]}
                     />
                 </Collapse.Panel>
@@ -64,29 +66,29 @@ const PrivacyPolicy = () =>{
                     <Trans
                         i18nKey={"privacyPolicy:trackingToolsPanelUmamiContent"}
                         components={[
-                            <a style={{whiteSpace: "pre-wrap"}} href="https://umami.is/" target="_blank" rel="noreferrer">umami</a>,
-                            <h3 style={{ marginTop: "10px" }}>{t("privacyPolicy:trackingToolsPanelUmamiContentHeader0")}</h3>,
-                            <h3 style={{ marginTop: "10px" }}>{t("privacyPolicy:trackingToolsPanelUmamiContentHeader1")}</h3>,
+                            <a style={{whiteSpace: "pre-wrap"}} href="https://umami.is/" target="_blank" rel="noreferrer"></a>,
+                            <h3 style={{ marginTop: "10px" }}></h3>,
+                            <h3 style={{ marginTop: "10px" }}></h3>,
                         ]}
                     />
                 </Collapse.Panel>
             </Collapse>
             <Title level={3}>{t("privacyPolicy:subTitleItem6")}</Title>
-            {t("privacyPolicy:item6")}
+            <p>{t("privacyPolicy:item6")}</p>
             <Title level={3}>{t("privacyPolicy:subTitleItem7")}</Title>
-            {t("privacyPolicy:item7")}
+            <p>{t("privacyPolicy:item7")}</p>
             <Title level={3}>{t("privacyPolicy:subTitleItem8")}</Title>
-            {t("privacyPolicy:item8")}
+            <p>{t("privacyPolicy:item8")}</p>
             <Title level={3}>{t("privacyPolicy:subTitleItem9")}</Title>
-            {t("privacyPolicy:item9")}
+            <p>{t("privacyPolicy:item9")}</p>
             <Title level={3}>{t("privacyPolicy:subTitleItem10")}</Title>
-            {t("privacyPolicy:item10")}
+            <p>{t("privacyPolicy:item10")}</p>
             <Title level={3}>{t("privacyPolicy:subTitleContact")}</Title>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail")}}
                 components={[
-                    <a style={{whiteSpace: "pre-wrap"}} href={`mailto:${t("common:contactEmail")}`} target="_blank" rel="noreferrer">{t("privacyPolicy:contact", { contactEmail: "contato@aletheiafact.org"})}</a>,
+                    <a style={{whiteSpace: "pre-wrap"}} href={`mailto:${t("common:contactEmail")}`} target="_blank" rel="noreferrer"></a>,
                 ]}
             />
         </Row>

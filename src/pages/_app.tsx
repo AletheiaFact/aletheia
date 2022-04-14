@@ -15,15 +15,15 @@ function MyApp({ Component, pageProps }) {
     const store = useStore();
     const { t } = useTranslation();
     let lang: string = pageProps._nextI18Next?.initialLocale;
-    console.log(lang)
     lang === 'pt' ? lang = 'pt-br' : lang = 'pt';
     return (
         <>
             <html lang={lang ? lang : 'pt-br'} />
             <Head>
                 <title>AletheiaFact.org</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="google-site-verification" content="hM4P5Iyoy9bojyEm1AhZF5O5ZSCtScgyXwFDHdrcnFI" />
                 {umami.UMAMI_SITE_ID && (
                     <script async defer data-website-id={umami.UMAMI_SITE_ID} src="https://analytics.aletheiafact.org/umami.js"></script>
                 )}
@@ -63,8 +63,10 @@ function MyApp({ Component, pageProps }) {
                         <Trans
                             i18nKey={"cookieConsent:text"}
                             components={[
-                                <a style={{ whiteSpace: "pre-wrap" }} href="/privacy-policy">{t("privacyPolicy:title")}</a>,
-                                <a style={{ whiteSpace: "pre-wrap" }} href="/code-of-conduct">{t("codeOfConduct:title")}</a>
+                                // eslint-disable-next-line jsx-a11y/anchor-has-content
+                                <a style={{ whiteSpace: "pre-wrap" }} href="/privacy-policy"></a>,
+                                // eslint-disable-next-line jsx-a11y/anchor-has-content
+                                <a style={{ whiteSpace: "pre-wrap" }} href="/code-of-conduct"></a>
                             ]}
                         />
                     </CookieConsent>
