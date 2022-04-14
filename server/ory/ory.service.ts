@@ -24,12 +24,12 @@ export default class OryService {
     }
 
     createIdentity(user, password): Promise<any> {
-        const { access_token: token, url } = this.configService.get("ory");
+        const { access_token: token, url, schema_id } = this.configService.get("ory");
         return axios({
             method: "post",
             url: `${url}/${this.adminEndpoint}/identities`,
             data: {
-                schema_id: "preset://aletheia-v1",
+                schema_id,
                 traits: { email: user.email, user_id: user._id },
                 credentials: {
                     password: {
@@ -37,6 +37,15 @@ export default class OryService {
                     },
                 },
             },
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+
+    deleteIdentity(identityId): Promise<any> {
+        const { access_token: token, url } = this.configService.get("ory");
+        return axios({
+            method: "delete",
+            url: `${url}/${this.adminEndpoint}/identities/${identityId}`,
             headers: { Authorization: `Bearer ${token}` },
         });
     }

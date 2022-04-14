@@ -33,7 +33,7 @@ export class SessionGuard implements CanActivate {
                     })
                 );
                 const { data: session } = await ory.toSession(undefined, request.header('Cookie'))
-                request.user = { session };
+                request.user = { _id: session?.identity?.traits?.user_id };
                 return true
             }
 

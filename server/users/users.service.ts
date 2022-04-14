@@ -27,7 +27,7 @@ export class UsersService {
                 user.password
             );
         } catch (e) {
-            // TODO: rollback and delete created ory user
+            await this.oryService.deleteIdentity(oryUser.id)
         }
     }
 
