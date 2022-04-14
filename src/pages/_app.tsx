@@ -14,12 +14,9 @@ import { DefaultSeo } from "next-seo";
 function MyApp({ Component, pageProps }) {
     const store = useStore();
     const { t } = useTranslation();
-    let lang: string = pageProps._nextI18Next?.initialLocale;
-    console.log(lang)
-    lang === 'pt' ? lang = 'pt-br' : lang = 'pt';
+
     return (
         <>
-            <html lang={lang ? lang : 'pt-br'} />
             <Head>
                 <title>AletheiaFact.org</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
