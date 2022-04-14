@@ -14,7 +14,8 @@ import { DefaultSeo } from "next-seo";
 function MyApp({ Component, pageProps }) {
     const store = useStore();
     const { t } = useTranslation();
-    let lang: string = pageProps._nextI18Next.initialLocale;
+    let lang: string = pageProps._nextI18Next?.initialLocale;
+    console.log(lang)
     lang === 'pt' ? lang = 'pt-br' : lang = 'pt';
     return (
         <>
