@@ -1,6 +1,6 @@
 import { Controller, Get, Req, Res } from "@nestjs/common";
 
-@Controller("api")
+@Controller()
 export class RootController {
     @Get("robots.txt")
     robots(@Res() res, @Req() req) {

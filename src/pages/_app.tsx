@@ -14,15 +14,15 @@ import { DefaultSeo } from "next-seo";
 function MyApp({ Component, pageProps }) {
     const store = useStore();
     const { t } = useTranslation();
-
+    let lang = pageProps._nextI18Next.initialLocale;
+    lang === 'pt' ? lang = 'pt-br' : lang;
     return (
         <>
+            <html lang={lang ? lang : 'pt-br'} />
             <Head>
                 <title>AletheiaFact.org</title>
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1.0"
-                />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
                 {umami.UMAMI_SITE_ID && (
                     <script async defer data-website-id={umami.UMAMI_SITE_ID} src="https://analytics.aletheiafact.org/umami.js"></script>
                 )}

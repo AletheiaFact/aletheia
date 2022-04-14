@@ -2,5 +2,10 @@
     "personalityDescription": "Veja o perfil de {{name}} na AletheiaFact.org",
     "personalityImageAlt": "Imagem de {{name}}",
     "personalityListTitle": "Perfis de personalidades",
-    "personalityListDescription": "Veja todos os perfis na AletheiaFact.org"
+    "personalityListDescription": "Veja todos os perfis na AletheiaFact.org",
+    "claimCreateTitle": "Adicione um discurso",
+    "claimCreateDescription": "Adicione um discurso realizado por {{name}} na AletheiaFact.org",
+    "claimDescription": "Veja o discurso {{title}} feito por {{name}} na AletheiaFact.org",
+    "sourcesTitle": "Fontes",
+    "sourcesDescription": "Fontes do discurso {{claimId}}"
 }
