@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Row, Col, Card, message } from "antd";
+import { Form, Row, Col, Card, message, Typography } from "antd";
 import api from "../../api/user";
 import BackButton from "../BackButton";
 import CTARegistration from "../Home/CTARegistration";
@@ -56,7 +56,7 @@ const LoginView = (props) => {
                         {formType === "login" && (
                             <>
                                 <Row className="typo-grey typo-center">
-                                    <h2>{t("login:formHeader")}</h2>
+                                    <Typography.Title style={{ fontSize: '1.5em', fontWeight: 500 }}>{t("login:formHeader")}</Typography.Title>
                                 </Row>
                                 <Form
                                     name="basic"
