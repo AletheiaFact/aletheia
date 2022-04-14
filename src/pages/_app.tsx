@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }) {
     const store = useStore();
     const { t } = useTranslation();
     let lang: string = pageProps._nextI18Next.initialLocale;
-    lang === 'pt' ? lang = 'pt-br' : lang;
+    lang === 'pt' ? lang = 'pt-br' : lang = 'pt';
     return (
         <>
             <html lang={lang ? lang : 'pt-br'} />
