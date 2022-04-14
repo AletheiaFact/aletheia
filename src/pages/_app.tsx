@@ -2,17 +2,19 @@ import React from "react";
 import Head from "next/head";
 import "../styles/app.css"
 import "antd/dist/antd.css";
-import {appWithTranslation, Trans, useTranslation} from 'next-i18next';
-import {Provider} from "react-redux";
+import { appWithTranslation, Trans, useTranslation } from 'next-i18next';
+import { Provider } from "react-redux";
 import { useStore } from "../store/store";
 import MainApp from "../components/MainApp";
 import * as umami from "../lib/umami";
 import CookieConsent from "react-cookie-consent";
 import colors from "../styles/colors";
+import { DefaultSeo } from "next-seo";
 
 function MyApp({ Component, pageProps }) {
     const store = useStore();
     const { t } = useTranslation();
+
     return (
         <>
             <Head>
@@ -27,6 +29,19 @@ function MyApp({ Component, pageProps }) {
             </Head>
             <Provider store={store}>
                 <MainApp>
+                    <DefaultSeo
+                        titleTemplate={`%s | AletheiaFact.org`}
+                        defaultTitle={`AletheiaFact.org`}
+                        openGraph={{
+                            type: 'website',
+                            url: pageProps.href,
+                            site_name: 'AletheiaFact.org',
+                        }}
+                        twitter={{
+                            site: '@aletheiafact',
+                            cardType: 'summary',
+                        }}
+                    />
                     <Component {...pageProps} />
                     <CookieConsent
                         location="bottom"
@@ -47,8 +62,8 @@ function MyApp({ Component, pageProps }) {
                         <Trans
                             i18nKey={"cookieConsent:text"}
                             components={[
-                                <a style={{whiteSpace: "pre-wrap"}} href="/privacy-policy"></a>,
-                                <a style={{whiteSpace: "pre-wrap"}} href="/code-of-conduct"></a>
+                                <a style={{ whiteSpace: "pre-wrap" }} href="/privacy-policy"></a>,
+                                <a style={{ whiteSpace: "pre-wrap" }} href="/code-of-conduct"></a>
                             ]}
                         />
                     </CookieConsent>
