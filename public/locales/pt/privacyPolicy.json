@@ -23,10 +23,14 @@
     "item5": "Dentre as operações de tratamento de dados previstas em Lei, o Movimento AletheiaFact.org, utilizama as seguintes ferramentas para cada uma das operações realizadas:",
     "trackingToolsPanelRecaptchaHeader": "reCaptcha",
     "trackingToolsPanelReCaptchaContent": "Implementamos o reCAPTCHA em AletheiaFact.org. O uso do reCAPTCHA está sujeito à <0> Política de Privacidade do Google </0> e aos <1> Termos de Uso </1>.",
+    "trackingToolsPanelReCaptchaContentLink0": "Política de Privacidade do Google",
+    "trackingToolsPanelReCaptchaContentLink1": "Termos de Uso",
     "trackingToolsPanelSessionCookiesHeader": "Cookies de sessão de login",
     "trackingToolsPanelSessionCookiesContent": "Se você possui uma conta registrada na AletheiaFact.org, nós registramos cookies de sessoes para garantir a segurança de acesso as ferramentas disponíveis para usuários registrados.",
     "trackingToolsPanelUmamiHeader": "Umami Analytics",
     "trackingToolsPanelUmamiContent": "<0> Umami </0> é uma solução analítica da web simples, fácil de usar e auto-hospedada. O objetivo é fornecer a você uma alternativa mais amigável e focada na privacidade do Google Analytics e uma alternativa gratuita e de código aberto para soluções pagas. <1> 1. O Umami é compatível com o GDPR? </1> Sim, o Umami não coleta nenhuma informação de identificação pessoal e torna todos os dados coletados anônimos. Os usuários não podem ser identificados e nunca são rastreados nos sites. <2> 2. Preciso exibir um aviso de cookie para os usuários? </2> Não, o Umami não usa cookies no código de rastreamento.",
+    "trackingToolsPanelUmamiContentHeader0": "1. O Umami é compatível com o GDPR?",
+    "trackingToolsPanelUmamiContentHeader1": "2. Preciso exibir um aviso de cookie para os usuários?",
     "subTitleItem6": "O que são e para que servem os cookies?",
     "item6": "Algumas ferramentas de tratamento de dados fazem uso de cookies e outras ferramentas de rastreamento de dados.\nPara compreender o porquê é necessário estar de acordo com o uso de cookies, além da Política de Privacidade, para navegar em nosso site, é preciso ter acesso às suas definições de sistema.\nCookies são pequenos arquivos de dados que solicitamos que o seu navegador armazene, seja no computador ou em dispositivos móveis. Dessa forma, o principal objetivo dos cookies é permitir que ao acessar o nosso portal, o seu navegador se lembre dos mecanismos de usabilidade desenvolvidos pela AletheiaFact.org com mais facilidade, eliminando a necessidade de introduzir repetidamente as mesmas informações.\nPor fim, é importante esclarecer que os únicos cookies coletados por nós são os chamados cookies de sessão, que apenas permanecem ativos enquanto o usuário estiver usando o sistema, sendo apagados no momento em que o usuário se desconecta do sistema.",
     "subTitleItem7": "Por que é necessário coletar e tratar seus dados?",
@@ -38,5 +42,6 @@
     "subTitleItem10": "Alterações nesta Política de Privacidade",
     "item10": "A AletheiaFact.org pode, periodicamente, realizar alterações nesta Política de Privacidade, para garantir a contínua melhoria dos nossos serviços, por isso, recomendamos a leitura desta página de tempos em tempos para tomar conhecimento de quaisquer mudanças em nossas diretrizes.",
     "subTitleContact": "Ficou com alguma dúvida? Fale conosco!",
-    "contact": "Qualquer solicitação que você tenha interesse em fazer a respeito de seus dados – informações, solicitação de alteração; cancelamento, mais informações, entre outros – entre em contato através do e-mail: <0>{{email}}</0>"
+    "contact": "Qualquer solicitação que você tenha interesse em fazer a respeito de seus dados – informações, solicitação de alteração; cancelamento, mais informações, entre outros – entre em contato através do e-mail: <0>{{email}}</0>",
+    "contactEmail": "{{email}}"
 }

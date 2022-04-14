@@ -27,7 +27,7 @@ const Sentence = ({ showHighlights, properties, content, generateHref }) => {
         <>
             <ClaimSentence
                 href={href}
-                id={properties.id}
+                id={properties["data-hash"]}
                 data-hash={properties["data-hash"]}
                 style={style}
                 className="claim-sentence"

@@ -23,10 +23,14 @@
     "item5": "Among the data processing operations provided for by Law, the Movement AletheiaFact.org uses the following tools for each of the operations performed:",
     "trackingToolsPanelRecaptchaHeader": "reCaptcha",
     "trackingToolsPanelReCaptchaContent": "We have implemented reCAPTCHA on AletheiaFact.org. The use of the reCAPTCHA is subject to the <0>Google Privacy Policy</0> and <1>Terms of Use</1>.",
+    "trackingToolsPanelReCaptchaContentLink0": "Google Privacy Policy",
+    "trackingToolsPanelReCaptchaContentLink1": "Terms of Use",
     "trackingToolsPanelSessionCookiesHeader": "Login session cookies",
     "trackingToolsPanelSessionCookiesContent": "If you have a registered account at AletheiaFact.org, we record session cookies to ensure safe access to the tools available to registered users.",
     "trackingToolsPanelUmamiHeader": "Umami Analytics",
     "trackingToolsPanelUmamiContent": "<0>Umami</0> is a simple, easy to use, self-hosted web analytics solution. The goal is to provide you with a friendlier, privacy-focused alternative to Google Analytics and a free, open-sourced alternative to paid solutions. <1>1. Is Umami GDPR compliant?</1>Yes, Umami does not collect any personally identifiable information and anonymizes all data collected. Users cannot be identified and are never tracked across websites. <2>2. Do I need to display a cookie notice to users?</2> No, Umami does not use any cookies in the tracking code.",
+    "trackingToolsPanelUmamiContentHeader0": "1. Is Umami GDPR compliant?",
+    "trackingToolsPanelUmamiContentHeader1": "2. Do I need to display a cookie notice to users?",
     "subTitleItem6": "What are cookies and what are they for?",
     "item6": "Some data processing tools make use of cookies and other data tracking tools.\nTo understand why it is necessary to agree with the use of cookies, in addition to the Privacy Policy, to browse our website, you must have access to your system settings.\nCookies are small data files that we ask your browser to store, whether on your computer or mobile devices. Thus, the main purpose of cookies is to allow your browser to remember more easily the usability mechanisms developed by AletheiaFact.org when accessing our portal, eliminating the need to repeatedly enter the same information.\nFinally, it is important to clarify that the only cookies collected by us are the so-called session cookies, which only remain active while the user is using the system, being erased when the user logs out of the system.",
     "subTitleItem7": "Why is it necessary to collect and process your data?",
@@ -38,5 +42,6 @@
     "subTitleItem10": "Changes to this Privacy Policy",
     "item10": "AletheiaFact.org may from time to time make changes to this Privacy Policy to ensure the continuous improvement of our services, therefore, we recommend reading this page from time to time to be aware of any changes in our guidelines.",
     "subTitleContact": "Got any questions? Contact us!",
-    "contact": "Any request that you are interested in making regarding your data – information, change request; cancellation, more information, among others – contact us through: <0>{{email}}</0>"
+    "contact": "Any request that you are interested in making regarding your data – information, change request; cancellation, more information, among others – contact us through: <0>{{email}}</0>",
+    "contactEmail": "{{email}}"
 }

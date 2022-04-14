@@ -52,8 +52,8 @@ const PrivacyPolicy = () =>{
                     <Trans
                         i18nKey={"privacyPolicy:trackingToolsPanelReCaptchaContent"}
                         components={[
-                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/privacy?hl=en" target="_blank" rel="noreferrer"></a>,
-                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/terms?hl=en" target="_blank" rel="noreferrer"></a>
+                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/privacy?hl=en" target="_blank" rel="noreferrer">{t("privacyPolicy:trackingToolsPanelReCaptchaContentLink0")}</a>,
+                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/terms?hl=en" target="_blank" rel="noreferrer">{t("privacyPolicy:trackingToolsPanelReCaptchaContentLink1")}</a>
                         ]}
                     />
                 </Collapse.Panel>
@@ -64,9 +64,9 @@ const PrivacyPolicy = () =>{
                     <Trans
                         i18nKey={"privacyPolicy:trackingToolsPanelUmamiContent"}
                         components={[
-                            <a style={{whiteSpace: "pre-wrap"}} href="https://umami.is/" target="_blank" rel="noreferrer"></a>,
-                            <h3 style={{ marginTop: "10px" }}></h3>,
-                            <h3 style={{ marginTop: "10px" }}></h3>,
+                            <a style={{whiteSpace: "pre-wrap"}} href="https://umami.is/" target="_blank" rel="noreferrer">umami</a>,
+                            <h3 style={{ marginTop: "10px" }}>{t("privacyPolicy:trackingToolsPanelUmamiContentHeader0")}</h3>,
+                            <h3 style={{ marginTop: "10px" }}>{t("privacyPolicy:trackingToolsPanelUmamiContentHeader1")}</h3>,
                         ]}
                     />
                 </Collapse.Panel>
@@ -86,7 +86,7 @@ const PrivacyPolicy = () =>{
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail")}}
                 components={[
-                    <a style={{whiteSpace: "pre-wrap"}} href={`mailto:${t("common:contactEmail")}`} target="_blank" rel="noreferrer"></a>,
+                    <a style={{whiteSpace: "pre-wrap"}} href={`mailto:${t("common:contactEmail")}`} target="_blank" rel="noreferrer">{t("privacyPolicy:contact", { contactEmail: "contato@aletheiafact.org"})}</a>,
                 ]}
             />
         </Row>

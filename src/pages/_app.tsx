@@ -14,7 +14,7 @@ import { DefaultSeo } from "next-seo";
 function MyApp({ Component, pageProps }) {
     const store = useStore();
     const { t } = useTranslation();
-    let lang = pageProps._nextI18Next.initialLocale;
+    let lang: string = pageProps._nextI18Next.initialLocale;
     lang === 'pt' ? lang = 'pt-br' : lang;
     return (
         <>
@@ -62,8 +62,8 @@ function MyApp({ Component, pageProps }) {
                         <Trans
                             i18nKey={"cookieConsent:text"}
                             components={[
-                                <a style={{ whiteSpace: "pre-wrap" }} href="/privacy-policy"></a>,
-                                <a style={{ whiteSpace: "pre-wrap" }} href="/code-of-conduct"></a>
+                                <a style={{ whiteSpace: "pre-wrap" }} href="/privacy-policy">{t("privacyPolicy:title")}</a>,
+                                <a style={{ whiteSpace: "pre-wrap" }} href="/code-of-conduct">{t("codeOfConduct:title")}</a>
                             ]}
                         />
                     </CookieConsent>
