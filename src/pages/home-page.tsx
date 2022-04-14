@@ -17,8 +17,10 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personalities: JSON.parse(JSON.stringify(query.personalities)),
             stats: JSON.parse(JSON.stringify(query.stats)),
-            href: req.protocol + '://' + req.get('host') + req.originalUrl
+            href: req.protocol + '://' + req.get('host') + req.originalUrl,
+            isLoggedIn: req.user ? true : false
         },
     };
 }
 export default HomePage;
+

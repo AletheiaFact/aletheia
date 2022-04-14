@@ -12,7 +12,7 @@ import ClaimList from "../Claim/ClaimList";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import { useTranslation } from 'next-i18next';
 
-const PersonalityView = ({ personality, href }) => {
+const PersonalityView = ({ personality, href, isLoggedIn }) => {
     const { t } = useTranslation();
 
     const [showSpeechesSection, setShowSpeechesSection] = useState(true);
@@ -39,10 +39,10 @@ const PersonalityView = ({ personality, href }) => {
         <>
             <PersonalityCard personality={personality} header={true} />
             <br />
-            <AffixButton
+            { isLoggedIn && <AffixButton
                 tooltipTitle={t("personality:affixButtonTitle")}
                 href={`/personality/${personality.slug}/claim/create`}
-            />
+            />}
             <Row
                 style={{
                     textAlign: "center",
