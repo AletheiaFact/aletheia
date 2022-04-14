@@ -24,7 +24,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personalities: JSON.parse(JSON.stringify(query.personalities)),
             stats: JSON.parse(JSON.stringify(query.stats)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            isLoggedIn: req.user ? true : false
         },
     };
 }
 export default HomePage;
+
