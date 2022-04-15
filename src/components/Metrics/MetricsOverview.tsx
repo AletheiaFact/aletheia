@@ -1,6 +1,6 @@
 import React from "react";
 import ReviewStats from "./ReviewStats";
-import { Col, Typography } from "antd";
+import { Col, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 
 const { Title } = Typography;
@@ -9,7 +9,7 @@ const MetricsOverview = ({ stats }) => {
     const { t } = useTranslation();
 
     return (
-        <section style={{
+        <Row style={{
             background: "white",
             marginTop: "15px"
         }}>
@@ -39,7 +39,7 @@ const MetricsOverview = ({ stats }) => {
                     type="line"
                 />
             </Col>
-        </section>
+        </Row>
     );
 }
 

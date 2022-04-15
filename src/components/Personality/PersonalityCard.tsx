@@ -49,7 +49,7 @@ const PersonalityCard = ({
 
     if (personality) {
         return (
-            <section
+            <Row
                 style={{
                     width: "100%",
                     ...cardStyle
@@ -211,7 +211,7 @@ const PersonalityCard = ({
                     </Row>
                 )}
                 <hr style={{ opacity: "20%" }} />
-            </section>
+            </Row>
         );
     } else {
         return (
