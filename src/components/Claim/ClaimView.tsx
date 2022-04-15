@@ -42,6 +42,7 @@ const Claim = ({ personality, claim, href }) => {
                             <Row style={{ marginTop: "20px" }}>
                                 <Col offset={2} span={18}>
                                     <Title
+                                        level={2}
                                         style={{
                                             fontSize: 14,
                                             lineHeight: 1.5715,
@@ -73,7 +74,7 @@ const Claim = ({ personality, claim, href }) => {
                             <Row style={{ marginTop: "20px", width: "100%" }}>
                                 <Col offset={2} span={18}>
                                     <Title
-                                        level={1}
+                                        level={2}
                                         style={{
                                             fontSize: 20,
                                             lineHeight: 1.4
@@ -124,17 +125,19 @@ const Claim = ({ personality, claim, href }) => {
                                 padding: "15px"
                             }}
                         >
-                            <h2
+                            <Title
+                                level={3}
                                 style={{
                                     fontSize: "14px",
                                     lineHeight: "21px",
                                     color: "#111111",
                                     marginBottom: 0,
-                                    paddingBottom: "15px"
+                                    paddingBottom: "15px",
+                                    fontWeight: 400
                                 }}
                             >
                                 {t("claim:sourceSectionTitle")}
-                            </h2>
+                            </Title>
                             {claim.sources && <>
                                 <LinkPreview
                                     url={claim.sources[0].link}

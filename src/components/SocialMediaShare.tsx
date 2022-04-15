@@ -28,7 +28,7 @@ const SocialMediaShare = ({ quote = null, href = '' }) => {
             }}
         >
             <Title
-                level={1}
+                level={2}
                 style={{
                     width: "100%",
                     textAlign: "center",
