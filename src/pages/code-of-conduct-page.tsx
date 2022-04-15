@@ -6,7 +6,7 @@ import { NextSeo } from "next-seo";
 import { useTranslation } from "next-i18next";
 const parser = require('accept-language-parser');
 
-const AboutPage: NextPage<{ data: string }> = (props) => {
+const AboutPage: NextPage<{ data: string }> = () => {
     const { t } = useTranslation();
     return (
         <>

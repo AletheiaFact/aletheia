@@ -1,10 +1,22 @@
 import { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import ClaimSourceList from "../components/Claim/ClaimSourceList";
+import { NextSeo } from 'next-seo';
+import { useTranslation } from "next-i18next";
 const parser = require("accept-language-parser");
 
 const ClaimSourcePage: NextPage<{ claimId }> = ({ claimId }) => {
-    return <ClaimSourceList claimId={claimId} />;
+    const { t } = useTranslation();
+
+    return (
+        <>
+            <NextSeo 
+                title={t("seo:sourcesTitle")}
+                description={t("seo:sourcesDescription", {claimId})}
+            />
+            <ClaimSourceList claimId={claimId} />;
+        </>
+    )
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {

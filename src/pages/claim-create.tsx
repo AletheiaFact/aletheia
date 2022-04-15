@@ -1,11 +1,22 @@
 import { NextPage } from "next";
 import ClaimCreate from "../components/Claim/ClaimCreate";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { NextSeo } from 'next-seo';
+import { useTranslation } from "next-i18next";
 const parser = require('accept-language-parser');
 
 const ClaimCreatePage: NextPage<{ sitekey, personality }> = ({ sitekey, personality }) => {
+    const { t } = useTranslation();
+
     return (
-        <ClaimCreate sitekey={sitekey} personality={personality}/>
+        <>
+            <NextSeo 
+                title={t("seo:claimCreateTitle")}
+                description={t("seo:claimCreateDescription", { name: personality.name })}
+            />
+            
+            <ClaimCreate sitekey={sitekey} personality={personality}/>
+        </>
     )
 }
 

@@ -1,11 +1,21 @@
-import {NextPage} from "next";
+import { NextPage } from "next";
 import ClaimView from "../components/Claim/ClaimView";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { NextSeo } from 'next-seo';
+import { useTranslation } from "next-i18next";
 const parser = require('accept-language-parser');
 
 const ClaimPage: NextPage<{ personality, claim, href }> = ({ personality, claim, href }) => {
+    const { t } = useTranslation();
+        
     return (
-        <ClaimView personality={personality} claim={claim} href={href}/>
+        <>
+            <NextSeo
+                title={claim.title}
+                description={t('seo:claimDescription', { title: claim.title, name: personality.name })}
+            />
+            <ClaimView personality={personality} claim={claim} href={href}/>
+        </>
     );
 }
 

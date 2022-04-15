@@ -1,5 +1,5 @@
 import React from "react";
-import { Row } from "antd";
+import { Typography } from "antd";
 import {
     FacebookShareButton,
     FacebookIcon,
@@ -13,11 +13,13 @@ import {
 import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
 
+const { Title } = Typography;
+
 const SocialMediaShare = ({ quote = null, href = '' }) => {
     const { t } = useTranslation();
     quote = quote || t("share:quote");
     return (
-        <Row
+        <section
             style={{
                 background: colors.grayTertiary,
                 borderRadius: "30px",
@@ -25,53 +27,70 @@ const SocialMediaShare = ({ quote = null, href = '' }) => {
                 padding: "20px 0px"
             }}
         >
-            <div
+            <Title
+                level={1}
                 style={{
                     width: "100%",
                     textAlign: "center",
                     fontSize: "26px",
                     lineHeight: "39px",
+                    fontWeight: 400,
                     color: colors.bluePrimary
                 }}
             >
                 {t("share:title")}
-            </div>
-            <div
+            </Title>
+            <nav
                 style={{
+                    marginTop: "15px",
                     width: "100%",
-                    textAlign: "center",
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    padding: "0px 20%",
-                    marginTop: "15px"
                 }}
             >
-                <FacebookShareButton
-                    url={href}
-                    quote={quote}
+                <ul 
+                    style={{
+                        marginBottom: 0,
+                        textAlign: "center",
+                        display: "flex",
+                        padding: "0px 20%",
+                        justifyContent: "space-evenly",
+                        listStyleType: "none"
+                    }}
                 >
-                    <FacebookIcon size={32} round />
-                </FacebookShareButton>
-                <TwitterShareButton
-                    url={href}
-                    title={quote}
-                >
-                    <TwitterIcon size={32} round />
-                </TwitterShareButton>
-                <WhatsappShareButton
-                    url={href}
-                    title={quote}
-                >
-                    <WhatsappIcon size={32} round />
-                </WhatsappShareButton>
-                <TelegramShareButton
-                    url={href}
-                    title={quote}
-                >
-                    <TelegramIcon size={32} round />
-                </TelegramShareButton>
-            </div>
-        </Row>
+                    <li>
+                        <FacebookShareButton
+                            url={href}
+                            quote={quote}
+                        >
+                            <FacebookIcon size={32} round />
+                        </FacebookShareButton>
+                    </li>
+                    <li>
+                        <TwitterShareButton
+                            url={href}
+                            title={quote}
+                        >
+                            <TwitterIcon size={32} round />
+                        </TwitterShareButton>
+                    </li>
+                    <li>
+                        <WhatsappShareButton
+                            url={href}
+                            title={quote}
+                        >
+                            <WhatsappIcon size={32} round />
+                        </WhatsappShareButton>
+                    </li>
+                    <li>
+                        <TelegramShareButton
+                            url={href}
+                            title={quote}
+                        >
+                            <TelegramIcon size={32} round />
+                        </TelegramShareButton>
+                    </li>
+                </ul>
+            </nav>
+        </section>
     );
 }
 

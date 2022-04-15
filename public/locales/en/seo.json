@@ -2,5 +2,10 @@
     "personalityDescription": "See the profile of {{name}} on AletheiaFact.org",
     "personalityImageAlt": "Image of {{name}}",
     "personalityListTitle": "Personality profiles",
-    "personalityListDescription": "See all the profiles on AletheiaFact.org"
+    "personalityListDescription": "See all the profiles on AletheiaFact.org",
+    "claimCreateTitle": "Create claim",
+    "claimCreateDescription": "Create claim given by {{name}} to AletheiaFact.org",
+    "claimDescription": "See the claim {{title}} made by {{name}} on AletheiaFact.org",
+    "sourcesTitle": "Sources",
+    "sourcesDescription": "Claim sources {{claimId}}"
 }

@@ -14,15 +14,13 @@ import { DefaultSeo } from "next-seo";
 function MyApp({ Component, pageProps }) {
     const store = useStore();
     const { t } = useTranslation();
-
     return (
         <>
             <Head>
                 <title>AletheiaFact.org</title>
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1.0"
-                />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta name="google-site-verification" content="hM4P5Iyoy9bojyEm1AhZF5O5ZSCtScgyXwFDHdrcnFI" />
                 {umami.UMAMI_SITE_ID && (
                     <script async defer data-website-id={umami.UMAMI_SITE_ID} src="https://analytics.aletheiafact.org/umami.js"></script>
                 )}
@@ -62,7 +60,9 @@ function MyApp({ Component, pageProps }) {
                         <Trans
                             i18nKey={"cookieConsent:text"}
                             components={[
+                                // eslint-disable-next-line jsx-a11y/anchor-has-content
                                 <a style={{ whiteSpace: "pre-wrap" }} href="/privacy-policy"></a>,
+                                // eslint-disable-next-line jsx-a11y/anchor-has-content
                                 <a style={{ whiteSpace: "pre-wrap" }} href="/code-of-conduct"></a>
                             ]}
                         />
