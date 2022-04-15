@@ -11,6 +11,18 @@ export class CreatePersonality {
     @IsString()
     wikidata: string;
 
+    @IsString()
+    @IsOptional()
+    P2013?: string;
+
+    @IsString()
+    @IsOptional()
+    instagramUsername?: string;
+
+    @IsString()
+    @IsOptional()
+    P2002?: string;
+
     @IsBoolean()
     @IsOptional()
     isAllowedProp?: boolean

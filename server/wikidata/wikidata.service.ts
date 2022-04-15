@@ -59,6 +59,9 @@ export class WikidataService {
             isAllowedProp: undefined,
             image: undefined,
             wikipedia: undefined,
+            facebookID: undefined, //facebook ID
+            twitterUsername: undefined, // instagram username
+            P2002: undefined // twitter username
         };
         if (!wikidata) {
             return {};
@@ -66,6 +69,10 @@ export class WikidataService {
 
         // Get label for the personality name
         wikidataProps.name = this.extractValue(wikidata, "labels", language);
+
+        wikidataProps.facebookID = this.extractValue(wikidata, "value", language);
+
+        wikidataProps.twitterUsername = this.extractValue(wikidata, "value", language);
 
         // Get description for the personality description
         wikidataProps.description = this.extractValue(
@@ -144,6 +151,8 @@ export class WikidataService {
                     return {
                         name: wbentity.label,
                         description: wbentity.description,
+                        facebookID: wbentity.P2013,
+                        twitterUsername: wbentity.P2002,
                         wikidata: wbentity.id,
                     };
                 });

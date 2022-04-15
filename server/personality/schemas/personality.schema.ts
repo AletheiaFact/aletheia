@@ -17,6 +17,12 @@ export class Personality {
 
     @Prop({ unique: true, sparse: true })
     wikidata: string;
+
+    @Prop({ required: false })
+    P2013: string
+
+    @Prop({ required: false })
+    P2002: string
 }
 
 

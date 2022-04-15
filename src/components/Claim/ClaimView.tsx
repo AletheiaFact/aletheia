@@ -201,7 +201,7 @@ const Claim = ({ personality, claim, href }) => {
                         <MetricsOverview stats={stats} />
                     )}
                 </article>
-                <SocialMediaShare quote={personality?.name} href={href} />
+                <SocialMediaShare quote={personality?.name} href={href} claim={claim?.title} />
             </>
         );
     } else {
