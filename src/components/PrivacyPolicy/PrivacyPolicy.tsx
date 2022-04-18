@@ -3,7 +3,7 @@
 import { Collapse, Row, Typography } from "antd";
 import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
-import TitlePrivacyPolicy from "./PrivacyPolicyTitle";
+import PrivacyPolicyTitle from "./PrivacyPolicyTitle";
 
 const { Title } = Typography;
 
@@ -35,15 +35,15 @@ const PrivacyPolicy = () =>{
                 <li key={9}>{t("privacyPolicy:tableOfContentsItem9")}</li>
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem1")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleItem1")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item1")}</p>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem2")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleItem2")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item2")}</p>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem3")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleItem3")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item3")}</p>
-            <TitlePrivacyPolicy level={2}>{t("privacyPolicy:subTitleItem4")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle level={2}>{t("privacyPolicy:subTitleItem4")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item4")}</p>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem5")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleItem5")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item5")}</p>
             <Collapse
                 style={{
@@ -74,17 +74,17 @@ const PrivacyPolicy = () =>{
                     />
                 </Collapse.Panel>
             </Collapse>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem6")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleItem6")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item6")}</p>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem7")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleItem7")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item7")}</p>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem8")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleItem8")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item8")}</p>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem9")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleItem9")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item9")}</p>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem10")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleItem10")}</PrivacyPolicyTitle>
             <p>{t("privacyPolicy:item10")}</p>
-            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleContact")}</TitlePrivacyPolicy>
+            <PrivacyPolicyTitle>{t("privacyPolicy:subTitleContact")}</PrivacyPolicyTitle>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail")}}

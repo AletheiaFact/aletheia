@@ -3,7 +3,7 @@ import { Typography } from "antd";
 
 const { Title } = Typography;
 
-const TitlePrivacyPolicy = (props) => {
+const PrivacyPolicyTitle = (props) => {
     return(
         <Title
             level={2} 
@@ -18,4 +18,4 @@ const TitlePrivacyPolicy = (props) => {
     )
 }
 
-export default TitlePrivacyPolicy
+export default PrivacyPolicyTitle
