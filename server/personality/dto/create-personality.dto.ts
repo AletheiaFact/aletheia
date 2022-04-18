@@ -13,7 +13,7 @@ export class CreatePersonality {
 
     @IsString()
     @IsOptional()
-    P2013?: string;
+    facebookID?: string;
 
     @IsString()
     @IsOptional()
@@ -21,7 +21,7 @@ export class CreatePersonality {
 
     @IsString()
     @IsOptional()
-    P2002?: string;
+    twitterUsename?: string;
 
     @IsBoolean()
     @IsOptional()

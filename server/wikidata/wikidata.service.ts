@@ -59,9 +59,9 @@ export class WikidataService {
             isAllowedProp: undefined,
             image: undefined,
             wikipedia: undefined,
-            facebookID: undefined, //facebook ID
-            twitterUsername: undefined, // instagram username
-            P2002: undefined // twitter username
+            facebookID: undefined,
+            instagramUsername: undefined,
+            twitterUsename: undefined
         };
         if (!wikidata) {
             return {};
@@ -69,10 +69,6 @@ export class WikidataService {
 
         // Get label for the personality name
         wikidataProps.name = this.extractValue(wikidata, "labels", language);
-
-        wikidataProps.facebookID = this.extractValue(wikidata, "value", language);
-
-        wikidataProps.twitterUsername = this.extractValue(wikidata, "value", language);
 
         // Get description for the personality description
         wikidataProps.description = this.extractValue(
@@ -89,6 +85,21 @@ export class WikidataService {
             wikidataProps.isAllowedProp = false;
         }
 
+        if (wikidata.claims.P2013) {
+            console.log('p2013')
+            wikidataProps.facebookID = wikidata.claims.P2013[0].mainsnak.datavalue.value;
+        }
+
+        if (wikidata.claims.P2003) {
+            console.log('p2003')
+            wikidataProps.instagramUsername = wikidata.claims.P2003[0].mainsnak.datavalue.value;
+        }
+
+        if (wikidata.claims.P2002) {
+            console.log('p2002')
+            wikidataProps.twitterUsename = wikidata.claims.P2002[0].mainsnak.datavalue.value;
+        }
+        
         // Extract image if it exists
         if (wikidata.claims.P18) {
             const fileName = wikidata.claims.P18[0].mainsnak.datavalue.value;
@@ -151,8 +162,6 @@ export class WikidataService {
                     return {
                         name: wbentity.label,
                         description: wbentity.description,
-                        facebookID: wbentity.P2013,
-                        twitterUsername: wbentity.P2002,
                         wikidata: wbentity.id,
                     };
                 });

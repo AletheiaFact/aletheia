@@ -19,7 +19,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
     const { t } = useTranslation();
     quote = quote || t("share:quote");
 
-    const personalityName = quote.replace(" ", ""); 
+    const trimPersonality = quote.replace(" ", ""); 
 
     let claimCamelize
     if(claim !== null) {
@@ -32,7 +32,6 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
             return index === 0 ? word.toLowerCase() : word.toUpperCase();
         }).replace(/\s+/g, '');
     }
-    //verify the url and select specifics hashtags
     
     return (
         <section
@@ -76,8 +75,8 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                         <FacebookShareButton
                             url={href}
                             quote={`Veja o discurso de ${quote} na AletheiaFact.org`}
-                            hashtag={personalityName}
-                            beforeOnClick={() => { umami?.trackEvent('facebook-share-button', 'share') }}
+                            hashtag={trimPersonality}
+                            beforeOnClick={() => {umami?.trackEvent('facebook-share-button', 'share')}}
                         >
                             <FacebookIcon size={32} round />
                         </FacebookShareButton>
@@ -86,8 +85,8 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                         <TwitterShareButton
                             url={`\n\n${href}\n\n`}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
-                            hashtags={["aletheia", personalityName, `${claim !== null ? camelize(claimCamelize) : null}\n`]}
-                            beforeOnClick={() => { umami?.trackEvent('twitter-share-button', 'share') }}
+                            hashtags={["aletheia", trimPersonality, `${claim !== null ? camelize(claimCamelize) : ''}\n`]}
+                            beforeOnClick={() => {umami?.trackEvent('twitter-share-button', 'sharing')}}
                         >
                             <TwitterIcon size={32} round />
                         </TwitterShareButton>
@@ -96,7 +95,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                         <WhatsappShareButton
                             url={href}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
-                            beforeOnClick={() => { umami?.trackEvent('whatsapp-share-button', 'share') }}
+                            beforeOnClick={() => {umami?.trackEvent('whatsapp-share-button', 'sharing')}}
                         >
                             <WhatsappIcon size={32} round />
                         </WhatsappShareButton>
@@ -105,7 +104,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                         <TelegramShareButton
                             url={href}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
-                            beforeOnClick={() => { umami?.trackEvent('telegram-share-button', 'share') }}
+                            beforeOnClick={() => {umami?.trackEvent('telegram-share-button', 'sharing')}}
                         >
                             <TelegramIcon size={32} round />
                         </TelegramShareButton>
