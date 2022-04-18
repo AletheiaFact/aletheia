@@ -3,6 +3,7 @@
 import { Collapse, Row, Typography } from "antd";
 import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
+import TitlePrivacyPolicy from "./PrivacyPolicyTitle";
 
 const { Title } = Typography;
 
@@ -34,55 +35,15 @@ const PrivacyPolicy = () =>{
                 <li key={9}>{t("privacyPolicy:tableOfContentsItem9")}</li>
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem1")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem1")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item1")}</p>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem2")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem2")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item2")}</p>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem3")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem3")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item3")}</p>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem4")}
-            </Title>
+            <TitlePrivacyPolicy level={2}>{t("privacyPolicy:subTitleItem4")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item4")}</p>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem5")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem5")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item5")}</p>
             <Collapse
                 style={{
@@ -113,65 +74,17 @@ const PrivacyPolicy = () =>{
                     />
                 </Collapse.Panel>
             </Collapse>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem6")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem6")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item6")}</p>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem7")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem7")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item7")}</p>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem8")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem8")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item8")}</p>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem9")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem9")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item9")}</p>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleItem10")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleItem10")}</TitlePrivacyPolicy>
             <p>{t("privacyPolicy:item10")}</p>
-            <Title level={2} 
-                style={{
-                    fontWeight: 600,
-                    fontSize: 24,
-                    lineHeight: 1.35,
-                }}
-            >
-                {t("privacyPolicy:subTitleContact")}
-            </Title>
+            <TitlePrivacyPolicy>{t("privacyPolicy:subTitleContact")}</TitlePrivacyPolicy>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail")}}
