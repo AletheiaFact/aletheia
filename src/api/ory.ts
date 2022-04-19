@@ -1,7 +1,6 @@
-import {ory} from "../lib/orysdk";
-import {SelfServiceLoginFlow} from "@ory/client";
-import {handleFlowError} from "../lib/orysdk/errors";
-import {AxiosError} from "axios";
+import { ory } from "../lib/orysdk";
+import { handleFlowError } from "../lib/orysdk/errors";
+import { AxiosError } from "axios";
 
 
 const oryGetLoginFlow = ({ router, setFlow, t }) => {
@@ -18,7 +17,7 @@ const oryGetLoginFlow = ({ router, setFlow, t }) => {
             returnTo ? String(returnTo) : undefined
         )
         .then(({ data }) => {
-            setFlow(data as SelfServiceLoginFlow)
+            setFlow(data)
         })
         .catch(handleFlowError(router, 'login', setFlow, t))
 }
@@ -26,14 +25,13 @@ const oryGetLoginFlow = ({ router, setFlow, t }) => {
 const orySubmitLogin = ({router, flow, setFlow, t, values}) => {
     return ory
         .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
-        .then((res) => {
+        .then(() => {
             if (flow?.return_to) {
                 window.location.href = flow?.return_to
                 return
             }
             router.push('/home')
         })
-        .then(() => { })
         .catch(handleFlowError(router, 'login', setFlow, t))
         .catch((err: AxiosError) => {
             if (err.response?.status === 400) {

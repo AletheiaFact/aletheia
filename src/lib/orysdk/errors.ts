@@ -18,16 +18,13 @@ export function handleGetFlowError<S>(
 ) {
     return async (err: AxiosError) => {
         switch (err.response?.data.error?.id) {
+            case "session_refresh_required":
             case "session_aal2_required":
                 // 2FA is enabled and enforced, but user did not perform 2fa yet
                 window.location.href = err.response?.data.redirect_browser_to;
                 return;
             case "session_already_available":
                 await router.push("/home");
-                return;
-            case "session_refresh_required":
-                // We need to re-authenticate to perform this action
-                window.location.href = err.response?.data.redirect_browser_to;
                 return;
             case "self_service_flow_return_to_forbidden":
                 message.error(t("oryErrors:returnAddressForbidden"));
@@ -53,10 +50,9 @@ export function handleGetFlowError<S>(
                 return;
         }
 
-        switch (err.response?.status) {
-            case 410:
-                await requestNewFlow();
-                return;
+        if (err.response?.status === 410) {
+            await requestNewFlow();
+            return;
         }
 
         // We are not able to handle the error? Return it.
