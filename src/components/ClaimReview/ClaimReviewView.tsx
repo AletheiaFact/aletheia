@@ -42,22 +42,27 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                 {sentence.userReview && (
                     <Row
                         style={{
-                            justifyContent: "center"
+                            justifyContent: "center",
+                            flexWrap: "wrap"
                         }}
                     >
-                        <div>
-                            {t("claimReview:userReviewPrefix")}&nbsp;
+                        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
+                            <p style={{ marginBottom: 0 }}>
+                                {t("claimReview:userReviewPrefix")}&nbsp;
+                            </p>
                             <ClassificationText
                                 classification={
                                     sentence.userReview?.classification
                                 }
                             />
                         </div>
-                        <div>
-                            {t("claimReview:userReviewSuffix", {
-                                count: review?.count
-                            })}
+                        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
+                            <p style={{ marginBottom: 0 }}>
+                                {t("claimReview:userReviewSuffix", {
+                                    count: review?.count
+                                })}
                             &nbsp;
+                            </p>
                             <ClassificationText
                                 classification={review?.classification}
                             />
@@ -103,7 +108,18 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                                         onClick={toggleFormCollapse}
                                         icon={<PlusOutlined />}
                                     >
-                                        {t("claimReviewForm:addReviewButton")}
+                                        <h3 style={{
+                                            marginLeft: 8,
+                                            lineHeight: 1.5715,
+                                            fontWeight: 400,
+                                            fontSize: 14,
+                                            marginBottom: 0,
+                                            color: colors.white,
+                                            display: "inline-block",
+
+                                        }}>
+                                            {t("claimReviewForm:addReviewButton")}
+                                        </h3>
                                     </Button>
                                 </Col>
                             </>
