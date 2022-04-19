@@ -19,12 +19,13 @@ import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
 import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
+import { LoggerMiddleware } from "./middleware/logger.middleware";
 import { GetLanguageMiddleware } from "./middleware/language.middleware";
 
 @Module({})
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(GetLanguageMiddleware).forRoutes('*');
+        consumer.apply(LoggerMiddleware, GetLanguageMiddleware).forRoutes('*');
     }
     static register(options): DynamicModule {
         // TODO: interface app with service-runner metrics interface
