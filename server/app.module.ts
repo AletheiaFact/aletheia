@@ -24,7 +24,7 @@ import { GetLanguageMiddleware } from "./middleware/language.middleware";
 @Module({})
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(LoggerMiddleware, GetLanguageMiddleware).forRoutes('*');
+        consumer.apply(GetLanguageMiddleware).forRoutes('*');
     }
     static register(options): DynamicModule {
         // TODO: interface app with service-runner metrics interface
