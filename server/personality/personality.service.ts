@@ -79,31 +79,45 @@ export class PersonalityService {
      * @param personality PersonalityBody received of the client.
      * @returns Return a new personality.
      */
-    create(personality) {
+    async create(personality) {
         try {
-            personality.slug = slugify(personality.name, {
-                lower: true,     // convert to lower case, defaults to `false`
-                strict: true     // strip special characters except replacement, defaults to `false`
-            })
-            const newPersonality = new this.PersonalityModel(personality);
-            this.logger.log(
-                `Attempting to create new personality with data ${personality}`
-            );
+            const personalityExists = 
+                await this.getDeletedPersonalityByWikidata(personality.wikidata)
 
-            const user = this.req.user
-
-            const history = this.history.getHistoryParams(
-                newPersonality._id,
-                TargetModel.Personality,
-                user,
-                HistoryType.Create,
-                personality
-            )
-
-            this.history.createHistory(history)
-
-            return newPersonality.save();
+            if(personalityExists) {
+                return personalityExists.restore()
+            } else {
+                personality.slug = slugify(personality.name, {
+                    lower: true,     // convert to lower case, defaults to `false`
+                    strict: true     // strip special characters except replacement, defaults to `false`
+                })
+                const newPersonality = new this.PersonalityModel(personality);
+                this.logger.log(
+                    `Attempting to create new personality with data ${personality}`
+                );
+    
+                const user = this.req.user
+    
+                const history = this.history.getHistoryParams(
+                    newPersonality._id,
+                    TargetModel.Personality,
+                    user,
+                    HistoryType.Create,
+                    personality
+                )
+    
+                this.history.createHistory(history)
+    
+                return newPersonality.save();
+            }
         } catch (err) {}
+    }
+
+    getDeletedPersonalityByWikidata(wikidata) {
+        return this.PersonalityModel.findOne({
+            isDeleted: true,
+            wikidata
+        })
     }
 
     async getById(personalityId, language = "en") {
