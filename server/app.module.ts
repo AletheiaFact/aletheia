@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from "@nestjs/common";
+import { DynamicModule, MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
@@ -19,9 +19,13 @@ import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
 import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
+import { GetLanguageMiddleware } from "./middleware/language.middleware";
 
 @Module({})
-export class AppModule {
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(LoggerMiddleware, GetLanguageMiddleware).forRoutes('*');
+    }
     static register(options): DynamicModule {
         // TODO: interface app with service-runner metrics interface
         return {
