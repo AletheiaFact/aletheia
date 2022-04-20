@@ -81,7 +81,7 @@ export class WikidataService {
         } else {
             wikidataProps.isAllowedProp = false;
         }
-
+        
         // Extract image if it exists
         if (wikidata.claims.P18) {
             const fileName = wikidata.claims.P18[0].mainsnak.datavalue.value;

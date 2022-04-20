@@ -34,6 +34,15 @@ function MyApp({ Component, pageProps }) {
                             type: 'website',
                             url: pageProps.href,
                             site_name: 'AletheiaFact.org',
+                            images: [
+                                {
+                                    url: 'https://pbs.twimg.com/profile_images/1426648783614619651/p43eLo43_400x400.jpg',
+                                    width: 90,
+                                    height: 90,
+                                    alt: 'aletheiaFact logo',
+                                    type: 'image/jpg',
+                                },
+                            ],
                         }}
                         twitter={{
                             site: '@aletheiafact',
