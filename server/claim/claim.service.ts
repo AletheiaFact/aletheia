@@ -33,7 +33,7 @@ export class ClaimService {
 
     async listAll(page, pageSize, order, query) {
         if (query.personality) {
-            query.personality = new Types.ObjectId(query.personality)
+            query.personality = Types.ObjectId(query.personality)
         }
         const claims = await this.ClaimModel.find(query)
             .populate("latestRevision")
@@ -64,7 +64,7 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim) {
-        claim.personality = new Types.ObjectId(claim.personality);
+        claim.personality = Types.ObjectId(claim.personality);
         const newClaim = new this.ClaimModel(claim);
         const newClaimRevision = await this.claimRevisionService.create(newClaim._id, claim)
         newClaim.latestRevision = newClaimRevision._id

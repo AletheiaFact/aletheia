@@ -53,7 +53,7 @@ export class ClaimReviewService {
     /**
      * get all personality claim claimIDs
      * @param claimId claim Id
-     * @returns 
+     * @returns
      */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
@@ -175,9 +175,9 @@ export class ClaimReviewService {
      */
     async create(claimReview) {
         // Cast ObjectId
-        claimReview.personality = new Types.ObjectId(claimReview.personality);
-        claimReview.claim = new Types.ObjectId(claimReview.claim);
-        claimReview.user = new Types.ObjectId(claimReview.user);
+        claimReview.personality = Types.ObjectId(claimReview.personality);
+        claimReview.claim = Types.ObjectId(claimReview.claim);
+        claimReview.user = Types.ObjectId(claimReview.user);
         const newClaimReview = new this.ClaimReviewModel(claimReview);
         if (claimReview.sources && Array.isArray(claimReview.sources)) {
             try {

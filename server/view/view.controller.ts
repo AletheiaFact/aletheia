@@ -2,6 +2,7 @@ import { Controller, Get, Res, Req } from "@nestjs/common";
 import { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "./view.service";
+import {IsPublic} from "../decorators/is-public.decorator";
 
 @Controller("/")
 export class ViewController {
@@ -16,6 +17,7 @@ export class ViewController {
             .render(req, res, parsedUrl.pathname, parsedUrl.query);
     }
 
+    @IsPublic()
     @Get()
     public async showHome(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -26,6 +28,7 @@ export class ViewController {
             .render(req, res, "/landing-page", Object.assign(parsedUrl.query));
     }
 
+    @IsPublic()
     @Get("about")
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -36,6 +39,7 @@ export class ViewController {
             .render(req, res, "/about-page", Object.assign(parsedUrl.query));
     }
 
+    @IsPublic()
     @Get("privacy-policy")
     public async showPrivacyPolicyPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -46,6 +50,7 @@ export class ViewController {
             .render(req, res, "/privacy-policy-page", Object.assign(parsedUrl.query));
     }
 
+    @IsPublic()
     @Get("code-of-conduct")
     public async codeOfConductPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -56,6 +61,7 @@ export class ViewController {
             .render(req, res, "/code-of-conduct-page", Object.assign(parsedUrl.query));
     }
 
+    @IsPublic()
     @Get("_next*")
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -70,6 +76,7 @@ export class ViewController {
      * Redirects to our custom 404 page.
      * The render404() method was not used here as it conflicts with our i18n strategy.
      */
+    @IsPublic()
     @Get("404")
     public async show404(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -77,6 +84,6 @@ export class ViewController {
 
         await this.viewService
             .getNextServer()
-            .render(req,res, '/404-page', Object.assign(parsedUrl.query))
+            .render(req, res, "/404-page", Object.assign(parsedUrl.query));
     }
 }
