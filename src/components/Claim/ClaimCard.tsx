@@ -52,8 +52,7 @@ const ClaimCard = ({ personality, claim }) => {
                                         }}
                                     >
                                         <cite style={{ fontStyle: "normal" }}>
-                                            <Title
-                                                level={3}
+                                            <p
                                                 style={{
                                                     fontSize: 14,
                                                     color: colors.blackPrimary,
@@ -62,7 +61,7 @@ const ClaimCard = ({ personality, claim }) => {
                                                     lineHeight: 1.5715,
                                                 }}>
                                                 {claim?.content?.text || claim?.title}
-                                            </Title>
+                                            </p>
                                         </cite>
                                     </Paragraph>
                                 </Col>

@@ -3,6 +3,8 @@
 import { Collapse, Row, Typography } from "antd";
 import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
+import Subtitle from "../Subtitle";
+import Paragraph from "../Paragraph";
 
 const { Title } = Typography;
 
@@ -20,8 +22,8 @@ const PrivacyPolicy = () =>{
                 padding: "20px"
             }}
         >
-            <Title>{t("privacyPolicy:title")}</Title>
-            <p>{t("privacyPolicy:leadParagraph")}</p>
+            <Title level={1}>{t("privacyPolicy:title")}</Title>
+            <Paragraph>{t("privacyPolicy:leadParagraph")}</Paragraph>
             <ul>
                 <li key={1}>{t("privacyPolicy:tableOfContentsItem1")}</li>
                 <li key={2}>{t("privacyPolicy:tableOfContentsItem2")}</li>
@@ -34,16 +36,16 @@ const PrivacyPolicy = () =>{
                 <li key={9}>{t("privacyPolicy:tableOfContentsItem9")}</li>
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
-            <Title level={3}>{t("privacyPolicy:subTitleItem1")}</Title>
-            <p>{t("privacyPolicy:item1")}</p>
-            <Title level={3}>{t("privacyPolicy:subTitleItem2")}</Title>
-            <p>{t("privacyPolicy:item2")}</p>
-            <Title level={3}>{t("privacyPolicy:subTitleItem3")}</Title>
-            <p>{t("privacyPolicy:item3")}</p>
-            <Title level={3}>{t("privacyPolicy:subTitleItem4")}</Title>
-            <p>{t("privacyPolicy:item4")}</p>
-            <Title level={3}>{t("privacyPolicy:subTitleItem5")}</Title>
-            <p>{t("privacyPolicy:item5")}</p>
+            <Subtitle>{t("privacyPolicy:subTitleItem1")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item1")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem2")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item2")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem3")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item3")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem4")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item4")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem5")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item5")}</Paragraph>
             <Collapse
                 style={{
                     width: "100%",
@@ -73,17 +75,17 @@ const PrivacyPolicy = () =>{
                     />
                 </Collapse.Panel>
             </Collapse>
-            <Title level={3}>{t("privacyPolicy:subTitleItem6")}</Title>
-            <p>{t("privacyPolicy:item6")}</p>
-            <Title level={3}>{t("privacyPolicy:subTitleItem7")}</Title>
-            <p>{t("privacyPolicy:item7")}</p>
-            <Title level={3}>{t("privacyPolicy:subTitleItem8")}</Title>
-            <p>{t("privacyPolicy:item8")}</p>
-            <Title level={3}>{t("privacyPolicy:subTitleItem9")}</Title>
-            <p>{t("privacyPolicy:item9")}</p>
-            <Title level={3}>{t("privacyPolicy:subTitleItem10")}</Title>
-            <p>{t("privacyPolicy:item10")}</p>
-            <Title level={3}>{t("privacyPolicy:subTitleContact")}</Title>
+            <Subtitle>{t("privacyPolicy:subTitleItem6")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item6")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem7")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item7")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem8")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item8")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem9")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item9")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem10")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item10")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleContact")}</Subtitle>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail")}}

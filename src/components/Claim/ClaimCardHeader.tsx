@@ -17,7 +17,7 @@ const ClaimCardHeader = ({ personality, date, claimType = 'speech' }) => {
             color: colors.blackSecondary,
             width: '100%'
         }}>
-            <Title level={1} style={{
+            <Title level={2} style={{
                 fontSize: 16,
                 fontWeight: 400,
                 marginBottom: 0,
@@ -26,7 +26,7 @@ const ClaimCardHeader = ({ personality, date, claimType = 'speech' }) => {
             </Title>
 
             <Row>
-                <Title level={2} style={{
+                <Title level={3} style={{
                     fontSize: 12,
                     fontWeight: 400,
                     lineHeight: '18px',
@@ -37,7 +37,7 @@ const ClaimCardHeader = ({ personality, date, claimType = 'speech' }) => {
             </Row>
 
             <Row>
-                <Title level={2} style={{
+                <Title level={3} style={{
                     fontSize: 12,
                     fontWeight: 400,
                     lineHeight: '18px',
