@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CodeOfConductParagraph = props => {
+const Paragraph = props => {
   return(
     <p style={{width: "100%"}}>
         {props.children}
@@ -8,4 +8,4 @@ const CodeOfConductParagraph = props => {
   )
 }
 
-export default CodeOfConductParagraph
+export default Paragraph
