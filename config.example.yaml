@@ -24,3 +24,11 @@ services:
       debug: true
       recaptcha_secret: RECAPTCHA_SECRET
       recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
+      throttle:
+        ttl: 60
+        limit: 1000
+      authentication_type: passport
+      ory:
+        url: ORY_URL
+        access_token: ORY_TOKEN
+        schema_id: ALETHEIA_SCHEMA_ID
