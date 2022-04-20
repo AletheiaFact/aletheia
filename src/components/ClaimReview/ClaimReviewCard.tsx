@@ -25,9 +25,15 @@ const ClaimReviewCard = ({ classification, userName, sources, report }) => {
             }}
             avatar={<Avatar size={45} icon={<UserOutlined />} />}
             author={
-                <span style={{ fontSize: 14 }}>{t("claimReview:cardAuthor", {
-                    name: username
-                })}</span>
+                <h2
+                    style={{
+                        fontSize: 14,
+                        marginBottom: 0,
+                        fontWeight: 400
+                    }}
+                >
+                    {t("claimReview:cardAuthor", { name: username })}
+                </h2>
             }
             content={
                 <Row>
@@ -36,19 +42,21 @@ const ClaimReviewCard = ({ classification, userName, sources, report }) => {
                         padding: "10px 0px"
 
                     }}>
-                        <span
+                        <h3
                             style={{
                                 color:
                                     ReviewColors[classification] ||
                                     "#000",
                                 fontWeight: "bold",
+                                fontSize: 14,
                                 textTransform: "uppercase",
                                 width: "100%",
                                 textAlign: "center",
+                                marginBottom: 0,
                             }}
                         >
                             {t(`claimReviewForm:${classification}`)}{" "}
-                        </span>
+                        </h3>
                     </Row>
                     <Row style={{
                         width: "100%"

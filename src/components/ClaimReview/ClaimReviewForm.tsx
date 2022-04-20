@@ -96,15 +96,16 @@ const ClaimReviewForm = ({
                 <Form.Item
                     name="classification"
                     label={
-                        <span
+                        <h4
                             style={{
                                 color: colors.blackSecondary,
                                 fontWeight: 600,
                                 paddingLeft: 10,
+                                marginBottom: 0,
                             }}
                         >
                             {t("claimReviewForm:selectLabel")}
-                        </span>
+                        </h4>
                     }
                 >
                     <ClaimReviewSelect
@@ -116,14 +117,15 @@ const ClaimReviewForm = ({
                 <SourceInput
                     name="source"
                     label={
-                        <span
+                        <h4
                             style={{
                                 color: colors.blackSecondary,
                                 fontWeight: 600,
+                                marginBottom: 0,
                             }}
                         >
                             {t("sourceForm:label")}
-                        </span>
+                        </h4>
                     }
                     onChange={(e, index) => {
                         setSources(
@@ -149,14 +151,15 @@ const ClaimReviewForm = ({
                 <Form.Item
                     name="report"
                     label={
-                        <span
+                        <h4
                             style={{
                                 color: colors.blackSecondary,
                                 fontWeight: 600,
+                                marginBottom: 0,
                             }}
                         >
                             {t("claimForm:reportField")}
-                        </span>
+                        </h4>
                     }
                     rules={[
                         {
