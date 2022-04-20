@@ -22,6 +22,7 @@ import { HistoryModule } from "./history/history.module";
 import { LoggerMiddleware } from "./middleware/logger.middleware";
 import OryModule from "./ory/ory.module";
 import { SessionGuard } from "./auth/session.guard";
+import { GetLanguageMiddleware } from "./middleware/language.middleware";
 import { DisableBodyParserMiddleware } from "./middleware/disable-body-parser.middleware";
 import OryController from "./ory/ory.controller";
 import { JsonBodyMiddleware } from "./middleware/json-body.middleware";
@@ -32,10 +33,7 @@ export class AppModule implements NestModule {
         consumer
             .apply(DisableBodyParserMiddleware)
             .forRoutes(OryController)
-            .apply(JsonBodyMiddleware)
-            .forRoutes('*')
-            .apply(LoggerMiddleware)
-            .forRoutes('*');
+            .apply(JsonBodyMiddleware, LoggerMiddleware, GetLanguageMiddleware).forRoutes('*');
     }
 
     static register(options): DynamicModule {
