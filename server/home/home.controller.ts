@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { parse } from "url";
 import { PersonalityService } from "../personality/personality.service";
 import { StatsService } from "../stats/stats.service";
+import { IsPublic } from "../decorators/is-public.decorator";
 
 @Controller("/")
 export class HomeController {
@@ -13,6 +14,7 @@ export class HomeController {
         private statsService: StatsService
     ) {}
 
+    @IsPublic()
     @Get("home")
     public async showHome(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);

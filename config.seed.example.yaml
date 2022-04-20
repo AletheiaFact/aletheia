@@ -28,3 +28,6 @@ services:
           password: TEST_USER_PASS
           sendAuthDetails: false
           isTestUser: true
+      throttle:
+        ttl: 60
+        limit: 1000

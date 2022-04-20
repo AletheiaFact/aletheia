@@ -1,10 +1,10 @@
-import {Body, Controller, Delete, Get, Param, Post, Req, UseGuards} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Req } from "@nestjs/common";
 import { ClaimReviewService } from "./claim-review.service";
 import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
-import {SessionGuard} from "../auth/session.guard";
 import { CreateClaimReview } from "./dto/create-claim-review.dto";
+import {IsPublic} from "../decorators/is-public.decorator";
 
 @Controller("api/claimreview")
 export class ClaimReviewController {
@@ -27,7 +27,6 @@ export class ClaimReviewController {
         return data;
     }
 
-    @UseGuards(SessionGuard)
     @Post()
     async create(@Body() createClaimReview: CreateClaimReview, @Req() req) {
         const secret = this.configService.get<string>("recaptcha_secret");
@@ -51,12 +50,12 @@ export class ClaimReviewController {
         }
     }
 
+    @IsPublic()
     @Get(":id")
     get(@Param() params) {
         return this.claimReviewService.getById(params.id);
     }
 
-    @UseGuards(SessionGuard)
     @Delete(":id")
     delete(@Param() params) {
         return this.claimReviewService.delete(params.id);

@@ -38,7 +38,7 @@ export class HistoryService {
     ) {
         const date = new Date()
         return {
-            targetId: new Types.ObjectId(dataId),
+            targetId: Types.ObjectId(dataId),
             targetModel,
             user: user?._id,
             type,
@@ -72,7 +72,7 @@ export class HistoryService {
      */
     async getByTargetIdAndModel(targetId, targetModel, page, pageSize, order = "asc") {
         return this.HistoryModel.find({
-            targetId: new Types.ObjectId(targetId),
+            targetId: Types.ObjectId(targetId),
             targetModel,
         })
         .populate("user", "_id name")

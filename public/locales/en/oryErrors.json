@@ -1,0 +1,5 @@
+{
+    "flowExpired": "Your interaction expired, please fill out the form again.",
+    "csrfViolation": "A security violation was detected, please fill out the form again.",
+    "returnAddressForbidden": "The return_to address is not allowed."
+}
