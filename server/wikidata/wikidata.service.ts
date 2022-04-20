@@ -59,9 +59,6 @@ export class WikidataService {
             isAllowedProp: undefined,
             image: undefined,
             wikipedia: undefined,
-            facebookID: undefined,
-            instagramUsername: undefined,
-            twitterUsename: undefined
         };
         if (!wikidata) {
             return {};
@@ -83,21 +80,6 @@ export class WikidataService {
             wikidataProps.isAllowedProp = wikidataInstanceof.id === "Q5";
         } else {
             wikidataProps.isAllowedProp = false;
-        }
-
-        if (wikidata.claims.P2013) {
-            console.log('p2013')
-            wikidataProps.facebookID = wikidata.claims.P2013[0].mainsnak.datavalue.value;
-        }
-
-        if (wikidata.claims.P2003) {
-            console.log('p2003')
-            wikidataProps.instagramUsername = wikidata.claims.P2003[0].mainsnak.datavalue.value;
-        }
-
-        if (wikidata.claims.P2002) {
-            console.log('p2002')
-            wikidataProps.twitterUsename = wikidata.claims.P2002[0].mainsnak.datavalue.value;
         }
         
         // Extract image if it exists
