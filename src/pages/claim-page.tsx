@@ -3,18 +3,32 @@ import ClaimView from "../components/Claim/ClaimView";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextSeo } from 'next-seo';
 import { useTranslation } from "next-i18next";
+import JsonLd from "../components/JsonLd";
 const parser = require('accept-language-parser');
 
 const ClaimPage: NextPage<{ personality, claim, href }> = ({ personality, claim, href }) => {
     const { t } = useTranslation();
-        
+    const jsonld = {
+        "@context": "https://schema.org",
+        "@type": "Claim",
+        author: {
+            "@type": "Person",
+            name: personality.name,
+            jobTitle: personality.description,
+            image: personality.image,
+        },
+        datePublished: claim.date,
+        name: claim.title,
+    }
+
     return (
         <>
             <NextSeo
                 title={claim.title}
                 description={t('seo:claimDescription', { title: claim.title, name: personality.name })}
             />
-            <ClaimView personality={personality} claim={claim} href={href}/>
+            <JsonLd {...jsonld} />
+            <ClaimView personality={personality} claim={claim} href={href} />
         </>
     );
 }
