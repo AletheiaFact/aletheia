@@ -34,21 +34,20 @@ export class SessionGuard implements CanActivate {
                 request.user = { _id: session?.identity?.traits?.user_id };
                 return true
             }
-
             if ((type === 'passport') && request.isAuthenticated && request.isAuthenticated()) {
                 return true;
             }
-            this.redirect(request, response);
+            return this.next(request, response, isPublic);
         } catch (e) {
-            if (isPublic) {
-                return true
-            }
             // TODO: logging
-            this.redirect(request, response);
+            return this.next(request, response, isPublic);
         }
     }
 
-    redirect(request, response) {
+    next(request, response, isPublic) {
+        if (isPublic) {
+            return true
+        }
         if (request.url.startsWith("/api")) {
             return false;
         } else {
