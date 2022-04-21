@@ -3,8 +3,8 @@ import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
-const parser = require("accept-language-parser");
 import { NextSeo } from 'next-seo';
+const parser = require("accept-language-parser");
 
 const ClaimPage: NextPage<{ personality; claim; sentence; sitekey }> = ({
     personality,
