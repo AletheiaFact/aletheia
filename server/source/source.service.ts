@@ -10,15 +10,15 @@ export class SourceService {
         private SourceModel: Model<SourceDocument>
     ) {}
     async create(data) {
-        data.targetId = new Types.ObjectId(data.targetId);
-        data.user = new Types.ObjectId(data.user);
+        data.targetId = Types.ObjectId(data.targetId);
+        data.user = Types.ObjectId(data.user);
         const source = new this.SourceModel(data);
         await source.save();
         return source;
     }
 
     async getByTargetId(targetId, page, pageSize, order = "asc") {
-        targetId = new Types.ObjectId(targetId);
+        targetId = Types.ObjectId(targetId);
 
         return this.SourceModel.find({ targetId })
         .skip(page * pageSize)

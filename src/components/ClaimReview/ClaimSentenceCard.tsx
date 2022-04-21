@@ -1,10 +1,8 @@
-import { Avatar, Col, Comment, Typography } from "antd";
+import { Avatar, Col, Comment } from "antd";
 import React from "react";
 import ClaimCardHeader from "../Claim/ClaimCardHeader";
 import ClaimSummary from "../Claim/ClaimSummary";
 
-
-const { Paragraph } = Typography;
 const ClaimSentenceCard = ({ personality, sentence, claimType, summaryClassName = "" }) => {
     const content = sentence?.content;
 
@@ -29,9 +27,16 @@ const ClaimSentenceCard = ({ personality, sentence, claimType, summaryClassName 
                         <>
                             <ClaimSummary className={summaryClassName}>
                                 <Col>
-                                    <Paragraph>
-                                        {content}
-                                    </Paragraph>
+                                    <cite
+                                        style={{
+                                            marginBottom: '1em',
+                                            fontStyle: 'normal'
+                                        }}
+                                    >
+                                        <p>
+                                            {content}
+                                        </p>
+                                    </cite>
                                 </Col>
                             </ClaimSummary>
                         </>

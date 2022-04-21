@@ -4,6 +4,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
 const parser = require("accept-language-parser");
+import { NextSeo } from 'next-seo';
 
 const ClaimPage: NextPage<{ personality; claim; sentence; sitekey }> = ({
     personality,
@@ -51,6 +52,10 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey }> = ({
             {review && (
                 <JsonLd {...jsonld} />
             )}
+            <NextSeo
+                title={sentence.content}
+                description={t('seo:claimReviewDescription', { sentence: sentence.content })}
+            />
             <ClaimReviewView
                 personality={personality}
                 claim={claim}

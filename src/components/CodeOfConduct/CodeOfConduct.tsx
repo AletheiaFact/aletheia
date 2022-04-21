@@ -1,6 +1,7 @@
 import {Row, Typography} from "antd";
 import colors from "../../styles/colors";
 import {useTranslation} from "next-i18next";
+import Paragraph from "../Paragraph";
 
 const { Title } = Typography;
 
@@ -22,21 +23,21 @@ const CodeOfConduct = () =>{
             <Title>{t("codeOfConduct:title")}</Title>
 
             <Title style={{width: "100%", marginTop: "10px"}} level={2}>{t("codeOfConduct:introductionSection")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:introductionSectionFirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={2}>{t("codeOfConduct:principlesSection")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:principlesSectionFirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={2}>{t("codeOfConduct:dutiesSection")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:dutiesSectionFirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={2}>{t("codeOfConduct:methodologySection")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:methodologySectionFirstParagraph")}
-            </p>
+            </Paragraph>
             <ul style={{ width: "100%", marginTop: "15px"}}>
                 <li key={1}>{t("claimReviewForm:not-fact")}</li>
                 <li key={2}>{t("claimReviewForm:true")}</li>
@@ -48,49 +49,49 @@ const CodeOfConduct = () =>{
                 <li key={8}>{t("claimReviewForm:exaggerated")}</li>
                 <li key={9}>{t("claimReviewForm:unverifiable")}</li>
             </ul>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:methodologySectionSecondParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={2}>{t("codeOfConduct:expectedBehaviorSection")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:expectedBehaviorSectionFirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={3}>{t("codeOfConduct:expectedBehaviorSubSection1")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:expectedBehaviorSubSection1FirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={3}>{t("codeOfConduct:expectedBehaviorSubSection2")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:expectedBehaviorSubSection2FirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={2}>{t("codeOfConduct:unacceptableBehaviorSection")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:unacceptableBehaviorSectionFirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={3}>{t("codeOfConduct:unacceptableBehaviorSubSection1")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:unacceptableBehaviorSubSection1FirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={3}>{t("codeOfConduct:unacceptableBehaviorSubSection2")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:unacceptableBehaviorSubSection2FirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={3}>{t("codeOfConduct:unacceptableBehaviorSubSection3")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:unacceptableBehaviorSubSection3FirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={2}>{t("codeOfConduct:responsibilitiesSection")}</Title>
             <Title style={{width: "100%", marginTop: "10px"}} level={3}>{t("codeOfConduct:responsibilitiesSectionSubSection1")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:responsibilitiesSectionSubSection1FirstParagraph")}
-            </p>
+            </Paragraph>
             <Title style={{width: "100%", marginTop: "10px"}} level={3}>{t("codeOfConduct:responsibilitiesSectionSubSection2")}</Title>
-            <p style={{width: "100%"}}>
+            <Paragraph>
                 {t("codeOfConduct:responsibilitiesSectionSubSection2FirstParagraph")}
-            </p>
-            <p style={{width: "100%"}}>
+            </Paragraph>
+            <Paragraph>
                 {t("codeOfConduct:responsibilitiesSectionSubSection2SecondParagraph")}
-            </p>
+            </Paragraph>
         </Row>
     )
 }

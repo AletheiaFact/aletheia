@@ -6,7 +6,6 @@ import * as passport from "passport";
 import * as session from "express-session";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
-import { GetLanguageMiddleware } from "./middleware/language.middleware";
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 
@@ -31,12 +30,12 @@ const initApp = async (options) => {
     const app = await NestFactory.create<NestExpressApplication>(
         AppModule.register(options),
         {
+            bodyParser: false,
             logger: new Logger(options.logger) || undefined,
             cors: corsOptions,
         }
     );
 
-    app.use(GetLanguageMiddleware);
     app.useGlobalPipes(
         new ValidationPipe({
             transform: true,

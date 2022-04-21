@@ -7,5 +7,6 @@
     "claimCreateDescription": "Create claim given by {{name}} to AletheiaFact.org",
     "claimDescription": "See the claim {{title}} made by {{name}} on AletheiaFact.org",
     "sourcesTitle": "Sources",
-    "sourcesDescription": "Claim sources {{claimId}}"
+    "sourcesDescription": "Claim sources {{claimId}}",
+    "claimReviewDescription": "See sentence reviews {{sentence}} on AletheiaFact.org"
 }

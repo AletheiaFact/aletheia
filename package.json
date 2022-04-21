@@ -11,8 +11,6 @@
         "seed": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/server.js -c config.seed.yaml",
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
         "test": "jest",
-        "seedUser:test": "SEED_TEST_ENVIRONMENT=true ts-node ./deprecated/server/infra/database/seeds/users/seedUsers.js",
-        "seedUser": "ts-node ./deprecated/server/infra/database/seeds/users/seedUsers.js",
         "build": "yarn build-ts && yarn build-nest && yarn copy-static-assets && yarn copy-html-files && next build",
         "build-ts": "tsc",
         "build-nest": "ENVIRONMENT=watch-dev nest build -p ./server/tsconfig.json",
@@ -26,7 +24,8 @@
         "watch-node": "nodemon dist/server/server.js  --signal SIGTERM",
         "serve-debug": "nodemon --inspect dist/server/server.js  --signal SIGTERM",
         "clean": "rimraf **/{node_modules,dist}",
-        "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs"
+        "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs",
+        "proxy": "ory proxy --no-jwt --port 4000 http://localhost:3000/"
     },
     "nodemonConfig": {
         "ignore": [
@@ -70,6 +69,9 @@
         "@nestjs/passport": "^8.0.1",
         "@nestjs/platform-express": "^8.0.6",
         "@nestjs/throttler": "^2.0.0",
+        "@ory/cli": "^0.1.24",
+        "@ory/client": "0.0.1-alpha.153",
+        "@ory/integrations": "^0.2.5",
         "@types/jest": "^27.4.0",
         "@typescript-eslint/eslint-plugin": "^4.29.0",
         "accept-language-parser": "^1.5.0",
@@ -115,6 +117,7 @@
         "rehype-raw": "^6.1.1",
         "rxjs": "^7.3.0",
         "service-runner": "^2.8.4",
+        "set-cookie-parser": "^2.4.8",
         "sitemap": "5",
         "slugify": "^1.6.1",
         "styled-components": "^5.3.0"

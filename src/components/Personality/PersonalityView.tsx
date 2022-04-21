@@ -42,15 +42,6 @@ const PersonalityView = ({ personality, href, isLoggedIn }) => {
                 description={t('seo:personalityDescription', { name: personality.name })}
                 openGraph={{
                     url: href,
-                    images: [
-                        {
-                            url: personality.image,
-                            width: 90,
-                            height: 90,
-                            alt: t('seo:personalityImageAlt', { name: personality.name }),
-                            type: 'image/jpeg',
-                        },
-                    ],
                 }}
             />
             <PersonalityCard personality={personality} header={true} />

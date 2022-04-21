@@ -7,5 +7,6 @@
     "claimCreateDescription": "Adicione um discurso realizado por {{name}} na AletheiaFact.org",
     "claimDescription": "Veja o discurso {{title}} feito por {{name}} na AletheiaFact.org",
     "sourcesTitle": "Fontes",
-    "sourcesDescription": "Fontes do discurso {{claimId}}"
+    "sourcesDescription": "Fontes do discurso {{claimId}}",
+    "claimReviewDescription": "Veja as revisões da sentença {{sentence}} na AletheiaFact.org"
 }

@@ -9,14 +9,12 @@ import {
     Query,
     Req,
     Res,
-    UseGuards,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
 import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
-import { SessionGuard } from "../auth/session.guard";
 import { Request, Response } from "express";
 import { parse } from "url";
 import { PersonalityService } from "../personality/personality.service";
@@ -26,6 +24,8 @@ import { CreateClaimDTO } from "./dto/create-claim.dto";
 import { GetClaimsDTO } from "./dto/get-claims.dto";
 import { GetClaimsByHashDTO } from "./dto/get-reviews-by-hash.dto";
 import { UpdateClaimDTO } from "./dto/update-claim.dto"
+import {IsPublic} from "../decorators/is-public.decorator";
+
 @Controller()
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
@@ -60,6 +60,7 @@ export class ClaimController {
         return queryInputs;
     }
 
+    @IsPublic()
     @Get("api/claim")
     listAll(@Query() getClaimsDTO: GetClaimsDTO) {
         const { page = 0, pageSize = 10, order = "asc" } = getClaimsDTO;
@@ -89,7 +90,6 @@ export class ClaimController {
         }).catch((error) => this.logger.error(error));
     }
 
-    @UseGuards(SessionGuard)
     @Post("api/claim")
     async create(@Body() createClaimDTO: CreateClaimDTO) {
         const secret = this.configService.get<string>("recaptcha_secret");
@@ -110,23 +110,23 @@ export class ClaimController {
 
     }
 
+    @IsPublic()
     @Get("api/claim/:id")
     getById(@Param("id") claimId) {
         return this.claimService.getById(claimId);
     }
 
-    @UseGuards(SessionGuard)
     @Put("api/claim/:id")
     update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
         return this.claimService.update(claimId, updateClaimDTO);
     }
 
-    @UseGuards(SessionGuard)
     @Delete("api/claim/:id")
     delete(@Param("id") claimId) {
         return this.claimService.delete(claimId);
     }
 
+    @IsPublic()
     @Get("api/claim/:claimId/sentence/:sentenceHash/reviews")
     getSentenceReviewsByHash(@Param() params, @Query() getClaimsByHashDTO: GetClaimsByHashDTO) {
         const { sentenceHash } = params;
@@ -188,6 +188,7 @@ export class ClaimController {
         });
     }
 
+    @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:sentenceHash")
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
         const { sentenceHash, personalitySlug, claimSlug } = req.params;
@@ -223,7 +224,6 @@ export class ClaimController {
     @Get("personality/:slug/claim/create/")
     public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
 
         const personality = await this.personalityService.getBySlug(
             req.params.slug,
@@ -244,10 +244,11 @@ export class ClaimController {
             );
     }
 
+    @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug")
     public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
+
         const personality = await this.personalityService.getBySlug(
             req.params.personalitySlug,
             // @ts-ignore
@@ -295,6 +296,7 @@ export class ClaimController {
             );
     }
 
+    @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug/sources")
     public async sourcesClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
