@@ -4,6 +4,10 @@ import { User } from "../../users/schemas/user.schema";
 
 export type SourceDocument = Source & mongoose.Document;
 
+export enum SourceTargetModel {
+    Claim = 'Claim',
+    ClaimReview = 'ClaimReview'
+} 
 @Schema()
 export class Source {
     @Prop({ required: true })
@@ -38,9 +42,8 @@ export class Source {
 
     @Prop({
         required: true,
-        enum: ["Claim", "ClaimReview"],
     })
-    targetModel: string;
+    targetModel: SourceTargetModel;
 
     @Prop({
         type: mongoose.Types.ObjectId,

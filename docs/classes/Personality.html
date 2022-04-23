@@ -266,8 +266,8 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Prop, Schema, SchemaFactory } from &quot;@nestjs/mongoose&quot;;
+import { softDeletePlugin } from &#x27;mongoose-softdelete-typescript&#x27;;
 import * as mongoose from &quot;mongoose&quot;;
-import { Claim } from &quot;../../claim/schemas/claim.schema&quot;;
 
 export type PersonalityDocument &#x3D; Personality &amp; mongoose.Document;
 
@@ -295,8 +295,9 @@ PersonalitySchemaRaw.virtual(&#x27;claims&#x27;, {
     foreignField: &#x27;personality&#x27;
 });
 
-export const PersonalitySchema &#x3D; PersonalitySchemaRaw;
-</code></pre>
+PersonalitySchemaRaw.plugin(softDeletePlugin)
+
+export const PersonalitySchema &#x3D; PersonalitySchemaRaw;</code></pre>
     </div>
 </div>
 

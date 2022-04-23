@@ -1,16 +1,17 @@
 import styled from "styled-components"
 import { Input } from "antd";
-const { TextArea } = Input;
+import colors from "../styles/colors";
 
-const AletheiaInput = styled(TextArea)`
-    background: #F5F5F5;
+const TextArea = styled(Input.TextArea)`
+    background: ${colors.white};
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
     border-radius: 30px;
     border: none;
     height: 40px;
+    padding: 10px;
 
     ::placeholder {
-        color: #515151;
+        color: ${colors.blackSecondary};
     }
 
     :focus {
@@ -27,4 +28,4 @@ const AletheiaInput = styled(TextArea)`
     }
 `;
 
-export default AletheiaInput;
+export default TextArea;

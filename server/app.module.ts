@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from "@nestjs/common";
+import { DynamicModule, MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
@@ -13,22 +13,44 @@ import { ConfigModule } from "@nestjs/config";
 import { ViewModule } from "./view/view.module";
 import { HomeModule } from "./home/home.module";
 import { EmailModule } from "./email/email.module";
-import { APP_FILTER } from "@nestjs/core";
+import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { SitemapModule } from "./sitemap/sitemap.module";
+import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
+import { HistoryModule } from "./history/history.module";
+import { LoggerMiddleware } from "./middleware/logger.middleware";
+import OryModule from "./ory/ory.module";
+import { SessionGuard } from "./auth/session.guard";
+import { GetLanguageMiddleware } from "./middleware/language.middleware";
+import { DisableBodyParserMiddleware } from "./middleware/disable-body-parser.middleware";
+import OryController from "./ory/ory.controller";
+import { JsonBodyMiddleware } from "./middleware/json-body.middleware";
 
 @Module({})
-export class AppModule {
+export class AppModule implements NestModule {
+    public configure(consumer: MiddlewareConsumer): void {
+        consumer
+            .apply(DisableBodyParserMiddleware)
+            .forRoutes(OryController)
+            .apply(JsonBodyMiddleware, LoggerMiddleware, GetLanguageMiddleware).forRoutes('*');
+    }
+
     static register(options): DynamicModule {
         // TODO: interface app with service-runner metrics interface
         return {
             module: AppModule,
             imports: [
                 MongooseModule.forRoot(
-                    options.db.connection_uri,
-                    options.db.options
+                    options.config.db.connection_uri,
+                    options.config.db.options
                 ),
                 ConfigModule.forRoot({
                     load: [() => options.config || {}],
+                }),
+                ThrottlerModule.forRoot({
+                    ttl: options.config.throttle.ttl,
+                    limit: options.config.throttle.limit,
                 }),
                 UsersModule,
                 AuthModule,
@@ -36,19 +58,31 @@ export class AppModule {
                 PersonalityModule,
                 ClaimModule,
                 ClaimReviewModule,
+                ClaimRevisionModule,
+                HistoryModule,
                 SourceModule,
                 StatsModule,
                 ViewModule,
                 HomeModule,
-                EmailModule
+                EmailModule,
+                SitemapModule,
+                OryModule
             ],
             controllers: [RootController],
             providers: [
                 {
-                  provide: APP_FILTER,
-                  useClass: NotFoundFilter,
+                    provide: APP_FILTER,
+                    useClass: NotFoundFilter,
                 },
-              ],
+                {
+                    provide: APP_GUARD,
+                    useClass: ThrottlerGuard
+                },
+                {
+                    provide: APP_GUARD,
+                    useClass: SessionGuard
+                }
+            ],
         };
     }
 }

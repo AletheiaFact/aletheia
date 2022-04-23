@@ -108,9 +108,6 @@
                                 <a href="#getClaimReviewPage" >getClaimReviewPage</a>
                             </li>
                             <li>
-                                <a href="#getSentenceByHash" >getSentenceByHash</a>
-                            </li>
-                            <li>
                                 <a href="#getSentenceReviewsByHash" >getSentenceReviewsByHash</a>
                             </li>
                             <li>
@@ -120,6 +117,16 @@
                                     <span class="modifier">Public</span>
                                     <span class="modifier">Async</span>
                                 <a href="#personalityClaimPage" >personalityClaimPage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#personalityHistoryPage" >personalityHistoryPage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#sourcesClaimPage" >sourcesClaimPage</a>
                             </li>
                             <li>
                                 <a href="#update" >update</a>
@@ -163,8 +170,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="38"
-                            class="link-to-prism">server/claim/claim.controller.ts:38</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="41"
+                            class="link-to-prism">server/claim/claim.controller.ts:41</a></div>
                 </td>
             </tr>
 
@@ -237,8 +244,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="158"
-                            class="link-to-prism">server/claim/claim.controller.ts:158</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="162"
+                            class="link-to-prism">server/claim/claim.controller.ts:162</a></div>
                 </td>
             </tr>
 
@@ -320,8 +327,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="50"
-                            class="link-to-prism">server/claim/claim.controller.ts:50</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="53"
+                            class="link-to-prism">server/claim/claim.controller.ts:53</a></div>
                 </td>
             </tr>
 
@@ -395,8 +402,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="229"
-                            class="link-to-prism">server/claim/claim.controller.ts:229</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="224"
+                            class="link-to-prism">server/claim/claim.controller.ts:224</a></div>
                 </td>
             </tr>
 
@@ -471,7 +478,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>create(body)</code>
+                    <code>create(createClaimDTO: <a href="../classes/CreateClaimDTO.html" target="_self">CreateClaimDTO</a>)</code>
                 </td>
             </tr>
 
@@ -485,8 +492,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="91"
-                            class="link-to-prism">server/claim/claim.controller.ts:91</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="94"
+                            class="link-to-prism">server/claim/claim.controller.ts:94</a></div>
                 </td>
             </tr>
 
@@ -501,12 +508,16 @@
                             <thead>
                                 <tr>
                                     <td>Name</td>
+                                    <td>Type</td>
                                     <td>Optional</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>body</td>
+                                    <td>createClaimDTO</td>
+                                    <td>
+                                                <code><a href="../classes/CreateClaimDTO.html" target="_self" >CreateClaimDTO</a></code>
+                                    </td>
 
                                     <td>
                                         No
@@ -543,7 +554,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>delete(params)</code>
+<code>delete(claimId)</code>
                 </td>
             </tr>
 
@@ -557,8 +568,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="122"
-                            class="link-to-prism">server/claim/claim.controller.ts:122</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="126"
+                            class="link-to-prism">server/claim/claim.controller.ts:126</a></div>
                 </td>
             </tr>
 
@@ -578,7 +589,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>params</td>
+                                    <td>claimId</td>
 
                                     <td>
                                         No
@@ -615,7 +626,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getById(params)</code>
+<code>getById(claimId)</code>
                 </td>
             </tr>
 
@@ -629,8 +640,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="110"
-                            class="link-to-prism">server/claim/claim.controller.ts:110</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="114"
+                            class="link-to-prism">server/claim/claim.controller.ts:114</a></div>
                 </td>
             </tr>
 
@@ -650,7 +661,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>params</td>
+                                    <td>claimId</td>
 
                                     <td>
                                         No
@@ -704,8 +715,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="194"
-                            class="link-to-prism">server/claim/claim.controller.ts:194</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="192"
+                            class="link-to-prism">server/claim/claim.controller.ts:192</a></div>
                 </td>
             </tr>
 
@@ -769,78 +780,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getSentenceByHash"></a>
-                    <span class="name">
-                        <span ><b>getSentenceByHash</b></span>
-                        <a href="#getSentenceByHash"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>getSentenceByHash(req)</code>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <b>Decorators : </b>
-                    <br />
-                    <code>@Get(&#x27;api/claim/:claimId/sentence/:sentenceHash&#x27;)<br /></code>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="188"
-                            class="link-to-prism">server/claim/claim.controller.ts:188</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>req</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="getSentenceReviewsByHash"></a>
                     <span class="name">
                         <span ><b>getSentenceReviewsByHash</b></span>
@@ -850,7 +789,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getSentenceReviewsByHash(req)</code>
+<code>getSentenceReviewsByHash(params, getClaimsByHashDTO: <a href="../classes/GetClaimsByHashDTO.html" target="_self">GetClaimsByHashDTO</a>)</code>
                 </td>
             </tr>
 
@@ -864,8 +803,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="127"
-                            class="link-to-prism">server/claim/claim.controller.ts:127</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="131"
+                            class="link-to-prism">server/claim/claim.controller.ts:131</a></div>
                 </td>
             </tr>
 
@@ -880,12 +819,27 @@
                             <thead>
                                 <tr>
                                     <td>Name</td>
+                                    <td>Type</td>
                                     <td>Optional</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>req</td>
+                                    <td>params</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>getClaimsByHashDTO</td>
+                                    <td>
+                                                <code><a href="../classes/GetClaimsByHashDTO.html" target="_self" >GetClaimsByHashDTO</a></code>
+                                    </td>
 
                                     <td>
                                         No
@@ -922,7 +876,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>listAll(query)</code>
+<code>listAll(getClaimsDTO: <a href="../classes/GetClaimsDTO.html" target="_self">GetClaimsDTO</a>)</code>
                 </td>
             </tr>
 
@@ -936,8 +890,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="61"
-                            class="link-to-prism">server/claim/claim.controller.ts:61</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="64"
+                            class="link-to-prism">server/claim/claim.controller.ts:64</a></div>
                 </td>
             </tr>
 
@@ -952,12 +906,16 @@
                             <thead>
                                 <tr>
                                     <td>Name</td>
+                                    <td>Type</td>
                                     <td>Optional</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>query</td>
+                                    <td>getClaimsDTO</td>
+                                    <td>
+                                                <code><a href="../classes/GetClaimsDTO.html" target="_self" >GetClaimsDTO</a></code>
+                                    </td>
 
                                     <td>
                                         No
@@ -1011,8 +969,190 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="254"
-                            class="link-to-prism">server/claim/claim.controller.ts:254</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="248"
+                            class="link-to-prism">server/claim/claim.controller.ts:248</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>req</td>
+                                    <td>
+                                            <code>Request</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>res</td>
+                                    <td>
+                                            <code>Response</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="personalityHistoryPage"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span class="modifier">Async</span>
+                        <span ><b>personalityHistoryPage</b></span>
+                        <a href="#personalityHistoryPage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>personalityHistoryPage(req: Request, res: Response)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Get(&#x27;personality/:personalitySlug/claim/:claimSlug/history&#x27;)<br /></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="296"
+                            class="link-to-prism">server/claim/claim.controller.ts:296</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>req</td>
+                                    <td>
+                                            <code>Request</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>res</td>
+                                    <td>
+                                            <code>Response</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sourcesClaimPage"></a>
+                    <span class="name">
+                        <span class="modifier">Public</span>
+                        <span class="modifier">Async</span>
+                        <span ><b>sourcesClaimPage</b></span>
+                        <a href="#sourcesClaimPage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sourcesClaimPage(req: Request, res: Response)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Get(&#x27;personality/:personalitySlug/claim/:claimSlug/sources&#x27;)<br /></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="273"
+                            class="link-to-prism">server/claim/claim.controller.ts:273</a></div>
                 </td>
             </tr>
 
@@ -1085,7 +1225,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>update(req)</code>
+<code>update(claimId, updateClaimDTO: <a href="../classes/UpdateClaimDTO.html" target="_self">UpdateClaimDTO</a>)</code>
                 </td>
             </tr>
 
@@ -1099,8 +1239,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="116"
-                            class="link-to-prism">server/claim/claim.controller.ts:116</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="120"
+                            class="link-to-prism">server/claim/claim.controller.ts:120</a></div>
                 </td>
             </tr>
 
@@ -1115,12 +1255,27 @@
                             <thead>
                                 <tr>
                                     <td>Name</td>
+                                    <td>Type</td>
                                     <td>Optional</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>req</td>
+                                    <td>claimId</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>updateClaimDTO</td>
+                                    <td>
+                                                <code><a href="../classes/UpdateClaimDTO.html" target="_self" >UpdateClaimDTO</a></code>
+                                    </td>
 
                                     <td>
                                         No
@@ -1167,12 +1322,15 @@ import * as qs from &quot;querystring&quot;;
 import { ConfigService } from &quot;@nestjs/config&quot;;
 import { HttpService } from &quot;@nestjs/axios&quot;;
 import { SessionGuard } from &quot;../auth/session.guard&quot;;
-import {Request, Response} from &quot;express&quot;;
-import {parse} from &quot;url&quot;;
-import {PersonalityService} from &quot;../personality/personality.service&quot;;
-import {ViewService} from &quot;../view/view.service&quot;;
+import { Request, Response } from &quot;express&quot;;
+import { parse } from &quot;url&quot;;
+import { PersonalityService } from &quot;../personality/personality.service&quot;;
+import { ViewService } from &quot;../view/view.service&quot;;
 import * as mongoose from &quot;mongoose&quot;;
-
+import { CreateClaimDTO } from &quot;./dto/create-claim.dto&quot;;
+import { GetClaimsDTO } from &quot;./dto/get-claims.dto&quot;;
+import { GetClaimsByHashDTO } from &quot;./dto/get-reviews-by-hash.dto&quot;;
+import { UpdateClaimDTO } from &quot;./dto/update-claim.dto&quot;
 @Controller()
 export class ClaimController {
     private readonly logger &#x3D; new Logger(&quot;ClaimController&quot;);
@@ -1208,19 +1366,19 @@ export class ClaimController {
     }
 
     @Get(&quot;api/claim&quot;)
-    listAll(@Query() query) {
-        const { page &#x3D; 0, pageSize &#x3D; 10, order &#x3D; &quot;asc&quot; } &#x3D; query;
-        const queryInputs &#x3D; this._verifyInputsQuery(query);
+    listAll(@Query() getClaimsDTO: GetClaimsDTO) {
+        const { page &#x3D; 0, pageSize &#x3D; 10, order &#x3D; &quot;asc&quot; } &#x3D; getClaimsDTO;
+        const queryInputs &#x3D; this._verifyInputsQuery(getClaimsDTO);
         return Promise.all([
             this.claimService.listAll(
                 page,
-                parseInt(pageSize, 10),
+                pageSize,
                 order,
                 queryInputs
             ),
             this.claimService.count(queryInputs),
         ]).then(([claims, totalClaims]) &#x3D;&gt; {
-            const totalPages &#x3D; Math.ceil(totalClaims / parseInt(pageSize, 10));
+            const totalPages &#x3D; Math.ceil(totalClaims / pageSize);
 
             this.logger.log(
                 &#x60;Found ${totalClaims} claims. Page ${page} of ${totalPages}&#x60;
@@ -1238,11 +1396,11 @@ export class ClaimController {
 
     @UseGuards(SessionGuard)
     @Post(&quot;api/claim&quot;)
-    async create(@Body() body) {
+    async create(@Body() createClaimDTO: CreateClaimDTO) {
         const secret &#x3D; this.configService.get&lt;string&gt;(&quot;recaptcha_secret&quot;);
         const recaptchaCheck &#x3D; await this._checkCaptchaResponse(
             secret,
-            body &amp;&amp; body.recaptcha
+            createClaimDTO &amp;&amp; createClaimDTO.recaptcha
         );
 
         // @ts-ignore
@@ -1253,30 +1411,31 @@ export class ClaimController {
             // );
             throw Error();
         }
-        return await this.claimService.create(body);
+        return this.claimService.create(createClaimDTO)
+
     }
 
     @Get(&quot;api/claim/:id&quot;)
-    getById(@Param() params) {
-        return this.claimService.getById(params.id);
+    getById(@Param(&quot;id&quot;) claimId) {
+        return this.claimService.getById(claimId);
     }
 
     @UseGuards(SessionGuard)
     @Put(&quot;api/claim/:id&quot;)
-    update(@Req() req) {
-        return this.claimService.update(req.params.id, req.body);
+    update(@Param(&quot;id&quot;) claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
+        return this.claimService.update(claimId, updateClaimDTO);
     }
 
     @UseGuards(SessionGuard)
     @Delete(&quot;api/claim/:id&quot;)
-    delete(@Param() params) {
-        return this.claimService.delete(params.id);
+    delete(@Param(&quot;id&quot;) claimId) {
+        return this.claimService.delete(claimId);
     }
 
     @Get(&quot;api/claim/:claimId/sentence/:sentenceHash/reviews&quot;)
-    getSentenceReviewsByHash(@Req() req) {
-        const { sentenceHash } &#x3D; req.params;
-        const { page, pageSize, order } &#x3D; req.query;
+    getSentenceReviewsByHash(@Param() params, @Query() getClaimsByHashDTO: GetClaimsByHashDTO) {
+        const { sentenceHash } &#x3D; params;
+        const { page, pageSize, order } &#x3D; getClaimsByHashDTO;
 
         return Promise.all([
             this.claimReviewService.getReviewsBySentenceHash(
@@ -1308,7 +1467,7 @@ export class ClaimController {
     _getSentenceByHashAndClaimId(sentenceHash, claimId, req) {
         const user &#x3D; req.user;
         return Promise.all([
-            this.claimReviewService.getReviewStatsBySentenceHash(sentenceHash),
+            this.claimReviewService.getReviewStatsBySentenceHash({sentenceHash, isDeleted: false}),
             this.claimService.getById(claimId),
             this.claimReviewService.getUserReviewBySentenceHash(
                 sentenceHash,
@@ -1334,19 +1493,10 @@ export class ClaimController {
         });
     }
 
-    @Get(&quot;api/claim/:claimId/sentence/:sentenceHash&quot;)
-    getSentenceByHash(@Req() req) {
-        const { sentenceHash, claimId } &#x3D; req.params;
-        return this._getSentenceByHashAndClaimId(sentenceHash, claimId, req);
-    }
-
     @Get(&quot;personality/:personalitySlug/claim/:claimSlug/sentence/:sentenceHash&quot;)
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
         const { sentenceHash, personalitySlug, claimSlug } &#x3D; req.params;
         const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
-        req.language &#x3D; req.headers[&quot;accept-language&quot;] || &quot;en&quot;;
-
         const personality &#x3D; await this.personalityService.getBySlug(
             personalitySlug,
             // @ts-ignore
@@ -1379,7 +1529,6 @@ export class ClaimController {
     public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
         // @ts-ignore
-        req.language &#x3D; req.headers[&quot;accept-language&quot;] || &quot;en&quot;;
 
         const personality &#x3D; await this.personalityService.getBySlug(
             req.params.slug,
@@ -1404,8 +1553,6 @@ export class ClaimController {
     public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
         // @ts-ignore
-        req.language &#x3D; req.headers[&quot;accept-language&quot;] || &quot;en&quot;;
-
         const personality &#x3D; await this.personalityService.getBySlug(
             req.params.personalitySlug,
             // @ts-ignore
@@ -1424,6 +1571,52 @@ export class ClaimController {
                 res,
                 &quot;/claim-page&quot;,
                 Object.assign(parsedUrl.query, { personality, claim })
+            );
+    }
+
+    @Get(&quot;personality/:personalitySlug/claim/:claimSlug/sources&quot;)
+    public async sourcesClaimPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl &#x3D; parse(req.url, true);
+
+        const personality &#x3D; await this.personalityService.getBySlug(
+            req.params.personalitySlug
+        );
+
+        const claim &#x3D; await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                &quot;/claim-sources-page&quot;,
+                Object.assign(parsedUrl.query, { claimId: claim._id })
+            );
+    }
+
+    @Get(&quot;personality/:personalitySlug/claim/:claimSlug/history&quot;)
+    public async personalityHistoryPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl &#x3D; parse(req.url, true);
+
+        const personality &#x3D; await this.personalityService.getBySlug(
+            req.params.personalitySlug
+        );
+
+        const claim &#x3D; await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                &quot;/history-page&quot;,
+                Object.assign(parsedUrl.query, { targetId: claim._id, targetModel: &quot;claim&quot; })
             );
     }
 }

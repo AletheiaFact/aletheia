@@ -16,7 +16,7 @@ function CTARegistration({ style = {} }) {
                 ...style
             }}
         >
-            <Typography.Title level={3} style={{ color: "#fff" }}>
+            <Typography.Title level={2} style={{ color: "#fff", fontSize: '24px' }}>
                 {t("CTARegistration:title")}
             </Typography.Title>
             <div
@@ -43,9 +43,9 @@ function CTARegistration({ style = {} }) {
                 {t("CTARegistration:footer")}
             </div>
             <Button
+                onClick={() => { umami?.trackEvent('cta-registration-button', 'registration') }}
                 type={ButtonType.white}
                 target="_blank"
-                className={"umami--click--registration-button"}
                 href={t("common:registrationLink")}
             >
                 <b

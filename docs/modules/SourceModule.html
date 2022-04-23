@@ -56,13 +56,13 @@
 <title>cluster_SourceModule</title>
 <polygon fill="none" stroke="black" stroke-dasharray="1,5" points="8,-32.8 8,-230.8 174,-230.8 174,-32.8 8,-32.8"/>
 </g>
-<g id="clust4" class="cluster">
-<title>cluster_SourceModule_exports</title>
-<polygon fill="none" stroke="black" points="33,-170.8 33,-222.8 149,-222.8 149,-170.8 33,-170.8"/>
-</g>
 <g id="clust6" class="cluster">
 <title>cluster_SourceModule_providers</title>
 <polygon fill="none" stroke="black" points="16,-40.8 16,-92.8 166,-92.8 166,-40.8 16,-40.8"/>
+</g>
+<g id="clust4" class="cluster">
+<title>cluster_SourceModule_exports</title>
+<polygon fill="none" stroke="black" points="33,-170.8 33,-222.8 149,-222.8 149,-170.8 33,-170.8"/>
 </g>
 <!-- SourceService  -->
 <g id="node1" class="node">
@@ -143,6 +143,15 @@
                     </ul>
                 </div>
                 <div class="col-sm-3">
+                    <h3>Controllers<a href="https://docs.nestjs.com/controllers" target="_blank" title="Official documentation about module controllers"><span
+                                class="icon ion-ios-information-circle-outline"></a></h3>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="../controllers/SourceController.html">SourceController</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
                     <h3>Exports<a href="https://angular.io/api/core/NgModule#exports" target="_blank" title="Official documentation about module exports"><span
                                 class="icon ion-ios-information-circle-outline"></a></h3>
                     <ul class="list-group">
@@ -162,6 +171,7 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Module } from &quot;@nestjs/common&quot;;
 import { MongooseModule } from &quot;@nestjs/mongoose&quot;;
 import { Source, SourceSchema } from &quot;./schemas/source.schema&quot;;
+import { SourceController } from &quot;./source.controller&quot;;
 import { SourceService } from &quot;./source.service&quot;;
 
 const SourceModel &#x3D; MongooseModule.forFeature([
@@ -175,6 +185,7 @@ const SourceModel &#x3D; MongooseModule.forFeature([
     imports: [SourceModel],
     providers: [SourceService],
     exports: [SourceService],
+    controllers: [SourceController],
 })
 export class SourceModule {}
 </code></pre>

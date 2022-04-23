@@ -1,12 +1,23 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Claim } from "../../claim/schemas/claim.schema";
 import { Personality } from "../../personality/schemas/personality.schema";
 import * as mongoose from "mongoose";
 import { User } from "../../users/schemas/user.schema";
-import { Source } from "../../source/schemas/source.schema";
+import { Claim } from "../../claim/schemas/claim.schema";
+import { softDeletePlugin } from 'mongoose-softdelete-typescript';
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
+export enum ClassificationEnum {
+    "not-fact",
+    "true",
+    "true-but",
+    "arguable",
+    "misleading",
+    "false",
+    "unsustainable",
+    "exaggerated",
+    "unverifiable",
+};
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class ClaimReview {
     @Prop({
@@ -35,7 +46,7 @@ export class ClaimReview {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: "Claim",
+        ref: "ClaimRevision",
     })
     claim: Claim;
 
@@ -62,7 +73,8 @@ export class ClaimReview {
     })
     user: User;
 
-    // TODO: revision_id
+    @Prop({ required: false })
+    isDeleted: boolean;
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);
@@ -72,5 +84,7 @@ ClaimReviewSchemaRaw.virtual('sources', {
     localField: '_id',
     foreignField: 'targetId'
 });
+
+ClaimReviewSchemaRaw.plugin(softDeletePlugin)
 
 export const ClaimReviewSchema = ClaimReviewSchemaRaw;

@@ -114,6 +114,7 @@
                                 <a href="#create" >create</a>
                             </li>
                             <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#delete" >delete</a>
                             </li>
                             <li>
@@ -154,7 +155,7 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(ClaimReviewModel: <a href="../undefineds/ClaimReviewDocument.html" target="_self">Model&lt;ClaimReviewDocument&gt;</a>, sourceService: <a href="../injectables/SourceService.html" target="_self">SourceService</a>, util: <a href="../injectables/UtilService.html" target="_self">UtilService</a>)</code>
+<code>constructor(ClaimReviewModel, historyService: <a href="../injectables/HistoryService.html" target="_self">HistoryService</a>, sourceService: <a href="../injectables/SourceService.html" target="_self">SourceService</a>, util: <a href="../injectables/UtilService.html" target="_self">UtilService</a>)</code>
                     </td>
                 </tr>
                         <tr>
@@ -180,7 +181,18 @@
                                                         <td>ClaimReviewModel</td>
                                                   
                                                         <td>
-                                                                        <code><a href="../miscellaneous/typealiases.html#ClaimReviewDocument" target="_self" >Model&lt;ClaimReviewDocument&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>historyService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/HistoryService.html" target="_self" >HistoryService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -246,8 +258,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="94"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:94</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="100"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:100</a></div>
                 </td>
             </tr>
 
@@ -311,8 +323,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="119"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:119</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="125"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:125</a></div>
                 </td>
             </tr>
 
@@ -348,8 +360,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="21"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:21</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="22"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:22</a></div>
                 </td>
             </tr>
 
@@ -417,8 +429,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="29"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:29</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="30"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:30</a></div>
                 </td>
             </tr>
 
@@ -490,8 +502,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="78"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:78</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="84"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:84</a></div>
                 </td>
             </tr>
 
@@ -557,14 +569,17 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="163"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:163</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="175"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:175</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>This function creates a new claim review.
+Also creates a History Module that tracks creation of claim reviews.</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -574,6 +589,7 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -585,6 +601,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>ClaimReviewBody received of the client.</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -596,7 +616,8 @@
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>Return a new claim review object.</p>
+
                     </div>
                 </td>
             </tr>
@@ -608,6 +629,7 @@
                 <td class="col-md-4">
                     <a name="delete"></a>
                     <span class="name">
+                        <span class="modifier">Async</span>
                         <span ><b>delete</b></span>
                         <a href="#delete"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -615,21 +637,26 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>delete(claimReviewId)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>delete(claimReviewId)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="210"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:210</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="225"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:225</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>This function does a soft deletion, doesn&#39;t delete claim review in DataBase,
+but omit its in the front page
+Also creates a History Module that tracks deletion of claim reviews.</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -639,6 +666,7 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -650,6 +678,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>claimId Claim id which wants to delete</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -657,11 +689,12 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                        <b>Returns : </b>    <code>unknown</code>
 
                     </div>
                     <div class="io-description">
-                        
+                        <p>Returns the claim review with the param isDeleted equal to true</p>
+
                     </div>
                 </td>
             </tr>
@@ -687,8 +720,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="187"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:187</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="212"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:212</a></div>
                 </td>
             </tr>
 
@@ -752,14 +785,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="51"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:51</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="57"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:57</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>get all personality claim claimIDs</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -769,6 +804,7 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
+                                    <td>Description</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -780,6 +816,10 @@
                                     </td>
 
 
+                                    <td>
+                                        <p>claim Id</p>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -817,8 +857,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="84"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:84</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="90"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:90</a></div>
                 </td>
             </tr>
 
@@ -911,8 +951,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="42"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:42</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="43"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:43</a></div>
                 </td>
             </tr>
 
@@ -971,15 +1011,15 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getReviewStatsBySentenceHash(sentenceHash)</code>
+                    <code>getReviewStatsBySentenceHash(match: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="33"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:33</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="34"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:34</a></div>
                 </td>
             </tr>
 
@@ -994,12 +1034,16 @@
                             <thead>
                                 <tr>
                                     <td>Name</td>
+                                    <td>Type</td>
                                     <td>Optional</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>sentenceHash</td>
+                                    <td>match</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
 
                                     <td>
                                         No
@@ -1043,8 +1087,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="63"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:63</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="69"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:69</a></div>
                 </td>
             </tr>
 
@@ -1136,22 +1180,23 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {Injectable, Logger} from &quot;@nestjs/common&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Logger } from &quot;@nestjs/common&quot;;
 import { Model, Types } from &quot;mongoose&quot;;
-import {
-    ClaimReview,
-    ClaimReviewDocument,
-} from &quot;./schemas/claim-review.schema&quot;;
+import { ClaimReview, ClaimReviewDocument } from &quot;./schemas/claim-review.schema&quot;;
 import { InjectModel } from &quot;@nestjs/mongoose&quot;;
 import { UtilService } from &quot;../util&quot;;
 import { SourceService } from &quot;../source/source.service&quot;;
+import { HistoryService } from &quot;../history/history.service&quot;;
+import { HistoryType, TargetModel } from &quot;../history/schema/history.schema&quot;;
+import { ISoftDeletedModel } from &#x27;mongoose-softdelete-typescript&#x27;;
 
 @Injectable()
 export class ClaimReviewService {
     private readonly logger &#x3D; new Logger(&quot;ClaimReviewService&quot;);
     constructor(
         @InjectModel(ClaimReview.name)
-        private ClaimReviewModel: Model&lt;ClaimReviewDocument&gt;,
+        private ClaimReviewModel: Model&lt;ClaimReviewDocument&gt; &amp; ISoftDeletedModel&lt;ClaimReviewDocument&gt;,
+        private historyService: HistoryService,
         private sourceService: SourceService,
         private util: UtilService
     ) {}
@@ -1168,9 +1213,9 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.countDocuments().where(query);
     }
 
-    async getReviewStatsBySentenceHash(sentenceHash) {
+    async getReviewStatsBySentenceHash(match: any) {
         const reviews &#x3D; await this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash: sentenceHash } },
+            { $match: match },
             { $group: { _id: &quot;$classification&quot;, count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
@@ -1179,16 +1224,21 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews &#x3D; await this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId } },
+            { $match: { claim: claimId, isDeleted: false } },
             { $group: { _id: &quot;$classification&quot;, count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
         return this.util.formatStats(reviews);
     }
 
+    /**
+     * get all personality claim claimIDs
+     * @param claimId claim Id
+     * @returns 
+     */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId } },
+            { $match: { claim: claimId, isDeleted: false } },
             {
                 $group: {
                     _id: &quot;$sentence_hash&quot;,
@@ -1203,7 +1253,7 @@ export class ClaimReviewService {
             return Promise.resolve(undefined);
         }
         return this.ClaimReviewModel.findOne(
-            { sentence_hash: sentenceHash, user: userId },
+            { sentence_hash: sentenceHash, user: userId, isDeleted: false },
             {
                 sources: 1,
                 _id: 1,
@@ -1231,7 +1281,7 @@ export class ClaimReviewService {
 
     _reviewsBySentenceHashAggregated(sentenceHash) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash: sentenceHash } },
+            { $match: { sentence_hash: sentenceHash, isDeleted: false } },
             // Virtual Populates doesn&#x27;t work with aggregate
             // https://stackoverflow.com/questions/47669178/mongoose-virtual-populate-and-aggregates
             {
@@ -1298,8 +1348,16 @@ export class ClaimReviewService {
         };
     }
 
+    /**
+     * This function creates a new claim review.
+     * Also creates a History Module that tracks creation of claim reviews.
+     * @param claimReview ClaimReviewBody received of the client.
+     * @returns Return a new claim review object.
+     */
     async create(claimReview) {
         // Cast ObjectId
+        //verificar id da claim review
+        //a claim review está referenciando a claim, não à claim revision está certo ?
         claimReview.personality &#x3D; new Types.ObjectId(claimReview.personality);
         claimReview.claim &#x3D; new Types.ObjectId(claimReview.claim);
         claimReview.user &#x3D; new Types.ObjectId(claimReview.user);
@@ -1319,6 +1377,17 @@ export class ClaimReviewService {
             }
         }
 
+        const history &#x3D; 
+            this.historyService.getHistoryParams(
+                newClaimReview._id,
+                TargetModel.ClaimReview,
+                claimReview.user,
+                HistoryType.Create,
+                newClaimReview
+            )
+
+        this.historyService.createHistory(history)
+
         return newClaimReview.save();
     }
 
@@ -1328,28 +1397,29 @@ export class ClaimReviewService {
             .populate(&quot;sources&quot;, &quot;_id link classification&quot;);
     }
 
-    // async update(claimReviewId, claimReviewBody) {
-    //     // eslint-disable-next-line no-useless-catch
-    //     try {
-    //         const claimReview &#x3D; await this.getById(claimReviewId);
-    //         const newClaimReview &#x3D; Object.assign(claimReview, claimReviewBody);
-    //         const claimReviewUpdate &#x3D; await ClaimReview.findByIdAndUpdate(
-    //             claimReviewId,
-    //             newClaimReview,
-    //             this.optionsToUpdate
-    //         );
-    //         return claimReviewUpdate;
-    //     } catch (error) {
-    //         // TODO: log to service-runner
-    //         throw error;
-    //     }
-    // }
-
-    delete(claimReviewId) {
-        return this.ClaimReviewModel.findByIdAndRemove(claimReviewId);
+    /**
+     * This function does a soft deletion, doesn&#x27;t delete claim review in DataBase,
+     * but omit its in the front page
+     * Also creates a History Module that tracks deletion of claim reviews.
+     * @param claimReviewId claimId Claim id which wants to delete
+     * @returns Returns the claim review with the param isDeleted equal to true
+     */
+    async delete(claimReviewId) {
+        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+        const claimReview &#x3D; await this.getById(claimReviewId)
+        const history &#x3D; 
+            this.historyService.getHistoryParams(
+                claimReview._id,
+                TargetModel.ClaimReview,
+                claimReview.user,
+                HistoryType.Delete,
+                null,
+                claimReview
+            )
+        this.historyService.createHistory(history)
+        return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }
-}
-</code></pre>
+}</code></pre>
     </div>
 
 </div>

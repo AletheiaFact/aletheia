@@ -136,8 +136,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="16"
-                            class="link-to-prism">server/claim-review/claim-review.controller.ts:16</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="17"
+                            class="link-to-prism">server/claim-review/claim-review.controller.ts:17</a></div>
                 </td>
             </tr>
 
@@ -205,7 +205,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>create(req)</code>
+                    <code>create(createClaimReview: <a href="../classes/CreateClaimReview.html" target="_self">CreateClaimReview</a>, req)</code>
                 </td>
             </tr>
 
@@ -219,8 +219,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="31"
-                            class="link-to-prism">server/claim-review/claim-review.controller.ts:31</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="32"
+                            class="link-to-prism">server/claim-review/claim-review.controller.ts:32</a></div>
                 </td>
             </tr>
 
@@ -235,12 +235,27 @@
                             <thead>
                                 <tr>
                                     <td>Name</td>
+                                    <td>Type</td>
                                     <td>Optional</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td>createClaimReview</td>
+                                    <td>
+                                                <code><a href="../classes/CreateClaimReview.html" target="_self" >CreateClaimReview</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
                                     <td>req</td>
+                                    <td>
+                                    </td>
 
                                     <td>
                                         No
@@ -291,8 +306,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="60"
-                            class="link-to-prism">server/claim-review/claim-review.controller.ts:60</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="61"
+                            class="link-to-prism">server/claim-review/claim-review.controller.ts:61</a></div>
                 </td>
             </tr>
 
@@ -363,8 +378,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="54"
-                            class="link-to-prism">server/claim-review/claim-review.controller.ts:54</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="55"
+                            class="link-to-prism">server/claim-review/claim-review.controller.ts:55</a></div>
                 </td>
             </tr>
 
@@ -412,12 +427,13 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {Controller, Delete, Get, Param, Post, Req, UseGuards} from &quot;@nestjs/common&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {Body, Controller, Delete, Get, Param, Post, Req, UseGuards} from &quot;@nestjs/common&quot;;
 import { ClaimReviewService } from &quot;./claim-review.service&quot;;
 import * as qs from &quot;querystring&quot;;
 import { ConfigService } from &quot;@nestjs/config&quot;;
 import { HttpService } from &quot;@nestjs/axios&quot;;
 import {SessionGuard} from &quot;../auth/session.guard&quot;;
+import { CreateClaimReview } from &quot;./dto/create-claim-review.dto&quot;;
 
 @Controller(&quot;api/claimreview&quot;)
 export class ClaimReviewController {
@@ -442,11 +458,11 @@ export class ClaimReviewController {
 
     @UseGuards(SessionGuard)
     @Post()
-    async create(@Req() req) {
+    async create(@Body() createClaimReview: CreateClaimReview, @Req() req) {
         const secret &#x3D; this.configService.get&lt;string&gt;(&quot;recaptcha_secret&quot;);
         const recaptchaCheck &#x3D; await this._checkCaptchaResponse(
             secret,
-            req.body &amp;&amp; req.body.recaptcha
+            createClaimReview &amp;&amp; createClaimReview.recaptcha
         );
 
         // @ts-ignore
@@ -458,7 +474,7 @@ export class ClaimReviewController {
             // );
         } else {
             return this.claimReviewService.create({
-                ...req.body,
+                ...createClaimReview,
                 user: req?.user?._id,
             });
         }

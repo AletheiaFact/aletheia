@@ -1,9 +1,10 @@
-import {Controller, Get, Req, Res} from "@nestjs/common";
-import {ViewService} from "../view/view.service";
-import {Request, Response} from "express";
-import {parse} from "url";
-import {PersonalityService} from "../personality/personality.service";
-import {StatsService} from "../stats/stats.service";
+import { Controller, Get, Req, Res } from "@nestjs/common";
+import { ViewService } from "../view/view.service";
+import { Request, Response } from "express";
+import { parse } from "url";
+import { PersonalityService } from "../personality/personality.service";
+import { StatsService } from "../stats/stats.service";
+import { IsPublic } from "../decorators/is-public.decorator";
 
 @Controller("/")
 export class HomeController {
@@ -13,14 +14,15 @@ export class HomeController {
         private statsService: StatsService
     ) {}
 
+    @IsPublic()
     @Get("home")
     public async showHome(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
         const { personalities } = await this.personalityService.combinedListAll({
             // @ts-ignore
             language: req.language,
+            order: 'random',
             pageSize: 5,
             fetchOnly: true
         });

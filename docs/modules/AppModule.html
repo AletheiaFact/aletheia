@@ -94,8 +94,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="19"
-                            class="link-to-prism">server/app.module.ts:19</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="25"
+                            class="link-to-prism">server/app.module.ts:25</a></div>
                 </td>
             </tr>
 
@@ -159,6 +159,12 @@ import { ConfigModule } from &quot;@nestjs/config&quot;;
 import { ViewModule } from &quot;./view/view.module&quot;;
 import { HomeModule } from &quot;./home/home.module&quot;;
 import { EmailModule } from &quot;./email/email.module&quot;;
+import { APP_FILTER, APP_GUARD } from &quot;@nestjs/core&quot;;
+import { NotFoundFilter } from &quot;./filters/not-found.filter&quot;;
+import { ThrottlerModule, ThrottlerGuard } from &quot;@nestjs/throttler&quot;;
+import { SitemapModule } from &quot;./sitemap/sitemap.module&quot;;
+import { ClaimRevisionModule } from &quot;./claim-revision/claim-revision.module&quot;;
+import { HistoryModule } from &quot;./history/history.module&quot;;
 
 @Module({})
 export class AppModule {
@@ -174,19 +180,36 @@ export class AppModule {
                 ConfigModule.forRoot({
                     load: [() &#x3D;&gt; options.config || {}],
                 }),
+                ThrottlerModule.forRoot({
+                    ttl: options.config.throttle.ttl,
+                    limit: options.config.throttle.limit,
+                }),
                 UsersModule,
                 AuthModule,
                 WikidataModule,
                 PersonalityModule,
                 ClaimModule,
                 ClaimReviewModule,
+                ClaimRevisionModule,
+                HistoryModule,
                 SourceModule,
                 StatsModule,
                 ViewModule,
                 HomeModule,
-                EmailModule
+                EmailModule,
+                SitemapModule,
             ],
             controllers: [RootController],
+            providers: [
+                {
+                    provide: APP_FILTER,
+                    useClass: NotFoundFilter,
+                },
+                {
+                    provide: APP_GUARD,
+                    useClass: ThrottlerGuard
+                }
+            ],
         };
     }
 }

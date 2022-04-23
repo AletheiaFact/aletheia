@@ -9,19 +9,22 @@ import {
     Query,
     Req,
     Res,
-    UseGuards,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
 import * as qs from "querystring";
 import { ConfigService } from "@nestjs/config";
 import { HttpService } from "@nestjs/axios";
-import { SessionGuard } from "../auth/session.guard";
-import {Request, Response} from "express";
-import {parse} from "url";
-import {PersonalityService} from "../personality/personality.service";
-import {ViewService} from "../view/view.service";
+import { Request, Response } from "express";
+import { parse } from "url";
+import { PersonalityService } from "../personality/personality.service";
+import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
+import { CreateClaimDTO } from "./dto/create-claim.dto";
+import { GetClaimsDTO } from "./dto/get-claims.dto";
+import { GetClaimsByHashDTO } from "./dto/get-reviews-by-hash.dto";
+import { UpdateClaimDTO } from "./dto/update-claim.dto"
+import {IsPublic} from "../decorators/is-public.decorator";
 
 @Controller()
 export class ClaimController {
@@ -57,20 +60,21 @@ export class ClaimController {
         return queryInputs;
     }
 
+    @IsPublic()
     @Get("api/claim")
-    listAll(@Query() query) {
-        const { page = 0, pageSize = 10, order = "asc" } = query;
-        const queryInputs = this._verifyInputsQuery(query);
+    listAll(@Query() getClaimsDTO: GetClaimsDTO) {
+        const { page = 0, pageSize = 10, order = "asc" } = getClaimsDTO;
+        const queryInputs = this._verifyInputsQuery(getClaimsDTO);
         return Promise.all([
             this.claimService.listAll(
                 page,
-                parseInt(pageSize, 10),
+                pageSize,
                 order,
                 queryInputs
             ),
             this.claimService.count(queryInputs),
         ]).then(([claims, totalClaims]) => {
-            const totalPages = Math.ceil(totalClaims / parseInt(pageSize, 10));
+            const totalPages = Math.ceil(totalClaims / pageSize);
 
             this.logger.log(
                 `Found ${totalClaims} claims. Page ${page} of ${totalPages}`
@@ -86,13 +90,12 @@ export class ClaimController {
         }).catch((error) => this.logger.error(error));
     }
 
-    @UseGuards(SessionGuard)
     @Post("api/claim")
-    async create(@Body() body) {
+    async create(@Body() createClaimDTO: CreateClaimDTO) {
         const secret = this.configService.get<string>("recaptcha_secret");
         const recaptchaCheck = await this._checkCaptchaResponse(
             secret,
-            body && body.recaptcha
+            createClaimDTO && createClaimDTO.recaptcha
         );
 
         // @ts-ignore
@@ -103,30 +106,31 @@ export class ClaimController {
             // );
             throw Error();
         }
-        return await this.claimService.create(body);
+        return this.claimService.create(createClaimDTO)
+
     }
 
+    @IsPublic()
     @Get("api/claim/:id")
-    getById(@Param() params) {
-        return this.claimService.getById(params.id);
+    getById(@Param("id") claimId) {
+        return this.claimService.getById(claimId);
     }
 
-    @UseGuards(SessionGuard)
     @Put("api/claim/:id")
-    update(@Req() req) {
-        return this.claimService.update(req.params.id, req.body);
+    update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
+        return this.claimService.update(claimId, updateClaimDTO);
     }
 
-    @UseGuards(SessionGuard)
     @Delete("api/claim/:id")
-    delete(@Param() params) {
-        return this.claimService.delete(params.id);
+    delete(@Param("id") claimId) {
+        return this.claimService.delete(claimId);
     }
 
+    @IsPublic()
     @Get("api/claim/:claimId/sentence/:sentenceHash/reviews")
-    getSentenceReviewsByHash(@Req() req) {
-        const { sentenceHash } = req.params;
-        const { page, pageSize, order } = req.query;
+    getSentenceReviewsByHash(@Param() params, @Query() getClaimsByHashDTO: GetClaimsByHashDTO) {
+        const { sentenceHash } = params;
+        const { page, pageSize, order } = getClaimsByHashDTO;
 
         return Promise.all([
             this.claimReviewService.getReviewsBySentenceHash(
@@ -158,7 +162,7 @@ export class ClaimController {
     _getSentenceByHashAndClaimId(sentenceHash, claimId, req) {
         const user = req.user;
         return Promise.all([
-            this.claimReviewService.getReviewStatsBySentenceHash(sentenceHash),
+            this.claimReviewService.getReviewStatsBySentenceHash({sentenceHash, isDeleted: false}),
             this.claimService.getById(claimId),
             this.claimReviewService.getUserReviewBySentenceHash(
                 sentenceHash,
@@ -184,19 +188,11 @@ export class ClaimController {
         });
     }
 
-    @Get("api/claim/:claimId/sentence/:sentenceHash")
-    getSentenceByHash(@Req() req) {
-        const { sentenceHash, claimId } = req.params;
-        return this._getSentenceByHashAndClaimId(sentenceHash, claimId, req);
-    }
-
+    @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:sentenceHash")
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
         const { sentenceHash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
-
         const personality = await this.personalityService.getBySlug(
             personalitySlug,
             // @ts-ignore
@@ -228,8 +224,6 @@ export class ClaimController {
     @Get("personality/:slug/claim/create/")
     public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         const personality = await this.personalityService.getBySlug(
             req.params.slug,
@@ -250,16 +244,65 @@ export class ClaimController {
             );
     }
 
+    @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug")
     public async personalityClaimPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         const personality = await this.personalityService.getBySlug(
             req.params.personalitySlug,
             // @ts-ignore
             req.language
+        );
+        
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
+        
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-page",
+                Object.assign(parsedUrl.query, { personality, claim })
+            );
+    }
+
+    @Get("personality/:personalitySlug/claim/:claimSlug/:revisionId")
+    public async personalityClaimPageWithRevision(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        // @ts-ignore
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug,
+            // @ts-ignore
+            req.language
+        );
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug,
+            req?.params?.revisionId
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-page",
+                Object.assign(parsedUrl.query, { personality, claim })
+            );
+    }
+
+    @IsPublic()
+    @Get("personality/:personalitySlug/claim/:claimSlug/sources")
+    public async sourcesClaimPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug
         );
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
@@ -272,8 +315,31 @@ export class ClaimController {
             .render(
                 req,
                 res,
-                "/claim-page",
-                Object.assign(parsedUrl.query, { personality, claim })
+                "/claim-sources-page",
+                Object.assign(parsedUrl.query, { claimId: claim._id })
+            );
+    }
+
+    @Get("personality/:personalitySlug/claim/:claimSlug/history")
+    public async personalityHistoryPage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        const personality = await this.personalityService.getBySlug(
+            req.params.personalitySlug
+        );
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            req.params.claimSlug
+        );
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/history-page",
+                Object.assign(parsedUrl.query, { targetId: claim._id, targetModel: "claim" })
             );
     }
 }

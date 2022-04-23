@@ -6,7 +6,7 @@
         {
             "label": "Run App",
             "type": "shell",
-            "command": "docker-compose down && docker-compose up & yarn && yarn build && yarn dev:server & yarn dev:front",
+            "command": "docker-compose kill && docker-compose up & yarn && yarn build && yarn dev:server & yarn dev:front",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

@@ -133,8 +133,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="11"
-                            class="link-to-prism">server/root/root.controller.ts:11</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="14"
+                            class="link-to-prism">server/root/root.controller.ts:14</a></div>
                 </td>
             </tr>
 
@@ -163,7 +163,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>robots(res)</code>
+<code>robots(res, req)</code>
                 </td>
             </tr>
 
@@ -206,6 +206,15 @@
 
 
                                 </tr>
+                                <tr>
+                                    <td>req</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -226,13 +235,16 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Res } from &quot;@nestjs/common&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Req, Res } from &quot;@nestjs/common&quot;;
 
 @Controller(&quot;api&quot;)
 export class RootController {
     @Get(&quot;robots.txt&quot;)
-    robots(@Res() res) {
-        res.type(&quot;text/plain&quot;).end(&quot;User-agent: *\nDisallow: /api\n&quot;);
+    robots(@Res() res, @Req() req) {
+        const host &#x3D; req.protocol + &quot;://&quot; + req.get(&quot;host&quot;);
+        res.type(&quot;text/plain&quot;).end(
+            &#x60;User-agent: *\nDisallow: /api\nSitemap: ${host}/sitemap.xml&#x60;
+        );
     }
 
     @Get(&quot;health&quot;)

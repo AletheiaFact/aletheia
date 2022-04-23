@@ -16,8 +16,6 @@ const initApp = async (options) => {
         options: {
             useUnifiedTopology: true,
             useNewUrlParser: true,
-            useCreateIndex: true,
-            useFindAndModify: false,
         }
     }
     options.logger.log("info", `Loading AppModule`);

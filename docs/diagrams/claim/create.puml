@@ -1,0 +1,47 @@
+@startuml createClaim
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 100
+skinparam sequenceParticipant underline
+
+!theme mars
+title Claim Page
+
+actor User
+participant "Claim Controller" as A
+participant "Recaptcha API" as B
+participant "Claim Service" as C
+database "MongoDB" as D
+
+alt
+  User -> A ++: //Request create new claim// :createClaimsDTO()
+
+  note right
+    receive params from
+    form submission
+  end note
+
+  alt
+    A ->> B ++: Check reCaptcha response [true] / OK 
+  else
+    A --> User: //error//
+    ||15||
+    B -->> A: //OK//
+else
+  B -->> User --: Error with your reCaptcha response
+
+A -> C ++: //Send claim params// :create(params)
+
+create Claim
+C -> Claim : <<createClaim>>
+||15||
+Claim --> D ++: Save claim in database
+||15||
+D --> C --: Return new claim
+||15||
+C -> C: Return new claim as object
+||15||
+C --> A --: Create new claim response
+||15||
+A --> User --: Response is returned to the client
+@enduml

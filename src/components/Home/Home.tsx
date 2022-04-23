@@ -7,7 +7,7 @@ import { useTranslation } from 'next-i18next';
 import Button, { ButtonType } from '../Button';
 import { ArrowRightOutlined } from "@ant-design/icons";
 
-const Home = ({ personalities, stats, href }) => {
+const Home = ({ personalities, stats, href, isLoggedIn }) => {
     const { t } = useTranslation();
 
     if (stats) {
@@ -42,6 +42,7 @@ const Home = ({ personalities, stats, href }) => {
                                     p && (
                                         <div key={i}>
                                             <img
+                                                alt={t('seo:personalityImageAlt', { name: p.name })}
                                                 style={{
                                                     height: "auto",
                                                     color: "#fff",
@@ -74,14 +75,14 @@ const Home = ({ personalities, stats, href }) => {
                                 textAlign: "center"
                             }}
                         >
-                            <span
+                            <h1
                                 style={{
+                                    color: "#fff",
                                     fontSize: "26px"
                                 }}
                             >
                                 {t("home:title")}
-                            </span>{" "}
-                            <br />
+                            </h1>
                             <span>{t("home:subtitle")}</span>
                         </Row>
                         <Row
@@ -143,9 +144,9 @@ const Home = ({ personalities, stats, href }) => {
                                 <span>{t("home:statsFooter")}</span>
                             </Col>
                             <Col span="10">
-                                <Button href="#create_account" type={ButtonType.white}>
-                                    {t("home:createAccountButton")}
-                                </Button>
+                            {  !isLoggedIn  && <Button href="#create_account" type={ButtonType.white}>
+                            {t("home:createAccountButton")}
+                            </Button>}
                             </Col>
                         </Row>
                     </div>
@@ -183,7 +184,7 @@ const Home = ({ personalities, stats, href }) => {
                         margin: "0 -15px"
                     }}
                 >
-                    <CTARegistration></CTARegistration>
+                    {!isLoggedIn && <CTARegistration></CTARegistration>}
                 </Row>
                 <SocialMediaShare href={href} />
             </>

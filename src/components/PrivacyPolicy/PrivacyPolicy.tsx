@@ -1,6 +1,10 @@
-import {Collapse, Row, Typography} from "antd";
+/* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable jsx-a11y/heading-has-content */
+import { Collapse, Row, Typography } from "antd";
 import colors from "../../styles/colors";
-import {Trans, useTranslation} from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
+import Subtitle from "../Subtitle";
+import Paragraph from "../Paragraph";
 
 const { Title } = Typography;
 
@@ -18,8 +22,8 @@ const PrivacyPolicy = () =>{
                 padding: "20px"
             }}
         >
-            <Title>{t("privacyPolicy:title")}</Title>
-            {t("privacyPolicy:leadParagraph")}
+            <Title level={1}>{t("privacyPolicy:title")}</Title>
+            <Paragraph>{t("privacyPolicy:leadParagraph")}</Paragraph>
             <ul>
                 <li key={1}>{t("privacyPolicy:tableOfContentsItem1")}</li>
                 <li key={2}>{t("privacyPolicy:tableOfContentsItem2")}</li>
@@ -32,16 +36,16 @@ const PrivacyPolicy = () =>{
                 <li key={9}>{t("privacyPolicy:tableOfContentsItem9")}</li>
                 <li key={0}>{t("privacyPolicy:tableOfContentsItem10")}</li>
             </ul>
-            <Title level={3}>{t("privacyPolicy:subTitleItem1")}</Title>
-            {t("privacyPolicy:item1")}
-            <Title level={3}>{t("privacyPolicy:subTitleItem2")}</Title>
-            {t("privacyPolicy:item2")}
-            <Title level={3}>{t("privacyPolicy:subTitleItem3")}</Title>
-            {t("privacyPolicy:item3")}
-            <Title level={3}>{t("privacyPolicy:subTitleItem4")}</Title>
-            {t("privacyPolicy:item4")}
-            <Title level={3}>{t("privacyPolicy:subTitleItem5")}</Title>
-            {t("privacyPolicy:item5")}
+            <Subtitle>{t("privacyPolicy:subTitleItem1")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item1")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem2")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item2")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem3")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item3")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem4")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item4")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem5")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item5")}</Paragraph>
             <Collapse
                 style={{
                     width: "100%",
@@ -71,17 +75,17 @@ const PrivacyPolicy = () =>{
                     />
                 </Collapse.Panel>
             </Collapse>
-            <Title level={3}>{t("privacyPolicy:subTitleItem6")}</Title>
-            {t("privacyPolicy:item6")}
-            <Title level={3}>{t("privacyPolicy:subTitleItem7")}</Title>
-            {t("privacyPolicy:item7")}
-            <Title level={3}>{t("privacyPolicy:subTitleItem8")}</Title>
-            {t("privacyPolicy:item8")}
-            <Title level={3}>{t("privacyPolicy:subTitleItem9")}</Title>
-            {t("privacyPolicy:item9")}
-            <Title level={3}>{t("privacyPolicy:subTitleItem10")}</Title>
-            {t("privacyPolicy:item10")}
-            <Title level={3}>{t("privacyPolicy:subTitleContact")}</Title>
+            <Subtitle>{t("privacyPolicy:subTitleItem6")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item6")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem7")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item7")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem8")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item8")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem9")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item9")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleItem10")}</Subtitle>
+            <Paragraph>{t("privacyPolicy:item10")}</Paragraph>
+            <Subtitle>{t("privacyPolicy:subTitleContact")}</Subtitle>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
                 values={{ email: t("common:contactEmail")}}

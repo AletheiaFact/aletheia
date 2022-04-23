@@ -1,12 +1,21 @@
 import React from "react";
 import { NextPage } from "next";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import CodeOfConduct from "../components/CodeOfConduct/CodeOfConduct";
+import { NextSeo } from "next-seo";
+import { useTranslation } from "next-i18next";
 const parser = require('accept-language-parser');
 
-const AboutPage: NextPage<{ data: string }> = (props) => {
+const AboutPage: NextPage<{ data: string }> = () => {
+    const { t } = useTranslation();
     return (
-        <CodeOfConduct {...props} />
+        <>
+            <NextSeo
+                title={t("codeOfConduct:title")}
+                description={t("codeOfConduct:unacceptableBehaviorSectionFirstParagraph")}
+            />
+            <CodeOfConduct />
+        </>
     );
 };
 

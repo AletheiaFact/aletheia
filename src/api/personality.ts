@@ -4,12 +4,12 @@ import { message } from "antd";
 const baseUrl = `/api/personality`;
 const getPersonalities = (options = {}, dispatch) => {
     const params = {
-        page: options.page - 1,
+        page: options.page ? options.page - 1 : 0,
+        order: options.order || 'asc',
         name: options.searchName,
-        pageSize: options.pageSize,
+        pageSize: options.pageSize ? options.pageSize : 5,
         withSuggestions: options.withSuggestions,
-        language:
-            options.i18n && options.i18n.languages && options.i18n.languages[0],
+        language: options?.i18n?.languages[0],
     };
 
     return axios

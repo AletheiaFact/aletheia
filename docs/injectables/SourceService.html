@@ -82,6 +82,10 @@
                                     <span class="modifier">Async</span>
                                 <a href="#create" >create</a>
                             </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getByTargetId" >getByTargetId</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -215,6 +219,120 @@
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getByTargetId"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>getByTargetId</b></span>
+                        <a href="#getByTargetId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getByTargetId(targetId, page, pageSize, order: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="20"
+                            class="link-to-prism">server/source/source.service.ts:20</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Default value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>targetId</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>page</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>pageSize</td>
+                                    <td>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>order</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>&quot;asc&quot;</code>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>unknown</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
 
     </div>
@@ -222,7 +340,7 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@nestjs/common&quot;;
-import {Model, Types} from &quot;mongoose&quot;;
+import { Model, Types } from &quot;mongoose&quot;;
 import { SourceDocument, Source } from &quot;./schemas/source.schema&quot;;
 import { InjectModel } from &quot;@nestjs/mongoose&quot;;
 
@@ -238,6 +356,15 @@ export class SourceService {
         const source &#x3D; new this.SourceModel(data);
         await source.save();
         return source;
+    }
+
+    async getByTargetId(targetId, page, pageSize, order &#x3D; &quot;asc&quot;) {
+        targetId &#x3D; new Types.ObjectId(targetId);
+
+        return this.SourceModel.find({ targetId })
+        .skip(page * pageSize)
+        .limit(pageSize)
+        .sort({ _id: order });
     }
 }
 </code></pre>
