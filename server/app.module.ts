@@ -42,8 +42,8 @@ export class AppModule implements NestModule {
             module: AppModule,
             imports: [
                 MongooseModule.forRoot(
-                    options.db.connection_uri,
-                    options.db.options
+                    options.config.db.connection_uri,
+                    options.config.db.options
                 ),
                 ConfigModule.forRoot({
                     load: [() => options.config || {}],
