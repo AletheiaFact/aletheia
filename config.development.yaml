@@ -47,6 +47,6 @@ services:
         limit: 1000
       authentication_type: ory
       ory:
-        url: ORY_URL
-        access_token: ORY_TOKEN
+        url: ORY_SDK_URL
+        access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
