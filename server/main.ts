@@ -9,9 +9,6 @@ import { ValidationPipe } from "@nestjs/common";
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 
-const mongodb_host = process.env.MONGODB_HOST || "localhost";
-const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
-
 const initApp = async (options) => {
     const corsOptions = {
         origin: options?.config?.cors || "*",
@@ -20,13 +17,6 @@ const initApp = async (options) => {
         allowedHeaders: ["accept", "x-requested-with", "content-type"],
     };
 
-    options.db = {
-        connection_uri: `mongodb://${mongodb_host}/${mongodb_name}`,
-        options: {
-            useUnifiedTopology: true,
-            useNewUrlParser: true,
-        }
-    }
     const app = await NestFactory.create<NestExpressApplication>(
         AppModule.register(options),
         {
@@ -52,8 +42,8 @@ const initApp = async (options) => {
             resave: false,
             saveUninitialized: false,
             store: MongoStore.create({
-                mongoUrl: options.db.connection_uri,
-                mongoOptions: options.db.options
+                mongoUrl: options.config.db.connection_uri,
+                mongoOptions: options.config.db.options
             })
         })
     );
