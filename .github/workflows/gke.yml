@@ -52,7 +52,7 @@ jobs:
           echo "${{ env.API_URL }}"
           sed -i "s/ENVIRONMENT/$ENVIRONMENT/g" deployment.yml
           sed -i "s/UMAMI_SITE_ID_STUB/$UMAMI_SITE_ID/g" deployment.yml
-          sed -i "s/ORY_SDK_URL_STUB/$ORY_SDK_URL/g" deployment.yml
+          sed -i "s%ORY_SDK_URL_STUB%$ORY_SDK_URL%g" deployment.yml
           sed -i "s/ORY_ACESS_TOKEN_STUB/$ORY_ACESS_TOKEN/g" deployment.yml
 
       # Setup gcloud CLI
