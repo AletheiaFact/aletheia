@@ -23,7 +23,7 @@ services:
       smtp_email_user: SMTP_EMAIL_USER
       smtp_email_pass: SMTP_EMAIL_PASS
       db:
-        connection_uri: mongodb://localhost/Aletheia
+        connection_uri: MONGODB_URI
         options:
           useUnifiedTopology: true
           useNewUrlParser: true
