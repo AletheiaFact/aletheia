@@ -68,9 +68,9 @@ jobs:
         env:
             RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
         run: |
-            sed -i "s/RECAPTCHA_SECRET/$RECAPTCHA_SECRET/g" config.$ENVIRONMENT.yaml
-            sed -i "s/MONGODB_URI/$MONGODB_URI/g" config.$ENVIRONMENT.yaml
-            sed -i "s/ORY_URL/$ORY_URL/g" config.$ENVIRONMENT.yaml
+            sed -i "s%RECAPTCHA_SECRET%$RECAPTCHA_SECRET%g" config.$ENVIRONMENT.yaml
+            sed -i "s%MONGODB_URI%$MONGODB_URI%g" config.$ENVIRONMENT.yaml
+            sed -i "s%ORY_URL%$ORY_URL%g" config.$ENVIRONMENT.yaml
             sed -i "s/ORY_TOKEN/$ORY_TOKEN/g" config.$ENVIRONMENT.yaml
             sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.$ENVIRONMENT.yaml
 
