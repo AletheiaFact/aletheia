@@ -1,7 +1,9 @@
 import { Controller, Get, Req, Res } from "@nestjs/common";
+import { IsPublic } from "../decorators/is-public.decorator";
 
 @Controller("api")
 export class RootController {
+    @IsPublic()
     @Get("robots.txt")
     robots(@Res() res, @Req() req) {
         const host = req.protocol + "://" + req.get("host");
@@ -10,6 +12,7 @@ export class RootController {
         );
     }
 
+    @IsPublic()
     @Get("health")
     health() {
         return { status: "ok" };
