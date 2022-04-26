@@ -25,7 +25,9 @@
         "serve-debug": "nodemon --inspect dist/server/server.js  --signal SIGTERM",
         "clean": "rimraf **/{node_modules,dist}",
         "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs",
-        "proxy": "ory proxy --no-jwt --port 4000 http://localhost:3000/"
+        "proxy": "ory proxy --no-jwt --port 4000 http://localhost:3000/",
+        "storybook": "start-storybook -p 6006 -s ./public",
+        "build-storybook": "build-storybook -s ./public"
     },
     "nodemonConfig": {
         "ignore": [
@@ -131,6 +133,15 @@
         "@nestjs/testing": "^8.2.6",
         "@next/eslint-plugin-next": "^12.0.10",
         "@shelf/jest-mongodb": "^2.2.0",
+        "@storybook/addon-actions": "^6.5.0-alpha.64",
+        "@storybook/addon-essentials": "^6.5.0-alpha.64",
+        "@storybook/addon-interactions": "^6.5.0-alpha.64",
+        "@storybook/addon-links": "^6.5.0-alpha.64",
+        "@storybook/builder-webpack5": "^6.5.0-alpha.64",
+        "@storybook/manager-webpack5": "^6.5.0-alpha.64",
+        "@storybook/preset-ant-design": "^0.0.2",
+        "@storybook/react": "^6.5.0-alpha.64",
+        "@storybook/testing-library": "^0.0.11",
         "@types/eslint": "^7.28.0",
         "@types/express": "^4.17.13",
         "@types/md5": "^2.3.1",
@@ -139,6 +150,7 @@
         "@types/react": "^17.0.16",
         "@typescript-eslint/parser": "^4.29.0",
         "babel-eslint": "^10.1.0",
+        "babel-loader": "^8.2.5",
         "babel-plugin-styled-components": "^1.13.2",
         "concurrently": "^6.2.1",
         "copyfiles": "^2.4.1",
