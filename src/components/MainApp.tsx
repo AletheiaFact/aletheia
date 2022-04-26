@@ -13,6 +13,7 @@ import { useAppSelector } from "../store/store";
 import styled from "styled-components"
 
 const { Footer, Content } = Layout;
+
 const MainApp = ({ children }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch()

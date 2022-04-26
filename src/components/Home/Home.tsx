@@ -6,6 +6,7 @@ import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from 'next-i18next';
 import Button, { ButtonType } from '../Button';
 import { ArrowRightOutlined } from "@ant-design/icons";
+import colors from "../../styles/colors";
 
 const Home = ({ personalities, stats, href, isLoggedIn }) => {
     const { t } = useTranslation();
@@ -16,13 +17,12 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                 <Row
                     style={{
                         position: "relative",
-                        margin: "-20px -15px 0px -15px"
+                        margin: "-20px -15px 0px -15px",
                     }}
                 >
-                    <div
+                    <Col
                         style={{
-                            width: "100%",
-                            height: "55vh",
+                            height: "443px",
                             overflow: "hidden",
                             position: "relative"
                         }}
@@ -30,7 +30,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                         <div
                             style={{
                                 width: "100%",
-                                height: "55vh",
+                                height: "100%",
                                 position: "absolute",
                                 zIndex: 1,
                                 backgroundColor: "rgba(0,0,0,0.6)"
@@ -51,142 +51,283 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                                     background: "#364d79",
                                                     width: "100%",
                                                     filter: "grayscale(100%)"
-                                                }}
+                                                }} //precisa ajustar as imagens
                                                 src={p.image}
                                             />
                                         </div>
                                     )
                             )}
                         </Carousel>
-                    </div>
+                    </Col>
                     <div
                         style={{
                             position: "absolute",
                             zIndex: 2,
                             width: "100%",
-                            padding: "7%"
+                            height: "100%",
                         }}
                     >
-                        <Row
-                            style={{
-                                height: "25%",
-                                color: "#fff",
-                                flexDirection: "column",
-                                textAlign: "center"
-                            }}
+                        <Col
+                            span={18}
+                            offset={3}
                         >
-                            <h1
-                                style={{
-                                    color: "#fff",
-                                    fontSize: "26px"
-                                }}
-                            >
-                                {t("home:title")}
-                            </h1>
-                            <span>{t("home:subtitle")}</span>
-                        </Row>
-                        <Row
-                            style={{
-                                color: "#fff",
-                                flexDirection: "column"
-                            }}
-                        >
-                            <Row>
-                                <p>
-                                    <span
+                            <Col offset={4} span={16}>
+                                <Row
+                                    style={{
+                                        color: "#fff",
+                                        margin: "64px 0 32px 0",
+                                        width: "314px",
+                                    }}
+                                >
+                                    <h1
                                         style={{
-                                            color: "#67BEF2",
-                                            fontSize: "34px"
+                                            color: "#fff",
+                                            fontSize: "40px",
+                                            lineHeight: "48px",
+                                            margin: 0,
                                         }}
                                     >
-                                        {stats.personalities}
-                                    </span>{" "}
-                                    {t("home:statsPersonalities")}
-                                </p>
-                            </Row>
-                            <Row>
-                                <p>
-                                    <span
-                                        style={{
-                                            color: "#67BEF2",
-                                            fontSize: "34px"
-                                        }}
-                                    >
-                                        {stats.claims}
-                                    </span>{" "}
-                                    {t("home:statsClaims")}
-                                </p>
-                            </Row>
-                            <Row>
-                                <p>
-                                    <span
-                                        style={{
-                                            color: "#67BEF2",
-                                            fontSize: "34px"
-                                        }}
-                                    >
-                                        {stats.reviews}
-                                    </span>{" "}
-                                    {t("home:statsClaimReviews")}
-                                </p>
-                            </Row>
-                        </Row>
-                        <Row
-                            style={{
-                                height: "15%",
-                                color: "#fff",
-                                justifyContent: "space-between"
-                            }}
-                            gutter={3}
-                        >
-                            <Col span="14">
+                                        {t("home:title")}
+                                    </h1>
+                                </Row>
 
-                                <span>{t("home:statsFooter")}</span>
+                                <Col span="14">
+                                    <h2
+                                        style={{
+                                            color: "#fff",
+                                            fontSize: "16px",
+                                        }}
+                                    >
+                                        {t("home:statsFooter")}
+                                    </h2>
+                                </Col>
+
+                                <Row
+                                    style={{
+                                        height: "15%",
+                                        margin: "32px 0 32px 0",
+                                        color: "#fff",
+                                        justifyContent: "space-between"
+                                    }}
+                                    gutter={3}
+                                >
+                                    <Col span="10">
+                                        {  !isLoggedIn  && 
+                                            <Button
+                                                style={{
+                                                    width: "185px",
+                                                    height: "40px",
+                                                    display: "flex",
+                                                    padding: 0,
+                                                    justifyContent: "center",
+                                                    alignItems: "center"
+                                                }}
+                                                href="#create_account"
+                                                type={ButtonType.white}
+                                            >
+                                                <span style={{ fontWeight: 700 }}>
+                                                    {t("home:createAccountButton")}
+                                                </span>
+                                            </Button>
+                                        }
+                                    </Col>
+                                </Row>
+                                
+                                <Row
+                                    style={{
+                                        color: "#fff",
+                                        flexDirection: "row",
+                                        width: "100%",
+                                        justifyContent: "space-between",
+                                        height: "55px",
+                                    }}
+                                >
+                                    <Col
+                                        span={7}
+                                        style={{
+                                            height: "100%",
+                                        }}
+                                    >
+                                        <p style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            marginBottom: 0,
+                                        }}>
+                                            <span
+                                                style={{
+                                                    color: "#67BEF2",
+                                                    fontSize: "40px",
+                                                    lineHeight: "55px",
+                                                    marginRight: 20,
+                                                }}
+                                            >
+                                                {stats.personalities}
+                                            </span>{" "}
+                                            <span style={{
+                                                fontSize: 20,
+                                            }}>
+                                                {t("home:statsPersonalities")}
+                                            </span>
+                                        </p>
+                                    </Col>
+                                    <Col
+                                        span={7}
+                                        offset={2}
+                                        style={{
+                                            height: "100%",
+                                        }}
+                                    >
+                                        <p style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            marginBottom: 0,
+                                        }}>
+                                            <span
+                                                style={{
+                                                    color: "#67BEF2",
+                                                    fontSize: "40px",
+                                                    lineHeight: "55px",
+                                                    marginRight: 20,
+                                                }}
+                                            >
+                                                {stats.claims}
+                                            </span>{" "}
+                                            <span style={{
+                                                fontSize: 20,
+                                            }}>
+                                                {t("home:statsClaims")}
+                                            </span>
+                                        </p>
+                                    </Col>
+                                    <Col
+                                        span={7}
+                                        offset={1}
+                                        style={{
+                                            height: "100%",
+                                        }}
+                                    >
+                                        <p style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            marginBottom: 0,
+                                        }}>
+                                            <span
+                                                style={{
+                                                    color: "#67BEF2",
+                                                    fontSize: "40px",
+                                                    lineHeight: "55px",
+                                                    marginRight: 20,
+                                                }}
+                                            >
+                                                {stats.reviews}
+                                            </span>{" "}
+                                            <span style={{
+                                                fontSize: 20,
+                                            }}>
+                                                {t("home:statsClaimReviews")}
+                                            </span>
+                                        </p>
+                                    </Col>
+                                </Row>
                             </Col>
-                            <Col span="10">
-                            {  !isLoggedIn  && <Button href="#create_account" type={ButtonType.white}>
-                            {t("home:createAccountButton")}
-                            </Button>}
-                            </Col>
-                        </Row>
+                        </Col>
                     </div>
                 </Row>
                 <Row
                     style={{
-                        padding: "20px 0px"
+                        marginTop: "32px",
                     }}
                 >
-                    {personalities.map(
-                        (p, i) =>
-                            p && (
-                                <PersonalityCard
-                                    personality={p}
-                                    summarized={true}
-                                    key={p._id}
-                                />
-                            )
-                    )}
-                    <Row
+                    <Col
+                        span={12}
+                        offset={3}
+                    >
+                        <Col>
+                            <h3
+                                style={{
+                                    fontSize: "22px",
+                                    lineHeight: "32px",
+                                    margin: "0 0 16px 0",
+                                    fontWeight: 400,
+                                    color: colors.grayPrimary
+                                }}
+                            >
+                                Popular today
+                            </h3>
+                            <Col
+                                style={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    justifyContent: "space-between"
+                                }}
+                            >
+                                {personalities.map(
+                                    (p, i) =>
+                                        p && (
+                                            <Col
+                                                style={{
+                                                    display: "flex",
+                                                    flexWrap: "wrap",
+                                                    flex: "0 1 326.75px",
+                                                }}
+                                            >
+                                                <PersonalityCard
+                                                    personality={p}
+                                                    summarized={true}
+                                                    key={p._id}
+                                                />
+                                            </Col>
+                                        )
+                                )}
+                            </Col>
+                            <Col
+                                style={{
+                                    padding: "20px",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}
+                            >
+                                <Button
+                                    href="/personality"
+                                    type={ButtonType.whiteBlue}
+                                    style={{
+                                        width: "240px",
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            fontWeight: 700
+                                        }}
+                                    >
+                                        {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
+                                    </span>
+                                </Button>
+                            </Col>
+                        </Col>
+                    </Col>
+                    <Col
+                        span={6}
                         style={{
-                            padding: "20px",
-                            width: "100%",
-                            flexDirection: "column"
+                            marginLeft: 20
                         }}
                     >
-                        <Button href="/personality" data-cy="testSeeMorePersonality" type={ButtonType.whiteBlue} >
-                            {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
-                        </Button>
-                    </Row>
+                        <h3
+                            style={{
+                                fontSize: "22px",
+                                lineHeight: "32px",
+                                fontWeight: 400,
+                                margin: "0 0 16px 0",
+                                color: colors.grayPrimary
+                            }}
+                        >
+                            Join the movement
+                        </h3>
+                        <Row id="create_account">
+                            {!isLoggedIn && <CTARegistration></CTARegistration>}
+                        </Row>
+                        <SocialMediaShare href={href} />
+                    </Col>
                 </Row>
-                <Row
-                    id="create_account"
-                    style={{
-                        margin: "0 -15px"
-                    }}
-                >
-                    {!isLoggedIn && <CTARegistration></CTARegistration>}
-                </Row>
-                <SocialMediaShare href={href} />
             </>
         );
     } else {

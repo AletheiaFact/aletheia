@@ -129,6 +129,14 @@ const PersonalityCard = ({
                                     data-cy={personality.name}
                                     href={`${hrefBase ||
                                         "personality/"}${personality.slug}`}
+                                    style={{
+                                        width: "98px",
+                                        height: "40px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        padding: 0,
+                                    }}
                                 >
                                     {t("personality:profile_button")}
                                 </Button>

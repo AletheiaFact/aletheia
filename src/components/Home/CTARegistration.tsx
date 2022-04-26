@@ -21,10 +21,10 @@ function CTARegistration({ style = {} }) {
             </Typography.Title>
             <div
                 style={{
-                    color: "#fff",
-                    fontSize: "14px",
+                    color: "rgba(255, 255, 255, 0.8)",
+                    fontSize: "16px",
                     fontWeight: 600,
-                    lineHeight: "21px",
+                    lineHeight: "24px",
                     marginBottom: "10px",
                     textAlign: 'center'
                 }}
@@ -33,11 +33,11 @@ function CTARegistration({ style = {} }) {
             </div>
             <div
                 style={{
-                    color: "#fff",
-                    fontSize: "10px",
-                    fontWeight: 600,
-                    lineHeight: "15px",
-                    marginBottom: "17px"
+                    color: "rgba(255, 255, 255, 0.8)",
+                    fontSize: "14px",
+                    fontWeight: 400,
+                    lineHeight: "22px",
+                    marginBottom: "17px",
                 }}
             >
                 {t("CTARegistration:footer")}
@@ -47,6 +47,15 @@ function CTARegistration({ style = {} }) {
                 type={ButtonType.white}
                 target="_blank"
                 href={t("common:registrationLink")}
+                style={{
+                    width: "120px",
+                    height: "40px",
+                    padding: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto",
+                }}
             >
                 <b
                     style={{

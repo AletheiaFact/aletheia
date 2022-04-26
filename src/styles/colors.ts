@@ -1,7 +1,7 @@
 const colors = {
     bluePrimary: "rgb(17, 39, 58)",
     blueSecondary: "rgb(101, 126, 142)",
-    blueTertiary: "rgb(101, 126, 142)",
+    blueTertiary: "rgb(45, 119, 163)",
     grayPrimary: "rgb(76, 77, 78)",
     graySecondary: "rgb(151, 154, 155)",
     grayTertiary: "rgb(194, 200, 204)",

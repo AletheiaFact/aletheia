@@ -44,8 +44,8 @@ const AletheiaButton: (
                 buttonStyle = {
                     ...buttonStyle,
                     background: colors.white,
-                    borderColor: colors.bluePrimary,
-                    color: colors.bluePrimary
+                    borderColor: colors.blueTertiary,
+                    color: colors.blueTertiary
                 }
                 break;
             case ButtonType.whiteBlack:
