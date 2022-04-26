@@ -17,10 +17,11 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                 <Row
                     style={{
                         position: "relative",
-                        margin: "-20px -15px 0px -15px",
+                        margin: "-20px 0px 0px 0",
                     }}
                 >
                     <Col
+                        span={24}
                         style={{
                             height: "443px",
                             overflow: "hidden",
