@@ -31,6 +31,7 @@ const Sentence = ({ showHighlights, properties, content, generateHref }) => {
                 data-hash={properties["data-hash"]}
                 style={style}
                 className="claim-sentence"
+                data-cy={`frase${properties.id}`}
             >
                 {content}
             </ClaimSentence>
