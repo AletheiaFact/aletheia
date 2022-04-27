@@ -38,7 +38,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
             style={{
                 background: colors.lightGray,
                 borderRadius: "10px",
-                margin: "45px 15px",
+                margin: "32px 0",
                 padding: "20px 0px"
             }}
         >
@@ -50,7 +50,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                     fontSize: "26px",
                     lineHeight: "39px",
                     fontWeight: 400,
-                    color: colors.bluePrimary
+                    color: colors.blackSecondary
                 }}
             >
                 {t("share:title")}

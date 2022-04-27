@@ -236,7 +236,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                 </Row>
                 <Row
                     style={{
-                        marginTop: "32px",
+                        paddingTop: "32px",
                     }}
                 >
                     <Col
@@ -283,7 +283,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                             </Col>
                             <Col
                                 style={{
-                                    padding: "20px",
+                                    margin: "48px 0 64px 0",
                                     display: "flex",
                                     justifyContent: "center"
                                 }}
@@ -293,11 +293,18 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                     type={ButtonType.whiteBlue}
                                     style={{
                                         width: "240px",
+                                        height: "40px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        padding: 0,
                                     }}
                                 >
                                     <span
                                         style={{
-                                            fontWeight: 700
+                                            fontWeight: 700,
+                                            fontSize: "14px",
+                                            lineHeight: "15px",
                                         }}
                                     >
                                         {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />

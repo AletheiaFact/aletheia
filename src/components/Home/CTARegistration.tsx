@@ -12,36 +12,46 @@ function CTARegistration({ style = {} }) {
             style={{
                 backgroundColor: colors.bluePrimary,
                 textAlign: "center",
-                padding: "30px",
+                padding: "32px 16px",
+                borderRadius: "4px",
                 ...style
             }}
         >
-            <Typography.Title level={2} style={{ color: "#fff", fontSize: '24px' }}>
+            <Typography.Title
+                level={2}
+                style={{
+                    color: "#fff",
+                    fontSize: '22px',
+                    lineHeight: "34px",
+                    fontWeight: 800,
+                    marginBottom: 0,
+                }}
+            >
                 {t("CTARegistration:title")}
             </Typography.Title>
-            <div
+            <p
                 style={{
                     color: "rgba(255, 255, 255, 0.8)",
                     fontSize: "16px",
                     fontWeight: 600,
                     lineHeight: "24px",
-                    marginBottom: "10px",
+                    margin: "32px 0 13px 0",
                     textAlign: 'center'
                 }}
             >
                 {t("CTARegistration:body")}
-            </div>
-            <div
+            </p>
+            <p
                 style={{
                     color: "rgba(255, 255, 255, 0.8)",
                     fontSize: "14px",
                     fontWeight: 400,
                     lineHeight: "22px",
-                    marginBottom: "17px",
+                    marginBottom: "32px",
                 }}
             >
                 {t("CTARegistration:footer")}
-            </div>
+            </p>
             <Button
                 onClick={() => { umami?.trackEvent('cta-registration-button', 'registration') }}
                 type={ButtonType.white}
