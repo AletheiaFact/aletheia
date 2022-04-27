@@ -36,8 +36,8 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
     return (
         <section
             style={{
-                background: colors.grayTertiary,
-                borderRadius: "30px",
+                background: colors.lightGray,
+                borderRadius: "10px",
                 margin: "45px 15px",
                 padding: "20px 0px"
             }}
@@ -78,7 +78,10 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                             hashtag={trimPersonality}
                             beforeOnClick={() => {umami?.trackEvent('facebook-share-button', 'share')}}
                         >
-                            <FacebookIcon size={32} round />
+                            <FacebookIcon size={33} 
+                                round
+                                bgStyle={{fill: "#2D77A3" }} 
+                            />
                         </FacebookShareButton>
                     </li>
                     <li>
@@ -88,7 +91,10 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                             hashtags={["aletheia", trimPersonality, `${claim !== null ? camelize(claimCamelize) : ''}\n`]}
                             beforeOnClick={() => {umami?.trackEvent('twitter-share-button', 'sharing')}}
                         >
-                            <TwitterIcon size={32} round />
+                            <TwitterIcon size={33} 
+                                round
+                                bgStyle={{fill: "#2D77A3" }} 
+                            />
                         </TwitterShareButton>
                     </li>
                     <li>
@@ -97,7 +103,10 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             beforeOnClick={() => {umami?.trackEvent('whatsapp-share-button', 'sharing')}}
                         >
-                            <WhatsappIcon size={32} round />
+                            <WhatsappIcon size={33} 
+                                round
+                                bgStyle={{fill: "#2D77A3" }} 
+                            />
                         </WhatsappShareButton>
                     </li>
                     <li>
@@ -106,7 +115,10 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             beforeOnClick={() => {umami?.trackEvent('telegram-share-button', 'sharing')}}
                         >
-                            <TelegramIcon size={32} round />
+                            <TelegramIcon size={33} 
+                                round
+                                bgStyle={{fill: "#2D77A3" }} 
+                            />
                         </TelegramShareButton>
                     </li>
                 </ul>
