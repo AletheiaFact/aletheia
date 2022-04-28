@@ -29,7 +29,11 @@ Blue.args = { children: "Blue Button", type: ButtonType.blue };
 
 export const White = Template.bind({});
 White.args = { type: ButtonType.white, children: "White Button" };
-
+White.parameters = {
+    backgrounds: {
+        default: "blue"
+    }
+}
 export const WhiteBlack = Template.bind({});
 WhiteBlack.args = { type: ButtonType.whiteBlack, children: "white Black Button" };
 
