@@ -46,6 +46,7 @@ const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
             type={type}
             onChange={onChange}
             defaultValue={defaultValue}
+            data-cy={"testClassificationText"}
         >
             <Option value="" disabled>
                 {placeholder}

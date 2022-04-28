@@ -29,6 +29,7 @@ const AffixButton = (props) => {
                     shape="circle"
                     href={props.href}
                     onClick={props.onClick}
+                    data-cy={"testButtonAddClaim"}
                     type="primary"
                     icon={<PlusOutlined style={{
                         padding: "21px",
