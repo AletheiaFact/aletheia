@@ -1,9 +1,13 @@
 {
-    "title": "checking claims from your favorite personalities",
+    "title1": "checking claims",
+    "title2": "from your",
+    "title3": "favorite personalities",
     "statsPersonalities": "personalities",
     "statsClaims": "claims",
     "statsClaimReviews": "reviewed claims",
-    "statsFooter": "Contribute to an internet free of disinformation",
+    "statsFooter": "contribute to an internet free of disinformation",
     "createAccountButton": "Create account",
-    "seeMorePersonalitiesButton": "See more Personalities"
+    "seeMorePersonalitiesButton": "See more Personalities",
+    "sectionTitle1": "Popular today",
+    "sectionTitle2": "Join the movement"
 }

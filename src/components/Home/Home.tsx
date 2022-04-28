@@ -7,6 +7,7 @@ import { useTranslation } from 'next-i18next';
 import Button, { ButtonType } from '../Button';
 import { ArrowRightOutlined } from "@ant-design/icons";
 import colors from "../../styles/colors";
+import SectionTitle from "../SectionTitle";
 
 const Home = ({ personalities, stats, href, isLoggedIn }) => {
     const { t } = useTranslation();
@@ -46,7 +47,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                                 alt={t('seo:personalityImageAlt', { name: p.name })}
                                                 style={{
                                                     height: "auto",
-                                                    color: "#fff",
+                                                    color: colors.white,
                                                     lineHeight: "160px",
                                                     textAlign: "center",
                                                     background: "#364d79",
@@ -75,20 +76,21 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                             <Col offset={4} span={16}>
                                 <Row
                                     style={{
-                                        color: "#fff",
+                                        color: colors.white,
                                         margin: "64px 0 32px 0",
-                                        width: "314px",
                                     }}
                                 >
                                     <h1
                                         style={{
-                                            color: "#fff",
+                                            color: colors.white,
                                             fontSize: "40px",
                                             lineHeight: "48px",
                                             margin: 0,
                                         }}
                                     >
-                                        {t("home:title")}
+                                        {t("home:title1")}<br />
+                                        {t("home:title2")}<br />
+                                        {t("home:title3")}
                                     </h1>
                                 </Row>
 
@@ -156,7 +158,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                         }}>
                                             <span
                                                 style={{
-                                                    color: "#67BEF2",
+                                                    color: colors.lightBlueSecondary,
                                                     fontSize: "40px",
                                                     lineHeight: "55px",
                                                     marginRight: 20,
@@ -185,7 +187,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                         }}>
                                             <span
                                                 style={{
-                                                    color: "#67BEF2",
+                                                    color: colors.lightBlueSecondary,
                                                     fontSize: "40px",
                                                     lineHeight: "55px",
                                                     marginRight: 20,
@@ -214,7 +216,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                         }}>
                                             <span
                                                 style={{
-                                                    color: "#67BEF2",
+                                                    color: colors.lightBlueSecondary,
                                                     fontSize: "40px",
                                                     lineHeight: "55px",
                                                     marginRight: 20,
@@ -244,17 +246,9 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                         offset={3}
                     >
                         <Col>
-                            <h3
-                                style={{
-                                    fontSize: "22px",
-                                    lineHeight: "32px",
-                                    margin: "0 0 16px 0",
-                                    fontWeight: 400,
-                                    color: colors.grayPrimary
-                                }}
-                            >
-                                Popular today
-                            </h3>
+                            <SectionTitle>
+                                {t("home:sectionTitle1")}
+                            </SectionTitle>
                             <Col
                                 style={{
                                     display: "flex",
@@ -319,17 +313,10 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                             marginLeft: 20
                         }}
                     >
-                        <h3
-                            style={{
-                                fontSize: "22px",
-                                lineHeight: "32px",
-                                fontWeight: 400,
-                                margin: "0 0 16px 0",
-                                color: colors.grayPrimary
-                            }}
-                        >
-                            Join the movement
-                        </h3>
+                        <SectionTitle>
+                            {t("home:sectionTitle2")}
+                        </SectionTitle>
+
                         <Row id="create_account">
                             {!isLoggedIn && <CTARegistration></CTARegistration>}
                         </Row>

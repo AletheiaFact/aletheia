@@ -58,9 +58,6 @@ function CTARegistration({ style = {} }) {
                 target="_blank"
                 href={t("common:registrationLink")}
                 style={{
-                    width: "120px",
-                    height: "40px",
-                    padding: 0,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
