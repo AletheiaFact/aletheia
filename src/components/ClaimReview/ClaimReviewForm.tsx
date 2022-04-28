@@ -112,6 +112,7 @@ const ClaimReviewForm = ({
                         type="select"
                         onChange={onChangeClassification}
                         defaultValue=""
+                        data-cy={"testClassification1"}
                     />
                 </Form.Item>
                 <SourceInput
@@ -178,6 +179,7 @@ const ClaimReviewForm = ({
                         value={report || ""}
                         onChange={(e) => setReport(e.target.value)}
                         placeholder={t("claimForm:reportFieldPlaceholder")}
+                        data-cy={"testReportInput"}
                     />
                 </Form.Item>
                 <Form.Item>

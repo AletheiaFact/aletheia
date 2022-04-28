@@ -7,7 +7,7 @@ describe("Should test at the login", () => {
     beforeEach(() => {
         cy.visit("http://localhost:3000/login");
 
-        cy.title().should("be.equal", "AletheiaFact.org");
+        cy.title().should("contain", "AletheiaFact.org");
         cy.get(locators.LOGIN.USER).type("test@aletheiafact.org", {
             delay: 200,
         });
@@ -18,7 +18,7 @@ describe("Should test at the login", () => {
     it("Go personality and search new personality", () => {
         cy.get(locators.PERSONALITY.BTN_SEE_MORE_PERSONALITY).click();
         cy.get(locators.PERSONALITY.BTN_ADD_PERSONALITY).click();
-        cy.get(locators.PERSONALITY.INPUT_SEARCH_PERSONALITY).type("beyonce");
+        cy.get(locators.PERSONALITY.INPUT_SEARCH_PERSONALITY).type("beyonce")
         cy.get("[data-cy=testBackButton]").click();
         cy.visit("http://localhost:3000/home");
     });

@@ -4,36 +4,44 @@
 import locators from "../../support/locator";
 
 describe("Test the side route", () => {
-    beforeEach (() => {
+    beforeEach(() => {
+        cy.visit("http://localhost:3000/home");
 
-    cy.visit('http://localhost:3000/home')
-
-    cy.title().should('be.equal', 'AletheiaFact.org');
-    cy.get('#rcc-confirm-button').click()
+        cy.title().should("contain", "AletheiaFact.org");
+        cy.get("#rcc-confirm-button").click();
     });
 
-    it("Check lateral menu and Login" , () => {
-        cy.get('[data-cy=testSideMenuClosed] > .anticon').click()
-        cy.get('[data-cy=testMyAccountItem] > .ant-menu-title-content').click()
+    it("Check side bar and Login", () => {
+        cy.get("[data-cy=testSideMenuClosed] > .anticon").click();
+        cy.get("[data-cy=testMyAccountItem] > .ant-menu-title-content").click();
         cy.get(locators.LOGIN.USER).type("test@aletheiafact.org", {
             delay: 200,
-        })
-        cy.get(locators.LOGIN.PASSWORD).type("123456")
-        cy.get(locators.LOGIN.BTN_LOGIN).click()
+        });
+        cy.get(locators.LOGIN.PASSWORD).type("123456");
+        cy.get(locators.LOGIN.BTN_LOGIN).click();
     });
 
-    it("Return lateral menu and go page about", () => {
-        cy.get('[data-cy=testSideMenuClosed] > .anticon').click()
-        cy.get('[data-cy=testAboutItem] > .ant-menu-title-content').click()
-    })
+    it("Return side bar and go page about", () => {
+        cy.get("[data-cy=testSideMenuClosed] > .anticon").click();
+        cy.get("[data-cy=testAboutItem] > .ant-menu-title-content").click();
+    });
 
-    it("Lateral menu and go polity", () => {
-        cy.get('[data-cy=testSideMenuClosed] > .anticon').click()
-        cy.get('[data-cy=testPrivacyPolicyItem] > .ant-menu-title-content').click()
-    })
+    it("Side bar and go polity", () => {
+        cy.get("[data-cy=testSideMenuClosed] > .anticon").click();
+        cy.get(
+            "[data-cy=testPrivacyPolicyItem] > .ant-menu-title-content"
+        ).click();
+        cy.get(".ant-col-20 > * > [data-cy=logo]").click();
+    });
 
-    it("Lateral menu and go conduct", () => {
-        cy.get('[data-cy=testCodeOfConductItem] > .ant-menu-title-content').click()
-        cy.get('.ant-col-20 > * > [data-cy=logo]').click()
-    })
-})
+    it("Side bar and go code of conduct", () => {
+        cy.get("[data-cy=testSideMenuClosed] > .anticon").click();
+        cy.get(
+            "[data-cy=testCodeOfConductItem] > .ant-menu-title-content"
+        ).should("contain", "Code of Conduct");
+        cy.wait(1000);
+        cy.get(
+            "[data-cy=testCodeOfConductItem] > .ant-menu-title-content"
+        ).click();
+    });
+});
