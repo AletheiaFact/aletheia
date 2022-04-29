@@ -14,6 +14,7 @@ function CTARegistration({ style = {} }) {
                 textAlign: "center",
                 padding: "32px 16px",
                 borderRadius: "4px",
+                marginBottom: "32px",
                 ...style
             }}
         >

@@ -261,7 +261,10 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                                 style={{
                                                     display: "flex",
                                                     flexWrap: "wrap",
-                                                    flex: "0 1 326.75px",
+                                                    flex: "1 1 326.75px",
+                                                    border: "1px solid blue",
+                                                    maxWidth: "450px",
+                                                    marginRight: "10px",
                                                 }}
                                             >
                                                 <PersonalityCard

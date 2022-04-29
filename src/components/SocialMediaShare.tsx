@@ -38,7 +38,6 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
             style={{
                 background: colors.lightGray,
                 borderRadius: "10px",
-                margin: "32px 0",
                 padding: "20px 0px"
             }}
         >
