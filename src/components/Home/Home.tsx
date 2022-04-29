@@ -81,6 +81,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                     }}
                                 >
                                     <h1
+                                        dangerouslySetInnerHTML={{ __html: t("home:title") }} 
                                         style={{
                                             color: colors.white,
                                             fontSize: "40px",
@@ -88,9 +89,6 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                             margin: 0,
                                         }}
                                     >
-                                        {t("home:title1")}<br />
-                                        {t("home:title2")}<br />
-                                        {t("home:title3")}
                                     </h1>
                                 </Row>
 
