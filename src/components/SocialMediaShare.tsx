@@ -12,9 +12,21 @@ import {
 } from "react-share";
 import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
+import styled from "styled-components";
 
 const { Title } = Typography;
 
+const SocialMediaContainer = styled.div`
+    background: ${colors.lightGray};
+    border-radius: 10px;
+    margin-bottom: 45px;
+    padding: 20px 0px;
+
+    @media (max-width: 548px) {
+        margin-bottom: 16px;
+        border-radius: 0;
+    }
+`
 const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
     const { t } = useTranslation();
     quote = quote || t("share:quote");
@@ -34,11 +46,9 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
     }
     
     return (
-        <section
+        <SocialMediaContainer
             style={{
-                background: colors.lightGray,
-                borderRadius: "10px",
-                padding: "20px 0px"
+                
             }}
         >
             <Title
@@ -79,7 +89,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                         >
                             <FacebookIcon size={33} 
                                 round
-                                bgStyle={{fill: "#2D77A3" }} 
+                                bgStyle={{fill: colors.bluePrimary }} 
                             />
                         </FacebookShareButton>
                     </li>
@@ -92,7 +102,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                         >
                             <TwitterIcon size={33} 
                                 round
-                                bgStyle={{fill: "#2D77A3" }} 
+                                bgStyle={{fill: colors.bluePrimary }} 
                             />
                         </TwitterShareButton>
                     </li>
@@ -104,7 +114,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                         >
                             <WhatsappIcon size={33} 
                                 round
-                                bgStyle={{fill: "#2D77A3" }} 
+                                bgStyle={{fill: colors.bluePrimary }} 
                             />
                         </WhatsappShareButton>
                     </li>
@@ -116,13 +126,13 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                         >
                             <TelegramIcon size={33} 
                                 round
-                                bgStyle={{fill: "#2D77A3" }} 
+                                bgStyle={{fill: colors.bluePrimary }} 
                             />
                         </TelegramShareButton>
                     </li>
                 </ul>
             </nav>
-        </section>
+        </SocialMediaContainer>
     );
 }
 

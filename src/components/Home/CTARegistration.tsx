@@ -3,18 +3,32 @@ import React from "react";
 import { Typography } from "antd";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
+import styled from "styled-components";
+
+const CTAContainer = styled.div`
+    background-color: ${colors.bluePrimary};
+    text-align: center;
+    padding: 32px 0;
+    border-radius: 4px;
+    margin-bottom: 45px;
+
+    @media (max-width: 1024px) {
+        padding: 32px;
+    }
+
+    @media (max-width: 548px) {
+        margin-bottom: 22px;
+        border-radius: 0;
+    }
+        
+`
 
 function CTARegistration({ style = {} }) {
     const { t } = useTranslation();
 
     return (
-        <div
+        <CTAContainer
             style={{
-                backgroundColor: colors.bluePrimary,
-                textAlign: "center",
-                padding: "32px 16px",
-                borderRadius: "4px",
-                marginBottom: "32px",
                 ...style
             }}
         >
@@ -37,7 +51,8 @@ function CTARegistration({ style = {} }) {
                     fontWeight: 600,
                     lineHeight: "24px",
                     margin: "32px 0 13px 0",
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    padding: "0 16px 0 16px",
                 }}
             >
                 {t("CTARegistration:body")}
@@ -49,6 +64,7 @@ function CTARegistration({ style = {} }) {
                     fontWeight: 400,
                     lineHeight: "22px",
                     marginBottom: "32px",
+                    padding: "0 16px 0 16px",
                 }}
             >
                 {t("CTARegistration:footer")}
@@ -58,11 +74,14 @@ function CTARegistration({ style = {} }) {
                 type={ButtonType.white}
                 target="_blank"
                 href={t("common:registrationLink")}
+                className="cta-registration-button"
                 style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    margin: "0 auto",
+                    margin: "0 16px",
+                    height: "40px",
+                    padding: "0 15px",
                 }}
             >
                 <b
@@ -73,7 +92,7 @@ function CTARegistration({ style = {} }) {
                     {t("CTARegistration:button")}
                 </b>
             </Button>
-        </div>
+        </CTAContainer>
     );
 }
 
