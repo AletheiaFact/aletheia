@@ -15,6 +15,7 @@ export async function getServerSideProps({ locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
+            href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };
 }

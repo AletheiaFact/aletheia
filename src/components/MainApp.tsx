@@ -74,7 +74,6 @@ const MainApp = ({ children }) => {
                         </Row>}
                         {children}
                     </ContentStyled>
-
                     <Footer style={{
                         textAlign: "center",
                         background: colors.lightGraySecondary,
