@@ -24,10 +24,10 @@
         "watch-node": "nodemon dist/server/server.js  --signal SIGTERM",
         "serve-debug": "nodemon --inspect dist/server/server.js  --signal SIGTERM",
         "clean": "rimraf **/{node_modules,dist}",
-        "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs",
+        "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs/compodoc",
         "proxy": "ory proxy --no-jwt --port 4000 http://localhost:3000/",
-        "storybook": "start-storybook -p 6006 -s ./public",
-        "build-storybook": "build-storybook -s ./public"
+        "storybook": "start-storybook -p 6006",
+        "build-storybook": "build-storybook -o ./docs/storybook"
     },
     "nodemonConfig": {
         "ignore": [
