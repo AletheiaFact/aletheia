@@ -1,7 +1,7 @@
 import React from "react"
 import { Button, Modal } from "antd";
-import styled from  "styled-components";
-import OrderRadio from "../Radio/orderRadio";
+import styled from "styled-components";
+import OrderRadio from "../Radio/OrderRadio";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 
@@ -72,8 +72,8 @@ const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
             >
                 {t("orderModal:title")}
             </span>
-            
-            <OrderRadio 
+
+            <OrderRadio
                 value={value}
                 setValue={setValue}
             />

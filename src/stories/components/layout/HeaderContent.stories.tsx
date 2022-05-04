@@ -1,9 +1,9 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import HeaderContent from "../components/Header/HeaderContent";
-import ProviderWrapper from "./ProviderWrapper";
+import HeaderContent from "../../../components/Header/HeaderContent";
+import ProviderWrapper from "../../ProviderWrapper";
 
 export default {
-    title: "Components/Header/HeaderContent",
+    title: "Components/Layout/HeaderContent",
     component: HeaderContent,
     decorators: [
         (Story) => (<ProviderWrapper><Story /></ProviderWrapper>),

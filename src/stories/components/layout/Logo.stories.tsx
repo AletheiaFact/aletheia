@@ -1,8 +1,8 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import Logo from "../components/Header/Logo";
+import Logo from "../../../components/Header/Logo";
 
 export default {
-    title: "Components/Header/Logo",
+    title: "Components/Layout/Logo",
     component: Logo,
     argTypes: {
         color: {

@@ -2,24 +2,15 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 
 import ClassificationText from '../../../components/ClassificationText';
+import { classifications } from '../../fixtures';
 
-const options = [
-    "true",
-    "true-but",
-    "arguable",
-    "misleading",
-    "false",
-    "unsustainable",
-    "exaggerated",
-    "not-fact",
-    "unverifiable"]
 
 export default {
     title: 'Components/Typography/ClassificationText',
     component: ClassificationText,
     argTypes: {
         classification: {
-            options,
+            options: classifications,
             control: {
                 type: "select",
             },

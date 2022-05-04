@@ -1,6 +1,6 @@
 import React from "react"
 import { Radio, Space } from "antd";
-import styled from  "styled-components";
+import styled from "styled-components";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 
@@ -28,25 +28,30 @@ const RadioInput = styled(Radio)`
         height: 25px;
     }
 
-    .ant-radio-wrapper-checked > span:nth-child(2) { //TODO: order by checked input label isn't bold
+    .ant-radio-wrapper-checked > span:nth-child(2) {
         font-weight: 700;
     }
 `
+//TODO: order by checked input label isn't bold
 
+interface OrderRadioProps {
+    value: 'asc' | 'desc';
+    setValue: (value: string) => void;
+}
 
-const OrderRadio = ({ value, setValue }) => {
+const OrderRadio = ({ value, setValue }: OrderRadioProps) => {
     const { t } = useTranslation();
 
     const onChangeRadio = e => {
         setValue(e.target.value);
     }
 
-    return(
+    return (
         <RadioInput.Group
             onChange={onChangeRadio}
             value={value}
         >
-            <Space style={{marginTop: 10}} direction="vertical">
+            <Space style={{ marginTop: 10 }} direction="vertical">
                 <RadioInput
                     value='asc'
                 >
@@ -66,7 +71,7 @@ const OrderRadio = ({ value, setValue }) => {
                     <span
                         style={{
                             fontSize: 18,
-                            marginLeft:10,
+                            marginLeft: 10,
                             color: colors.blackSecondary,
                         }}
                     >

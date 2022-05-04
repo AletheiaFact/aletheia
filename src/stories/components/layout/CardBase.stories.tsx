@@ -1,8 +1,8 @@
-import CardBase from "../components/CardBase";
+import CardBase from "../../../components/CardBase";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 
 export default {
-    title: "Components/CardBase",
+    title: "Components/Layout/CardBase",
     component: CardBase,
     decorators: [
         (Story) => (

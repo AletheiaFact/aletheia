@@ -1,11 +1,11 @@
-import AletheiaSocialMediaFooter from "../components/AletheiaSocialMediaFooter";
+import AletheiaSocialMediaFooter from "../../../components/AletheiaSocialMediaFooter";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 
 export default {
-    title: "Components/AletheiaSocialMediaFooter",
+    title: "Components/Layout/AletheiaSocialMediaFooter",
     component: AletheiaSocialMediaFooter,
     parameters: {
-        backgrounds: { default: "dark" }
+        backgrounds: { default: "blue" }
     }
 } as ComponentMeta<typeof AletheiaSocialMediaFooter>;
 
