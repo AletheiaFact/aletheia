@@ -135,6 +135,7 @@ const PersonalityCard = ({
                                         alignItems: "center",
                                         height: 40,
                                         paddingBottom: 0,
+                                        borderRadius: "4px",
                                     }}
                                 >
                                     {t("personality:profile_button")}

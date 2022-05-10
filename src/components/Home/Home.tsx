@@ -310,12 +310,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                 span={16}
                                 className="header-content-container"
                             >
-                                <Row
-                                    className="home-title-container"
-                                    style={{
-                                        color: colors.white,
-                                    }}
-                                >
+                                <Row className="home-title-container">
                                     <h1 className="home-title">
                                         {t("home:title")}
                                     </h1>
@@ -413,19 +408,13 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                         </Col>
                     </div>
                 </Row>
-                { 
-                    isLoggedIn && 
-                    <HomeLoggedIn 
+                {!isLoggedIn && <HomeLoggedOut 
                         personalities={personalities}
-                        isLoggedIn={isLoggedIn}
                         href={href}
                     />
                 }
-                { 
-                    !isLoggedIn && 
-                    <HomeLoggedOut 
+                {isLoggedIn && <HomeLoggedIn 
                         personalities={personalities}
-                        isLoggedIn={isLoggedIn}
                         href={href}
                     />
                 }

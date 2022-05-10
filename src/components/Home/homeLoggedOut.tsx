@@ -14,6 +14,12 @@ const MainContent = styled.div`
         padding-top: 32px;
     }
 
+    .personality-list-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
     .personality-card {
         display: flex;
         flex-wrap: wrap;
@@ -24,6 +30,12 @@ const MainContent = styled.div`
         margin: 48px 0 64px 0;
         display: flex;
         justify-content: center;
+    }
+
+    .more-personalities-title {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
     }
 
     .join-container {
@@ -54,7 +66,6 @@ const MainContent = styled.div`
             display: block;
             flex: 0 0 50%;
             max-width: 75%;
-            border: 1px solid red;
         }
 
         .more-personalities-container {
@@ -62,6 +73,12 @@ const MainContent = styled.div`
         }
 
         .join-container {
+            margin-left: 0;
+            max-width: 100%;
+        }
+
+        #create_account,
+        .section-join-title {
             margin-left: 12.5%;
             max-width: 75%;
         }
@@ -69,7 +86,8 @@ const MainContent = styled.div`
 
     @media (max-width: 900px) {
         .ant-col-12.personalities-container,
-        .join-container {
+        #create_account,
+        .section-join-title {
             margin-left: 8.33333333%;
             max-width: 83.333334%;
         }
@@ -77,7 +95,8 @@ const MainContent = styled.div`
 
     @media (max-width: 725px) {
         .ant-col-12.personalities-container,
-        .join-container {
+        #create_account,
+        .section-join-title {
             margin-left: 4.16666667%;
             max-width: 91.666666%;
         }
@@ -89,15 +108,16 @@ const MainContent = styled.div`
             max-width: 91.666666%;
         }
 
-        .join-container {
-          margin-left: 0;
-          max-width: 100%;
-      }
+        #create_account,
+        .section-join-title {
+            margin-left: 0;
+            max-width: 100%;
+        }
     }
 `
 
 
-const HomeLoggedOut = ({personalities, isLoggedIn, href}) => {
+const HomeLoggedOut = ({personalities, href}) => {
     const { t } = useTranslation();
 
     return (
@@ -112,13 +132,7 @@ const HomeLoggedOut = ({personalities, isLoggedIn, href}) => {
                         <SectionTitle>
                             {t("home:sectionTitle1")}
                         </SectionTitle>
-                        <Col
-                            style={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                justifyContent: "space-between"
-                            }}
-                        >
+                        <Col className="personality-list-container">
                             {personalities.map(
                                 (p, i) =>
                                     p && (
@@ -144,15 +158,10 @@ const HomeLoggedOut = ({personalities, isLoggedIn, href}) => {
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
+                                    borderRadius: "4px",
                                 }}
                             >
-                                <span
-                                    style={{
-                                        fontWeight: 400,
-                                        fontSize: "16px",
-                                        lineHeight: "24px",
-                                    }}
-                                >
+                                <span className="more-personalities-title">
                                     {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
                                 </span>
                             </Button>
@@ -169,7 +178,7 @@ const HomeLoggedOut = ({personalities, isLoggedIn, href}) => {
                     <Row id="create_account">
                         <CTARegistration></CTARegistration>
                     </Row>
-                    <SocialMediaShare isLoggedIn={isLoggedIn} href={href} />
+                    <SocialMediaShare href={href} />
                 </Col>
             </Row>
         </MainContent>

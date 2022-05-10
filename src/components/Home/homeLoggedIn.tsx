@@ -1,5 +1,4 @@
 import React from "react";
-import CTARegistration from "./CTARegistration";
 import { Row, Col } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
@@ -14,6 +13,12 @@ const MainContent = styled.div`
         padding-top: 32px;
     }
 
+    .personality-list-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
     .personality-card {
         display: flex;
         flex-wrap: wrap;
@@ -24,6 +29,12 @@ const MainContent = styled.div`
         margin: 48px 0 64px 0;
         display: flex;
         justify-content: center;
+    }
+
+    .more-personalities-title {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
     }
 
     @media (min-width: 1370px) {
@@ -50,7 +61,6 @@ const MainContent = styled.div`
             display: block;
             flex: 0 0 50%;
             max-width: 75%;
-            border: 1px solid red;
         }
 
         .more-personalities-container {
@@ -77,83 +87,70 @@ const MainContent = styled.div`
             margin-left: 4.16666667%;
             max-width: 91.666666%;
         }
-
-        .join-container {
-          margin-left: 0;
-          max-width: 100%;
-      }
     }
 `
 
-const HomeLoggedIn = ({personalities, isLoggedIn, href}) => {
+const HomeLoggedIn = ({personalities, href}) => {
     const { t } = useTranslation();
 
     return (
         <MainContent>
-          <Row className="main-content">
-              <Col
-                  span={18}
-                  offset={3}
-                  className="personalities-container"
-              >
-                  <Col>
-                      <SectionTitle>
-                          {t("home:sectionTitle1")}
-                      </SectionTitle>
-                      <Col
-                          style={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                              justifyContent: "space-between"
-                          }}
-                      >
-                          {personalities.map(
-                              (p, i) =>
-                                  p && (
-                                      <Col
-                                          className="personality-card"
-                                      >
-                                          <PersonalityCard
-                                              personality={p}
-                                              summarized={true}
-                                              key={p._id}
-                                          />
-                                      </Col>
-                                  )
-                          )}
-                      </Col>
-                      <Col className="more-personalities-container">
-                          <Button
-                              href="/personality"
-                              type={ButtonType.blue}
-                              style={{
-                                  paddingBottom: 0,
-                                  height: 40,
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                              }}
-                          >
-                              <span
-                                  style={{
-                                      fontWeight: 400,
-                                      fontSize: "16px",
-                                      lineHeight: "24px",
-                                  }}
-                              >
-                                  {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
-                              </span>
-                          </Button>
-                      </Col>
-                  </Col>
-              </Col>
-              <Col 
-                span={24}
-                className="join-container"
-              >
-                  <SocialMediaShare isLoggedIn={isLoggedIn} href={href} />
-              </Col>
-          </Row>
+            <Row className="main-content">
+                <Col
+                    span={18}
+                    offset={3}
+                    className="personalities-container"
+                >
+                    <Col>
+                        <SectionTitle>
+                            {t("home:sectionTitle1")}
+                        </SectionTitle>
+                        <Col className="personality-list-container">
+                            {personalities.map(
+                                (p, i) =>
+                                    p && (
+                                        <Col
+                                            className="personality-card"
+                                        >
+                                            <PersonalityCard
+                                                personality={p}
+                                                summarized={true}
+                                                key={p._id}
+                                            />
+                                        </Col>
+                                    )
+                            )}
+                        </Col>
+                        <Col className="more-personalities-container">
+                            <Button
+                                href="/personality"
+                                type={ButtonType.blue}
+                                style={{
+                                    paddingBottom: 0,
+                                    height: 40,
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: "4px",
+                                }}
+                            >
+                                <span className="more-personalities-title">
+                                    {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
+                                </span>
+                            </Button>
+                        </Col>
+                    </Col>
+                </Col>
+                <Col 
+                    span={24}
+                    className="join-container"
+                >
+                    <SocialMediaShare
+                        href={href}
+                        style={{}}
+                    />
+                </Col>
+            </Row>
         </MainContent>
     )
 }
