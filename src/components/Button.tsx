@@ -21,7 +21,7 @@ const AletheiaButton: (
         let buttonStyle = {
             ...props.style,
             borderWidth: "2px",
-            borderRadius: "30px",
+            borderRadius: "4px",
         };
         switch (props.type) {
             case ButtonType.white:

@@ -21,13 +21,18 @@ const SocialMediaContainer = styled.div`
     border-radius: 10px;
     margin-bottom: 45px;
     padding: 20px 0px;
+    display: flex;
+    justify-content: center;
+    align-itens: center;
 
     @media (max-width: 548px) {
         margin-bottom: 16px;
         border-radius: 0;
+        display: grid;
+        grid-template-columns: 1fr;
     }
 `
-const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
+const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null }) => {
     const { t } = useTranslation();
     quote = quote || t("share:quote");
 
@@ -46,37 +51,36 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
     }
     
     return (
-        <SocialMediaContainer
-            style={{
-                
-            }}
-        >
+        <SocialMediaContainer>
             <Title
                 level={2}
                 style={{
-                    width: "100%",
+                    width: "auto",
                     textAlign: "center",
+                    marginBottom: 0,
                     fontSize: "26px",
                     lineHeight: "39px",
                     fontWeight: 400,
-                    color: colors.blackSecondary
+                    color: colors.blackSecondary,
                 }}
             >
                 {t("share:title")}
             </Title>
             <nav
                 style={{
-                    marginTop: "15px",
-                    width: "100%",
+                    marginTop: "3px",
+                    height: "39px",
+                    marginLeft: "32px",
                 }}
             >
                 <ul 
                     style={{
                         marginBottom: 0,
+                        padding: 0,
                         textAlign: "center",
-                        display: "flex",
-                        padding: "0px 20%",
-                        justifyContent: "space-evenly",
+                        display: "grid",
+                        gridTemplateColumns: "30px 30px 30px 30px",
+                        gridColumnGap: "16px",
                         listStyleType: "none"
                     }}
                 >
@@ -87,7 +91,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
                             hashtag={trimPersonality}
                             beforeOnClick={() => {umami?.trackEvent('facebook-share-button', 'share')}}
                         >
-                            <FacebookIcon size={33} 
+                            <FacebookIcon size={33}
                                 round
                                 bgStyle={{fill: colors.bluePrimary }} 
                             />

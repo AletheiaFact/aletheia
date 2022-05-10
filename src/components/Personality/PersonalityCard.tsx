@@ -133,6 +133,8 @@ const PersonalityCard = ({
                                         display: "flex",
                                         justifyContent: "center",
                                         alignItems: "center",
+                                        height: 40,
+                                        paddingBottom: 0,
                                     }}
                                 >
                                     {t("personality:profile_button")}
@@ -144,6 +146,13 @@ const PersonalityCard = ({
                                         onClick(personality)
                                     }
                                     data-cy={personality.name}
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: 40,
+                                        paddingBottom: 0,
+                                    }}
                                 >
                                     <PlusOutlined /> {t("personality:add_button")}
                                 </Button>
