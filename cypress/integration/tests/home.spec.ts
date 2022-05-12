@@ -4,20 +4,18 @@
 import locators from "../../support/locator";
 
 describe("Test the side route", () => {
-    beforeEach(() => {
+    beforeEach("Check side bar and Login", () => {
         cy.visit("http://localhost:3000/home");
 
         cy.title().should("contain", "AletheiaFact.org");
         cy.get("#rcc-confirm-button").click();
-    });
 
-    it("Check side bar and Login", () => {
         cy.get("[data-cy=testSideMenuClosed] > .anticon").click();
         cy.get("[data-cy=testMyAccountItem] > .ant-menu-title-content").click();
         cy.get(locators.LOGIN.USER).type("test@aletheiafact.org", {
             delay: 200,
         });
-        cy.get(locators.LOGIN.PASSWORD).type("123456");
+        cy.get(locators.LOGIN.PASSWORD).type("TEST_USER_PASS");
         cy.get(locators.LOGIN.BTN_LOGIN).click();
     });
 
@@ -40,8 +38,8 @@ describe("Test the side route", () => {
             "[data-cy=testCodeOfConductItem] > .ant-menu-title-content"
         ).should("contain", "Code of Conduct");
         cy.wait(1000);
-        cy.get(
-            "[data-cy=testCodeOfConductItem] > .ant-menu-title-content"
-        ).click();
+        cy.get("[data-cy=testCodeOfConductItem] > .ant-menu-title-content")
+            .wait(100)
+            .click();
     });
 });

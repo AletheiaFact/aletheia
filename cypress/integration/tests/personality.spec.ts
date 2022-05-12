@@ -11,7 +11,7 @@ describe("Should test at the login", () => {
         cy.get(locators.LOGIN.USER).type("test@aletheiafact.org", {
             delay: 200,
         });
-        cy.get(locators.LOGIN.PASSWORD).type("123456");
+        cy.get(locators.LOGIN.PASSWORD).type("TEST_USER_PASS");
         cy.get(locators.LOGIN.BTN_LOGIN).click();
     });
 

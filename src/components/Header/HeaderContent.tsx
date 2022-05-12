@@ -65,6 +65,7 @@ const HeaderContent = ({ className }) => {
                         }
                     });
                 }}
+                data-cy={"testSearchPersonality"}
             >
                 <SearchOutlined
                     style={{

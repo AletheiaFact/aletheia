@@ -104,6 +104,7 @@ const ClaimReviewView = ({ personality, claim, sentence, href }) => {
                                         type={ButtonType.blue}
                                         onClick={toggleFormCollapse}
                                         icon={<PlusOutlined />}
+                                        data-cy={"testAddReviewButton"}
                                     >
                                         {t("claimReviewForm:addReviewButton")}
                                     </Button>

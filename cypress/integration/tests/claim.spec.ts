@@ -14,72 +14,79 @@ describe("Check side bar and Login", () => {
         cy.get("[data-cy=testSideMenuClosed] > .anticon").click();
         cy.get("[data-cy=testMyAccountItem] > .ant-menu-title-content").click();
 
-        cy.get(locators.LOGIN.USER).should('be.visible').type("test@aletheiafact.org", {
-            delay: 200,
-        });
-        cy.get(locators.LOGIN.PASSWORD).should('be.visible').type("123456");
-        cy.get(locators.LOGIN.BTN_LOGIN).should('be.visible').click();
-        cy.get(".ant-message-notice-content").should(
-            "contain",
-            "Login successful"
-        );
+        cy.get(locators.LOGIN.USER)
+            .should("be.visible")
+            .type("test@aletheiafact.org", {
+                delay: 200,
+            });
+        cy.get(locators.LOGIN.PASSWORD)
+            .should("be.visible")
+            .type("TEST_USER_PASS");
+        cy.get(locators.LOGIN.BTN_LOGIN).should("be.visible").click();
     });
-    
+
     it("Claim", () => {
-        cy.get(locators.PERSONALITY.BTN_SEE_MORE_PERSONALITY).should('be.visible').click();
-        cy.get("[data-cy=Beyoncé] > *").should('be.visible').click();
+        cy.get(locators.PERSONALITY.BTN_SEE_MORE_PERSONALITY)
+            .should("be.visible")
+            .click();
+        cy.get("[data-cy=Beyoncé] > *").should("be.visible").click();
         cy.url().should(
             "contains",
             "http://localhost:3000/personality/beyonce"
         );
 
         cy.get("[data-cy=testButtonAddClaim] > .anticon")
-        .should('be.visible')
-        .click();
+            .should("be.visible")
+            .click();
 
         cy.get("[ data-cy=testTitleClaimForm]")
-        .should('be.visible')
-        .type("Cantora e Dançarina?");
+            .should("be.visible")
+            .type("Cantora e Dançarina?");
 
         cy.get("[ data-cy=testContentClaim]")
-        .should('be.visible')
-        .type("Ele é uma ótima dançarina e cantora");
+            .should("be.visible")
+            .type("Ele é uma ótima dançarina e cantora");
 
-        cy.get("[data-cy=dataAserSelecionada]")
-        .should('be.visible').click()
-        // .select("");
-        cy.get('.ant-layout-content').click() 
+        cy.get("[data-cy=dataAserSelecionada]").should("be.visible").click();
+        cy.contains(7).click();
 
-        cy.get('.ant-col-24 > .ant-input')
-        .should('be.visible')
-        .type("http://wikipedia.org");
+        //    cy.get(".ant-picker-today-btn").click();
 
-        cy.get('[data-cy=testCheckboxAcceptTerms]').click();
-    });  
-     // This is not checkbox   
+        cy.get(".ant-layout-content").click();
+
+        cy.get(".ant-col-24 > .ant-input")
+            .should("be.visible")
+            .type("http://wikipedia.org");
+
+        cy.get("[data-cy=testCheckboxAcceptTerms]").click();
+
+        cy.get("[data-cy=testSearchPersonality] > .anticon").click();
+    });
+    // This is not checkbox
 
     it("Claim review from an existing one", () => {
-        cy.visit("http://localhost:3000/personality")
+        cy.visit("http://localhost:3000/personality");
 
-        cy.get("[data-cy=Beyoncé]").click()
+        cy.get("[data-cy=Beyoncé]").click();
         cy.url().should(
             "contains",
             "http://localhost:3000/personality/beyonce"
         );
-        cy.get('[data-cy=testSeeFullSpeech]').click()
+        cy.get("[data-cy=testSeeFullSpeech]").click();
         cy.url().should(
             "contains",
             "http://localhost:3000/personality/beyonce/claim/cantora-e-dancarina"
         );
 
         cy.get("[data-cy=frase1]")
-        .should("contain", "dançarina e cantora")
-        .click()
+            .should("contain", "dançarina e cantora")
+            .click();
         cy.url().should(
             "contains",
-        "http://localhost:3000/personality/beyonce/claim/cantora-e-dancarina/sentence/c2b74a9ccff0038975d51283c10e457d")
+            "http://localhost:3000/personality/beyonce/claim/cantora-e-dancarina/sentence/c2b74a9ccff0038975d51283c10e457d"
+        );
 
-        cy.get("[data-cy=AletheiaButton]").should("be.visible").click();
+        cy.get("[data-cy=testAddReviewButton]").should("be.visible").click();
 
         cy.get("[data-cy=testClassificationText]").should("be.visible").click();
         cy.get("[data-cy=true]").click();
@@ -88,14 +95,15 @@ describe("Check side bar and Login", () => {
             "contain",
             "Trustworthy"
         );
-        cy.get(".Input__AletheiaInput-sc-1gffuww-0").should("be.visible")
+        cy.get(".Input__AletheiaInput-sc-1gffuww-0")
+            .should("be.visible")
             .click()
             .type("https://www.wikipedia.org/");
-        cy.get("[data-cy=testReportInput]").should("be.visible")
+        cy.get("[data-cy=testReportInput]")
+            .should("be.visible")
             .click()
-            .type("Além de treinar o canto, a Beyoncé tem ensaios diários de dança e treinamento físico para melhorar sua condição cardiorespirátoria");
-
-    })
-
-   
+            .type(
+                "Além de treinar o canto, a Beyoncé tem ensaios diários de dança e treinamento físico para melhorar sua condição cardiorespirátoria"
+            );
+    });
 });
