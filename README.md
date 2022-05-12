@@ -93,7 +93,7 @@ yarn build
 
 #### Making The Changes On Your Code:
 - First you gonna have to change the ``authentication_type: `` to ory on your config.yaml and config.seed.yaml.
-- Now take SDK Configuration url and paste on ``url: `` in bouth pages config.yaml, config.seed.yaml and on ``ORY_SDK_URL=`` in your .env too. 
+- Now take SDK Configuration url and paste on ``url: `` in both pages config.yaml, config.seed.yaml and on ``ORY_SDK_URL=`` in your .env too. 
 - Now Paste the acess token that you saved on ``access_token: `` in your config.yaml and congig.seed.yaml.
 - Do the same as above but now with the id that you saved and paste it on ``schema_id: ``. 
 
