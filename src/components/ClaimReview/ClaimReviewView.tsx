@@ -108,6 +108,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                                             type={ButtonType.blue}
                                             onClick={toggleFormCollapse}
                                             icon={<PlusOutlined />}
+                                            data-cy={"testAddReviewButton"}
                                         >
                                             <h3 style={{
                                                 marginLeft: 8,
@@ -117,7 +118,6 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                                                 marginBottom: 0,
                                                 color: colors.white,
                                                 display: "inline-block",
-
                                             }}>
                                                 {t("claimReviewForm:addReviewButton")}
                                             </h3>
