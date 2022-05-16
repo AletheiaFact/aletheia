@@ -1,33 +1,66 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import {
-    SelfServiceSettingsFlowState,
-    SubmitSelfServiceSettingsFlowBody,
+    SelfServiceSettingsFlow,
+    SubmitSelfServiceSettingsFlowWithPasswordMethodBody as ValuesType,
+    UiNodeInputAttributes,
 } from "@ory/client";
+import { isUiNodeInputAttributes } from "@ory/integrations/ui";
 import { Alert, Form, FormInstance, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
-import { oryGetSettingsFlow } from "../../api/ory";
+import { oryGetSettingsFlow, orySubmitSettings } from "../../api/ory";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
 
 const OryProfileView = ({ user }) => {
-    const [flow, setFlow] = useState<SelfServiceSettingsFlowState>();
+    const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
     const router = useRouter();
     const { t } = useTranslation();
     const formRef = useRef<FormInstance>();
 
-    console.log("user", user);
     useEffect(() => {
         oryGetSettingsFlow({ router, setFlow, t });
     }, []);
+
+    let flowValues: ValuesType = {
+        csrf_token: "",
+        method: "password",
+        password: "",
+    };
 
     useEffect(() => {
         console.log("flow", flow);
     }, [flow]);
 
+
+
+    const initializeCsrf = () => {
+        if (flow?.ui?.nodes) {
+            const { nodes } = flow?.ui;
+            const csrfNode = nodes.find(
+                (node) =>
+                    isUiNodeInputAttributes(node.attributes) &&
+                    node.attributes.name === "csrf_token"
+            ).attributes as UiNodeInputAttributes;
+            if (csrfNode) {
+                flowValues.csrf_token = csrfNode.value;
+            }
+        }
+    };
+
+    const onSubmit = (values: ValuesType) => {
+        orySubmitSettings({ router, flow, setFlow, t, values });
+    };
+
     const onFinish = (values) => {
-        console.log("values", values);
+        initializeCsrf();
+        flowValues = {
+            ...flowValues,
+            password: values.newPassword,
+        };
+        console.log("flowValues", flowValues);
+        onSubmit(flowValues);
     };
 
     if (!flow) {

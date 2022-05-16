@@ -16,7 +16,10 @@ export function handleGetFlowError<S>(
     resetFlow: Dispatch<SetStateAction<S | undefined>>,
     t: TFunction
 ) {
+
     return async (err: AxiosError) => {
+        console.log('handleGetFlowError', err.response);
+        debugger
         switch (err.response?.data.error?.id) {
             case "session_refresh_required":
             case "session_aal2_required":

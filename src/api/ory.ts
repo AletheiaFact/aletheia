@@ -70,5 +70,6 @@ const orySubmitSettings = ({router, flow, setFlow, t, values}) => {
 export {
     oryGetLoginFlow,
     orySubmitLogin,
-    oryGetSettingsFlow
+    oryGetSettingsFlow,
+    orySubmitSettings
 }
