@@ -1,7 +1,6 @@
 import { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import OryProfileView from "../components/Profile/OryProfileView";
-import ProfileView from "../components/Profile/ProfileView";
 const parser = require("accept-language-parser");
 
 const ProfilePage: NextPage<{ user }> = ({ user }) => {
@@ -13,7 +12,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            user: req.user ? JSON.parse(JSON.stringify(req.user)) : null,
+            user: query.user ? JSON.parse(JSON.stringify(query.user)) : null,
         },
     };
 }

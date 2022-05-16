@@ -41,17 +41,18 @@ export class UsersController {
     // TODO: move old logic to ory
     @Put("api/user/:id/password")
     async changePassword(@Req() req, @Res() res) {
-        const { currentPassword, newPassword, repeatedNewPassword } = req.body;
+        //const { currentPassword, newPassword, repeatedNewPassword } = req.body;
 
         try {
             if (req.params.id !== req.user._id.toString()) {
                 throw Error("Invalid user attempting to change password");
             }
-            if (newPassword !== repeatedNewPassword) {
+           /*  if (newPassword !== repeatedNewPassword) {
                 throw Error("Repeated password doesn't match");
             }
             this.usersService
-                .changePassword(mongoose.Types.ObjectId(req.params.id), currentPassword, newPassword)
+                .changePassword(mongoose.Types.ObjectId(req.params.id), currentPassword, newPassword)*/
+                this.usersService.registerPasswordChange(mongoose.Types.ObjectId(req.params.id))
                 .then(() => {
                     res.status(200).json({
                         success: true,
@@ -85,6 +86,7 @@ export class UsersController {
     @Get("profile")
     public async profile(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const user = await this.usersService.getById(req.user._id);
 
         await this.viewService
             .getNextServer()
@@ -92,7 +94,7 @@ export class UsersController {
                 req,
                 res,
                 "/profile-page",
-                Object.assign(parsedUrl.query, {})
+                Object.assign(parsedUrl.query, {user})
             );
     }
 }

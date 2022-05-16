@@ -12,6 +12,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { oryGetSettingsFlow, orySubmitSettings } from "../../api/ory";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
+import api from "../../api/user";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
@@ -51,6 +52,7 @@ const OryProfileView = ({ user }) => {
 
     const onSubmit = (values: ValuesType) => {
         orySubmitSettings({ router, flow, setFlow, t, values });
+        api.updatePassword({ userId: user._id }, t)
     };
 
     const onFinish = (values) => {

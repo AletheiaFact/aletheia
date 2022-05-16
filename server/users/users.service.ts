@@ -49,4 +49,13 @@ export class UsersService {
             user.save();
         });
     }
+
+    async registerPasswordChange(userId) {
+        const user = await this.getById(userId);
+        if (user.firstPasswordChanged === false) {
+            user.firstPasswordChanged = true;
+            this.logger.log(`User ${user._id} changed first password`);
+            user.save();
+        }
+    }
 }
