@@ -70,7 +70,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     useEffect(() => {
         const setTitleAndContent = async () => {
             if (edit) {
-                const { content, title } = await claimApi.getById(claim._id, {}, t);
+                const { content, title } = await claimApi.getById(claim._id, t);
                 setTitle(title);
                 setContent(content.text);
             }
@@ -91,7 +91,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
             recaptchaRef.current.reset();
         }
 
-        const { slug } = await claimApi.save({
+        const { slug } = await claimApi.save(t, {
             content,
             title,
             personality: personality._id,
@@ -100,17 +100,17 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
             date,
             sources,
             recaptcha
-        },t);
+        });
         // Redirect to personality profile in case slug is not present
         const path = slug ? `/personality/${personality.slug}/claim/${slug}` : `/personality/${personality.slug}`;
         router.push(path);
     }
 
     const updateClaim = async () => {
-        await claimApi.update(claim._id, {
+        await claimApi.update(claim._id, t, {
             title,
             content
-        }, t);
+        });
         // Redirect to personality profile in case _id is not present
         const path = `/personality/${personality._id}`;
         router.push(path);

@@ -33,7 +33,7 @@ const get = (options = {}) => {
         });
 };
 
-const getById = (id, params = {}, t) => {
+const getById = (id, t, params = {}) => {
     return request
         .get(
             `${id}`,
@@ -89,7 +89,7 @@ const getClaimSentenceReviews = (options = {}) => {
         });
 };
 
-const save = (claim = {}, t) => {
+const save = (t, claim = {}) => {
     return request
         .post("/", claim)
         .then((response) => {
@@ -114,7 +114,7 @@ const save = (claim = {}, t) => {
         });
 };
 
-const update = (id, params = {}, t) => {
+const update = (id, t, params = {}) => {
     return request
         .put(`${id}`, params)
         .then((response) => {
