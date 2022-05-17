@@ -27,7 +27,6 @@ const orySubmitLogin = ({router, flow, setFlow, t, values}) => {
     return ory
         .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
         .then((response) => {
-            console.log(response)
             message.success(
                 `${t("login:loginSuccessfulMessage")}`
             );
