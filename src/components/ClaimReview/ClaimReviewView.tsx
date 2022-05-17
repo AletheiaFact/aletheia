@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
-import { Col, Row } from "antd";
+import { Col, Row, Input } from "antd";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
@@ -9,6 +9,7 @@ import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
+import InputSearch from "../Form/InputSearch";
 
 const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     const { t } = useTranslation();
@@ -18,10 +19,16 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
 
+    const [searchFormCollapsed, setSearchFormCollapsed] = useState(true);
+
     const [formCollapsed, setFormCollapsed] = useState(true);
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
+    };
+
+    const toggleSearchFormCollapse = () => {
+        setSearchFormCollapsed(!formCollapsed);
     };
 
     return (
@@ -106,7 +113,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                                 <Col span={10}>
                                     <Button
                                         type={ButtonType.blue}
-                                        onClick={toggleFormCollapse}
+                                        onClick={toggleSearchFormCollapse}
                                         icon={<PlusOutlined />}
                                     >
                                         <h3 style={{
@@ -127,6 +134,10 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                         )}
                     </Row>
                 )}
+                {!searchFormCollapsed && 
+                    <Input.Search
+                        placeholder="Atribua à um usuário"
+                    />}
                 {!formCollapsed && (
                     <Row>
                         <ClaimReviewForm
