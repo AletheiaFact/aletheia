@@ -27,7 +27,7 @@
         "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs/compodoc",
         "proxy": "ory proxy --no-jwt --port 4000 http://localhost:3000/",
         "storybook": "start-storybook -p 6006",
-        "build-storybook": "build-storybook -o ./docs/storybook"
+        "build-storybook": "build-storybook -o ./docs/storybook",
         "cypress-open": "cypress open",
         "cypress-run": "cypress run",
         "watch-test": "nodemon dist/server/server.js -c config.test.yaml --signal SIGTERM",
