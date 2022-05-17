@@ -33,7 +33,7 @@ const get = (options = {}) => {
         });
 };
 
-const getById = (id, params = {}) => {
+const getById = (id, params = {}, t) => {
     return request
         .get(
             `${id}`,
@@ -46,7 +46,7 @@ const getById = (id, params = {}) => {
             return response.data;
         })
         .catch(() => {
-            message.error("Error while fetching Claim");
+            message.error(t("claim:errorWhileFetching"));
         });
 };
 
@@ -89,12 +89,14 @@ const getClaimSentenceReviews = (options = {}) => {
         });
 };
 
-const save = (claim = {}) => {
+const save = (claim = {}, t) => {
     return request
         .post("/", claim)
         .then((response) => {
             const { title } = response.data;
-            message.success(`"${title}" created with success`);
+            message.success(
+                `"${title}" ${t("claimForm:successCreateMessage")}`
+            );
             return response.data;
         })
         .catch((err) => {
@@ -105,17 +107,19 @@ const save = (claim = {}) => {
             }
             const { data } = response;
             message.error(
-                data && data.message ? data.message : "Error while saving claim"
+                data && data.message
+                    ? data.message
+                    : t("claimForm:errorCreateMessage")
             );
         });
 };
 
-const update = (id, params = {}) => {
+const update = (id, params = {}, t) => {
     return request
         .put(`${id}`, params)
         .then((response) => {
             const { title, _id } = response.data;
-            message.success(`"${title}" updated with success`);
+            message.success(`"${title}" ${t("claimForm:successUpdateMessage")}`);
             return _id;
         })
         .catch((err) => {
@@ -128,7 +132,7 @@ const update = (id, params = {}) => {
             message.error(
                 data && data.message
                     ? data.message
-                    : "Error while updating claim"
+                    : t("claimForm:errorUpdateMessage")
             );
         });
 };

@@ -15,5 +15,6 @@
     "cardHeader1": "Declarou em",
     "cardHeader2": "em um",
     "typeSpeech": "Discurso oficial",
-    "typeTwitter": "post no Twitter"
+    "typeTwitter": "post no Twitter",
+    "errorWhileFetching": "Erro ao buscar o Discurso"
 }
