@@ -144,7 +144,8 @@ const SearchOverlay = ({ overlay }) => {
                                     (p, i) =>
                                         p && (
                                             <SearchResult
-                                                handleOnClick={handleSearchClick(p.slug)}
+                                                key={i}
+                                                handleOnClick={() => handleSearchClick(p.slug)}
                                                 avatar={
                                                     <Avatar
                                                         size={30}

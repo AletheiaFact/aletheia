@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
-import { Col, Row, Input, Typography } from "antd";
+import { Col, Row, Input, Typography, Avatar } from "antd";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, UserOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/user";
+import SearchResult from "../SearchResult"
 
 const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     const { t } = useTranslation();
@@ -25,6 +26,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     const [formCollapsed, setFormCollapsed] = useState(true);
 
     const [users, setUsers] = useState([]);
+    const [searchName, setSearchName] = useState("")
 
 
     const toggleFormCollapse = () => {
@@ -36,8 +38,13 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     };
 
     const handleInputSearch = async (name) => {
+        setSearchName(name)
         const userSearchResults = await api.getUsers(name)
         setUsers(userSearchResults)
+    }
+
+    const handleSearchClick = (name) => {
+        console.log(name)
     }
 
     return (
@@ -150,7 +157,14 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                     />
                 }
                 {users &&
-                    users.map(user => <p>{user.name}</p>)
+                    users.map(user => 
+                        <SearchResult
+                            key={user._id}
+                            handleOnClick={() => handleSearchClick(user.name)}
+                            avatar={<Avatar size={30} icon={<UserOutlined />} />}
+                            name={user.name}
+                            searchName={searchName}
+                        />)
                 }
                 {!formCollapsed && (
                     <Row>

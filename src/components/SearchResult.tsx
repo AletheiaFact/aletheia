@@ -9,7 +9,8 @@ const SearchResult = ({handleOnClick, avatar, name, searchName}) => {
                 padding: "10px 10%",
                 boxShadow:
                     "0 2px 2px rgba(0, 0, 0, 0.1)",
-                cursor: "pointer"
+                cursor: "pointer",
+                width: "100%"
             }}
             onClick= {handleOnClick}
         >
