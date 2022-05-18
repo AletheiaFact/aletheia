@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
-import { Col, Row, Input } from "antd";
+import { Col, Row, Input, Typography } from "antd";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
@@ -10,6 +10,7 @@ import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import InputSearch from "../Form/InputSearch";
+import api from "../../api/user";
 
 const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     const { t } = useTranslation();
@@ -23,6 +24,9 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
 
     const [formCollapsed, setFormCollapsed] = useState(true);
 
+    const [users, setUsers] = useState([]);
+
+
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
     };
@@ -30,6 +34,11 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     const toggleSearchFormCollapse = () => {
         setSearchFormCollapsed(!formCollapsed);
     };
+
+    const handleInputSearch = async (name) => {
+        const userSearchResults = await api.getUsers(name)
+        setUsers(userSearchResults)
+    }
 
     return (
         <>
@@ -69,7 +78,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                                 {t("claimReview:userReviewSuffix", {
                                     count: review?.count
                                 })}
-                            &nbsp;
+                                &nbsp;
                             </p>
                             <ClassificationText
                                 classification={review?.classification}
@@ -134,10 +143,15 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                         )}
                     </Row>
                 )}
-                {!searchFormCollapsed && 
-                    <Input.Search
+                {!searchFormCollapsed &&
+                    <InputSearch
                         placeholder="Atribua à um usuário"
-                    />}
+                        callback={handleInputSearch}
+                    />
+                }
+                {users &&
+                    users.map(user => <p>{user.name}</p>)
+                }
                 {!formCollapsed && (
                     <Row>
                         <ClaimReviewForm

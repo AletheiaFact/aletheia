@@ -1,7 +1,7 @@
 import {
     Controller,
     Get, Logger,
-    Post, Put, Req,
+    Post, Put, Query, Req,
     Res,
     UseGuards,
 } from "@nestjs/common";
@@ -94,5 +94,11 @@ export class UsersController {
                 "/profile-page",
                 Object.assign(parsedUrl.query, {})
             );
+    }
+
+    @IsPublic()
+    @Get("api/user")
+    public async getAll(@Query() getUsers) {
+        return this.usersService.findAll(getUsers);
     }
 }

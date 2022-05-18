@@ -62,9 +62,25 @@ const updatePassword = (params, t) => {
         });
 };
 
+const getUsers = (searchName) => {
+    const params = {
+        searchName,
+    }
+    return request
+        .get(`/`, { params })
+        .then((response) => {
+            return response?.data;
+        })
+        .catch((e) => {
+            console.log('erro na busca dos usuários', e);
+
+        })
+}
+
 export default {
     login,
     validateSession,
     updatePassword,
     getById,
+    getUsers
 };

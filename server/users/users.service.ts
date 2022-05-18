@@ -12,8 +12,9 @@ export class UsersService {
         private oryService: OryService
     ) {}
 
-    async findAll(): Promise<User[]> {
-        return this.UserModel.find().exec();
+    async findAll(getUsers): Promise<User[]> {
+        const {searchName} = getUsers;
+        return this.UserModel.find({name: { '$regex': searchName, '$options': 'i' }});
     }
 
     async register(user) {
