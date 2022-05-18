@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
-import { Col, Row, Input, Typography, Avatar } from "antd";
+import { Col, Row, Avatar } from "antd";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
@@ -12,8 +12,11 @@ import SocialMediaShare from "../SocialMediaShare";
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/user";
 import SearchResult from "../SearchResult"
+import { useMachine } from "@xstate/react";
+import { reviewTaskMachine } from "../../machine/reviewTask"
 
 const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
+    const [state, send, service] = useMachine(reviewTaskMachine)
     const { t } = useTranslation();
     const personalityId = personality._id;
     const claimId = claim._id;
@@ -43,9 +46,21 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
         setUsers(userSearchResults)
     }
 
-    const handleSearchClick = (name) => {
-        console.log(name)
+    const handleSearchClick = (id) => {
+        send("ASSIGN_USER", {id, sentenceHash})
     }
+
+    service.onTransition(state => {
+        try {
+            const reviewTaskData = {
+                state: state.value,
+                context: state.context
+            }
+            localStorage.setItem("stored-state", JSON.stringify(reviewTaskData))
+        } catch (e) {
+            console.error("Unable to save to localStorage")
+        }
+    })
 
     return (
         <>
@@ -150,23 +165,24 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                         )}
                     </Row>
                 )}
-                {!searchFormCollapsed &&
+                {state.matches("unassigned") && !searchFormCollapsed &&
                     <InputSearch
                         placeholder="Atribua à um usuário"
                         callback={handleInputSearch}
                     />
                 }
-                {users &&
+                {state.matches("unassigned") && users &&
                     users.map(user => 
                         <SearchResult
                             key={user._id}
-                            handleOnClick={() => handleSearchClick(user.name)}
+                            handleOnClick={() => handleSearchClick(user._id)}
                             avatar={<Avatar size={30} icon={<UserOutlined />} />}
                             name={user.name}
                             searchName={searchName}
                         />)
                 }
-                {!formCollapsed && (
+                <p>{state.value}</p>
+                {state.matches("assigned") && (
                     <Row>
                         <ClaimReviewForm
                             claimId={claimId}

@@ -14,7 +14,10 @@ export class UsersService {
 
     async findAll(getUsers): Promise<User[]> {
         const {searchName} = getUsers;
-        return this.UserModel.find({name: { '$regex': searchName, '$options': 'i' }});
+        return this.UserModel.aggregate([
+            { $match: {name: { '$regex': searchName, '$options': 'i' }}},
+            { $project: { "_id": 1, "name": 1}}
+        ])
     }
 
     async register(user) {
