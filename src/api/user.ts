@@ -33,20 +33,6 @@ const login = (params, t) => {
         });
 };
 
-const validateSession = (params, t) => {
-    return request
-        .get(`/validate`, { withCredentials: true })
-        .then((response) => {
-            return { login: true, ...response };
-        })
-        .catch((e) => {
-            const response = e?.response?.data || {
-                message: t("login:failedMessage"),
-            };
-            return { login: false, ...response };
-        });
-};
-
 const updatePassword = (params, t) => {
     return request
         .put(
@@ -64,7 +50,6 @@ const updatePassword = (params, t) => {
 
 export default {
     login,
-    validateSession,
     updatePassword,
     getById,
 };
