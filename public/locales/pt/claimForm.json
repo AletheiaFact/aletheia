@@ -1,4 +1,8 @@
 {
+    "errorMessage": "Erro ao salvar discurso",
+    "successMessage": "discurso criado com sucesso",
+    "errorUpdateMessage": "Erro ao alterar o discurso",
+    "successUpdateMessage": "Discurso alterado com sucesso",
     "titleField": "Título",
     "titleFieldError": "Por favor, insira um título",
     "titleFieldPlaceholder": "Insira o título aqui",

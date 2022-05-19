@@ -72,7 +72,7 @@ const ClaimReviewForm = ({
             recaptchaRef.current.reset();
         }
         setDisableSubmit(true);
-        claimReviewApi.save({
+        claimReviewApi.save(t, {
             classification,
             claim,
             personality,
@@ -81,7 +81,7 @@ const ClaimReviewForm = ({
             report,
             recaptcha,
             sources
-        }, t).then(response => {
+        }).then(response => {
             if (response.success) {
                 handleOk();
                 router.reload();

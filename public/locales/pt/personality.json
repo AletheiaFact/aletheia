@@ -6,5 +6,6 @@
     "wikipediaPage": "Acesse a página do Wikipédia",
     "headerReviewsTotal": "{{totalReviews}} avaliações de sentenças",
     "headerClaimsTotal": "discursos adicionados",
-    "toggleSectionSpeeches": "Discursos"
+    "toggleSectionSpeeches": "Discursos",
+    "errorWhileFetching": "Erro ao buscar personalidade"
 }

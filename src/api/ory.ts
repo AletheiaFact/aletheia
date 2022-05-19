@@ -1,6 +1,7 @@
 import { ory } from "../lib/orysdk";
 import { handleFlowError } from "../lib/orysdk/errors";
 import { AxiosError } from "axios";
+import { message } from "antd";
 
 
 const oryGetLoginFlow = ({ router, setFlow, t }) => {
@@ -26,6 +27,9 @@ const orySubmitLogin = ({router, flow, setFlow, t, values}) => {
     return ory
         .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
         .then(() => {
+            message.success(
+                `${t("login:loginSuccessfulMessage")}`
+            );
             if (flow?.return_to) {
                 window.location.href = flow?.return_to
                 return
