@@ -4,6 +4,6 @@ import { AssignEvent } from "./events";
 
 
 export const assignedUser = assign<reviewTaskMachineContext, AssignEvent>({
-  id: (_context, event) => event.id,
-  sentenceHash: (_context, event) => event.sentenceHash
+    userId: (_context, event) => event.userId,
+    sentence_hash: (_context, event) => event.sentence_hash
 });

@@ -1,24 +1,17 @@
 import * as mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { User } from "../../users/schemas/user.schema";
+import { ReviewTaskMachineContext } from "../dto/create-claim-review-task.dto";
 
 export type ClaimReviewTaskDocument = ClaimReviewTask & mongoose.Document;
 
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class ClaimReviewTask {
-    @Prop({ required: true })
-    userId: User;
 
     @Prop({ required: true })
-    sentence_hash: string;
+    state: string
+
+    @Prop({ type: Object, required: true })
+    context: ReviewTaskMachineContext;
 }
 
-const ClaimReviewTaskSchemaRaw = SchemaFactory.createForClass(ClaimReviewTask);
-
-ClaimReviewTaskSchemaRaw.virtual('user', {
-    ref: 'User',
-    localField: '_id',
-    foreignField: 'userId'
-});
-
-export const ClaimReviewTaskSchema = ClaimReviewTaskSchemaRaw;
+export const ClaimReviewTaskSchema = SchemaFactory.createForClass(ClaimReviewTask);

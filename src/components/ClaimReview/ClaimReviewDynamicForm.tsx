@@ -4,12 +4,15 @@ import { useMachine } from "@xstate/react";
 import { reviewTaskMachine } from "../../machine/reviewTaskMachine"
 import ClaimReviewForm from './ClaimReviewForm'
 import ClaimReviewUserForm from './ClaimReviewUserForm'
+import api from '../../api/claimReviewTask'
+import { useTranslation } from 'next-i18next';
 
 const ClaimReviewDynamicForm = ({ personality, claim, sentence, sitekey, handleReviewFinished }) => {
     const [state, send, service] = useMachine(reviewTaskMachine)
     const personalityId = personality._id;
     const claimId = claim._id;
     const sentenceHash = sentence?.props["data-hash"];
+    const { t } = useTranslation();
 
 
     service.onTransition(transitionState => {
@@ -19,6 +22,10 @@ const ClaimReviewDynamicForm = ({ personality, claim, sentence, sitekey, handleR
                 context: transitionState.context
             }
             localStorage.setItem("stored-state", JSON.stringify(reviewTaskData))
+            if (transitionState.value !== "unassigned") {
+                api.createClaimReviewTask(reviewTaskData, t)
+            }
+
         } catch (e) {
             console.error("Unable to save to localStorage")
         }

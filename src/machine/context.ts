@@ -1,9 +1,10 @@
 export type reviewTaskMachineContext = {
-  id: string;
-  sentenceHash: string;
-}
+    userId: string;
+    sentence_hash: string;
+  }
+
 
 export const initialContext: reviewTaskMachineContext = {
-  id: '',
-  sentenceHash: ''
+    userId: '',
+    sentence_hash: ''
 }

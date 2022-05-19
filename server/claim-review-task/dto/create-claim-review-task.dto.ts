@@ -1,11 +1,15 @@
-import { IsAlphanumeric, IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 import { User } from '../../users/schemas/user.schema';
 
+export type ReviewTaskMachineContext = {
+    userId: User;
+    sentence_hash: string;
+  }
 export class CreateClaimReviewTask {
     @IsNotEmpty()
     @IsString()
-    userId: User;
+    state: string
 
-    @IsString()
-    sentence_hash: string;
+    @IsObject()
+    context: ReviewTaskMachineContext
 }
