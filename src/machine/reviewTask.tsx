@@ -15,8 +15,8 @@ type reviewTaskMachineState =
     | { value: 'assigned', context: reviewTaskMachineContext}
 
 const assignedUser = assign<reviewTaskMachineContext, AssignEvent>({
-    id: (context, event) => event.id,
-    sentenceHash: (context, event) => event.sentenceHash
+    id: (_context, event) => event.id,
+    sentenceHash: (_context, event) => event.sentenceHash
 });
 
 const initialContext: reviewTaskMachineContext = {

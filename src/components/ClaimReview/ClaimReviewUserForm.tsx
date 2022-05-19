@@ -1,8 +1,6 @@
 import { UserOutlined } from '@ant-design/icons'
 import { Avatar } from 'antd'
-import { t } from 'i18next'
 import React, { useState } from 'react'
-import { send } from 'xstate'
 import InputSearch from '../Form/InputSearch'
 import SearchResult from '../SearchResult'
 import api from "../../api/user";

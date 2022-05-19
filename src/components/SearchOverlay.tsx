@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Avatar, Col, Row } from "antd";
-import { LeftCircleFilled, RightOutlined, SearchOutlined } from "@ant-design/icons";
+import { LeftCircleFilled, SearchOutlined } from "@ant-design/icons";
 import InputSearch from "./Form/InputSearch";
 import { useTranslation } from "next-i18next";
 import api from "../api/personality";
@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 import styled from "styled-components";
 import { useAppSelector } from "../store/store";
 import colors from "../styles/colors";
-import HighlightedText from "./HighlightedSearchText";
 import SearchResult from "./SearchResult";
 
 const OverlayDiv = styled.div`

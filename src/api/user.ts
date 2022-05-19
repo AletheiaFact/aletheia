@@ -72,10 +72,9 @@ const getUsers = (searchName, t) => {
             return response?.data;
         })
         .catch((e) => {
-            const response = e?.response?.data || {
+            return e?.response?.data || {
                 message: t("login:getUsersFailed"),
             };
-            return response;
         })
 }
 
