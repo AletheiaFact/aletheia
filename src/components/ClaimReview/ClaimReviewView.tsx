@@ -1,66 +1,26 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
-import { Col, Row, Avatar } from "antd";
-import ClaimReviewForm from "./ClaimReviewForm";
+import { Col, Row } from "antd";
 import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
-import { PlusOutlined, UserOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
-import InputSearch from "../Form/InputSearch";
-import api from "../../api/user";
-import SearchResult from "../SearchResult"
-import { useMachine } from "@xstate/react";
-import { reviewTaskMachine } from "../../machine/reviewTask"
+import ClaimReviewDynamicForm from "./ClaimReviewDynamicForm";
 
 const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
-    const [state, send, service] = useMachine(reviewTaskMachine)
     const { t } = useTranslation();
-    const personalityId = personality._id;
     const claimId = claim._id;
     const sentenceHash = sentence?.props["data-hash"];
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
-
-    const [searchFormCollapsed, setSearchFormCollapsed] = useState(true);
-
     const [formCollapsed, setFormCollapsed] = useState(true);
-
-    const [users, setUsers] = useState([]);
-    const [searchName, setSearchName] = useState("")
-
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
     };
-
-    const toggleSearchFormCollapse = () => {
-        setSearchFormCollapsed(!formCollapsed);
-    };
-
-    const handleInputSearch = async (name) => {
-        setSearchName(name)
-        const userSearchResults = await api.getUsers(name)
-        setUsers(userSearchResults)
-    }
-
-    const handleSearchClick = (id) => {
-        send("ASSIGN_USER", {id, sentenceHash})
-    }
-
-    service.onTransition(state => {
-        try {
-            const reviewTaskData = {
-                state: state.value,
-                context: state.context
-            }
-            localStorage.setItem("stored-state", JSON.stringify(reviewTaskData))
-        } catch (e) {
-            console.error("Unable to save to localStorage")
-        }
-    })
 
     return (
         <>
@@ -144,7 +104,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                                 <Col span={10}>
                                     <Button
                                         type={ButtonType.blue}
-                                        onClick={toggleSearchFormCollapse}
+                                        onClick={toggleFormCollapse}
                                         icon={<PlusOutlined />}
                                     >
                                         <h3 style={{
@@ -165,35 +125,13 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                         )}
                     </Row>
                 )}
-                {state.matches("unassigned") && !searchFormCollapsed &&
-                    <InputSearch
-                        placeholder="Atribua à um usuário"
-                        callback={handleInputSearch}
-                    />
-                }
-                {state.matches("unassigned") && users &&
-                    users.map(user => 
-                        <SearchResult
-                            key={user._id}
-                            handleOnClick={() => handleSearchClick(user._id)}
-                            avatar={<Avatar size={30} icon={<UserOutlined />} />}
-                            name={user.name}
-                            searchName={searchName}
-                        />)
-                }
-                <p>{state.value}</p>
-                {state.matches("assigned") && (
-                    <Row>
-                        <ClaimReviewForm
-                            claimId={claimId}
-                            personalityId={personalityId}
-                            handleOk={toggleFormCollapse}
-                            handleCancel={toggleFormCollapse}
-                            highlight={sentence}
-                            sitekey={sitekey}
-                        />
-                    </Row>
-                )}
+                {!formCollapsed && <ClaimReviewDynamicForm
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                    sitekey={sitekey}
+                    handleReviewFinished={toggleFormCollapse}
+                />}
             </Row>
             <Row>
                 <ClaimReviewList
