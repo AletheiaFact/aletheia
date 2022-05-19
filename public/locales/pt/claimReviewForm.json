@@ -17,5 +17,6 @@
     "errorMessage": "Erro ao enviar revisão",
     "successMessage": "Revisão concluída",
     "reportHeading": "Relatório da checagem",
-    "sourcesHeading": "Fontes"
+    "sourcesHeading": "Fontes",
+    "assignUser": "Atribua à um usuário"
 }

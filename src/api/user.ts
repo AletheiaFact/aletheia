@@ -62,7 +62,7 @@ const updatePassword = (params, t) => {
         });
 };
 
-const getUsers = (searchName) => {
+const getUsers = (searchName, t) => {
     const params = {
         searchName,
     }
@@ -72,8 +72,10 @@ const getUsers = (searchName) => {
             return response?.data;
         })
         .catch((e) => {
-            console.log('erro na busca dos usuários', e);
-
+            const response = e?.response?.data || {
+                message: t("login:getUsersFailed"),
+            };
+            return response;
         })
 }
 
