@@ -30,12 +30,6 @@ const OryProfileView = ({ user }) => {
         password: "",
     };
 
-    useEffect(() => {
-        console.log("flow", flow);
-    }, [flow]);
-
-
-
     const initializeCsrf = () => {
         if (flow?.ui?.nodes) {
             const { nodes } = flow?.ui;
@@ -61,7 +55,6 @@ const OryProfileView = ({ user }) => {
             ...flowValues,
             password: values.newPassword,
         };
-        console.log("flowValues", flowValues);
         onSubmit(flowValues);
     };
 

@@ -22,12 +22,14 @@ const oryGetLoginFlow = ({ router, setFlow, t }) => {
         .catch(handleFlowError(router, 'login', setFlow, t))
 }
 
+
 const orySubmitLogin = ({router, flow, setFlow, t, values}) => {
     return ory
         .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
         .then(() => {
-            if (flow?.return_to) {
-                window.location.href = flow?.return_to
+            // If the user needs to refresh privileged session to change settings
+            if (flow?.refresh) {
+                router.push('/profile')
                 return
             }
             router.push('/home')
