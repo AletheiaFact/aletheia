@@ -1,7 +1,7 @@
 import { Row } from 'antd'
 import React from 'react'
 import { useMachine } from "@xstate/react";
-import { reviewTaskMachine } from "../../machine/reviewTask"
+import { reviewTaskMachine } from "../../machine/reviewTaskMachine"
 import ClaimReviewForm from './ClaimReviewForm'
 import ClaimReviewUserForm from './ClaimReviewUserForm'
 
@@ -12,11 +12,11 @@ const ClaimReviewDynamicForm = ({ personality, claim, sentence, sitekey, handleR
     const sentenceHash = sentence?.props["data-hash"];
 
 
-    service.onTransition(state => {
+    service.onTransition(transitionState => {
         try {
             const reviewTaskData = {
-                state: state.value,
-                context: state.context
+                state: transitionState.value,
+                context: transitionState.context
             }
             localStorage.setItem("stored-state", JSON.stringify(reviewTaskData))
         } catch (e) {
