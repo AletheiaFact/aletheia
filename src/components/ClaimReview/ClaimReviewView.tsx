@@ -8,8 +8,9 @@ import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
+import SocialMediaShare from "../SocialMediaShare";
 
-const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
+const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     const { t } = useTranslation();
     const personalityId = personality._id;
     const claimId = claim._id;
@@ -145,6 +146,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                     claimId={claimId}
                 />
             </Row>
+            <SocialMediaShare quote={personality?.name} href={href} claim={claim?.title} />
         </>
     )
 }

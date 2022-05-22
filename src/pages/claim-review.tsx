@@ -6,11 +6,12 @@ import { useTranslation } from "next-i18next";
 import { NextSeo } from 'next-seo';
 const parser = require("accept-language-parser");
 
-const ClaimPage: NextPage<{ personality; claim; sentence; sitekey }> = ({
+const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
     personality,
     claim,
     sentence,
     sitekey,
+    href,
 }) => {
     const { t } = useTranslation();
     const review = sentence?.props?.topClassification;
@@ -61,6 +62,7 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey }> = ({
                 claim={claim}
                 sentence={sentence}
                 sitekey={sitekey}
+                href={href}
             />
         </>
     );

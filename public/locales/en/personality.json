@@ -6,5 +6,6 @@
     "wikipediaPage": "View Wikipedia Page",
     "headerReviewsTotal": "{{totalReviews}} claim reviews",
     "headerClaimsTotal": "speeches added",
-    "toggleSectionSpeeches": "Speeches"
+    "toggleSectionSpeeches": "Speeches",
+    "errorWhileFetching": "Error while fetching Personality"
 }

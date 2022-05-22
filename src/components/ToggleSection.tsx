@@ -27,7 +27,14 @@ const RadioButton = styled(Radio.Button)`
     color: ${colors.bluePrimary};
 `;
 
-const ToggleSection = (props) => {
+interface ToggleSectionProps {
+    defaultValue: boolean
+    onChange: (event: any) => void
+    labelTrue: string
+    labelFalse: string
+}
+
+const ToggleSection = (props: ToggleSectionProps) => {
     return (
         <RadioGroup
             defaultValue={props.defaultValue}
