@@ -90,6 +90,6 @@ spec:
               value: ORY_ACESS_TOKEN_STUB
           resources:
             limits:
-              cpu: 150m
+              cpu: 350m
             requests:
-              cpu: 120m
+              cpu: 240m
