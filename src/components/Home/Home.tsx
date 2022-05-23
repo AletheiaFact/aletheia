@@ -3,9 +3,8 @@ import { Row, Carousel, Spin, Col } from "antd";
 import { useTranslation } from 'next-i18next';
 import Button, { ButtonType } from '../Button';
 import colors from "../../styles/colors";
-import HomeLoggedIn from "./homeLoggedIn";
-import HomeLoggedOut from "./homeLoggedOut";
 import HomeContainer from "./HomeContainer";
+import HomeContent from "./HomeContent";
 
 const Home = ({ personalities, stats, href, isLoggedIn }) => {
     const { t } = useTranslation();
@@ -86,7 +85,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                         <span className="home-subtitle1">{t("home:subtitle1")}</span>
                                     </h2>
                                 </Row>
-                                {  !isLoggedIn  &&
+                                {!isLoggedIn &&
                                     <Row className="footer-container">
                                         <Col
                                             span="14"
@@ -96,27 +95,27 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                                 {t("home:statsFooter")}
                                             </h2>
                                         </Col>
-                                            <Row
-                                                style={{
-                                                    height: "15%",
-                                                    color: "#fff",
-                                                    justifyContent: "space-between",
-                                                    marginBottom: "32px",
-                                                }}
-                                                gutter={3}
-                                            >
-                                                <Col className="create-account-container">
-                                                        <Button
-                                                            href="#create_account"
-                                                            type={ButtonType.white}
-                                                            className="create-account-button"
-                                                        >
-                                                            <span style={{ fontWeight: 700 }}>
-                                                                {t("home:createAccountButton")}
-                                                            </span>
-                                                        </Button>
-                                                </Col>
-                                            </Row>
+                                        <Row
+                                            style={{
+                                                height: "15%",
+                                                color: "#fff",
+                                                justifyContent: "space-between",
+                                                marginBottom: "32px",
+                                            }}
+                                            gutter={3}
+                                        >
+                                            <Col className="create-account-container">
+                                                <Button
+                                                    href="#create_account"
+                                                    type={ButtonType.white}
+                                                    className="create-account-button"
+                                                >
+                                                    <span style={{ fontWeight: 700 }}>
+                                                        {t("home:createAccountButton")}
+                                                    </span>
+                                                </Button>
+                                            </Col>
+                                        </Row>
                                     </Row>
                                 }
                                 {
@@ -127,7 +126,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                         </h2>
                                     </Row>
                                 }
-                                
+
                                 <Row className="stats-container">
                                     <Col
                                         span={7}
@@ -175,16 +174,11 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                         </Col>
                     </div>
                 </Row>
-                {!isLoggedIn && <HomeLoggedOut 
-                        personalities={personalities}
-                        href={href}
-                    />
-                }
-                {isLoggedIn && <HomeLoggedIn 
-                        personalities={personalities}
-                        href={href}
-                    />
-                }
+                <HomeContent
+                    personalities={personalities}
+                    href={href}
+                    isLoggedIn={isLoggedIn}
+                />
             </HomeContainer>
         );
     } else {

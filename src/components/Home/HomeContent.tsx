@@ -14,12 +14,6 @@ const MainContent = styled.div`
         padding-top: 32px;
     }
 
-    .personality-list-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
-
     .personality-card {
         display: flex;
         flex-wrap: wrap;
@@ -48,7 +42,7 @@ const MainContent = styled.div`
             max-width: 450px;
         }
     }
-    
+
     @media (max-width: 1369px) {
         .personality-card {
             flex: 1 1 326.75px;
@@ -61,7 +55,7 @@ const MainContent = styled.div`
             grid-template-columns: 1fr;
         }
 
-        
+
         .ant-col-12.personalities-container {
             display: block;
             flex: 0 0 50%;
@@ -103,28 +97,22 @@ const MainContent = styled.div`
     }
 
     @media (max-width: 548px) {
-        .ant-col-12.personalities-container {
-            margin-left: 4.16666667%;
-            max-width: 91.666666%;
-        }
-
         #create_account,
-        .section-join-title {
+        join-container-logged-in {
             margin-left: 0;
             max-width: 100%;
         }
     }
 `
 
-
-const HomeLoggedOut = ({personalities, href}) => {
+const HomeContent = ({ personalities, href, isLoggedIn }) => {
     const { t } = useTranslation();
 
     return (
         <MainContent>
             <Row className="main-content">
                 <Col
-                    span={12}
+                    span={isLoggedIn ? 18 : 12}
                     offset={3}
                     className="personalities-container"
                 >
@@ -132,9 +120,13 @@ const HomeLoggedOut = ({personalities, href}) => {
                         <SectionTitle>
                             {t("home:sectionTitle1")}
                         </SectionTitle>
-                        <Col className="personality-list-container">
+                        <Col style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            justifyContent: "space-between"
+                        }}>
                             {personalities.map(
-                                (p, i) =>
+                                (p) =>
                                     p && (
                                         <Col
                                             className="personality-card"
@@ -168,16 +160,21 @@ const HomeLoggedOut = ({personalities, href}) => {
                         </Col>
                     </Col>
                 </Col>
-                <Col span={6} className="join-container">
-                    <Row className="section-join-title">
-                        <SectionTitle>
-                            {t("home:sectionTitle2")}
-                        </SectionTitle>
-                    </Row>
+                <Col span={isLoggedIn ? 24 : 6}
+                    className={`join-container ${isLoggedIn ? "join-container-logged-in" : ""}`}>
+                    {!isLoggedIn &&
+                        <>
+                            <Row className="section-join-title">
+                                <SectionTitle>
+                                    {t("home:sectionTitle2")}
+                                </SectionTitle>
+                            </Row>
 
-                    <Row id="create_account">
-                        <CTARegistration></CTARegistration>
-                    </Row>
+                            <Row id="create_account">
+                                <CTARegistration></CTARegistration>
+                            </Row>
+                        </>
+                    }
                     <SocialMediaShare href={href} />
                 </Col>
             </Row>
@@ -185,4 +182,4 @@ const HomeLoggedOut = ({personalities, href}) => {
     )
 }
 
-export default HomeLoggedOut
+export default HomeContent
