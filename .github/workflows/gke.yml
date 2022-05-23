@@ -86,10 +86,10 @@ jobs:
             TEST_USER_PASS: ${{ secrets.TEST_USER_PASS }}
 
         run: |
-            sed -i "s%SMTP_HOS%/$SMTP_HOST%g" config.seed.example.yaml
-            sed -i "s%SMTP_POR%/$SMTP_PORT%g" config.seed.example.yaml
-            sed -i "s%SMTP_EMAIL_USE%/$SMTP_EMAIL_USER%g" config.seed.example.yaml
-            sed -i "s%SMTP_EMAIL_PAS%/$SMTP_EMAIL_PASS%g" config.seed.example.yaml
+            sed -i "s%SMTP_HOST%$SMTP_HOST%g" config.seed.example.yaml
+            sed -i "s%SMTP_PORT%$SMTP_PORT%g" config.seed.example.yaml
+            sed -i "s%SMTP_EMAIL_USER%$SMTP_EMAIL_USER%g" config.seed.example.yaml
+            sed -i "s%SMTP_EMAIL_PASS%$SMTP_EMAIL_PASS%g" config.seed.example.yaml
             sed -i "s/TEST_USER_PASS/$TEST_USER_PASS/g" config.seed.example.yaml
             sed -i "s%MONGODB_URI%$MONGODB_URI%g" config.seed.example.yaml
             sed -i "s%ORY_SDK_URL%$ORY_SDK_URL%g" config.seed.example.yaml
