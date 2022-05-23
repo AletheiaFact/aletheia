@@ -19,7 +19,6 @@ const MainApp = ({ children }) => {
     const dispatch = useDispatch()
 
     const router = useRouter();
-<<<<<<< HEAD
     const pageUrl = router.pathname
 
     const ContentStyled = styled(Content)`
@@ -33,24 +32,6 @@ const MainApp = ({ children }) => {
             }
         `}
     `
-
-=======
-    const pageUrl = children[0].props?.openGraph?.url
-    let ContentStyled = styled(Content)`
-        padding: 0 30%;
-    `
-    if(pageUrl) {
-        const page = pageUrl.includes("home")
-        let layout;
-        
-        if (page) {
-            layout = "padding: 0;";
-            ContentStyled = styled(Content)`
-                ${layout}
-            `
-        }
-    }
->>>>>>> fixed yarn build
     const { enableOverlay, menuCollapsed } = useAppSelector(
         (state) => {
             return {

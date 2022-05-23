@@ -1,0 +1,237 @@
+import styled from "styled-components";
+import colors from "../../styles/colors";
+
+const HomeContainer = styled.div`
+    .header-content-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .home-title-container {
+        margin: 64px 0 32px 0;
+    }
+
+    .home-title,
+    .home-subtitle {
+        width: 100%;
+        color: ${colors.white};
+        font-size: 40px;
+        line-height: 48px;
+        margin: 0;
+    }
+
+    .home-subtitle0,
+    .home-subtitle1 {
+        display: block;
+    }
+
+    .footer-container {
+        display: grid;
+        grid-template-rows: 52px 72px;
+        width: 100%;
+    }
+
+    .home-footer-title {
+        color: ${colors.white};
+        font-size: 16px;
+        line-height: 20px;
+        margin-bottom: 0;
+    }
+
+    .create-account-button {
+        width: 185px;
+        height: 40px;
+        display: flex;
+        padding: 0;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .stats-container {
+        flex-direction: row;
+        color: ${colors.white};
+        width: 100%;
+        justify-content: space-between;
+        height: 55px;
+    }
+
+    .stats-text {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+    }
+    
+    .number-stats {
+        color: ${colors.lightBlueSecondary};
+        font-size: 40px;
+        line-height: 55px;
+        margin-right: 20px;
+    }
+
+    .title-stats {
+        font-size: 20px;
+    }
+    
+    @media (min-width: 1171px) {
+        .footer-container .ant-col-14 {
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 1170px) {
+        .home-title-container {
+            margin: 32px 0 16px 0;
+        }
+
+        .footer-container {
+            order: 3;
+            display: flex;
+        }
+        
+        .stats-container {
+            order: 2;
+            flex-direction: column;
+            margin: 0 0 16px 0;
+            height: auto;
+        }
+        
+        .ant-col-7.stats-child-container {
+            max-width: 100%;
+            margin-left: 0;
+        }
+    }
+    
+    @media (max-width: 950px) {
+        .ant-col-offset-4.header-content-container {
+            margin-left: 12.5%;
+            max-width: 75%;
+        }
+    }
+    
+    @media (max-width: 900px) {
+        .header-container {
+            max-width: 80%;
+            margin-left: 10%;
+        }
+
+        .home-title,
+        .home-subtitle {
+            font-size: 36px;
+            line-height: 42px;
+        }
+
+        .ant-col-offset-4.header-content-container {
+            margin-left: 8.33333333%;
+            max-width: 83.333334%;
+        }
+
+        .footer-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .home-footer-title {
+            margin-bottom: 0;
+        }
+    }
+
+    @media (max-width: 800px) {
+        .ant-col-offset-4.header-content-container {
+            margin-left: 4.16666667%;
+            max-width: 91.666666%;
+            
+        }
+    }
+
+    @media (max-width: 725px) {
+        .ant-col-offset-4.header-content-container {
+            margin-left: 0;
+        }
+    }
+
+    @media (max-width: 610px) {
+        .home-subtitle {
+            width: 100%;
+        }   
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr
+        }
+
+        .footer-container .ant-col-14 {
+            max-width: 100%;
+        }
+
+        .create-account-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 548px) {
+        .ant-col-offset-4.header-content-container {
+            max-width: 100%;
+        }
+
+        .home-title-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .home-title,
+        .home-subtitle {
+            width: 100%;
+            text-align: center;
+            font-size: 16px;
+            line-height: 38px;
+        }
+
+        .home-title {
+            font-size: 26px;
+        }
+
+        .home-subtitle {
+            font-size: 16px;
+        }
+
+        .home-subtitle0,
+        .home-subtitle1 {
+            display: inline;
+        }
+
+        .stats-container,
+        .create-account-container {
+            margin-bottom: 32px;
+        }
+
+        .number-stats {
+            font-size: 34px;
+        }
+
+        .title-stats {
+            font-size: 16px;
+        }
+
+        .home-footer-title {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .create-account-button {
+            width: 150px;
+        }
+
+        .section-join-title {
+            margin-left: 4.16666667%;
+            max-width: 91.666666%;
+        }
+    }
+`
+
+export default HomeContainer
