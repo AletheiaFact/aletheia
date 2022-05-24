@@ -1,9 +1,9 @@
 import React from "react";
 import { Avatar, Spin, Col, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import {ArrowRightOutlined, PlusOutlined} from "@ant-design/icons";
+import { ArrowRightOutlined, PlusOutlined } from "@ant-design/icons";
 import ReviewStats from "../Metrics/ReviewStats";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
 const { Title, Paragraph } = Typography;
 
@@ -13,8 +13,14 @@ const PersonalityCard = ({
     enableStats = true,
     header = false,
     hrefBase = '',
-    suggestion = 'default',
-    onClick = () => {}
+    onClick
+}: {
+    personality: any;
+    summarized?: boolean;
+    enableStats?: boolean;
+    header?: boolean;
+    hrefBase?: string;
+    onClick?: (personality: any) => {};
 }) => {
     const { t } = useTranslation();
     const style = {
@@ -60,11 +66,12 @@ const PersonalityCard = ({
                         <Avatar
                             size={style.avatarSize}
                             src={personality.image}
+                            alt={t('seo:personalityImageAlt', { name: personality.name })}
                         />
                     </Col>
                     <Col span={3}></Col>
                     <Col span={style.titleSpan}>
-                        <Title level={4} style={{ fontSize: "16px", marginBottom: 0 }}>
+                        <Title level={summarized ? 2 : 1} style={{ fontSize: "16px", marginBottom: 0 }}>
                             {personality.name}
                         </Title>
                         <Paragraph
@@ -77,23 +84,23 @@ const PersonalityCard = ({
                             {personality.description}
                         </Paragraph>
                         {summarized && enableStats &&
-                        personality.stats?.total !== undefined && (
-                            <Paragraph
-                                style={{
-                                    fontSize: "10px"
-                                }}
-                            >
-                                <b>
-                                    {t(
-                                        "personality:headerReviewsTotal",
-                                        {
-                                            totalReviews:
-                                            personality.stats?.total
-                                        }
-                                    )}
-                                </b>
-                            </Paragraph>
-                        )}
+                            personality.stats?.total !== undefined && (
+                                <Paragraph
+                                    style={{
+                                        fontSize: "10px"
+                                    }}
+                                >
+                                    <b>
+                                        {t(
+                                            "personality:headerReviewsTotal",
+                                            {
+                                                totalReviews:
+                                                    personality.stats?.total
+                                            }
+                                        )}
+                                    </b>
+                                </Paragraph>
+                            )}
                         {!summarized && personality.wikipedia && (
                             <a
                                 style={{
@@ -118,15 +125,15 @@ const PersonalityCard = ({
                         >
                             {personality._id ? (
                                 <Button
-                                    type="blue"
+                                    type={ButtonType.blue}
                                     href={`${hrefBase ||
-                                    "personality/"}${personality.slug}`}
+                                        "personality/"}${personality.slug}`}
                                 >
                                     {t("personality:profile_button")}
                                 </Button>
                             ) : (
                                 <Button
-                                    type="primary"
+                                    type={ButtonType.blue}
                                     onClick={() =>
                                         onClick(personality)
                                     }
@@ -155,34 +162,34 @@ const PersonalityCard = ({
                             >
                                 {personality?.claims?.length !== undefined && (
                                     <span>
-                                            <span
-                                                style={{
-                                                    color: colors.blueSecondary,
-                                                    fontSize: "20px"
-                                                }}
-                                            >
-                                                {personality.claims.length}
-                                            </span>{" "}
+                                        <span
+                                            style={{
+                                                color: colors.blueSecondary,
+                                                fontSize: "20px"
+                                            }}
+                                        >
+                                            {personality.claims.length}
+                                        </span>{" "}
                                         {t("personality:headerClaimsTotal")}
-                                        </span>
+                                    </span>
                                 )}
-                                {personality.stats?.total && (
+                                {personality.stats?.total !== undefined && (
                                     <span>
-                                            <span
-                                                style={{
-                                                    color: colors.blueSecondary,
-                                                    fontSize: "20px"
-                                                }}
-                                            >
-                                                {t(
-                                                    "personality:headerReviewsTotal",
-                                                    {
-                                                        totalReviews:
+                                        <span
+                                            style={{
+                                                color: colors.blueSecondary,
+                                                fontSize: "20px"
+                                            }}
+                                        >
+                                            {t(
+                                                "personality:headerReviewsTotal",
+                                                {
+                                                    totalReviews:
                                                         personality.stats?.total
-                                                    }
-                                                )}
-                                            </span>
+                                                }
+                                            )}
                                         </span>
+                                    </span>
                                 )}
                             </Row>
                         )}

@@ -6,9 +6,11 @@ import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
+import { PlusOutlined } from "@ant-design/icons";
+import SocialMediaShare from "../SocialMediaShare";
 
-const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
+const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     const { t } = useTranslation();
     const personalityId = personality._id;
     const claimId = claim._id;
@@ -16,7 +18,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
 
-    const [ formCollapsed, setFormCollapsed ] = useState(true);
+    const [formCollapsed, setFormCollapsed] = useState(true);
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
@@ -28,37 +30,42 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                 style={{
                     background: colors.lightGray,
                     margin: "2px -15px 0px -15px",
-                    padding: "0px 15px"
+                    padding: "0px 15px",
+                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)"
                 }}
             >
                 <ClaimSentenceCard
                     personality={personality}
                     sentence={sentence}
                     summaryClassName="claim-review"
+                    claimType={claim?.type}
                 />
                 {sentence.userReview && (
                     <Row
                         style={{
-                            justifyContent: "center"
+                            justifyContent: "center",
+                            flexWrap: "wrap"
                         }}
                     >
-                        <div>
-                            {t("claimReview:userReviewPrefix")}&nbsp;
+                        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
+                            <p style={{ marginBottom: 0 }}>
+                                {t("claimReview:userReviewPrefix")}&nbsp;
+                            </p>
                             <ClassificationText
                                 classification={
                                     sentence.userReview?.classification
                                 }
-                                t={t}
                             />
                         </div>
-                        <div>
-                            {t("claimReview:userReviewSuffix", {
-                                count: review?.count
-                            })}
+                        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
+                            <p style={{ marginBottom: 0 }}>
+                                {t("claimReview:userReviewSuffix", {
+                                    count: review?.count
+                                })}
                             &nbsp;
+                            </p>
                             <ClassificationText
                                 classification={review?.classification}
-                                t={t}
                             />
                         </div>
                     </Row>
@@ -68,15 +75,15 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                         {!sentence.userReview && (
                             <>
                                 <Col span={14}>
-                                        <span
-                                            style={{
-                                                fontSize: "14px"
-                                            }}
-                                        >
-                                            {t("claim:metricsHeaderInfo", {
-                                                totalReviews: stats?.total
-                                            })}
-                                        </span>{" "}
+                                    <span
+                                        style={{
+                                            fontSize: "14px"
+                                        }}
+                                    >
+                                        {t("claim:metricsHeaderInfo", {
+                                            totalReviews: stats?.total
+                                        })}
+                                    </span>{" "}
                                     <br />
                                     {review && (
                                         <span
@@ -84,28 +91,39 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                                                 fontSize: "10px"
                                             }}
                                         >
-                                                {t(
-                                                    "claim:cardOverallReviewPrefix"
-                                                )}{" "}
+                                            {t(
+                                                "claim:cardOverallReviewPrefix"
+                                            )}{" "}
                                             <ClassificationText
                                                 classification={
                                                     review?.classification
                                                 }
-                                                t={t}
                                             />
-                                                ({review?.count})
-                                            </span>
+                                            ({review?.count})
+                                        </span>
                                     )}
                                 </Col>
-                                <Col span={10}>
-                                    <Button
-                                        shape="round"
-                                        type="primary"
-                                        onClick={toggleFormCollapse}
-                                    >
-                                        {t("claimReviewForm:addReviewButton")}
-                                    </Button>
-                                </Col>
+                                {!review && <Col span={10}>
+                                        <Button
+                                            type={ButtonType.blue}
+                                            onClick={toggleFormCollapse}
+                                            icon={<PlusOutlined />}
+                                        >
+                                            <h3 style={{
+                                                marginLeft: 8,
+                                                lineHeight: 1.5715,
+                                                fontWeight: 400,
+                                                fontSize: 14,
+                                                marginBottom: 0,
+                                                color: colors.white,
+                                                display: "inline-block",
+
+                                            }}>
+                                                {t("claimReviewForm:addReviewButton")}
+                                            </h3>
+                                        </Button>
+                                    </Col>
+                                }
                             </>
                         )}
                     </Row>
@@ -129,6 +147,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey }) => {
                     claimId={claimId}
                 />
             </Row>
+            <SocialMediaShare quote={personality?.name} href={href} claim={claim?.title} />
         </>
     )
 }

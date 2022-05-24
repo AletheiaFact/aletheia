@@ -1,10 +1,10 @@
-import {useTranslation} from "next-i18next";
+import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
 import React from "react";
-import {Row} from "antd";
+import { Row } from "antd";
 import Logo from "./Header/Logo";
 import CTARegistration from "./Home/CTARegistration";
-import Button from "./Button";
+import Button, { ButtonType } from "./Button";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 
 const LandingPageComponent = () => {
@@ -70,7 +70,7 @@ const LandingPageComponent = () => {
                             padding: "5px 20px"
                         }}
                     >
-                        <Button type="blue" href="/about">{t("landingPage:learnMoreButton")}</Button>
+                        <Button type={ButtonType.blue} href="/about">{t("landingPage:learnMoreButton")}</Button>
                     </Row>
 
 

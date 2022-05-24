@@ -1,12 +1,14 @@
-import { Avatar, Col, Comment, Row, Tooltip, Typography } from "antd";
+import { Avatar, Col, Comment, Row, Typography } from "antd";
 import React from "react";
 import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
 import CardBase from "../CardBase";
 import ClaimSummary from "./ClaimSummary";
-import Button from "../Button";
+import Button, { ButtonType } from "../Button";
+import ClaimCardHeader from "./ClaimCardHeader";
+import colors from "../../styles/colors";
 
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 
 const ClaimCard = ({ personality, claim }) => {
     const { t } = useTranslation();
@@ -15,16 +17,20 @@ const ClaimCard = ({ personality, claim }) => {
     if (!claim) {
         return <div></div>;
     }
-
     return (
         <CardBase>
             <Row>
                 <Comment
-                    // review="true"
                     style={{
                         padding: "15px 15px 0px 15px"
                     }}
-                    author={personality.name}
+                    author={
+                        <ClaimCardHeader
+                            personality={personality}
+                            date={claim?.date}
+                            claimType={claim?.type}
+                        />
+                    }
                     avatar={
                         <Avatar
                             src={personality.image}
@@ -32,40 +38,44 @@ const ClaimCard = ({ personality, claim }) => {
                         />
                     }
                     content={
-                        <>
-                            <ClaimSummary
-                                style={{
-                                    padding: "15px"
-                                }}
-                            >
+                        <ClaimSummary
+                            style={{
+                                padding: "15px"
+                            }}
+                        >
+                            <Col>
                                 <Col>
-                                    <Col>
-                                        <Paragraph
-                                            ellipsis={{
-                                                rows: 4,
-                                                expandable: false
-                                            }}
-                                        >
-                                            {claim.content.text || claim.title}
-                                        </Paragraph>
-                                    </Col>
-                                    <a
-                                        href={`/personality/${personality.slug}/claim/${claim.slug}`}
-                                        style={{
-                                            textDecoration: "underline"
+                                    <Paragraph
+                                        ellipsis={{
+                                            rows: 4,
+                                            expandable: false
                                         }}
                                     >
-                                        {t("claim:cardLinkToFullText")}
-                                    </a>
+                                        <cite style={{ fontStyle: "normal" }}>
+                                            <p
+                                                style={{
+                                                    fontSize: 14,
+                                                    color: colors.blackPrimary,
+                                                    fontWeight: 400,
+                                                    margin: 0,
+                                                    lineHeight: 1.5715,
+                                                }}>
+                                                {claim?.content?.text || claim?.title}
+                                            </p>
+                                        </cite>
+                                    </Paragraph>
                                 </Col>
-                            </ClaimSummary>
+                                <a
+                                    href={`/personality/${personality.slug}/claim/${claim.slug}`}
+                                    style={{
+                                        textDecoration: "underline"
+                                    }}
+                                >
+                                    {t("claim:cardLinkToFullText")}
+                                </a>
+                            </Col>
+                        </ClaimSummary>
 
-                        </>
-                    }
-                    datetime={
-                        <Tooltip title={claim?.date}>
-                            <span>{claim?.date}</span>
-                        </Tooltip>
                     }
                 />
             </Row>
@@ -75,60 +85,91 @@ const ClaimCard = ({ personality, claim }) => {
                     width: "100%"
                 }}
             >
-                <Col span={16}>
-                    <span
+                <Col
+                    span={16}
+                    style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                    }}
+                >
+                    <p
                         style={{
-                            fontSize: "14px"
+                            width: '100%',
+                            fontSize: "14px",
+                            margin: 0,
                         }}
                     >
                         {t("claim:metricsHeaderInfo", {
                             totalReviews: claim
                                 ?.stats?.total
                         })}
-                    </span>{" "}
-                    <br />
+                    </p>{" "}
                     {review && (
-                        <span
+                        <Paragraph
                             style={{
-                                fontSize: "10px"
+                                fontSize: "10px",
+                                marginTop: 5,
+                                marginBottom: 0,
+                                display: 'flex'
                             }}
                         >
-                                        {t(
-                                            "claim:cardOverallReviewPrefix"
-                                        )}{" "}
-                            <span
+                            <p style={{ margin: 0}}>
+                                {t(
+                                    "claim:cardOverallReviewPrefix"
+                                )}
+                            </p>
+                            <p
                                 style={{
                                     color:
                                         ReviewColors[
-                                            review?._id
-                                            ] || "#000",
+                                        review?._id
+                                        ] || "#000",
                                     fontWeight: "bold",
                                     textTransform:
-                                        "uppercase"
+                                        "uppercase",
+                                    margin: '0px 3px'
                                 }}
                             >
-                                            {t(
-                                                `claimReviewForm:${review?._id}`
-                                            )}{" "}
-                                        </span>
-                                        ({review.count})
-                                    </span>
+                                {t(
+                                    `claimReviewForm:${review?._id}`
+                                )}{" "}
+                            </p>
+                            <p style={{ margin: 0 }}>
+                                ({review.count})
+                            </p>
+                        </Paragraph>
                     )}
                 </Col>
                 <Col span={8}>
                     <Button
                         style={{
-                            width: "100%"
+                            width: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            paddingBottom: 0,
                         }}
-                        type="primary"
+                        type={ButtonType.blue}
                         href={`/personality/${personality.slug}/claim/${claim.slug}`}
                     >
-                        {t("claim:cardReviewButton")}
+                        <Title
+                            level={4}
+                            style={{
+                                color: colors.white,
+                                fontSize: 14,
+                                fontWeight: 400,
+                                margin: 0,
+                                padding: 0,
+                                lineHeight: '32px',
+                            }}
+                        >
+                            {t("claim:cardReviewButton")}
+                        </Title>
                     </Button>
                 </Col>
             </Row>
-      </CardBase>
-  );
+        </CardBase>
+    );
 }
 
 export default ClaimCard;

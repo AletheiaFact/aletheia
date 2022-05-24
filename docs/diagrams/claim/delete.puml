@@ -1,0 +1,39 @@
+@startuml deleteClaim
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 100
+skinparam sequenceParticipant underline
+
+!theme mars
+title Claim Page\n\napi/claim/:id
+
+actor User
+participant "Claim Controller" as A
+participant "Claim Service" as B
+participant "Claim Revision Service" as C
+database "MongoDB" as D
+
+User -> A ++: //Request specify claim//
+
+note right
+  receive params from Request
+end note
+
+alt
+  A -> B ++: :delete(params.id)
+else
+  A --> User: //this claim doesn't exist//
+
+B -> C --++: //get the lastest claim revision//
+||15||
+C -> D ++: //find lastest revision//
+||15||
+create Claim
+D -> Claim !! : <<delete>>
+||15||
+D --> C --: //return delete response to service//
+||15||
+C --> A --: //delete claim response//
+||15||
+A --> User --: //Response is returned to the client//
+@enduml

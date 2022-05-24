@@ -1,10 +1,10 @@
 import { useTranslation } from "next-i18next";
-import React from "react";
+import React, { CSSProperties } from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import colors from "../styles/colors";
 
-function BackButton({ style, callback }) {
+function BackButton({ style, callback }: { style?: CSSProperties; callback?: () => void }) {
     const { t } = useTranslation();
     const router = useRouter();
     const pathname = router.pathname || "";

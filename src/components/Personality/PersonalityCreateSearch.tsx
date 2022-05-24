@@ -2,39 +2,42 @@ import React from "react";
 import { Form, Row } from "antd";
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
-import PersonalityCard from "./PersonalityCard";
 import { useTranslation } from "next-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "../../store/store";
+import colors from "../../styles/colors";
+import Label from "../Label";
+import PersonalitySearchResultSection from "./PersonalitySearchResultSection";
 
 const PersonalityCreateSearch = ({ withSuggestions }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
-    const router = useRouter();
 
-    const { personalities } = useSelector(
-        (state) => {
-            return {
-                personalities: state?.search?.searchResults || [],
-                searchName: state?.search?.searchInput || null
-            };
-        }
-    );
-
-    const createPersonality = async (personality) => {
-        const { slug } = await api.createPersonality(personality, t);
-        // Redirect to personality list in case _id is not present
-        const path = slug ? `/personality/${slug}` : "/personality";
-        router.push(path);
-    }
+    const { personalities } = useAppSelector((state) => {
+        return {
+            personalities: state?.search?.searchResults || [],
+            searchName: state?.search?.searchInput || null
+        };
+    });
 
     const handleInputSearch = (name) => {
+        const trimmedName = name.trim()
         dispatch({
             type: "SET_SEARCH_NAME",
-            searchName: name
+            searchName: trimmedName
         });
-        api.getPersonalities({ withSuggestions, personalities, searchName: name }, dispatch);
+        api.getPersonalities(
+            { withSuggestions, personalities, searchName: trimmedName, i18n },
+            dispatch
+        );
     }
+
+    const personalitiesCreated = personalities.filter(
+        (personality) => personality && personality._id
+    )
+    const personalitiesAvailable = personalities.filter(
+        (personality) => personality && !personality._id
+    )
 
     return (
         <Row style={{ marginTop: "10px" }}>
@@ -42,12 +45,17 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
                 style={{
                     width: "100%"
                 }}
+                layout="vertical"
             >
                 <Form.Item
-                    label={t("personalityCreateForm:name")}
+                    label={
+                        <Label>
+                            {t("personalityCreateForm:name")}
+                        </Label>
+                    }
                     style={{
                         width: "100%",
-                        color: "#595959",
+                        color: colors.blackSecondary,
                         fontSize: "14px",
                         lineHeight: "21px",
                     }}
@@ -58,22 +66,16 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
                     />
                 </Form.Item>
             </Form>
-            {personalities.map(
-                (p, i) =>
-                    p && (
-                        <PersonalityCard
-                            personality={p}
-                            summarized={true}
-                            enableStats={false}
-                            suggestion
-                            hrefBase="./"
-                            onClick={createPersonality}
-                            key={i}
-                        />
-                    )
-            )}
+            <PersonalitySearchResultSection
+                personalities={personalitiesCreated}
+                label={t("personalityCTA:created")}
+            />
+            <PersonalitySearchResultSection
+                personalities={personalitiesAvailable}
+                label={t("personalityCTA:available")}
+            />
         </Row>
     );
-}
+};
 
 export default PersonalityCreateSearch;

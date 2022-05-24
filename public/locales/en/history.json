@@ -1,0 +1,9 @@
+{
+    "anonymousUserName": "Anonymous",
+    "create": "created",
+    "update": "updated",
+    "delete": "deleted",
+    "personality": "profile",
+    "claim": "claim",
+    "historyItem": "{{username}} {{type}} {{title}} {{targetModel}}"
+}

@@ -8,10 +8,12 @@ const request = axios.create({
 
 const get = (options = {}) => {
     const params = {
-        page: options.page - 1,
+        page: options.page ? options.page - 1 : 0,
+        order: options.order || 'asc',
         name: options.searchName,
-        pageSize: options.pageSize,
+        pageSize: options.pageSize ? options.pageSize : 5,
         personality: options.personality,
+        language: options?.i18n?.languages[0],
     };
 
     return request
@@ -31,7 +33,7 @@ const get = (options = {}) => {
         });
 };
 
-const getById = (id, params = {}) => {
+const getById = (id, t, params = {}) => {
     return request
         .get(
             `${id}`,
@@ -44,7 +46,7 @@ const getById = (id, params = {}) => {
             return response.data;
         })
         .catch(() => {
-            message.error("Error while fetching Claim");
+            message.error(t("claim:errorWhileFetching"));
         });
 };
 
@@ -61,8 +63,12 @@ const getClaimSentence = (id, sentenceHash) => {
 
 const getClaimSentenceReviews = (options = {}) => {
     const params = {
-        page: options.page - 1,
-        pageSize: options.pageSize,
+        page: options.page ? options.page - 1 : 0,
+        order: options.order || 'asc',
+        name: options.searchName,
+        pageSize: options.pageSize ? options.pageSize : 5,
+        personality: options.personality,
+        language: options?.i18n?.languages[0],
     };
     return request
         .get(`${options.claimId}/sentence/${options.sentenceHash}/reviews`, {
@@ -83,12 +89,14 @@ const getClaimSentenceReviews = (options = {}) => {
         });
 };
 
-const save = (claim = {}) => {
+const save = (t, claim = {}) => {
     return request
         .post("/", claim)
         .then((response) => {
             const { title } = response.data;
-            message.success(`"${title}" created with success`);
+            message.success(
+                `"${title}" ${t("claimForm:successCreateMessage")}`
+            );
             return response.data;
         })
         .catch((err) => {
@@ -99,17 +107,19 @@ const save = (claim = {}) => {
             }
             const { data } = response;
             message.error(
-                data && data.message ? data.message : "Error while saving claim"
+                data && data.message
+                    ? data.message
+                    : t("claimForm:errorCreateMessage")
             );
         });
 };
 
-const update = (id, params = {}) => {
+const update = (id, t, params = {}) => {
     return request
         .put(`${id}`, params)
         .then((response) => {
             const { title, _id } = response.data;
-            message.success(`"${title}" updated with success`);
+            message.success(`"${title}" ${t("claimForm:successUpdateMessage")}`);
             return _id;
         })
         .catch((err) => {
@@ -122,7 +132,7 @@ const update = (id, params = {}) => {
             message.error(
                 data && data.message
                     ? data.message
-                    : "Error while updating claim"
+                    : t("claimForm:errorUpdateMessage")
             );
         });
 };

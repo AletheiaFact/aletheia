@@ -1,21 +1,25 @@
 import React from "react";
 import { Input } from "antd";
 import styled from "styled-components";
+import colors from "../../styles/colors";
 
 const InputSearchStyled = styled(Input.Search)`
     span.ant-input-group-addon {
         display: none;
     }
-    input.ant-input {
-        background: #F5F5F5;
+    span.ant-input-affix-wrapper {
+        background: ${colors.lightGray};
         box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
         border-radius: 30px!important;
-        color: #515151;
-        &:focus {
+        &:focus-within {
             border-color: #d9d9d9 ;
         }
+    }
+    input.ant-input {
+        background: ${colors.lightGray};
+        color: ${colors.blackSecondary};
         &::placeholder {
-            color: #515151;
+            color: ${colors.blackSecondary};
         }
     }
 `
@@ -42,6 +46,7 @@ const InputSearch = (props) => {
             addonAfter={false}
             addonBefore={false}
             onChange={e => doSearch(e)}
+            suffix={props.suffix || <></>}
         />
     );
 }

@@ -30,7 +30,7 @@ const MetricsOverview = ({ stats }) => {
                 >
                     <Title level={4}>{t("metrics:headerTitle")}</Title>
                     {stats.totalClaims && (
-                        <span>{t("metrics:header", stats)}</span>
+                        <p style={{ marginBottom: 0 }}>{t("metrics:header", stats)}</p>
                     )}
                 </div>
                 <ReviewStats

@@ -16,8 +16,6 @@ const initApp = async (options) => {
         options: {
             useUnifiedTopology: true,
             useNewUrlParser: true,
-            useCreateIndex: true,
-            useFindAndModify: false,
         }
     }
     options.logger.log("info", `Loading AppModule`);
@@ -52,7 +50,7 @@ const initApp = async (options) => {
                     const emailResponse = await emailService.sendEmail(
                         userData.email,
                         "Bem-vinda(o) a Aletheia",
-                        "Voce poderá acessar o sistema usando as credenciais abaixo",
+                        "Você poderá acessar o sistema usando as credenciais abaixo",
                         { ...userData, password },
                         "./templates/userSeed.html"
                     );

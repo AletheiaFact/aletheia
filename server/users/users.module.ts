@@ -4,6 +4,8 @@ import { User, UserSchema } from "./schemas/user.schema";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
 import { ViewModule } from "../view/view.module";
+import OryModule from "../ory/ory.module";
+import {ConfigModule} from "@nestjs/config";
 
 const UserModel = MongooseModule.forFeatureAsync([
     {
@@ -19,7 +21,7 @@ const UserModel = MongooseModule.forFeatureAsync([
 ]);
 
 @Module({
-    imports: [UserModel, ViewModule],
+    imports: [UserModel, ViewModule, OryModule, ConfigModule],
     exports: [UsersService, UserModel],
     controllers: [UsersController],
     providers: [UsersService],

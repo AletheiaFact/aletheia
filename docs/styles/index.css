@@ -1,0 +1,47 @@
+h2 {
+    font-weight: bold;
+}
+
+body{
+    background-image: linear-gradient(to bottom, rgb(17, 39, 58), rgb(101, 126, 142));
+}
+
+.main {
+    margin: 3rem;
+    min-height: 100vh;
+    padding-top: 10%;
+}
+
+.header {
+    color: white;
+}
+
+.columns {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    margin-top: 12rem;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: white;
+}
+
+.card-header {
+    border-radius: 4px 4px 0 0;
+    border-bottom: 1px solid #ddd;
+    padding-left: 15px;
+    padding-bottom: 8px;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+    padding: 15px;
+    justify-content: space-around;
+    align-items: center;
+}

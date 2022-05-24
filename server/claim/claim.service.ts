@@ -1,23 +1,29 @@
-import {Injectable, Logger} from "@nestjs/common";
+import { Injectable, Inject, Logger, Scope, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
-import slugify from 'slugify'
+import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ParserService } from "../parser/parser.service";
-import { SourceService } from "../source/source.service";
+import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
+import { HistoryService } from "../history/history.service"
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
-@Injectable()
+type ClaimMatchParameters = ({ _id: string } | { personality: string, slug: string }) & FilterQuery<ClaimDocument>;
+
+@Injectable({ scope: Scope.REQUEST })
 export class ClaimService {
     private optionsToUpdate: { new: boolean; upsert: boolean };
     private readonly logger = new Logger("ClaimService");
 
     constructor(
+        @Inject(REQUEST) private req: Request,
         @InjectModel(Claim.name)
-        private ClaimModel: Model<ClaimDocument>,
+        private ClaimModel: ISoftDeletedModel<ClaimDocument> & Model<ClaimDocument>,
         private claimReviewService: ClaimReviewService,
-        private sourceService: SourceService,
-        private parserService: ParserService
+        private historyService: HistoryService,
+        private claimRevisionService: ClaimRevisionService,
     ) {
         this.optionsToUpdate = {
             new: true,
@@ -27,16 +33,22 @@ export class ClaimService {
 
     async listAll(page, pageSize, order, query) {
         if (query.personality) {
-            query.personality = new Types.ObjectId(query.personality)
+            query.personality = Types.ObjectId(query.personality)
         }
         const claims = await this.ClaimModel.find(query)
+            .populate("latestRevision")
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
+
         return Promise.all(
-            claims.map((claim) => {
-                return this.postProcess(claim);
+            claims.map(async (claim) => {
+                // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+                return this.postProcess({
+                    ...claim.latestRevision,
+                    ...claim
+                });
             })
         );
     }
@@ -45,81 +57,146 @@ export class ClaimService {
         return this.ClaimModel.countDocuments().where(query);
     }
 
+    /**
+     * This function will create a new claim and claim Revision and save it to the dataBase.
+     * Also creates a History Module that tracks creation of claims.
+     * @param claim ClaimBody received of the client.
+     * @returns Return a new claim object.
+     */
     async create(claim) {
-        claim.content = this.parserService.parse(claim.content);
-        claim.slug = slugify(claim.title, {
-            lower: true,     // convert to lower case, defaults to `false`
-            strict: true     // strip special characters except replacement, defaults to `false`
-        })
-        claim.personality = new Types.ObjectId(claim.personality);
+        claim.personality = Types.ObjectId(claim.personality);
         const newClaim = new this.ClaimModel(claim);
-        if (claim.sources && Array.isArray(claim.sources)) {
-            try {
-                for (let i = 0; i < claim.sources.length ; i++) {
-                    await this.sourceService.create({
-                        link: claim.sources[i],
-                        targetId: newClaim.id,
-                        targetModel: "Claim",
-                    });
-                }
-            } catch (e) {
-                this.logger.error(e);
-                throw e;
-            }
-        }
-        return newClaim.save();
-    }
+        const newClaimRevision = await this.claimRevisionService.create(newClaim._id, claim)
+        newClaim.latestRevision = newClaimRevision._id
+        newClaim.slug = newClaimRevision.slug
 
-    async update(claimId, claimBody) {
-        // eslint-disable-next-line no-useless-catch
-        try {
-            const claim = await this.getById(claimId);
-            claimBody.content = this.parserService.parse(claimBody.content);
-            const newClaim = Object.assign(claim, claimBody);
-            const claimUpdate = await this.ClaimModel.findByIdAndUpdate(
-                claimId,
-                newClaim,
-                this.optionsToUpdate
-            );
-            return claimUpdate;
-        } catch (error) {
-            // TODO: log to service-runner
-            throw error;
+        const user = this.req.user
+
+        const history =
+            this.historyService.getHistoryParams(
+                newClaim._id,
+                TargetModel.Claim,
+                user,
+                HistoryType.Create,
+                newClaim.latestRevision
+            )
+        await this.historyService.createHistory(history)
+
+        newClaim.save();
+
+        return {
+            ...newClaim.toObject(),
+            ...newClaimRevision.toObject()
         }
     }
 
-    delete(claimId) {
-        return this.ClaimModel.findByIdAndRemove(claimId);
-    }
-
-    async getById(claimId) {
-        const claim = await this.ClaimModel.findById(claimId)
-            .populate("personality", "_id name")
-            .populate("sources", "_id link classification");
-        if (!claim) {
-            // TODO: handle 404 for claim not found
-            return {};
-        }
-
-        return this.postProcess(claim.toObject());
-    }
-
-    async getByPersonalityIdAndClaimSlug(personalityId, claimSlug) {
-        const claim =
-            await this.ClaimModel.findOne({
-                slug: claimSlug,
-                personality: personalityId
+    /**
+     * This function creates a new claim with the old claim data
+     * and overwrite with the new data, keeping data that hasn't changed.
+     * Also creates a History Module that tracks updation of claims.
+     * @param claimId Claim id which wants updated.
+     * @param claimRevisionUpdate ClaimBody received of the client.
+     * @returns Return a new claim object.
+     */
+    async update(claimId, claimRevisionUpdate) {
+        const claim = await this._getClaim({ _id: claimId }, undefined, false);
+        const previousRevision = claim.toObject().latestRevision
+        delete previousRevision._id
+        const newClaimRevision =
+            await this.claimRevisionService.create(claim._id, {
+                ...previousRevision,
+                ...claimRevisionUpdate
             })
-            .populate("personality", "_id name")
-            .populate("sources", "_id link classification");
-        if (!claim) {
-            return {};
-        }
+        claim.latestRevision = newClaimRevision._id
+        claim.slug = newClaimRevision.slug
 
-        return this.postProcess(claim.toObject());
+        const user = this.req.user
+
+        const history =
+            this.historyService.getHistoryParams(
+                claimId,
+                TargetModel.Claim,
+                user,
+                HistoryType.Update,
+                newClaimRevision,
+                previousRevision
+            )
+        await this.historyService.createHistory(history)
+
+        claim.save()
+        return newClaimRevision;
     }
 
+    /**
+     * This function does a soft deletion, doesn't delete claim in DataBase,
+     * but omit its in the front page
+     * Also creates a History Module that tracks deletion of claims.
+     * @param claimId Claim id which wants to delete
+     * @returns Returns the claim with the param isDeleted equal to true
+     */
+    async delete(claimId) {
+        const user = this.req.user
+        const previousClaim = await this.getById(claimId)
+        const history = this.historyService.getHistoryParams(
+            claimId,
+            TargetModel.Claim,
+            user,
+            HistoryType.Delete,
+            null,
+            previousClaim
+        )
+        await this.historyService.createHistory(history)
+        return this.ClaimModel.softDelete({ _id: claimId });
+    }
+
+    // TODO: add optional revisionId that will fetch a specifc revision that matches
+    async getById(claimId) {
+        return this._getClaim({_id: claimId})
+    }
+
+    async getByPersonalityIdAndClaimSlug(personalityId, claimSlug, revisionId = undefined) {
+        return this._getClaim({personality: personalityId, slug: claimSlug}, revisionId)
+    }
+
+    private async _getClaim(match: ClaimMatchParameters, revisionId = undefined, postprocess = true) {
+        let claim
+        if(revisionId) {
+            const rawClaim = await this.ClaimModel.aggregate([
+                { $match: match },
+                { $project: { "latestRevision": 0}}
+            ])
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            const revision = (await this.claimRevisionService.getRevision(revisionId)).toObject()
+            claim = {
+                ...rawClaim[0],
+                revision
+            }
+        } else {
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            claim = await this.ClaimModel.findOne(match)
+                .populate("personality", "_id name")
+                .populate("sources", "_id link classification")
+                .populate("latestRevision")
+            claim = claim.toObject()
+        }
+        if (!claim) {
+            throw new NotFoundException()
+        }
+        return postprocess === true ? this.postProcess(claim) : claim;
+    }
+
+    /**
+     * This function return all personality claims
+     * @param claim all personality claims
+     * @returns return all claims
+     */
     private async postProcess(claim) {
+        // TODO: we should not transform the object in this function
+        claim = {
+            ...(claim?.latestRevision || claim?.revision),
+            ...claim,
+            latestRevision: undefined
+        }
         const reviews = await this.claimReviewService.getReviewsByClaimId(
             claim._id
         );
@@ -138,7 +215,6 @@ export class ClaimService {
             const stats = { ...reviewStats, ...overallStats };
             claim = Object.assign(claim, { stats });
         }
-
         return claim;
     }
 
@@ -179,18 +255,5 @@ export class ClaimService {
             });
         });
         return claimContent;
-    }
-
-    findOneAndUpdate(query, push) {
-        return this.ClaimModel.findOneAndUpdate(
-            { ...query },
-            { $push: { ...push } },
-            { new: true },
-            (e) => {
-                if (e) {
-                    throw e;
-                }
-            }
-        );
     }
 }

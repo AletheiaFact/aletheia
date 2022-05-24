@@ -37,3 +37,16 @@ services:
       debug: true
       recaptcha_secret: RECAPTCHA_SECRET
       recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
+      db:
+        connection_uri: mongodb://localhost/Aletheia
+        options:
+          useUnifiedTopology: true
+          useNewUrlParser: true
+      throttle:
+        ttl: 60
+        limit: 1000
+      authentication_type: passport
+      ory:
+        url: ORY_SDK_URL
+        access_token: ORY_ACCESS_TOKEN
+        schema_id: ALETHEIA_SCHEMA_ID

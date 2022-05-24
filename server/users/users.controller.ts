@@ -8,25 +8,28 @@ import {
 import {Request, Response} from "express";
 import { UsersService } from "./users.service";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
-import { SessionGuard } from "../auth/session.guard";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
+import {ConfigService} from "@nestjs/config";
+import {IsPublic} from "../decorators/is-public.decorator";
 
 @Controller()
 export class UsersController {
     private readonly logger = new Logger("UserController");
     constructor(
         private readonly usersService: UsersService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private configService: ConfigService
     ) {}
 
-    @UseGuards(SessionGuard)
+    // TODO: this seems to be deprecated
     @Get("api/user/validate")
     async findAll(@Req() req): Promise<any> {
         return { login: true, user: req.user };
     }
 
+    @IsPublic()
     @UseGuards(LocalAuthGuard)
     @Post("api/user/signin")
     async login(@Req() req, @Res() res) {
@@ -35,7 +38,7 @@ export class UsersController {
         });
     }
 
-    @UseGuards(SessionGuard)
+    // TODO: move old logic to ory
     @Put("api/user/:id/password")
     async changePassword(@Req() req, @Res() res) {
         const { currentPassword, newPassword, repeatedNewPassword } = req.body;
@@ -48,7 +51,7 @@ export class UsersController {
                 throw Error("Repeated password doesn't match");
             }
             this.usersService
-                .changePassword(new mongoose.Types.ObjectId(req.params.id), currentPassword, newPassword)
+                .changePassword(mongoose.Types.ObjectId(req.params.id), currentPassword, newPassword)
                 .then(() => {
                     res.status(200).json({
                         success: true,
@@ -64,28 +67,24 @@ export class UsersController {
         }
     }
 
+    @IsPublic()
     @Get("login")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
-
+        const authType = this.configService.get<string>("authentication_type")
         await this.viewService
             .getNextServer()
             .render(
                 req,
                 res,
                 "/login",
-                Object.assign(parsedUrl.query, {})
+                Object.assign(parsedUrl.query, { authType })
             );
     }
 
-    @UseGuards(SessionGuard)
     @Get("profile")
     public async profile(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-        req.language = req.headers["accept-language"] || "en";
 
         await this.viewService
             .getNextServer()

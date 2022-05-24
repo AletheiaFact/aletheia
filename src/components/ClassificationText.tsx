@@ -1,7 +1,10 @@
 import ReviewColors from "../constants/reviewColors";
 import React from "react";
+import { useTranslation } from "next-i18next";
 
-export default (props) => {
+const ClassificationText = (props: { classification: string }) => {
+    const { t } = useTranslation();
+
     return (
         <span
             style={{
@@ -10,7 +13,9 @@ export default (props) => {
                 textTransform: "uppercase"
             }}
         >
-            {props.t(`claimReviewForm:${props.classification}`)}{" "}
+            {t(`claimReviewForm:${props.classification}`)}{" "}
         </span>
     );
 };
+
+export default ClassificationText

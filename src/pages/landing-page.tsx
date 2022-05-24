@@ -1,12 +1,19 @@
 import React from "react";
 import { NextPage } from "next";
 import LandingPageComponent from "../components/LandingPage";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
-const parser = require('accept-language-parser');
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { NextSeo } from "next-seo";
+import { useTranslation } from "next-i18next";
+const parser = require("accept-language-parser");
 
-const LandingPage: NextPage<{ data: string }> = (props) => {
+const LandingPage: NextPage<{ data: string }> = () => {
+    const { t } = useTranslation();
+
     return (
-        <LandingPageComponent {...props} />
+        <>
+            <NextSeo description={t("landingPage:description")} />
+            <LandingPageComponent />
+        </>
     );
 };
 
@@ -15,7 +22,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            href: req.protocol + '://' + req.get('host') + req.originalUrl
+            href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };
 }

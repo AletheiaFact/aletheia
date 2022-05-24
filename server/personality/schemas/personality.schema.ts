@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { softDeletePlugin } from 'mongoose-softdelete-typescript';
 import * as mongoose from "mongoose";
-import { Claim } from "../../claim/schemas/claim.schema";
 
 export type PersonalityDocument = Personality & mongoose.Document;
 
@@ -27,5 +27,7 @@ PersonalitySchemaRaw.virtual('claims', {
     localField: '_id',
     foreignField: 'personality'
 });
+
+PersonalitySchemaRaw.plugin(softDeletePlugin)
 
 export const PersonalitySchema = PersonalitySchemaRaw;

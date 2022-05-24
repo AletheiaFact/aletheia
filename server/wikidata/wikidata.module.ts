@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import { WikidataService } from "./wikidata.service";
-import { WikidataController } from "./wikidata.controller";
 import { MongooseModule } from "@nestjs/mongoose";
 import { WikidataCache, WikidataCacheSchema } from "./schemas/wikidata.schema";
 
@@ -26,6 +25,5 @@ const WikidataCacheModel = MongooseModule.forFeatureAsync([
     imports: [WikidataCacheModel],
     exports: [WikidataService],
     providers: [WikidataService],
-    controllers: [WikidataController],
 })
 export class WikidataModule {}

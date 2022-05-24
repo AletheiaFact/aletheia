@@ -22,9 +22,22 @@ services:
       smtp_secure: false
       smtp_email_user: SMTP_EMAIL_USER
       smtp_email_pass: SMTP_EMAIL_PASS
+      db:
+        connection_uri: MONGODB_URI
+        options:
+          useUnifiedTopology: true
+          useNewUrlParser: true
       users:
         - name: Test User
           email: test@aletheiafact.org
           password: TEST_USER_PASS
           sendAuthDetails: false
           isTestUser: true
+      throttle:
+        ttl: 60
+        limit: 1000
+      authentication_type: passport
+      ory:
+        url: ORY_SDK_URL
+        access_token: ORY_ACCESS_TOKEN
+        schema_id: ALETHEIA_SCHEMA_ID

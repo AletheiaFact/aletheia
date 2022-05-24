@@ -1,15 +1,16 @@
-import {Layout, Row} from "antd";
+import { Layout, Row } from "antd";
 import Sidebar from "./Sidebar";
 import Header from "./Header/Header";
 import BackButton from "./BackButton";
 import SearchOverlay from "./SearchOverlay";
 import React from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {useTranslation} from "next-i18next";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "next-i18next";
 import styled from "styled-components"
 import { useRouter } from 'next/router'
 import colors from "../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
+import { useAppSelector } from "../store/store";
 
 const { Footer, Content } = Layout;
 
@@ -21,11 +22,11 @@ const ContentStyled = styled(Content)`
     }
 `;
 
-const MainApp = ({children}) => {
+const MainApp = ({ children }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch()
     const router = useRouter();
-    const { enableOverlay, menuCollapsed, isLoggedIn } = useSelector(
+    const { enableOverlay, menuCollapsed } = useAppSelector(
         (state) => {
             return {
                 isLoggedIn: state?.login || false,
@@ -83,7 +84,7 @@ const MainApp = ({children}) => {
                             flexDirection: "column"
                         }}>
                             {t("footer:creativeCommons")}
-                            <a style={{whiteSpace: "pre-wrap"}} rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
+                            <a style={{ whiteSpace: "pre-wrap" }} rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
                         </Row>
                         <Row style={{
                             width: "100%",

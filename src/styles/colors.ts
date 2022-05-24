@@ -1,4 +1,4 @@
-export default {
+const colors = {
     bluePrimary: "rgb(17, 39, 58)",
     blueSecondary: "rgb(101, 126, 142)",
     blueTertiary: "rgb(101, 126, 142)",
@@ -8,5 +8,7 @@ export default {
     lightGray: "rgb(245,245,245)",
     lightBlue: "rgb(218, 232, 234)",
     white: "rgb(255, 255, 255)",
-    black: "rgb(81, 81, 81)",
+    blackPrimary: "rgb(17, 17, 17)",
+    blackSecondary: "rgb(81, 81, 81)",
 };
+export default colors
