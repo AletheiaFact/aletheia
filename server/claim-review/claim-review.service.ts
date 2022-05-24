@@ -174,44 +174,55 @@ export class ClaimReviewService {
      * @returns Return a new claim review object.
      */
     async create(claimReview) {
-        // Cast ObjectId
-        claimReview.personality = Types.ObjectId(claimReview.personality);
-        claimReview.claim = Types.ObjectId(claimReview.claim);
-        claimReview.user = Types.ObjectId(claimReview.user);
-        const newClaimReview = new this.ClaimReviewModel(claimReview);
-        if (claimReview.sources && Array.isArray(claimReview.sources)) {
-            try {
-                for (let i = 0; i < claimReview.sources.length ; i++) {
-                    await this.sourceService.create({
-                        link: claimReview.sources[i],
-                        targetId: newClaimReview.id,
-                        targetModel: SourceTargetModel.ClaimReview,
-                    });
+        const review = await this.getReviewBySentenceHash(claimReview.sentence_hash)
+
+        if (review.length) {
+            throw new Error("This Claim already has a review");
+        } else {
+            // Cast ObjectId
+            claimReview.personality = Types.ObjectId(claimReview.personality);
+            claimReview.claim = Types.ObjectId(claimReview.claim);
+            const newClaimReview = new this.ClaimReviewModel(claimReview)
+            if (claimReview.sources && Array.isArray(claimReview.sources)) {
+                try {
+                    for (let i = 0; i < claimReview.sources.length ; i++) {
+                        await this.sourceService.create({
+                            link: claimReview.sources[i],
+                            targetId: newClaimReview.id,
+                            targetModel: SourceTargetModel.ClaimReview,
+                        });
+                    }
+                } catch (e) {
+                    this.logger.error(e);
+                    throw e;
                 }
-            } catch (e) {
-                this.logger.error(e);
-                throw e;
             }
+
+            const history = 
+                this.historyService.getHistoryParams(
+                    newClaimReview._id,
+                    TargetModel.ClaimReview,
+                    claimReview.user,
+                    HistoryType.Create,
+                    newClaimReview
+                )
+
+            this.historyService.createHistory(history)
+
+            return newClaimReview.save();
         }
-
-        const history = 
-            this.historyService.getHistoryParams(
-                newClaimReview._id,
-                TargetModel.ClaimReview,
-                claimReview.user,
-                HistoryType.Create,
-                newClaimReview
-            )
-
-        this.historyService.createHistory(history)
-
-        return newClaimReview.save();
     }
 
     getById(claimReviewId) {
         return this.ClaimReviewModel.findById(claimReviewId)
             .populate("claims", "_id title")
             .populate("sources", "_id link classification");
+    }
+
+    getReviewBySentenceHash(sentence_hash) {
+        return this.ClaimReviewModel.aggregate([
+            { $match: { sentence_hash } },
+        ])
     }
 
     /**
