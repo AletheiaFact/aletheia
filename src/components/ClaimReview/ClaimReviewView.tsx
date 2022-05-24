@@ -103,26 +103,27 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                                         </span>
                                     )}
                                 </Col>
-                                <Col span={10}>
-                                    <Button
-                                        type={ButtonType.blue}
-                                        onClick={toggleFormCollapse}
-                                        icon={<PlusOutlined />}
-                                    >
-                                        <h3 style={{
-                                            marginLeft: 8,
-                                            lineHeight: 1.5715,
-                                            fontWeight: 400,
-                                            fontSize: 14,
-                                            marginBottom: 0,
-                                            color: colors.white,
-                                            display: "inline-block",
+                                {!review && <Col span={10}>
+                                        <Button
+                                            type={ButtonType.blue}
+                                            onClick={toggleFormCollapse}
+                                            icon={<PlusOutlined />}
+                                        >
+                                            <h3 style={{
+                                                marginLeft: 8,
+                                                lineHeight: 1.5715,
+                                                fontWeight: 400,
+                                                fontSize: 14,
+                                                marginBottom: 0,
+                                                color: colors.white,
+                                                display: "inline-block",
 
-                                        }}>
-                                            {t("claimReviewForm:addReviewButton")}
-                                        </h3>
-                                    </Button>
-                                </Col>
+                                            }}>
+                                                {t("claimReviewForm:addReviewButton")}
+                                            </h3>
+                                        </Button>
+                                    </Col>
+                                }
                             </>
                         )}
                     </Row>
