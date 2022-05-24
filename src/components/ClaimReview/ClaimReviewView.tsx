@@ -40,7 +40,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                     summaryClassName="claim-review"
                     claimType={claim?.type}
                 />
-                {sentence.userReview && (
+                {sentence.userReview && review && (
                     <Row
                         style={{
                             justifyContent: "center",
