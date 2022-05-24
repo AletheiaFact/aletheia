@@ -86,8 +86,8 @@ spec:
               value: UMAMI_SITE_ID_STUB
             - name: ORY_SDK_URL
               value: ORY_SDK_URL_STUB
-            - name: ORY_ACESS_TOKEN
-              value: ORY_ACESS_TOKEN_STUB
+            - name: ORY_ACCESS_TOKEN
+              value: ORY_ACCESS_TOKEN_STUB
           resources:
             limits:
               cpu: 200m
