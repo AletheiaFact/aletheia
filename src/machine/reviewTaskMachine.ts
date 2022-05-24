@@ -17,6 +17,20 @@ export const reviewTaskMachine = createMachine<reviewTaskMachineContext, reviewT
             }
         },
         assigned: {
+            on: {
+                REPORT_FINISHED: {
+                    target: "reported",
+                },
+            }
+        },
+        reported: {
+            on: {
+                PUBLISHED: {
+                    target: "published",
+                }
+            }
+        },        
+        published: {
             type: "final"
         }
     },
