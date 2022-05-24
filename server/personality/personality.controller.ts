@@ -36,7 +36,7 @@ export class PersonalityController {
     @Post("api/personality")
     async create(@Body() createPersonality: CreatePersonality) {
         try {
-            return this.personalityService.create(createPersonality);
+            return await this.personalityService.create(createPersonality);
         } catch (error) {
             if (
                 error.name === "MongoError" &&
