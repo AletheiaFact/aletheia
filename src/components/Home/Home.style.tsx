@@ -25,7 +25,7 @@ const HomeContainer = styled.div`
         display: block;
     }
 
-    .footer-container {
+    .CTA-section {
         display: grid;
         grid-template-rows: 52px 72px;
         width: 100%;
@@ -71,9 +71,48 @@ const HomeContainer = styled.div`
     .title-stats {
         font-size: 20px;
     }
+
+    .main-content {
+        padding-top: 32px;
+    }
+
+    .personality-card {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: 10px;
+    }
+
+    .more-personalities-container {
+        margin: 48px 0 64px 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .more-personalities-title {
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    .join-container-logged-out {
+        margin-left: 20px;
+    }
+
+    @media (min-width: 1370px) {
+        .personality-card {
+            flex: 1 1 326.75px;
+            max-width: 450px;
+        }
+    }
+
+    @media (max-width: 1369px) {
+        .personality-card {
+            flex: 1 1 326.75px;
+        }
+    }
     
     @media (min-width: 1171px) {
-        .footer-container .ant-col-14 {
+        .CTA-section .ant-col-14 {
             max-width: 100%;
         }
     }
@@ -83,7 +122,7 @@ const HomeContainer = styled.div`
             margin: 32px 0 16px 0;
         }
 
-        .footer-container {
+        .CTA-section {
             order: 3;
             display: flex;
         }
@@ -98,6 +137,36 @@ const HomeContainer = styled.div`
         .ant-col-7.stats-child-container {
             max-width: 100%;
             margin-left: 0;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+
+        .ant-col-12.personalities-container {
+            display: block;
+            flex: 0 0 50%;
+            max-width: 75%;
+        }
+
+        .more-personalities-container {
+            margin: 16px 0 32px 0;
+        }
+
+        .join-container-logged-in,
+        .join-container-logged-out {
+            margin-left: 0;
+            max-width: 100%;
+        }
+
+        #create_account,
+        .section-join-title {
+            margin-left: 12.5%;
+            max-width: 75%;
         }
     }
     
@@ -125,7 +194,7 @@ const HomeContainer = styled.div`
             max-width: 83.333334%;
         }
 
-        .footer-container {
+        .CTA-section {
             width: 100%;
             display: flex;
             justify-content: space-between;
@@ -134,6 +203,13 @@ const HomeContainer = styled.div`
 
         .home-footer-title {
             margin-bottom: 0;
+        }
+
+        .ant-col-12.personalities-container,
+        #create_account,
+        .section-join-title {
+            margin-left: 8.33333333%;
+            max-width: 83.333334%;
         }
     }
 
@@ -149,6 +225,13 @@ const HomeContainer = styled.div`
         .ant-col-offset-4.header-content-container {
             margin-left: 0;
         }
+
+        .ant-col-12.personalities-container,
+        #create_account,
+        .section-join-title {
+            margin-left: 4.16666667%;
+            max-width: 91.666666%;
+        }
     }
 
     @media (max-width: 610px) {
@@ -156,13 +239,13 @@ const HomeContainer = styled.div`
             width: 100%;
         }   
         
-        .footer-container {
+        .CTA-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr
         }
 
-        .footer-container .ant-col-14 {
+        .CTA-section .ant-col-14 {
             max-width: 100%;
         }
 
@@ -230,6 +313,12 @@ const HomeContainer = styled.div`
         .section-join-title {
             margin-left: 4.16666667%;
             max-width: 91.666666%;
+        },
+
+        #create_account,
+        join-container-logged-in {
+            margin-left: 0;
+            max-width: 100%;
         }
     }
 `
