@@ -12,7 +12,7 @@ import {
 } from "react-share";
 import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
-import SocialMediaContainer from "./SocialMediaContainer";
+import SocialMediaContainer from "./SocialMediaShare.style";
 
 const { Title } = Typography;
 

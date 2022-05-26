@@ -3,7 +3,7 @@ import { Row, Carousel, Spin, Col } from "antd";
 import { useTranslation } from 'next-i18next';
 import Button, { ButtonType } from '../Button';
 import colors from "../../styles/colors";
-import HomeContainer from "./HomeContainer";
+import HomeContainer from "./Home.style";
 import HomeContent from "./HomeContent";
 
 const Home = ({ personalities, stats, href, isLoggedIn }) => {
@@ -127,7 +127,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                                     </Row>
                                 }
 
-                                <Row className="stats-container">
+                                <Row className="stats-container" style={{border: "1px solid red"}}>
                                     <Col
                                         span={7}
                                         className="stats-child-container"

@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import { Typography } from "antd";
 import Button, { ButtonType } from "../Button";
-import CTAContainer from "./CTAContainer";
+import CTAContainer from "./CTARegistration.style";
 
 function CTARegistration() {
     const { t } = useTranslation();
