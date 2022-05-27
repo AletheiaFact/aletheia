@@ -10,7 +10,10 @@ const HomeContent = ({ personalities, href, isLoggedIn }) => {
     const { t } = useTranslation();
 
     return (
-        <Row className="main-content">
+        <Row
+            className="main-content"
+            style={{ paddingTop: "32px" }}
+        >
             <PersonalitiesContainer
                 personalities={personalities}
                 isLoggedIn={isLoggedIn}
@@ -20,13 +23,13 @@ const HomeContent = ({ personalities, href, isLoggedIn }) => {
                 className={`${isLoggedIn ? "join-container-logged-in" : "join-container-logged-out"}`}>
                 {!isLoggedIn &&
                     <>
-                        <Row className="section-join-title">
+                        <Row className="section-title-container">
                             <SectionTitle>
                                 {t("home:sectionTitle2")}
                             </SectionTitle>
                         </Row>
 
-                        <Row id="create_account">
+                        <Row id="create_account" className="CTA-registration-container">
                             <CTARegistration></CTARegistration>
                         </Row>
                     </>

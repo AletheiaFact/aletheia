@@ -66,20 +66,38 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                 <Col
                     span={18}
                     offset={3}
-                    className="header-container"
+                    className="carousel-container"
                 >
                     <Col
                         offset={4}
                         span={16}
-                        className="header-content-container"
+                        className="carousel-content"
+                        style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                        }}
                     >
-                        <Row className="home-title-container">
-                            <h1 className="home-title">
+                        <Row className="carousel-title-container">
+                            <h1
+                                className="carousel-title"
+                                style={{
+                                    width: "100%",
+                                    color: colors.white,
+                                    margin: 0,
+                                }}
+                            >
                                 {t("home:title")}
                             </h1>
-                            <h2 className="home-subtitle">
-                                <span className="home-subtitle0">{t("home:subtitle0")}</span>{" "}
-                                <span className="home-subtitle1">{t("home:subtitle1")}</span>
+                            <h2
+                                className="carousel-subtitle-container"
+                                style={{
+                                    width: "100%",
+                                    color: colors.white,
+                                    margin: 0,
+                                }}
+                            >
+                                <span className="carousel-subtitle">{t("home:subtitle0")}</span>
+                                <span className="carousel-subtitle">{t("home:subtitle1")}</span>
                             </h2>
                         </Row>
                         

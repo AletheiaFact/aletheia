@@ -29,6 +29,11 @@ const PersonalitiesContainer = ({ isLoggedIn, personalities }) => {
                             p && (
                                 <Col
                                     className="personality-card"
+                                    style={{
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        marginRight: "10px",
+                                    }}
                                 >
                                     <PersonalityCard
                                         personality={p}
@@ -39,7 +44,13 @@ const PersonalitiesContainer = ({ isLoggedIn, personalities }) => {
                             )
                     )}
                 </Col>
-                <Col className="more-personalities-container">
+                <Col
+                    className="more-personalities-container"
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                    }}
+                >
                     <Button
                         href="/personality"
                         type={ButtonType.blue}
@@ -52,7 +63,13 @@ const PersonalitiesContainer = ({ isLoggedIn, personalities }) => {
                             borderRadius: "4px",
                         }}
                     >
-                        <span className="more-personalities-title">
+                        <span
+                            style={{
+                                fontWeight: 400,
+                                fontSize: "16px",
+                                lineHeight: "24px",
+                            }}
+                        >
                             {t("home:seeMorePersonalitiesButton")} <ArrowRightOutlined />
                         </span>
                     </Button>

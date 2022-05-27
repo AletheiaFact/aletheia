@@ -3,18 +3,56 @@ import React from "react";
 import { Typography } from "antd";
 import Button, { ButtonType } from "../Button";
 import CTAContainer from "./CTARegistration.style";
+import colors from "../../styles/colors";
 
 function CTARegistration() {
     const { t } = useTranslation();
+    
     return (
-        <CTAContainer>
-            <Typography.Title level={2}  className="cta-title">
+        <CTAContainer
+            style={{
+                backgroundColor: colors.bluePrimary,
+                textAlign: "center",
+                maxWidth: "100%",
+                display: "grid",
+                justifyContent: "center",
+            }}
+        >
+            <Typography.Title
+                level={2}
+                style={{
+                    width: "100%",
+                    color: colors.white,
+                    fontSize: "22px",
+                    lineHeight: "34px",
+                    fontWeight: 800,
+                    marginBottom: 0,
+                }}
+            >
                 {t("CTARegistration:title")}
             </Typography.Title>
-            <p className="cta-body-paragraph">
+            <p
+                style={{
+                    color: "rgba(255, 255, 255, 0.8)",
+                    padding: "0 16px 0 16px",
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    lineHeight: "24px",
+                    margin: "32px 0 13px 0",
+                }}
+            >
                 {t("CTARegistration:body")}
             </p>
-            <p className="cta-footer-paragraph">
+            <p
+                style={{
+                    color: "rgba(255, 255, 255, 0.8)",
+                    padding: "0 16px 0 16px",
+                    fontSize: "14px",
+                    fontWeight: 400,
+                    lineHeight: "22px",
+                    marginBottom: "32px",
+                }}
+            >
                 {t("CTARegistration:footer")}
             </p>
             <Button
@@ -22,7 +60,14 @@ function CTARegistration() {
                 type={ButtonType.white}
                 target="_blank"
                 href={t("common:registrationLink")}
-                className="cta-registration-button"
+                className="CTA-registration-button"
+                style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "40px",
+                    padding: "0 15px",
+                    fontWeight: 700,
+                }}
             >
                 {t("CTARegistration:button")}
             </Button>

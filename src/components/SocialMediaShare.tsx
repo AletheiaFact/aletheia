@@ -35,12 +35,41 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
     }
     
     return (
-        <SocialMediaContainer>
-            <Title level={2} className="social-media-title">
+        <SocialMediaContainer
+            style={{
+                background: colors.lightGray,
+                padding: "20px 8px",
+                justifyContent: "center",
+                alignItens: "center",
+            }}
+        >
+            <Title
+                level={2}
+                style={{
+                    width: "auto",
+                    textAlign: "center",
+                    marginBottom: 0,
+                    fontSize: "26px",
+                    lineHeight: "39px",
+                    fontWeight: 400,
+                    color: colors.blackSecondary,
+                }}
+            >
                 {t("share:title")}
             </Title>
             <nav className="social-media-container">
-                <ul className="social-media-list">
+                <ul
+                    className="social-media-list"
+                    style={{
+                        marginBottom: 0,
+                        padding: 0,
+                        textAlign: "center",
+                        display: "grid",
+                        gridTemplateColumns: "30px 30px 30px 30px",
+                        gridColumnGap: "16px",
+                        listStyleType: "none",
+                    }}
+                >
                     <li>
                         <FacebookShareButton
                             url={href}

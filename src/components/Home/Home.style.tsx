@@ -2,96 +2,49 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 
 const HomeContainer = styled.div`
-    .header-content-container {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .home-title-container {
+    .carousel-title-container {
         margin: 64px 0 32px 0;
     }
 
-    .home-title,
-    .home-subtitle {
-        width: 100%;
-        color: ${colors.white};
+    .carousel-title,
+    .carousel-subtitle-container {
         font-size: 40px;
         line-height: 48px;
-        margin: 0;
     }
 
-    .home-subtitle0,
-    .home-subtitle1 {
+    .carousel-subtitle {
         display: block;
     }
 
-    .CTA-section {
+    .CTA-container {
         display: grid;
         grid-template-rows: 52px 72px;
         width: 100%;
     }
 
-    .home-footer-title {
-        color: ${colors.white};
+    .CTA-title {
         font-size: 16px;
-        line-height: 20px;
-        margin-bottom: 0;
     }
 
-    .create-account-button {
+    .CTA-button {
         width: 185px;
-        height: 40px;
-        display: flex;
-        padding: 0;
-        justify-content: center;
-        align-items: center;
     }
 
     .stats-container {
         flex-direction: row;
-        color: ${colors.white};
-        width: 100%;
-        justify-content: space-between;
         height: 55px;
-    }
-
-    .stats-text {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0;
     }
     
     .number-stats {
-        color: ${colors.lightBlueSecondary};
         font-size: 40px;
-        line-height: 55px;
-        margin-right: 20px;
     }
 
     .title-stats {
         font-size: 20px;
     }
 
-    .main-content {
-        padding-top: 32px;
-    }
-
-    .personality-card {
-        display: flex;
-        flex-wrap: wrap;
-        margin-right: 10px;
-    }
-
     .more-personalities-container {
         margin: 48px 0 64px 0;
-        display: flex;
-        justify-content: center;
-    }
-
-    .more-personalities-title {
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 24px;
     }
 
     .join-container-logged-out {
@@ -112,17 +65,17 @@ const HomeContainer = styled.div`
     }
     
     @media (min-width: 1171px) {
-        .CTA-section .ant-col-14 {
+        .CTA-container .ant-col-14 {
             max-width: 100%;
         }
     }
 
     @media (max-width: 1170px) {
-        .home-title-container {
+        .carousel-title-container {
             margin: 32px 0 16px 0;
         }
 
-        .CTA-section {
+        .CTA-container {
             order: 3;
             display: flex;
         }
@@ -157,64 +110,58 @@ const HomeContainer = styled.div`
             margin: 16px 0 32px 0;
         }
 
-        .join-container-logged-in,
         .join-container-logged-out {
             margin-left: 0;
             max-width: 100%;
         }
 
-        #create_account,
-        .section-join-title {
+        .CTA-registration-container,
+        .section-title-container {
             margin-left: 12.5%;
             max-width: 75%;
         }
     }
     
     @media (max-width: 950px) {
-        .ant-col-offset-4.header-content-container {
+        .ant-col-offset-4.carousel-content {
             margin-left: 12.5%;
             max-width: 75%;
         }
     }
     
     @media (max-width: 900px) {
-        .header-container {
+        .carousel-container {
             max-width: 80%;
             margin-left: 10%;
         }
 
-        .home-title,
-        .home-subtitle {
+        .carousel-title,
+        .carousel-subtitle-container {
             font-size: 36px;
             line-height: 42px;
         }
 
-        .ant-col-offset-4.header-content-container {
+        .ant-col-offset-4.carousel-content {
             margin-left: 8.33333333%;
             max-width: 83.333334%;
         }
 
-        .CTA-section {
-            width: 100%;
+        .CTA-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .home-footer-title {
-            margin-bottom: 0;
-        }
-
         .ant-col-12.personalities-container,
-        #create_account,
-        .section-join-title {
+        .CTA-registration-container,
+        .section-title-container {
             margin-left: 8.33333333%;
             max-width: 83.333334%;
         }
     }
 
     @media (max-width: 800px) {
-        .ant-col-offset-4.header-content-container {
+        .ant-col-offset-4.carousel-content {
             margin-left: 4.16666667%;
             max-width: 91.666666%;
             
@@ -222,34 +169,34 @@ const HomeContainer = styled.div`
     }
 
     @media (max-width: 725px) {
-        .ant-col-offset-4.header-content-container {
+        .ant-col-offset-4.carousel-content {
             margin-left: 0;
         }
 
         .ant-col-12.personalities-container,
-        #create_account,
-        .section-join-title {
+        .CTA-registration-container,
+        .section-title-container {
             margin-left: 4.16666667%;
             max-width: 91.666666%;
         }
     }
 
     @media (max-width: 610px) {
-        .home-subtitle {
+        .carousel-subtitle-container {
             width: 100%;
         }   
         
-        .CTA-section {
+        .CTA-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr
         }
 
-        .CTA-section .ant-col-14 {
+        .CTA-container .ant-col-14 {
             max-width: 100%;
         }
 
-        .create-account-container {
+        .CTA-button-container {
             display: flex;
             justify-content: flex-end;
             width: 100%;
@@ -257,39 +204,37 @@ const HomeContainer = styled.div`
     }
 
     @media (max-width: 548px) {
-        .ant-col-offset-4.header-content-container {
+        .ant-col-offset-4.carousel-content {
             max-width: 100%;
         }
 
-        .home-title-container {
+        .carousel-title-container {
             width: 100%;
             display: flex;
             justify-content: center;
         }
 
-        .home-title,
-        .home-subtitle {
-            width: 100%;
+        .carousel-title,
+        .carousel-subtitle-container {
             text-align: center;
             font-size: 16px;
             line-height: 38px;
         }
 
-        .home-title {
+        .carousel-title {
             font-size: 26px;
         }
 
-        .home-subtitle {
+        .carousel-subtitle-container {
             font-size: 16px;
         }
 
-        .home-subtitle0,
-        .home-subtitle1 {
+        .carousel-subtitle {
             display: inline;
         }
 
         .stats-container,
-        .create-account-container {
+        .CTA-button-container {
             margin-bottom: 32px;
         }
 
@@ -301,21 +246,21 @@ const HomeContainer = styled.div`
             font-size: 16px;
         }
 
-        .home-footer-title {
+        .CTA-title {
             font-size: 12px;
             font-weight: 700;
         }
 
-        .create-account-button {
+        .CTA-button {
             width: 150px;
         }
 
-        .section-join-title {
+        .section-title-container {
             margin-left: 4.16666667%;
             max-width: 91.666666%;
         },
 
-        #create_account,
+        .CTA-registration-container,
         join-container-logged-in {
             margin-left: 0;
             max-width: 100%;
