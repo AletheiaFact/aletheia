@@ -9,6 +9,7 @@ import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import ClaimReviewDynamicForm from "./ClaimReviewDynamicForm";
+import DynamicForm from "./ DynamicForm";
 
 const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
     const { t } = useTranslation();
@@ -125,13 +126,14 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                         )}
                     </Row>
                 )}
-                {!formCollapsed && <ClaimReviewDynamicForm
+                {/*                 {!formCollapsed && <ClaimReviewDynamicForm
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
                     sitekey={sitekey}
                     handleReviewFinished={toggleFormCollapse}
-                />}
+                />} */}
+                <DynamicForm sentence_hash={sentenceHash} />
             </Row>
             <Row>
                 <ClaimReviewList

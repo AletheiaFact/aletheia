@@ -1,5 +1,5 @@
 const unassignedForm = {
-    search: {
+    userId: {
         label: "",
         type: "inputSearch",
         placeholder: "claimReviewForm:assignUser",
@@ -7,7 +7,7 @@ const unassignedForm = {
         rules: {
             required: true,
         },
-    },
+    }
 };
 
 export default unassignedForm

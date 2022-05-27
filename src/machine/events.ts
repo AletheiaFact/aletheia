@@ -1,4 +1,4 @@
-export type AssignEvent = { type: 'ASSIGN_USER', userId: string, sentence_hash: string }
+export type AssignEvent = { type: 'ASSIGN_USER', userId: string, sentence_hash: string, t: any }
 export type ReportEvent = { type: 'REPORT_FINISHED', summary: string, questions: string[], report: string, verification: string, source: string[] }
 export type PublishEvent = { type: 'PUBLISHED', classification: string }
 
