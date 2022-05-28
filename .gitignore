@@ -38,3 +38,8 @@ globalConfig.json
 
 # Sonarqube
 /.scannerwork
+
+# Cypress
+cypress/videos/**/*
+cypress/screenshots/**/*
+

@@ -29,9 +29,7 @@
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook -o ./docs/storybook",
         "cypress-open": "cypress open",
-        "cypress-run": "cypress run",
-        "watch-test": "nodemon dist/server/server.js -c config.test.yaml --signal SIGTERM",
-        "server:test": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-test\""
+        "cypress-run": "cypress run"
     },
     "nodemonConfig": {
         "ignore": [
@@ -99,6 +97,7 @@
         "handlebars": "^4.7.7",
         "i18next": "^21.6.10",
         "md5": "^2.3.0",
+        "mongodb-memory-server-core": "^8.6.0",
         "mongoose": "^  5.13.5",
         "mongoose-softdelete-typescript": "^0.0.3",
         "next": "^12.1.0",

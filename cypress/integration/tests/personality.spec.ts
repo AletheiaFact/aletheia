@@ -18,8 +18,7 @@ describe("Should test at the login", () => {
     it("Go personality and search new personality", () => {
         cy.get(locators.PERSONALITY.BTN_SEE_MORE_PERSONALITY).click();
         cy.get(locators.PERSONALITY.BTN_ADD_PERSONALITY).click();
-        cy.get(locators.PERSONALITY.INPUT_SEARCH_PERSONALITY).type("beyonce")
-        cy.get("[data-cy=testBackButton]").click();
-        cy.visit("http://localhost:3000/home");
+        cy.get(locators.PERSONALITY.INPUT_SEARCH_PERSONALITY).type("beyonce");
+        cy.get("[data-cy=Beyoncé]").click();
     });
 });
