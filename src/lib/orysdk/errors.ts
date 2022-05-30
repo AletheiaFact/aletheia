@@ -60,7 +60,7 @@ export function handleGetFlowError<S>(
         }
 
         // We are not able to handle the error? Return it.
-        return Promise.reject(err);
+        return message.error(t("login:loginFailedMessage"))
 
         async function requestNewFlow() {
             resetFlow(undefined);

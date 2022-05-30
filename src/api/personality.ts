@@ -39,7 +39,7 @@ const getPersonalities = (options = {}, dispatch) => {
         });
 };
 
-const getPersonality = (id, params) => {
+const getPersonality = (id, params, t) => {
     return axios
         .get(`${baseUrl}/${id}`, {
             params,
@@ -48,7 +48,7 @@ const getPersonality = (id, params) => {
             return response.data;
         })
         .catch(() => {
-            console.log("Error while fetching Personality");
+            message.error(t("personality:errorWhileFetching"));
         });
 };
 

@@ -1,4 +1,8 @@
 {
+    "errorCreateMessage": "Error while saving claim",
+    "successCreateMessage": "claim created with success",
+    "errorUpdateMessage": "Error while updating claim",
+    "successUpdateMessage": "claim updated with success",
     "titleField": "Title",
     "titleFieldError": "Please insert a title",
     "titleFieldPlaceholder": "Insert the title here",
