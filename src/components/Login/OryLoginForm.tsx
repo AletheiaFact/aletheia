@@ -4,14 +4,18 @@ import InputPassword from "../InputPassword";
 import Input from "../Input";
 import Button, { ButtonType } from "../Button";
 import {
-    SelfServiceLoginFlow, SubmitSelfServiceLoginFlowBody,
+    SelfServiceLoginFlow,
+    SubmitSelfServiceLoginFlowBody,
     SubmitSelfServiceLoginFlowWithPasswordMethodBody as ValuesType,
     UiNodeInputAttributes
 } from "@ory/client";
 import { isUiNodeInputAttributes } from "@ory/integrations/ui"
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { oryGetLoginFlow, orySubmitLogin } from "../../api/ory";
+import {
+    oryGetLoginFlow,
+    orySubmitLogin
+} from "../../api/ory";
 import { LoadingOutlined } from "@ant-design/icons";
 
 const OryLoginForm = () => {
@@ -22,10 +26,6 @@ const OryLoginForm = () => {
     useEffect(() => {
         oryGetLoginFlow({ router, setFlow, t })
     }, [])
-
-    useEffect(() => {
-        console.log(flow)
-    }, [flow])
 
     const onSubmit = (values: SubmitSelfServiceLoginFlowBody) => {
         orySubmitLogin({ router, flow, setFlow, t, values })

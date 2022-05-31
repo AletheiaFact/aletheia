@@ -13,6 +13,8 @@ import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
 import {ConfigService} from "@nestjs/config";
 import {IsPublic} from "../decorators/is-public.decorator";
+import { BaseRequest } from "../types";
+
 
 @Controller()
 export class UsersController {
@@ -33,7 +35,7 @@ export class UsersController {
     }
 
     @Put("api/user/:id/password")
-    async changePassword(@Req() req, @Res() res) {
+    async changePassword(@Req() req: BaseRequest, @Res() res) {
 
         try {
             if (req.params.id !== req.user._id.toString()) {
@@ -71,7 +73,7 @@ export class UsersController {
     }
 
     @Get("profile")
-    public async profile(@Req() req, @Res() res: Response) {
+    public async profile(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const user = await this.usersService.getById(req.user._id);
 

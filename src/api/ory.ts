@@ -3,6 +3,13 @@ import { handleFlowError } from "../lib/orysdk/errors";
 import { AxiosError } from "axios";
 import { message } from "antd";
 
+const handleAxiosError = (err: AxiosError, setFlow) => {
+    if (err.response?.status === 400) {
+        setFlow(err.response?.data)
+        return
+    }
+    return Promise.reject(err)
+}
 
 const oryGetLoginFlow = ({ router, setFlow, t }) => {
     const {
@@ -42,13 +49,7 @@ const orySubmitLogin = ({router, flow, setFlow, t, values}) => {
             router.push('/home')
         })
         .catch(handleFlowError(router, 'login', setFlow, t))
-        .catch((err: AxiosError) => {
-            if (err.response?.status === 400) {
-                setFlow(err.response?.data)
-                return
-            }
-            return Promise.reject(err)
-        })
+        .catch((err: AxiosError) => handleAxiosError(err, setFlow))
 }
 
 
@@ -66,13 +67,7 @@ const orySubmitSettings = ({router, flow, setFlow, t, values}) => {
             router.push('/home')
         })
         .catch(handleFlowError(router, 'settings', setFlow, t))
-        .catch((err: AxiosError) => {
-            if (err.response?.status === 400) {
-                setFlow(err.response?.data)
-                return
-            }
-            return Promise.reject(err)
-        })
+        .catch((err: AxiosError) =>  handleAxiosError(err, setFlow))
 }
 
 
