@@ -2,7 +2,7 @@ import { Body, Controller, Post, Param, Get, Put } from "@nestjs/common";
 import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto"
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
-
+import { IsPublic } from "../decorators/is-public.decorator";
 @Controller()
 export class ClaimReviewController {
     constructor(
@@ -14,6 +14,7 @@ export class ClaimReviewController {
         return this.claimReviewTaskService.getById(id)
     }
 
+    
     @Post("api/claimreviewtask")
     async create(@Body() createClaimReviewTask: CreateClaimReviewTaskDTO) {
         return this.claimReviewTaskService.create(createClaimReviewTask)
@@ -23,8 +24,8 @@ export class ClaimReviewController {
     async update(@Param("sentence_hash") sentence_hash, @Body() newClaimReviewTask: UpdateClaimReviewTaskDTO) {
         return this.claimReviewTaskService.update(sentence_hash, newClaimReviewTask)
     }
-
-    @Get("api/claimreviewtask/:sentence_hash")
+    
+    @Get("api/claimreviewtask/sentence/:sentence_hash")
     async getBySentenceHash(@Param("sentence_hash") sentence_hash: string) {
         return this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(sentence_hash)
     }
