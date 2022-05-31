@@ -7,7 +7,7 @@ import DynamicInput from './form/DynamicInput';
 import AletheiaButton, { ButtonType } from '../Button';
 
 const DynamicForm = ({ sentence_hash }) => {
-    const [state, send, service] = useMachine(reviewTaskMachine)
+    const [ state, send ] = useMachine(reviewTaskMachine)
     const { t } = useTranslation();
 
     const { handleSubmit, control, formState: { errors } } = useForm()
@@ -30,7 +30,10 @@ const DynamicForm = ({ sentence_hash }) => {
                                 type={type}
                                 placeholder={placeholder}
                                 onChange={field.onChange}
-                                value={field.value} />
+                                value={field.value} 
+                                sentenceHash={sentence_hash}
+                                send={send}
+                            />
                         )}
                     />
                     {errors[fieldName] && <p>This field is required</p>}
@@ -63,8 +66,8 @@ const DynamicForm = ({ sentence_hash }) => {
                             </AletheiaButton>
                         </div>
                     </>
-                )
-            })}
+                )})
+            }
 
         </form>)
 }

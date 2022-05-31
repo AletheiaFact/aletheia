@@ -3,12 +3,15 @@ import { useTranslation } from 'next-i18next';
 import React from 'react'
 import ClaimReviewSelect from '../../Form/ClaimReviewSelect';
 import TextArea from '../../TextArea';
+import ClaimReviewUserForm from '../ClaimReviewUserForm';
 
 interface DynamicInputProps {
     type: string;
     placeholder: string;
     value: string;
     onChange: any;
+    sentenceHash: string;
+    send: any;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -25,6 +28,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                 />
             )
         case "inputSearch":
+            return <ClaimReviewUserForm sentenceHash={props.sentenceHash} send={props.send} />
         case "textList":
             return (
                 <Input

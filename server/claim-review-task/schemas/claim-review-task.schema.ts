@@ -6,9 +6,11 @@ export type ClaimReviewTaskDocument = ClaimReviewTask & mongoose.Document;
 
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class ClaimReviewTask {
-
     @Prop({ required: true })
     state: string
+
+    @Prop({ unique: true, required: true })
+    sentence_hash: string;
 
     @Prop({ type: Object, required: true })
     context: ReviewTaskMachineContext;

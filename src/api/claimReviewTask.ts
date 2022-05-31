@@ -19,6 +19,24 @@ const createClaimReviewTask = (params, t) => {
         })
 }
 
+const updateClaimReviewTask = (params, t) => {
+    console.log(params)
+    return request
+        .put(
+            `/${params.sentence_hash}`,
+            { ...params },
+            { withCredentials: true }
+        )
+        .then((response) => {
+            message.success('deu certo')
+            return response.data
+        })
+        .catch(err=>{
+            message.error('não deu certo')
+            return err
+        })
+}
 
-const ClaimReviewTaskApi = { createClaimReviewTask }
+
+const ClaimReviewTaskApi = { createClaimReviewTask, updateClaimReviewTask }
 export default ClaimReviewTaskApi

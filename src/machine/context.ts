@@ -5,10 +5,10 @@ export type reviewTaskMachineContext = {
         userId: string;
         sentence_hash: string;
         summary: string;
-        questions: string[];
-        report: string;
+        questions: any;
+        report: any;
         verification: string;
-        source: string[];
+        source: any;
         classification: string;
     };
     formUi: any;
@@ -19,10 +19,10 @@ export const initialContext: reviewTaskMachineContext = {
         userId: "",
         sentence_hash: "",
         summary: "",
-        questions: [],
+        questions: "",
         report: "",
         verification: "",
-        source: [],
+        source: "",
         classification: "",
     },
     formUi: unassignedForm,

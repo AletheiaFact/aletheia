@@ -6,9 +6,10 @@ import { useTranslation } from "next-i18next";
 import { NextSeo } from 'next-seo';
 const parser = require("accept-language-parser");
 
-const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
+const ClaimPage: NextPage<{ personality; claim; reviewTask; sentence; sitekey, href}> = ({
     personality,
     claim,
+    reviewTask,
     sentence,
     sitekey,
     href,
@@ -60,6 +61,7 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
             <ClaimReviewView
                 personality={personality}
                 claim={claim}
+                reviewTask={reviewTask}
                 sentence={sentence}
                 sitekey={sitekey}
                 href={href}

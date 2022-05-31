@@ -18,7 +18,7 @@ const ClaimReviewUserForm = ({ sentenceHash, send }) => {
     }
 
     const handleSearchClick = (userId) => {
-        send("ASSIGN_USER", { userId, sentence_hash: sentenceHash })
+        send("ASSIGN_USER", { userId, sentence_hash: sentenceHash, t })
     }
 
 

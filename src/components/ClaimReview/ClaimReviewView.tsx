@@ -8,16 +8,17 @@ import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
-import ClaimReviewDynamicForm from "./ClaimReviewDynamicForm";
 import DynamicForm from "./ DynamicForm";
 
-const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
+const ClaimReviewView = ({ personality, claim, reviewTask, sentence, sitekey, href }) => {
     const { t } = useTranslation();
     const claimId = claim._id;
     const sentenceHash = sentence?.props["data-hash"];
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
     const [formCollapsed, setFormCollapsed] = useState(true);
+
+    console.log("reviewTask", reviewTask)
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
@@ -126,13 +127,6 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                         )}
                     </Row>
                 )}
-                {/*                 {!formCollapsed && <ClaimReviewDynamicForm
-                    personality={personality}
-                    claim={claim}
-                    sentence={sentence}
-                    sitekey={sitekey}
-                    handleReviewFinished={toggleFormCollapse}
-                />} */}
                 <DynamicForm sentence_hash={sentenceHash} />
             </Row>
             <Row>

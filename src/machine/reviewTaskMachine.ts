@@ -2,7 +2,7 @@ import { createMachine } from "xstate"
 import { reviewTaskMachineContext, initialContext } from "./context"
 import { reviewTaskMachineEvents } from "./events"
 import { reviewTaskMachineState } from "./states"
-import { assignedUser } from "./actions"
+import { assignedUser, report } from "./actions"
 
 export const reviewTaskMachine = createMachine<reviewTaskMachineContext, reviewTaskMachineEvents, reviewTaskMachineState>({
     initial: "unassigned",
@@ -20,6 +20,7 @@ export const reviewTaskMachine = createMachine<reviewTaskMachineContext, reviewT
             on: {
                 REPORT_FINISHED: {
                     target: "reported",
+                    actions: [report]
                 },
             }
         },
