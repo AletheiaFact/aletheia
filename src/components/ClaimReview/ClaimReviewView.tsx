@@ -127,7 +127,9 @@ const ClaimReviewView = ({ personality, claim, reviewTask, sentence, sitekey, hr
                         )}
                     </Row>
                 )}
-                <DynamicForm sentence_hash={sentenceHash} />
+                {!formCollapsed &&
+                    <DynamicForm sentence_hash={sentenceHash} />
+                }
             </Row>
             <Row>
                 <ClaimReviewList

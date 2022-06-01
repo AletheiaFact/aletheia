@@ -11,7 +11,7 @@ interface DynamicInputProps {
     value: string;
     onChange: any;
     sentenceHash: string;
-    send: any;
+
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -28,7 +28,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                 />
             )
         case "inputSearch":
-            return <ClaimReviewUserForm sentenceHash={props.sentenceHash} send={props.send} />
+            return <ClaimReviewUserForm {...props} />
         case "textList":
             return (
                 <Input

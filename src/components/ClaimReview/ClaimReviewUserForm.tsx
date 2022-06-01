@@ -1,45 +1,28 @@
-import { UserOutlined } from '@ant-design/icons'
-import { Avatar } from 'antd'
-import React, { useState } from 'react'
-import InputSearch from '../Form/InputSearch'
-import SearchResult from '../SearchResult'
+import React from 'react'
 import api from "../../api/user";
 import { useTranslation } from 'next-i18next'
+import SelectUser from './form/SelectUser'
 
-const ClaimReviewUserForm = ({ sentenceHash, send }) => {
+const ClaimReviewUserForm = (props) => {
     const { t } = useTranslation();
-    const [users, setUsers] = useState([]);
-    const [searchName, setSearchName] = useState("")
 
-    const handleInputSearch = async (name) => {
-        setSearchName(name)
+    const fetchUserList = async (name) => {
         const userSearchResults = await api.getUsers(name, t)
-        setUsers(userSearchResults)
+        return userSearchResults.map(user => ({
+            label: user.name,
+            value: user._id
+        }))
     }
-
-    const handleSearchClick = (userId) => {
-        send("ASSIGN_USER", { userId, sentence_hash: sentenceHash, t })
-    }
-
 
     return (
-        <>
-            <InputSearch
-                placeholder={t("claimReviewForm:assignUser")}
-                callback={handleInputSearch}
-            />
-            {users &&
-                users.map(user =>
-                    <SearchResult
-                        key={user._id}
-                        handleOnClick={() => handleSearchClick(user._id)}
-                        avatar={<Avatar size={30} icon={<UserOutlined />} />}
-                        name={user.name}
-                        searchName={searchName}
-                    />)
-            }
-        </>
-
+        <SelectUser
+            showSearch
+            value={props.value}
+            fetchOptions={fetchUserList}
+            placeholder={t(props.placeholder)}
+            onChange={props.onChange}
+            style={{ width: '100%' }}
+        />
     )
 }
 

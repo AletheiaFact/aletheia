@@ -9,7 +9,7 @@ import api from '../../api/claimReviewTask'
 
 
 const DynamicForm = ({ sentence_hash }) => {
-    const [ state, send ] = useMachine(reviewTaskMachine)
+    const [state, send] = useMachine(reviewTaskMachine)
     const { t } = useTranslation();
 
     const { handleSubmit, control, formState: { errors } } = useForm()
@@ -20,7 +20,7 @@ const DynamicForm = ({ sentence_hash }) => {
         const { rules, defaultValue, label, placeholder, type } = currentForm[fieldName];
         if (type !== 'sendEvent') {
             return (
-                <>
+                <div key={fieldName}>
                     <label>{label}</label>
                     <Controller
                         name={fieldName}
@@ -32,15 +32,14 @@ const DynamicForm = ({ sentence_hash }) => {
                                 type={type}
                                 placeholder={placeholder}
                                 onChange={field.onChange}
-                                value={field.value} 
+                                value={field.value}
                                 sentenceHash={sentence_hash}
-                                send={send}
                             />
                         )}
                     />
                     {errors[fieldName] && <p>This field is required</p>}
 
-                </>
+                </div>
             )
         }
         return null
@@ -49,19 +48,18 @@ const DynamicForm = ({ sentence_hash }) => {
     const onSubmit = (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute('event')
         console.log(data, event)
-        const sentence_hash = data.sentence_hash
-        switch(event) {
+        switch (event) {
             case "ASSIGN_USER":
-                api.createClaimReviewTask({sentence_hash, context: data, state: 'assigned'}, event.t)
+                api.createClaimReviewTask({ sentence_hash, context: data, state: 'assigned' }, t)
                 break;
-            case"REPORT_FINISHED":
-                api.updateClaimReviewTask({sentence_hash, context: data, state: 'reported'}, event.t)
+            case "REPORT_FINISHED":
+                api.updateClaimReviewTask({ sentence_hash, context: data, state: 'reported' }, t)
                 break;
-            case"PUBLISHED":
-                api.updateClaimReviewTask({sentence_hash, context: data, state: 'published'}, event.t)
+            case "PUBLISHED":
+                api.updateClaimReviewTask({ sentence_hash, context: data, state: 'published' }, t)
                 break;
         }
-        
+
         send(event, { ...data, sentence_hash, t })
     };
 
@@ -70,18 +68,17 @@ const DynamicForm = ({ sentence_hash }) => {
             {formInputs}
             {state.nextEvents.map((event) => {
                 return (
-                    <>
-                        <div>
-                            <AletheiaButton
-                                type={ButtonType.blue}
-                                htmlType="submit"
-                                event={event}
-                            >
-                                {event}
-                            </AletheiaButton>
-                        </div>
-                    </>
-                )})
+                    <AletheiaButton
+                        key={event}
+                        type={ButtonType.blue}
+                        htmlType="submit"
+                        event={event}
+                        style={{ marginTop: 20, marginBottom: 20 }}
+                    >
+                        {event}
+                    </AletheiaButton>
+                )
+            })
             }
 
         </form>)
