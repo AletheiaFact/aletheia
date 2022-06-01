@@ -4,6 +4,7 @@ import React from 'react'
 import ClaimReviewSelect from '../../Form/ClaimReviewSelect';
 import TextArea from '../../TextArea';
 import ClaimReviewUserForm from '../ClaimReviewUserForm';
+import InputTextList from '../../InputTextList'
 
 interface DynamicInputProps {
     type: string;
@@ -31,10 +32,9 @@ const DynamicInput = (props: DynamicInputProps) => {
             return <ClaimReviewUserForm {...props} />
         case "textList":
             return (
-                <Input
-                    value={props.value}
-                    placeholder={t(props.placeholder)}
-                    onChange={(value) => props.onChange(value)}
+                <InputTextList 
+                placeholder={t(props.placeholder)}
+                onChange={(value) => props.onChange(value)}
                 />
             )
         case "select":

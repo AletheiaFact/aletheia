@@ -11,7 +11,7 @@ const assignedForm = {
     questions: {
         label: "Which questions must be answered",
         type: "textList",
-        placeholder: "",
+        placeholder: "Insert question here",
         defaultValue: "",
         rules: {
             required: true,
