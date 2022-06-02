@@ -11,5 +11,6 @@
     "signup": "Sign-up",
     "signupFormHeader": "Create a new account",
     "signupFailedMessage": "Error while signing up",
-    "signupSuccessfulMessage": "Sign-up successful"
+    "signupSuccessfulMessage": "Sign-up successful",
+    "refreshLoginMessage": "Please, confirm your login before changing your account settings"
 }
