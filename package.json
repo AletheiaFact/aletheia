@@ -29,7 +29,8 @@
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook -o ./docs/storybook",
         "cypress-open": "cypress open",
-        "cypress-run": "cypress run"
+        "cypress-run": "cypress run",
+        "test:e2e:cy": "node dist/server/mongodb.server.js -c config.yaml"
     },
     "nodemonConfig": {
         "ignore": [
