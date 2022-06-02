@@ -18,8 +18,6 @@ const ClaimReviewView = ({ personality, claim, reviewTask, sentence, sitekey, hr
     const review = sentence?.props?.topClassification;
     const [formCollapsed, setFormCollapsed] = useState(true);
 
-    console.log("reviewTask", reviewTask)
-
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
     };

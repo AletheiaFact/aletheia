@@ -40,6 +40,7 @@ const assignedForm = {
         type: "textList",
         placeholder: "Paste URL",
         defaultValue: "",
+        inputType: "url",
         rules: {
             required: true,
         },

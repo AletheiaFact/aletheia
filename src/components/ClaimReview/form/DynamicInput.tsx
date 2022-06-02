@@ -1,4 +1,3 @@
-import { Input } from 'antd';
 import { useTranslation } from 'next-i18next';
 import React from 'react'
 import ClaimReviewSelect from '../../Form/ClaimReviewSelect';
@@ -12,12 +11,11 @@ interface DynamicInputProps {
     value: string;
     onChange: any;
     sentenceHash: string;
-
+    ruleType: string;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
     const { t } = useTranslation()
-
     switch (props.type) {
         case "textArea":
             return (
@@ -33,8 +31,9 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "textList":
             return (
                 <InputTextList 
-                placeholder={t(props.placeholder)}
-                onChange={(value) => props.onChange(value)}
+                    placeholder={t(props.placeholder)}
+                    onChange={(value) => props.onChange(value)}
+                    type={props.ruleType}
                 />
             )
         case "select":
