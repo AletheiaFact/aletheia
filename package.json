@@ -30,7 +30,7 @@
         "build-storybook": "build-storybook -o ./docs/storybook",
         "cypress-open": "cypress open",
         "cypress-run": "cypress run",
-        "test:e2e:cy": "node dist/server/mongodb.server.js -c config.yaml"
+        "test:e2e:cy": "node dist/server/mongodb.server.js -c config.test.ci.yaml"
     },
     "nodemonConfig": {
         "ignore": [

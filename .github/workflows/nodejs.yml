@@ -9,6 +9,12 @@ on:
   pull_request:
     branches: [ stage, develop ]
 
+env:
+  UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
+  ORY_SDK_URL: ${{ secrets.DEVELOPMENT_ORY_SDK_URL }}
+  ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
+  ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
+
 jobs:
   build:
 
@@ -28,6 +34,16 @@ jobs:
     - run: yarn build
     - run: yarn lint
     - run: yarn test
+
+    - name: Set config.yaml
+      env:
+        RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
+      run: |
+        sed -i "s%RECAPTCHA_SECRET%$RECAPTCHA_SECRET%g" config.test.ci.yaml
+        sed -i "s%ORY_SDK_URL%$ORY_SDK_URL%g" config.test.ci.yaml
+        sed -i "s/ORY_ACCESS_TOKEN/$ORY_ACCESS_TOKEN/g" config.test.ci.yaml
+        sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.test.ci.yaml
+
     - name: Cypress run
       uses: cypress-io/github-action@v4
       with:
