@@ -38,3 +38,6 @@ globalConfig.json
 
 # Sonarqube
 /.scannerwork
+
+# Docker
+docker-compose.override.yaml
