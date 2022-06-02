@@ -43,3 +43,5 @@ globalConfig.json
 cypress/videos/**/*
 cypress/screenshots/**/*
 
+# Docker
+docker-compose.override.yaml
