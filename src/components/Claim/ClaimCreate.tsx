@@ -70,7 +70,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     useEffect(() => {
         const setTitleAndContent = async () => {
             if (edit) {
-                const { content, title } = await claimApi.getById(claim._id);
+                const { content, title } = await claimApi.getById(claim._id, t);
                 setTitle(title);
                 setContent(content.text);
             }
@@ -91,7 +91,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
             recaptchaRef.current.reset();
         }
 
-        const { slug } = await claimApi.save({
+        const { slug } = await claimApi.save(t, {
             content,
             title,
             personality: personality._id,
@@ -107,7 +107,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
     }
 
     const updateClaim = async () => {
-        await claimApi.update(claim._id, {
+        await claimApi.update(claim._id, t, {
             title,
             content
         });

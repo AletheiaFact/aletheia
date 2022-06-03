@@ -6,7 +6,7 @@ const request = axios.create({
     baseURL: `/api/claimReview`,
 });
 
-const save = (review, t) => {
+const save = (t, review) => {
     return request
         .post("/", review)
         .then((response) => {

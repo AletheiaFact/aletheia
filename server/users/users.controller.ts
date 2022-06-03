@@ -13,6 +13,8 @@ import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
 import {ConfigService} from "@nestjs/config";
 import {IsPublic} from "../decorators/is-public.decorator";
+import { BaseRequest } from "../types";
+
 
 @Controller()
 export class UsersController {
@@ -23,12 +25,6 @@ export class UsersController {
         private configService: ConfigService
     ) {}
 
-    // TODO: this seems to be deprecated
-    @Get("api/user/validate")
-    async findAll(@Req() req): Promise<any> {
-        return { login: true, user: req.user };
-    }
-
     @IsPublic()
     @UseGuards(LocalAuthGuard)
     @Post("api/user/signin")
@@ -38,20 +34,14 @@ export class UsersController {
         });
     }
 
-    // TODO: move old logic to ory
     @Put("api/user/:id/password")
-    async changePassword(@Req() req, @Res() res) {
-        const { currentPassword, newPassword, repeatedNewPassword } = req.body;
+    async changePassword(@Req() req: BaseRequest, @Res() res) {
 
         try {
             if (req.params.id !== req.user._id.toString()) {
                 throw Error("Invalid user attempting to change password");
             }
-            if (newPassword !== repeatedNewPassword) {
-                throw Error("Repeated password doesn't match");
-            }
-            this.usersService
-                .changePassword(mongoose.Types.ObjectId(req.params.id), currentPassword, newPassword)
+                this.usersService.registerPasswordChange(mongoose.Types.ObjectId(req.params.id))
                 .then(() => {
                     res.status(200).json({
                         success: true,
@@ -83,8 +73,9 @@ export class UsersController {
     }
 
     @Get("profile")
-    public async profile(@Req() req: Request, @Res() res: Response) {
+    public async profile(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const user = await this.usersService.getById(req.user._id);
 
         await this.viewService
             .getNextServer()
@@ -92,7 +83,7 @@ export class UsersController {
                 req,
                 res,
                 "/profile-page",
-                Object.assign(parsedUrl.query, {})
+                Object.assign(parsedUrl.query, {user})
             );
     }
 

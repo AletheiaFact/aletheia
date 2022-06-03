@@ -15,5 +15,6 @@
     "cardHeader1": "Stated on",
     "cardHeader2": "in",
     "typeSpeech": "Oficial speech",
-    "typeTwitter": "Twitter post"
+    "typeTwitter": "Twitter post",
+    "errorWhileFetching": "Error while fetching Claim"
 }
