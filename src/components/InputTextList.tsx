@@ -27,7 +27,7 @@ export default function InputTextList(props) {
     });
 
     React.useEffect(() => {
-        const subscription = watch((value, { name, type }) => {
+        const subscription = watch((value) => {
             const contentArray = [value.firstContent]
             value.fieldArray.forEach(field => {
                 contentArray.push(field.content)
@@ -41,11 +41,11 @@ export default function InputTextList(props) {
         <div>
             <Input {...register("firstContent")} placeholder={props.placeholder} type={props.type} />
 
-            {controlledFields.map((field, index) => {
+            {controlledFields.map((_field, index) => {
                 return (
                     <Row key={`fieldArray.${index}.content`} style={{ marginTop: 20 }}>
                         <Col span={20}>
-                            <input 
+                            <input
                                 {...register(`fieldArray.${index}.content` as const)}
                                 placeholder={props.placeholder}
                                 type={props.type}
@@ -54,13 +54,13 @@ export default function InputTextList(props) {
                         </Col>
                         <Col span={4}>
                             <Button
-                                style={{ width: "100%", height:"40px" }}
+                                style={{ width: "100%", height: "40px" }}
                                 onClick={() => remove(index)}
                             >
                                 <DeleteOutlined />
                             </Button>
                         </Col>
-                    </Row> 
+                    </Row>
                 )
             })}
 

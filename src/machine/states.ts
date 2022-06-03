@@ -1,7 +1,8 @@
-import { reviewTaskMachineContext } from "./context";
+import { ReviewTaskMachineContext } from "./context";
+import { ReviewTaskStates } from "./enums";
 
-export type reviewTaskMachineState =
-    | { value: 'unassigned', context: reviewTaskMachineContext}
-    | { value: 'assigned', context: reviewTaskMachineContext}
-    | { value: 'reported', context: reviewTaskMachineContext}
-    | { value: 'published', context: reviewTaskMachineContext}
+export type ReviewTaskMachineState =
+    | { value: ReviewTaskStates.unassigned; context: ReviewTaskMachineContext }
+    | { value: ReviewTaskStates.assigned; context: ReviewTaskMachineContext }
+    | { value: ReviewTaskStates.reported; context: ReviewTaskMachineContext }
+    | { value: ReviewTaskStates.published; context: ReviewTaskMachineContext };

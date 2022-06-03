@@ -10,8 +10,6 @@ interface DynamicInputProps {
     placeholder: string;
     value: string;
     onChange: any;
-    sentenceHash: string;
-    ruleType: string;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -30,10 +28,9 @@ const DynamicInput = (props: DynamicInputProps) => {
             return <ClaimReviewUserForm {...props} />
         case "textList":
             return (
-                <InputTextList 
+                <InputTextList
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
-                    type={props.ruleType}
                 />
             )
         case "select":

@@ -8,9 +8,9 @@ import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
-import DynamicForm from "./ DynamicForm";
+import DynamicForm from "./form/DynamicForm";
 
-const ClaimReviewView = ({ personality, claim, reviewTask, sentence, sitekey, href }) => {
+const ClaimReviewView = ({ personality, claim, sentence, href }) => {
     const { t } = useTranslation();
     const claimId = claim._id;
     const sentenceHash = sentence?.props["data-hash"];
@@ -102,25 +102,25 @@ const ClaimReviewView = ({ personality, claim, reviewTask, sentence, sitekey, hr
                                     )}
                                 </Col>
                                 {!review && <Col span={10}>
-                                        <Button
-                                            type={ButtonType.blue}
-                                            onClick={toggleFormCollapse}
-                                            icon={<PlusOutlined />}
-                                        >
-                                            <h3 style={{
-                                                marginLeft: 8,
-                                                lineHeight: 1.5715,
-                                                fontWeight: 400,
-                                                fontSize: 14,
-                                                marginBottom: 0,
-                                                color: colors.white,
-                                                display: "inline-block",
+                                    <Button
+                                        type={ButtonType.blue}
+                                        onClick={toggleFormCollapse}
+                                        icon={<PlusOutlined />}
+                                    >
+                                        <h3 style={{
+                                            marginLeft: 8,
+                                            lineHeight: 1.5715,
+                                            fontWeight: 400,
+                                            fontSize: 14,
+                                            marginBottom: 0,
+                                            color: colors.white,
+                                            display: "inline-block",
 
-                                            }}>
-                                                {t("claimReviewForm:addReviewButton")}
-                                            </h3>
-                                        </Button>
-                                    </Col>
+                                        }}>
+                                            {t("claimReviewForm:addReviewButton")}
+                                        </h3>
+                                    </Button>
+                                </Col>
                                 }
                             </>
                         )}

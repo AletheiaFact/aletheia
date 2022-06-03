@@ -1,6 +1,6 @@
-import unassignedForm from "../components/ClaimReview/form/unassinedForm";
+import unassignedForm from "../components/ClaimReview/form/unassignedForm";
 
-export type reviewTaskMachineContext = {
+export type ReviewTaskMachineContext = {
     reviewData: {
         userId: string;
         sentence_hash: string;
@@ -14,7 +14,7 @@ export type reviewTaskMachineContext = {
     formUi: any;
 };
 
-export const initialContext: reviewTaskMachineContext = {
+export const initialContext: ReviewTaskMachineContext = {
     reviewData: {
         userId: "",
         sentence_hash: "",
