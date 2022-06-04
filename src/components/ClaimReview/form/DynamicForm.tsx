@@ -1,67 +1,68 @@
 import React from 'react'
-import { useMachine } from "@xstate/react";
-import { reviewTaskMachine } from "../../../machine/reviewTaskMachine"
 import { useTranslation } from 'next-i18next';
 import { useForm, Controller } from "react-hook-form";
-import DynamicInput from './DynamicInput';
+import DynamicInput from '../form/DynamicInput';
 import AletheiaButton, { ButtonType } from '../../Button';
-import api from '../../../api/claimReviewTask'
-import { ReviewTaskStates, ReviewTaskEvents } from '../../../machine/enums';
+import colors from '../../../styles/colors';
+import { Col, Row } from 'antd';
 
-
-const DynamicForm = ({ sentence_hash }) => {
-    const [state, send] = useMachine(reviewTaskMachine)
+const DynamicForm = ({ sentence_hash, state, send }) => {
     const { t } = useTranslation();
-
     const { handleSubmit, control, formState: { errors } } = useForm()
 
     const currentForm = state.context.formUi
 
     const formInputs = Object.keys(currentForm).map(fieldName => {
-        const { rules, defaultValue, label, placeholder, type } = currentForm[fieldName];
-
-        return (
-            <div key={fieldName}>
-                <label>{label}</label>
-                <Controller
-                    name={fieldName}
-                    control={control}
-                    rules={rules}
-                    defaultValue={defaultValue}
-                    render={({ field }) => (
-                        <DynamicInput
-                            type={type}
-                            placeholder={placeholder}
-                            onChange={field.onChange}
-                            value={field.value}
+        const { rules, defaultValue, label, placeholder, type, inputType } = currentForm[fieldName];
+        if (type !== 'sendEvent') {
+            return (
+                <Row key={fieldName}>
+                    <Col span={24}>
+                        <h4
+                            style={{
+                                color: colors.blackSecondary,
+                                fontWeight: 600,
+                                paddingLeft: 10,
+                                marginBottom: 0,
+                            }}
+                        >
+                            {label}
+                        </h4>
+                    </Col>
+                    <Col span={24} style={{ margin: "10px 0", }}>
+                        <Controller
+                            name={fieldName}
+                            control={control}
+                            rules={rules}
+                            defaultValue={defaultValue}
+                            render={({ field }) => (
+                                <DynamicInput
+                                    type={type}
+                                    placeholder={placeholder}
+                                    onChange={field.onChange}
+                                    value={field.value}
+                                    inputType={inputType}
+                                />
+                            )}
                         />
-                    )}
-                />
-                {errors[fieldName] && <p>This field is required</p>}
-            </div>
-        )
+                        {errors[fieldName] && <p>This field is required</p>}
+                    </Col>
+                </Row>
+            )
+        }
+        return null
     })
 
-    const onSubmit = (data, e) => {
-        const event = e.nativeEvent.submitter.getAttribute('key')
-        console.log(data, event)
-        switch (event) {
-            case ReviewTaskEvents.assignUser:
-                api.createClaimReviewTask({ sentence_hash, context: data, state: ReviewTaskStates.assigned }, t)
-                break;
-            case ReviewTaskEvents.finishReport:
-                api.updateClaimReviewTask({ sentence_hash, context: data, state: ReviewTaskStates.reported }, t)
-                break;
-            case ReviewTaskEvents.publish:
-                api.updateClaimReviewTask({ sentence_hash, context: data, state: ReviewTaskStates.published }, t)
-                break;
-        }
-
-        send(event, { ...data, sentence_hash, t })
+    const onSubmit = async(data, e) => {
+        const event = e.nativeEvent.submitter.getAttribute('event')
+        send(event,  { ...data, sentence_hash, machine: state }, t)
     };
-
+    
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form
+            style={{ width: "100%" }}
+            onSubmit={handleSubmit(onSubmit)}
+        >
             {formInputs}
             {state.nextEvents.map((event) => {
                 return (
@@ -69,6 +70,7 @@ const DynamicForm = ({ sentence_hash }) => {
                         key={event}
                         type={ButtonType.blue}
                         htmlType="submit"
+                        event={event}
                         style={{ marginTop: 20, marginBottom: 20 }}
                     >
                         {event}

@@ -6,15 +6,15 @@ import { AssignEvent, PublishEvent, ReportEvent } from "./events";
 
 export const assignedUser = assign<ReviewTaskMachineContext, AssignEvent>(
     (context, event) => {
-        return {
-            ...context,
-            reviewData: {
-                ...context.reviewData,
-            },
-            formUi: assignedForm,
-        };
-    }
-);
+    return {
+        ...context,
+        reviewData:{
+            ...context.reviewData,
+            userId: event.userId,
+        },
+        formUi: assignedForm
+    };
+});
 
 export const report = assign<ReviewTaskMachineContext, ReportEvent>(
     (context, event) => {
@@ -22,6 +22,11 @@ export const report = assign<ReviewTaskMachineContext, ReportEvent>(
             ...context,
             reviewData: {
                 ...context.reviewData,
+                summary: event.summary,
+                questions: event.questions,
+                report: event.report,
+                verification: event.verification,
+                source: event.source,
             },
             formUi: reportedForm,
         };
@@ -30,12 +35,12 @@ export const report = assign<ReviewTaskMachineContext, ReportEvent>(
 
 export const publish = assign<ReviewTaskMachineContext, PublishEvent>(
     (context, event) => {
-        return {
-            ...context,
-            reviewData: {
-                ...context.reviewData,
-            },
-            formUi: {},
-        };
-    }
-);
+    return {
+        ...context,
+        reviewData: {
+            ...context.reviewData,
+            classification: event.classification
+        },
+        formUi: {},
+    };
+});

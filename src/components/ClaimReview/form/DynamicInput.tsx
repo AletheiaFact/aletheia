@@ -10,6 +10,7 @@ interface DynamicInputProps {
     placeholder: string;
     value: string;
     onChange: any;
+    inputType: string;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -31,6 +32,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                 <InputTextList
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
+                    type={props.inputType}
                 />
             )
         case "select":

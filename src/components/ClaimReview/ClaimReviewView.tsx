@@ -10,7 +10,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
 
-const ClaimReviewView = ({ personality, claim, sentence, href }) => {
+const ClaimReviewView = ({ personality, claim, sentence, href, state, send }) => {
     const { t } = useTranslation();
     const claimId = claim._id;
     const sentenceHash = sentence?.props["data-hash"];
@@ -127,7 +127,11 @@ const ClaimReviewView = ({ personality, claim, sentence, href }) => {
                     </Row>
                 )}
                 {!formCollapsed &&
-                    <DynamicForm sentence_hash={sentenceHash} />
+                    <DynamicForm
+                        sentence_hash={sentenceHash}
+                        state={state}
+                        send={send}
+                    />
                 }
             </Row>
             <Row>

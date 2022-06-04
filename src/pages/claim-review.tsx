@@ -4,18 +4,22 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
 import { NextSeo } from 'next-seo';
+import { useMachine } from "@xstate/react";
+import { reviewTaskMachine } from "../machine/reviewTaskMachine"
+import api from '../api/claimReviewTask'
+import { ReviewTaskEvents } from "../machine/enums"
 const parser = require("accept-language-parser");
 
-const ClaimPage: NextPage<{ personality; claim; reviewTask; sentence; sitekey, href}> = ({
+const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
     personality,
     claim,
-    reviewTask,
     sentence,
     sitekey,
     href,
 }) => {
     const { t } = useTranslation();
     const review = sentence?.props?.topClassification;
+    const [ state, send, service ] = useMachine(reviewTaskMachine)
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -48,6 +52,25 @@ const ClaimPage: NextPage<{ personality; claim; reviewTask; sentence; sitekey, h
             name: claim.title,
         },
     };
+    
+    service.onTransition(state => {
+        const sentence_hash = sentence?.props["data-hash"];
+        try {
+            switch (state.event.type) {
+                case ReviewTaskEvents.assignUser:
+                    api.createClaimReviewTask({ sentence_hash, machine: state }, t)
+                    break;
+                case ReviewTaskEvents.finishReport:
+                    api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
+                    break;
+                case ReviewTaskEvents.publish:
+                    api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
+                    break;
+            }
+        } catch (e) {
+            console.error("Unable to save to localStorage")
+        }
+    })
 
     return (
         <>
@@ -61,10 +84,10 @@ const ClaimPage: NextPage<{ personality; claim; reviewTask; sentence; sitekey, h
             <ClaimReviewView
                 personality={personality}
                 claim={claim}
-                reviewTask={reviewTask}
                 sentence={sentence}
-                sitekey={sitekey}
                 href={href}
+                state={state}
+                send={send}
             />
         </>
     );

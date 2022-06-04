@@ -2,7 +2,6 @@ import { Body, Controller, Post, Param, Get, Put } from "@nestjs/common";
 import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto"
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
-import { IsPublic } from "../decorators/is-public.decorator";
 @Controller()
 export class ClaimReviewController {
     constructor(

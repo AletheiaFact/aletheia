@@ -1,7 +1,6 @@
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import * as React from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import Input from "./Input";
 import Button from "./Button";
 import { Col, Row } from "antd";
 
@@ -39,7 +38,7 @@ export default function InputTextList(props) {
 
     return (
         <div>
-            <Input {...register("firstContent")} placeholder={props.placeholder} type={props.type} />
+            <input {...register("firstContent")} placeholder={props.placeholder} type={props.type} />
 
             {controlledFields.map((_field, index) => {
                 return (

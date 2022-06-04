@@ -3,7 +3,6 @@ import unassignedForm from "../components/ClaimReview/form/unassignedForm";
 export type ReviewTaskMachineContext = {
     reviewData: {
         userId: string;
-        sentence_hash: string;
         summary: string;
         questions: string[];
         report: string;
@@ -17,7 +16,6 @@ export type ReviewTaskMachineContext = {
 export const initialContext: ReviewTaskMachineContext = {
     reviewData: {
         userId: "",
-        sentence_hash: "",
         summary: "",
         questions: [],
         report: "",

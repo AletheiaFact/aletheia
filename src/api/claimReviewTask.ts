@@ -1,5 +1,6 @@
 import { message } from "antd";
 import axios from "axios";
+import { ParseMachineState } from "../utils/ParseMachineState";
 
 const request = axios.create({
     withCredentials: true,
@@ -7,6 +8,7 @@ const request = axios.create({
 });
 
 const createClaimReviewTask = (params, t) => {
+    params.machine = ParseMachineState(params.machine)
     return request
         .post('/', {...params})
         .then((response) => {
@@ -20,12 +22,10 @@ const createClaimReviewTask = (params, t) => {
 }
 
 const updateClaimReviewTask = (params, t) => {
-    console.log(params)
     return request
         .put(
             `/${params.sentence_hash}`,
             { ...params },
-            { withCredentials: true }
         )
         .then((response) => {
             message.success('deu certo')
