@@ -6,7 +6,7 @@ import { useTranslation } from "next-i18next";
 import { NextSeo } from 'next-seo';
 import { useMachine } from "@xstate/react";
 import { reviewTaskMachine } from "../machine/reviewTaskMachine"
-import api from '../api/ClaimReviewTask'
+import api from '../api/ClaimReviewTaskApi'
 import { ReviewTaskEvents } from "../machine/enums"
 const parser = require("accept-language-parser");
 
@@ -53,18 +53,18 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
         },
     };
     
-    service.onTransition(state => {
+    service.onTransition(async(state) => {
         const sentence_hash = sentence?.props["data-hash"];
         try {
             switch (state.event.type) {
                 case ReviewTaskEvents.assignUser:
-                    api.createClaimReviewTask({ sentence_hash, machine: state }, t)
+                    await api.createClaimReviewTask({ sentence_hash, machine: state }, t)
                     break;
                 case ReviewTaskEvents.finishReport:
-                    api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
+                    await api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
                     break;
                 case ReviewTaskEvents.publish:
-                    api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
+                    await api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
                     break;
             }
         } catch (e) {
