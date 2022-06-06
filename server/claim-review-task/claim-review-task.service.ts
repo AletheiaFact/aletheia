@@ -28,10 +28,9 @@ export class ClaimReviewTaskService {
     async update(sentence_hash: string, newClaimReviewTaskBody: UpdateClaimReviewTaskDTO) {
         const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(sentence_hash)
 
-        const newClaimReviewTaskContext = Object.assign(claimReviewTask.context, newClaimReviewTaskBody.context);
+        const newClaimReviewTaskContext = Object.assign(claimReviewTask.machine.context, newClaimReviewTaskBody.machine.context);
         
         const newClaimReviewTask = Object.assign(claimReviewTask, newClaimReviewTaskContext);
-        newClaimReviewTask.state = newClaimReviewTaskBody.state
 
         const claimReviewTaskUpdated = await this.ClaimReviewTaskModel.updateOne(
             { _id: newClaimReviewTask._id },

@@ -3,7 +3,7 @@ import api from "../../api/user";
 import { useTranslation } from 'next-i18next'
 import SelectUser from './form/SelectUser'
 
-const ClaimReviewUserForm = (props) => {
+const UserAutocomplete = (props) => {
     const { t } = useTranslation();
 
     const fetchUserList = async (name) => {
@@ -26,4 +26,4 @@ const ClaimReviewUserForm = (props) => {
     )
 }
 
-export default ClaimReviewUserForm
+export default UserAutocomplete

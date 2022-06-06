@@ -5,6 +5,9 @@ import DynamicInput from '../form/DynamicInput';
 import AletheiaButton, { ButtonType } from '../../Button';
 import colors from '../../../styles/colors';
 import { Col, Row } from 'antd';
+import assignedForm from "./assignedForm";
+import reportedForm from "./reportedForm";
+import { ReviewTaskEvents } from "../../../machine/enums";
 
 const DynamicForm = ({ sentence_hash, state, send }) => {
     const { t } = useTranslation();
@@ -54,8 +57,16 @@ const DynamicForm = ({ sentence_hash, state, send }) => {
     })
 
     const onSubmit = async(data, e) => {
+        let formUi;
         const event = e.nativeEvent.submitter.getAttribute('event')
-        send(event,  { ...data, sentence_hash, machine: state }, t)
+        if(event === ReviewTaskEvents.assignUser) {
+            formUi = assignedForm
+        } else if (event === ReviewTaskEvents.finishReport) {
+            formUi = reportedForm
+        } else {
+            formUi = {}
+        }
+        send(event,  { ...data, sentence_hash, type: event, formUi }, t)
     };
     
     return (

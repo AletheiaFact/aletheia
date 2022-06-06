@@ -2,7 +2,7 @@ import { createMachine } from "xstate";
 import { ReviewTaskMachineContext, initialContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
-import { assignedUser, publish, report } from "./actions";
+import { saveContext } from "./actions";
 import { ReviewTaskStates } from "./enums";
 
 export const reviewTaskMachine = createMachine<
@@ -17,7 +17,7 @@ export const reviewTaskMachine = createMachine<
             on: {
                 ASSIGN_USER: {
                     target: ReviewTaskStates.assigned,
-                    actions: [assignedUser],
+                    actions: [saveContext],
                 },
             },
         },
@@ -25,7 +25,7 @@ export const reviewTaskMachine = createMachine<
             on: {
                 FINISH_REPORT: {
                     target: ReviewTaskStates.reported,
-                    actions: [report],
+                    actions: [saveContext],
                 },
             },
         },
@@ -33,7 +33,7 @@ export const reviewTaskMachine = createMachine<
             on: {
                 PUBLISH: {
                     target: ReviewTaskStates.published,
-                    actions: [publish],
+                    actions: [saveContext],
                 },
             },
         },

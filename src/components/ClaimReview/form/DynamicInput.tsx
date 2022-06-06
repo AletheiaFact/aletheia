@@ -2,7 +2,7 @@ import { useTranslation } from 'next-i18next';
 import React from 'react'
 import ClaimReviewSelect from '../../Form/ClaimReviewSelect';
 import TextArea from '../../TextArea';
-import ClaimReviewUserForm from '../ClaimReviewUserForm';
+import UserAutocomplete from '../UserAutocomplete';
 import InputTextList from '../../InputTextList'
 
 interface DynamicInputProps {
@@ -26,7 +26,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                 />
             )
         case "inputSearch":
-            return <ClaimReviewUserForm {...props} />
+            return <UserAutocomplete {...props} />
         case "textList":
             return (
                 <InputTextList
