@@ -28,11 +28,11 @@ const updateClaimReviewTask = (params, t) => {
             { ...params },
         )
         .then((response) => {
-            message.success('deu certo')
+            message.success(t("claimReviewTask:reportedSuccess"))
             return response.data
         })
         .catch(err=>{
-            message.error('não deu certo')
+            message.success(t("claimReviewTask:reportedError"))
             return err
         })
 }

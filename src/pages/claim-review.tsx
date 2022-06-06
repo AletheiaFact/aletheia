@@ -6,7 +6,7 @@ import { useTranslation } from "next-i18next";
 import { NextSeo } from 'next-seo';
 import { useMachine } from "@xstate/react";
 import { reviewTaskMachine } from "../machine/reviewTaskMachine"
-import api from '../api/claimReviewTask'
+import api from '../api/ClaimReviewTask'
 import { ReviewTaskEvents } from "../machine/enums"
 const parser = require("accept-language-parser");
 

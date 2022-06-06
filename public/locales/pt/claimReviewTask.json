@@ -1,4 +1,6 @@
 {
     "userAssignedSuccess": "Usuário atribuído com sucesso",
-    "userAssignedError": "Erro ao atribuir usuário"
+    "userAssignedError": "Erro ao atribuir usuário",
+    "reportedSuccess": "Relatório salvo com sucesso",
+    "reportedError": "Erro ao salvar o relatório"
 }
