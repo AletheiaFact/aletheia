@@ -9,6 +9,7 @@ export type ReviewTaskMachineContext = {
         verification: string;
         source: string[];
         classification: string;
+        sentence_hash: string;
     };
     formUi: any;
 };
@@ -22,6 +23,7 @@ export const initialContext: ReviewTaskMachineContext = {
         verification: "",
         source: [],
         classification: "",
+        sentence_hash: "",
     },
     formUi: unassignedForm,
 };

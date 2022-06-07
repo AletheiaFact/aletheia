@@ -1,5 +1,4 @@
 import React from 'react'
-import { useTranslation } from 'next-i18next';
 import { useForm, Controller } from "react-hook-form";
 import DynamicInput from '../form/DynamicInput';
 import AletheiaButton, { ButtonType } from '../../Button';
@@ -8,12 +7,14 @@ import { Col, Row } from 'antd';
 import assignedForm from "./assignedForm";
 import reportedForm from "./reportedForm";
 import { ReviewTaskEvents } from "../../../machine/enums";
+import { authService } from '../../../machine/reviewTaskMachine';
+import { useActor } from '@xstate/react';
 
-const DynamicForm = ({ sentence_hash, state, send }) => {
-    const { t } = useTranslation();
+const DynamicForm = ({ sentence_hash }) => {
     const { handleSubmit, control, formState: { errors } } = useForm()
+    const [ authState ] = useActor(authService);
 
-    const currentForm = state.context.formUi
+    const currentForm = authState.context.formUi
 
     const formInputs = Object.keys(currentForm).map(fieldName => {
         const { rules, defaultValue, label, placeholder, type, inputType } = currentForm[fieldName];
@@ -66,7 +67,7 @@ const DynamicForm = ({ sentence_hash, state, send }) => {
         } else {
             formUi = {}
         }
-        send(event,  { ...data, sentence_hash, type: event, formUi }, t)
+        authService.send(event, { ...data, sentence_hash, type: event, formUi })
     };
     
     return (
@@ -75,7 +76,7 @@ const DynamicForm = ({ sentence_hash, state, send }) => {
             onSubmit={handleSubmit(onSubmit)}
         >
             {formInputs}
-            {state.nextEvents.map((event) => {
+            {authState.nextEvents.map((event) => {
                 return (
                     <AletheiaButton
                         key={event}

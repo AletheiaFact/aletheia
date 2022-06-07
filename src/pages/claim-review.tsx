@@ -4,10 +4,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
 import { NextSeo } from 'next-seo';
-import { useMachine } from "@xstate/react";
-import { reviewTaskMachine } from "../machine/reviewTaskMachine"
-import api from '../api/ClaimReviewTaskApi'
-import { ReviewTaskEvents } from "../machine/enums"
 const parser = require("accept-language-parser");
 
 const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
@@ -19,7 +15,6 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
 }) => {
     const { t } = useTranslation();
     const review = sentence?.props?.topClassification;
-    const [ state, send, service ] = useMachine(reviewTaskMachine)
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -52,25 +47,6 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
             name: claim.title,
         },
     };
-    
-    service.onTransition(async(state) => {
-        const sentence_hash = sentence?.props["data-hash"];
-        try {
-            switch (state.event.type) {
-                case ReviewTaskEvents.assignUser:
-                    await api.createClaimReviewTask({ sentence_hash, machine: state }, t)
-                    break;
-                case ReviewTaskEvents.finishReport:
-                    await api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
-                    break;
-                case ReviewTaskEvents.publish:
-                    await api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
-                    break;
-            }
-        } catch (e) {
-            console.error("Unable to save to localStorage")
-        }
-    })
 
     return (
         <>
@@ -86,8 +62,6 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
                 claim={claim}
                 sentence={sentence}
                 href={href}
-                state={state}
-                send={send}
             />
         </>
     );
