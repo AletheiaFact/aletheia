@@ -1,8 +1,8 @@
 import { Col, Form, Row } from "antd";
 import React from "react";
-import {DeleteOutlined, PlusOutlined} from "@ant-design/icons";
-import {useTranslation} from "next-i18next";
-import Input from "../Input";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { useTranslation } from "next-i18next";
+import Input from "../AletheiaInput";
 import Button from "../Button";
 
 const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, label, sources }) => {
@@ -40,12 +40,12 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                                 />
                             </Col>
                             <Col span={4}>
-                                {index > 0 && <Button style={{ width: "100%", height:"40px" }} onClick={() => removeSource(index)}><DeleteOutlined /></Button>}
+                                {index > 0 && <Button style={{ width: "100%", height: "40px" }} onClick={() => removeSource(index)}><DeleteOutlined /></Button>}
                             </Col>
                         </Row>
                     </Form.Item>
                 )
-                })
+            })
             }
             <div
                 style={{

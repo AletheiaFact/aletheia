@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SourceInput from "../Source/SourceInput";
 import Button, { ButtonType } from "../Button";
-import Input from "../Input";
+import Input from "../AletheiaInput";
 import TextArea from "../TextArea";
 
 const recaptchaRef = React.createRef<ReCAPTCHA>();
@@ -34,7 +34,7 @@ const ClaimForm = styled(Form)`
 const DatePickerInput = styled(DatePicker)`
     background: #F5F5F5;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    border-radius: 30px;
+    border-radius: 4px;
     border: none;
     height: 40px;
 

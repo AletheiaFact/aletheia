@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Form, message, Row } from "antd";
 import InputPassword from "../InputPassword";
-import Input from "../Input";
+import Input from "../AletheiaInput";
 import Button, { ButtonType } from "../Button";
 import {
     SelfServiceLoginFlow,
