@@ -12,5 +12,6 @@
     "signupFormHeader": "Crie uma nova conta",
     "signupFailedMessage": "Erro ao criar a conta",
     "signupSuccessfulMessage": "Cadastro realizado com sucesso",
+    "getUsersFailed": "Erro ao buscar usuários",
     "refreshLoginMessage": "Por favor, confirme o seu login antes de alterar as definições da sua conta"
 }

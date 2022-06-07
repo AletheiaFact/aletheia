@@ -48,8 +48,25 @@ const updatePassword = (params, t) => {
         });
 };
 
+const getUsers = (searchName, t) => {
+    const params = {
+        searchName,
+    }
+    return request
+        .get(`/`, { params })
+        .then((response) => {
+            return response?.data;
+        })
+        .catch((e) => {
+            return e?.response?.data || {
+                message: t("login:getUsersFailed"),
+            };
+        })
+}
+
 export default {
     login,
     updatePassword,
     getById,
+    getUsers
 };

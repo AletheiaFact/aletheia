@@ -2,7 +2,7 @@
     "titleEmpty": "Escolha uma frase para revisar",
     "title": "Classifique a frase",
     "selectLabel": "Revise essa frase",
-    "addReviewButton": "Adicione revisão",
+    "addReviewButton": "Comece uma Revisão",
     "cancelButton": "Cancelar",
     "placeholder": "Selecione uma classificação",
     "not-fact": "Não é fato",
@@ -17,5 +17,6 @@
     "errorMessage": "Erro ao enviar revisão",
     "successMessage": "Revisão concluída",
     "reportHeading": "Relatório da checagem",
-    "sourcesHeading": "Fontes"
+    "sourcesHeading": "Fontes",
+    "assignUser": "Atribua à um usuário"
 }

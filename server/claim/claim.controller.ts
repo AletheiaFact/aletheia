@@ -24,13 +24,15 @@ import { CreateClaimDTO } from "./dto/create-claim.dto";
 import { GetClaimsDTO } from "./dto/get-claims.dto";
 import { GetClaimsByHashDTO } from "./dto/get-reviews-by-hash.dto";
 import { UpdateClaimDTO } from "./dto/update-claim.dto"
-import {IsPublic} from "../decorators/is-public.decorator";
+import { IsPublic } from "../decorators/is-public.decorator";
+import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 
 @Controller()
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
     constructor(
         private claimReviewService: ClaimReviewService,
+        private claimReviewTaskService: ClaimReviewTaskService,
         private personalityService: PersonalityService,
         private claimService: ClaimService,
         private configService: ConfigService,

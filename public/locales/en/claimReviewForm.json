@@ -2,7 +2,7 @@
     "titleEmpty": "Choose a sentence to review",
     "title": "Review the sentence",
     "selectLabel": "Review this claim",
-    "addReviewButton": "Add review",
+    "addReviewButton": "Start Review",
     "cancelButton": "Cancel",
     "placeholder": "Choose a classification",
     "not-fact": "Not fact",
@@ -17,5 +17,6 @@
     "errorMessage": "Error while sending review",
     "successMessage": "Review succeeded",
     "reportHeading": "Fact-checking Report",
-    "sourcesHeading": "Sources"
+    "sourcesHeading": "Sources",
+    "assignUser": "Assign to a user"
 }

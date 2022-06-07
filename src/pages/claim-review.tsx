@@ -61,7 +61,6 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
                 personality={personality}
                 claim={claim}
                 sentence={sentence}
-                sitekey={sitekey}
                 href={href}
             />
         </>

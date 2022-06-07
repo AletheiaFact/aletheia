@@ -1,0 +1,6 @@
+{
+    "userAssignedSuccess": "User assigned successfully",
+    "userAssignedError": "Error in assigning user",
+    "reportedSuccess": "Report saved succesfully",
+    "reportedError": "Error in saving report"
+}
