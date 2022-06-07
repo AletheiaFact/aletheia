@@ -9,10 +9,12 @@ import reportedForm from "./reportedForm";
 import { ReviewTaskEvents } from "../../../machine/enums";
 import { authService } from '../../../machine/reviewTaskMachine';
 import { useActor } from '@xstate/react';
+import { useTranslation } from 'next-i18next';
 
 const DynamicForm = ({ sentence_hash }) => {
     const { handleSubmit, control, formState: { errors } } = useForm()
     const [ authState ] = useActor(authService);
+    const { t } = useTranslation()
 
     const currentForm = authState.context.formUi
 
@@ -67,7 +69,7 @@ const DynamicForm = ({ sentence_hash }) => {
         } else {
             formUi = {}
         }
-        authService.send(event, { ...data, sentence_hash, type: event, formUi })
+        authService.send(event, { ...data, sentence_hash, type: event, formUi, t })
     };
     
     return (

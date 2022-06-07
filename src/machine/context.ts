@@ -11,6 +11,9 @@ export type ReviewTaskMachineContext = {
         classification: string;
         sentence_hash: string;
     };
+    utils: {
+        t: any;
+    }
     formUi: any;
 };
 
@@ -24,6 +27,9 @@ export const initialContext: ReviewTaskMachineContext = {
         source: [],
         classification: "",
         sentence_hash: "",
+    },
+    utils: {
+        t: null,
     },
     formUi: unassignedForm,
 };

@@ -9,6 +9,7 @@ export type SaveEvent = {
     classification?: string;
     formUi: any;
     sentence_hash: string;
+    t: any;
 };
 
 export type ReviewTaskMachineEvents = SaveEvent

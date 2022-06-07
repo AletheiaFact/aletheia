@@ -7,36 +7,32 @@ const request = axios.create({
     baseURL: `/api/claimreviewtask`,
 });
 
-const createClaimReviewTask = (params) => {
+const createClaimReviewTask = (params, t) => {
     params.machine = ParseMachineState(params.machine)
     return request
         .post('/', {...params})
         .then((response) => {
-            // message.success(t("claimReviewTask:userAssignedSuccess"))
-            message.success("deu certo")
+            message.success(t("claimReviewTask:userAssignedSuccess"))
             return response.data
         })
         .catch(err=>{
-            // message.error(t("claimReviewTask:userAssignedError"))
-            message.error("deu errado")
+            message.error(t("claimReviewTask:userAssignedError"))
             return err
         })
 }
 
-const updateClaimReviewTask = (params, t = undefined) => {
+const updateClaimReviewTask = (params, t) => {
     return request
         .put(
             `/${params.sentence_hash}`,
             { ...params },
         )
         .then((response) => {
-            // message.success(t("claimReviewTask:reportedSuccess"))
-            message.success("deu certo")
+            message.success(t("claimReviewTask:reportedSuccess"))
             return response.data
         })
         .catch(err=>{
-            // message.success(t("claimReviewTask:reportedError"))
-            message.error("deu errado")
+            message.success(t("claimReviewTask:reportedError"))
             return err
         })
 }
