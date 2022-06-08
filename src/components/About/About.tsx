@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
-import { Row, Typography} from "antd";
+import { Row, Typography } from "antd";
 import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
 import InfoAlert from "../InfoAlert";
