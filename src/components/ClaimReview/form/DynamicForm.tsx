@@ -24,8 +24,8 @@ const DynamicForm = ({ sentence_hash }) => {
 
     const currentForm = authState.context.formUi;
 
-    const formInputs = currentForm.map((field, index) => {
-        const { fieldName, rules, label, placeholder, type, inputType } = field
+    const formInputs = currentForm.map((fieldItem, index) => {
+        const { fieldName, rules, label, placeholder, type, inputType } = fieldItem
 
         return (
             <Row key={index} style={{ marginBottom: 20 }}>
@@ -67,8 +67,6 @@ const DynamicForm = ({ sentence_hash }) => {
     });
 
     const onSubmit = async (data, e) => {
-        console.log(data);
-
         let formUi: FormField[];
         const event = e.nativeEvent.submitter.getAttribute("event");
         if (event === ReviewTaskEvents.assignUser) {

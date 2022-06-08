@@ -12,6 +12,7 @@ const SelectInput = styled(Select)`
     border-radius: 30px;
     border: none;
     height: 40px;
+    width: 100%;
 
     .ant-select-selector {
         background: none !important;
