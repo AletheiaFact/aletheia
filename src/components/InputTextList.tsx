@@ -11,10 +11,7 @@ type FormValues = {
 };
 
 
-
-
-
-export default function InputTextList(props) {
+export default function InputTextList({ placeholder, onChange, inputType, addInputLabel }) {
     const { t } = useTranslation()
 
     const { register, control, watch } = useForm<FormValues>({
@@ -35,7 +32,7 @@ export default function InputTextList(props) {
     React.useEffect(() => {
         const subscription = watch((value) => {
             const contentArray = value.fieldArray.flatMap(field => field.content)
-            props.onChange(contentArray)
+            onChange(contentArray)
         });
         return () => subscription.unsubscribe();
     }, [watch]);
@@ -48,8 +45,8 @@ export default function InputTextList(props) {
                         <Col span={index > 0 ? 20 : 24}>
                             <AletheiaInput
                                 {...register(`fieldArray.${index}.content` as const)}
-                                placeholder={props.placeholder}
-                                type={props.type}
+                                placeholder={placeholder}
+                                type={inputType}
                                 required={true}
                             />
                         </Col>
@@ -82,7 +79,7 @@ export default function InputTextList(props) {
                         })
                     }
                 >
-                    <PlusOutlined /> {t("claimReviewForm:addInput")}
+                    <PlusOutlined /> {addInputLabel}
                 </a>
             </div>
         </div>

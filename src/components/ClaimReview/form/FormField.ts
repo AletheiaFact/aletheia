@@ -7,6 +7,7 @@ export type FormField = {
     rules?: RegisterOptions;
     type: string;
     inputType?: string;
+    addInputLabel?: string;
 };
 
 interface createFormFieldProps extends Partial<FormField> {

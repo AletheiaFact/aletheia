@@ -25,7 +25,7 @@ const DynamicForm = ({ sentence_hash }) => {
     const currentForm = authState.context.formUi;
 
     const formInputs = currentForm.map((fieldItem, index) => {
-        const { fieldName, rules, label, placeholder, type, inputType } = fieldItem
+        const { fieldName, rules, label, placeholder, type, inputType, addInputLabel } = fieldItem
 
         return (
             <Row key={index} style={{ marginBottom: 20 }}>
@@ -53,6 +53,7 @@ const DynamicForm = ({ sentence_hash }) => {
                                 onChange={field.onChange}
                                 value={field.value}
                                 inputType={inputType}
+                                addInputLabel={addInputLabel}
                             />
                         )}
                     />

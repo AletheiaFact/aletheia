@@ -11,6 +11,7 @@ interface DynamicInputProps {
     value: string;
     onChange: any;
     inputType: string;
+    addInputLabel: string
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -27,14 +28,15 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "inputSearch":
             return <UserAutocomplete
                 placeholder={t(props.placeholder)}
-                onChange={(value) => props.onChange(value)}
+                onChange={props.onChange}
             />
         case "textList":
             return (
                 <InputTextList
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
-                    type={props.inputType}
+                    inputType={props.inputType}
+                    addInputLabel={t(props.addInputLabel)}
                 />
             )
         case "select":
@@ -43,6 +45,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     type="select"
                     onChange={(value) => props.onChange(value)}
                     defaultValue=""
+                    placeholder={t(props.placeholder)}
                 />
             )
         default:
