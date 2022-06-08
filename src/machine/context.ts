@@ -1,3 +1,4 @@
+import { FormField } from "../components/ClaimReview/form/FormField";
 import unassignedForm from "../components/ClaimReview/form/unassignedForm";
 
 export type ReviewTaskMachineContext = {
@@ -13,8 +14,8 @@ export type ReviewTaskMachineContext = {
     };
     utils: {
         t: any;
-    }
-    formUi: any;
+    };
+    formUi: FormField[];
 };
 
 export const initialContext: ReviewTaskMachineContext = {

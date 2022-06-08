@@ -1,50 +1,52 @@
-const assignedForm = {
-    summary: {
-        label: "Conclusion summary",
+import { FormField } from "./FormField";
+
+const assignedForm: FormField[] = [
+    {
+        fieldName: "summary",
         type: "textArea",
-        placeholder: "Insert summary here",
-        defaultValue: "",
+        label: "claimReviewForm:summaryLabel",
+        placeholder: "claimReviewForm:summaryPlaceholder",
         rules: {
-            required: true,
+            required: "common:requiredFieldError",
         },
     },
-    questions: {
-        label: "Which questions must be answered",
+    {
+        fieldName: "questions",
         type: "textList",
-        placeholder: "Insert question here",
-        defaultValue: "",
+        label: "claimReviewForm:questionsLabel",
+        placeholder: "claimReviewForm:questionsPlaceholder",
         rules: {
-            required: true,
+            required: "common:requiredFieldError",
         },
     },
-    report: {
-        label: "Verify report",
+    {
+        fieldName: "report",
         type: "textArea",
-        placeholder: "Insert content report here",
-        defaultValue: "",
+        label: "claimReviewForm:reportLabel",
+        placeholder: "claimReviewForm:reportPlaceholder",
         rules: {
-            required: true,
+            required: "common:requiredFieldError",
         },
     },
-    verification: {
-        label: "How we verify",
+    {
+        fieldName: "verification",
         type: "textArea",
-        placeholder: "Insert how we verify",
-        defaultValue: "",
+        label: "claimReviewForm:verificationLabel",
+        placeholder: "claimReviewForm:verificationPlaceholder",
         rules: {
-            required: true,
+            required: "common:requiredFieldError",
         },
     },
-    source: {
-        label: "Sources",
+    {
+        fieldName: "source",
         type: "textList",
-        placeholder: "Paste URL",
-        defaultValue: "",
+        label: "claimReviewForm:sourcesLabel",
+        placeholder: "claimReviewForm:sourcesPlaceholder",
         inputType: "url",
         rules: {
-            required: true,
+            required: "common:requiredFieldError",
         },
     },
-};
+];
 
-export default assignedForm
+export default assignedForm;
