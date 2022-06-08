@@ -1,6 +1,17 @@
 import { Select, Spin } from 'antd';
 import React, { useMemo, useState } from 'react';
+import styled from 'styled-components'
+import colors from '../../../styles/colors';
 
+const StyledSelect = styled(Select)`
+    .ant-select-selector {
+        border-radius: 30px !important;
+    }
+
+    .ant-select-selection-placeholder {
+        color: ${colors.graySecondary};
+    }
+`
 
 function SelectUser({ fetchOptions, ...props }) {
     const [fetching, setFetching] = useState(false);
@@ -19,12 +30,13 @@ function SelectUser({ fetchOptions, ...props }) {
     }, [fetchOptions]);
 
     return (
-        <Select
+        <StyledSelect
+            showSearch
             filterOption={false}
             onSearch={getOptions}
             notFoundContent={fetching ? <Spin size="small" /> : null}
-            {...props}
             options={options}
+            {...props}
         />
     );
 }

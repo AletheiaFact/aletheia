@@ -20,13 +20,15 @@ const DynamicInput = (props: DynamicInputProps) => {
             return (
                 <TextArea
                     rows={4}
-                    value={props.value}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
                 />
             )
         case "inputSearch":
-            return <UserAutocomplete {...props} />
+            return <UserAutocomplete
+                placeholder={t(props.placeholder)}
+                onChange={(value) => props.onChange(value)}
+            />
         case "textList":
             return (
                 <InputTextList

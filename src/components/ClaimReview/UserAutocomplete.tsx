@@ -3,7 +3,7 @@ import api from "../../api/user";
 import { useTranslation } from 'next-i18next'
 import SelectUser from './form/SelectUser'
 
-const UserAutocomplete = (props) => {
+const UserAutocomplete = ({ placeholder, onChange }) => {
     const { t } = useTranslation();
 
     const fetchUserList = async (name) => {
@@ -16,11 +16,9 @@ const UserAutocomplete = (props) => {
 
     return (
         <SelectUser
-            showSearch
-            value={props.value}
             fetchOptions={fetchUserList}
-            placeholder={t(props.placeholder)}
-            onChange={props.onChange}
+            placeholder={placeholder}
+            onChange={onChange}
             style={{ width: '100%' }}
         />
     )
