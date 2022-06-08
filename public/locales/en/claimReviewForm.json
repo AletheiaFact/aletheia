@@ -1,10 +1,10 @@
 {
     "titleEmpty": "Choose a sentence to review",
     "title": "Review the sentence",
-    "selectLabel": "Review this claim",
+    "classificationLabel": "Review this claim",
     "addReviewButton": "Start Review",
     "cancelButton": "Cancel",
-    "placeholder": "Choose a classification",
+    "classificationPlaceholder": "Choose a classification",
     "not-fact": "Not fact",
     "true": "Trustworthy",
     "true-but": "Trustworthy, but",

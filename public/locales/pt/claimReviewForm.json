@@ -1,10 +1,10 @@
 {
     "titleEmpty": "Escolha uma frase para revisar",
     "title": "Classifique a frase",
-    "selectLabel": "Revise essa frase",
+    "classificationLabel": "Revise essa frase",
     "addReviewButton": "Comece uma Revisão",
     "cancelButton": "Cancelar",
-    "placeholder": "Selecione uma classificação",
+    "classificationPlaceholder": "Selecione uma classificação",
     "not-fact": "Não é fato",
     "true": "Confiável",
     "true-but": "Confiável, mas",

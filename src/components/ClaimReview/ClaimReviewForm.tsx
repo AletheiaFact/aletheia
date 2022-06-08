@@ -112,6 +112,7 @@ const ClaimReviewForm = ({
                         type="select"
                         onChange={onChangeClassification}
                         defaultValue=""
+                        placeholder={t("claimReviewForm:classificationPlaceholder")}
                     />
                 </Form.Item>
                 <SourceInput

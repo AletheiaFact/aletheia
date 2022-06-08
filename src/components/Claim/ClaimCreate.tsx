@@ -34,7 +34,7 @@ const ClaimForm = styled(Form)`
 const DatePickerInput = styled(DatePicker)`
     background: #F5F5F5;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    border-radius: 4px;
+    border-radius: 30px;
     border: none;
     height: 40px;
 
