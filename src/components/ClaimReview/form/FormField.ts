@@ -8,3 +8,31 @@ export type FormField = {
     type: string;
     inputType?: string;
 };
+
+interface createFormFieldProps extends Partial<FormField> {
+    fieldName: string;
+    type: string;
+    i18nKey?: string;
+    i18nNamespace?: string;
+}
+
+const createFormField = (props: createFormFieldProps): FormField => {
+    const {
+        fieldName,
+        type,
+        i18nKey = fieldName,
+        i18nNamespace = "claimReviewForm",
+    } = props;
+    return {
+        fieldName,
+        type,
+        label: `${i18nNamespace}:${i18nKey}Label`,
+        placeholder: `${i18nNamespace}:${i18nKey}Placeholder`,
+        rules: {
+            required: "common:requiredFieldError",
+        },
+        ...props,
+    };
+};
+
+export { createFormField };

@@ -1,15 +1,7 @@
-import { FormField } from "./FormField";
+import { createFormField, FormField } from "./FormField";
 
 const reportedForm: FormField[] = [
-    {
-        fieldName: "classification",
-        type: "select",
-        label: "claimReviewForm:selectLabel",
-        placeholder: "claimReviewForm:placeholder",
-        rules: {
-            required: "common:requiredFieldError",
-        },
-    },
+    createFormField({ fieldName: "classification", type: "select" }),
 ];
 
 export default reportedForm;

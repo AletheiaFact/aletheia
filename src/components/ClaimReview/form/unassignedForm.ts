@@ -1,15 +1,11 @@
-import { FormField } from "./FormField";
+import { createFormField, FormField } from "./FormField";
 
 const unassignedForm: FormField[] = [
-    {
+    createFormField({
         fieldName: "userId",
-        label: "claimReviewForm:assignUserLabel",
         type: "inputSearch",
-        placeholder: "claimReviewForm:assignUserPlaceholder",
-        rules: {
-            required: "common:requiredFieldError",
-        },
-    },
+        i18nKey: "assignUser",
+    }),
 ];
 
 export default unassignedForm;
