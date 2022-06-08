@@ -8,23 +8,31 @@ const InfoAlert= () => {
     return (
         <Alert
             type="info"
-            style={{marginBottom: "15px", padding: "50px 25px 50px 25px"}}
-            message={<Trans i18nKey={"about:alertInfo"}
+            style={{
+                marginBottom: "15px", 
+                padding: "50px 25px 50px 25px"
+            }}
+            message={<Trans 
+                i18nKey={"about:alertInfo"}
                 components={[
                     <a style={{whiteSpace: "pre-wrap"}} href="https://github.com/AletheiaFact/aletheia" target="_blank" rel="noreferrer"></a>
                 ]}
             />}
             action={
                 <Button
-                type="primary"
-                size="small"
-                shape="round"
-                icon={<FilePdfOutlined />}
-                href="https://github.com/AletheiaFact/miscellaneous/blob/main/presentations/aletheiafact.pdf"
-                target={"_blank"}
-                style={{position: "absolute", bottom: "0", right: "0", marginRight: "15px", marginBottom: "15px" }}
+                    type="primary"
+                    size="small"
+                    shape="round"
+                    icon={<FilePdfOutlined />}
+                    href="https://github.com/AletheiaFact/miscellaneous/blob/main/presentations/aletheiafact.pdf"
+                    target={"_blank"}
+                    style={{
+                        position: "absolute",
+                        bottom: "15px", 
+                        right: "15px", 
+                    }}
                 >
-                {t("about:labelButton")}
+                    {t("about:labelButton")}
                 </Button>
             }
         />
