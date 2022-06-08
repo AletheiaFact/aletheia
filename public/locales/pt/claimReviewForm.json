@@ -18,5 +18,17 @@
     "successMessage": "Revisão concluída",
     "reportHeading": "Relatório da checagem",
     "sourcesHeading": "Fontes",
-    "assignUser": "Atribua à um usuário"
+    "assignUserLabel": "Atribuir a um usuário",
+    "assignUserPlaceholder": "Selecione um usuário",
+    "summaryLabel": "Resumo da conclusão",
+    "summaryPlaceholder": "Insira o resumo da conclusão",
+    "questionsLabel": "Quais perguntas a verificação deverá responder?",
+    "questionsPlaceholder": "Insira uma pergunta",
+    "reportLabel": "Relatório da verificação",
+    "reportPlaceholder": "Insira o relatório da verificação",
+    "verificationLabel": "Como verificamos?",
+    "verificationPlaceholder": "Insira como a verificação foi feita",
+    "sourcesLabel": "Forneça ao menos um link de uma fonte confiável",
+    "sourcesPlaceholder": "Cole uma URL",
+    "addInput": "Insira outro campo"
 }
