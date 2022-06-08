@@ -1,14 +1,15 @@
 import { FilePdfOutlined } from '@ant-design/icons';
 import { Alert, Button } from 'antd';
-import { Trans } from 'next-i18next';
+import { Trans, useTranslation } from 'next-i18next';
 import React from 'react';
 
 const InfoAlert= () => {
+    const { t } = useTranslation()
     return (
         <Alert
             type="info"
-            closable
-            description={<Trans i18nKey={"about:alertInfo"}
+            style={{marginBottom: "15px", padding: "50px 25px 50px 25px"}}
+            message={<Trans i18nKey={"about:alertInfo"}
                 components={[
                     <a style={{whiteSpace: "pre-wrap"}} href="https://github.com/AletheiaFact/aletheia" target="_blank" rel="noreferrer"></a>
                 ]}
@@ -16,12 +17,15 @@ const InfoAlert= () => {
             action={
                 <Button
                 type="primary"
+                size="small"
                 shape="round"
                 icon={<FilePdfOutlined />}
                 href="https://github.com/AletheiaFact/miscellaneous/blob/main/presentations/aletheiafact.pdf"
                 target={"_blank"}
-                style={{position: "absolute", bottom: "0", right: "0", marginRight: "5px", marginBottom: "5px" }}
-                />
+                style={{position: "absolute", bottom: "0", right: "0", marginRight: "15px", marginBottom: "15px" }}
+                >
+                {t("about:labelButton")}
+                </Button>
             }
         />
     )
