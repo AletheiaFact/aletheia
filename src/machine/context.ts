@@ -18,19 +18,23 @@ export type ReviewTaskMachineContext = {
     formUi: FormField[];
 };
 
-export const initialContext: ReviewTaskMachineContext = {
-    reviewData: {
-        userId: "",
-        summary: "",
-        questions: [],
-        report: "",
-        verification: "",
-        source: [],
-        classification: "",
-        sentence_hash: "",
-    },
-    utils: {
-        t: null,
-    },
-    formUi: unassignedForm,
-};
+const buildState = ({ reviewData, formUi } : { reviewData?: any, formUi?: FormField[] }) : ReviewTaskMachineContext => {
+        return {
+            reviewData: reviewData || {
+                userId: "",
+                summary: "",
+                questions: [],
+                report: "",
+                verification: "",
+                source: [],
+                classification: "",
+                sentence_hash: "",
+            },
+            utils: {
+                t: null,
+            },
+            formUi: formUi || unassignedForm,
+        }
+}
+
+export const initialContext: ReviewTaskMachineContext = buildState({});
