@@ -1,6 +1,5 @@
 import { Select } from "antd";
 import React from "react";
-import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import ClassificationText from "../ClassificationText";
@@ -12,6 +11,7 @@ const SelectInput = styled(Select)`
     border-radius: 30px;
     border: none;
     height: 40px;
+    width: 100%;
 
     .ant-select-selector {
         background: none !important;
@@ -40,8 +40,7 @@ const SelectInput = styled(Select)`
     }
 `;
 
-const ClaimReviewSelect = ({ type, onChange, defaultValue }) => {
-    const { t } = useTranslation();
+const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
     return (
         <SelectInput
             type={type}
@@ -49,7 +48,7 @@ const ClaimReviewSelect = ({ type, onChange, defaultValue }) => {
             defaultValue={defaultValue}
         >
             <Option value="" disabled>
-                {t("claimReviewForm:placeholder")}
+                {placeholder}
             </Option>
             <Option value="not-fact">
                 <ClassificationText classification="not-fact" />

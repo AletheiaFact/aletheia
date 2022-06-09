@@ -41,3 +41,6 @@ globalConfig.json
 
 # Docker
 docker-compose.override.yaml
+
+# Vscode settings
+.vscode/settings.json

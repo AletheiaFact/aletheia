@@ -1,10 +1,10 @@
 {
     "titleEmpty": "Choose a sentence to review",
     "title": "Review the sentence",
-    "selectLabel": "Review this claim",
+    "classificationLabel": "Review this claim",
     "addReviewButton": "Start Review",
     "cancelButton": "Cancel",
-    "placeholder": "Choose a classification",
+    "classificationPlaceholder": "Choose a classification",
     "not-fact": "Not fact",
     "true": "Trustworthy",
     "true-but": "Trustworthy, but",
@@ -18,5 +18,18 @@
     "successMessage": "Review succeeded",
     "reportHeading": "Fact-checking Report",
     "sourcesHeading": "Sources",
-    "assignUser": "Assign to a user"
+    "assignUserLabel": "Assign a user",
+    "assignUserPlaceholder": "Select a user",
+    "summaryLabel": "Conclusion summary",
+    "summaryPlaceholder": "Insert summary here",
+    "questionsLabel": "Which questions must be answered",
+    "questionsPlaceholder": "Insert question here",
+    "addQuestionLabel": "Add another question",
+    "reportLabel": "Verification report",
+    "reportPlaceholder": "Insert report content here",
+    "verificationLabel": "How it was verified",
+    "verificationPlaceholder": "Insert how de verifications was done",
+    "sourcesLabel": "Provide at least one link to a reliable source",
+    "sourcesPlaceholder": "Paste URL",
+    "addSourceLabel": "Add another source"
 }

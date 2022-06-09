@@ -1,50 +1,24 @@
-const assignedForm = {
-    summary: {
-        label: "Conclusion summary",
-        type: "textArea",
-        placeholder: "Insert summary here",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    questions: {
-        label: "Which questions must be answered",
-        type: "textList",
-        placeholder: "Insert question here",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    report: {
-        label: "Verify report",
-        type: "textArea",
-        placeholder: "Insert content report here",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    verification: {
-        label: "How we verify",
-        type: "textArea",
-        placeholder: "Insert how we verify",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    source: {
-        label: "Sources",
-        type: "textList",
-        placeholder: "Paste URL",
-        defaultValue: "",
-        inputType: "url",
-        rules: {
-            required: true,
-        },
-    },
-};
+import { createFormField, FormField } from "./FormField";
 
-export default assignedForm
+const assignedForm: FormField[] = [
+    createFormField({ fieldName: "summary", type: "textArea" }),
+    createFormField({
+        fieldName: "questions",
+        type: "textList",
+        addInputLabel: "claimReviewForm:addQuestionLabel",
+    }),
+    createFormField({ fieldName: "report", type: "textArea" }),
+    createFormField({
+        fieldName: "verification",
+        type: "textArea",
+    }),
+    createFormField({
+        fieldName: "source",
+        type: "textList",
+        inputType: "url",
+        i18nKey: "sources",
+        addInputLabel: "claimReviewForm:addSourceLabel",
+    }),
+];
+
+export default assignedForm;

@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SourceInput from "../Source/SourceInput";
 import Button, { ButtonType } from "../Button";
-import Input from "../Input";
+import Input from "../AletheiaInput";
 import TextArea from "../TextArea";
 
 const recaptchaRef = React.createRef<ReCAPTCHA>();

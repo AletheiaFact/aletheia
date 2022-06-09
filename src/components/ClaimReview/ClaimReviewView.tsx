@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
-import { Col, Row } from "antd";
+import { Row } from "antd";
 import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
@@ -69,58 +69,44 @@ const ClaimReviewView = ({ personality, claim, sentence, href }) => {
                     </Row>
                 )}
                 {formCollapsed && (
-                    <Row style={{ width: "100%", padding: "0px 0px 15px 0px" }}>
+                    <Row style={{ width: "100%", padding: "0px 0px 15px 0px", justifyContent: 'space-between' }}>
                         {!sentence.userReview && (
                             <>
-                                <Col span={14}>
+                                <span
+                                    style={{
+                                        fontSize: "14px"
+                                    }}
+                                >
+                                    {t("claim:metricsHeaderInfo", {
+                                        totalReviews: stats?.total
+                                    })}
+                                </span>{" "}
+                                <br />
+                                {review && (
                                     <span
                                         style={{
-                                            fontSize: "14px"
+                                            fontSize: "10px"
                                         }}
                                     >
-                                        {t("claim:metricsHeaderInfo", {
-                                            totalReviews: stats?.total
-                                        })}
-                                    </span>{" "}
-                                    <br />
-                                    {review && (
-                                        <span
-                                            style={{
-                                                fontSize: "10px"
-                                            }}
-                                        >
-                                            {t(
-                                                "claim:cardOverallReviewPrefix"
-                                            )}{" "}
-                                            <ClassificationText
-                                                classification={
-                                                    review?.classification
-                                                }
-                                            />
-                                            ({review?.count})
-                                        </span>
-                                    )}
-                                </Col>
-                                {!review && <Col span={10}>
+                                        {t(
+                                            "claim:cardOverallReviewPrefix"
+                                        )}{" "}
+                                        <ClassificationText
+                                            classification={
+                                                review?.classification
+                                            }
+                                        />
+                                        ({review?.count})
+                                    </span>
+                                )}
+                                {!review &&
                                     <Button
                                         type={ButtonType.blue}
                                         onClick={toggleFormCollapse}
                                         icon={<PlusOutlined />}
                                     >
-                                        <h3 style={{
-                                            marginLeft: 8,
-                                            lineHeight: 1.5715,
-                                            fontWeight: 400,
-                                            fontSize: 14,
-                                            marginBottom: 0,
-                                            color: colors.white,
-                                            display: "inline-block",
-
-                                        }}>
-                                            {t("claimReviewForm:addReviewButton")}
-                                        </h3>
+                                        {t("claimReviewForm:addReviewButton")}
                                     </Button>
-                                </Col>
                                 }
                             </>
                         )}
