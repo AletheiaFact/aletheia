@@ -24,7 +24,6 @@ const DynamicForm = ({ sentence_hash }) => {
     const { t } = useTranslation()
 
     useEffect(() => {
-        // TODO: Add the fetch to get the stored state from the server
         api.getMachineBySentenceHash(sentence_hash).then((claimReviewTask) => {
             const machine = claimReviewTask.machine || { context: initialContext, value: "unassigned" }
             machine.context.utils = { t }
@@ -121,10 +120,8 @@ const DynamicForm = ({ sentence_hash }) => {
                         type={ButtonType.blue}
                         htmlType="submit"
                         event={event}
-                        style={{ marginTop: 20, marginBottom: 20 }}
                         style={{ marginBottom: 20 }}
                     >
-                        {event}
                         {t(`claimReviewTask:${event}`)}
                     </AletheiaButton>
                 )
