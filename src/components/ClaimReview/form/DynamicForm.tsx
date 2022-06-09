@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from "react-hook-form";
 import DynamicInput from "../form/DynamicInput";
 import AletheiaButton, { ButtonType } from "../../Button";
 import colors from "../../../styles/colors";
 import { Col, Row } from "antd";
+import unassignedForm from "./unassignedForm"
 import assignedForm from "./assignedForm";
 import reportedForm from "./reportedForm";
 import { ReviewTaskEvents } from "../../../machine/enums";
-import { authService } from "../../../machine/reviewTaskMachine";
+import { reviewTaskMachine, reviewTaskService } from '../../../machine/reviewTaskMachine';
 import { useActor } from "@xstate/react";
 import { useTranslation } from "next-i18next";
 import Text from "antd/lib/typography/Text";
 import { FormField } from "./FormField";
+import { State } from 'xstate';
+import api from '../../../api/ClaimReviewTaskApi'
 
 const DynamicForm = ({ sentence_hash }) => {
     const {
@@ -19,10 +22,48 @@ const DynamicForm = ({ sentence_hash }) => {
         control,
         formState: { errors },
     } = useForm();
-    const [authState] = useActor(authService);
-    const { t } = useTranslation();
-
-    const currentForm = authState.context.formUi;
+    const [ service, setService ] = useState(reviewTaskService);
+    const [ currentForm, setCurrentForm ] = useState(unassignedForm)
+    const [ nextEvent, setNextEvent ] = useState("ASSIGN_USER");
+    const { t } = useTranslation()
+    
+    useEffect(() => {
+        // TODO: Add the fetch to get the stored state from the server
+        api.getMachineBySentenceHash(sentence_hash).then((machine) => {
+            console.log("machine", machine)
+            if(machine) {
+                const persitedReviewTaskMachine = machine.machine
+                const previousState = State.create(persitedReviewTaskMachine);
+                // @ts-ignore
+                const resolvedState = reviewTaskMachine.resolveState(previousState);
+                switch (resolvedState.value) {
+                    case "assigned":
+                        //@ts-ignore
+                        setCurrentForm(assignedForm)
+                        break;
+                    case "reported":
+                        //@ts-ignore
+                        setCurrentForm(reportedForm)
+                        break;
+                    case "published":
+                        //@ts-ignore
+                        setCurrentForm({})
+                        break;
+                }
+                switch (resolvedState.value) {
+                    case "assigned":
+                        setNextEvent("FINISH_REPORT")
+                        break;
+                    case "reported":
+                        setNextEvent("PUBLISH")
+                        break;
+                }
+                //@ts-ignore
+                setService(resolvedState);
+                // TODO: Add dependencies for the useEffect for when identification values change
+            }
+        })
+    }, []);
 
     const formInputs = currentForm.map((fieldItem, index) => {
         const { fieldName, rules, label, placeholder, type, inputType, addInputLabel } = fieldItem
@@ -77,31 +118,67 @@ const DynamicForm = ({ sentence_hash }) => {
         } else {
             formUi = [];
         }
-        authService.send(event, {
+        reviewTaskService.send(event, {
             ...data,
             sentence_hash,
             type: event,
             formUi,
             t,
         });
+        switch (event) {
+            case "ASSIGN_USER":
+                //@ts-ignore
+                setNextEvent("FINISH_REPORT")
+                break;
+            case "FINISH_REPORT":
+                //@ts-ignore
+                setNextEvent("PUBLISH")
+                break;
+        }
+        switch (event) {
+            case "ASSIGN_USER":
+                //@ts-ignore
+                setCurrentForm(assignedForm)
+                break;
+            case "FINISH_REPORT":
+                //@ts-ignore
+                setCurrentForm(reportedForm)
+                break;
+            case "PUBLISH":
+                //@ts-ignore
+                setCurrentForm({})
+                break;
+        }
     };
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {formInputs}
-            {authState.nextEvents.map((event) => {
+            {/* {authState.nextEvents.map((event) => {
                 return (
                     <AletheiaButton
                         key={event}
                         type={ButtonType.blue}
                         htmlType="submit"
                         event={event}
+                        style={{ marginTop: 20, marginBottom: 20 }}
                         style={{ marginBottom: 20 }}
                     >
+                        {event}
                         {t(`claimReviewTask:${event}`)}
                     </AletheiaButton>
-                );
-            })}
+                    );
+                })
+            } */}
+            <AletheiaButton
+                key={nextEvent}
+                type={ButtonType.blue}
+                htmlType="submit"
+                event={nextEvent}
+                style={{ marginTop: 20, marginBottom: 20 }}
+            >
+                {nextEvent}
+            </AletheiaButton>
         </form>
     );
 };

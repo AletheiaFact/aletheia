@@ -28,10 +28,8 @@ export class ClaimReviewTaskService {
     async update(sentence_hash: string, newClaimReviewTaskBody: UpdateClaimReviewTaskDTO) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(sentence_hash)
-
-        const newClaimReviewTaskContext = Object.assign(claimReviewTask.machine.context, newClaimReviewTaskBody.machine.context);        
-        const newClaimReviewTask = Object.assign(claimReviewTask, newClaimReviewTaskContext);
-
+        const newClaimReviewTaskMachine = Object.assign(claimReviewTask.machine, newClaimReviewTaskBody.machine);
+        const newClaimReviewTask = Object.assign(claimReviewTask, newClaimReviewTaskMachine);
         return this.ClaimReviewTaskModel.updateOne(
             { _id: newClaimReviewTask._id },
             newClaimReviewTask
