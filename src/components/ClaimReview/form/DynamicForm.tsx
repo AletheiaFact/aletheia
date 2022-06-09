@@ -7,8 +7,6 @@ import { Col, Row } from "antd";
 import unassignedForm from "./unassignedForm"
 import assignedForm from "./assignedForm";
 import reportedForm from "./reportedForm";
-import { ReviewTaskEvents } from "../../../machine/enums";
-import { FormField } from "./FormField";
 import { createNewMachineService} from '../../../machine/reviewTaskMachine';
 import { useTranslation } from 'next-i18next';
 import api from '../../../api/ClaimReviewTaskApi'
@@ -24,6 +22,7 @@ const DynamicForm = ({ sentence_hash }) => {
     const { t } = useTranslation()
 
     useEffect(() => {
+        // TODO: Add the fetch to get the stored state from the server
         api.getMachineBySentenceHash(sentence_hash).then((claimReviewTask) => {
             const machine = claimReviewTask.machine || { context: initialContext, value: "unassigned" }
             machine.context.utils = { t }
