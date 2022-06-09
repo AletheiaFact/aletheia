@@ -47,7 +47,7 @@ export const reviewTaskMachine = createMachine<
     },
 });
 
-export const authService = interpret(reviewTaskMachine)
+export const reviewTaskService = interpret(reviewTaskMachine)
     .onTransition((state) => {
         if (state.changed) {
             const sentence_hash = state.context.reviewData.sentence_hash
