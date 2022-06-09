@@ -7,57 +7,48 @@ import { Col, Row } from 'antd';
 import unassignedForm from "./unassignedForm"
 import assignedForm from "./assignedForm";
 import reportedForm from "./reportedForm";
-import { reviewTaskMachine, reviewTaskService } from '../../../machine/reviewTaskMachine';
+import { createNewMachineService} from '../../../machine/reviewTaskMachine';
 import { useTranslation } from 'next-i18next';
-import { State } from 'xstate';
 import api from '../../../api/ClaimReviewTaskApi'
+import { initialContext } from "../../../machine/context";
+import Text from "antd/lib/typography/Text";
+
 
 const DynamicForm = ({ sentence_hash }) => {
     const { handleSubmit, control, formState: { errors } } = useForm()
-    const [ service, setService ] = useState(reviewTaskService);
-    const [ currentForm, setCurrentForm ] = useState(unassignedForm)
+    const [ service, setService ] = useState(null);
+    const [ currentForm, setCurrentForm ] = useState(null)
     const [ nextEvent, setNextEvent ] = useState("ASSIGN_USER");
     const { t } = useTranslation()
-    
+
     useEffect(() => {
         // TODO: Add the fetch to get the stored state from the server
-        api.getMachineBySentenceHash(sentence_hash).then((machine) => {
-            console.log("machine", machine)
-            if(machine) {
-                const persitedReviewTaskMachine = machine.machine
-                const previousState = State.create(persitedReviewTaskMachine);
-                // @ts-ignore
-                const resolvedState = reviewTaskMachine.resolveState(previousState);
-                switch (resolvedState.value) {
-                    case "assigned":
-                        //@ts-ignore
-                        setCurrentForm(assignedForm)
-                        break;
-                    case "reported":
-                        //@ts-ignore
-                        setCurrentForm(reportedForm)
-                        break;
-                    case "published":
-                        //@ts-ignore
-                        setCurrentForm({})
-                        break;
-                }
-                switch (resolvedState.value) {
-                    case "assigned":
-                        setNextEvent("FINISH_REPORT")
-                        break;
-                    case "reported":
-                        setNextEvent("PUBLISH")
-                        break;
-                }
-                //@ts-ignore
-                setService(resolvedState);
-                // TODO: Add dependencies for the useEffect for when identification values change
+        api.getMachineBySentenceHash(sentence_hash).then((claimReviewTask) => {
+            const machine = claimReviewTask.machine || { context: initialContext, value: "unassigned" }
+            machine.context.utils = { t }
+            setService(createNewMachineService(machine))
+            switch (machine.value) {
+                case "assigned":
+                    setCurrentForm(assignedForm)
+                    setNextEvent("FINISH_REPORT")
+                    break;
+                case "reported":
+                    setCurrentForm(reportedForm)
+                    setNextEvent("PUBLISH")
+                    break;
+                case "published":
+                    setCurrentForm([])
+                    break;
+                default:
+                    setCurrentForm(unassignedForm)
+                    setNextEvent('ASSIGN_USER')
+                    break;
             }
+            // TODO: Add dependencies for the useEffect for when identification values change
         })
     }, []);
 
-    const formInputs = currentForm.map((fieldItem, index) => {
+    const formInputs = currentForm && currentForm.map((fieldItem, index) => {
         const { fieldName, rules, label, placeholder, type, inputType, addInputLabel } = fieldItem
 
         return (
@@ -102,38 +93,26 @@ const DynamicForm = ({ sentence_hash }) => {
 
     const onSubmit = async(data, e) => {
         const event = e.nativeEvent.submitter.getAttribute('event')
-        reviewTaskService.send(event, { ...data, sentence_hash, type: event, t })
+        service.send(event, { ...data, sentence_hash, type: event, t })
         switch (event) {
             case "ASSIGN_USER":
-                //@ts-ignore
                 setNextEvent("FINISH_REPORT")
-                break;
-            case "FINISH_REPORT":
-                //@ts-ignore
-                setNextEvent("PUBLISH")
-                break;
-        }
-        switch (event) {
-            case "ASSIGN_USER":
-                //@ts-ignore
                 setCurrentForm(assignedForm)
                 break;
             case "FINISH_REPORT":
-                //@ts-ignore
+                setNextEvent("PUBLISH")
                 setCurrentForm(reportedForm)
                 break;
             case "PUBLISH":
-                //@ts-ignore
-                setCurrentForm({})
+                setCurrentForm([])
                 break;
         }
-        console.log(event)
     };
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {formInputs}
-            {/* {service.state.nextEvents.map((event) => {
+            {service?.state?.nextEvents?.map((event) => {
                 return (
                     <AletheiaButton
                         key={event}
@@ -145,18 +124,7 @@ const DynamicForm = ({ sentence_hash }) => {
                         {t(`claimReviewTask:${event}`)}
                     </AletheiaButton>
                 )
-            })
-            } */}
-            <AletheiaButton
-                key={nextEvent}
-                type={ButtonType.blue}
-                htmlType="submit"
-                event={nextEvent}
-                style={{ marginTop: 20, marginBottom: 20 }}
-            >
-                {nextEvent}
-            </AletheiaButton>
-
+            })}
         </form>)
 }
 

@@ -14,6 +14,7 @@ const getMachineBySentenceHash = (params) => {
             { ...params }
         )
         .then((response) => {
+            console.log(response)
             return response.data;
         })
         .catch(() => {
@@ -36,6 +37,7 @@ const createClaimReviewTask = (params, t) => {
 }
 
 const updateClaimReviewTask = (params, t) => {
+    params.machine = ParseMachineState(params.machine)
     return request
         .put(
             `/${params.sentence_hash}`,
