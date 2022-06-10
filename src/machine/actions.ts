@@ -11,15 +11,7 @@ export const saveContext = assign<ReviewTaskMachineContext, SaveEvent>(
                 ...event,
             },
             utils: {
-                ...context.utils,
                 t
             }
-        };
-});
-
-export const returnForm = assign<ReviewTaskMachineContext, SaveEvent>(
-    (context, event) => {
-        return {
-            formUi: event.formUi
         };
 });

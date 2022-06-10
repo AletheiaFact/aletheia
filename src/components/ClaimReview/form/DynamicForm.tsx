@@ -1,30 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from "react-hook-form";
 import DynamicInput from "../form/DynamicInput";
 import AletheiaButton, { ButtonType } from "../../Button";
 import colors from "../../../styles/colors";
 import { Col, Row } from "antd";
+import unassignedForm from "./unassignedForm"
 import assignedForm from "./assignedForm";
 import reportedForm from "./reportedForm";
-import { ReviewTaskEvents } from "../../../machine/enums";
-import { authService } from "../../../machine/reviewTaskMachine";
-import { useActor } from "@xstate/react";
-import { useTranslation } from "next-i18next";
+import { createNewMachineService} from '../../../machine/reviewTaskMachine';
+import { useTranslation } from 'next-i18next';
+import api from '../../../api/ClaimReviewTaskApi'
+import { initialContext } from "../../../machine/context";
 import Text from "antd/lib/typography/Text";
-import { FormField } from "./FormField";
-
 const DynamicForm = ({ sentence_hash }) => {
-    const {
-        handleSubmit,
-        control,
-        formState: { errors },
-    } = useForm();
-    const [authState] = useActor(authService);
-    const { t } = useTranslation();
+    const { handleSubmit, control, formState: { errors } } = useForm()
+    const [ service, setService ] = useState(null);
+    const [ currentForm, setCurrentForm ] = useState(null)
+    const { t } = useTranslation()
 
-    const currentForm = authState.context.formUi;
+    const setCurrentFormBasedOnParam = (param) => {
+        if(param === "assigned" || param === "ASSIGN_USER") {
+            setCurrentForm(assignedForm)
+        } else if(param === "reported" || param === "FINISH_REPORT") {
+            setCurrentForm(reportedForm)
+        } else if(param === "published" || param === "PUBLISH") {
+            setCurrentForm([])
+        } else {
+            setCurrentForm(unassignedForm)
+        }
+    }
+    
+    useEffect(() => {
+        api.getMachineBySentenceHash(sentence_hash, t).then((claimReviewTask) => {
+            const machine = claimReviewTask.machine || { context: initialContext, value: "unassigned" }
+            machine.context.utils = { t }
+            setService(createNewMachineService(machine))
+            setCurrentFormBasedOnParam(machine.value)
+            // TODO: Add dependencies for the useEffect for when identification values change
+        })
+    }, []);
 
-    const formInputs = currentForm.map((fieldItem, index) => {
+    const formInputs = currentForm && currentForm.map((fieldItem, index) => {
         const { fieldName, rules, label, placeholder, type, inputType, addInputLabel } = fieldItem
 
         return (
@@ -67,29 +83,16 @@ const DynamicForm = ({ sentence_hash }) => {
         );
     });
 
-    const onSubmit = async (data, e) => {
-        let formUi: FormField[];
-        const event = e.nativeEvent.submitter.getAttribute("event");
-        if (event === ReviewTaskEvents.assignUser) {
-            formUi = assignedForm;
-        } else if (event === ReviewTaskEvents.finishReport) {
-            formUi = reportedForm;
-        } else {
-            formUi = [];
-        }
-        authService.send(event, {
-            ...data,
-            sentence_hash,
-            type: event,
-            formUi,
-            t,
-        });
+    const onSubmit = async(data, e) => {
+        const event = e.nativeEvent.submitter.getAttribute('event')
+        service.send(event, { ...data, sentence_hash, type: event, t })
+        setCurrentFormBasedOnParam(event)
     };
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {formInputs}
-            {authState.nextEvents.map((event) => {
+            {service?.state?.nextEvents?.map((event) => {
                 return (
                     <AletheiaButton
                         key={event}
@@ -100,10 +103,9 @@ const DynamicForm = ({ sentence_hash }) => {
                     >
                         {t(`claimReviewTask:${event}`)}
                     </AletheiaButton>
-                );
+                )
             })}
-        </form>
-    );
-};
+        </form>)
+}
 
 export default DynamicForm;

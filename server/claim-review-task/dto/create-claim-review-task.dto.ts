@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 import { User } from '../../users/schemas/user.schema';
+import { ClassificationEnum } from '../../claim-review/schemas/claim-review.schema';
 
 export type ReviewTaskMachineContext = {
     reviewData: {
@@ -9,33 +10,15 @@ export type ReviewTaskMachineContext = {
         report?: string;
         verification?: string;
         source?: string[];
-        classification?: string;
+        classification?: ClassificationEnum;
     }
 }
 
-export type MachineEvent = {
-    type: string;
-    userId: string;
-    sentence_hash: string;
-}
-
-export type MachineHistory = {
-    value: string;
-    context: ReviewTaskMachineContext;
-}
-
-export type MachineHistoryValue = {
-    current: string;
-}
-
 export type Machine = {
-    changed: boolean;
     context: ReviewTaskMachineContext;
-    event: MachineEvent;
-    history: MachineHistory;
-    historyValue: MachineHistoryValue;
     value: string;
 }
+
 export class CreateClaimReviewTaskDTO {
     @IsNotEmpty()
     @IsObject()
