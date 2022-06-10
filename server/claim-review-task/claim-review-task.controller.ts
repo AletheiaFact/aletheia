@@ -13,7 +13,6 @@ export class ClaimReviewController {
         return this.claimReviewTaskService.getById(id)
     }
 
-    
     @Post("api/claimreviewtask")
     async create(@Body() createClaimReviewTask: CreateClaimReviewTaskDTO) {
         return this.claimReviewTaskService.create(createClaimReviewTask)

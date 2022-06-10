@@ -1,6 +1,6 @@
-export const ParseMachineState = (state) => {
+export const ParseMachineState = ({ value, context }) => {
     return {
-        context: state.context,
-        value: state.value,
+        context,
+        value,
     }
 }

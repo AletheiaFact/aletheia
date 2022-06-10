@@ -1,6 +1,3 @@
-import { FormField } from "../components/ClaimReview/form/FormField";
-import unassignedForm from "../components/ClaimReview/form/unassignedForm";
-
 export type ReviewTaskMachineContext = {
     reviewData: {
         userId: string;
@@ -15,10 +12,9 @@ export type ReviewTaskMachineContext = {
     utils: {
         t: any;
     };
-    formUi: FormField[];
 };
 
-const buildState = ({ reviewData, formUi } : { reviewData?: any, formUi?: FormField[] }) : ReviewTaskMachineContext => {
+const buildState = ({ reviewData } : { reviewData?: any }) : ReviewTaskMachineContext => {
         return {
             reviewData: reviewData || {
                 userId: "",
@@ -33,7 +29,6 @@ const buildState = ({ reviewData, formUi } : { reviewData?: any, formUi?: FormFi
             utils: {
                 t: null,
             },
-            formUi: formUi || unassignedForm,
         }
 }
 

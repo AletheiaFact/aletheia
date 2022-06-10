@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
 import { ClaimReviewTask, ClaimReviewTaskDocument } from "./schemas/claim-review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
@@ -7,7 +7,6 @@ import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 
 @Injectable()
 export class ClaimReviewTaskService {
-    private readonly logger = new Logger("ClaimReviewService");
     constructor(
         @InjectModel(ClaimReviewTask.name)
         private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
@@ -19,9 +18,7 @@ export class ClaimReviewTaskService {
 
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
         const newClaimReviewTask = new this.ClaimReviewTaskModel(claimReviewTaskBody);
-
         newClaimReviewTask.save();
-
         return newClaimReviewTask;
     }
 

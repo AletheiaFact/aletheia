@@ -3,15 +3,15 @@ import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
-import { saveContext, returnForm } from "./actions";
+import { saveContext } from "./actions";
 import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
 
-export const createNewMachine = ({value, context}) => {
+export const createNewMachine = ({ value, context }) => {
     return createMachine<
         ReviewTaskMachineContext,
         ReviewTaskMachineEvents,
         ReviewTaskMachineState
-        >({
+    >({
         initial: value,
         context,
         states: {
@@ -24,7 +24,6 @@ export const createNewMachine = ({value, context}) => {
                 },
             },
             assigned: {
-                entry: returnForm,
                 on: {
                     FINISH_REPORT: {
                         target: ReviewTaskStates.reported,
@@ -33,7 +32,6 @@ export const createNewMachine = ({value, context}) => {
                 },
             },
             reported: {
-                entry: returnForm,
                 on: {
                     PUBLISH: {
                         target: ReviewTaskStates.published,
@@ -42,7 +40,6 @@ export const createNewMachine = ({value, context}) => {
                 },
             },
             published: {
-                entry: returnForm,
                 type: "final",
             },
         },

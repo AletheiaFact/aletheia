@@ -12,38 +12,30 @@ import { useTranslation } from 'next-i18next';
 import api from '../../../api/ClaimReviewTaskApi'
 import { initialContext } from "../../../machine/context";
 import Text from "antd/lib/typography/Text";
-
-
 const DynamicForm = ({ sentence_hash }) => {
     const { handleSubmit, control, formState: { errors } } = useForm()
     const [ service, setService ] = useState(null);
     const [ currentForm, setCurrentForm ] = useState(null)
-    const [ nextEvent, setNextEvent ] = useState("ASSIGN_USER");
     const { t } = useTranslation()
 
+    const setCurrentFormBasedOnParam = (param) => {
+        if(param === "assigned" || param === "ASSIGN_USER") {
+            setCurrentForm(assignedForm)
+        } else if(param === "reported" || param === "FINISH_REPORT") {
+            setCurrentForm(reportedForm)
+        } else if(param === "published" || param === "PUBLISH") {
+            setCurrentForm([])
+        } else {
+            setCurrentForm(unassignedForm)
+        }
+    }
+    
     useEffect(() => {
-        // TODO: Add the fetch to get the stored state from the server
-        api.getMachineBySentenceHash(sentence_hash).then((claimReviewTask) => {
+        api.getMachineBySentenceHash(sentence_hash, t).then((claimReviewTask) => {
             const machine = claimReviewTask.machine || { context: initialContext, value: "unassigned" }
             machine.context.utils = { t }
             setService(createNewMachineService(machine))
-            switch (machine.value) {
-                case "assigned":
-                    setCurrentForm(assignedForm)
-                    setNextEvent("FINISH_REPORT")
-                    break;
-                case "reported":
-                    setCurrentForm(reportedForm)
-                    setNextEvent("PUBLISH")
-                    break;
-                case "published":
-                    setCurrentForm([])
-                    break;
-                default:
-                    setCurrentForm(unassignedForm)
-                    setNextEvent('ASSIGN_USER')
-                    break;
-            }
+            setCurrentFormBasedOnParam(machine.value)
             // TODO: Add dependencies for the useEffect for when identification values change
         })
     }, []);
@@ -94,19 +86,7 @@ const DynamicForm = ({ sentence_hash }) => {
     const onSubmit = async(data, e) => {
         const event = e.nativeEvent.submitter.getAttribute('event')
         service.send(event, { ...data, sentence_hash, type: event, t })
-        switch (event) {
-            case "ASSIGN_USER":
-                setNextEvent("FINISH_REPORT")
-                setCurrentForm(assignedForm)
-                break;
-            case "FINISH_REPORT":
-                setNextEvent("PUBLISH")
-                setCurrentForm(reportedForm)
-                break;
-            case "PUBLISH":
-                setCurrentForm([])
-                break;
-        }
+        setCurrentFormBasedOnParam(event)
     };
 
     return (

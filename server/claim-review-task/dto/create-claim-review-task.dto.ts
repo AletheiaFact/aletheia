@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 import { User } from '../../users/schemas/user.schema';
+import { ClassificationEnum } from '../../claim-review/schemas/claim-review.schema';
 
 export type ReviewTaskMachineContext = {
     reviewData: {
@@ -9,9 +10,7 @@ export type ReviewTaskMachineContext = {
         report?: string;
         verification?: string;
         source?: string[];
-        classification?: string;
-        sentence_hash: string;
-        type: string;
+        classification?: ClassificationEnum;
     }
 }
 

@@ -1,5 +1,5 @@
-import { message } from "antd";
 import axios from "axios";
+import { message } from "antd";
 import { ParseMachineState } from "../utils/ParseMachineState";
 
 const request = axios.create({
@@ -7,18 +7,14 @@ const request = axios.create({
     baseURL: `/api/claimreviewtask`,
 });
 
-const getMachineBySentenceHash = (params) => {
+const getMachineBySentenceHash = (params, t) => {
     return request
-        .get(
-            `/sentence/${params}`,
-            { ...params }
-        )
+        .get(`/sentence/${params}`)
         .then((response) => {
-            console.log(response)
             return response.data;
         })
         .catch(() => {
-            message.error("erro ao pegar a maquina");
+            message.error(t("claimReviewTask:errorWhileFetching"));
         });
 };
 
@@ -30,7 +26,7 @@ const createClaimReviewTask = (params, t) => {
             message.success(t("claimReviewTask:userAssignedSuccess"))
             return response.data
         })
-        .catch(err=>{
+        .catch(err => {
             message.error(t("claimReviewTask:userAssignedError"))
             return err
         })
@@ -47,7 +43,7 @@ const updateClaimReviewTask = (params, t) => {
             message.success(t("claimReviewTask:reportedSuccess"))
             return response.data
         })
-        .catch(err=>{
+        .catch(err => {
             message.success(t("claimReviewTask:reportedError"))
             return err
         })
