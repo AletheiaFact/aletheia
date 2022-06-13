@@ -35,9 +35,7 @@ export class UsersService {
             // @ts-ignore
             return this.UserModel.register(newUser, user.password);
         } catch (e) {
-            if (!newUser.oryId) {
-                await this.oryService.deleteIdentity(newUser.oryId);
-            }
+            this.logger.error(`Error registering user ${user.email}`);
         }
     }
 
