@@ -1,10 +1,15 @@
 {
     "userAssignedSuccess": "Usuário atribuído com sucesso",
     "userAssignedError": "Erro ao atribuir usuário",
-    "reportedSuccess": "Relatório salvo com sucesso",
-    "reportedError": "Erro ao salvar o relatório",
+    "assignedSuccess": "Relatório salvo com sucesso",
+    "assignedError": "Erro ao salvar o relatório",
+    "reportedSuccess": "Classificação salva com sucesso",
+    "reportedError": "Erro ao salvar classificação",
+    "draftSuccess": "Rascunho salvo com sucesso",
+    "draftError": "Erro ao salvar rascunho",
     "ASSIGN_USER": "Atribuir",
     "FINISH_REPORT": "Concluir Relatório",
     "PUBLISH": "Publicar",
+    "SAVE_DRAFT": "Salvar rascunho",
     "errorWhileFetching": "Erro ao buscar a máquina"
 }

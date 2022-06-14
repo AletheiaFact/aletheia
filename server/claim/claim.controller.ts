@@ -208,6 +208,8 @@ export class ClaimController {
 
         const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
 
+        const claimReviewTask = await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(sentenceHash)
+
         await this.viewService
             .getNextServer()
             .render(
@@ -218,6 +220,7 @@ export class ClaimController {
                     personality,
                     claim,
                     sentence,
+                    claimReviewTask,
                     sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 })
             );

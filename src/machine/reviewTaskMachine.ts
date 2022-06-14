@@ -24,6 +24,25 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             assigned: {
+                initial: "undraft",
+                states: {
+                    undraft: {
+                        on: {
+                            SAVE_DRAFT: {
+                                target: ReviewTaskStates.draft,
+                                actions: [saveContext]
+                            }
+                        }
+                    },
+                    draft: {
+                        on: {
+                            SAVE_DRAFT: {
+                                target: ReviewTaskStates.draft,
+                                actions: [saveContext],
+                            }
+                        }
+                    }
+                },
                 on: {
                     FINISH_REPORT: {
                         target: ReviewTaskStates.reported,
@@ -32,6 +51,25 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             reported: {
+                initial: "undraft",
+                states: {
+                    undraft: {
+                        on: {
+                            SAVE_DRAFT: {
+                                target: ReviewTaskStates.draft,
+                                actions: [saveContext]
+                            }
+                        }
+                    },
+                    draft: {
+                        on: {
+                            SAVE_DRAFT: {
+                                target: ReviewTaskStates.draft,
+                                actions: [saveContext],
+                            }
+                        }
+                    }
+                },
                 on: {
                     PUBLISH: {
                         target: ReviewTaskStates.published,
@@ -54,10 +92,13 @@ export const transitionHandler = (state) => {
                 api.createClaimReviewTask({ sentence_hash, machine: state }, t)
                 break;
             case ReviewTaskEvents.finishReport:
-                api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
+                api.updateClaimReviewTask({ sentence_hash, machine: state }, t, ReviewTaskStates.assigned)
                 break;
             case ReviewTaskEvents.publish:
-                api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
+                api.updateClaimReviewTask({ sentence_hash, machine: state }, t, ReviewTaskStates.reported)
+                break;
+            case ReviewTaskEvents.draft:
+                api.updateClaimReviewTask({ sentence_hash, machine: state }, t, ReviewTaskStates.draft)
                 break;
     }}
 

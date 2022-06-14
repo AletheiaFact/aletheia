@@ -32,7 +32,7 @@ const createClaimReviewTask = (params, t) => {
         })
 }
 
-const updateClaimReviewTask = (params, t) => {
+const updateClaimReviewTask = (params, t, type) => {
     params.machine = ParseMachineState(params.machine)
     return request
         .put(
@@ -40,15 +40,19 @@ const updateClaimReviewTask = (params, t) => {
             { ...params },
         )
         .then((response) => {
-            message.success(t("claimReviewTask:reportedSuccess"))
+            message.success(t(`claimReviewTask:${type}Success`))
             return response.data
         })
         .catch(err => {
-            message.success(t("claimReviewTask:reportedError"))
+            message.success(t(`claimReviewTask:${type}Error`))
             return err
         })
 }
 
+const ClaimReviewTaskApi = {
+    getMachineBySentenceHash,
+    createClaimReviewTask,
+    updateClaimReviewTask,
+}
 
-const ClaimReviewTaskApi = { getMachineBySentenceHash, createClaimReviewTask, updateClaimReviewTask }
 export default ClaimReviewTaskApi

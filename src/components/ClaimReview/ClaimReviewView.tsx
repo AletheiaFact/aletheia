@@ -10,13 +10,13 @@ import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
 
-const ClaimReviewView = ({ personality, claim, sentence, href }) => {
+const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask }) => {
     const { t } = useTranslation();
     const claimId = claim._id;
     const sentenceHash = sentence?.props["data-hash"];
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
-    const [formCollapsed, setFormCollapsed] = useState(true);
+    const [formCollapsed, setFormCollapsed] = useState(claimReviewTask ? false : true);
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);

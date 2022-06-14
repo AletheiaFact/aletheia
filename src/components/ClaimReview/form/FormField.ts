@@ -8,6 +8,7 @@ export type FormField = {
     type: string;
     inputType?: string;
     addInputLabel?: string;
+    defaultValue: string;
 };
 
 interface createFormFieldProps extends Partial<FormField> {
@@ -23,6 +24,7 @@ const createFormField = (props: createFormFieldProps): FormField => {
         type,
         i18nKey = fieldName,
         i18nNamespace = "claimReviewForm",
+        defaultValue,
     } = props;
     return {
         fieldName,
@@ -32,6 +34,7 @@ const createFormField = (props: createFormFieldProps): FormField => {
         rules: {
             required: "common:requiredFieldError",
         },
+        defaultValue,
         ...props,
     };
 };

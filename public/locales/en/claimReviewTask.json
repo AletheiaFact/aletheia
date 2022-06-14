@@ -1,10 +1,15 @@
 {
     "userAssignedSuccess": "User assigned successfully",
     "userAssignedError": "Error in assigning user",
-    "reportedSuccess": "Report saved succesfully",
-    "reportedError": "Error in saving report",
+    "assignedSuccess": "Report saved succesfully",
+    "assignedError": "Error in saving report",
+    "reportedSuccess": "Classification saved succesfully",
+    "reportedError": "Error in saving classification",
+    "draftSuccess": "Draft saved succesfully",
+    "draftError": "Error in saving draft",
     "ASSIGN_USER": "Assign",
     "FINISH_REPORT": "Finish Report",
     "PUBLISH": "Publish",
+    "SAVE_DRAFT": "Save Draft",
     "errorWhileFetching": "Error while fetching machine"
 }

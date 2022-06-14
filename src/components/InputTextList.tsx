@@ -4,18 +4,22 @@ import { useForm, useFieldArray } from "react-hook-form";
 import Button from "./Button";
 import { Col, Row } from "antd";
 import AletheiaInput from "./AletheiaInput";
-import { useTranslation } from "next-i18next";
 
 type FormValues = {
     fieldArray: { content: string }[];
 };
 
 
-export default function InputTextList({ placeholder, onChange, inputType, addInputLabel }) {
-    const { t } = useTranslation()
+export default function InputTextList({ placeholder, onChange, inputType, addInputLabel, defaultValue = []}) {
+    let contents = []
+    if(defaultValue) {
+        contents = defaultValue.map((item) => {
+            return { content: item }
+        })
+    }
 
     const { register, control, watch } = useForm<FormValues>({
-        defaultValues: { fieldArray: [{ content: '' }] }
+        defaultValues: { fieldArray: contents.length ? contents : [{ content: ""}] }
     });
     const { fields, append, remove } = useFieldArray({
         control,
