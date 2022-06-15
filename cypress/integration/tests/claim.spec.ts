@@ -60,11 +60,20 @@ describe("Check side bar and Login", () => {
 
         cy.get("[data-cy=testCheckboxAcceptTerms]").click();
 
-        cy.get("[data-cy=testSearchPersonality] > .anticon").click();
+        cy.get("iframe").then((iframe) => {
+            const body = iframe.contents().find("body");
+            cy.wrap(body)
+                .find("#recaptcha-anchor")
+                // .should("be.empty")
+                .click();
+        });
+        cy.get("[data-cy=testSaveButton]").click();
+
+        // cy.get("[data-cy=testSearchPersonality] > .anticon").click();
     });
     // This is not checkbox
 
-    it("Claim review from an existing one", () => {
+    it.only("Claim review from an existing one", () => {
         cy.visit("http://localhost:3000/personality");
 
         cy.get("[data-cy=Beyoncé]").click();
@@ -72,7 +81,7 @@ describe("Check side bar and Login", () => {
             "contains",
             "http://localhost:3000/personality/beyonce"
         );
-        cy.get("[data-cy=testSeeFullSpeech]").click();
+        cy.get("[data-cy=testSeeFullSpeech]").last().click();
         cy.url().should(
             "contains",
             "http://localhost:3000/personality/beyonce/claim/cantora-e-dancarina"
@@ -105,5 +114,11 @@ describe("Check side bar and Login", () => {
             .type(
                 "Além de treinar o canto, a Beyoncé tem ensaios diários de dança e treinamento físico para melhorar sua condição cardiorespirátoria"
             );
+
+        cy.get("iframe").then((iframe) => {
+            const body = iframe.contents().find("body");
+            cy.wrap(body).find("#recaptcha-anchor").click();
+        });
+        cy.get("[data-cy=testAddReviewButton]").click();
     });
 });

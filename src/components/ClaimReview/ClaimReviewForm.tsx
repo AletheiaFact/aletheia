@@ -205,6 +205,7 @@ const ClaimReviewForm = ({
                             htmlType="submit"
                             disabled={disableSubmit}
                             icon={<PlusOutlined />}
+                            data-cy={'testAddReviewButton'}
                         >
                             {t("claimReviewForm:addReviewButton")}
                         </Button>

@@ -312,6 +312,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                             type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit}
+                            data-cy={'testSaveButton'}
                         >
                             {t("claimForm:saveButton")}
                         </Button>
