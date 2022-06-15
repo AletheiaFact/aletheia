@@ -10,6 +10,7 @@ enum ReviewTaskStates {
     assigned = "assigned",
     reported = "reported",
     published = "published",
+    undraft = "undraft",
     draft = "draft"
 }
 

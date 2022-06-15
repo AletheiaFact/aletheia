@@ -24,7 +24,7 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             assigned: {
-                initial: "undraft",
+                initial: ReviewTaskStates.undraft,
                 states: {
                     undraft: {
                         on: {
@@ -51,7 +51,7 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             reported: {
-                initial: "undraft",
+                initial: ReviewTaskStates.undraft,
                 states: {
                     undraft: {
                         on: {
