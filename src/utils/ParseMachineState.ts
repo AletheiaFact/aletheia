@@ -1,7 +1,5 @@
 export const ParseMachineState = ({ value, context }) => {
-    if(value !== "published") {
-        value = Object.keys(value)[0]
-    }
+    typeof value === "object" ? value = Object.keys(value)[0] : value
     return {
         context,
         value,
