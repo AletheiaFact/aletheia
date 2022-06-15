@@ -12,7 +12,7 @@ interface DynamicInputProps {
     onChange: any;
     inputType: string;
     addInputLabel: string;
-    defaultValue: any;
+    defaultValue: string | [];
 }
 
 const DynamicInput = (props: DynamicInputProps) => {

@@ -8,7 +8,7 @@ export type FormField = {
     type: string;
     inputType?: string;
     addInputLabel?: string;
-    defaultValue: string;
+    defaultValue: string | [];
 };
 
 interface createFormFieldProps extends Partial<FormField> {

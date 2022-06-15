@@ -10,13 +10,10 @@ type FormValues = {
 };
 
 
-export default function InputTextList({ placeholder, onChange, inputType, addInputLabel, defaultValue = []}) {
-    let contents = []
-    if(defaultValue) {
-        contents = defaultValue.map((item) => {
-            return { content: item }
-        })
-    }
+export default function InputTextList({ placeholder, onChange, inputType, addInputLabel, defaultValue}) {
+    const contents = defaultValue.map((item) => {
+        return { content: item }
+    })
 
     const { register, control, watch } = useForm<FormValues>({
         defaultValues: { fieldArray: contents.length ? contents : [{ content: ""}] }

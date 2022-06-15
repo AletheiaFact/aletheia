@@ -6,7 +6,7 @@ const assignedForm: FormField[] = [
         fieldName: "questions",
         type: "textList",
         addInputLabel: "claimReviewForm:addQuestionLabel",
-        defaultValue: ""
+        defaultValue: [],
     }),
     createFormField({ fieldName: "report", type: "textArea", defaultValue: "" }),
     createFormField({
@@ -20,7 +20,7 @@ const assignedForm: FormField[] = [
         inputType: "url",
         i18nKey: "sources",
         addInputLabel: "claimReviewForm:addSourceLabel",
-        defaultValue: ""
+        defaultValue: [],
     }),
 ];
 
