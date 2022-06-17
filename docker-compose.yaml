@@ -9,3 +9,20 @@ services:
       - ${DATA_PATH}/mongodb/db:/data/db:delegated
     ports:
       - "${MONGODB_PORT:-27017}:27017"
+
+  localstack:
+    container_name: aletheia-localstack
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4510-4559:4510-4559"  # external service port range
+      - "127.0.0.1:4566:4566"            # LocalStack Edge Proxy
+    environment:
+      - SERVICES=s3,iam
+      - DEBUG=1
+      - DATA_DIR=${DATA_DIR:-/data/localstack}
+      - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "./data/localstack:${DATA_DIR:-/data/localstack}"
+      - "/var/run/docker.sock:/var/run/docker.sock"

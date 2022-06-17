@@ -128,3 +128,15 @@ yarn build
 #### Using Mongo DB Atlas
 - Replace your ``connection_uri`` with your MongoDB atlas connection URI in config.yaml
 - Bellow of ``connection_uri`` add ``atlas`` field with a true boolean
+
+#### Localstack (AWS)
+
+```shell
+docker-compose up -d localstack  # Run in detached mode
+```
+
+##### Create a s3 bucket
+
+```shell
+docker-compose exec localstack awslocal s3 mb s3://aletheia
+```

@@ -40,6 +40,7 @@ import { StateEventModule } from "./state-event/state-event.module";
 import { TopicModule } from "./topic/topic.module";
 import { ImageModule } from "./image/image.module";
 import { SearchModule } from "./search/search.module";
+import { FileManagementModule } from './file-management/file-management.module';
 
 @Module({})
 export class AppModule implements NestModule {
@@ -92,6 +93,7 @@ export class AppModule implements NestModule {
                 TopicModule,
                 ImageModule,
                 SearchModule,
+                FileManagementModule,
             ],
             controllers: [RootController],
             providers: [
