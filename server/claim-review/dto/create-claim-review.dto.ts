@@ -1,7 +1,13 @@
-import { IsAlphanumeric, IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import {
+    IsAlphanumeric,
+    IsArray,
+    IsEnum,
+    IsNotEmpty,
+    IsString,
+} from "class-validator";
 import { Personality } from "../../personality/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
-import { ClassificationEnum } from "../../report/schemas/report.schema"
+import { ClassificationEnum } from "../../report/schemas/report.schema";
 
 export class CreateClaimReview {
     @IsNotEmpty()
@@ -24,10 +30,7 @@ export class CreateClaimReview {
     @IsString()
     report: string;
 
-    @IsString()
-    recaptcha: string
-
     @IsNotEmpty()
     @IsArray()
-    sources: string[]
+    sources: string[];
 }

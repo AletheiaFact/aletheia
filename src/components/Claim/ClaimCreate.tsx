@@ -8,7 +8,6 @@ import {
     FormInstance,
 } from "antd";
 import claimApi from "../../api/claim";
-import ReCAPTCHA from "react-google-recaptcha";
 import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import { useRouter } from "next/router";
@@ -17,8 +16,8 @@ import SourceInput from "../Source/SourceInput";
 import Button, { ButtonType } from "../Button";
 import Input from "../AletheiaInput";
 import TextArea from "../TextArea";
+import AletheiaCaptcha from "../AletheiaCaptcha";
 
-const recaptchaRef = React.createRef<ReCAPTCHA>();
 const formRef = React.createRef<FormInstance>();
 
 const ClaimForm = styled(Form)`
@@ -56,14 +55,12 @@ const DatePickerInput = styled(DatePicker)`
     }
 `;
 
-const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
+const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();
-
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [date, setDate] = useState("");
-    const [recaptcha, setRecaptcha] = useState("");
     const [disableSubmit, setDisableSubmit] = useState(true);
     const [sources, setSources] = useState([""]);
 
@@ -74,23 +71,12 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                 setTitle(title);
                 setContent(content.text);
             }
-
         }
         setTitleAndContent()
     }, []);
 
-    const toggleDisabledSubmit = () => {
-        const hasRecaptcha = !!recaptcha;
-        if (hasRecaptcha) {
-            setDisableSubmit(!disableSubmit);
-        }
-    }
 
     const saveClaim = async () => {
-        if (recaptchaRef && recaptchaRef.current) {
-            recaptchaRef.current.reset();
-        }
-
         const { slug } = await claimApi.save(t, {
             content,
             title,
@@ -98,8 +84,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
             // TODO: add a new input when twitter is supported
             type: "speech",
             date,
-            sources,
-            recaptcha
+            sources
         });
         // Redirect to personality profile in case slug is not present
         const path = slug ? `/personality/${personality.slug}/claim/${slug}` : `/personality/${personality.slug}`;
@@ -122,20 +107,10 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
         }
     }, [content]);
 
-    const onExpiredCaptcha = () => {
-        return new Promise<void>(resolve => {
-            setDisableSubmit(true);
-            resolve();
-        });
-    }
 
-    const onChangeCaptcha = () => {
-        const recaptchaString = recaptchaRef.current.getValue();
-        setRecaptcha(recaptchaString);
+    const onChangeCaptcha = (captchaValid) => {
+        setDisableSubmit(!captchaValid)
     }
-    useEffect(() => {
-        toggleDisabledSubmit();
-    }, [recaptcha]);
 
     return (
         <>
@@ -283,11 +258,9 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                 </Form.Item>
 
                 <Form.Item>
-                    <ReCAPTCHA
-                        ref={recaptchaRef}
+                    <AletheiaCaptcha
                         sitekey={sitekey}
                         onChange={onChangeCaptcha}
-                        onExpired={onExpiredCaptcha}
                     />
                 </Form.Item>
                 <Row
