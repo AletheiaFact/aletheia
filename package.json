@@ -2,7 +2,6 @@
     "name": "aletheia",
     "version": "0.0.2",
     "description": "Crowd-sourced fact-checking platform.",
-    "private": false,
     "license": "MIT",
     "main": "./dist/server/main.js",
     "scripts": {
@@ -187,11 +186,6 @@
         "not ie <= 11",
         "not op_mini all"
     ],
-    "resolutions": {
-        "**/**/acorn": ">=5.7.4 <6.0.0 || >=6.4.1 <7.0.0 || >=7.1.1",
-        "**/**/minimist": ">=1.2.3",
-        "**/**/yargs-parser": ">=13.1.2 <14.0.0 || >=15.0.1 <16.0.0 || >=18.1.2"
-    },
     "jest": {
         "projects": [
             "./server/jest.config.json",

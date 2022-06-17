@@ -55,5 +55,6 @@ cypress/screenshots/**/*
 
 # Clinic.js
 .clinic
+
 # localstack
 data

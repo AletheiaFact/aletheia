@@ -30,11 +30,7 @@ export class ClaimRevision {
         required: true,
         validate: {
             validator: (v) => {
-                return (
-                    v === ContentModelEnum.Speech ||
-                    v === ContentModelEnum.Twitter ||
-                    v === ContentModelEnum.Image
-                );
+                return v === ContentModelEnum.Speech || v === ContentModelEnum.Twitter || v === ContentModelEnum.Image;
             },
         },
         message: (tag) => `${tag} is not a valid claim type.`,
