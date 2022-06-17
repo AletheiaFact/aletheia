@@ -67,9 +67,9 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
     useEffect(() => {
         const setTitleAndContent = async () => {
             if (edit) {
-                const { content, title } = await claimApi.getById(claim._id, t);
-                setTitle(title);
-                setContent(content.text);
+                const fetchedClaim = await claimApi.getById(claim._id, t);
+                setTitle(fetchedClaim.title);
+                setContent(fetchedClaim.content.text);
             }
         }
         setTitleAndContent()
@@ -223,7 +223,7 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                         setSources(sources.concat(""));
                     }}
                     removeSource={(index) => {
-                        setSources(sources.filter((source, i) => {
+                        setSources(sources.filter((_source, i) => {
                             return i !== index
                         }))
                     }}
