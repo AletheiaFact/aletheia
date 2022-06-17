@@ -18,4 +18,6 @@ const validateCaptcha = (recaptcha: string) => {
         });
 };
 
-export { validateCaptcha };
+const CaptchaApi = { validateCaptcha };
+
+export default CaptchaApi;

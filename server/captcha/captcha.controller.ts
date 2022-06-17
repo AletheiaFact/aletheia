@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Logger, Post } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as qs from "querystring";
 
@@ -7,6 +7,7 @@ import { ValidateCaptchaDto } from "./dto/validate-captcha.dto";
 
 @Controller("api/validate-captcha")
 export class CaptchaController {
+    private readonly logger = new Logger("ClaimController");
     constructor(
         private httpService: HttpService,
         private configService: ConfigService
@@ -29,18 +30,16 @@ export class CaptchaController {
 
     @Post()
     async validate(@Body() validateCaptcha: ValidateCaptchaDto) {
-        const secret = this.configService.get<string>("recaptcha_secret");
-        const recaptchaCheck = await this._checkCaptchaResponse(
-            secret,
-            validateCaptcha.recaptcha
-        );
+        try {
+            const secret = this.configService.get<string>("recaptcha_secret");
+            return await this._checkCaptchaResponse(
+                secret,
+                validateCaptcha.recaptcha
+            );
+        } catch (err) {
+            this.logger.error(`error/recaptcha ${err}`);
 
-        console.log("recaptcha check", recaptchaCheck);
-
-        if (recaptchaCheck.success) {
-            return { success: true };
-        } else {
-            return { success: false };
+            throw Error();
         }
     }
 }
