@@ -10,6 +10,7 @@ import Button, { ButtonType } from "../Button";
 import TextArea from "../TextArea";
 import { PlusOutlined } from "@ant-design/icons";
 import colors from "../../styles/colors";
+import AletheiaCaptcha from "../AletheiaCaptcha";
 const recaptchaRef = React.createRef<ReCAPTCHA>();
 
 const ClaimReviewForm = ({
@@ -29,7 +30,7 @@ const ClaimReviewForm = ({
 
     const [report, setReport] = useState("");
     const [classification, setClassification] = useState("");
-    const [recaptcha, setRecaptcha] = useState("");
+    const [recaptcha, setRecaptcha] = useState(false);
     const [sources, setSources] = useState([""]);
     const [disableSubmit, setDisableSubmit] = useState(true);
 
@@ -45,16 +46,8 @@ const ClaimReviewForm = ({
         }
     };
 
-    const onExpiredCaptcha = () => {
-        return new Promise<void>(resolve => {
-            setDisableSubmit(true);
-            resolve();
-        });
-    }
-
-    const onChangeCaptcha = () => {
-        const recaptchaString = recaptchaRef.current.getValue();
-        setRecaptcha(recaptchaString);
+    const onChangeCaptcha = (isCaptchaValid) => {
+        setRecaptcha(isCaptchaValid);
     }
 
     useEffect(() => {
@@ -79,7 +72,6 @@ const ClaimReviewForm = ({
             sentence_hash,
             sentence_content,
             report,
-            recaptcha,
             sources
         }).then(response => {
             if (response.success) {
@@ -182,11 +174,9 @@ const ClaimReviewForm = ({
                     />
                 </Form.Item>
                 <Form.Item>
-                    <ReCAPTCHA
-                        ref={recaptchaRef}
+                    <AletheiaCaptcha
                         sitekey={sitekey}
                         onChange={onChangeCaptcha}
-                        onExpired={onExpiredCaptcha}
                     />
                 </Form.Item>
                 <Form.Item>
