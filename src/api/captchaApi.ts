@@ -9,12 +9,10 @@ const validateCaptcha = (recaptcha: string) => {
     return request
         .post("/", { recaptcha })
         .then((response) => {
-            console.log("response validate captcha", response.data);
             return response.data;
         })
         .catch((err) => {
             console.log("error", err);
-            return;
         });
 };
 
