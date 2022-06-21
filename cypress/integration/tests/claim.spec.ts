@@ -50,9 +50,7 @@ describe("Check side bar and Login", () => {
         cy.get("[data-cy=dataAserSelecionada]").should("be.visible").click();
         cy.contains(7).click();
 
-        //    cy.get(".ant-picker-today-btn").click();
-
-        cy.get(".ant-layout-content").click();
+        // cy.get(".ant-layout-content").click();
 
         cy.get(".ant-col-24 > .ant-input")
             .should("be.visible")
@@ -64,61 +62,12 @@ describe("Check side bar and Login", () => {
             const body = iframe.contents().find("body");
             cy.wrap(body)
                 .find("#recaptcha-anchor")
-                // .should("be.empty")
                 .click();
         });
         cy.get("[data-cy=testSaveButton]").click();
-
-        // cy.get("[data-cy=testSearchPersonality] > .anticon").click();
-    });
-    // This is not checkbox
-
-    it.only("Claim review from an existing one", () => {
-        cy.visit("http://localhost:3000/personality");
-
-        cy.get("[data-cy=Beyoncé]").click();
         cy.url().should(
             "contains",
-            "http://localhost:3000/personality/beyonce"
-        );
-        cy.get("[data-cy=testSeeFullSpeech]").last().click();
-        cy.url().should(
-            "contains",
-            "http://localhost:3000/personality/beyonce/claim/cantora-e-dancarina"
-        );
-
-        cy.get("[data-cy=frase1]")
-            .should("contain", "dançarina e cantora")
-            .click();
-        cy.url().should(
-            "contains",
-            "http://localhost:3000/personality/beyonce/claim/cantora-e-dancarina/sentence/c2b74a9ccff0038975d51283c10e457d"
-        );
-
-        cy.get("[data-cy=testAddReviewButton]").should("be.visible").click();
-
-        cy.get("[data-cy=testClassificationText]").should("be.visible").click();
-        cy.get("[data-cy=true]").click();
-        cy.wait(1000);
-        cy.get(".ant-select-selection-item > [data-cy=true]").should(
-            "contain",
-            "Trustworthy"
-        );
-        cy.get(".Input__AletheiaInput-sc-1gffuww-0")
-            .should("be.visible")
-            .click()
-            .type("https://www.wikipedia.org/");
-        cy.get("[data-cy=testReportInput]")
-            .should("be.visible")
-            .click()
-            .type(
-                "Além de treinar o canto, a Beyoncé tem ensaios diários de dança e treinamento físico para melhorar sua condição cardiorespirátoria"
-            );
-
-        cy.get("iframe").then((iframe) => {
-            const body = iframe.contents().find("body");
-            cy.wrap(body).find("#recaptcha-anchor").click();
-        });
-        cy.get("[data-cy=testAddReviewButton]").click();
+            "http://localhost:3000/personality/beyonce/claim/cantora-e-dancarina");
+        cy.reload()
     });
 });
