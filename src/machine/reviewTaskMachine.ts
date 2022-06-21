@@ -85,22 +85,16 @@ export const createNewMachine = ({ value, context }) => {
 }
 
 export const transitionHandler = (state) => {
-        const sentence_hash = state.context.reviewData.sentence_hash
-        const t = state.context.utils.t
-        switch (state.event.type) {
-            case ReviewTaskEvents.assignUser:
-                api.createClaimReviewTask({ sentence_hash, machine: state }, t)
-                break;
-            case ReviewTaskEvents.finishReport:
-                api.updateClaimReviewTask({ sentence_hash, machine: state }, t, ReviewTaskStates.assigned)
-                break;
-            case ReviewTaskEvents.publish:
-                api.updateClaimReviewTask({ sentence_hash, machine: state }, t, ReviewTaskStates.reported)
-                break;
-            case ReviewTaskEvents.draft:
-                api.updateClaimReviewTask({ sentence_hash, machine: state }, t, ReviewTaskStates.draft)
-                break;
-    }}
+    const sentence_hash = state.context.reviewData.sentence_hash
+    const t = state.context.utils.t
+    const event = state.event.type
+
+    if (event === ReviewTaskEvents.assignUser) {
+        api.createClaimReviewTask({ sentence_hash, machine: state }, t, event)
+    } else if (event !== ReviewTaskEvents.init) {
+        api.updateClaimReviewTask({ sentence_hash, machine: state }, t, event)
+    }
+}
 
 export const createNewMachineService = (machine: any) => {
     return interpret(createNewMachine(machine))

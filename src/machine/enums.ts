@@ -1,4 +1,5 @@
 enum ReviewTaskEvents {
+    init = "xstate.init",
     assignUser = "ASSIGN_USER",
     finishReport = "FINISH_REPORT",
     publish = "PUBLISH",
