@@ -173,6 +173,8 @@ export class ClaimController {
 
         const claimReviewTask = await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(sentence_hash)
 
+        const claimReviewTask = await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(sentenceHash)
+
         await this.viewService
             .getNextServer()
             .render(

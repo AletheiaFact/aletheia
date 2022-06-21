@@ -60,8 +60,8 @@ const AletheiaButton: (
             default:
                 buttonStyle = {
                     ...buttonStyle,
-                    background: colors.blueSecondary,
-                    borderColor: colors.blueSecondary,
+                    background: colors.bluePrimary,
+                    borderColor: colors.bluePrimary,
                     color: colors.white
                 }
                 break;

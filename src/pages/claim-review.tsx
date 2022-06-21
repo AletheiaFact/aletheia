@@ -4,13 +4,14 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
 import { NextSeo } from 'next-seo';
+import SentenceReportView from "../components/ClaimReview/SentenceReportView";
+import { ReviewTaskStates } from "../machine/enums";
 const parser = require("accept-language-parser");
 
 const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href, claimReviewTask, isLoggedIn }> = ({
     personality,
     claim,
     sentence,
-    sitekey,
     href,
     claimReviewTask,
     isLoggedIn
@@ -68,6 +69,23 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href, claimRe
                 isLoggedIn={isLoggedIn}
                 review={review}
             />
+            { claimReviewTask?.machine.value !== ReviewTaskStates.published
+                ? <ClaimReviewView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                    href={href}
+                    claimReviewTask={claimReviewTask}
+                    isLoggedIn={isLoggedIn}
+                    review={review}
+                />
+                : <SentenceReportView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                    href={href}
+                    context={claimReviewTask.machine.context.reviewData}
+                />}
         </>
     );
 };
