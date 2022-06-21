@@ -21,6 +21,45 @@ export enum ClassificationEnum {
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class ClaimReview {
     @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "ClaimRevision",
+    })
+    claim: Claim;
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "Personality",
+    })
+    personality: Personality;
+
+    @Prop({ required: true })
+    sentence_hash: string;
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "User",
+    })
+    userId: User;
+
+    @Prop({ required: true })
+    summary: string;
+    
+    @Prop({ required: true })
+    questions: string[];
+
+    @Prop({ required: true })
+    report: string;
+
+    @Prop({ required: true })
+    verification: string;
+
+    @Prop({ required: true })
+    source: string[];
+
+    @Prop({
         required: true,
         validate: {
             validator: (v) => {
@@ -42,39 +81,6 @@ export class ClaimReview {
         message: (tag) => `${tag} is not a valid classification.`,
     })
     classification: string;
-
-    @Prop({
-        type: mongoose.Types.ObjectId,
-        required: true,
-        ref: "ClaimRevision",
-    })
-    claim: Claim;
-
-    @Prop({
-        type: mongoose.Types.ObjectId,
-        required: true,
-        ref: "Personality",
-    })
-    personality: Personality;
-
-    @Prop({ required: true })
-    sentence_hash: string;
-
-    @Prop({ required: true })
-    sentence_content: string;
-
-    @Prop({ required: true })
-    report: string;
-
-    @Prop({
-        type: mongoose.Types.ObjectId,
-        required: true,
-        ref: "User",
-    })
-    user: User;
-
-    @Prop({ required: false })
-    isDeleted: boolean;
 
     @Prop({ required: true })
     isPublished: boolean;

@@ -13,6 +13,7 @@ import DynamicForm from "./form/DynamicForm";
 const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, isLoggedIn }) => {
     const { t } = useTranslation();
     const claimId = claim._id;
+    const personalityId = personality._id;
     const sentenceHash = sentence?.props["data-hash"];
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
@@ -116,6 +117,8 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                 {!formCollapsed &&
                     <DynamicForm
                         sentence_hash={sentenceHash}
+                        personality={personalityId}
+                        claim={claimId}
                     />
                 }
             </Row>

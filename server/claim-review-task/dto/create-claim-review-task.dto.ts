@@ -1,6 +1,8 @@
 import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 import { User } from '../../users/schemas/user.schema';
 import { ClassificationEnum } from '../../claim-review/schemas/claim-review.schema';
+import { Personality } from '../../personality/schemas/personality.schema';
+import { Claim } from '../../claim/schemas/claim.schema';
 
 export type ReviewTaskMachineContext = {
     reviewData: {
@@ -11,6 +13,8 @@ export type ReviewTaskMachineContext = {
         verification?: string;
         source?: string[];
         classification?: ClassificationEnum;
+        personality: Personality;
+        claim: Claim;
     }
 }
 

@@ -9,6 +9,8 @@ export type SaveEvent = {
     classification?: string;
     formUi: any;
     sentence_hash: string;
+    personality: string;
+    claim: string;
     t: any;
 };
 

@@ -8,6 +8,8 @@ export type ReviewTaskMachineContext = {
         source: string[];
         classification: string;
         sentence_hash: string;
+        personality: string;
+        claim: string;
     };
     utils: {
         t: any;
@@ -25,6 +27,8 @@ const buildState = ({ reviewData } : { reviewData?: any }) : ReviewTaskMachineCo
                 source: [],
                 classification: "",
                 sentence_hash: "",
+                personality: "",
+                claim: "",
             },
             utils: {
                 t: null,

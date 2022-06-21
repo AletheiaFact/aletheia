@@ -2,6 +2,7 @@ import { IsAlphanumeric, IsArray, IsEnum, IsNotEmpty, IsString } from 'class-val
 import { Personality } from "../../personality/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { ClassificationEnum } from "../schemas/claim-review.schema"
+
 export class CreateClaimReview {
     @IsNotEmpty()
     @IsString()
@@ -18,9 +19,6 @@ export class CreateClaimReview {
     @IsString()
     @IsAlphanumeric()
     sentence_hash: string;
-
-    @IsString()
-    sentence_content: string;
 
     @IsNotEmpty()
     @IsString()

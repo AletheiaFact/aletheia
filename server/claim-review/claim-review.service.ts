@@ -205,7 +205,7 @@ export class ClaimReviewService {
                 this.historyService.getHistoryParams(
                     newClaimReview._id,
                     TargetModel.ClaimReview,
-                    claimReview.user,
+                    claimReview.userId,
                     HistoryType.Create,
                     newClaimReview
                 )
@@ -242,7 +242,7 @@ export class ClaimReviewService {
             this.historyService.getHistoryParams(
                 claimReview._id,
                 TargetModel.ClaimReview,
-                claimReview.user,
+                claimReview.userId,
                 HistoryType.Delete,
                 null,
                 claimReview
