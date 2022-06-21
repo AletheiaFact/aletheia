@@ -3,8 +3,6 @@
 
 import locators from "../../support/locator";
 
-//If you want to test a single test from (it), write .only after it , getting it.only
-
 describe("Check side bar and Login", () => {
     beforeEach(() => {
         cy.visit("http://localhost:3000/home");
@@ -43,7 +41,7 @@ describe("Check side bar and Login", () => {
             .should("be.visible")
             .type("Cantora e Dançarina?");
 
-        cy.get("[ data-cy=testContentClaim]")
+        cy.get("[data-cy=testContentClaim]")
             .should("be.visible")
             .type("Ele é uma ótima dançarina e cantora");
 

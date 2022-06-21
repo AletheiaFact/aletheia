@@ -1,34 +1,34 @@
 # Number of worker processes to spawn.
+# Set to 0 to run everything in a single process without clustering.
 # Use 'ncpu' to run as many workers as there are CPU units
 num_workers: 1
-
-# Log error messages and gracefully restart a worker if v8 reports that it
-# uses more heap (note: not RSS) than this many mb.
-# worker_heap_limit_mb: 250
 
 # Logger info
 logging:
   level: trace
   streams:
-  - type: stdout # log to stdout
-    named_levels: true # emit log level name instead of index. e.g. INFO vs 30
+    - type: stdout # log to stdout
+      named_levels: true # emit log level name instead of index. e.g. INFO vs 30
 
 # Using config.yaml with wikimedia service-runner pattern
 services:
   - name: service-aletheia
     # path relative to the __dirname variable
-    module: dist/server/main.js
+    module: dist/server/seed.js
     conf:
-      port: 3000
-      cors: '*'
-      debug: true
-      recaptcha_secret: {env(RECAPTCHA_SECRET)}
-      recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
+      disable_smtp: true
       db:
         connection_uri: {env(CI_MONGODB_URI)}
         options:
           useUnifiedTopology: true
           useNewUrlParser: true
+      users:
+        - name: Test User
+          email: test@aletheiafact.org
+          password: TEST_USER_PASS
+          sendAuthDetails: false
+          isTestUser: true
+          oryId: {env(CI_ORY_USERID)}
       throttle:
         ttl: 60
         limit: 1000
