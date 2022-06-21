@@ -5,7 +5,7 @@ import colors from "../../styles/colors";
 import SentenceReportSummary from "./SentenceReportSummary";
 import ClassificationText from "../ClassificationText";
 import LocalizedDate from "../LocalizedDate";
-``
+
 const { Title, Paragraph } = Typography;
 
 const SentenceReportCard = ({ claim, personality, date, context, sentence, claimType = 'speech'} : { personality: any; claim: any; sentence: any; date: any; claimType: string; context: any; }) => {
