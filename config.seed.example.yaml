@@ -33,10 +33,12 @@ services:
           password: TEST_USER_PASS
           sendAuthDetails: false
           isTestUser: true
+          # Uncomment next line and provide Id if user already exists in Ory
+          # oryId:
       throttle:
         ttl: 60
         limit: 1000
-      authentication_type: passport
+      authentication_type: ory
       ory:
         url: ORY_SDK_URL
         access_token: ORY_ACCESS_TOKEN

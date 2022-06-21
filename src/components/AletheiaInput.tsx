@@ -1,14 +1,14 @@
 import styled from "styled-components"
-import { Input } from "antd";
 import colors from "../styles/colors";
 
-
-const AletheiaInput = styled(Input)`
+const AletheiaInput = styled.input`
     background: ${colors.white};
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
     border-radius: 30px;
     border: none;
     height: 40px;
+    width: 100%;
+    padding: 10px;
 
     ::placeholder {
         color: #515151;
@@ -25,6 +25,10 @@ const AletheiaInput = styled(Input)`
 
     :hover {
         border: none;
+    }
+
+    :focus-visible {
+        outline: none;
     }
 `;
 

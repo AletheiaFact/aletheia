@@ -12,6 +12,7 @@ export enum ButtonType {
 type AletheiaButtonProps = Omit<ButtonProps, 'type'>
 interface IAletheiaButtonProps extends AletheiaButtonProps {
     type?: ButtonType;
+    event?: any;
 }
 
 const AletheiaButton: (

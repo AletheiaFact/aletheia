@@ -45,3 +45,10 @@ cypress/screenshots/**/*
 
 # Docker
 docker-compose.override.yaml
+
+# Vscode settings
+.vscode/settings.json
+
+# Cypress
+cypress/videos/**/*
+cypress/screenshots/**/*

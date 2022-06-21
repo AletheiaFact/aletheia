@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
-import { Col, Row } from "antd";
-import ClaimReviewForm from "./ClaimReviewForm";
+import { Row } from "antd";
 import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
@@ -9,15 +8,14 @@ import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
+import DynamicForm from "./form/DynamicForm";
 
-const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
+const ClaimReviewView = ({ personality, claim, sentence, href }) => {
     const { t } = useTranslation();
-    const personalityId = personality._id;
     const claimId = claim._id;
     const sentenceHash = sentence?.props["data-hash"];
     const stats = sentence?.stats;
     const review = sentence?.props?.topClassification;
-
     const [formCollapsed, setFormCollapsed] = useState(true);
 
     const toggleFormCollapse = () => {
@@ -62,7 +60,7 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                                 {t("claimReview:userReviewSuffix", {
                                     count: review?.count
                                 })}
-                            &nbsp;
+                                &nbsp;
                             </p>
                             <ClassificationText
                                 classification={review?.classification}
@@ -71,75 +69,55 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
                     </Row>
                 )}
                 {formCollapsed && (
-                    <Row style={{ width: "100%", padding: "0px 0px 15px 0px" }}>
+                    <Row style={{ width: "100%", padding: "0px 0px 15px 0px", justifyContent: 'space-between' }}>
                         {!sentence.userReview && (
                             <>
-                                <Col span={14}>
+                                <span
+                                    style={{
+                                        fontSize: "14px"
+                                    }}
+                                >
+                                    {t("claim:metricsHeaderInfo", {
+                                        totalReviews: stats?.total
+                                    })}
+                                </span>{" "}
+                                <br />
+                                {review && (
                                     <span
                                         style={{
-                                            fontSize: "14px"
+                                            fontSize: "10px"
                                         }}
                                     >
-                                        {t("claim:metricsHeaderInfo", {
-                                            totalReviews: stats?.total
-                                        })}
-                                    </span>{" "}
-                                    <br />
-                                    {review && (
-                                        <span
-                                            style={{
-                                                fontSize: "10px"
-                                            }}
-                                        >
-                                            {t(
-                                                "claim:cardOverallReviewPrefix"
-                                            )}{" "}
-                                            <ClassificationText
-                                                classification={
-                                                    review?.classification
-                                                }
-                                            />
-                                            ({review?.count})
-                                        </span>
-                                    )}
-                                </Col>
-                                {!review && <Col span={10}>
-                                        <Button
-                                            type={ButtonType.blue}
-                                            onClick={toggleFormCollapse}
-                                            icon={<PlusOutlined />}
-                                            data-cy={"testAddReviewButton"}
-                                        >
-                                            <h3 style={{
-                                                marginLeft: 8,
-                                                lineHeight: 1.5715,
-                                                fontWeight: 400,
-                                                fontSize: 14,
-                                                marginBottom: 0,
-                                                color: colors.white,
-                                                display: "inline-block",
-                                            }}>
-                                                {t("claimReviewForm:addReviewButton")}
-                                            </h3>
-                                        </Button>
-                                    </Col>
+                                        {t(
+                                            "claim:cardOverallReviewPrefix"
+                                        )}{" "}
+                                        <ClassificationText
+                                            classification={
+                                                review?.classification
+                                            }
+                                        />
+                                        ({review?.count})
+                                    </span>
+                                )}
+                                {!review &&
+                                    <Button
+                                        type={ButtonType.blue}
+                                        onClick={toggleFormCollapse}
+                                        icon={<PlusOutlined />}
+                                        data-cy={"testAddReviewButton"}
+                                    >
+                                        {t("claimReviewForm:addReviewButton")}
+                                    </Button>
                                 }
                             </>
                         )}
                     </Row>
                 )}
-                {!formCollapsed && (
-                    <Row>
-                        <ClaimReviewForm
-                            claimId={claimId}
-                            personalityId={personalityId}
-                            handleOk={toggleFormCollapse}
-                            handleCancel={toggleFormCollapse}
-                            highlight={sentence}
-                            sitekey={sitekey}
-                        />
-                    </Row>
-                )}
+                {!formCollapsed &&
+                    <DynamicForm
+                        sentence_hash={sentenceHash}
+                    />
+                }
             </Row>
             <Row>
                 <ClaimReviewList

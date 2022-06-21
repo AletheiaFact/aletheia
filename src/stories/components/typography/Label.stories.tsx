@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { Form } from "antd";
-import AletheiaInput from "../../../components/Input";
+import AletheiaInput from "../../../components/AletheiaInput";
 import Label from "../../../components/Label";
 
 export default {

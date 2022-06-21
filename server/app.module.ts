@@ -19,6 +19,7 @@ import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
 import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
+import { ClaimReviewTaskModule } from "./claim-review-task/claim-review-task.module";
 import { LoggerMiddleware } from "./middleware/logger.middleware";
 import OryModule from "./ory/ory.module";
 import { SessionGuard } from "./auth/session.guard";
@@ -58,6 +59,7 @@ export class AppModule implements NestModule {
                 PersonalityModule,
                 ClaimModule,
                 ClaimReviewModule,
+                ClaimReviewTaskModule,
                 ClaimRevisionModule,
                 HistoryModule,
                 SourceModule,

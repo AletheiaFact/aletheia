@@ -1,8 +1,9 @@
-import { Model } from "mongoose";
-import {Injectable, Logger} from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { User, UserDocument } from "./schemas/user.schema";
-import OryService from "../ory/ory.service";
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
+import OryService from '../ory/ory.service';
+import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
@@ -12,22 +13,29 @@ export class UsersService {
         private oryService: OryService
     ) {}
 
-    async findAll(): Promise<User[]> {
-        return this.UserModel.find().exec();
+    async findAll(getUsers): Promise<User[]> {
+        const { searchName } = getUsers;
+        return this.UserModel.aggregate([
+            { $match: { name: { $regex: searchName, $options: "i" } } },
+            { $project: { _id: 1, name: 1 } },
+        ]);
     }
 
     async register(user) {
-        const newUser = new this.UserModel(user)
-        const { data: oryUser } = await this.oryService.createIdentity(newUser, user.password);
-        newUser.oryId = oryUser.id;
-        try {
-            // @ts-ignore
-            return this.UserModel.register(
+        const newUser = new this.UserModel(user);
+
+        if (!newUser.oryId) {
+            const { data: oryUser } = await this.oryService.createIdentity(
                 newUser,
                 user.password
             );
+            newUser.oryId = oryUser.id;
+        }
+        try {
+            // @ts-ignore
+            return this.UserModel.register(newUser, user.password);
         } catch (e) {
-            await this.oryService.deleteIdentity(oryUser.id)
+            this.logger.error(`Error registering user ${user.email}`);
         }
     }
 
@@ -37,16 +45,12 @@ export class UsersService {
         return user;
     }
 
-    async changePassword(userId, currentPassword, newPassword) {
+    async registerPasswordChange(userId) {
         const user = await this.getById(userId);
-        // @ts-ignore
-        return user.changePassword(currentPassword, newPassword).then(() => {
-            if (user.firstPasswordChanged === false) {
-                this.logger.log(`User ${user._id} changed first password`);
-                user.firstPasswordChanged = true;
-            }
-            this.logger.log(`User ${user._id} changed password`);
+        if (user.firstPasswordChanged === false) {
+            user.firstPasswordChanged = true;
+            this.logger.log(`User ${user._id} changed first password`);
             user.save();
-        });
+        }
     }
 }

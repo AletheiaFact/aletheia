@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Avatar, Col, Row } from "antd";
-import { LeftCircleFilled, RightOutlined, SearchOutlined } from "@ant-design/icons";
+import { LeftCircleFilled, SearchOutlined } from "@ant-design/icons";
 import InputSearch from "./Form/InputSearch";
 import { useTranslation } from "next-i18next";
 import api from "../api/personality";
@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import styled from "styled-components";
 import { useAppSelector } from "../store/store";
 import colors from "../styles/colors";
-import HighlightedText from "./HighlightedSearchText";
+import SearchResult from "./SearchResult";
 
 const OverlayDiv = styled.div`
     width: 100%;
@@ -50,6 +50,17 @@ const SearchOverlay = ({ overlay }) => {
             };
         }
     );
+    const handleSearchClick = (slug) => {
+        dispatch({
+            type:
+                "ENABLE_SEARCH_OVERLAY",
+            overlay: false
+        });
+        router.push(
+            `/personality/${slug}`
+        );
+    }
+
     const dispatch = useDispatch();
     const { t, i18n } = useTranslation();
     const router = useRouter();
@@ -131,46 +142,18 @@ const SearchOverlay = ({ overlay }) => {
                                 {personalities.map(
                                     (p, i) =>
                                         p && (
-                                            <Row
+                                            <SearchResult
                                                 key={i}
-                                                style={{
-                                                    background: "#fff",
-                                                    padding: "10px 10%",
-                                                    boxShadow:
-                                                        "0 2px 2px rgba(0, 0, 0, 0.1)",
-                                                    cursor: "pointer"
-                                                }}
-                                                onClick={() => {
-                                                    dispatch({
-                                                        type:
-                                                            "ENABLE_SEARCH_OVERLAY",
-                                                        overlay: false
-                                                    });
-                                                    router.push(
-                                                        `/personality/${p.slug}`
-                                                    );
-                                                }}
-                                            >
-                                                <Col span={4}>
+                                                handleOnClick={() => handleSearchClick(p.slug)}
+                                                avatar={
                                                     <Avatar
                                                         size={30}
                                                         src={p.image}
                                                     />
-                                                </Col>
-                                                <Col span={18}>
-                                                    <span
-                                                        style={{
-                                                            marginBottom: 0,
-                                                            fontSize: "14px"
-                                                        }}
-                                                    >
-                                                        <HighlightedText text={p.name} highlight={searchName} />
-                                                    </span>
-                                                </Col>
-                                                <Col span={2}>
-                                                    <RightOutlined />
-                                                </Col>
-                                            </Row>
+                                                }  
+                                                name={p.name}
+                                                searchName={searchName}
+                                            />
                                         )
                                 )}
                             </>

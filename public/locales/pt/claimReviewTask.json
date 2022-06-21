@@ -1,0 +1,10 @@
+{
+    "userAssignedSuccess": "Usuário atribuído com sucesso",
+    "userAssignedError": "Erro ao atribuir usuário",
+    "reportedSuccess": "Relatório salvo com sucesso",
+    "reportedError": "Erro ao salvar o relatório",
+    "ASSIGN_USER": "Atribuir",
+    "FINISH_REPORT": "Concluir Relatório",
+    "PUBLISH": "Publicar",
+    "errorWhileFetching": "Erro ao buscar a máquina"
+}
