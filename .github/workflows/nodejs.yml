@@ -16,6 +16,7 @@ env:
   ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
   CI_MONGODB_URI: mongodb://localhost:35025/Aletheia
   RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
+  RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
 
 jobs:
   build:

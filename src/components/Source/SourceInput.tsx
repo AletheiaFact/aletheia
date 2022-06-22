@@ -37,6 +37,7 @@ const SourceInput = ({ onChange, addSource, removeSource, placeholder, name, lab
                                     value={source || ""}
                                     onChange={onSourceChange}
                                     placeholder={placeholder}
+                                    data-cy={'testSource1'}
                                 />
                             </Col>
                             <Col span={4}>
