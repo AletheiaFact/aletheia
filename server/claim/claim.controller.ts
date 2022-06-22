@@ -24,6 +24,7 @@ import { GetClaimsDTO } from "./dto/get-claims.dto";
 import { GetClaimsByHashDTO } from "./dto/get-reviews-by-hash.dto";
 import { UpdateClaimDTO } from "./dto/update-claim.dto";
 import { IsPublic } from "../decorators/is-public.decorator";
+import { CaptchaService } from "../captcha/captcha.service";
 
 @Controller()
 export class ClaimController {
@@ -33,19 +34,18 @@ export class ClaimController {
         private personalityService: PersonalityService,
         private claimService: ClaimService,
         private configService: ConfigService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private captchaService: CaptchaService
     ) {}
 
     _verifyInputsQuery(query) {
-        const queryInputs = {};
+        const inputs = {};
         if (query.personality) {
             // @ts-ignore
-            queryInputs.personality = new mongoose.Types.ObjectId(
-                query.personality
-            );
+            inputs.personality = new mongoose.Types.ObjectId(query.personality);
         }
 
-        return queryInputs;
+        return inputs;
     }
 
     @IsPublic()
@@ -77,6 +77,12 @@ export class ClaimController {
 
     @Post("api/claim")
     async create(@Body() createClaimDTO: CreateClaimDTO) {
+        const validateCaptcha = await this.captchaService.validate(
+            createClaimDTO.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
         return this.claimService.create(createClaimDTO);
     }
 

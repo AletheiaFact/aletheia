@@ -1,53 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
-import CaptchaApi from '../api/captchaApi';
-import Text from "antd/lib/typography/Text";
-import { useTranslation } from 'next-i18next';
-
 const recaptchaRef = React.createRef<ReCAPTCHA>();
 
 interface CaptchaProps {
     sitekey: string;
-    onChange: (isCaptchaValid: boolean) => void;
+    onChange: (captchaString: string) => void;
 }
 
 const AletheiaCaptcha = ({ sitekey, onChange }: CaptchaProps) => {
-    const [isCaptchaValid, setIsCaptchaValid] = useState(false);
-    const [error, setError] = useState([]);
+    const [captchaString, setCaptchaString] = useState('')
 
     const handleChangeCaptcha = async () => {
         const recaptchaString: string = recaptchaRef.current.getValue();
-        const validation = await CaptchaApi.validateCaptcha(recaptchaString);
-        setError(validation["error-codes"])
-        setIsCaptchaValid(validation.success)
+        setCaptchaString(recaptchaString);
     }
 
     const onExpiredCaptcha = () => {
-        setIsCaptchaValid(false)
+        setCaptchaString('')
     }
 
     useEffect(
         () => {
-            onChange(isCaptchaValid)
-        }, [isCaptchaValid]
+            onChange(captchaString)
+        }, [captchaString]
     )
 
-    const { t } = useTranslation();
-
-
     return (
-        <>
-            <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey={sitekey}
-                onChange={handleChangeCaptcha}
-                onExpired={onExpiredCaptcha}
-            />
-            {error?.length > 0 &&
-                <Text type='danger' style={{ marginLeft: 20 }}>
-                    {t('common:captchaError')}
-                </Text>}
-        </>
+        <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={sitekey}
+            onChange={handleChangeCaptcha}
+            onExpired={onExpiredCaptcha}
+        />
     )
 }
 
