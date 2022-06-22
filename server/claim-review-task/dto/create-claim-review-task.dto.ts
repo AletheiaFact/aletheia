@@ -13,6 +13,11 @@ export type ReviewTaskMachineContext = {
         verification?: string;
         sources?: string[];
         classification?: ClassificationEnum;
+        sentence_hash: string;
+    }
+    claimReview: {
+        userId?: User;
+        sentence_hash: string;
         personality: Personality;
         claim: Claim;
     }

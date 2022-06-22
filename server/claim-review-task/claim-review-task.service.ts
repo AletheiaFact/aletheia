@@ -34,7 +34,7 @@ export class ClaimReviewTaskService {
             const newClaimReviewTask = Object.assign(claimReviewTask, newClaimReviewTaskMachine);
 
             if (newClaimReviewTask.machine.value === "published") {
-                const claimReviewData = newClaimReviewTask.machine.context?.claimReview
+                const claimReviewData = newClaimReviewTask.machine.context.claimReview
                 const report = await this.reportService.create(newClaimReviewTask.machine.context.reviewData)
                 this.claimReviewService.create({
                     ...claimReviewData,
