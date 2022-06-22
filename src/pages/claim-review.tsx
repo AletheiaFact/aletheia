@@ -6,12 +6,13 @@ import { useTranslation } from "next-i18next";
 import { NextSeo } from 'next-seo';
 const parser = require("accept-language-parser");
 
-const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
+const ClaimPage: NextPage<{ personality, claim, sentence, sitekey, href, isLoggedIn }> = ({
     personality,
     claim,
     sentence,
     sitekey,
     href,
+    isLoggedIn
 }) => {
     const { t } = useTranslation();
     const review = sentence?.props?.topClassification;
@@ -62,6 +63,7 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
                 claim={claim}
                 sentence={sentence}
                 href={href}
+                isLoggedIn={isLoggedIn}
             />
         </>
     );
@@ -79,6 +81,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             sentence: JSON.parse(JSON.stringify(query.sentence)),
             sitekey: query.sitekey,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            isLoggedIn: req.user ? true : false
         },
     };
 }
