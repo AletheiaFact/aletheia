@@ -63,6 +63,7 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
     const [date, setDate] = useState("");
     const [disableSubmit, setDisableSubmit] = useState(true);
     const [sources, setSources] = useState([""]);
+    const [recaptcha, setRecaptcha] = useState("");
 
     useEffect(() => {
         const setTitleAndContent = async () => {
@@ -84,7 +85,8 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
             // TODO: add a new input when twitter is supported
             type: "speech",
             date,
-            sources
+            sources,
+            recaptcha
         });
         // Redirect to personality profile in case slug is not present
         const path = slug ? `/personality/${personality.slug}/claim/${slug}` : `/personality/${personality.slug}`;
@@ -108,8 +110,10 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
     }, [content]);
 
 
-    const onChangeCaptcha = (captchaValid) => {
-        setDisableSubmit(!captchaValid)
+    const onChangeCaptcha = (captchaString) => {
+        setRecaptcha(captchaString);
+        const hasRecaptcha = !!captchaString;
+        setDisableSubmit(!hasRecaptcha);
     }
 
     return (

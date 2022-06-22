@@ -34,5 +34,9 @@ export class CreateClaimDTO {
 
     @IsNotEmpty()
     @IsString()
+    recaptcha: string;
+
+    @IsNotEmpty()
+    @IsString()
     personality: Personality;
 }
