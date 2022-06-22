@@ -3,11 +3,9 @@ import { Model, Types } from "mongoose";
 import { ClaimReview, ClaimReviewDocument } from "./schemas/claim-review.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UtilService } from "../util";
-import { SourceService } from "../source/source.service";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
-import { SourceTargetModel } from '../source/schemas/source.schema'
 
 @Injectable()
 export class ClaimReviewService {
@@ -16,7 +14,6 @@ export class ClaimReviewService {
         @InjectModel(ClaimReview.name)
         private ClaimReviewModel: Model<ClaimReviewDocument> & ISoftDeletedModel<ClaimReviewDocument>,
         private historyService: HistoryService,
-        private sourceService: SourceService,
         private util: UtilService
     ) {}
 
@@ -183,21 +180,9 @@ export class ClaimReviewService {
             // Cast ObjectId
             claimReview.personality = Types.ObjectId(claimReview.personality);
             claimReview.claim = Types.ObjectId(claimReview.claim);
+            claimReview.report = Types.ObjectId(claimReview.report._id)
+            claimReview.userId = Types.ObjectId(claimReview.userId)
             const newClaimReview = new this.ClaimReviewModel(claimReview)
-            if (claimReview.sources && Array.isArray(claimReview.sources)) {
-                try {
-                    for (let i = 0; i < claimReview.sources.length ; i++) {
-                        await this.sourceService.create({
-                            link: claimReview.sources[i],
-                            targetId: newClaimReview.id,
-                            targetModel: SourceTargetModel.ClaimReview,
-                        });
-                    }
-                } catch (e) {
-                    this.logger.error(e);
-                    throw e;
-                }
-            }
 
             newClaimReview.isPublished = true
 

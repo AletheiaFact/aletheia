@@ -1,7 +1,7 @@
 import { IsAlphanumeric, IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { Personality } from "../../personality/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
-import { ClassificationEnum } from "../schemas/claim-review.schema"
+import { ClassificationEnum } from "../../report/schemas/report.schema"
 
 export class CreateClaimReview {
     @IsNotEmpty()

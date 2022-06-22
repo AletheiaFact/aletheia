@@ -1,23 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Personality } from "../../personality/schemas/personality.schema";
 import * as mongoose from "mongoose";
-import { User } from "../../users/schemas/user.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { softDeletePlugin } from 'mongoose-softdelete-typescript';
+import { Report } from "../../report/schemas/report.schema";
+import { User } from "../../users/schemas/user.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
-export enum ClassificationEnum {
-    "not-fact",
-    "true",
-    "true-but",
-    "arguable",
-    "misleading",
-    "false",
-    "unsustainable",
-    "exaggerated",
-    "unverifiable",
-};
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class ClaimReview {
     @Prop({
@@ -34,9 +24,6 @@ export class ClaimReview {
     })
     personality: Personality;
 
-    @Prop({ required: true })
-    sentence_hash: string;
-
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
@@ -45,45 +32,21 @@ export class ClaimReview {
     userId: User;
 
     @Prop({ required: true })
-    summary: string;
-    
-    @Prop({ required: true })
-    questions: string[];
-
-    @Prop({ required: true })
-    report: string;
-
-    @Prop({ required: true })
-    verification: string;
-
-    @Prop({ required: true })
-    source: string[];
+    sentence_hash: string;
 
     @Prop({
+        type: mongoose.Types.ObjectId,
         required: true,
-        validate: {
-            validator: (v) => {
-                return (
-                    [
-                        "not-fact",
-                        "true",
-                        "true-but",
-                        "arguable",
-                        "misleading",
-                        "false",
-                        "unsustainable",
-                        "exaggerated",
-                        "unverifiable",
-                    ].indexOf(v) !== -1
-                );
-            },
-        },
-        message: (tag) => `${tag} is not a valid classification.`,
+        ref: "Report",
     })
+<<<<<<< HEAD
     classification: string;
 
     @Prop({ required: true })
     isPublished: boolean;
+=======
+    report: Report;
+>>>>>>> create report schema and relation between reportSchema and claimReviewSchema
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);

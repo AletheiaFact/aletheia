@@ -5,6 +5,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { ReportService } from "../report/report.service";
 
 @Injectable()
 export class ClaimReviewTaskService {
@@ -12,6 +13,7 @@ export class ClaimReviewTaskService {
         @InjectModel(ClaimReviewTask.name)
         private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
+        private reportService: ReportService,
     ) {}
 
     getById(claimReviewTaskId: string) {
@@ -32,7 +34,12 @@ export class ClaimReviewTaskService {
             const newClaimReviewTask = Object.assign(claimReviewTask, newClaimReviewTaskMachine);
 
             if (newClaimReviewTask.machine.value === "published") {
-                this.claimReviewService.create(newClaimReviewTask.machine.context.reviewData)
+                const claimReviewData = newClaimReviewTask.machine.context?.claimReview
+                const report = await this.reportService.create(newClaimReviewTask.machine.context.reviewData)
+                this.claimReviewService.create({
+                    ...claimReviewData,
+                    report
+                })
             }
             
             return this.ClaimReviewTaskModel.updateOne(

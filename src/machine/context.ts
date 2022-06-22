@@ -1,16 +1,8 @@
+import { ClaimReview, ReviewData } from "./events";
+
 export type ReviewTaskMachineContext = {
-    reviewData: {
-        userId: string;
-        summary: string;
-        questions: string[];
-        report: string;
-        verification: string;
-        source: string[];
-        classification: string;
-        sentence_hash: string;
-        personality: string;
-        claim: string;
-    };
+    reviewData: ReviewData
+    claimReview: ClaimReview
     utils: {
         t: any;
     };
@@ -24,15 +16,19 @@ const buildState = ({ reviewData } : { reviewData?: any }) : ReviewTaskMachineCo
                 questions: [],
                 report: "",
                 verification: "",
-                source: [],
+                sources: [],
                 classification: "",
                 sentence_hash: "",
-                personality: "",
-                claim: "",
             },
             utils: {
                 t: null,
             },
+            claimReview: {
+                personality: "",
+                claim: "",
+                sentence_hash: "",
+                userId: "",
+            }
         }
 }
 

@@ -100,7 +100,20 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
 
     const onSubmit = async(data, e) => {
         const event = e.nativeEvent.submitter.getAttribute('event')
-        service.send(event, { ...data, sentence_hash, personality, claim, type: event, t })
+        service.send(event, {
+            sentence_hash,
+            reviewData: {
+                ...data,
+                sentence_hash,
+            },
+            claimReview: {
+                personality,
+                claim,
+                sentence_hash,
+            },
+            type: event,
+            t,
+        })
         setCurrentFormBasedOnParam(event)
     };
 

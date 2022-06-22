@@ -15,7 +15,7 @@ const assignedForm: FormField[] = [
         defaultValue: ""
     }),
     createFormField({
-        fieldName: "source",
+        fieldName: "sources",
         type: "textList",
         inputType: "url",
         i18nKey: "sources",

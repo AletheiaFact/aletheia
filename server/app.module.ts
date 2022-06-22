@@ -21,6 +21,7 @@ import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
 import { ClaimReviewTaskModule } from "./claim-review-task/claim-review-task.module";
 import { LoggerMiddleware } from "./middleware/logger.middleware";
+import { ReportModule } from "./report/report.module";
 import OryModule from "./ory/ory.module";
 import { SessionGuard } from "./auth/session.guard";
 import { GetLanguageMiddleware } from "./middleware/language.middleware";
@@ -68,7 +69,8 @@ export class AppModule implements NestModule {
                 HomeModule,
                 EmailModule,
                 SitemapModule,
-                OryModule
+                OryModule,
+                ReportModule,
             ],
             controllers: [RootController],
             providers: [
