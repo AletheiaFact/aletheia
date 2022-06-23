@@ -37,7 +37,6 @@ describe("Test the side route", () => {
         cy.get(
             "[data-cy=testCodeOfConductItem] > .ant-menu-title-content"
         ).should("contain", "Code of Conduct");
-        cy.wait(1000);
         cy.get("[data-cy=testCodeOfConductItem] > .ant-menu-title-content")
             .wait(100)
             .click();
