@@ -77,18 +77,19 @@ const SentenceReportView = ({ personality, claim, sentence, href, context }) => 
                         <Paragraph style={paragraphStyle}>{verification}</Paragraph>
                     </Col>
                 </Row>
-                {sources && Array.isArray(claim.sources) && claim.sources.length > 0 && <Col style={{marginTop: "33px", width: "100%"}}>
-                    <Typography.Title style={{ width: "100%" }} level={3}>{t("claim:sourceSectionTitle")}</Typography.Title>
+                {sources && 
+                    <Col style={{marginTop: "33px", width: "100%"}}>
+                        <Typography.Title style={{ width: "100%" }} level={3}>{t("claim:sourceSectionTitle")}</Typography.Title>
                     {sources && <>
                         <LinkPreview
-                            url={claim.sources[0].link}
+                            url={sources[0]}
                             borderRadius="10px"
                             borderColor="transparent"
                             imageHeight="156px"
                             secondaryTextColor="#515151"
                             fallback={
-                                <Link href={claim.sources[0].link}>
-                                    {claim.sources[0].link}
+                                <Link href={sources[0]}>
+                                    {sources[0]}
                                 </Link>
                             }
                             width="100%"

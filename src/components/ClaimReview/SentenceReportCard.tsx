@@ -68,6 +68,7 @@ const SentenceReportCard = ({ claim, personality, date, context, sentence, claim
                                     {sentence?.content}
                                 </p>
                             </cite>
+                        </Paragraph>
                             <a
                                 href={`/personality/${personality.slug}/claim/${claim.slug}`}
                                 style={{
@@ -79,7 +80,6 @@ const SentenceReportCard = ({ claim, personality, date, context, sentence, claim
                             >
                                 {t("claim:cardLinkToFullText")}
                             </a>
-                        </Paragraph>
                     </SentenceReportSummary>
                     <div style={{ display: "flex", width: "100%", justifyContent: "center", marginTop: "18px", fontSize: "22px", fontWeight: 800 }}>
                         <p style={{ marginBottom: 0 }}>
