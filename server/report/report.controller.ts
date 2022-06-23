@@ -7,7 +7,6 @@ export class ReportController {
         private reportService: ReportService,
     ) {}
     
-    @IsPublic()
     @Get("api/report/:sentence_hash")
     async getBySentenceHash(@Param("sentence_hash") sentence_hash: string) {
         return this.reportService.findBySentenceHash(sentence_hash)

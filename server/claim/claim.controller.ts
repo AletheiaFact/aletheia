@@ -128,58 +128,17 @@ export class ClaimController {
         return this.claimService.delete(claimId);
     }
 
-    @IsPublic()
-    @Get("api/claim/:claimId/sentence/:sentenceHash/reviews")
-    getSentenceReviewsByHash(@Param() params, @Query() getClaimsByHashDTO: GetClaimsByHashDTO) {
-        const { sentenceHash } = params;
-        const { page, pageSize, order } = getClaimsByHashDTO;
-
+    _getSentenceByHashAndClaimId(sentence_hash, claimId, req) {
         return Promise.all([
-            this.claimReviewService.getReviewsBySentenceHash(
-                sentenceHash,
-                page,
-                pageSize,
-                order || "desc"
-            ),
-            this.claimReviewService.countReviewsBySentenceHash(sentenceHash),
-        ]).then(([reviews, totalReviews]) => {
-            totalReviews = totalReviews[0]?.count;
-            // @ts-ignore
-            const totalPages = Math.ceil(totalReviews / parseInt(pageSize, 10));
-
-            this.logger.log(
-                `Found ${totalReviews} reviews for sentence hash ${sentenceHash}. Page ${page} of ${totalPages}`
-            );
-
-            return {
-                reviews,
-                totalReviews,
-                totalPages,
-                page,
-                pageSize,
-            };
-        });
-    }
-
-    _getSentenceByHashAndClaimId(sentenceHash, claimId, req) {
-        const user = req.user;
-        return Promise.all([
-            this.claimReviewService.getReviewStatsBySentenceHash({
-                sentenceHash,
-                isDeleted: false,
-                isPublished: true
-            }),
+            this.claimReviewService.getReviewStatsBySentenceHash({sentence_hash, isDeleted: false, isPublished: true}),
             this.claimService.getById(claimId),
-            this.claimReviewService.getUserReviewBySentenceHash(
-                sentenceHash,
-                user?._id
-            ),
+            this.claimReviewService.getUserReviewBySentenceHash(sentence_hash),
         ]).then(([stats, claimObj, userReview]) => {
             let sentenceObj;
 
             claimObj.content.object.forEach((p) => {
                 p.content.forEach((sentence) => {
-                    if (sentence.props["data-hash"] === sentenceHash) {
+                    if (sentence.props["data-hash"] === sentence_hash) {
                         sentenceObj = sentence;
                     }
                 });
@@ -195,9 +154,9 @@ export class ClaimController {
     }
 
     @IsPublic()
-    @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:sentenceHash")
+    @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash")
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
-        const { sentenceHash, personalitySlug, claimSlug } = req.params;
+        const { sentence_hash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
         const personality = await this.personalityService.getBySlug(
             personalitySlug,
@@ -210,9 +169,9 @@ export class ClaimController {
             claimSlug
         );
 
-        const sentence = await this._getSentenceByHashAndClaimId(sentenceHash, claim._id, req);
+        const sentence = await this._getSentenceByHashAndClaimId(sentence_hash, claim._id, req);
 
-        const claimReviewTask = await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(sentenceHash)
+        const claimReviewTask = await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(sentence_hash)
 
         await this.viewService
             .getNextServer()

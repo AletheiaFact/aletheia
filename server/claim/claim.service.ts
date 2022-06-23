@@ -225,7 +225,7 @@ export class ClaimService {
             claim.content.object.forEach((p) => {
                 totalClaims += p.content.length;
                 p.content.forEach((sentence) => {
-                    if (sentence.props.topClassification) {
+                    if (sentence.props.classification) {
                         totalClaimsReviewed++;
                     }
                 });
@@ -244,12 +244,12 @@ export class ClaimService {
         claimContent.forEach((paragraph, paragraphIndex) => {
             paragraph.content.forEach((sentence, sentenceIndex) => {
                 const claimReview = reviews.find((review) => {
-                    return review._id === sentence.props["data-hash"];
+                    return review._id.sentence_hash === sentence.props["data-hash"];
                 });
                 if (claimReview) {
                     claimContent[paragraphIndex].content[sentenceIndex].props =
                         Object.assign(sentence.props, {
-                            topClassification: claimReview.topClassification,
+                            classification: claimReview._id.classification[0],
                         });
                 }
             });

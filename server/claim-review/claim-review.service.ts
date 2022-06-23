@@ -20,7 +20,15 @@ export class ClaimReviewService {
     agreggateClassification(match: any) {
         return this.ClaimReviewModel.aggregate([
             { $match: match },
-            { $group: { _id: "$classification", count: { $sum: 1 } } },
+            {
+                $lookup: {
+                    from: 'reports',
+                    localField: 'report',
+                    foreignField: '_id',
+                    as: 'report'
+                }
+            },
+            { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
     }
@@ -32,7 +40,15 @@ export class ClaimReviewService {
     async getReviewStatsBySentenceHash(match: any) {
         const reviews = await this.ClaimReviewModel.aggregate([
             { $match: match },
-            { $group: { _id: "$classification", count: { $sum: 1 } } },
+            {
+                $lookup: {
+                    from: 'reports',
+                    localField: 'report',
+                    foreignField: '_id',
+                    as: 'report'
+                }
+            },
+            { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
         return this.util.formatStats(reviews);
@@ -41,7 +57,15 @@ export class ClaimReviewService {
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
             { $match: { claim: claimId, isDeleted: false, isPublished: true, } },
-            { $group: { _id: "$classification", count: { $sum: 1 } } },
+            {
+                $lookup: {
+                    from: 'reports',
+                    localField: 'report',
+                    foreignField: '_id',
+                    as: 'report'
+                }
+            },
+            { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
         return this.util.formatStats(reviews);
@@ -56,113 +80,34 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.aggregate([
             { $match: { claim: claimId, isDeleted: false, isPublished: true } },
             {
+                $lookup: {
+                    from: 'reports',
+                    localField: 'report',
+                    foreignField: '_id',
+                    as: 'report'
+                }
+            },
+            {
                 $group: {
-                    _id: "$sentence_hash",
-                    topClassification: this._topClassificationAccumulator(),
+                    _id: {sentence_hash: "$sentence_hash", classification: "$report.classification"},
+                    count: { $sum: 1 }
                 },
             },
         ]).option({ serializeFunctions: true });
     }
 
-    getUserReviewBySentenceHash(sentenceHash, userId) {
-        if (!userId) {
-            return Promise.resolve(undefined);
-        }
-        return this.ClaimReviewModel.findOne(
-            { sentence_hash: sentenceHash, user: userId, isDeleted: false },
+    async getUserReviewBySentenceHash(sentence_hash) {
+        const user = await this.ClaimReviewModel.findOne(
+            { sentence_hash, isDeleted: false },
             {
-                sources: 1,
-                _id: 1,
-                classification: 1,
-                user: 1,
+                userId: 1,
             }
         );
+        const userReview = user?.userId
+        return userReview
     }
 
-    countReviewsBySentenceHash(sentenceHash) {
-        return this._reviewsBySentenceHashAggregated(sentenceHash).count(
-            "count"
-        );
-    }
 
-    getReviewsBySentenceHash(sentenceHash, page, pageSize, order) {
-        pageSize = parseInt(pageSize);
-        page = parseInt(page);
-
-        return this._reviewsBySentenceHashAggregated(sentenceHash)
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .sort({ _id: order });
-    }
-
-    _reviewsBySentenceHashAggregated(sentenceHash) {
-        return this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash: sentenceHash, isDeleted: false, isPublished: true, } },
-            // Virtual Populates doesn't work with aggregate
-            // https://stackoverflow.com/questions/47669178/mongoose-virtual-populate-and-aggregates
-            {
-                $lookup: {
-                    from: 'sources',
-                    localField: '_id',
-                    foreignField: 'targetId',
-                    as: 'sources'
-                }
-            },
-            {
-                $project: {
-                    _id: 1,
-                    sources: 1,
-                    report: 1,
-                    classification: 1,
-                    user: 1,
-                },
-            },
-        ]);
-    }
-
-    _topClassificationAccumulator() {
-        return {
-            $accumulator: {
-                init: function () {
-                    return {};
-                },
-                accumulate: function (state, classification) {
-                    if (!state[classification]) {
-                        state[classification] = 1;
-                    } else {
-                        state[classification]++;
-                    }
-
-                    return state;
-                },
-                accumulateArgs: ["$classification"],
-                merge: function (state1, state2) {
-                    return { ...state1, ...state2 };
-                },
-                finalize: function (state) {
-                    // Find the classification with bigger count
-                    const topClassification = Object.keys(state).reduce(
-                        (acc, classification) => {
-                            if (!state[acc]) {
-                                return classification;
-                            } else {
-                                return state[acc] >= state[classification]
-                                    ? acc
-                                    : classification;
-                            }
-                        },
-                        ""
-                    );
-                    // TODO: what can we do about ties?
-                    return {
-                        classification: topClassification,
-                        count: state[topClassification],
-                    };
-                },
-                lang: "js",
-            },
-        };
-    }
 
     /**
      * This function creates a new claim review.
