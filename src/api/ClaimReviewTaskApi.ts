@@ -18,21 +18,21 @@ const getMachineBySentenceHash = (params, t) => {
         });
 };
 
-const createClaimReviewTask = (params, t) => {
+const createClaimReviewTask = (params, t, type) => {
     params.machine = ParseMachineState(params.machine)
     return request
         .post('/', {...params})
         .then((response) => {
-            message.success(t("claimReviewTask:userAssignedSuccess"))
+            message.success(t(`claimReviewTask:${type}_SUCCESS`))
             return response.data
         })
         .catch(err => {
-            message.error(t("claimReviewTask:userAssignedError"))
+            message.error(t(`claimReviewTask:${type}_ERROR`))
             return err
         })
 }
 
-const updateClaimReviewTask = (params, t) => {
+const updateClaimReviewTask = (params, t, type) => {
     params.machine = ParseMachineState(params.machine)
     return request
         .put(
@@ -40,15 +40,19 @@ const updateClaimReviewTask = (params, t) => {
             { ...params },
         )
         .then((response) => {
-            message.success(t("claimReviewTask:reportedSuccess"))
+            message.success(t(`claimReviewTask:${type}_SUCCESS`))
             return response.data
         })
         .catch(err => {
-            message.success(t("claimReviewTask:reportedError"))
+            message.success(t(`claimReviewTask:${type}_ERROR`))
             return err
         })
 }
 
+const ClaimReviewTaskApi = {
+    getMachineBySentenceHash,
+    createClaimReviewTask,
+    updateClaimReviewTask,
+}
 
-const ClaimReviewTaskApi = { getMachineBySentenceHash, createClaimReviewTask, updateClaimReviewTask }
 export default ClaimReviewTaskApi

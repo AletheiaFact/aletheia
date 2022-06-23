@@ -1,31 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from "react-hook-form";
-import DynamicInput from "../form/DynamicInput";
+import { Col, Row } from "antd";
+import { useTranslation } from 'next-i18next';
+import { initialContext } from "../../../machine/context";
+import { createNewMachineService } from '../../../machine/reviewTaskMachine';
+import { ReviewTaskEvents, ReviewTaskStates } from '../../../machine/enums';
 import AletheiaButton, { ButtonType } from "../../Button";
 import colors from "../../../styles/colors";
-import { Col, Row } from "antd";
+import DynamicInput from "../form/DynamicInput";
 import unassignedForm from "./unassignedForm"
 import assignedForm from "./assignedForm";
 import reportedForm from "./reportedForm";
-import { createNewMachineService} from '../../../machine/reviewTaskMachine';
-import { useTranslation } from 'next-i18next';
-import api from '../../../api/ClaimReviewTaskApi'
-import { initialContext } from "../../../machine/context";
 import Text from "antd/lib/typography/Text";
+import api from '../../../api/ClaimReviewTaskApi'
+
 const DynamicForm = ({ sentence_hash }) => {
     const { handleSubmit, control, formState: { errors } } = useForm()
     const [ service, setService ] = useState(null);
     const [ currentForm, setCurrentForm ] = useState(null)
     const { t } = useTranslation()
 
-    const setCurrentFormBasedOnParam = (param) => {
-        if(param === "assigned" || param === "ASSIGN_USER") {
+    const setDefaultValuesOfCurrentForm = (machine, form) => {
+        machine && form.map((input) => {
+            Object.keys(machine.context.reviewData).forEach((value) => {
+                if(input.fieldName === value) {
+                    input.defaultValue = machine.context.reviewData[value]
+                }
+            })
+        })
+    }
+
+    const setCurrentFormBasedOnParam = (param, machine = null) => {
+        if(param === ReviewTaskStates.assigned || param === ReviewTaskEvents.assignUser) {
+            setDefaultValuesOfCurrentForm(machine, assignedForm)
             setCurrentForm(assignedForm)
-        } else if(param === "reported" || param === "FINISH_REPORT") {
+        } else if(param === ReviewTaskStates.reported || param === ReviewTaskEvents.finishReport) {
+            setDefaultValuesOfCurrentForm(machine, reportedForm)
             setCurrentForm(reportedForm)
-        } else if(param === "published" || param === "PUBLISH") {
+        } else if(param === ReviewTaskStates.published || param === ReviewTaskEvents.publish) {
             setCurrentForm([])
-        } else {
+        } else if(param !== ReviewTaskEvents.draft) {
             setCurrentForm(unassignedForm)
         }
     }
@@ -35,13 +49,12 @@ const DynamicForm = ({ sentence_hash }) => {
             const machine = claimReviewTask.machine || { context: initialContext, value: "unassigned" }
             machine.context.utils = { t }
             setService(createNewMachineService(machine))
-            setCurrentFormBasedOnParam(machine.value)
-            // TODO: Add dependencies for the useEffect for when identification values change
+            setCurrentFormBasedOnParam(machine.value, machine)
         })
     }, []);
 
     const formInputs = currentForm && currentForm.map((fieldItem, index) => {
-        const { fieldName, rules, label, placeholder, type, inputType, addInputLabel } = fieldItem
+        const { fieldName, rules, label, placeholder, type, inputType, addInputLabel, defaultValue } = fieldItem
 
         return (
             <Row key={index} style={{ marginBottom: 20 }}>
@@ -62,6 +75,7 @@ const DynamicForm = ({ sentence_hash }) => {
                         name={fieldName}
                         control={control}
                         rules={rules}
+                        defaultValue={defaultValue}
                         render={({ field }) => (
                             <DynamicInput
                                 type={type}
@@ -70,6 +84,7 @@ const DynamicForm = ({ sentence_hash }) => {
                                 value={field.value}
                                 inputType={inputType}
                                 addInputLabel={addInputLabel}
+                                defaultValue={defaultValue}
                             />
                         )}
                     />

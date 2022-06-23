@@ -24,6 +24,25 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             assigned: {
+                initial: ReviewTaskStates.undraft,
+                states: {
+                    undraft: {
+                        on: {
+                            SAVE_DRAFT: {
+                                target: ReviewTaskStates.draft,
+                                actions: [saveContext]
+                            }
+                        }
+                    },
+                    draft: {
+                        on: {
+                            SAVE_DRAFT: {
+                                target: ReviewTaskStates.draft,
+                                actions: [saveContext],
+                            }
+                        }
+                    }
+                },
                 on: {
                     FINISH_REPORT: {
                         target: ReviewTaskStates.reported,
@@ -32,6 +51,25 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             reported: {
+                initial: ReviewTaskStates.undraft,
+                states: {
+                    undraft: {
+                        on: {
+                            SAVE_DRAFT: {
+                                target: ReviewTaskStates.draft,
+                                actions: [saveContext]
+                            }
+                        }
+                    },
+                    draft: {
+                        on: {
+                            SAVE_DRAFT: {
+                                target: ReviewTaskStates.draft,
+                                actions: [saveContext],
+                            }
+                        }
+                    }
+                },
                 on: {
                     PUBLISH: {
                         target: ReviewTaskStates.published,
@@ -47,19 +85,16 @@ export const createNewMachine = ({ value, context }) => {
 }
 
 export const transitionHandler = (state) => {
-        const sentence_hash = state.context.reviewData.sentence_hash
-        const t = state.context.utils.t
-        switch (state.event.type) {
-            case ReviewTaskEvents.assignUser:
-                api.createClaimReviewTask({ sentence_hash, machine: state }, t)
-                break;
-            case ReviewTaskEvents.finishReport:
-                api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
-                break;
-            case ReviewTaskEvents.publish:
-                api.updateClaimReviewTask({ sentence_hash, machine: state }, t)
-                break;
-    }}
+    const sentence_hash = state.context.reviewData.sentence_hash
+    const t = state.context.utils.t
+    const event = state.event.type
+
+    if (event === ReviewTaskEvents.assignUser) {
+        api.createClaimReviewTask({ sentence_hash, machine: state }, t, event)
+    } else if (event !== ReviewTaskEvents.init) {
+        api.updateClaimReviewTask({ sentence_hash, machine: state }, t, event)
+    }
+}
 
 export const createNewMachineService = (machine: any) => {
     return interpret(createNewMachine(machine))

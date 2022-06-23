@@ -11,7 +11,8 @@ interface DynamicInputProps {
     value: string;
     onChange: any;
     inputType: string;
-    addInputLabel: string
+    addInputLabel: string;
+    defaultValue: string | [];
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -23,6 +24,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     rows={4}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
+                    defaultValue={props.defaultValue}
                 />
             )
         case "inputSearch":
@@ -37,6 +39,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={(value) => props.onChange(value)}
                     inputType={props.inputType}
                     addInputLabel={t(props.addInputLabel)}
+                    defaultValue={props.defaultValue}
                 />
             )
         case "select":
@@ -44,7 +47,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                 <ClaimReviewSelect
                     type="select"
                     onChange={(value) => props.onChange(value)}
-                    defaultValue=""
+                    defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
                 />
             )
