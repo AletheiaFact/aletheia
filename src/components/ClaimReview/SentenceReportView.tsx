@@ -77,70 +77,88 @@ const SentenceReportView = ({ personality, claim, sentence, href, context }) => 
                         <Paragraph style={paragraphStyle}>{verification}</Paragraph>
                     </Col>
                 </Row>
-                {sources && 
-                    <Col style={{marginTop: "33px", width: "100%"}}>
-                        <Typography.Title style={{ width: "100%" }} level={3}>{t("claim:sourceSectionTitle")}</Typography.Title>
-                    {sources && <>
-                        <LinkPreview
-                            url={sources[0]}
-                            borderRadius="10px"
-                            borderColor="transparent"
-                            imageHeight="156px"
-                            secondaryTextColor="#515151"
-                            fallback={
-                                <Link href={sources[0]}>
-                                    {sources[0]}
-                                </Link>
-                            }
-                            width="100%"
-                        />
-                        <AletheiaButton
-                            style={{
-                                width: "100%",
-                                marginTop: "21px",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                paddingBottom: 0,
-                            }}
-                            type={ButtonType.blue}
-                            href={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
-                        >
-                            <Title
-                                level={4}
-                                style={{
-                                    fontSize: 14,
-                                    color: colors.white,
-                                    fontWeight: 400,
-                                    margin: 0,
-                                }}
-                            >
-                                {t('claim:seeSourcesButton')}
-                            </Title>
-                        </AletheiaButton>
-                    </>}
-                    <Paragraph
+                <Col style={{marginTop: "33px"}}>
+                    <Typography.Title style={{ width: "100%" }} level={3}>{t("claim:sourceSectionTitle")}</Typography.Title>
+                    <Row 
                         style={{
-                            fontSize: "10px",
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            lineHeight: "15px",
-                            color: colors.bluePrimary,
-                            marginBottom: 21,
-                        }}
-                    >
-                        <p style={{ marginBottom: 0, marginRight: 3 }}>
-                            {t("claim:sourceFooter")}
-                        </p>
-                        <a
-                            href={`mailto:${t("common:supportEmail")}`}
-                            style={{
-                                color: colors.blueSecondary
-                            }}
-                        > {t("claim:sourceFooterReport")}</a>
-                    </Paragraph>
-                </Col>}
+                            display: "inline-flex",
+                            flexWrap: "wrap",
+                            gap: "38px"
+                        }}>
+                    {sources && <>{sources.slice(0, 6).map((link) =>{
+                        return(
+                                <Col 
+                                    style={{ 
+                                        display: "block", 
+                                        flex: "1 1 30%", 
+                                    }}>
+                                    <LinkPreview
+                                        url={link}
+                                        borderRadius="10px"
+                                        backgroundColor={colors.lightGray}
+                                        borderColor="transparent"
+                                        imageHeight="156px"
+                                        height={244}
+
+                                        secondaryTextColor="#515151"
+                                        fallback={
+                                            <Link href={link}>
+                                                {link}
+                                            </Link>
+                                        }
+                                        width="100%"
+                                    />
+                                    <Paragraph
+                                        style={{
+                                            fontSize: "10px",
+                                            width: "100%",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            lineHeight: "15px",
+                                            color: colors.bluePrimary,
+                                        }}
+                                    >
+                                        <p style={{ marginBottom: 0, marginRight: 3 }}>
+                                            {t("claim:sourceFooter2")}
+                                        </p>
+                                        <a
+                                            href={`mailto:${t("common:supportEmail")}`}
+                                            style={{
+                                                color: colors.blueSecondary,
+                                            }}
+                                        > {t("claim:sourceFooterReport")}</a>
+                                    </Paragraph>
+                                </Col>
+                            )
+                        })}
+                    </>}
+                    {sources.length > 5 && <AletheiaButton
+                                    style={{
+                                        width: "100%",
+                                        marginTop: "21px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        paddingBottom: 0,
+                                        marginBottom: "10px"
+                                    }}
+                                    type={ButtonType.blue}
+                                    href={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
+                                >
+                                    <Title
+                                        level={4}
+                                        style={{
+                                            fontSize: 14,
+                                            color: colors.white,
+                                            fontWeight: 400,
+                                            margin: 0,
+                                        }}
+                                    >
+                                        {t('claim:seeSourcesButton')}
+                                    </Title>
+                                </AletheiaButton>}
+                    </Row>
+                </Col>
                 <CTARegistration></CTARegistration>
             </Col>
             <Col span={24}>
