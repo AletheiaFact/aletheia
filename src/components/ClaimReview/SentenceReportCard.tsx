@@ -75,7 +75,8 @@ const SentenceReportCard = ({ claim, personality, date, context, sentence, claim
                                     textDecoration: "underline",
                                     color: colors.blackPrimary,
                                     fontWeight: "bold",
-                                    fontSize: "22px"
+                                    fontSize: "22px",
+                                    marginLeft: 10
                                 }}
                             >
                                 {t("claim:cardLinkToFullText")}

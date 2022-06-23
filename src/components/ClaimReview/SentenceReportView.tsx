@@ -83,7 +83,7 @@ const SentenceReportView = ({ personality, claim, sentence, href, context }) => 
                         style={{
                             display: "inline-flex",
                             flexWrap: "wrap",
-                            gap: "38px"
+                            gap: "38px 38px"
                         }}>
                     {sources && <>{sources.slice(0, 6).map((link) =>{
                         return(
