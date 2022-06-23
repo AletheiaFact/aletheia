@@ -12,6 +12,7 @@ const ClassificationText = (props: { classification: string }) => {
                 fontWeight: "bold",
                 textTransform: "uppercase"
             }}
+            data-cy={props.classification}
         >
             {t(`claimReviewForm:${props.classification}`)}{" "}
         </span>

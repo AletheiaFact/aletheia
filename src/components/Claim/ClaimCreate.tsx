@@ -175,6 +175,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         placeholder={t(
                             "claimForm:titleFieldPlaceholder"
                         )}
+                        data-cy={"testTitleClaimForm"}
                     />
                 </Form.Item>
                 <Form.Item
@@ -204,6 +205,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         placeholder={t(
                             "claimForm:contentFieldPlaceholder"
                         )}
+                        data-cy={"testContentClaim"}
                     />
                 </Form.Item>
                 <Form.Item
@@ -234,6 +236,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         onChange={value =>
                             setDate(value)
                         }
+                        data-cy={"dataAserSelecionada"}
                     />
                 </Form.Item>
                 <SourceInput
@@ -274,7 +277,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                     ]}
                     valuePropName="checked"
                 >
-                    <Checkbox>
+                    <Checkbox data-cy={"testCheckboxAcceptTerms"}>
                         {t("claimForm:checkboxAcceptTerms")}
                     </Checkbox>
                 </Form.Item>
@@ -309,6 +312,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                             type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit}
+                            data-cy={'testSaveButton'}
                         >
                             {t("claimForm:saveButton")}
                         </Button>

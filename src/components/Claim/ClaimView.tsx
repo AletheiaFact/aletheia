@@ -163,6 +163,7 @@ const Claim = ({ personality, claim, href }) => {
                                     }}
                                     type={ButtonType.blue}
                                     href={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
+                                    data-cy={personality.name}
                                 >
                                     <Title
                                         level={4}

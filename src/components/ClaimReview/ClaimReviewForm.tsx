@@ -113,6 +113,7 @@ const ClaimReviewForm = ({
                         onChange={onChangeClassification}
                         defaultValue=""
                         placeholder={t("claimReviewForm:classificationPlaceholder")}
+                        data-cy={"testClassification1"}
                     />
                 </Form.Item>
                 <SourceInput
@@ -179,6 +180,7 @@ const ClaimReviewForm = ({
                         value={report || ""}
                         onChange={(e) => setReport(e.target.value)}
                         placeholder={t("claimForm:reportFieldPlaceholder")}
+                        data-cy={"testReportInput"}
                     />
                 </Form.Item>
                 <Form.Item>
@@ -204,6 +206,7 @@ const ClaimReviewForm = ({
                             htmlType="submit"
                             disabled={disableSubmit}
                             icon={<PlusOutlined />}
+                            data-cy={'testAddReviewButton'}
                         >
                             {t("claimReviewForm:addReviewButton")}
                         </Button>
