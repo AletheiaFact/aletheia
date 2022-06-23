@@ -38,7 +38,7 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                     summaryClassName="claim-review"
                     claimType={claim?.type}
                 />
-                {sentence.userReview && (
+                {sentence.userReview && review && (
                     <Row
                         style={{
                             justifyContent: "center",

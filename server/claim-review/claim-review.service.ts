@@ -43,7 +43,7 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false } },
+            { $match: { claim: claimId, isDeleted: false, isPublished: true, } },
             { $group: { _id: "$classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
@@ -57,7 +57,7 @@ export class ClaimReviewService {
      */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false } },
+            { $match: { claim: claimId, isDeleted: false, isPublished: true } },
             {
                 $group: {
                     _id: "$sentence_hash",
@@ -100,7 +100,7 @@ export class ClaimReviewService {
 
     _reviewsBySentenceHashAggregated(sentenceHash) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash: sentenceHash, isDeleted: false } },
+            { $match: { sentence_hash: sentenceHash, isDeleted: false, isPublished: true, } },
             // Virtual Populates doesn't work with aggregate
             // https://stackoverflow.com/questions/47669178/mongoose-virtual-populate-and-aggregates
             {
@@ -178,6 +178,7 @@ export class ClaimReviewService {
 
         if (review.length) {
             throw new Error("This Claim already has a review");
+            //TODO: verify if already start a review and isn't published
         } else {
             // Cast ObjectId
             claimReview.personality = Types.ObjectId(claimReview.personality);
@@ -197,6 +198,8 @@ export class ClaimReviewService {
                     throw e;
                 }
             }
+
+            newClaimReview.isPublished = true
 
             const history = 
                 this.historyService.getHistoryParams(

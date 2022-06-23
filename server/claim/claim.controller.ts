@@ -164,7 +164,11 @@ export class ClaimController {
     _getSentenceByHashAndClaimId(sentenceHash, claimId, req) {
         const user = req.user;
         return Promise.all([
-            this.claimReviewService.getReviewStatsBySentenceHash({sentenceHash, isDeleted: false}),
+            this.claimReviewService.getReviewStatsBySentenceHash({
+                sentenceHash,
+                isDeleted: false,
+                isPublished: true
+            }),
             this.claimService.getById(claimId),
             this.claimReviewService.getUserReviewBySentenceHash(
                 sentenceHash,
