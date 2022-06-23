@@ -1,0 +1,39 @@
+# Number of worker processes to spawn.
+# Use 'ncpu' to run as many workers as there are CPU units
+num_workers: 1
+
+# Log error messages and gracefully restart a worker if v8 reports that it
+# uses more heap (note: not RSS) than this many mb.
+# worker_heap_limit_mb: 250
+
+# Logger info
+logging:
+  level: trace
+  streams:
+  - type: stdout # log to stdout
+    named_levels: true # emit log level name instead of index. e.g. INFO vs 30
+
+# Using config.yaml with wikimedia service-runner pattern
+services:
+  - name: service-aletheia
+    # path relative to the __dirname variable
+    module: dist/server/main.js
+    conf:
+      port: 3000
+      cors: '*'
+      debug: true
+      recaptcha_secret: {env(RECAPTCHA_SECRET)}
+      recaptcha_sitekey: {env(RECAPTCHA_SITEKEY)}
+      db:
+        connection_uri: {env(CI_MONGODB_URI)}
+        options:
+          useUnifiedTopology: true
+          useNewUrlParser: true
+      throttle:
+        ttl: 60
+        limit: 1000
+      authentication_type: ory
+      ory:
+        url: {env(ORY_SDK_URL)}
+        access_token: {env(ORY_ACCESS_TOKEN)}
+        schema_id: {env(ALETHEIA_SCHEMA_ID)}

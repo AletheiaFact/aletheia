@@ -1,18 +1,22 @@
-import React, {useEffect, useState} from "react";
-import { Form, message, Row } from "antd";
+import React, { useEffect, useState } from "react";
+import { Alert, Form, message, Row } from "antd";
 import InputPassword from "../InputPassword";
-import Input from "../Input";
+import Input from "../AletheiaInput";
 import Button, { ButtonType } from "../Button";
 import {
-    SelfServiceLoginFlow, SubmitSelfServiceLoginFlowBody,
+    SelfServiceLoginFlow,
+    SubmitSelfServiceLoginFlowBody,
     SubmitSelfServiceLoginFlowWithPasswordMethodBody as ValuesType,
     UiNodeInputAttributes
 } from "@ory/client";
 import { isUiNodeInputAttributes } from "@ory/integrations/ui"
 import { useTranslation } from "next-i18next";
-import {useRouter} from "next/router";
-import {oryGetLoginFlow, orySubmitLogin} from "../../api/ory";
-import {LoadingOutlined} from "@ant-design/icons";
+import { useRouter } from "next/router";
+import {
+    oryGetLoginFlow,
+    orySubmitLogin
+} from "../../api/ory";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const OryLoginForm = () => {
     const [flow, setFlow] = useState<SelfServiceLoginFlow>()
@@ -24,7 +28,7 @@ const OryLoginForm = () => {
     }, [])
 
     const onSubmit = (values: SubmitSelfServiceLoginFlowBody) => {
-        orySubmitLogin({router, flow, setFlow, t, values})
+        orySubmitLogin({ router, flow, setFlow, t, values })
     }
 
     if (!flow) {
@@ -77,6 +81,12 @@ const OryLoginForm = () => {
             <Row className="typo-grey typo-center">
                 <h2>{t("login:formHeader")}</h2>
             </Row>
+            {flow.refresh && <Row style={{ paddingBottom: "10px" }}>
+                <Alert
+                    message={t("login:refreshLoginMessage")}
+                    type="warning"
+                />
+            </Row>}
             <Form
                 name="basic"
                 initialValues={{ remember: true }}

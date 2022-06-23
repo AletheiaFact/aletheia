@@ -14,6 +14,7 @@ const Logo = ({color = "white"}) => {
             backgroundPosition: "center",
             backgroundSize: "200px"
         }}
+        data-cy={"logo"}
     ></div>
 }
 

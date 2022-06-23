@@ -1,5 +1,5 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import AletheiaInput from "../../../components/Input";
+import AletheiaInput from "../../../components/AletheiaInput";
 
 export default {
     title: "Components/Inputs/Input",

@@ -70,6 +70,7 @@ const ClaimCard = ({ personality, claim }) => {
                                     style={{
                                         textDecoration: "underline"
                                     }}
+                                    data-cy={"testSeeFullSpeech"} 
                                 >
                                     {t("claim:cardLinkToFullText")}
                                 </a>
@@ -151,6 +152,7 @@ const ClaimCard = ({ personality, claim }) => {
                         }}
                         type={ButtonType.blue}
                         href={`/personality/${personality.slug}/claim/${claim.slug}`}
+                        data-cy={personality.name}
                     >
                         <Title
                             level={4}

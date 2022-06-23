@@ -126,6 +126,7 @@ const PersonalityCard = ({
                             {personality._id ? (
                                 <Button
                                     type={ButtonType.blue}
+                                    data-cy={personality.name}
                                     href={`${hrefBase ||
                                         "personality/"}${personality.slug}`}
                                 >
@@ -137,6 +138,7 @@ const PersonalityCard = ({
                                     onClick={() =>
                                         onClick(personality)
                                     }
+                                    data-cy={personality.name}
                                 >
                                     <PlusOutlined /> {t("personality:add_button")}
                                 </Button>

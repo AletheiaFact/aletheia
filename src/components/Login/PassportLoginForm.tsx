@@ -1,14 +1,14 @@
-import {Form, message, Row} from "antd";
-import Input from "../Input";
+import { Form, message, Row } from "antd";
+import Input from "../AletheiaInput";
 import InputPassword from "../InputPassword";
 import colors from "../../styles/colors";
-import Button, {ButtonType} from "../Button";
+import Button, { ButtonType } from "../Button";
 import BackButton from "../BackButton";
 import CTARegistration from "../Home/CTARegistration";
 import React from "react";
 import api from "../../api/user";
-import {useTranslation} from "next-i18next";
-import {useRouter} from "next/router";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 const PassportLoginForm = (props) => {
     const { t } = useTranslation();
