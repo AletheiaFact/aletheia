@@ -14,7 +14,7 @@ import reportedForm from "./reportedForm";
 import Text from "antd/lib/typography/Text";
 import api from '../../../api/ClaimReviewTaskApi'
 
-const DynamicForm = ({ sentence_hash }) => {
+const DynamicForm = ({ sentence_hash, personality, claim }) => {
     const { handleSubmit, control, formState: { errors } } = useForm()
     const [ service, setService ] = useState(null);
     const [ currentForm, setCurrentForm ] = useState(null)
@@ -100,7 +100,20 @@ const DynamicForm = ({ sentence_hash }) => {
 
     const onSubmit = async(data, e) => {
         const event = e.nativeEvent.submitter.getAttribute('event')
-        service.send(event, { ...data, sentence_hash, type: event, t })
+        service.send(event, {
+            sentence_hash,
+            reviewData: {
+                ...data,
+                sentence_hash,
+            },
+            claimReview: {
+                personality,
+                claim,
+                sentence_hash,
+            },
+            type: event,
+            t,
+        })
         setCurrentFormBasedOnParam(event)
     };
 

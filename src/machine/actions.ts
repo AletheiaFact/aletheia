@@ -5,13 +5,20 @@ import { SaveEvent } from "./events";
 export const saveContext = assign<ReviewTaskMachineContext, SaveEvent>(
     (context, event) => {
         const t = event.t
+        const claimReview = event.claimReview
+        const reviewData = event.reviewData
+        const userId = event.reviewData.userId
         return {
-            reviewData:{
+            reviewData: {
                 ...context.reviewData,
-                ...event,
+                ...reviewData,
             },
             utils: {
                 t
+            },
+            claimReview: {
+                ...claimReview,
+                userId,
             }
         };
 });

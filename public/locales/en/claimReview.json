@@ -1,7 +1,6 @@
 {
     "cardAuthor": "{{name}} reviewed this as:",
     "anonymousUserName": "Anonymous",
-    "userReviewPrefix": "You reviewed this claim as ",
-    "userReviewSuffix": "Mostly ({{count}}) reviewed as ",
+    "classificationTextPrefix": "Claim reviewed as ",
     "listTitle": "Reviews"
 }

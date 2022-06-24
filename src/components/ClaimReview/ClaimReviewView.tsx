@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
 import { Row } from "antd";
-import ClaimReviewList from "./ClaimReviewList";
 import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
@@ -10,12 +9,12 @@ import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
 
-const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, isLoggedIn }) => {
+const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, isLoggedIn, review }) => {
     const { t } = useTranslation();
     const claimId = claim._id;
+    const personalityId = personality._id;
     const sentenceHash = sentence?.props["data-hash"];
     const stats = sentence?.stats;
-    const review = sentence?.props?.topClassification;
     const [formCollapsed, setFormCollapsed] = useState(claimReviewTask ? false : true);
 
     const toggleFormCollapse = () => {
@@ -38,32 +37,23 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                     summaryClassName="claim-review"
                     claimType={claim?.type}
                 />
-                {sentence.userReview && review && (
+                {review && (
                     <Row
                         style={{
                             justifyContent: "center",
-                            flexWrap: "wrap"
+                            flexWrap: "wrap",
+                            width: "100%",
+                            paddingBottom: "1em"
                         }}
                     >
                         <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
                             <p style={{ marginBottom: 0 }}>
-                                {t("claimReview:userReviewPrefix")}&nbsp;
+                                {t("claimReview:classificationTextPrefix")}&nbsp;
                             </p>
                             <ClassificationText
                                 classification={
-                                    sentence.userReview?.classification
+                                    sentence.props?.classification
                                 }
-                            />
-                        </div>
-                        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-                            <p style={{ marginBottom: 0 }}>
-                                {t("claimReview:userReviewSuffix", {
-                                    count: review?.count
-                                })}
-                                &nbsp;
-                            </p>
-                            <ClassificationText
-                                classification={review?.classification}
                             />
                         </div>
                     </Row>
@@ -116,14 +106,10 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                 {!formCollapsed &&
                     <DynamicForm
                         sentence_hash={sentenceHash}
+                        personality={personalityId}
+                        claim={claimId}
                     />
                 }
-            </Row>
-            <Row>
-                <ClaimReviewList
-                    sentenceHash={sentenceHash}
-                    claimId={claimId}
-                />
             </Row>
             <SocialMediaShare quote={personality?.name} href={href} claim={claim?.title} />
         </>

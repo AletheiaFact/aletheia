@@ -16,7 +16,7 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href, claimRe
     isLoggedIn
 }) => {
     const { t } = useTranslation();
-    const review = sentence?.props?.topClassification;
+    const review = sentence?.props?.classification;
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -66,6 +66,7 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href, claimRe
                 href={href}
                 claimReviewTask={claimReviewTask}
                 isLoggedIn={isLoggedIn}
+                review={review}
             />
         </>
     );

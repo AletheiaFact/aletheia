@@ -11,7 +11,7 @@ export class UtilService {
         const result = reviews.map((review) => {
             const percentage = (review.count / total) * 100;
             return {
-                _id: review._id,
+                _id: review._id[0],
                 percentage: percentage.toFixed(0),
                 count: review.count,
             };
