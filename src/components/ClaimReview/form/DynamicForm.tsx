@@ -19,6 +19,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
     const { handleSubmit, control, formState: { errors } } = useForm()
     const [service, setService] = useState(null);
     const [currentForm, setCurrentForm] = useState(null)
+    const [nextEvents, setNextEvents] = useState(null)
     const { t } = useTranslation()
     const [recaptchaString, setRecaptchaString] = useState('')
     const hasCaptcha = !!recaptchaString;
@@ -34,17 +35,21 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
         })
     }
 
-    const setCurrentFormBasedOnParam = (param, machine = null) => {
+    const setCurrentFormAndNextEvents = (param, machine = null) => {
         if (param === ReviewTaskStates.assigned || param === ReviewTaskEvents.assignUser) {
             setDefaultValuesOfCurrentForm(machine, assignedForm)
             setCurrentForm(assignedForm)
+            setNextEvents([ReviewTaskEvents.finishReport, ReviewTaskEvents.draft])
         } else if (param === ReviewTaskStates.reported || param === ReviewTaskEvents.finishReport) {
             setDefaultValuesOfCurrentForm(machine, reportedForm)
             setCurrentForm(reportedForm)
+            setNextEvents([ReviewTaskEvents.publish, ReviewTaskEvents.draft])
         } else if (param === ReviewTaskStates.published || param === ReviewTaskEvents.publish) {
             setCurrentForm([])
+            setNextEvents([])
         } else if (param !== ReviewTaskEvents.draft) {
             setCurrentForm(unassignedForm)
+            setNextEvents([ReviewTaskEvents.assignUser])
         }
     }
 
@@ -53,7 +58,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
             const machine = claimReviewTask.machine || { context: initialContext, value: "unassigned" }
             machine.context.utils = { t }
             setService(createNewMachineService(machine))
-            setCurrentFormBasedOnParam(machine.value, machine)
+            setCurrentFormAndNextEvents(machine.value, machine)
         })
     }, []);
 
@@ -117,9 +122,9 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
             },
             type: event,
             t,
-            recaptchaString
+            recaptchaString,
+            setCurrentFormAndNextEvents,
         })
-        setCurrentFormBasedOnParam(event)
         recaptchaRef.current.resetRecaptcha()
     };
 
@@ -129,8 +134,9 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
             <AletheiaCaptcha
                 onChange={setRecaptchaString}
                 sitekey={sitekey}
-                ref={recaptchaRef} />
-            {service?.state?.nextEvents?.map((event) => {
+                ref={recaptchaRef}
+            />
+            {nextEvents?.map((event) => {
                 return (
                     <AletheiaButton
                         key={event}

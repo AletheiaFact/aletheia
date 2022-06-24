@@ -89,18 +89,21 @@ export const transitionHandler = (state) => {
     const t = state.context.utils.t;
     const event = state.event.type;
     const recaptcha = state.event.recaptchaString;
+    const setCurrentFormAndNextEvents = state.context.utils.setCurrentFormAndNextEvents
 
     if (event === ReviewTaskEvents.assignUser) {
         api.createClaimReviewTask(
             { sentence_hash, machine: state, recaptcha },
             t,
-            event
+            event,
+            setCurrentFormAndNextEvents
         );
     } else if (event !== ReviewTaskEvents.init) {
         api.updateClaimReviewTask(
             { sentence_hash, machine: state, recaptcha },
             t,
-            event
+            event,
+            setCurrentFormAndNextEvents
         );
     }
 };
