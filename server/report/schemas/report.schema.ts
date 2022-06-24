@@ -14,7 +14,7 @@ export enum ClassificationEnum {
     "unsustainable",
     "exaggerated",
     "unverifiable",
-};
+}
 
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Report {

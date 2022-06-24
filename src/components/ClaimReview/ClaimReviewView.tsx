@@ -108,6 +108,7 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                         sentence_hash={sentenceHash}
                         personality={personalityId}
                         claim={claimId}
+                        isLoggedIn={isLoggedIn}
                     />
                 }
             </Row>

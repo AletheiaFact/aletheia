@@ -22,7 +22,6 @@ import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
 import { CreateClaimDTO } from "./dto/create-claim.dto";
 import { GetClaimsDTO } from "./dto/get-claims.dto";
-import { GetClaimsByHashDTO } from "./dto/get-reviews-by-hash.dto";
 import { UpdateClaimDTO } from "./dto/update-claim.dto"
 import { IsPublic } from "../decorators/is-public.decorator";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
@@ -128,7 +127,7 @@ export class ClaimController {
         return this.claimService.delete(claimId);
     }
 
-    _getSentenceByHashAndClaimId(sentence_hash, claimId, req) {
+    _getSentenceByHashAndClaimId(sentence_hash, claimId) {
         return Promise.all([
             this.claimReviewService.getReviewStatsBySentenceHash({sentence_hash, isDeleted: false, isPublished: true}),
             this.claimService.getById(claimId),
@@ -169,7 +168,7 @@ export class ClaimController {
             claimSlug
         );
 
-        const sentence = await this._getSentenceByHashAndClaimId(sentence_hash, claim._id, req);
+        const sentence = await this._getSentenceByHashAndClaimId(sentence_hash, claim._id);
 
         const claimReviewTask = await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(sentence_hash)
 
