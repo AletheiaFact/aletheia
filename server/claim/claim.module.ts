@@ -12,6 +12,7 @@ import { SourceModule } from "../source/source.module";
 import { ClaimRevisionModule } from "../claim-revision/claim-revision.module";
 import { HistoryModule } from "../history/history.module";
 import { CaptchaModule } from "../captcha/captcha.module";
+import { ClaimReviewTaskModule } from "../claim-review-task/claim-review-task.module";
 
 const ClaimModel = MongooseModule.forFeature([
     {
@@ -24,6 +25,7 @@ const ClaimModel = MongooseModule.forFeature([
     imports: [
         ClaimModel,
         ClaimReviewModule,
+        ClaimReviewTaskModule,
         ClaimRevisionModule,
         ParserModule,
         PersonalityModule,
