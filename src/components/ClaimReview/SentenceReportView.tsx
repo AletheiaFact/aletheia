@@ -18,7 +18,7 @@ const SentenceReportView = ({ personality, claim, sentence, href, context }) => 
     const questions = context.questions
     const report = context.report
     const verification = context.verification
-    const sources = context.source
+    const sources = context.sources
     const paragraphStyle = {
         margin: "10px 0px",
         width: "100%",
@@ -64,7 +64,7 @@ const SentenceReportView = ({ personality, claim, sentence, href, context }) => 
                         <Typography.Title level={3}>{t("claimReview:secondParagraphTittle")}</Typography.Title>
                         {questions.map((item) => {
                             return (
-                                <li style={paragraphStyle}>{item}</li>
+                                <li key={item} style={paragraphStyle}>{item}</li>
                             )
                         })}
                     </Col>
@@ -79,19 +79,20 @@ const SentenceReportView = ({ personality, claim, sentence, href, context }) => 
                 </Row>
                 <Col style={{marginTop: "33px"}}>
                     <Typography.Title style={{ width: "100%" }} level={3}>{t("claim:sourceSectionTitle")}</Typography.Title>
-                    <Row 
+                    <Row
                         style={{
                             display: "inline-flex",
                             flexWrap: "wrap",
-                            gap: "38px 38px"
                         }}>
                     {sources && <>{sources.slice(0, 6).map((link) =>{
                         return(
-                                <Col 
-                                    style={{ 
-                                        display: "block", 
-                                        flex: "1 1 30%", 
-                                    }}>
+                                <Col
+                                    key={link}
+                                    style={{
+                                        display: "block",
+                                        flex: "1 1 30%",
+                                    }}
+                                >
                                     <LinkPreview
                                         url={link}
                                         borderRadius="10px"
@@ -132,7 +133,7 @@ const SentenceReportView = ({ personality, claim, sentence, href, context }) => 
                             )
                         })}
                     </>}
-                    {sources.length > 5 && <AletheiaButton
+                    {sources?.length > 5 && <AletheiaButton
                                     style={{
                                         width: "100%",
                                         marginTop: "21px",

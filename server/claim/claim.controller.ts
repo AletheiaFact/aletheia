@@ -173,8 +173,6 @@ export class ClaimController {
 
         const claimReviewTask = await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(sentence_hash)
 
-        const claimReviewTask = await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(sentenceHash)
-
         await this.viewService
             .getNextServer()
             .render(
@@ -224,12 +222,12 @@ export class ClaimController {
             // @ts-ignore
             req.language
         );
-        
+
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
             req.params.claimSlug
         );
-        
+
         await this.viewService
             .getNextServer()
             .render(

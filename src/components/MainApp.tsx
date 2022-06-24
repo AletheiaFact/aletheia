@@ -23,7 +23,7 @@ const MainApp = ({ children }) => {
     const ContentStyled = styled(Content)`
         padding: 0;
 
-        ${({ mobile }) => mobile && `
+        ${({ mobile } : { mobile: boolean }) => mobile && `
             padding: 0 15px;
 
             @media (min-width: 768px) {
@@ -31,7 +31,7 @@ const MainApp = ({ children }) => {
             }
         `}
     `
-    
+
     const { enableOverlay, menuCollapsed } = useAppSelector(
         (state) => {
             return {
@@ -60,8 +60,8 @@ const MainApp = ({ children }) => {
                 />
                 <Layout style={{ background: colors.white }}>
                     <Header />
-                    <ContentStyled 
-                        mobile={pageUrl.includes("/home") || pageUrl.includes("/claim-review") ? false : true}
+                    <ContentStyled
+                        mobile={(pageUrl.includes("/home") || pageUrl.includes("/claim-review")) ? false : true}
                     >
                         {!pageUrl.includes("/claim-review") && <Row style={{
                             padding: "10px 30px",

@@ -33,10 +33,10 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href, claimRe
         claimReviewed: sentence.content,
         reviewRating: {
             "@type": "Rating",
-            ratingValue: review?.classification,
+            ratingValue: review,
             bestRating: "true",
             worstRating: "false",
-            alternateName: t(`claimReviewForm:${review?.classification}`),
+            alternateName: t(`claimReviewForm:${review}`),
         },
         itemReviewed: {
             "@type": "CreativeWork",
@@ -60,15 +60,7 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href, claimRe
                 title={sentence.content}
                 description={t('seo:claimReviewDescription', { sentence: sentence.content })}
             />
-            <ClaimReviewView
-                personality={personality}
-                claim={claim}
-                sentence={sentence}
-                href={href}
-                claimReviewTask={claimReviewTask}
-                isLoggedIn={isLoggedIn}
-                review={review}
-            />
+
             { claimReviewTask?.machine.value !== ReviewTaskStates.published
                 ? <ClaimReviewView
                     personality={personality}
