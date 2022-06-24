@@ -17,7 +17,8 @@ import { ViewService } from "../view/view.service";
 import { PersonalityService } from "./personality.service";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonality } from "./dto/create-personality.dto";
-import {IsPublic} from "../decorators/is-public.decorator";
+import { IsPublic } from "../decorators/is-public.decorator";
+import { TargetModel } from "../history/schema/history.schema";
 
 @Controller()
 export class PersonalityController {
@@ -148,8 +149,7 @@ export class PersonalityController {
                 req,
                 res,
                 "/history-page",
-                Object.assign(parsedUrl.query, { targetId: personality._id, targetModel: "personality" })
+                Object.assign(parsedUrl.query, { targetId: personality._id, targetModel: TargetModel.Personality })
             );
     }
-
 }

@@ -22,10 +22,10 @@ import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
 import { CreateClaimDTO } from "./dto/create-claim.dto";
 import { GetClaimsDTO } from "./dto/get-claims.dto";
-import { GetClaimsByHashDTO } from "./dto/get-reviews-by-hash.dto";
 import { UpdateClaimDTO } from "./dto/update-claim.dto"
 import { IsPublic } from "../decorators/is-public.decorator";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
+import { TargetModel } from "../history/schema/history.schema";
 
 @Controller()
 export class ClaimController {
@@ -238,7 +238,7 @@ export class ClaimController {
             );
     }
 
-    @Get("personality/:personalitySlug/claim/:claimSlug/:revisionId")
+    @Get("personality/:personalitySlug/claim/:claimSlug/revision/:revisionId")
     public async personalityClaimPageWithRevision(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
@@ -307,7 +307,7 @@ export class ClaimController {
                 req,
                 res,
                 "/history-page",
-                Object.assign(parsedUrl.query, { targetId: claim._id, targetModel: "claim" })
+                Object.assign(parsedUrl.query, { targetId: claim._id, targetModel: TargetModel.Claim })
             );
     }
 }
