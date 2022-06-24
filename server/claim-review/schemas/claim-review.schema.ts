@@ -39,14 +39,10 @@ export class ClaimReview {
         required: true,
         ref: "Report",
     })
-<<<<<<< HEAD
-    classification: string;
+    report: Report;
 
     @Prop({ required: true })
     isPublished: boolean;
-=======
-    report: Report;
->>>>>>> create report schema and relation between reportSchema and claimReviewSchema
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);

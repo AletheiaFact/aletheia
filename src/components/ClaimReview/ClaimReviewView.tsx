@@ -37,32 +37,23 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                     summaryClassName="claim-review"
                     claimType={claim?.type}
                 />
-                {sentence.userReview && review && (
+                {review && (
                     <Row
                         style={{
                             justifyContent: "center",
-                            flexWrap: "wrap"
+                            flexWrap: "wrap",
+                            width: "100%",
+                            paddingBottom: "1em"
                         }}
                     >
                         <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
                             <p style={{ marginBottom: 0 }}>
-                                {t("claimReview:userReviewPrefix")}&nbsp;
+                                {t("claimReview:classificationTextPrefix")}&nbsp;
                             </p>
                             <ClassificationText
                                 classification={
                                     sentence.props?.classification
                                 }
-                            />
-                        </div>
-                        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-                            <p style={{ marginBottom: 0 }}>
-                                {t("claimReview:userReviewSuffix", {
-                                    count: stats.reviews[0].count
-                                })}
-                                &nbsp;
-                            </p>
-                            <ClassificationText
-                                classification={sentence.props?.classification}
                             />
                         </div>
                     </Row>
