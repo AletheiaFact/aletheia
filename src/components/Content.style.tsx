@@ -3,7 +3,7 @@ import { Layout } from "antd";
 
 const { Content } = Layout;
 
-const ContentStyled = styled(Content)`
+const ContentStyle = styled(Content)`
     padding: 0;
 
     ${({ mobile } : { mobile: boolean }) => mobile && `
@@ -15,4 +15,4 @@ const ContentStyled = styled(Content)`
     `}
 `
 
-export default ContentStyled
+export default ContentStyle

@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 import colors from "../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 import { useAppSelector } from "../store/store";
-import ContentStyled from "./Content.style";
+import ContentStyle from "./Content.style";
 
 const { Footer } = Layout;
 
@@ -49,7 +49,7 @@ const MainApp = ({ children }) => {
                 />
                 <Layout style={{ background: colors.white }}>
                     <Header />
-                    <ContentStyled
+                    <ContentStyle
                         mobile={(pageUrl.includes("/claim-review")) || (pageUrl.includes("/home")) ? false : true}
                     >
                         {(!pageUrl.includes("/claim-review")) && (!pageUrl.includes("/home")) && <Row style={{
@@ -61,7 +61,7 @@ const MainApp = ({ children }) => {
                             <BackButton />
                         </Row>}
                         {children}
-                    </ContentStyled>
+                    </ContentStyle>
 
                     <Footer style={{
                         textAlign: "center",
