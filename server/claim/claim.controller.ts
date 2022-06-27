@@ -222,12 +222,12 @@ export class ClaimController {
             // @ts-ignore
             req.language
         );
-        
+
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
             req.params.claimSlug
         );
-        
+
         await this.viewService
             .getNextServer()
             .render(

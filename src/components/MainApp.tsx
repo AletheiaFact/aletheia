@@ -6,26 +6,32 @@ import SearchOverlay from "./SearchOverlay";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
-import styled from "styled-components"
 import { useRouter } from 'next/router'
 import colors from "../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 import { useAppSelector } from "../store/store";
+import styled from "styled-components"
 
 const { Footer, Content } = Layout;
-
-const ContentStyled = styled(Content)`
-    padding: 0 15px;
-
-    @media (min-width: 768px) {
-        padding: 0 30%;
-    }
-`;
-
 const MainApp = ({ children }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch()
+
     const router = useRouter();
+    const pageUrl = router.pathname
+
+    const ContentStyled = styled(Content)`
+        padding: 0;
+
+        ${({ mobile } : { mobile: boolean }) => mobile && `
+            padding: 0 15px;
+
+            @media (min-width: 768px) {
+                padding: 0 30%;
+            }
+        `}
+    `
+
     const { enableOverlay, menuCollapsed } = useAppSelector(
         (state) => {
             return {
@@ -52,46 +58,68 @@ const MainApp = ({ children }) => {
                         });
                     }}
                 />
-                <Layout style={{ background: "#FFF" }}>
+                <Layout style={{ background: colors.white }}>
                     <Header />
-                    <ContentStyled>
-                        <Row style={{
+                    <ContentStyled
+                        mobile={(pageUrl.includes("/claim-review")) ? false : true}
+                    >
+                        {!pageUrl.includes("/claim-review") && <Row style={{
                             padding: "10px 30px",
-                            background: "#FFFFFF",
+                            background: colors.white,
                             boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
-                            margin: "0px -15px"
+                            margin: "0px"
                         }}>
                             <BackButton />
-                        </Row>
+                        </Row>}
                         {children}
                     </ContentStyled>
+
                     <Footer style={{
                         textAlign: "center",
-                        background: colors.grayPrimary,
-                        color: colors.white
-                    }}
-                    >
+                        background: colors.lightGraySecondary,
+                        color: colors.grayTertiary
+                    }}>
                         <AletheiaSocialMediaFooter />
-                        <Row style={{ marginTop: "10px", width: "100%" }}>
-                            <a style={{ width: "100%" }} rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">
-                                <img alt="Creative Commons License" style={{ borderWidth: 0 }} src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
+                        <Row style={{
+                            marginTop: "10px",
+                            width: "100%"
+                        }}>
+                            <a
+                                style={{ width: "100%" }}
+                                rel="license"
+                                href="https://creativecommons.org/licenses/by-sa/4.0/"
+                            >
+                                <img
+                                    alt="Creative Commons License"
+                                    style={{ borderWidth: 0 }}
+                                    src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"
+                                />
                             </a>
                         </Row>
                         <Row style={{
                             marginTop: "10px",
                             width: "100%",
                             textAlign: "center",
-                            flexDirection: "column"
+                            flexDirection: "column",
+                            fontSize: "12px"
                         }}>
                             {t("footer:creativeCommons")}
-                            <a style={{ whiteSpace: "pre-wrap" }} rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>
+                            <a
+                                style={{ whiteSpace: "pre-wrap" }}
+                                rel="license"
+                                href="https://creativecommons.org/licenses/by-sa/4.0/"
+                            >
+                                Creative Commons Attribution-ShareAlike 4.0 International License
+                            </a>
                         </Row>
                         <Row style={{
                             width: "100%",
                             textAlign: "center",
-                            marginTop: "20px",
+                            marginTop: "10px",
                             flexDirection: "column"
-                        }}>{t("footer:copyright")}</Row>
+                        }}>
+                            {t("footer:copyright")}
+                        </Row>
                     </Footer>
                     {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
                 </Layout>

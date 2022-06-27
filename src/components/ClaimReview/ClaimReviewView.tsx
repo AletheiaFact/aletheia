@@ -48,7 +48,7 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                     >
                         <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
                             <p style={{ marginBottom: 0 }}>
-                                {t("claimReview:classificationTextPrefix")}&nbsp;
+                                {t("claimReview:claimReview")}&nbsp;
                             </p>
                             <ClassificationText
                                 classification={
