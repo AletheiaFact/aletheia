@@ -4,5 +4,6 @@
     "registrationLink": "https://forms.gle/LrA8D9k6nod2hmPf8",
     "requiredFieldError": "Field is required",
     "supportEmail": "support@aletheifact.org",
-    "contactEmail": "contact@aletheiafact.org"
+    "contactEmail": "contact@aletheiafact.org",
+    "captchaError": "There was an error validating the captcha"
 }
