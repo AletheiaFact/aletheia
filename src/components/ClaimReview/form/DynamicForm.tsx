@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useForm, Controller } from "react-hook-form";
 import { Col, Row } from "antd";
 import { useTranslation } from 'next-i18next';
@@ -22,6 +22,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
     const { t } = useTranslation()
     const [recaptchaString, setRecaptchaString] = useState('')
     const hasCaptcha = !!recaptchaString;
+    const recaptchaRef = useRef(null)
 
     const setDefaultValuesOfCurrentForm = (machine, form) => {
         machine && form.map((input) => {
@@ -119,6 +120,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
             recaptchaString
         })
         setCurrentFormBasedOnParam(event)
+        recaptchaRef.current.resetRecaptcha()
     };
 
     return (
@@ -127,6 +129,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
             <AletheiaCaptcha
                 onChange={setRecaptchaString}
                 sitekey={sitekey}
+                ref={recaptchaRef} />
             {service?.state?.nextEvents?.map((event) => {
                 return (
                     <AletheiaButton
