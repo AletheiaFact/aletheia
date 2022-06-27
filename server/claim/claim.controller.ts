@@ -25,6 +25,7 @@ import { UpdateClaimDTO } from "./dto/update-claim.dto";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
+import { TargetModel } from "../history/schema/history.schema";
 
 @Controller()
 export class ClaimController {
@@ -103,7 +104,7 @@ export class ClaimController {
         return this.claimService.delete(claimId);
     }
 
-    _getSentenceByHashAndClaimId(sentence_hash, claimId, req) {
+    _getSentenceByHashAndClaimId(sentence_hash, claimId) {
         return Promise.all([
             this.claimReviewService.getReviewStatsBySentenceHash({
                 sentence_hash,
@@ -150,11 +151,7 @@ export class ClaimController {
             claimSlug
         );
 
-        const sentence = await this._getSentenceByHashAndClaimId(
-            sentence_hash,
-            claim._id,
-            req
-        );
+        const sentence = await this._getSentenceByHashAndClaimId(sentence_hash, claim._id);
 
         const claimReviewTask =
             await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
@@ -225,11 +222,8 @@ export class ClaimController {
             );
     }
 
-    @Get("personality/:personalitySlug/claim/:claimSlug/:revisionId")
-    public async personalityClaimPageWithRevision(
-        @Req() req: Request,
-        @Res() res: Response
-    ) {
+    @Get("personality/:personalitySlug/claim/:claimSlug/revision/:revisionId")
+    public async personalityClaimPageWithRevision(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
         const personality = await this.personalityService.getBySlug(
@@ -294,14 +288,13 @@ export class ClaimController {
             req.params.claimSlug
         );
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/history-page",
-            Object.assign(parsedUrl.query, {
-                targetId: claim._id,
-                targetModel: "claim",
-            })
-        );
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/history-page",
+                Object.assign(parsedUrl.query, { targetId: claim._id, targetModel: TargetModel.Claim })
+            );
     }
 }

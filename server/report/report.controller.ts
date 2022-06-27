@@ -1,5 +1,4 @@
 import { Controller, Param, Get } from "@nestjs/common";
-import { IsPublic } from "../decorators/is-public.decorator";
 import { ReportService } from "./report.service";
 @Controller()
 export class ReportController {

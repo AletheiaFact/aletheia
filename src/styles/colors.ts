@@ -6,6 +6,7 @@ const colors = {
     graySecondary: "rgb(151, 154, 155)",
     grayTertiary: "rgb(194, 200, 204)",
     lightGray: "rgb(245,245,245)",
+    lightGraySecondary: "rgba(238, 238, 238)",
     lightBlue: "rgb(218, 232, 234)",
     white: "rgb(255, 255, 255)",
     blackPrimary: "rgb(17, 17, 17)",

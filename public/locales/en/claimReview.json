@@ -1,6 +1,10 @@
 {
     "cardAuthor": "{{name}} reviewed this as:",
     "anonymousUserName": "Anonymous",
-    "classificationTextPrefix": "Claim reviewed as ",
-    "listTitle": "Reviews"
+    "claimReview": "Claim reviewed as ",
+    "listTitle": "Reviews",
+    "firstParagraphTittle": "Summary of conclusion",
+    "secondParagraphTittle": "What questions should the verification answer?",
+    "thirdParagraphTittle": "Verification report",
+    "fourthParagraphTittle": "How do we check?"
 }
