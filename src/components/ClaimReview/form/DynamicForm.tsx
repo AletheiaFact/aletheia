@@ -13,17 +13,20 @@ import assignedForm from "./assignedForm";
 import reportedForm from "./reportedForm";
 import Text from "antd/lib/typography/Text";
 import api from '../../../api/ClaimReviewTaskApi'
+import AletheiaCaptcha from '../../AletheiaCaptcha';
 
-const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn }) => {
+const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey }) => {
     const { handleSubmit, control, formState: { errors } } = useForm()
-    const [ service, setService ] = useState(null);
-    const [ currentForm, setCurrentForm ] = useState(null)
+    const [service, setService] = useState(null);
+    const [currentForm, setCurrentForm] = useState(null)
     const { t } = useTranslation()
+    const [recaptchaString, setRecaptchaString] = useState('')
+    const hasCaptcha = !!recaptchaString;
 
     const setDefaultValuesOfCurrentForm = (machine, form) => {
         machine && form.map((input) => {
             Object.keys(machine.context.reviewData).forEach((value) => {
-                if(input.fieldName === value) {
+                if (input.fieldName === value) {
                     input.defaultValue = machine.context.reviewData[value]
                 }
             })
@@ -98,7 +101,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn }) => {
         );
     });
 
-    const onSubmit = async(data, e) => {
+    const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute('event')
         service.send(event, {
             sentence_hash,
@@ -113,6 +116,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn }) => {
             },
             type: event,
             t,
+            recaptchaString
         })
         setCurrentFormBasedOnParam(event)
     };
@@ -120,6 +124,9 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn }) => {
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {formInputs}
+            <AletheiaCaptcha
+                onChange={setRecaptchaString}
+                sitekey={sitekey}
             {service?.state?.nextEvents?.map((event) => {
                 return (
                     <AletheiaButton
@@ -127,7 +134,8 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn }) => {
                         type={ButtonType.blue}
                         htmlType="submit"
                         event={event}
-                        style={{ marginBottom: 20 }}
+                        style={{ margin: 20 }}
+                        disabled={!hasCaptcha}
                     >
                         {t(`claimReviewTask:${event}`)}
                     </AletheiaButton>

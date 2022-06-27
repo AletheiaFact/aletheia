@@ -1,8 +1,8 @@
-import { IsNotEmpty, IsObject, IsString } from 'class-validator';
-import { User } from '../../users/schemas/user.schema';
-import { ClassificationEnum } from '../../report/schemas/report.schema';
-import { Personality } from '../../personality/schemas/personality.schema';
-import { Claim } from '../../claim/schemas/claim.schema';
+import { IsNotEmpty, IsObject, IsString } from "class-validator";
+import { User } from "../../users/schemas/user.schema";
+import { ClassificationEnum } from "../../report/schemas/report.schema";
+import { Personality } from "../../personality/schemas/personality.schema";
+import { Claim } from "../../claim/schemas/claim.schema";
 
 export type ReviewTaskMachineContext = {
     reviewData: {
@@ -14,19 +14,19 @@ export type ReviewTaskMachineContext = {
         sources?: string[];
         classification?: ClassificationEnum;
         sentence_hash: string;
-    }
+    };
     claimReview: {
         userId?: User;
         sentence_hash: string;
         personality: Personality;
         claim: Claim;
-    }
-}
+    };
+};
 
 export type Machine = {
     context: ReviewTaskMachineContext;
     value: string;
-}
+};
 
 export class CreateClaimReviewTaskDTO {
     @IsNotEmpty()
@@ -36,4 +36,8 @@ export class CreateClaimReviewTaskDTO {
     @IsNotEmpty()
     @IsString()
     sentence_hash: string;
+
+    @IsNotEmpty()
+    @IsString()
+    recaptcha: string;
 }

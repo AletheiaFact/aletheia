@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { Model } from "mongoose";
-import { ClaimReviewTask, ClaimReviewTaskDocument } from "./schemas/claim-review-task.schema";
+import {
+    ClaimReviewTask,
+    ClaimReviewTaskDocument,
+} from "./schemas/claim-review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
@@ -13,46 +16,61 @@ export class ClaimReviewTaskService {
         @InjectModel(ClaimReviewTask.name)
         private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
-        private reportService: ReportService,
+        private reportService: ReportService
     ) {}
 
     getById(claimReviewTaskId: string) {
-        return this.ClaimReviewTaskModel.findById(claimReviewTaskId)
+        return this.ClaimReviewTaskModel.findById(claimReviewTaskId);
     }
 
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
-        const newClaimReviewTask = new this.ClaimReviewTaskModel(claimReviewTaskBody);
+        const newClaimReviewTask = new this.ClaimReviewTaskModel(
+            claimReviewTaskBody
+        );
         newClaimReviewTask.save();
         return newClaimReviewTask;
     }
 
-    async update(sentence_hash: string, newClaimReviewTaskBody: UpdateClaimReviewTaskDTO) {
+    async update(
+        sentence_hash: string,
+        newClaimReviewTaskBody: UpdateClaimReviewTaskDTO
+    ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         try {
-            const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(sentence_hash)
-            const newClaimReviewTaskMachine = Object.assign(claimReviewTask.machine, newClaimReviewTaskBody.machine);
-            const newClaimReviewTask = Object.assign(claimReviewTask, newClaimReviewTaskMachine);
+            const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
+                sentence_hash
+            );
+            const newClaimReviewTaskMachine = Object.assign(
+                claimReviewTask.machine,
+                newClaimReviewTaskBody.machine
+            );
+            const newClaimReviewTask = Object.assign(
+                claimReviewTask,
+                newClaimReviewTaskMachine
+            );
 
             if (newClaimReviewTask.machine.value === "published") {
-                const claimReviewData = newClaimReviewTask.machine.context.claimReview
-                const report = await this.reportService.create(newClaimReviewTask.machine.context.reviewData)
+                const claimReviewData =
+                    newClaimReviewTask.machine.context.claimReview;
+                const report = await this.reportService.create(
+                    newClaimReviewTask.machine.context.reviewData
+                );
                 this.claimReviewService.create({
                     ...claimReviewData,
-                    report
-                })
+                    report,
+                });
             }
-            
+
             return this.ClaimReviewTaskModel.updateOne(
                 { _id: newClaimReviewTask._id },
                 newClaimReviewTask
             );
-        } catch(e) {
+        } catch (e) {
             throw new Error(e);
         }
-        
     }
 
     getClaimReviewTaskBySentenceHash(sentence_hash: string) {
-        return this.ClaimReviewTaskModel.findOne({ sentence_hash })
+        return this.ClaimReviewTaskModel.findOne({ sentence_hash });
     }
 }

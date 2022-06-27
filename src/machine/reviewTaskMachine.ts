@@ -1,4 +1,4 @@
-import api from '../api/ClaimReviewTaskApi'
+import api from "../api/ClaimReviewTaskApi";
 import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
@@ -85,16 +85,25 @@ export const createNewMachine = ({ value, context }) => {
 }
 
 export const transitionHandler = (state) => {
-    const sentence_hash = state.context.reviewData.sentence_hash
-    const t = state.context.utils.t
-    const event = state.event.type
+    const sentence_hash = state.context.reviewData.sentence_hash;
+    const t = state.context.utils.t;
+    const event = state.event.type;
+    const recaptcha = state.event.recaptchaString;
 
     if (event === ReviewTaskEvents.assignUser) {
-        api.createClaimReviewTask({ sentence_hash, machine: state }, t, event)
+        api.createClaimReviewTask(
+            { sentence_hash, machine: state, recaptcha },
+            t,
+            event
+        );
     } else if (event !== ReviewTaskEvents.init) {
-        api.updateClaimReviewTask({ sentence_hash, machine: state }, t, event)
+        api.updateClaimReviewTask(
+            { sentence_hash, machine: state, recaptcha },
+            t,
+            event
+        );
     }
-}
+};
 
 export const createNewMachineService = (machine: any) => {
     return interpret(createNewMachine(machine))
