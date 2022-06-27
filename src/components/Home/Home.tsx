@@ -1,7 +1,6 @@
 import React from "react";
 import { Spin } from "antd";
 import { useTranslation } from 'next-i18next';
-import HomeContainer from "./Home.style";
 import HomeContent from "./HomeContent";
 import HomeCarousel from "./HomeCarousel";
 
@@ -10,7 +9,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
 
     if (stats) {
         return (
-            <HomeContainer>
+            <>
                 <HomeCarousel
                     personalities={personalities}
                     isLoggedIn={isLoggedIn}
@@ -21,7 +20,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                     href={href}
                     isLoggedIn={isLoggedIn}
                 />
-            </HomeContainer>
+            </>
         );
     } else {
         return (

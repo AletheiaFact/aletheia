@@ -16,7 +16,7 @@ import SocialMediaContainer from "./SocialMediaShare.style";
 
 const { Title } = Typography;
 
-const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
+const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }) => {
     const { t } = useTranslation();
     quote = quote || t("share:quote");
 
@@ -36,6 +36,7 @@ const SocialMediaShare = ({ quote = null, href = '', claim = null }) => {
     
     return (
         <SocialMediaContainer
+            isLoggedIn={isLoggedIn}
             style={{
                 background: colors.lightGray,
                 padding: "20px 8px",

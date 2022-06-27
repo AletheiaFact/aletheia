@@ -61,9 +61,9 @@ const MainApp = ({ children }) => {
                 <Layout style={{ background: colors.white }}>
                     <Header />
                     <ContentStyled
-                        mobile={(pageUrl.includes("/claim-review")) ? false : true}
+                        mobile={(pageUrl.includes("/claim-review")) || (pageUrl.includes("/home")) ? false : true}
                     >
-                        {!pageUrl.includes("/claim-review") && <Row style={{
+                        {(!pageUrl.includes("/claim-review")) && (!pageUrl.includes("/home")) && <Row style={{
                             padding: "10px 30px",
                             background: colors.white,
                             boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",

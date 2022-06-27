@@ -8,26 +8,36 @@ const SocialMediaContainer = styled.div`
 
     .social-media-container {
         margin-left: 32px;
-        margin-top: 3px;
         height: 39px;
     }
 
-    @media (min-width: 1024px) {
-        display: grid;
-        border-radius: 10px;
-        grid-template-columns: 1fr;
+    ${({ isLoggedIn } : { isLoggedIn: boolean }) => isLoggedIn && `
+        align-items: center;
+        justify-content: center;
 
         .social-media-container {
-            width: 276px;
             height: 39px;
-            margin: 0 auto;
-            margin-top: 16px;
         }
+    `}
 
-        .social-media-list {
-            justify-content: center;
+    ${({ isLoggedIn } : { isLoggedIn: boolean }) => !isLoggedIn && `
+        @media (min-width: 1024px) {
+            display: grid;
+            border-radius: 10px;
+            grid-template-columns: 1fr;
+
+            .social-media-container {
+                width: 276px;
+                height: 39px;
+                margin: 0 auto;
+                margin-top: 16px;
+            }
+
+            .social-media-list {
+                justify-content: center;
+            }
         }
-    }
+    `}
 
     @media (max-width: 548px) {
         margin-bottom: 16px;

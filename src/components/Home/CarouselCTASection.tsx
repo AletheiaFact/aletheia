@@ -4,7 +4,7 @@ import Button, { ButtonType } from '../Button';
 import { useTranslation } from 'next-i18next';
 import colors from '../../styles/colors';
 
-const CTASection = ({ isLoggedIn }) => {
+const CarouselCTASection = ({ isLoggedIn }) => {
     const { t } = useTranslation();
 
     return (
@@ -55,4 +55,4 @@ const CTASection = ({ isLoggedIn }) => {
     )
 }
 
-export default CTASection
+export default CarouselCTASection

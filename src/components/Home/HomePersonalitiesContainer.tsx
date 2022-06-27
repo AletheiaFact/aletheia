@@ -6,7 +6,7 @@ import Button, { ButtonType } from '../Button';
 import { ArrowRightOutlined } from "@ant-design/icons";
 import SectionTitle from "../SectionTitle";
 
-const PersonalitiesContainer = ({ isLoggedIn, personalities }) => {
+const HomePersonalitiesContainer = ({ isLoggedIn, personalities }) => {
     const { t } = useTranslation()
 
     return (
@@ -54,6 +54,7 @@ const PersonalitiesContainer = ({ isLoggedIn, personalities }) => {
                     <Button
                         href="/personality"
                         type={ButtonType.blue}
+                        data-cy="testSeeMorePersonality"
                         style={{
                             paddingBottom: 0,
                             height: 40,
@@ -79,4 +80,4 @@ const PersonalitiesContainer = ({ isLoggedIn, personalities }) => {
     )
 }
 
-export default PersonalitiesContainer
+export default HomePersonalitiesContainer

@@ -1,7 +1,7 @@
+import { Row } from "antd";
 import styled from "styled-components";
-import colors from "../../styles/colors";
 
-const HomeContainer = styled.div`
+const HomeCarouselContainer = styled(Row)`
     .carousel-title-container {
         margin: 64px 0 32px 0;
     }
@@ -34,7 +34,7 @@ const HomeContainer = styled.div`
         flex-direction: row;
         height: 55px;
     }
-    
+
     .number-stats {
         font-size: 40px;
     }
@@ -43,27 +43,6 @@ const HomeContainer = styled.div`
         font-size: 20px;
     }
 
-    .more-personalities-container {
-        margin: 48px 0 64px 0;
-    }
-
-    .join-container-logged-out {
-        margin-left: 20px;
-    }
-
-    @media (min-width: 1370px) {
-        .personality-card {
-            flex: 1 1 326.75px;
-            max-width: 450px;
-        }
-    }
-
-    @media (max-width: 1369px) {
-        .personality-card {
-            flex: 1 1 326.75px;
-        }
-    }
-    
     @media (min-width: 1171px) {
         .CTA-container .ant-col-14 {
             max-width: 100%;
@@ -93,42 +72,14 @@ const HomeContainer = styled.div`
         }
     }
 
-    @media (max-width: 1024px) {
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr;
-        }
-
-
-        .ant-col-12.personalities-container {
-            display: block;
-            flex: 0 0 50%;
-            max-width: 75%;
-        }
-
-        .more-personalities-container {
-            margin: 16px 0 32px 0;
-        }
-
-        .join-container-logged-out {
-            margin-left: 0;
-            max-width: 100%;
-        }
-
-        .CTA-registration-container,
-        .section-title-container {
-            margin-left: 12.5%;
-            max-width: 75%;
-        }
-    }
-    
     @media (max-width: 950px) {
         .ant-col-offset-4.carousel-content {
             margin-left: 12.5%;
             max-width: 75%;
         }
     }
-    
+
+
     @media (max-width: 900px) {
         .carousel-container {
             max-width: 80%;
@@ -151,33 +102,18 @@ const HomeContainer = styled.div`
             justify-content: space-between;
             align-items: center;
         }
-
-        .ant-col-12.personalities-container,
-        .CTA-registration-container,
-        .section-title-container {
-            margin-left: 8.33333333%;
-            max-width: 83.333334%;
-        }
     }
 
     @media (max-width: 800px) {
         .ant-col-offset-4.carousel-content {
             margin-left: 4.16666667%;
             max-width: 91.666666%;
-            
         }
     }
 
     @media (max-width: 725px) {
         .ant-col-offset-4.carousel-content {
             margin-left: 0;
-        }
-
-        .ant-col-12.personalities-container,
-        .CTA-registration-container,
-        .section-title-container {
-            margin-left: 4.16666667%;
-            max-width: 91.666666%;
         }
     }
 
@@ -189,7 +125,7 @@ const HomeContainer = styled.div`
         .CTA-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr
+            grid-template-rows: 1fr;
         }
 
         .CTA-container .ant-col-14 {
@@ -254,18 +190,7 @@ const HomeContainer = styled.div`
         .CTA-button {
             width: 150px;
         }
-
-        .section-title-container {
-            margin-left: 4.16666667%;
-            max-width: 91.666666%;
-        },
-
-        .CTA-registration-container,
-        join-container-logged-in {
-            margin-left: 0;
-            max-width: 100%;
-        }
     }
 `
 
-export default HomeContainer
+export default HomeCarouselContainer
