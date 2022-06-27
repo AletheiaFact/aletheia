@@ -10,9 +10,9 @@ import { useRouter } from 'next/router'
 import colors from "../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 import { useAppSelector } from "../store/store";
-import styled from "styled-components"
+import ContentStyled from "./Content.style";
 
-const { Footer, Content } = Layout;
+const { Footer } = Layout;
 
 const MainApp = ({ children }) => {
     const { t } = useTranslation();
@@ -21,17 +21,6 @@ const MainApp = ({ children }) => {
     const router = useRouter();
     const pageUrl = router.pathname
 
-    const ContentStyled = styled(Content)`
-        padding: 0;
-
-        ${({ mobile } : { mobile: boolean }) => mobile && `
-            padding: 0 15px;
-
-            @media (min-width: 768px) {
-                padding: 0 30%;
-            }
-        `}
-    `
     const { enableOverlay, menuCollapsed } = useAppSelector(
         (state) => {
             return {

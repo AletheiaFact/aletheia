@@ -1,7 +1,7 @@
 import { Row } from "antd";
 import styled from "styled-components";
 
-const HomeCarouselContainer = styled(Row)`
+const HomeCarouselStyle = styled(Row)`
     .carousel-title-container {
         margin: 64px 0 32px 0;
     }
@@ -193,4 +193,4 @@ const HomeCarouselContainer = styled(Row)`
     }
 `
 
-export default HomeCarouselContainer
+export default HomeCarouselStyle

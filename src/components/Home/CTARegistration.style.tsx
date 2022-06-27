@@ -1,7 +1,6 @@
-import colors from "../../styles/colors"
 import styled from "styled-components";
 
-const CTAContainer = styled.div`
+const CTARegistrationStyle = styled.div`
     border-radius: 4px;
     padding: 32px 0;
     margin-bottom: 45px;
@@ -26,4 +25,4 @@ const CTAContainer = styled.div`
     }
 `
 
-export default CTAContainer
+export default CTARegistrationStyle

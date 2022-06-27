@@ -3,14 +3,14 @@ import React from 'react';
 import colors from '../../styles/colors';
 import { useTranslation } from 'next-i18next';
 import HomeStats from "./HomeStats";
-import CarouselCTASection from './CarouselCTASection';
-import HomeCarouselContainer from './HomeCarousel.style';
+import CTASection from './CTASection';
+import HomeCarouselStyle from './HomeCarousel.style';
 
 const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
     const { t } = useTranslation();
 
     return (
-        <HomeCarouselContainer>
+        <HomeCarouselStyle>
             <Col
                 span={24}
                 style={{
@@ -97,13 +97,13 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                             </h2>
                         </Row>
                         
-                        <CarouselCTASection isLoggedIn={isLoggedIn} />
+                        <CTASection isLoggedIn={isLoggedIn} />
 
                         <HomeStats stats={stats} />
                     </Col>
                 </Col>
             </div>
-        </HomeCarouselContainer>
+        </HomeCarouselStyle>
     )
 }
 

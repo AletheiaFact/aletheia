@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const HomeContentContainer = styled.div`
+const HomeContentStyle = styled.div`
     .more-personalities-container {
         margin: 48px 0 64px 0;
     }
@@ -82,4 +82,4 @@ const HomeContentContainer = styled.div`
     }
 `
 
-export default HomeContentContainer
+export default HomeContentStyle

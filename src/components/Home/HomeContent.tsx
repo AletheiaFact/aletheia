@@ -5,12 +5,12 @@ import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from 'next-i18next';
 import SectionTitle from "../SectionTitle";
 import HomePersonalitiesContainer from "./HomePersonalitiesContainer";
-import HomeContentContainer from "./HomeContent.style";
+import HomeContentStyle from "./HomeContent.style";
 const HomeContent = ({ personalities, href, isLoggedIn }) => {
     const { t } = useTranslation();
 
     return (
-        <HomeContentContainer>
+        <HomeContentStyle>
             <Row
                 className="main-content"
                 style={{ paddingTop: "32px" }}
@@ -38,7 +38,7 @@ const HomeContent = ({ personalities, href, isLoggedIn }) => {
                     <SocialMediaShare isLoggedIn={isLoggedIn} href={href} />
                 </Col>
             </Row>
-        </HomeContentContainer>
+        </HomeContentStyle>
     )
 }
 

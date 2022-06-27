@@ -2,14 +2,14 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import { Typography } from "antd";
 import Button, { ButtonType } from "../Button";
-import CTAContainer from "./CTARegistration.style";
+import CTARegistrationStyle from "./CTARegistration.style";
 import colors from "../../styles/colors";
 
 function CTARegistration() {
     const { t } = useTranslation();
     
     return (
-        <CTAContainer
+        <CTARegistrationStyle
             style={{
                 backgroundColor: colors.bluePrimary,
                 textAlign: "center",
@@ -71,7 +71,7 @@ function CTARegistration() {
             >
                 {t("CTARegistration:button")}
             </Button>
-        </CTAContainer>
+        </CTARegistrationStyle>
     );
 }
 

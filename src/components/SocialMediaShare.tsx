@@ -12,7 +12,7 @@ import {
 } from "react-share";
 import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
-import SocialMediaContainer from "./SocialMediaShare.style";
+import SocialMediaShareStyle from "./SocialMediaShare.style";
 
 const { Title } = Typography;
 
@@ -35,7 +35,7 @@ const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }
     }
     
     return (
-        <SocialMediaContainer
+        <SocialMediaShareStyle
             isLoggedIn={isLoggedIn}
             style={{
                 background: colors.lightGray,
@@ -123,7 +123,7 @@ const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }
                     </li>
                 </ul>
             </nav>
-        </SocialMediaContainer>
+        </SocialMediaShareStyle>
     );
 }
 

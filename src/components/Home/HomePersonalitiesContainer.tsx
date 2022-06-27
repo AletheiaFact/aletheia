@@ -28,6 +28,7 @@ const HomePersonalitiesContainer = ({ isLoggedIn, personalities }) => {
                         (p) =>
                             p && (
                                 <Col
+                                    key={p.name}
                                     className="personality-card"
                                     style={{
                                         display: "flex",

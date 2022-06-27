@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 
-const SocialMediaContainer = styled.div`
+const SocialMediaShareStyle = styled.div`
     margin-bottom: 32px;
     display: flex;
     border-radius: 0;
@@ -55,4 +55,4 @@ const SocialMediaContainer = styled.div`
         }
     }
 `
-export default SocialMediaContainer
+export default SocialMediaShareStyle
