@@ -14,7 +14,7 @@ import reportedForm from "./reportedForm";
 import Text from "antd/lib/typography/Text";
 import api from '../../../api/ClaimReviewTaskApi'
 
-const DynamicForm = ({ sentence_hash, personality, claim }) => {
+const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn }) => {
     const { handleSubmit, control, formState: { errors } } = useForm()
     const [ service, setService ] = useState(null);
     const [ currentForm, setCurrentForm ] = useState(null)
@@ -45,7 +45,7 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
     }
     
     useEffect(() => {
-        api.getMachineBySentenceHash(sentence_hash, t).then((claimReviewTask) => {
+        isLoggedIn && api.getMachineBySentenceHash(sentence_hash, t).then((claimReviewTask) => {
             const machine = claimReviewTask.machine || { context: initialContext, value: "unassigned" }
             machine.context.utils = { t }
             setService(createNewMachineService(machine))

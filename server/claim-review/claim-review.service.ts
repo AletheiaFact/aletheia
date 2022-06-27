@@ -98,7 +98,7 @@ export class ClaimReviewService {
 
     async getUserReviewBySentenceHash(sentence_hash) {
         const user = await this.ClaimReviewModel.findOne(
-            { sentence_hash, isDeleted: false },
+            { sentence_hash, isDeleted: false, isPublished: true },
             {
                 userId: 1,
             }
