@@ -22,8 +22,8 @@ services:
       port: 3000
       cors: '*'
       debug: true
-      recaptcha_secret: {env(RECAPTCHA_SECRET)}
-      recaptcha_sitekey: {env(RECAPTCHA_SITEKEY)}
+      recaptcha_secret: {env(TEST_RECAPTCHA_SECRET)}
+      recaptcha_sitekey: {env(TEST_RECAPTCHA_SITEKEY)}
       db:
         connection_uri: {env(CI_MONGODB_URI)}
         options:

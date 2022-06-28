@@ -15,8 +15,8 @@ env:
   ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
   ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
   CI_MONGODB_URI: mongodb://localhost:35025/Aletheia
-  RECAPTCHA_SECRET: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe # public secret for CI tests provided by google
-  RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
+  TEST_RECAPTCHA_SECRET: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe # public secret for CI tests provided by google
+  TEST_RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
 
 jobs:
   build:
