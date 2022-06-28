@@ -14,5 +14,9 @@ const locators = {
     CLAIM_REVIEW: {
         BTN_START_CLAIM_REVIEW: "[data-cy=testAddReviewButton]",
     },
+
+    MENU: {
+        SIDE_MENU: "[data-cy=testSideMenuClosed]"
+    }
 };
 export default locators;
