@@ -35,19 +35,19 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
     }
 
     const setCurrentFormBasedOnParam = (param, machine = null) => {
-        if(param === ReviewTaskStates.assigned || param === ReviewTaskEvents.assignUser) {
+        if (param === ReviewTaskStates.assigned || param === ReviewTaskEvents.assignUser) {
             setDefaultValuesOfCurrentForm(machine, assignedForm)
             setCurrentForm(assignedForm)
-        } else if(param === ReviewTaskStates.reported || param === ReviewTaskEvents.finishReport) {
+        } else if (param === ReviewTaskStates.reported || param === ReviewTaskEvents.finishReport) {
             setDefaultValuesOfCurrentForm(machine, reportedForm)
             setCurrentForm(reportedForm)
-        } else if(param === ReviewTaskStates.published || param === ReviewTaskEvents.publish) {
+        } else if (param === ReviewTaskStates.published || param === ReviewTaskEvents.publish) {
             setCurrentForm([])
-        } else if(param !== ReviewTaskEvents.draft) {
+        } else if (param !== ReviewTaskEvents.draft) {
             setCurrentForm(unassignedForm)
         }
     }
-    
+
     useEffect(() => {
         isLoggedIn && api.getMachineBySentenceHash(sentence_hash, t).then((claimReviewTask) => {
             const machine = claimReviewTask.machine || { context: initialContext, value: "unassigned" }
@@ -139,6 +139,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
                         event={event}
                         style={{ margin: 20 }}
                         disabled={!hasCaptcha}
+                        data-cy={`testClaimReview${event}`}
                     >
                         {t(`claimReviewTask:${event}`)}
                     </AletheiaButton>
