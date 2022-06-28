@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
-import { Row } from "antd";
+import { Col, Row } from "antd";
 import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
@@ -23,10 +23,11 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
 
     return (
         <>
-            <Row
+            <Col
+                offset={3}
+                span={18}
                 style={{
                     background: colors.lightGray,
-                    margin: "2px -15px 0px -15px",
                     padding: "0px 15px",
                     boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)"
                 }}
@@ -111,7 +112,7 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                         isLoggedIn={isLoggedIn}
                     />
                 }
-            </Row>
+            </Col>
             <SocialMediaShare quote={personality?.name} href={href} claim={claim?.title} />
         </>
     )
