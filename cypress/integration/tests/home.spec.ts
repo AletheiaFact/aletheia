@@ -12,9 +12,7 @@ describe("Test the side route", () => {
 
         cy.get("[data-cy=testSideMenuClosed] > .anticon").click();
         cy.get("[data-cy=testMyAccountItem] > .ant-menu-title-content").click();
-        cy.get(locators.LOGIN.USER).type("test@aletheiafact.org", {
-            delay: 200,
-        });
+        cy.get(locators.LOGIN.USER).type("test@aletheiafact.org");
         cy.get(locators.LOGIN.PASSWORD).type("TEST_USER_PASS");
         cy.get(locators.LOGIN.BTN_LOGIN).click();
     });
@@ -24,7 +22,7 @@ describe("Test the side route", () => {
         cy.get("[data-cy=testAboutItem] > .ant-menu-title-content").click();
     });
 
-    it("Side bar and go polity", () => {
+    it("Side bar and go policy", () => {
         cy.get("[data-cy=testSideMenuClosed] > .anticon").click();
         cy.get(
             "[data-cy=testPrivacyPolicyItem] > .ant-menu-title-content"
@@ -36,7 +34,7 @@ describe("Test the side route", () => {
         cy.get("[data-cy=testSideMenuClosed] > .anticon").click();
         cy.get(
             "[data-cy=testCodeOfConductItem] > .ant-menu-title-content"
-        ).should("contain", "Code of Conduct");
+        ).should("contains", "Condu");
         cy.get("[data-cy=testCodeOfConductItem] > .ant-menu-title-content")
             .wait(100)
             .click();
