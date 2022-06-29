@@ -21,7 +21,7 @@ const getMachineBySentenceHash = (params, t) => {
 const createClaimReviewTask = (params, t, type) => {
     params.machine = ParseMachineState(params.machine)
     return request
-        .post('/', {...params})
+        .post('/', { ...params })
         .then((response) => {
             message.success(t(`claimReviewTask:${type}_SUCCESS`))
             return response.data
@@ -44,7 +44,7 @@ const updateClaimReviewTask = (params, t, type) => {
             return response.data
         })
         .catch(err => {
-            message.success(t(`claimReviewTask:${type}_ERROR`))
+            message.error(t(`claimReviewTask:${type}_ERROR`))
             return err
         })
 }

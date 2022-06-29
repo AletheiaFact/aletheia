@@ -9,7 +9,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
 
-const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, isLoggedIn, review }) => {
+const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, isLoggedIn, review, sitekey }) => {
     const { t } = useTranslation();
     const claimId = claim._id;
     const personalityId = personality._id;
@@ -109,6 +109,7 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                         personality={personalityId}
                         claim={claimId}
                         isLoggedIn={isLoggedIn}
+                        sitekey={sitekey}
                     />
                 }
             </Row>

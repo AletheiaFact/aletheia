@@ -4,18 +4,7 @@
 import locators from "../../support/locator";
 
 describe("Should test at the login", () => {
-    beforeEach(() => {
-        cy.visit("http://localhost:3000/login");
-
-        cy.title().should("contain", "AletheiaFact.org");
-        cy.get(locators.LOGIN.USER).type("test@aletheiafact.org", {
-            delay: 200,
-        });
-        cy.get(locators.LOGIN.PASSWORD)
-            .should("be.visible")
-            .type("TEST_USER_PASS");
-        cy.get(locators.LOGIN.BTN_LOGIN).should("be.visible").click();
-    });
+    beforeEach('login', () => { cy.login() });
 
     it("Go personality and search new personality", () => {
         cy.get(locators.PERSONALITY.BTN_SEE_MORE_PERSONALITY).click();
@@ -55,10 +44,7 @@ describe("Should test at the login", () => {
 
         cy.get("[data-cy=testCheckboxAcceptTerms]").click();
 
-        cy.get("iframe").then((iframe) => {
-            const body = iframe.contents().find("body");
-            cy.wrap(body).find("#recaptcha-anchor").click();
-        });
+        cy.checkRecaptcha()
         cy.get("[data-cy=testSaveButton]").click();
         cy.url().should(
             "contains",

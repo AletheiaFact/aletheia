@@ -8,13 +8,14 @@ import SentenceReportView from "../components/ClaimReview/SentenceReportView";
 import { ReviewTaskStates } from "../machine/enums";
 const parser = require("accept-language-parser");
 
-const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href, claimReviewTask, isLoggedIn }> = ({
+const ClaimPage: NextPage<{ personality, claim, sentence, sitekey, href, claimReviewTask, isLoggedIn }> = ({
     personality,
     claim,
     sentence,
     href,
     claimReviewTask,
-    isLoggedIn
+    isLoggedIn,
+    sitekey
 }) => {
     const { t } = useTranslation();
     const review = sentence?.props?.classification;
@@ -61,7 +62,7 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href, claimRe
                 description={t('seo:claimReviewDescription', { sentence: sentence.content })}
             />
 
-            { claimReviewTask?.machine.value !== ReviewTaskStates.published
+            {claimReviewTask?.machine.value !== ReviewTaskStates.published
                 ? <ClaimReviewView
                     personality={personality}
                     claim={claim}
@@ -70,6 +71,7 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href, claimRe
                     claimReviewTask={claimReviewTask}
                     isLoggedIn={isLoggedIn}
                     review={review}
+                    sitekey={sitekey}
                 />
                 : <SentenceReportView
                     personality={personality}
