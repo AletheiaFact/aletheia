@@ -8,11 +8,27 @@ Cypress.Commands.add('login', () => {
 })
 
 Cypress.Commands.add('checkRecaptcha', () => {
-    cy.get("iframe").then((iframe) => {
-        const body = iframe.contents().find("body");
-        cy.wrap(body).find("#recaptcha-anchor").click();
-    });
-})
+
+    const getIframeDocument = () => {
+        return cy
+            .get('[title="reCAPTCHA"]')
+            // Cypress yields jQuery element, which has the real
+            // DOM element under property "0".
+            .its('0.contentDocument').should('exist')
+    }
+
+
+    const getIframeBody = () => {
+        return getIframeDocument()
+            // automatically retries until body is not empty or fails with timeout
+            .its('body').should('not.be.empty')
+            // wraps "body" DOM element to allow
+            // chaining more Cypress commands, like ".find(...)"
+            .then(cy.wrap)
+    }
+
+    getIframeBody().find("#recaptcha-anchor").click();
+});
 
 declare global {
     namespace Cypress {

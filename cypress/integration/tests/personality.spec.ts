@@ -3,17 +3,17 @@
 
 import locators from "../../support/locator";
 
-describe("Should test at the login", () => {
+describe("Create personality and claim", () => {
     beforeEach('login', () => { cy.login() });
 
-    it("Go personality and search new personality", () => {
+    it("Should search and create a new Personality", () => {
         cy.get(locators.PERSONALITY.BTN_SEE_MORE_PERSONALITY).click();
         cy.get(locators.PERSONALITY.BTN_ADD_PERSONALITY).click();
         cy.get(locators.PERSONALITY.INPUT_SEARCH_PERSONALITY).type("beyonce");
         cy.get("[data-cy=Beyoncé]").click();
     });
 
-    it("Claim", () => {
+    it("Should create a Claim", () => {
         cy.get(locators.PERSONALITY.BTN_SEE_MORE_PERSONALITY)
             .should("be.visible")
             .click();
