@@ -6,13 +6,11 @@ export type ReviewData = {
     verification: string;
     sources: string[];
     classification: string;
-    sentence_hash: string;
 }
 
 export type ClaimReview = {
     personality: string;
     claim: string;
-    sentence_hash: string;
     userId: string;
 }
 
@@ -20,8 +18,6 @@ export type SaveEvent = {
     type: string;
     reviewData: ReviewData;
     claimReview: ClaimReview;
-    t: any;
-    setCurrentFormAndNextEvents: any;
 };
 
 export type ReviewTaskMachineEvents = SaveEvent

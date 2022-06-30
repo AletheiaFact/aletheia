@@ -49,16 +49,24 @@ export class ClaimReviewTaskService {
                 newClaimReviewTaskMachine
             );
 
-            if (newClaimReviewTask.machine.value === "published") {
-                const claimReviewData =
-                    newClaimReviewTask.machine.context.claimReview;
-                const report = await this.reportService.create(
-                    newClaimReviewTask.machine.context.reviewData
+            if (newClaimReviewTaskMachine.value === "published") {
+                const claimReviewData = 
+                    newClaimReviewTaskMachine.context.claimReview;
+
+                const newReport = Object.assign(
+                    newClaimReviewTaskMachine.context.reviewData,
+                    { sentence_hash }
+                )
+
+                const report = await this.reportService.create(newReport);
+
+                this.claimReviewService.create(
+                    {
+                        ...claimReviewData,
+                        report,
+                    },
+                    sentence_hash
                 );
-                this.claimReviewService.create({
-                    ...claimReviewData,
-                    report,
-                });
             }
 
             return this.ClaimReviewTaskModel.updateOne(

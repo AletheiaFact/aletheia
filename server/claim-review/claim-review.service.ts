@@ -115,7 +115,7 @@ export class ClaimReviewService {
      * @param claimReview ClaimReviewBody received of the client.
      * @returns Return a new claim review object.
      */
-    async create(claimReview) {
+    async create(claimReview, sentence_hash) {
         const review = await this.getReviewBySentenceHash(claimReview.sentence_hash)
 
         if (review.length) {
@@ -127,6 +127,7 @@ export class ClaimReviewService {
             claimReview.claim = Types.ObjectId(claimReview.claim);
             claimReview.report = Types.ObjectId(claimReview.report._id)
             claimReview.userId = Types.ObjectId(claimReview.userId)
+            claimReview.sentence_hash = sentence_hash
             const newClaimReview = new this.ClaimReviewModel(claimReview)
 
             newClaimReview.isPublished = true
