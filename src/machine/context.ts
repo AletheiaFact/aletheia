@@ -5,6 +5,7 @@ export type ReviewTaskMachineContext = {
     claimReview: ClaimReview
     utils: {
         t: any;
+        setCurrentFormAndNextEvents: any;
     };
 };
 
@@ -22,6 +23,7 @@ const buildState = ({ reviewData } : { reviewData?: any }) : ReviewTaskMachineCo
             },
             utils: {
                 t: null,
+                setCurrentFormAndNextEvents: null,
             },
             claimReview: {
                 personality: "",

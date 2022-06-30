@@ -28,7 +28,7 @@ const createClaimReviewTask = (params, t, type) => {
         })
         .catch(err => {
             message.error(t(`claimReviewTask:${type}_ERROR`))
-            return err
+            throw err
         })
 }
 
@@ -45,7 +45,7 @@ const updateClaimReviewTask = (params, t, type) => {
         })
         .catch(err => {
             message.error(t(`claimReviewTask:${type}_ERROR`))
-            return err
+            throw err
         })
 }
 

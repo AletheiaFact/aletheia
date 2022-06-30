@@ -21,6 +21,7 @@ export type SaveEvent = {
     reviewData: ReviewData;
     claimReview: ClaimReview;
     t: any;
+    setCurrentFormAndNextEvents: any;
 };
 
 export type ReviewTaskMachineEvents = SaveEvent
