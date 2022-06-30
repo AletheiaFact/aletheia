@@ -96,15 +96,17 @@ export const transitionHandler = (state) => {
             { sentence_hash, machine: state, recaptcha },
             t,
             event,
-            setCurrentFormAndNextEvents
-        );
+        )
+        .then(() => setCurrentFormAndNextEvents(event))
+        .catch((e) => e)
     } else if (event !== ReviewTaskEvents.init) {
         api.updateClaimReviewTask(
             { sentence_hash, machine: state, recaptcha },
             t,
             event,
-            setCurrentFormAndNextEvents
-        );
+        )
+        .then(() => setCurrentFormAndNextEvents(event))
+        .catch((e) => e)
     }
 };
 

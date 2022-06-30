@@ -18,22 +18,21 @@ const getMachineBySentenceHash = (params, t) => {
         });
 };
 
-const createClaimReviewTask = (params, t, type, setCurrentFormAndNextEvents) => {
+const createClaimReviewTask = (params, t, type) => {
     params.machine = ParseMachineState(params.machine)
     return request
         .post('/', { ...params })
         .then((response) => {
             message.success(t(`claimReviewTask:${type}_SUCCESS`))
-            setCurrentFormAndNextEvents(type)
             return response.data
         })
         .catch(err => {
             message.error(t(`claimReviewTask:${type}_ERROR`))
-            return err
+            throw err
         })
 }
 
-const updateClaimReviewTask = (params, t, type, setCurrentFormAndNextEvents) => {
+const updateClaimReviewTask = (params, t, type) => {
     params.machine = ParseMachineState(params.machine)
     return request
         .put(
@@ -42,12 +41,11 @@ const updateClaimReviewTask = (params, t, type, setCurrentFormAndNextEvents) => 
         )
         .then((response) => {
             message.success(t(`claimReviewTask:${type}_SUCCESS`))
-            setCurrentFormAndNextEvents(type)
             return response.data
         })
         .catch(err => {
             message.error(t(`claimReviewTask:${type}_ERROR`))
-            return err
+            throw err
         })
 }
 
