@@ -13,5 +13,8 @@ module.exports = withAntdLess({
     i18n,
     webpack(config) {
         return config;
+    },
+    images: {
+        domains: ['i.creativecommons.org']
     }
 });
