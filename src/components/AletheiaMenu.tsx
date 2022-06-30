@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { useAppSelector } from "../store/store";
-import { createLogoutHandler } from "./Login/LogoutAction";
+import { CreateLogoutHandler } from "./Login/LogoutAction";
 import { ory } from "../lib/orysdk";
 import { AxiosError } from "axios";
 
@@ -12,7 +12,7 @@ const AletheiaMenu = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const router = useRouter();
-    const onLogout = createLogoutHandler()
+    const onLogout = CreateLogoutHandler()
     const [hasSession, setHasSession] = useState<boolean>(false)
     
     const { menuCollapsed } = useAppSelector(

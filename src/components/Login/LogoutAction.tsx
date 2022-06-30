@@ -4,7 +4,7 @@ import { useState, useEffect, DependencyList } from 'react'
 
 import { ory } from '../../lib/orysdk'
 
-export function createLogoutHandler(deps?: DependencyList) {
+export function CreateLogoutHandler(deps?: DependencyList) {
   const [logoutToken, setLogoutToken] = useState<string>('')
   const router = useRouter()
 
