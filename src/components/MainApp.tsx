@@ -10,27 +10,16 @@ import { useRouter } from 'next/router'
 import colors from "../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 import { useAppSelector } from "../store/store";
-import styled from "styled-components"
+import ContentStyle from "./Content.style";
 
-const { Footer, Content } = Layout;
+const { Footer } = Layout;
+
 const MainApp = ({ children }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch()
 
     const router = useRouter();
     const pageUrl = router.pathname
-
-    const ContentStyled = styled(Content)`
-        padding: 0;
-
-        ${({ mobile } : { mobile: boolean }) => mobile && `
-            padding: 0 15px;
-
-            @media (min-width: 768px) {
-                padding: 0 30%;
-            }
-        `}
-    `
 
     const { enableOverlay, menuCollapsed } = useAppSelector(
         (state) => {
@@ -60,10 +49,10 @@ const MainApp = ({ children }) => {
                 />
                 <Layout style={{ background: colors.white }}>
                     <Header />
-                    <ContentStyled
-                        mobile={(pageUrl.includes("/claim-review")) ? false : true}
+                    <ContentStyle
+                        mobile={(pageUrl.includes("/claim-review")) || (pageUrl.includes("/home")) ? false : true}
                     >
-                        {!pageUrl.includes("/claim-review") && <Row style={{
+                        {(!pageUrl.includes("/claim-review")) && (!pageUrl.includes("/home")) && <Row style={{
                             padding: "10px 30px",
                             background: colors.white,
                             boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
@@ -72,7 +61,7 @@ const MainApp = ({ children }) => {
                             <BackButton />
                         </Row>}
                         {children}
-                    </ContentStyled>
+                    </ContentStyle>
 
                     <Footer style={{
                         textAlign: "center",

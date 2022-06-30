@@ -19,9 +19,9 @@ const AletheiaButton: (
     props: IAletheiaButtonProps) => JSX.Element = (
         props: IAletheiaButtonProps) => {
         let buttonStyle = {
-            ...props.style,
             borderWidth: "2px",
             borderRadius: "30px",
+            ...props.style,
         };
         switch (props.type) {
             case ButtonType.white:

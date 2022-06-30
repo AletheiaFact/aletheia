@@ -13,6 +13,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             user: query.user ? JSON.parse(JSON.stringify(query.user)) : null,
+            // user: req.user ? JSON.parse(JSON.stringify(req.user)) : null,
+            href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };
 }
