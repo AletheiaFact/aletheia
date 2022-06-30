@@ -12,7 +12,10 @@ const AletheiaMenu = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const router = useRouter();
-    const onLogout = CreateLogoutHandler()
+    const onLogout = () => { CreateLogoutHandler() 
+        .then(() => router.push("/login"))
+        .then(() => router.reload())
+    }
     const [hasSession, setHasSession] = useState<boolean>(false)
     
     const { menuCollapsed } = useAppSelector(
