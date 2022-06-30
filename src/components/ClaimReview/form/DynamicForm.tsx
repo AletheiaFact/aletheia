@@ -125,17 +125,22 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
             recaptchaString,
             setCurrentFormAndNextEvents,
         })
+        setRecaptchaString('')
         recaptchaRef.current.resetRecaptcha()
     };
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
-            {formInputs}
-            <AletheiaCaptcha
-                onChange={setRecaptchaString}
-                sitekey={sitekey}
-                ref={recaptchaRef}
-            />
+            {formInputs && (
+                <>
+                    {formInputs}
+                    <AletheiaCaptcha
+                        onChange={setRecaptchaString}
+                        sitekey={sitekey}
+                        ref={recaptchaRef}
+                    />
+                </>
+            )}
             {nextEvents?.map((event) => {
                 return (
                     <AletheiaButton
