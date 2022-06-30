@@ -1,6 +1,6 @@
 {
-    "errorMessage": "Erro ao salvar discurso",
-    "successMessage": "discurso criado com sucesso",
+    "errorCreateMessage": "Erro ao salvar discurso",
+    "successCreateMessage": "discurso criado com sucesso",
     "errorUpdateMessage": "Erro ao alterar o discurso",
     "successUpdateMessage": "Discurso alterado com sucesso",
     "titleField": "Título",
