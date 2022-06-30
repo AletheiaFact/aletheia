@@ -13,6 +13,7 @@ interface DynamicInputProps {
     inputType: string;
     addInputLabel: string;
     defaultValue: string | [];
+    "data-cy": string;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -31,6 +32,7 @@ const DynamicInput = (props: DynamicInputProps) => {
             return <UserAutocomplete
                 placeholder={t(props.placeholder)}
                 onChange={props.onChange}
+                dataCy={props['data-cy']}
             />
         case "textList":
             return (

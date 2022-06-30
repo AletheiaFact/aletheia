@@ -94,6 +94,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
                                 inputType={inputType}
                                 addInputLabel={addInputLabel}
                                 defaultValue={defaultValue}
+                                data-cy={`testClaimReview${fieldName}`}
                             />
                         )}
                     />
