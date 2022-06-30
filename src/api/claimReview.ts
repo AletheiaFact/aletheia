@@ -6,9 +6,9 @@ const request = axios.create({
     baseURL: `/api/claimReview`,
 });
 
-const save = (t, review) => {
+const save = (t, review, sentence_hash) => {
     return request
-        .post("/", review)
+        .post(`/${sentence_hash}`, review)
         .then((response) => {
             message.success(t("claimReviewForm:successMessage"));
             return {

@@ -15,12 +15,19 @@ import { IsPublic } from "../decorators/is-public.decorator";
 export class ClaimReviewController {
     constructor(private claimReviewService: ClaimReviewService) {}
 
-    @Post()
-    async create(@Body() createClaimReview: CreateClaimReview, @Req() req) {
-        return this.claimReviewService.create({
-            ...createClaimReview,
-            user: req?.user?._id,
-        });
+    @Post(":sentence_hash")
+    async create(
+        @Body() createClaimReview: CreateClaimReview,
+        @Req() req,
+        @Param("sentence_hash") sentence_hash
+    ) {
+        return this.claimReviewService.create(
+            {
+                ...createClaimReview,
+                userId: req?.user?._id,
+            },
+            sentence_hash
+        );
     }
 
     @IsPublic()
