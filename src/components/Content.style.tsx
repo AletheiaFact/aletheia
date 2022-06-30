@@ -6,7 +6,7 @@ const { Content } = Layout;
 const ContentStyle = styled(Content)`
     padding: 0;
 
-    ${({ mobile } : { mobile: boolean }) => mobile && `
+    ${({ layout } : { layout: string }) => layout === "mobile" && `
         padding: 0 15px;
 
         @media (min-width: 768px) {

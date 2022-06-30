@@ -50,7 +50,7 @@ const MainApp = ({ children }) => {
                 <Layout style={{ background: colors.white }}>
                     <Header />
                     <ContentStyle
-                        mobile={(pageUrl.includes("/claim-review")) || (pageUrl.includes("/home")) ? false : true}
+                        layout={(pageUrl.includes("/claim-review")) || (pageUrl.includes("/home")) ? "desktop" : "mobile"}
                     >
                         {(!pageUrl.includes("/claim-review")) && (!pageUrl.includes("/home")) && <Row style={{
                             padding: "10px 30px",
