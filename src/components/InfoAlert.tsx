@@ -9,10 +9,10 @@ const InfoAlert= () => {
         <Alert
             type="info"
             style={{
-                marginBottom: "15px", 
+                marginBottom: "15px",
                 padding: "50px 25px 50px 25px"
             }}
-            message={<Trans 
+            message={<Trans
                 i18nKey={"about:alertInfo"}
                 components={[
                     <a style={{whiteSpace: "pre-wrap"}} href="https://github.com/AletheiaFact/aletheia" target="_blank" rel="noreferrer"></a>
@@ -24,12 +24,12 @@ const InfoAlert= () => {
                     size="small"
                     shape="round"
                     icon={<FilePdfOutlined />}
-                    href="https://github.com/AletheiaFact/miscellaneous/blob/main/presentations/aletheiafact.pdf"
+                    href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/AletheiaFact/miscellaneous/290b19847f0da521963f74e7947d7863bf5d5624/documents/org_legal_register.pdf"
                     target={"_blank"}
                     style={{
                         position: "absolute",
-                        bottom: "15px", 
-                        right: "15px", 
+                        bottom: "15px",
+                        right: "15px",
                     }}
                 >
                     {t("about:labelButton")}
