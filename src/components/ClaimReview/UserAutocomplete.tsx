@@ -3,7 +3,7 @@ import api from "../../api/user";
 import { useTranslation } from 'next-i18next'
 import SelectUser from './form/SelectUser'
 
-const UserAutocomplete = ({ placeholder, onChange }) => {
+const UserAutocomplete = ({ placeholder, onChange, dataCy }) => {
     const { t } = useTranslation();
 
     const fetchUserList = async (name) => {
@@ -19,6 +19,7 @@ const UserAutocomplete = ({ placeholder, onChange }) => {
             fetchOptions={fetchUserList}
             placeholder={placeholder}
             onChange={onChange}
+            data-cy={dataCy}
             style={{ width: '100%' }}
         />
     )

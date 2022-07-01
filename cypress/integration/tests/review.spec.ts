@@ -26,6 +26,8 @@ describe("Test claim review", () => {
         cy.get('[data-cy=frase1]').click()
         cy.url().should('contains', 'http://localhost:3000/personality/beyonce/claim/cantora-e-dancarina/sentence')
         cy.get(locators.CLAIM_REVIEW.BTN_START_CLAIM_REVIEW).should('exist').click()
+        cy.get('[data-cy=testClaimReviewuserId]').should('exist').type("user", {delay: 200})
+        cy.contains("User").first().click()
         cy.get('[title="reCAPTCHA"]').should('exist')
         cy.get('[data-cy=testClaimReviewASSIGN_USER]').should('be.disabled')
         cy.checkRecaptcha()
