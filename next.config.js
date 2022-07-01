@@ -15,6 +15,9 @@ module.exports = withAntdLess({
         return config;
     },
     images: {
-        domains: ['i.creativecommons.org']
-    }
+        domains: [
+            'i.creativecommons.org',
+            'upload.wikimedia.org'
+        ]
+    },
 });

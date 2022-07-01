@@ -1,10 +1,12 @@
 import { Carousel, Col, Row } from 'antd';
-import React from 'react';
-import colors from '../../styles/colors';
 import { useTranslation } from 'next-i18next';
-import HomeStats from "./HomeStats";
+import Image from 'next/image';
+import React from 'react';
+
+import colors from '../../styles/colors';
 import CTASection from './CTASection';
 import HomeCarouselStyle from './HomeCarousel.style';
+import HomeStats from './HomeStats';
 
 const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
     const { t } = useTranslation();
@@ -28,26 +30,29 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                         backgroundColor: "rgba(0,0,0,0.6)"
                     }}
                 ></div>
-                <Carousel autoplay dots={false}>
+                <Carousel autoplay dots={false} style={{ backgroundColor: '#222' }}>
                     {personalities.map(
-                        (p, i) =>
-                            p && (
-                                <div key={i}>
-                                    <img
-                                        alt={t('seo:personalityImageAlt', { name: p.name })}
-                                        style={{
-                                            height: "auto",
-                                            color: colors.white,
-                                            lineHeight: "160px",
-                                            textAlign: "center",
-                                            background: "#364d79",
-                                            width: "100%",
-                                            filter: "grayscale(100%)"
-                                        }} //TODO: Need adjust images
-                                        src={p.image}
-                                    />
-                                </div>
-                            )
+                        (p, i) => p && (
+                            <div key={i}>
+                                <Image
+                                    alt={t('seo:personalityImageAlt', { name: p.name })}
+                                    src={p.image}
+                                    width="100%"
+                                    height="100%"
+                                    layout="responsive"
+                                    objectFit="contain"
+                                    objectPosition={"center calc(443px / 2 * -1)"}
+                                    style={{
+                                        color: colors.white,
+                                        lineHeight: "160px",
+                                        textAlign: "center",
+                                        width: "auto",
+                                        filter: "grayscale(100%)",
+                                        background: 'none',
+                                    }}
+                                />
+                            </div>
+                        )
                     )}
                 </Carousel>
             </Col>
@@ -96,7 +101,7 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                                 <span className="carousel-subtitle">{t("home:subtitle1")}</span>
                             </h2>
                         </Row>
-                        
+
                         <CTASection isLoggedIn={isLoggedIn} />
 
                         <HomeStats stats={stats} />
