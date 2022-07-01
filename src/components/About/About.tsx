@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
-import {Row, Typography} from "antd";
+import { Row, Typography } from "antd";
 import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
+import InfoAlert from "../InfoAlert";
 
 const About = () => {
     const { t } = useTranslation();
@@ -21,6 +22,7 @@ const About = () => {
                 padding: "20px"
             }}
         >
+            <InfoAlert/>
             <Row style={{width: "100%", textAlign: "center"}}>
                 <Typography.Title style={{ width: "100%" }}>
                     {t("about:title")}
