@@ -25,7 +25,7 @@ const ContentWrapper = ({ children }) => {
     const router = useRouter();
 
     // TODO: we can remove this when we have desktop layout for all the pages
-    const desktopReadyPages = ["claim-review", "home", "personality-page"];
+    const desktopReadyPages = ["claim-review", "home"];
 
     const layout = desktopReadyPages.some((page) => router.pathname.includes(page))
         ? "desktop"
