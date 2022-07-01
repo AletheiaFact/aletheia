@@ -13,5 +13,10 @@ module.exports = withAntdLess({
     i18n,
     webpack(config) {
         return config;
-    }
+    },
+    images: {
+        domains: [
+            'upload.wikimedia.org'
+        ]
+    },
 });
