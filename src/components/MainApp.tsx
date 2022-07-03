@@ -55,7 +55,7 @@ const MainApp = ({ children }) => {
                     <AletheiaSocialMediaFooter />
                     <Row>
                         <Col span={12}>
-                            <InfoAlert/>
+                            <InfoAlert />
                         </Col>
                         <Col span={12}>
                             <Row
