@@ -2,7 +2,7 @@ const locators = {
     LOGIN: {
         USER: "#basic_email",
         PASSWORD: "#basic_password",
-        BTN_LOGIN: ".ant-btn > span",
+        BTN_LOGIN: "[data-cy=loginButton]",
     },
 
     PERSONALITY: {
