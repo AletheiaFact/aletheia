@@ -54,10 +54,10 @@ const MainApp = ({ children }) => {
                 >
                     <AletheiaSocialMediaFooter />
                     <Row>
-                        <Col span={12}>
+                        <Col lg={12} xs={24}>
                             <InfoAlert />
                         </Col>
-                        <Col span={12}>
+                        <Col lg={12} xs={24}>
                             <Row
                                 style={{
                                     marginTop: "10px",
