@@ -18,17 +18,6 @@ export class ViewController {
     }
 
     @IsPublic()
-    @Get()
-    public async showHome(@Req() req: Request, @Res() res: Response) {
-        const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/landing-page", Object.assign(parsedUrl.query));
-    }
-
-    @IsPublic()
     @Get("about")
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);

@@ -49,7 +49,7 @@ const HeaderContent = ({ className }) => {
             </a>
         </Col>
         <Col span={20}>
-            <a onClick={() => router.push("/home")}>
+            <a onClick={() => router.push("/")}>
                 <Logo color="white" />
             </a>
         </Col>

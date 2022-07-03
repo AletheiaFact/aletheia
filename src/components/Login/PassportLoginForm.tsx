@@ -35,7 +35,7 @@ const PassportLoginForm = (props) => {
                 router.back()
             }
             else {
-                router.push('/home')
+                router.push('/')
             }
         }
     };
