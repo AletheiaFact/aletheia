@@ -16,6 +16,7 @@ module.exports = withAntdLess({
     },
     images: {
         domains: [
+            'i.creativecommons.org',
             'upload.wikimedia.org'
         ]
     },

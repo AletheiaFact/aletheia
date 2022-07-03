@@ -36,7 +36,7 @@ describe("Create personality and claim", () => {
             .type("Ele é uma ótima dançarina e cantora");
 
         cy.get("[data-cy=dataAserSelecionada]").should("be.visible").click();
-        cy.contains(7).click();
+        cy.get('table.ant-picker-content').contains('7').should("be.visible").click();
 
         cy.get("[data-cy=testSource1]")
             .should("be.visible")
