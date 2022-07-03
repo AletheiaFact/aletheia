@@ -4,11 +4,6 @@ import { SaveEvent } from "./events";
 
 export const saveContext = assign<ReviewTaskMachineContext, SaveEvent>(
     (context, event) => {
-        const utils = Object.assign(
-            { t: event.t },
-            { setCurrentFormAndNextEvents: event.setCurrentFormAndNextEvents }
-        )
-        
         const claimReview = event.claimReview
         const reviewData = event.reviewData
         const userId = event.reviewData.userId
@@ -16,9 +11,6 @@ export const saveContext = assign<ReviewTaskMachineContext, SaveEvent>(
             reviewData: {
                 ...context.reviewData,
                 ...reviewData,
-            },
-            utils: {
-                ...utils
             },
             claimReview: {
                 ...claimReview,

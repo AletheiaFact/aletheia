@@ -85,11 +85,11 @@ export const createNewMachine = ({ value, context }) => {
 }
 
 export const transitionHandler = (state) => {
-    const sentence_hash = state.context.reviewData.sentence_hash;
-    const t = state.context.utils.t;
+    const sentence_hash = state.event.sentence_hash;
+    const t = state.event.t;
     const event = state.event.type;
     const recaptcha = state.event.recaptchaString;
-    const setCurrentFormAndNextEvents = state.context.utils.setCurrentFormAndNextEvents
+    const setCurrentFormAndNextEvents = state.event.setCurrentFormAndNextEvents
 
     if (event === ReviewTaskEvents.assignUser) {
         api.createClaimReviewTask(

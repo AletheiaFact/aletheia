@@ -114,12 +114,10 @@ const DynamicForm = ({ sentence_hash, personality, claim, isLoggedIn, sitekey })
             sentence_hash,
             reviewData: {
                 ...data,
-                sentence_hash,
             },
             claimReview: {
                 personality,
                 claim,
-                sentence_hash,
             },
             type: event,
             t,
