@@ -12,12 +12,7 @@ const InfoAlert= () => {
                 marginBottom: "15px",
                 padding: "50px 25px 50px 25px"
             }}
-            message={<Trans
-                i18nKey={"about:alertInfo"}
-                components={[
-                    <a style={{whiteSpace: "pre-wrap"}} href="https://github.com/AletheiaFact/aletheia" target="_blank" rel="noreferrer"></a>
-                ]}
-            />}
+            message={<>{t("about:alertInfo")} <a style={{whiteSpace: "pre-wrap"}} href="https://github.com/AletheiaFact/aletheia" target="_blank" rel="noreferrer">https://github.com/AletheiaFact/aletheia</a></>}
             action={
                 <Button
                     type="primary"

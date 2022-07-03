@@ -28,7 +28,7 @@ export function handleGetFlowError<S>(
                 window.location.href = err.response?.data.redirect_browser_to;
                 return;
             case "session_already_available":
-                await router.push("/home");
+                await router.push("/");
                 return;
             case "self_service_flow_return_to_forbidden":
                 message.error(t("oryErrors:returnAddressForbidden"));

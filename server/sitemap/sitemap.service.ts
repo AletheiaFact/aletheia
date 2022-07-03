@@ -17,7 +17,6 @@ export class SitemapService {
     async getSitemap(hostname) {
         const sites: any[] = [
             { url: "/" },
-            { url: "/home" },
             { url: "/about" },
             { url: "/privacy-policy" },
             { url: "/code-of-conduct" },

@@ -46,7 +46,7 @@ const orySubmitLogin = ({router, flow, setFlow, t, values}) => {
                 window.location.href = flow?.return_to
                 return
             }
-            router.push('/home')
+            router.push('/')
         })
         .catch(handleFlowError(router, 'login', setFlow, t))
         .catch((err: AxiosError) => handleAxiosError(err, setFlow))
@@ -64,7 +64,7 @@ const orySubmitSettings = ({router, flow, setFlow, t, values}) => {
     return ory
         .submitSelfServiceSettingsFlow(String(flow?.id), undefined, values)
         .then(() => {
-            router.push('/home')
+            router.push('/')
         })
         .catch(handleFlowError(router, 'settings', setFlow, t))
         .catch((err: AxiosError) =>  handleAxiosError(err, setFlow))
