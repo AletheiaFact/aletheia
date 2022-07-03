@@ -14,7 +14,6 @@ export class HomeController {
         private statsService: StatsService
     ) {}
 
-    @IsPublic()
     @Get('/home')
     /**
      * Redirect /home to / for backwards compatibility

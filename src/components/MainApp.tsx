@@ -1,7 +1,6 @@
 import {Col, Layout, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch } from "react-redux";
 
