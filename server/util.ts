@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { randomBytes } from "crypto";
 
 @Injectable()
 export class UtilService {
@@ -10,7 +11,7 @@ export class UtilService {
         const result = reviews.map((review) => {
             const percentage = (review.count / total) * 100;
             return {
-                _id: review._id,
+                _id: review._id[0],
                 percentage: percentage.toFixed(0),
                 count: review.count,
             };
@@ -38,4 +39,14 @@ export class UtilService {
 
         return Array.from(newArray.values());
     }
+
+    generatePassword(isTestUser = false, forcePassword = null) {
+        const buf = randomBytes(8);
+
+        if (isTestUser) {
+            return forcePassword ? `${forcePassword}` : process.env.DEVELOPMENT_PASSWORD;
+        }
+
+        return buf.toString("hex");
+    };
 }

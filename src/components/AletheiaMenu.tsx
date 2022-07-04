@@ -39,6 +39,7 @@ const AletheiaMenu = () => {
         >
             <Menu.Item
                 key="/profile"
+                data-cy={"testMyAccountItem"}
                 style={{
                     fontSize: "18px"
                 }}
@@ -47,6 +48,7 @@ const AletheiaMenu = () => {
             </Menu.Item>
             <Menu.Item
                 key="/about"
+                data-cy={"testAboutItem"}
                 style={{
                     fontSize: "18px"
                 }}
@@ -55,6 +57,7 @@ const AletheiaMenu = () => {
             </Menu.Item>
             <Menu.Item
                 key="/privacy-policy"
+                data-cy={"testPrivacyPolicyItem"}
                 style={{
                     fontSize: "18px"
                 }}
@@ -63,6 +66,7 @@ const AletheiaMenu = () => {
             </Menu.Item>
             <Menu.Item
                 key="/code-of-conduct"
+                data-cy={"testCodeOfConductItem"}
                 style={{
                     fontSize: "18px"
                 }}

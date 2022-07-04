@@ -1,0 +1,15 @@
+{
+    "ASSIGN_USER_SUCCESS": "Usuário atribuído com sucesso",
+    "ASSIGN_USER_ERROR": "Erro ao atribuir usuário",
+    "FINISH_REPORT_SUCCESS": "Relatório salvo com sucesso",
+    "FINISH_REPORT_ERROR": "Erro ao salvar o relatório",
+    "PUBLISH_SUCCESS": "Classificação salva com sucesso",
+    "PUBLISH_ERROR": "Erro ao salvar classificação",
+    "SAVE_DRAFT_SUCCESS": "Rascunho salvo com sucesso",
+    "SAVE_DRAFT_ERROR": "Erro ao salvar rascunho",
+    "ASSIGN_USER": "Atribuir",
+    "FINISH_REPORT": "Concluir Relatório",
+    "PUBLISH": "Publicar",
+    "SAVE_DRAFT": "Salvar rascunho",
+    "errorWhileFetching": "Erro ao buscar a máquina"
+}

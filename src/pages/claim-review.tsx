@@ -4,17 +4,21 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
 import { NextSeo } from 'next-seo';
+import SentenceReportView from "../components/ClaimReview/SentenceReportView";
+import { ReviewTaskStates } from "../machine/enums";
 const parser = require("accept-language-parser");
 
-const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
+const ClaimPage: NextPage<{ personality, claim, sentence, sitekey, href, claimReviewTask, isLoggedIn }> = ({
     personality,
     claim,
     sentence,
-    sitekey,
     href,
+    claimReviewTask,
+    isLoggedIn,
+    sitekey
 }) => {
     const { t } = useTranslation();
-    const review = sentence?.props?.topClassification;
+    const review = sentence?.props?.classification;
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -30,10 +34,10 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
         claimReviewed: sentence.content,
         reviewRating: {
             "@type": "Rating",
-            ratingValue: review?.classification,
+            ratingValue: review,
             bestRating: "true",
             worstRating: "false",
-            alternateName: t(`claimReviewForm:${review?.classification}`),
+            alternateName: t(`claimReviewForm:${review}`),
         },
         itemReviewed: {
             "@type": "CreativeWork",
@@ -57,13 +61,25 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
                 title={sentence.content}
                 description={t('seo:claimReviewDescription', { sentence: sentence.content })}
             />
-            <ClaimReviewView
-                personality={personality}
-                claim={claim}
-                sentence={sentence}
-                sitekey={sitekey}
-                href={href}
-            />
+
+            {claimReviewTask?.machine.value !== ReviewTaskStates.published
+                ? <ClaimReviewView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                    href={href}
+                    claimReviewTask={claimReviewTask}
+                    isLoggedIn={isLoggedIn}
+                    review={review}
+                    sitekey={sitekey}
+                />
+                : <SentenceReportView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                    href={href}
+                    context={claimReviewTask.machine.context.reviewData}
+                />}
         </>
     );
 };
@@ -78,8 +94,10 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personality: JSON.parse(JSON.stringify(query.personality)),
             claim: JSON.parse(JSON.stringify(query.claim)),
             sentence: JSON.parse(JSON.stringify(query.sentence)),
+            claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             sitekey: query.sitekey,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            isLoggedIn: req.user ? true : false
         },
     };
 }

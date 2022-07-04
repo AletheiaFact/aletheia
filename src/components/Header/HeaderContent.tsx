@@ -8,6 +8,7 @@ import colors from "../../styles/colors";
 import Logo from "./Logo";
 import { useAppSelector } from "../../store/store";
 
+
 const HeaderContent = ({ className }) => {
     const dispatch = useDispatch();
     const router = useRouter();
@@ -30,7 +31,7 @@ const HeaderContent = ({ className }) => {
         }}
     >
         <Col span={2}>
-            <a
+            <a data-cy="testSideMenuClosed"
                 onClick={() => {
                     dispatch({
                         type: "TOGGLE_MENU",
@@ -64,6 +65,7 @@ const HeaderContent = ({ className }) => {
                         }
                     });
                 }}
+                data-cy={"testSearchPersonality"}
             >
                 <SearchOutlined
                     style={{

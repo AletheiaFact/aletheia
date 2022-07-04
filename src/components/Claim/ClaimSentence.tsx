@@ -16,10 +16,10 @@ const ClaimSentence = styled.a`
 
 const Sentence = ({ showHighlights, properties, content, generateHref }) => {
     let style = {};
-    if (properties.topClassification && showHighlights) {
+    if (properties.classification && showHighlights) {
         style = {
             ...style,
-            backgroundColor: highlightColors[properties.topClassification.classification]
+            backgroundColor: highlightColors[properties.classification]
         };
     }
     const href = generateHref({ properties });
@@ -31,21 +31,22 @@ const Sentence = ({ showHighlights, properties, content, generateHref }) => {
                 data-hash={properties["data-hash"]}
                 style={style}
                 className="claim-sentence"
+                data-cy={`frase${properties.id}`}
             >
                 {content}
             </ClaimSentence>
-            {properties.topClassification && showHighlights && (
+            {properties.classification && showHighlights && (
                 <sup
                     style={{
                         color:
-                            highlightColors[properties.topClassification.classification],
+                            highlightColors[properties.classification],
                         fontWeight: 600,
                         fontSize: "14px",
                         lineHeight: "22px",
                         paddingLeft: "5px"
                     }}
                 >
-                    {properties.topClassification.count}
+                    {1}
                 </sup>
             )}
         </>

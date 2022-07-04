@@ -10,7 +10,6 @@ export class ViewController {
 
     async handler(req: Request, res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -18,21 +17,9 @@ export class ViewController {
     }
 
     @IsPublic()
-    @Get()
-    public async showHome(@Req() req: Request, @Res() res: Response) {
-        const parsedUrl = parse(req.url, true);
-        // @ts-ignore
-
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/landing-page", Object.assign(parsedUrl.query));
-    }
-
-    @IsPublic()
     @Get("about")
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -43,7 +30,6 @@ export class ViewController {
     @Get("privacy-policy")
     public async showPrivacyPolicyPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -54,7 +40,6 @@ export class ViewController {
     @Get("code-of-conduct")
     public async codeOfConductPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -65,7 +50,6 @@ export class ViewController {
     @Get("_next*")
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -80,7 +64,6 @@ export class ViewController {
     @Get("404")
     public async show404(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()

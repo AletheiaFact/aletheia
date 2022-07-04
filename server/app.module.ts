@@ -1,4 +1,9 @@
-import { DynamicModule, MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import {
+    DynamicModule,
+    MiddlewareConsumer,
+    Module,
+    NestModule,
+} from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
@@ -19,13 +24,16 @@ import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
 import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
+import { ClaimReviewTaskModule } from "./claim-review-task/claim-review-task.module";
 import { LoggerMiddleware } from "./middleware/logger.middleware";
+import { ReportModule } from "./report/report.module";
 import OryModule from "./ory/ory.module";
 import { SessionGuard } from "./auth/session.guard";
 import { GetLanguageMiddleware } from "./middleware/language.middleware";
 import { DisableBodyParserMiddleware } from "./middleware/disable-body-parser.middleware";
 import OryController from "./ory/ory.controller";
 import { JsonBodyMiddleware } from "./middleware/json-body.middleware";
+import { CaptchaModule } from "./captcha/captcha.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -33,7 +41,8 @@ export class AppModule implements NestModule {
         consumer
             .apply(DisableBodyParserMiddleware)
             .forRoutes(OryController)
-            .apply(JsonBodyMiddleware, LoggerMiddleware, GetLanguageMiddleware).forRoutes('*');
+            .apply(JsonBodyMiddleware, LoggerMiddleware, GetLanguageMiddleware)
+            .forRoutes("*");
     }
 
     static register(options): DynamicModule {
@@ -58,6 +67,7 @@ export class AppModule implements NestModule {
                 PersonalityModule,
                 ClaimModule,
                 ClaimReviewModule,
+                ClaimReviewTaskModule,
                 ClaimRevisionModule,
                 HistoryModule,
                 SourceModule,
@@ -66,7 +76,9 @@ export class AppModule implements NestModule {
                 HomeModule,
                 EmailModule,
                 SitemapModule,
-                OryModule
+                OryModule,
+                ReportModule,
+                CaptchaModule,
             ],
             controllers: [RootController],
             providers: [
@@ -76,12 +88,12 @@ export class AppModule implements NestModule {
                 },
                 {
                     provide: APP_GUARD,
-                    useClass: ThrottlerGuard
+                    useClass: ThrottlerGuard,
                 },
                 {
                     provide: APP_GUARD,
-                    useClass: SessionGuard
-                }
+                    useClass: SessionGuard,
+                },
             ],
         };
     }

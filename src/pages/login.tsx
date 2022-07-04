@@ -22,7 +22,8 @@ export async function getServerSideProps({ locale, locales, req, query }) {
             ...(await serverSideTranslations(locale)),
             previousUrl: req.headers.referer || 'none',
             host: req.protocol + '://' + req.get('host'),
-            type: query?.authType
+            type: query?.authType,
+            href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };
 }

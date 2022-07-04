@@ -14,8 +14,17 @@ export class HomeController {
         private statsService: StatsService
     ) {}
 
+    @Get('/home')
+    /**
+     * Redirect /home to / for backwards compatibility
+     * @param res
+     */
+    redirect(@Res() res) {
+        return res.redirect('/');
+    }
+
     @IsPublic()
-    @Get("home")
+    @Get()
     public async showHome(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore

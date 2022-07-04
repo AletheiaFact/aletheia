@@ -187,6 +187,7 @@ export class PersonalityService {
         const reviews = await this.claimReview.agreggateClassification({
             personality: personality._id,
             isDeleted: false,
+            isPublished: true,
         });
         this.logger.log(`Got stats ${reviews}`);
         return this.util.formatStats(reviews, true);

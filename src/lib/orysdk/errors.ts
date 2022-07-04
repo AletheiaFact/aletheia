@@ -16,15 +16,19 @@ export function handleGetFlowError<S>(
     resetFlow: Dispatch<SetStateAction<S | undefined>>,
     t: TFunction
 ) {
+
     return async (err: AxiosError) => {
         switch (err.response?.data.error?.id) {
             case "session_refresh_required":
+                // set refresh to true so we can redirect back to profile after login
+                await router.push("/login?refresh=true");
+                return;
             case "session_aal2_required":
                 // 2FA is enabled and enforced, but user did not perform 2fa yet
                 window.location.href = err.response?.data.redirect_browser_to;
                 return;
             case "session_already_available":
-                await router.push("/home");
+                await router.push("/");
                 return;
             case "self_service_flow_return_to_forbidden":
                 message.error(t("oryErrors:returnAddressForbidden"));

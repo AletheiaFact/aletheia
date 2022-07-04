@@ -8,17 +8,16 @@ import {
     FormInstance,
 } from "antd";
 import claimApi from "../../api/claim";
-import ReCAPTCHA from "react-google-recaptcha";
 import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SourceInput from "../Source/SourceInput";
 import Button, { ButtonType } from "../Button";
-import Input from "../Input";
+import Input from "../AletheiaInput";
 import TextArea from "../TextArea";
+import AletheiaCaptcha from "../AletheiaCaptcha";
 
-const recaptchaRef = React.createRef<ReCAPTCHA>();
 const formRef = React.createRef<FormInstance>();
 
 const ClaimForm = styled(Form)`
@@ -56,41 +55,29 @@ const DatePickerInput = styled(DatePicker)`
     }
 `;
 
-const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
+const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();
-
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [date, setDate] = useState("");
-    const [recaptcha, setRecaptcha] = useState("");
     const [disableSubmit, setDisableSubmit] = useState(true);
     const [sources, setSources] = useState([""]);
+    const [recaptcha, setRecaptcha] = useState("");
 
     useEffect(() => {
         const setTitleAndContent = async () => {
             if (edit) {
-                const { content, title } = await claimApi.getById(claim._id, t);
-                setTitle(title);
-                setContent(content.text);
+                const fetchedClaim = await claimApi.getById(claim._id, t);
+                setTitle(fetchedClaim.title);
+                setContent(fetchedClaim.content.text);
             }
-
         }
         setTitleAndContent()
     }, []);
 
-    const toggleDisabledSubmit = () => {
-        const hasRecaptcha = !!recaptcha;
-        if (hasRecaptcha) {
-            setDisableSubmit(!disableSubmit);
-        }
-    }
 
     const saveClaim = async () => {
-        if (recaptchaRef && recaptchaRef.current) {
-            recaptchaRef.current.reset();
-        }
-
         const { slug } = await claimApi.save(t, {
             content,
             title,
@@ -122,20 +109,12 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
         }
     }, [content]);
 
-    const onExpiredCaptcha = () => {
-        return new Promise<void>(resolve => {
-            setDisableSubmit(true);
-            resolve();
-        });
-    }
 
-    const onChangeCaptcha = () => {
-        const recaptchaString = recaptchaRef.current.getValue();
-        setRecaptcha(recaptchaString);
+    const onChangeCaptcha = (captchaString) => {
+        setRecaptcha(captchaString);
+        const hasRecaptcha = !!captchaString;
+        setDisableSubmit(!hasRecaptcha);
     }
-    useEffect(() => {
-        toggleDisabledSubmit();
-    }, [recaptcha]);
 
     return (
         <>
@@ -175,6 +154,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         placeholder={t(
                             "claimForm:titleFieldPlaceholder"
                         )}
+                        data-cy={"testTitleClaimForm"}
                     />
                 </Form.Item>
                 <Form.Item
@@ -204,6 +184,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         placeholder={t(
                             "claimForm:contentFieldPlaceholder"
                         )}
+                        data-cy={"testContentClaim"}
                     />
                 </Form.Item>
                 <Form.Item
@@ -234,6 +215,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         onChange={value =>
                             setDate(value)
                         }
+                        data-cy={"dataAserSelecionada"}
                     />
                 </Form.Item>
                 <SourceInput
@@ -248,7 +230,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                         setSources(sources.concat(""));
                     }}
                     removeSource={(index) => {
-                        setSources(sources.filter((source, i) => {
+                        setSources(sources.filter((_source, i) => {
                             return i !== index
                         }))
                     }}
@@ -274,17 +256,15 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                     ]}
                     valuePropName="checked"
                 >
-                    <Checkbox>
+                    <Checkbox data-cy={"testCheckboxAcceptTerms"}>
                         {t("claimForm:checkboxAcceptTerms")}
                     </Checkbox>
                 </Form.Item>
 
                 <Form.Item>
-                    <ReCAPTCHA
-                        ref={recaptchaRef}
+                    <AletheiaCaptcha
                         sitekey={sitekey}
                         onChange={onChangeCaptcha}
-                        onExpired={onExpiredCaptcha}
                     />
                 </Form.Item>
                 <Row
@@ -309,6 +289,7 @@ const ClaimCreate = ({ personality, claim = {}, sitekey, edit = false }) => {
                             type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit}
+                            data-cy={'testSaveButton'}
                         >
                             {t("claimForm:saveButton")}
                         </Button>

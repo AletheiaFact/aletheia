@@ -12,15 +12,16 @@ export enum ButtonType {
 type AletheiaButtonProps = Omit<ButtonProps, 'type'>
 interface IAletheiaButtonProps extends AletheiaButtonProps {
     type?: ButtonType;
+    event?: any;
 }
 
 const AletheiaButton: (
     props: IAletheiaButtonProps) => JSX.Element = (
         props: IAletheiaButtonProps) => {
         let buttonStyle = {
-            ...props.style,
             borderWidth: "2px",
             borderRadius: "30px",
+            ...props.style,
         };
         switch (props.type) {
             case ButtonType.white:
@@ -59,8 +60,8 @@ const AletheiaButton: (
             default:
                 buttonStyle = {
                     ...buttonStyle,
-                    background: colors.blueSecondary,
-                    borderColor: colors.blueSecondary,
+                    background: colors.bluePrimary,
+                    borderColor: colors.bluePrimary,
                     color: colors.white
                 }
                 break;
