@@ -128,7 +128,7 @@ const PersonalityCard = ({
                                     type={ButtonType.blue}
                                     data-cy={personality.name}
                                     href={`${hrefBase ||
-                                        "personality/"}${personality.slug}`}
+                                        "/personality/"}${personality.slug}`}
                                     style={{
                                         display: "flex",
                                         justifyContent: "center",

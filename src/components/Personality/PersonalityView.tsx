@@ -4,11 +4,11 @@ import { NextSeo } from "next-seo";
 
 import ClaimList from "../Claim/ClaimList";
 import AffixButton from "../Form/AffixButton";
-import ToggleSection from "../ToggleSection"
+import HomeContent from "../Home/HomeContent";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "./PersonalityCard";
 
-const PersonalityView = ({ personality, href, isLoggedIn }) => {
+const PersonalityView = ({ personality, href, isLoggedIn, personalities }) => {
     const { t } = useTranslation();
     if (!personality) {
         return (
@@ -48,6 +48,15 @@ const PersonalityView = ({ personality, href, isLoggedIn }) => {
                 <Col sm={24} md={8} lg={6}>
                     <MetricsOverview stats={personality.stats} />
                 </Col>
+            </Row>
+
+            <Row>
+                <HomeContent
+                    isLoggedIn={isLoggedIn}
+                    personalities={personalities}
+                    href={href}
+                    title={t("personality:otherPersonalitiesTitle")}
+                />
             </Row>
             {isLoggedIn && (
                 <AffixButton

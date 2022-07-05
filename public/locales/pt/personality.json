@@ -7,5 +7,6 @@
     "headerReviewsTotal": "{{totalReviews}} avaliações de sentenças",
     "headerClaimsTotal": "discursos adicionados",
     "speechesListHeader": "Discursos",
-    "errorWhileFetching": "Erro ao buscar personalidade"
+    "errorWhileFetching": "Erro ao buscar personalidade",
+    "otherPersonalitiesTitle": "Personalidades no site"
 }

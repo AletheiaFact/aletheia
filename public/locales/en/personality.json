@@ -7,5 +7,6 @@
     "headerReviewsTotal": "{{totalReviews}} claim reviews",
     "headerClaimsTotal": "speeches added",
     "speechesListHeader": "Speeches",
-    "errorWhileFetching": "Error while fetching Personality"
+    "errorWhileFetching": "Error while fetching Personality",
+    "otherPersonalitiesTitle": "Personalities on the website"
 }
