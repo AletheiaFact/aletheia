@@ -2,5 +2,6 @@
     "myAccountItem": "My Account",
     "aboutItem": "About",
     "privacyPolicyItem": "Privacy Policy",
-    "codeOfConductItem": "Code of Conduct"
+    "codeOfConductItem": "Code of Conduct",
+    "logout": "Log Out"
 }
