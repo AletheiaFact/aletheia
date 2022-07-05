@@ -1,6 +1,6 @@
 import React from "react";
 import { NextPage } from "next";
-import LandingPageComponent from "../components/LandingPage";
+import LandingPageComponent from "../components/LandingPageComponent";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextSeo } from "next-seo";
 import { useTranslation } from "next-i18next";
@@ -17,7 +17,7 @@ const LandingPage: NextPage<{ data: string }> = () => {
     );
 };
 
-export async function getServerSideProps({ query, locale, locales, req }) {
+export async function getServerSideProps({ locale, locales, req }) {
     locale = parser.pick(locales, req.language) || locale || "en";
     return {
         props: {
