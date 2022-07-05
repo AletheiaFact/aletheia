@@ -42,9 +42,10 @@ describe("Test the side menu routes", () => {
             "contains",
             "http://localhost:3000"
         );
-        cy.wait(5000)
+        cy.intercept('/').as('homePage')
+        cy.wait("@homePage")
         cy.get(locators.MENU.SIDE_MENU).click();
-        cy.get("[data-cy=testLogout]").should("exist").click()
+        cy.get("[data-cy=testLogout]").should("exist").click();
         cy.url().should(
             "contains",
             "http://localhost:3000/login"
