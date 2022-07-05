@@ -1,26 +1,15 @@
-import { useState } from "react";
-import {
-    Row,
-    Spin
-} from "antd";
-import PersonalityCard from "./PersonalityCard";
-import SocialMediaShare from "../SocialMediaShare";
+import { Col, Row, Spin } from "antd";
+import { useTranslation } from "next-i18next";
+import { NextSeo } from "next-seo";
+
+import ClaimList from "../Claim/ClaimList";
 import AffixButton from "../Form/AffixButton";
 import ToggleSection from "../ToggleSection"
-import ClaimList from "../Claim/ClaimList";
 import MetricsOverview from "../Metrics/MetricsOverview";
-import { useTranslation } from 'next-i18next';
-import { NextSeo } from 'next-seo';
+import PersonalityCard from "./PersonalityCard";
 
 const PersonalityView = ({ personality, href, isLoggedIn }) => {
     const { t } = useTranslation();
-
-    const [showSpeechesSection, setShowSpeechesSection] = useState(true);
-
-    const onSectionChange = (event) => {
-        setShowSpeechesSection(event.target.value);
-    }
-
     if (!personality) {
         return (
             <Spin
@@ -29,7 +18,7 @@ const PersonalityView = ({ personality, href, isLoggedIn }) => {
                     textAlign: "center",
                     position: "absolute",
                     top: "50%",
-                    left: "calc(50% - 40px)"
+                    left: "calc(50% - 40px)",
                 }}
             ></Spin>
         );
@@ -39,38 +28,35 @@ const PersonalityView = ({ personality, href, isLoggedIn }) => {
         <>
             <NextSeo
                 title={personality.name}
-                description={t('seo:personalityDescription', { name: personality.name })}
+                description={t("seo:personalityDescription", {
+                    name: personality.name,
+                })}
                 openGraph={{
                     url: href,
                 }}
             />
-            <PersonalityCard personality={personality} header={true} />
-            <br />
-            { isLoggedIn && <AffixButton
-                tooltipTitle={t("personality:affixButtonTitle")}
-                href={`/personality/${personality.slug}/claim/create`}
-            />}
-            <Row
-                style={{
-                    textAlign: "center",
-                    width: "100%"
-                }}
-            >
-                <ToggleSection
-                    defaultValue={showSpeechesSection}
-                    labelTrue={t("personality:toggleSectionSpeeches")}
-                    labelFalse={t("metrics:headerTitle")}
-                    onChange={onSectionChange}
-                ></ToggleSection>
+            <Row justify="center">
+                <Col sm={24} md={18}>
+                    <PersonalityCard personality={personality} header={true} />
+                </Col>
             </Row>
-            {showSpeechesSection ? (
-                <ClaimList personality={personality}></ClaimList>
-            ) : (
-                <MetricsOverview stats={personality.stats} />
+
+            <Row justify="center">
+                <Col sm={24} md={14} lg={12}>
+                    <ClaimList personality={personality} />
+                </Col>
+                <Col sm={24} md={8} lg={6}>
+                    <MetricsOverview stats={personality.stats} />
+                </Col>
+            </Row>
+            {isLoggedIn && (
+                <AffixButton
+                    tooltipTitle={t("personality:affixButtonTitle")}
+                    href={`/personality/${personality.slug}/claim/create`}
+                />
             )}
-            <SocialMediaShare isLoggedIn={isLoggedIn} href={href} quote={personality.name} />
         </>
     );
-}
+};
 
 export default PersonalityView;
