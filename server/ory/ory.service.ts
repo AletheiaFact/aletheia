@@ -24,7 +24,6 @@ export default class OryService {
     }
 
     updateIdentity(user, password): Promise<any> {
-        console.log("user", user)
         const { access_token: token, url, schema_id } = this.configService.get("ory");
         return axios({
             method: "put",
