@@ -30,6 +30,11 @@ export class UsersService {
                 user.password
             );
             newUser.oryId = oryUser.id;
+        } else {
+            await this.oryService.updateIdentity(
+                newUser,
+                user.password
+            );
         }
         try {
             // @ts-ignore
