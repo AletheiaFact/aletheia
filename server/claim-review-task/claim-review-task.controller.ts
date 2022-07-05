@@ -3,12 +3,20 @@ import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 import { CaptchaService } from "../captcha/captcha.service";
+import { IsPublic } from "../decorators/is-public.decorator";
+
 @Controller()
 export class ClaimReviewController {
     constructor(
         private claimReviewTaskService: ClaimReviewTaskService,
         private captchaService: CaptchaService
     ) { }
+
+    @IsPublic()
+    @Get("api/claimreviewtask/value/:value")
+    public async getByMachineValue(@Param("value") value) {
+        return await this.claimReviewTaskService.listAll(value)
+    }
 
     @Get("api/claimreviewtask/:id")
     async getById(@Param("id") id: string) {

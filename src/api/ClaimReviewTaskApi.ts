@@ -7,6 +7,17 @@ const request = axios.create({
     baseURL: `/api/claimreviewtask`,
 });
 
+const getClaimReviewTasks = (params) => {
+    return request
+        .get(`/value/${params}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((e) => {
+            throw e;
+        });
+};
+
 const getMachineBySentenceHash = (params, t) => {
     return request
         .get(`/sentence/${params}`)
@@ -53,6 +64,7 @@ const ClaimReviewTaskApi = {
     getMachineBySentenceHash,
     createClaimReviewTask,
     updateClaimReviewTask,
+    getClaimReviewTasks
 }
 
 export default ClaimReviewTaskApi
