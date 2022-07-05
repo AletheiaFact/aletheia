@@ -8,7 +8,7 @@ const ProfilePage: NextPage<{ user }> = ({ user }) => {
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = req.cookies.default_language || parser.pick(locales, req.language) || locale || "pt";
     return {
         props: {
             ...(await serverSideTranslations(locale)),

@@ -1,13 +1,14 @@
-import { Col, Row } from "antd";
-import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
 import React from "react";
+import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
+import { Col, Row } from "antd";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
+import { GB, BR } from 'country-flag-icons/react/3x2'
 import colors from "../../styles/colors";
 import Logo from "./Logo";
 import { useAppSelector } from "../../store/store";
-
+import ButtonFlag from "./ButtonFlag";
 
 const HeaderContent = ({ className }) => {
     const dispatch = useDispatch();
@@ -53,7 +54,7 @@ const HeaderContent = ({ className }) => {
                 <Logo color="white" />
             </a>
         </Col>
-        <Col span={2}>
+        <Col span={1}>
             <a
                 onClick={() => {
                     const pathname = router.pathname;
@@ -75,6 +76,15 @@ const HeaderContent = ({ className }) => {
                     }}
                 />
             </a>
+        </Col>
+        <Col span={1} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <ButtonFlag language="pt">
+                <BR title="Brazil" style={{ width: "20px"}} />
+            </ButtonFlag>
+
+            <ButtonFlag language="en">
+                <GB title="United Kingdom" style={{ width: "20px"}} />
+            </ButtonFlag>
         </Col>
     </Row>
 };

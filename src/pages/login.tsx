@@ -16,7 +16,7 @@ const LoginPage: NextPage<{ data: any }> = (props) => {
 };
 
 export async function getServerSideProps({ locale, locales, req, query }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = req.cookies.default_language || parser.pick(locales, req.language) || locale || "pt";
     return {
         props: {
             ...(await serverSideTranslations(locale)),
