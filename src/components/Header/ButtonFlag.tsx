@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "antd";
 
-const ButtonFlag = ({ children, language }) => {
+const ButtonFlag = ({ children, language, dataCy }) => {
     const setDefaultLanguage = (language) => {
         if(!document.cookie.includes(`default_language=${language}`)) {
             window.location.reload()
@@ -17,6 +17,7 @@ const ButtonFlag = ({ children, language }) => {
                 background: "none"
             }}
             onClick={() => setDefaultLanguage(language)}
+            data-cy={dataCy}
         >
             {children}
         </Button>
