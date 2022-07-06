@@ -36,7 +36,7 @@ const PersonalityView = ({ personality, href, isLoggedIn, personalities }) => {
                 }}
             />
             <Row justify="center">
-                <Col sm={24} md={18}>
+                <Col sm={24} md={20} lg={18}>
                     <PersonalityCard personality={personality} header={true} />
                 </Col>
             </Row>
