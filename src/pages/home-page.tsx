@@ -3,7 +3,7 @@ import Home from "../components/Home/Home";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextSeo } from "next-seo";
 import { useTranslation } from "next-i18next";
-const parser = require("accept-language-parser");
+import { GetLocale } from "../utils/GetLocale";
 
 const HomePage: NextPage<{ data: any }> = (props) => {
     const { t } = useTranslation();
@@ -15,7 +15,7 @@ const HomePage: NextPage<{ data: any }> = (props) => {
     );
 };
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = req.cookies.default_language || parser.pick(locales, req.language) || locale || "pt";
+    locale = GetLocale(req, locale, locales)
     return {
         props: {
             ...(await serverSideTranslations(locale)),

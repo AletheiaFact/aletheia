@@ -1,14 +1,14 @@
 import { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import OryProfileView from "../components/Profile/OryProfileView";
-const parser = require("accept-language-parser");
+import { GetLocale } from "../utils/GetLocale";
 
 const ProfilePage: NextPage<{ user }> = ({ user }) => {
     return <OryProfileView user={user} />;
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = req.cookies.default_language || parser.pick(locales, req.language) || locale || "pt";
+    locale = GetLocale(req, locale, locales)
     return {
         props: {
             ...(await serverSideTranslations(locale)),

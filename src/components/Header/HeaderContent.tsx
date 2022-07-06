@@ -79,11 +79,11 @@ const HeaderContent = ({ className }) => {
         </Col>
         <Col span={1} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <ButtonFlag language="pt">
-                <BR title="Brazil" style={{ width: "20px"}} />
+                <BR title="PT" style={{ width: "20px"}} />
             </ButtonFlag>
 
             <ButtonFlag language="en">
-                <GB title="United Kingdom" style={{ width: "20px"}} />
+                <GB title="EN" style={{ width: "20px"}} />
             </ButtonFlag>
         </Col>
     </Row>
