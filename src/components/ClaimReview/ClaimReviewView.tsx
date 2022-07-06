@@ -114,7 +114,7 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                     />
                 }
             </Col>
-            <SocialMediaShare quote={personality?.name} href={href} claim={claim?.title} />
+            <SocialMediaShare isLoggedIn={isLoggedIn}  quote={personality?.name} href={href} claim={claim?.title} />
         </>
     )
 }
