@@ -32,4 +32,23 @@ describe("Test the side menu routes", () => {
         cy.get("[data-cy=testCodeOfConductItem]").should("contain", "Condu");
         cy.get("[data-cy=testCodeOfConductItem]").click();
     });
+
+    it("Should not show log out when not logged in", () => {
+        cy.get(locators.MENU.SIDE_MENU).click();
+        cy.get("[data-cy=testLogout]").should("not.exist")
+
+        cy.login()
+        cy.url().should(
+            "contains",
+            "http://localhost:3000"
+        );
+        cy.intercept('/').as('homePage')
+        cy.wait("@homePage")
+        cy.get(locators.MENU.SIDE_MENU).click();
+        cy.get("[data-cy=testLogout]").should("exist").click();
+        cy.url().should(
+            "contains",
+            "http://localhost:3000/login"
+        );
+    })
 });
