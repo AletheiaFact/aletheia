@@ -104,6 +104,7 @@ const AletheiaMenu = () => {
             </Menu.Item>
             {hasSession && <Menu.Item
                 data-cy={"testLogout"}
+                key="/login"
                 style={{
                     fontSize: "18px"
                 }}
