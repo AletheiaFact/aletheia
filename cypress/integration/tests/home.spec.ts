@@ -5,7 +5,7 @@ import locators from "../../support/locator";
 
 describe("Test the side menu routes", () => {
     it("Open side bar and Login", () => {
-        cy.visit("http://localhost:3000/home");
+        cy.visit("http://localhost:3000");
 
         cy.title().should("contain", "AletheiaFact.org");
         cy.get("#rcc-confirm-button").click();
@@ -36,14 +36,11 @@ describe("Test the side menu routes", () => {
     it("Should not show log out when not logged in", () => {
         cy.get(locators.MENU.SIDE_MENU).click();
         cy.get("[data-cy=testLogout]").should("not.exist")
+    })
 
+    it("Should be able to log out when logged in", () => {
         cy.login()
-        cy.url().should(
-            "contains",
-            "http://localhost:3000"
-        );
-        cy.intercept('/').as('homePage')
-        cy.wait("@homePage")
+        cy.title().should("contains", "Home");
         cy.get(locators.MENU.SIDE_MENU).click();
         cy.get("[data-cy=testLogout]").should("exist").click();
         cy.url().should(
