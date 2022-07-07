@@ -13,7 +13,7 @@ const AletheiaMenu = () => {
     const dispatch = useDispatch();
     const router = useRouter();
     const onLogout = () => { CreateLogoutHandler() 
-        .then(() => router.push("/login"))
+        .then(() => router.push("/"))
         .then(() => router.reload())
     }
     const [hasSession, setHasSession] = useState<boolean>(false)
@@ -104,7 +104,7 @@ const AletheiaMenu = () => {
             </Menu.Item>
             {hasSession && <Menu.Item
                 data-cy={"testLogout"}
-                key="/login"
+                key="/home"
                 style={{
                     fontSize: "18px"
                 }}
