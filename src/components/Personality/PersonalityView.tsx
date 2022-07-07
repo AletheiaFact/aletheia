@@ -36,16 +36,16 @@ const PersonalityView = ({ personality, href, isLoggedIn, personalities }) => {
                 }}
             />
             <Row justify="center">
-                <Col sm={24} md={20} lg={18}>
+                <Col sm={22} md={20} lg={18}>
                     <PersonalityCard personality={personality} header={true} />
                 </Col>
             </Row>
 
             <Row justify="center">
-                <Col sm={24} md={14} lg={12}>
+                <Col sm={22} md={14} lg={12}>
                     <ClaimList personality={personality} />
                 </Col>
-                <Col sm={24} md={8} lg={6}>
+                <Col sm={22} md={8} lg={6}>
                     <MetricsOverview stats={personality.stats} />
                 </Col>
             </Row>
