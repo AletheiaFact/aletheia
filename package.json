@@ -91,6 +91,7 @@
         "compromise-sentences": "^0.3.0",
         "connect-mongo": "^4.6.0",
         "cookie-parser": "^1.4.5",
+        "country-flag-icons": "^1.5.5",
         "domino": "^2.1.6",
         "draft-js": "^0.11.7",
         "draft-js-export-html": "^1.4.1",

@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextSeo } from "next-seo";
 import LoginView from "../components/Login/LoginView";
-const parser = require("accept-language-parser");
+import { GetLocale } from "../utils/GetLocale";
 
 const LoginPage: NextPage<{ data: any }> = (props) => {
     const { t } = useTranslation();
@@ -16,7 +16,7 @@ const LoginPage: NextPage<{ data: any }> = (props) => {
 };
 
 export async function getServerSideProps({ locale, locales, req, query }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = GetLocale(req, locale, locales)
     return {
         props: {
             ...(await serverSideTranslations(locale)),

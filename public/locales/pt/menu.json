@@ -2,5 +2,6 @@
     "myAccountItem": "Minha conta",
     "aboutItem": "Sobre nós",
     "privacyPolicyItem": "Política de Privacidade",
-    "codeOfConductItem": "Código de Conduta"
+    "codeOfConductItem": "Código de Conduta",
+    "logout": "Encerrar Sessão"
 }

@@ -205,7 +205,7 @@ const Claim = ({ personality, claim, href }) => {
                         <MetricsOverview stats={stats} />
                     )}
                 </article>
-                <SocialMediaShare quote={personality?.name} href={href} claim={claim?.title} />
+                <SocialMediaShare isLoggedIn={"isLoggedIn"} quote={personality?.name} href={href} claim={claim?.title} />
             </>
         );
     } else {

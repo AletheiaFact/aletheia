@@ -68,7 +68,7 @@ const PersonalityView = ({ personality, href, isLoggedIn }) => {
             ) : (
                 <MetricsOverview stats={personality.stats} />
             )}
-            <SocialMediaShare href={href} quote={personality.name} />
+            <SocialMediaShare isLoggedIn={isLoggedIn} href={href} quote={personality.name} />
         </>
     );
 }
