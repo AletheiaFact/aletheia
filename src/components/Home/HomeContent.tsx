@@ -4,7 +4,7 @@ import { Row, Col } from "antd";
 import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from 'next-i18next';
 import SectionTitle from "../SectionTitle";
-import HomePersonalitiesContainer from "../Personality/PersonalitiesGrid";
+import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import HomeContentStyle from "./HomeContent.style";
 const HomeContent = ({ personalities, href, isLoggedIn, title }) => {
     const { t } = useTranslation();
@@ -15,7 +15,7 @@ const HomeContent = ({ personalities, href, isLoggedIn, title }) => {
                 className="main-content"
                 style={{ paddingTop: "32px" }}
             >
-                <HomePersonalitiesContainer
+                <PersonalitiesGrid
                     personalities={personalities}
                     isLoggedIn={isLoggedIn}
                     title={title}

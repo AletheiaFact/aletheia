@@ -6,7 +6,7 @@ import Button, { ButtonType } from '../Button';
 import { ArrowRightOutlined } from "@ant-design/icons";
 import SectionTitle from "../SectionTitle";
 
-const HomePersonalitiesContainer = ({ isLoggedIn, personalities, title }) => {
+const PersonalitiesGrid = ({ isLoggedIn, personalities, title }) => {
     const { t } = useTranslation()
 
     const gridLayout = isLoggedIn ? {
@@ -66,14 +66,6 @@ const HomePersonalitiesContainer = ({ isLoggedIn, personalities, title }) => {
                     href="/personality"
                     type={ButtonType.blue}
                     data-cy="testSeeMorePersonality"
-                    style={{
-                        paddingBottom: 0,
-                        height: 40,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: "4px",
-                    }}
                 >
                     <span
                         style={{
@@ -91,4 +83,4 @@ const HomePersonalitiesContainer = ({ isLoggedIn, personalities, title }) => {
     )
 }
 
-export default HomePersonalitiesContainer
+export default PersonalitiesGrid

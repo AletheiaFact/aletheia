@@ -192,16 +192,7 @@ const PersonalityCard = ({
                                     <Button
                                         type={ButtonType.blue}
                                         data-cy={personality.name}
-                                        href={`${hrefBase || "/personality/"}${personality.slug
-                                            }`}
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            height: 40,
-                                            paddingBottom: 0,
-                                            borderRadius: "4px",
-                                        }}
+                                        href={`${hrefBase || "/personality/"}${personality.slug}`}
                                     >
                                         {t("personality:profile_button")}
                                     </Button>
