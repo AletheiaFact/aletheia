@@ -35,17 +35,13 @@ describe("Test the side menu routes", () => {
 
     it("Should not show log out when not logged in", () => {
         cy.get(locators.MENU.SIDE_MENU).click();
-        cy.get("[data-cy=testLogout]").should("not.exist")
-    })
+        cy.get("[data-cy=testLogout]").should("not.exist");
+    });
 
     it("Should be able to log out when logged in", () => {
-        cy.login()
-        cy.title().should("contains", "Home");
+        cy.login();
         cy.get(locators.MENU.SIDE_MENU).click();
         cy.get("[data-cy=testLogout]").should("exist").click();
-        cy.url().should(
-            "contains",
-            "http://localhost:3000/login"
-        );
-    })
+        cy.url().should("contains", "login");
+    });
 });

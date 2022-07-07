@@ -5,6 +5,8 @@ Cypress.Commands.add('login', () => {
     cy.get(locators.LOGIN.USER).type("test@aletheiafact.org");
     cy.get(locators.LOGIN.PASSWORD).type("TEST_USER_PASS");
     cy.get(locators.LOGIN.BTN_LOGIN).click();
+    cy.intercept("/api/.ory/sessions/whoami").as("confirmLogin");
+    cy.wait("@confirmLogin");
 })
 
 Cypress.Commands.add('checkRecaptcha', () => {
