@@ -24,7 +24,7 @@ services:
           useNewUrlParser: true
       users:
         - name: Test User
-          email: test@aletheiafact.org
+          email: test-cypress@aletheiafact.org
           password: TEST_USER_PASS
           sendAuthDetails: false
           isTestUser: true
