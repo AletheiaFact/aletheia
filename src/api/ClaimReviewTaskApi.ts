@@ -7,11 +7,25 @@ const request = axios.create({
     baseURL: `/api/claimreviewtask`,
 });
 
-const getClaimReviewTasks = (params) => {
+const getClaimReviewTasks = (options) => {
+    const params = {
+        page: options.page ? options.page - 1 : 0,
+        order: options.order || 'asc',
+        pageSize: options.pageSize ? options.pageSize : 5,
+        value: options.value
+    };
+
     return request
-        .get(`/value/${params}`)
+        .get(`/`, { params })
         .then((response) => {
-            return response.data;
+            const { tasks, totalPages, totalTasks } = response.data;
+            console.log('api response', tasks);
+
+            return {
+                data: tasks[0].reviews,
+                total: totalTasks,
+                totalPages
+            }
         })
         .catch((e) => {
             throw e;

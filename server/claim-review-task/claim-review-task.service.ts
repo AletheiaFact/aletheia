@@ -17,28 +17,39 @@ export class ClaimReviewTaskService {
         private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
         private reportService: ReportService
-    ) {}
+    ) { }
 
-    async listAll(value) {
+    async listAll(page, pageSize, order, value) {
+        console.log('value no service', value, pageSize);
+
         return await this.ClaimReviewTaskModel.aggregate([
-            {"$match": { "machine.value": value }},
-            {"$lookup": {
-                from: 'users',
-                localField: 'machine.context.reviewData.userId',
-                foreignField: '_id',
-                as: 'machine.context.reviewData.userId'
-            }},
-            {"$project": {
-                sentence_hash: 1,
-                "machine.value": 1,
-                "machine.context.reviewData.userId.name": 1
-            }},
-            {"$group": {
-                _id: "$machine.value",
-                reviews: {
-                    "$push": { sentence_hash: "$sentence_hash", userId: "$machine.context.reviewData.userId.name" }
+            { "$match": { "machine.value": value } },
+            { "$skip": page * pageSize },
+            { "$sample": { size: 5 } },
+            { "$sort": { _id: 1 } },
+            {
+                "$lookup": {
+                    from: 'users',
+                    localField: 'machine.context.reviewData.userId',
+                    foreignField: '_id',
+                    as: 'machine.context.reviewData.userId'
                 }
-            }}
+            },
+            {
+                "$project": {
+                    sentence_hash: 1,
+                    "machine.value": 1,
+                    "machine.context.reviewData.userId.name": 1
+                }
+            },
+            {
+                "$group": {
+                    _id: "$machine.value",
+                    reviews: {
+                        "$push": { sentence_hash: "$sentence_hash", userId: "$machine.context.reviewData.userId.name" }
+                    }
+                }
+            },
         ])
     }
 
@@ -75,7 +86,7 @@ export class ClaimReviewTaskService {
             );
 
             if (newClaimReviewTaskMachine.value === "published") {
-                const claimReviewData = 
+                const claimReviewData =
                     newClaimReviewTaskMachine.context.claimReview;
 
                 const newReport = Object.assign(

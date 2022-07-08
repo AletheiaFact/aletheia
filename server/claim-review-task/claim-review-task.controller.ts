@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Param, Get, Put } from "@nestjs/common";
+import { Body, Controller, Post, Param, Get, Put, Query } from "@nestjs/common";
 import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
@@ -13,9 +13,23 @@ export class ClaimReviewController {
     ) { }
 
     @IsPublic()
-    @Get("api/claimreviewtask/value/:value")
-    public async getByMachineValue(@Param("value") value) {
-        return await this.claimReviewTaskService.listAll(value)
+    @Get("api/claimreviewtask")
+    public async getByMachineValue(@Query() query) {
+        const { page = 0, pageSize = 10, order = 1, value } = query;
+        return this.claimReviewTaskService.listAll(page, pageSize, order, value)
+            .then(tasks => {
+                const totalPages = 1
+                const totalTasks = 5
+
+                return {
+                    tasks,
+                    totalTasks,
+                    totalPages,
+                    page,
+                    pageSize,
+
+                }
+            })
     }
 
     @Get("api/claimreviewtask/:id")

@@ -1,10 +1,12 @@
-import React from "react";
 import { Col, Row } from "antd";
+import React from "react";
+
+import claimReviewTaskApi from "../../api/ClaimReviewTaskApi";
 import { ReviewTaskStates } from "../../machine/enums";
-import ClaimReviewTaskList from "./ClaimReviewTaskList";
-import KanbanCol from "./KanbanCol";
-import Subtitle from "../Subtitle";
 import colors from "../../styles/colors";
+import BaseList from "../List/BaseList";
+import KanbanCard from "./KanbanCard";
+import KanbanCol from "./KanbanCol";
 
 const KanbanView = () => {
     return (
@@ -12,14 +14,19 @@ const KanbanView = () => {
             <Col span={24}>
                 <Row
                     style={{
-                        background: colors.bluePrimary,
                         borderRadius: "10px",
                         height: "100%",
                     }}
                 >
                     <KanbanCol>
-                        <Subtitle style={{ color: colors.white, fontSize: 18 }}>Assigned</Subtitle>
-                        <ClaimReviewTaskList value={ReviewTaskStates.assigned} />
+                        <BaseList
+                            title={ReviewTaskStates.assigned}
+                            apiCall={claimReviewTaskApi.getClaimReviewTasks}
+                            filter={{ value: ReviewTaskStates.assigned }}
+                            renderItem={task => (
+                                <KanbanCard reviewTask={task} />
+                            )}
+                        />
                     </KanbanCol>
 
                     <KanbanCol
@@ -28,13 +35,25 @@ const KanbanView = () => {
                             borderRight: `2px solid ${colors.blackSecondary}`,
                         }}
                     >
-                        <Subtitle style={{ color: colors.white, fontSize: 18 }}>Report</Subtitle>
-                        <ClaimReviewTaskList value={ReviewTaskStates.reported} />
+                        <BaseList
+                            title={ReviewTaskStates.reported}
+                            apiCall={claimReviewTaskApi.getClaimReviewTasks}
+                            filter={{ value: ReviewTaskStates.reported }}
+                            renderItem={task => (
+                                <KanbanCard reviewTask={task} />
+                            )}
+                        />
                     </KanbanCol>
 
                     <KanbanCol>
-                        <Subtitle style={{ color: colors.white, fontSize: 18 }}>Publish</Subtitle>
-                        <ClaimReviewTaskList value={ReviewTaskStates.published} />
+                        <BaseList
+                            title={ReviewTaskStates.published}
+                            apiCall={claimReviewTaskApi.getClaimReviewTasks}
+                            filter={{ value: ReviewTaskStates.published }}
+                            renderItem={task => (
+                                <KanbanCard reviewTask={task} />
+                            )}
+                        />
                     </KanbanCol>
                 </Row>
             </Col>

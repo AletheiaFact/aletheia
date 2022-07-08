@@ -20,7 +20,7 @@ export class ClaimReviewController {
     constructor(
         private claimReviewService: ClaimReviewService,
         private viewService: ViewService,
-    ) {}
+    ) { }
 
     @Post("api/review/:sentence_hash")
     async create(
@@ -49,7 +49,7 @@ export class ClaimReviewController {
     }
 
     @IsPublic()
-    @Get("review/kanban")
+    @Get("kanban")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
