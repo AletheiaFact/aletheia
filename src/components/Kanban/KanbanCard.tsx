@@ -9,7 +9,7 @@ const { Title } = Typography
 const KanbanCard = ({ reviewTask }) => {
     return (
         <CardBase>
-            <Row style={{ padding: "10px", width: "100%" }}>
+            <Row style={{ padding: "10px", width: "300px" }}>
                 <Col style={{
                     display: "flex",
                     alignItems: "center",

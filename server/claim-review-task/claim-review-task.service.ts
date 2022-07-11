@@ -20,7 +20,6 @@ export class ClaimReviewTaskService {
     ) { }
 
     async listAll(page, pageSize, order, value) {
-        console.log('value no service', value, pageSize);
 
         return await this.ClaimReviewTaskModel.aggregate([
             { "$match": { "machine.value": value } },

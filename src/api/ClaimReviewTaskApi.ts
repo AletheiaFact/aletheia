@@ -19,10 +19,9 @@ const getClaimReviewTasks = (options) => {
         .get(`/`, { params })
         .then((response) => {
             const { tasks, totalPages, totalTasks } = response.data;
-            console.log('api response', tasks);
 
             return {
-                data: tasks[0].reviews,
+                data: tasks[0]?.reviews || [],
                 total: totalTasks,
                 totalPages
             }

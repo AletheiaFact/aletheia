@@ -11,8 +11,11 @@ enum ReviewTaskStates {
     assigned = "assigned",
     reported = "reported",
     published = "published",
+}
+
+enum DraftStates {
     undraft = "undraft",
     draft = "draft"
 }
 
-export { ReviewTaskEvents, ReviewTaskStates };
+export { ReviewTaskEvents, ReviewTaskStates, DraftStates };

@@ -1,18 +1,36 @@
+import { Col, Empty, Row } from "antd";
+import { useTranslation } from "next-i18next";
 import React from "react";
-import { Col } from "antd";
+import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
+import { ReviewTaskStates } from "../../machine/enums";
+import BaseList from "../List/BaseList";
+import EmptyKanbanCol from "./EmptyKanbanCol";
+import KanbanCard from "./KanbanCard";
 
-const KabanCol = (props) => {
+interface KanbanColProps {
+    state: ReviewTaskStates
+}
+
+
+
+const KabanCol = ({ state }: KanbanColProps) => {
+    const { t } = useTranslation();
     return (
-        <Col
-            span={8}
+        <div
             style={{
                 padding: 10,
-                height: "100%",
-                ...props.style
             }}
         >
-            {props.children}
-        </Col>
+            <BaseList
+                title={t(`claimReviewTask:${state}`)}
+                apiCall={ClaimReviewTaskApi.getClaimReviewTasks}
+                filter={{ value: state }}
+                renderItem={task => (
+                    <KanbanCard reviewTask={task} />
+                )}
+                emptyFallback={<EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />}
+            />
+        </div>
     )
 }
 
