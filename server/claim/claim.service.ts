@@ -37,6 +37,7 @@ export class ClaimService {
         }
         const claims = await this.ClaimModel.find(query)
             .populate("latestRevision")
+            .populate("speeches")
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
@@ -183,7 +184,9 @@ export class ClaimService {
                 .populate("personality", "_id name")
                 .populate("sources", "_id link classification")
                 .populate("latestRevision")
+                .populate("speeches")
                 .lean()
+
         }
         if (!claim) {
             throw new NotFoundException()
@@ -206,6 +209,9 @@ export class ClaimService {
         const reviews = await this.claimReviewService.getReviewsByClaimId(
             claim._id
         );
+
+        claim.content = claim.speeches[0].content
+
         if (claim) {
             if (claim?.content?.object) {
                 claim.content.object = this.transformContentObject(

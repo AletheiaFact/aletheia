@@ -42,14 +42,16 @@ export class ClaimRevisionService {
      */
     async create(claimId, claim) {
         claim.claimId = claimId;
-        if (typeof claim.content === "string") {
-            claim.content = this.parserService.parse(claim.content);
-        }
         claim.slug = slugify(claim.title, {
             lower: true,     // convert to lower case, defaults to `false`
             strict: true     // strip special characters except replacement, defaults to `false`
         })
         const newClaimRevision = new this.ClaimRevisionModel(claim);
+
+        if (typeof claim.content === "string") {
+            newClaimRevision.content = await this.parserService.parse(claim.content, newClaimRevision._id);
+        }
+
         if (claim.sources && Array.isArray(claim.sources)) {
             try {
                 for (let source of claim.sources) {

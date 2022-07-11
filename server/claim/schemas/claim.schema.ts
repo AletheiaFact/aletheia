@@ -39,6 +39,12 @@ ClaimSchemaRaw.virtual('sources', {
     foreignField: 'targetId'
 })
 
+ClaimSchemaRaw.virtual('speeches', {
+    ref: 'Speech',
+    localField: 'latestRevision',
+    foreignField: 'targetId'
+})
+
 ClaimSchemaRaw.plugin(softDeletePlugin)
 
 export const ClaimSchema = ClaimSchemaRaw;

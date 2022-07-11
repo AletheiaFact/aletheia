@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { SpeechService } from "../speech/speech.service";
 const md5 = require("md5");
 const nlp = require('compromise')
 nlp.extend(require('compromise-sentences'))
@@ -15,11 +16,14 @@ const phdRegex = /Ph\.D\./g;
 
 @Injectable()
 export class ParserService {
+    constructor(
+        private speechService: SpeechService,
+    ) {}
     paragraphSequence: number;
     sentenceSequence: number;
     nlpOptions: object = { trim:true };
 
-    parse(content: string) {
+    async parse(content: string, claimRevisionId = null) {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
         const result = [];
@@ -41,10 +45,13 @@ export class ParserService {
             }
         });
 
-        return {
-            object: result,
-            text: nlpContent.text(this.nlpOptions),
-        };
+        return await this.speechService.create({ 
+            content: {
+                object: result,
+                text: nlpContent.text(this.nlpOptions),
+            },
+            targetId: claimRevisionId
+        })
     }
 
     postProcessSentences(sentences) {
