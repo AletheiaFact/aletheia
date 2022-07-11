@@ -117,7 +117,7 @@ const ClaimCard = ({ personality, claim }) => {
                             display: 'flex'
                         }}
                     >
-                        <span style={{ margin: 0 }}>
+                        {review && <span style={{ margin: 0 }}>
                             {t(
                                 "claim:cardOverallReviewPrefix"
                             )}
@@ -139,7 +139,7 @@ const ClaimCard = ({ personality, claim }) => {
                                 )}
                             </span>
                             ({0})
-                        </span>
+                        </span>}
                     </Paragraph>
                 </Col>
                 <Col>
