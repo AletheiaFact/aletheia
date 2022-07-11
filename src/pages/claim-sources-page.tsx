@@ -3,7 +3,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import ClaimSourceList from "../components/Claim/ClaimSourceList";
 import { NextSeo } from 'next-seo';
 import { useTranslation } from "next-i18next";
-const parser = require("accept-language-parser");
+import { GetLocale } from "../utils/GetLocale";
 
 const ClaimSourcePage: NextPage<{ claimId }> = ({ claimId }) => {
     const { t } = useTranslation();
@@ -20,7 +20,7 @@ const ClaimSourcePage: NextPage<{ claimId }> = ({ claimId }) => {
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = GetLocale(req, locale, locales)
     return {
         props: {
             ...(await serverSideTranslations(locale)),

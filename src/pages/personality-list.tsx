@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import PersonalityList from "../components/Personality/PersonalityList";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-const parser = require('accept-language-parser');
+import { GetLocale } from "../utils/GetLocale";
 
 const PersonalityListPage: NextPage<{}> = () => {
     return (
@@ -10,7 +10,7 @@ const PersonalityListPage: NextPage<{}> = () => {
 }
 
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = GetLocale(req, locale, locales)
     return {
         props: {
             ...(await serverSideTranslations(locale)),

@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import HistoryView from "../components/history/HistoryView";
-const parser = require('accept-language-parser');
+import { GetLocale } from "../utils/GetLocale";
 
 const HistoryPage: NextPage<{ targetId: any, targetModel: any }> = ({ targetId, targetModel }) => {
     return (
@@ -10,7 +10,7 @@ const HistoryPage: NextPage<{ targetId: any, targetModel: any }> = ({ targetId, 
 }
 
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = GetLocale(req, locale, locales)
     return {
         props: {
             ...(await serverSideTranslations(locale)),

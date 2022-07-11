@@ -31,7 +31,7 @@
         "build-storybook": "build-storybook -o ./docs/storybook",
         "cypress-open": "cypress open",
         "cypress-run": "cypress run",
-        "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"Server,Seed\" \"node dist/server/mongodb.server.js -c config.test.ci.yaml\" \"wait-on tcp:35025 && yarn seed:ci\""
+        "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Server\" \"node dist/server/mongodb.server.js\" \"wait-on tcp:35025 && yarn seed:ci && yarn start -c config.test.ci.yaml\""
     },
     "nodemonConfig": {
         "ignore": [
@@ -91,6 +91,7 @@
         "compromise-sentences": "^0.3.0",
         "connect-mongo": "^4.6.0",
         "cookie-parser": "^1.4.5",
+        "country-flag-icons": "^1.5.5",
         "domino": "^2.1.6",
         "draft-js": "^0.11.7",
         "draft-js-export-html": "^1.4.1",

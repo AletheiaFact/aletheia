@@ -25,11 +25,18 @@ export class UsersService {
         const newUser = new this.UserModel(user);
 
         if (!newUser.oryId) {
+            this.logger.log("No user id provided, creating a new ory identity")
             const { data: oryUser } = await this.oryService.createIdentity(
                 newUser,
                 user.password
             );
             newUser.oryId = oryUser.id;
+        } else {
+            this.logger.log("User id provided, updating a new ory identity")
+            await this.oryService.updateIdentity(
+                newUser,
+                user.password
+            );
         }
         try {
             // @ts-ignore
