@@ -42,6 +42,9 @@ describe("Test the side menu routes", () => {
         cy.login();
         cy.get(locators.MENU.SIDE_MENU).click();
         cy.get("[data-cy=testLogout]").should("exist").click();
-        cy.url().should("contains", "login");
-    });
+        cy.url().should(
+            "contains",
+            "http://localhost:3000"
+        );
+    })
 });
