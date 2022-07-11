@@ -5,7 +5,8 @@
     "affixButtonTitle": "Clique aqui para adicionar um discurso",
     "wikipediaPage": "Acesse a página do Wikipédia",
     "headerReviewsTotal": "{{totalReviews}} avaliações de sentenças",
-    "headerClaimsTotal": "discursos adicionados",
-    "toggleSectionSpeeches": "Discursos",
-    "errorWhileFetching": "Erro ao buscar personalidade"
+    "headerClaimsTotal": "{{totalClaims}} discursos adicionados",
+    "speechesListHeader": "Discursos",
+    "errorWhileFetching": "Erro ao buscar personalidade",
+    "otherPersonalitiesTitle": "Personalidades no site"
 }

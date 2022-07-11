@@ -1,10 +1,11 @@
 import { Controller, Get, Req, Res } from "@nestjs/common";
 import { ViewService } from "../view/view.service";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { parse } from "url";
 import { PersonalityService } from "../personality/personality.service";
 import { StatsService } from "../stats/stats.service";
 import { IsPublic } from "../decorators/is-public.decorator";
+import { BaseRequest } from "../types";
 
 @Controller("/")
 export class HomeController {
@@ -12,7 +13,7 @@ export class HomeController {
         private viewService: ViewService,
         private personalityService: PersonalityService,
         private statsService: StatsService
-    ) {}
+    ) { }
 
     @Get('/home')
     /**
@@ -25,16 +26,16 @@ export class HomeController {
 
     @IsPublic()
     @Get()
-    public async showHome(@Req() req: Request, @Res() res: Response) {
+    public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
+
         const { personalities } = await this.personalityService.combinedListAll({
-            // @ts-ignore
             language: req.language,
             order: 'random',
-            pageSize: 5,
+            pageSize: 6,
             fetchOnly: true
         });
+
         const stats = await this.statsService.getHomeStats();
         await this.viewService
             .getNextServer()
