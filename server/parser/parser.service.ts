@@ -23,24 +23,30 @@ export class ParserService {
     sentenceSequence: number;
     nlpOptions: object = { trim:true };
 
-    async parse(content: string, claimRevisionId = null) {
+    async parse(content: string) {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
         const result = [];
         const nlpContent = nlp(content);
         const paragraphs = nlpContent.paragraphs();
+        const text = nlpContent.text(this.nlpOptions)
 
         paragraphs.forEach((paragraph) => {
             const paragraphId = this.createParagraphId();
             const sentences = this.postProcessSentences(paragraph.sentences());
 
+            const paragraphDataHash = md5(
+                `${this.paragraphSequence}${text}${paragraph}`
+            );
+
             if (sentences && sentences.length) {
                 result.push({
                     type: "paragraph",
+                    "data-hash": paragraphDataHash,
                     props: {
                         id: paragraphId,
                     },
-                    content: sentences.map((sentence) => this.parseSentence(sentence)),
+                    content: sentences.map((sentence) => this.parseSentence(sentence, paragraphDataHash)),
                 });
             }
         });
@@ -48,9 +54,8 @@ export class ParserService {
         return await this.speechService.create({ 
             content: {
                 object: result,
-                text: nlpContent.text(this.nlpOptions),
+                text
             },
-            targetId: claimRevisionId
         })
     }
 
@@ -74,17 +79,17 @@ export class ParserService {
         return newSentences;
     }
 
-    parseSentence(sentenceContent) {
+    parseSentence(sentenceContent, paragraphDataHash) {
         const sentenceId = this.createSentenceId();
         const sentenceDataHash = md5(
-            `${this.paragraphSequence}${this.sentenceSequence}${sentenceContent}`
+            `${paragraphDataHash}${this.sentenceSequence}${sentenceContent}`
         );
 
         return {
             type: "sentence",
+            "data-hash": sentenceDataHash,
             props: {
                 id: sentenceId,
-                "data-hash": sentenceDataHash,
             },
             content: sentenceContent,
         };

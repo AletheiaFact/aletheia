@@ -46,11 +46,13 @@ export class ClaimRevisionService {
             lower: true,     // convert to lower case, defaults to `false`
             strict: true     // strip special characters except replacement, defaults to `false`
         })
-        const newClaimRevision = new this.ClaimRevisionModel(claim);
 
         if (typeof claim.content === "string") {
-            newClaimRevision.content = await this.parserService.parse(claim.content, newClaimRevision._id);
+            claim.contentId = await this.parserService.parse(claim.content);
+            claim.contentModel = "speech"
         }
+
+        const newClaimRevision = new this.ClaimRevisionModel(claim);
 
         if (claim.sources && Array.isArray(claim.sources)) {
             try {
