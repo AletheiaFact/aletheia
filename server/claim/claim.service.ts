@@ -36,7 +36,7 @@ export class ClaimService {
             query.personality = Types.ObjectId(query.personality)
         }
         const claims = await this.ClaimModel.find(query)
-            .populate("latestRevision")
+            .populate({ path: 'latestRevision', populate: { path: 'content', select: "content" } })
             .populate("speeches")
             .skip(page * pageSize)
             .limit(pageSize)
@@ -177,8 +177,7 @@ export class ClaimService {
             claim = await this.ClaimModel.findOne(match)
                 .populate("personality", "_id name")
                 .populate("sources", "_id link classification")
-                .populate("latestRevision")
-                .populate("speeches");
+                .populate({ path: 'latestRevision', populate: { path: 'content', select: "content" } })
             claim = claim.toObject()
         }
         if (!claim) {
@@ -203,7 +202,7 @@ export class ClaimService {
             claim._id
         );
 
-        claim.content = claim.speeches[0].content
+        claim.content = claim.content[0].content
         
         if (claim) {
             if (claim?.content?.object) {

@@ -7,6 +7,7 @@ export type ParagraphDocument = Paragraph & mongoose.Document;
 @Schema()
 export class Paragraph {
     @Prop({
+        type: String,
         default: "paragraph",
         required: true,
     })
@@ -19,7 +20,7 @@ export class Paragraph {
     props: object;
 
     @Prop({ required: true })
-    content: [Sentence];
+    content: Sentence[];
 }
 
 const ParagraphSchemaRaw = SchemaFactory.createForClass(Paragraph);

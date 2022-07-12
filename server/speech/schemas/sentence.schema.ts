@@ -7,8 +7,8 @@ export type SentenceDocument = Sentence & mongoose.Document;
 export class Sentence {
     @Prop({
         type: String,
+        default: "sentence",
         required: true,
-        default: "sentence"
     })
     type: string;
 

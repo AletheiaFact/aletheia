@@ -13,8 +13,17 @@ export class ClaimRevision {
     @Prop({ required: true })
     slug: string;
 
-    @Prop({ type: Object, required: true })
-    content: object;
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "Speech",
+    })
+    contentId: mongoose.Types.ObjectId;
+
+    @Prop({
+        required: true,
+    })
+    contentModel: string;
 
     @Prop({ required: true })
     date: Date;
@@ -57,5 +66,11 @@ ClaimRevisionSchemaRaw.virtual('reviews', {
     localField: '_id',
     foreignField: 'claim'
 });
+
+ClaimRevisionSchemaRaw.virtual('content', {
+    ref: 'Speech',
+    localField: 'contentId',
+    foreignField: '_id'
+})
 
 export const ClaimRevisionSchema = ClaimRevisionSchemaRaw;
