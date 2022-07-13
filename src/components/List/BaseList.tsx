@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { List, Button, Spin, Row, Col } from "antd";
+import { Button, Col, List, Row, Spin } from "antd";
 import { useTranslation } from "next-i18next";
+import React, { useEffect, useState } from "react";
+
 import SortByButton from "./SortByButton";
 
 const BaseList = ({
@@ -10,62 +11,65 @@ const BaseList = ({
     emptyFallback = <></>,
     style = {},
     footer = <></>,
-    title = ''
+    title = "",
+    grid = null,
 }) => {
     const { t } = useTranslation();
 
-    const [loading, setLoading] = useState(false)
-    const [initLoading, setInitLoading] = useState(true)
-    const [totalPages, setTotalPages] = useState(0)
-    const [totalItems, setTotalItems] = useState(0)
-    const [items, setItems] = useState([])
-    const [sortByOrder] = useState('asc')
-    const [execLoadMore, setExecLoadMore] = useState<boolean>(true)
+    const [loading, setLoading] = useState(false);
+    const [initLoading, setInitLoading] = useState(true);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalItems, setTotalItems] = useState(0);
+    const [items, setItems] = useState([]);
+    const [sortByOrder] = useState("asc");
+    const [execLoadMore, setExecLoadMore] = useState<boolean>(true);
 
     const [query, setQuery] = useState({
         page: 1,
         pageSize: 10,
         fetchOnly: true,
         order: sortByOrder,
-        ...filter
-    })
+        ...filter,
+    });
 
     useEffect(() => {
-        apiCall(query).then(newItems => {
-            setInitLoading(false)
-            setLoading(false)
-            setTotalPages(newItems.totalPages)
-            setTotalItems(newItems.total)
-            setItems(execLoadMore ? [...items, ...newItems.data] : newItems.data)
+        apiCall(query).then((newItems) => {
+            setInitLoading(false);
+            setLoading(false);
+            setTotalPages(newItems.totalPages);
+            setTotalItems(newItems.total);
+            setItems(
+                execLoadMore ? [...items, ...newItems.data] : newItems.data
+            );
         });
     }, [query, apiCall]);
 
     const loadMoreData = () => {
         if (execLoadMore !== true) {
-            setExecLoadMore(true)
+            setExecLoadMore(true);
         }
         setLoading(true);
         setQuery({
             ...query,
-            page: query.page + 1
-        })
-    }
+            page: query.page + 1,
+        });
+    };
 
     const refreshListItems = (sortBy) => {
         const newQuery = {
-            order: sortBy
-        }
+            order: sortBy,
+        };
 
         if (execLoadMore !== false) {
-            setExecLoadMore(false)
+            setExecLoadMore(false);
         }
         setLoading(true);
         setQuery({
             ...query,
             ...newQuery,
-            page: 1
-        })
-    }
+            page: 1,
+        });
+    };
 
     const loadMoreButton =
         totalPages > query.page ? (
@@ -74,7 +78,7 @@ const BaseList = ({
                     textAlign: "center",
                     marginTop: 12,
                     height: 32,
-                    lineHeight: "32px"
+                    lineHeight: "32px",
                 }}
             >
                 <Button onClick={loadMoreData}>
@@ -83,64 +87,53 @@ const BaseList = ({
             </div>
         ) : null;
 
-    if (
-        items &&
-        Array.isArray(items) &&
-        (items.length > 0 || !emptyFallback)
-    ) {
+    if (items && Array.isArray(items) && (items.length > 0 || !emptyFallback)) {
         return (
             <>
                 <List
                     itemLayout="horizontal"
+                    grid={grid}
                     header={
-                        <Row style={{ width: "100%" }}>
-                            <Row
-                                style={{
-                                    fontSize: 18,
-                                }}
-                            >
-                                <span>{title}</span>
-                            </Row>
-                            <Row
-                                style={{
-                                    width: "100%",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Col>
-                                    {t("list:totalItems", {
-                                        total: totalItems
-                                    })}
-                                </Col>
-                                <Col>
-                                    <SortByButton
-                                        refreshListItems={refreshListItems}
-                                    />
-                                </Col>
-                            </Row>
+                        <Row align="middle" justify="space-between">
+                            <Col>
+                                <Row>
+                                    <span
+                                        style={{
+                                            fontSize: 24,
+                                        }}
+                                    >
+                                        {title}
+                                    </span>
+                                </Row>
+
+                                {t("list:totalItems", {
+                                    total: totalItems,
+                                })}
+                            </Col>
+                            <Col>
+                                <SortByButton
+                                    refreshListItems={refreshListItems}
+                                />
+                            </Col>
                         </Row>
                     }
                     style={style || {}}
                     loadMore={loadMoreButton}
                     loading={loading}
                     dataSource={items}
-                    renderItem={item => {
-                        return (
-                            <List.Item>
-                                {renderItem(item)}
-                            </List.Item>
-                        );
+                    renderItem={(item) => {
+                        return <List.Item>{renderItem(item)}</List.Item>;
                     }}
                 />
                 <Row
                     style={{
                         textAlign: "center",
                         display: "block",
-                        marginBottom: "20px"
+                        marginBottom: "20px",
                     }}
                 >
                     {t("list:totalItems", {
-                        total: totalItems
+                        total: totalItems,
                     })}
                 </Row>
                 {footer}
@@ -155,7 +148,7 @@ const BaseList = ({
                         textAlign: "center",
                         position: "absolute",
                         top: "50%",
-                        left: "calc(50% - 40px)"
+                        left: "calc(50% - 40px)",
                     }}
                 ></Spin>
             );
@@ -163,6 +156,6 @@ const BaseList = ({
             return emptyFallback;
         }
     }
-}
+};
 
 export default BaseList;

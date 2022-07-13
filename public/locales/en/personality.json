@@ -5,7 +5,8 @@
     "affixButtonTitle": "Click here to add a claim",
     "wikipediaPage": "View Wikipedia Page",
     "headerReviewsTotal": "{{totalReviews}} claim reviews",
-    "headerClaimsTotal": "speeches added",
-    "toggleSectionSpeeches": "Speeches",
-    "errorWhileFetching": "Error while fetching Personality"
+    "headerClaimsTotal": "{{totalClaims}} speeches added",
+    "speechesListHeader": "Speeches",
+    "errorWhileFetching": "Error while fetching Personality",
+    "otherPersonalitiesTitle": "Personalities on the website"
 }

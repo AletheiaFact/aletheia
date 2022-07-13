@@ -20,7 +20,12 @@ const AletheiaButton: (
         props: IAletheiaButtonProps) => {
         let buttonStyle = {
             borderWidth: "2px",
-            borderRadius: "30px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: 40,
+            paddingBottom: 0,
+            borderRadius: "4px",
             ...props.style,
         };
         switch (props.type) {

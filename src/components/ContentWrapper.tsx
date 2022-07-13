@@ -1,11 +1,11 @@
-import styled from "styled-components";
 import { Layout, Row } from "antd";
 import { useRouter } from "next/router";
-import BackButton from "./BackButton";
+import styled from "styled-components";
+
 import colors from "../styles/colors";
+import BackButton from "./BackButton";
 
 const { Content } = Layout;
-
 
 const StyledContent = styled(Content)`
     padding: 0;
@@ -25,12 +25,13 @@ const ContentWrapper = ({ children }) => {
     const router = useRouter();
 
     // TODO: we can remove this when we have desktop layout for all the pages
-    const desktopReadyPages = ["claim-review", "home", "kanban-page"];
+    const desktopReadyPages = ["claim-review", "home", "kanban-page", "personality-page"];
 
-    const layout = desktopReadyPages.some((page) => router.pathname.includes(page))
+    const layout = desktopReadyPages.some((page) =>
+        router.pathname.includes(page)
+    )
         ? "desktop"
         : "mobile";
-    console.log(`Layout ${layout}`);
 
     return (
         <StyledContent layout={layout}>

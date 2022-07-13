@@ -4,9 +4,9 @@ import { Row, Col } from "antd";
 import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from 'next-i18next';
 import SectionTitle from "../SectionTitle";
-import HomePersonalitiesContainer from "./HomePersonalitiesContainer";
+import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import HomeContentStyle from "./HomeContent.style";
-const HomeContent = ({ personalities, href, isLoggedIn }) => {
+const HomeContent = ({ personalities, href, isLoggedIn, title }) => {
     const { t } = useTranslation();
 
     return (
@@ -15,11 +15,12 @@ const HomeContent = ({ personalities, href, isLoggedIn }) => {
                 className="main-content"
                 style={{ paddingTop: "32px" }}
             >
-                <HomePersonalitiesContainer
+                <PersonalitiesGrid
                     personalities={personalities}
                     isLoggedIn={isLoggedIn}
+                    title={title}
                 />
-            
+
                 <Col span={isLoggedIn ? 24 : 6}
                     className={`${isLoggedIn ? "join-container-logged-in" : "join-container-logged-out"}`}>
                     {!isLoggedIn &&
@@ -31,7 +32,7 @@ const HomeContent = ({ personalities, href, isLoggedIn }) => {
                             </Row>
 
                             <Row id="create_account" className="CTA-registration-container">
-                                <CTARegistration></CTARegistration>
+                                <CTARegistration />
                             </Row>
                         </>
                     }

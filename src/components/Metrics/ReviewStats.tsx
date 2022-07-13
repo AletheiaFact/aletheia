@@ -36,6 +36,8 @@ const ReviewStats = (props) => {
                             style={props.type === "circle" ? {
                                 display: "flex",
                                 flexDirection: "column-reverse",
+                                alignItems: "center",
+                                paddingRight: "10px"
                             } : {}}
                             key={review._id}
                         >

@@ -7,7 +7,7 @@ describe("Create personality and claim", () => {
     beforeEach('login', () => { cy.login() });
 
     it("Should search and create a new Personality", () => {
-        cy.get(locators.PERSONALITY.BTN_SEE_MORE_PERSONALITY).click();
+        cy.get(locators.PERSONALITY.BTN_SEE_MORE_PERSONALITY).should('exist').click();
         cy.get(locators.PERSONALITY.BTN_ADD_PERSONALITY).click();
         cy.get(locators.PERSONALITY.INPUT_SEARCH_PERSONALITY).type("beyonce");
         cy.get("[data-cy=Beyoncé]").click();
