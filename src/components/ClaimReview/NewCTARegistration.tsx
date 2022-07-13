@@ -1,3 +1,4 @@
+import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
@@ -7,43 +8,55 @@ function NewCTARegistration({ style = {} }) {
     const { t } = useTranslation();
 
     return (
-        <div
-            style={{
-                backgroundColor: colors.graySecondary,
-                textAlign: "center",
-                padding: "116px 20px 34px 20px",
-                ...style
-            }}
-        >
-            <div
+            <Row
                 style={{
-                    color: "#fff",
-                    fontSize: "18px",
-                    fontWeight: 600,
-                    lineHeight: "21px",
-                    marginBottom: "223px",
-                    textAlign: "center"
+                    backgroundColor: colors.graySecondary,
+                    textAlign: "center",
+                    padding: "100px 20px 20px 20px",
+                    margin: "0px -5px",
+                    display: "grid",
+                    justifyContent: "center",
+                    ...style,
                 }}
             >
-                {t("AletheiaFact.org é um movimento e plataforma coletivo de verificação de fatos que imagina uma sociedade onde todos podem ter")}
-            </div>
-            <Button
-                onClick={() => { umami?.trackEvent('cta-registration-button', 'registration') }}
-                type={ButtonType.blue}
-                target="_blank"
-                href={t("common:registrationLink")}
-                style={{width:"100%", height: "88px" }}
-            >
-                <b
+                <Col
                     style={{
+                        color: "#fff",
                         fontSize: "18px",
-                        lineHeight: "80px"
+                        fontWeight: 600,
+                        lineHeight: "21px",
+                        textAlign: "center",
                     }}
                 >
-                    {t("CTARegistration:button")}
-                </b>
-            </Button>
-        </div>
+                    {t(
+                        "AletheiaFact.org é um movimento e plataforma coletivo de verificação de fatos que imagina uma sociedade onde todos podem ter"
+                    )}
+                </Col>
+                <Col xs={0} sm={0} md={24}>
+                    <Button
+                        onClick={() => {
+                            umami?.trackEvent(
+                                "cta-registration-button",
+                                "registration"
+                            );
+                        }}
+                        type={ButtonType.blue}
+                        target="_blank"
+                        href={t("common:registrationLink")}
+                        className="New-CTA-registration-button"
+                        style={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: "40px",
+                            marginTop: "20px",
+                            padding: "0 15px",
+                            fontWeight: 700,
+                        }}
+                    >
+                        {t("CTARegistration:button")}
+                    </Button>
+                </Col>
+            </Row>
     );
 }
 
