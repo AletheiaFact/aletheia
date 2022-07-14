@@ -9,7 +9,7 @@ const { Title } = Typography
 const KanbanCard = ({ reviewTask }) => {
     return (
         <CardBase>
-            <Row style={{ padding: "10px", width: "300px" }}>
+            <Row style={{ padding: "10px", width: "100%" }}>
                 <Col style={{
                     display: "flex",
                     alignItems: "center",
@@ -24,7 +24,7 @@ const KanbanCard = ({ reviewTask }) => {
                             margin: "0 0 0 5px",
                         }}
                     >
-                        {reviewTask.userId}
+                        {reviewTask.userName}
                     </Title>
                 </Col>
                 <Col>

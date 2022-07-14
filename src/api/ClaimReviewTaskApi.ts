@@ -12,7 +12,8 @@ const getClaimReviewTasks = (options) => {
         page: options.page ? options.page - 1 : 0,
         order: options.order || 'asc',
         pageSize: options.pageSize ? options.pageSize : 5,
-        value: options.value
+        value: options.value,
+        userId: options.userId
     };
 
     return request

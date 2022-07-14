@@ -1,32 +1,38 @@
-import { Col, Row } from "antd";
+import { Divider } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
 const EmptyKanbanCol = ({ title }) => {
-    const { t } = useTranslation()
+    const { t } = useTranslation();
     return (
-        <Row style={{ width: "300px", padding: "12px 0" }}>
-            <Row
+        <div
+            style={{
+                width: "100%",
+                padding: "12px 0",
+                display: "flex",
+                flexDirection: "column",
+            }}
+        >
+            <span
                 style={{
-                    fontSize: 18,
+                    fontSize: 24,
                 }}
             >
-                <span>{title}</span>
-            </Row>
-            <Row
-                style={{
-                    width: "100%",
-                    alignItems: "center",
-                }}
-            >
-                <Col>
-                    {t("list:totalItems", {
-                        total: 0
-                    })}
-                </Col>
-            </Row>
-        </Row>
-    )
-}
+                {title}
+            </span>
 
-export default EmptyKanbanCol
+            <span>
+                {t("list:totalItems", {
+                    total: 0,
+                })}
+            </span>
+            <Divider
+                style={{
+                    marginTop: 12,
+                }}
+            />
+        </div>
+    );
+};
+
+export default EmptyKanbanCol;

@@ -4,6 +4,7 @@ import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { IsPublic } from "../decorators/is-public.decorator";
+import { GetTasksDTO } from "./dto/get-tasks.dto";
 
 @Controller()
 export class ClaimReviewController {
@@ -14,9 +15,9 @@ export class ClaimReviewController {
 
     @IsPublic()
     @Get("api/claimreviewtask")
-    public async getByMachineValue(@Query() query) {
-        const { page = 0, pageSize = 10, order = 1, value } = query;
-        return this.claimReviewTaskService.listAll(page, pageSize, order, value)
+    public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
+        const { page = 0, pageSize = 10, order = 1, value, userId } = getTasksDTO;
+        return this.claimReviewTaskService.listAll(page, pageSize, order, value, userId)
             .then(tasks => {
                 const totalPages = 1
                 const totalTasks = 5

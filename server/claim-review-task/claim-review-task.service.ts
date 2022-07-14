@@ -19,13 +19,22 @@ export class ClaimReviewTaskService {
         private reportService: ReportService
     ) { }
 
-    async listAll(page, pageSize, order, value) {
+    async listAll(page, pageSize, order, value, userId) {
+        let filters = {
+            "machine.value": value,
+        }
+
+        if (userId) {
+            filters["machine.context.reviewData.userId"] = Types.ObjectId(userId)
+        }
 
         return await this.ClaimReviewTaskModel.aggregate([
-            { "$match": { "machine.value": value } },
+            {
+                "$match": filters
+            },
             { "$skip": page * pageSize },
-            { "$sample": { size: 5 } },
-            { "$sort": { _id: 1 } },
+            { "$sample": { size: pageSize } },
+            { "$sort": { _id: order === 'asc' ? 1 : -1 } },
             {
                 "$lookup": {
                     from: 'users',
@@ -45,7 +54,7 @@ export class ClaimReviewTaskService {
                 "$group": {
                     _id: "$machine.value",
                     reviews: {
-                        "$push": { sentence_hash: "$sentence_hash", userId: "$machine.context.reviewData.userId.name" }
+                        "$push": { sentence_hash: "$sentence_hash", userName: "$machine.context.reviewData.userId.name" }
                     }
                 }
             },
