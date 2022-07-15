@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Sentence } from "./sentence.schema";
 
 export type ParagraphDocument = Paragraph & mongoose.Document;
 
@@ -20,9 +19,15 @@ export class Paragraph {
     props: object;
 
     @Prop({ required: true })
-    content: Sentence[];
+    content: object[];
 }
 
 const ParagraphSchemaRaw = SchemaFactory.createForClass(Paragraph);
+
+ParagraphSchemaRaw.virtual('sentence', {
+    ref: 'Sentence',
+    localField: 'content',
+    foreignField: '_id'
+})
 
 export const ParagraphSchema = ParagraphSchemaRaw;

@@ -47,8 +47,8 @@ export class ClaimRevisionService {
         })
 
         if (typeof claim.content === "string") {
-            claim.contentId = await this.parserService.parse(claim.content);
-            claim.contentModel = "speech"
+            const newSpeech = await this.parserService.parse(claim.content);
+            claim.contentId = newSpeech._id;
         }
 
         const newClaimRevision = new this.ClaimRevisionModel(claim);

@@ -83,7 +83,7 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
             title,
             personality: personality._id,
             // TODO: add a new input when twitter is supported
-            type: "speech",
+            contentModel: "Speech",
             date,
             sources,
             recaptcha

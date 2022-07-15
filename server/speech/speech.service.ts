@@ -11,7 +11,6 @@ export class SpeechService {
     ) {}
 
     async create(speechBody) {
-        const newSpeech = await new this.SpeechModel(speechBody).save();
-        return newSpeech._id
+        return await new this.SpeechModel(speechBody).save();
     }
 }

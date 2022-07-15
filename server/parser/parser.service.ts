@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { ParagraphService } from "../paragraph/paragraph.service";
 import { SpeechService } from "../speech/speech.service";
 const md5 = require("md5");
 const nlp = require('compromise')
@@ -18,6 +19,7 @@ const phdRegex = /Ph\.D\./g;
 export class ParserService {
     constructor(
         private speechService: SpeechService,
+        private paragraphService: ParagraphService,
     ) {}
     paragraphSequence: number;
     sentenceSequence: number;
@@ -40,22 +42,19 @@ export class ParserService {
             );
 
             if (sentences && sentences.length) {
-                result.push({
-                    type: "paragraph",
-                    "data-hash": paragraphDataHash,
+                const newParagraph = {
+                    data_hash: paragraphDataHash,
                     props: {
                         id: paragraphId,
                     },
                     content: sentences.map((sentence) => this.parseSentence(sentence, paragraphDataHash)),
-                });
+                }
+                return result.push(this.paragraphService.create(newParagraph))
             }
-        });
+        })
 
-        return await this.speechService.create({ 
-            content: {
-                object: result,
-                text
-            },
+        return await Promise.all(result).then(async(object) => {
+            return await this.speechService.create({ content: object })
         })
     }
 
@@ -86,8 +85,7 @@ export class ParserService {
         );
 
         return {
-            type: "sentence",
-            "data-hash": sentenceDataHash,
+            data_hash: sentenceDataHash,
             props: {
                 id: sentenceId,
             },

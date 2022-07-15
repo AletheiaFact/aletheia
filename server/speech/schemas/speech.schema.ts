@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Paragraph } from "./paragraph.schema";
+import { Paragraph } from "../../paragraph/schemas/paragraph.schema";
 
 export type SpeechDocument = Speech & mongoose.Document;
 
@@ -12,11 +12,14 @@ export class Speech {
     })
     type: string;
 
-    @Prop({ type: Object, required: true })
-    content: {
-        object: Paragraph[],
-        text: String,
-    };
+    @Prop({
+        type: [{
+            type: mongoose.Types.ObjectId,
+            required: true,
+            ref: "Paragraph"
+        }]
+    })
+    content: Paragraph[];
 }
 
 const SpeechSchemaRaw = SchemaFactory.createForClass(Speech);
