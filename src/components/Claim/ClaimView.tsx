@@ -21,7 +21,7 @@ const Claim = ({ personality, claim, href }) => {
     const { title, stats } = claim;
 
     let date = claim.date;
-    const paragraphs = claim.content.object;
+    const paragraphs = Array.isArray(claim.content) ? claim.content : [claim.content]
 
     date = moment(new Date(date));
     const [showHighlights, setShowHighlights] = useState(true);
