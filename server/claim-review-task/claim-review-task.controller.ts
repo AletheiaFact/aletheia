@@ -19,8 +19,8 @@ export class ClaimReviewController {
         const { page = 0, pageSize = 10, order = 1, value, userId } = getTasksDTO;
         return this.claimReviewTaskService.listAll(page, pageSize, order, value, userId)
             .then(tasks => {
-                const totalPages = 1
-                const totalTasks = 5
+                const totalTasks = tasks.length
+                const totalPages = Math.ceil(totalTasks / pageSize)
 
                 return {
                     tasks,

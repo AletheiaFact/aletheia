@@ -22,7 +22,7 @@ const getClaimReviewTasks = (options) => {
             const { tasks, totalPages, totalTasks } = response.data;
 
             return {
-                data: tasks[0]?.reviews || [],
+                data: tasks || [],
                 total: totalTasks,
                 totalPages
             }

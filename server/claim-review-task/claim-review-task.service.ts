@@ -28,37 +28,20 @@ export class ClaimReviewTaskService {
             filters["machine.context.reviewData.userId"] = Types.ObjectId(userId)
         }
 
-        return await this.ClaimReviewTaskModel.aggregate([
-            {
-                "$match": filters
-            },
-            { "$skip": page * pageSize },
-            { "$sample": { size: pageSize } },
-            { "$sort": { _id: order === 'asc' ? 1 : -1 } },
-            {
-                "$lookup": {
-                    from: 'users',
-                    localField: 'machine.context.reviewData.userId',
-                    foreignField: '_id',
-                    as: 'machine.context.reviewData.userId'
-                }
-            },
-            {
-                "$project": {
-                    sentence_hash: 1,
-                    "machine.value": 1,
-                    "machine.context.reviewData.userId.name": 1
-                }
-            },
-            {
-                "$group": {
-                    _id: "$machine.value",
-                    reviews: {
-                        "$push": { sentence_hash: "$sentence_hash", userName: "$machine.context.reviewData.userId.name" }
-                    }
-                }
-            },
-        ])
+        const reviewTasks = await this.ClaimReviewTaskModel.find(filters)
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .sort({ _id: order })
+            .populate({path: "machine.context.reviewData.userId", model: "User", select: "name"})
+            .lean()
+            
+        return reviewTasks.map(({sentence_hash, machine}) => {
+            return {
+                sentence_hash,
+                userName: machine.context.reviewData.userId.name,
+                value: machine.value
+            }
+        })
     }
 
     getById(claimReviewTaskId: string) {
