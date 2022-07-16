@@ -18,8 +18,8 @@ describe('ParserService', () => {
             const claimText =
                 "Pellentesque auctor neque nec urna. Nulla facilisi. Praesent nec nisl a purus blandit viverra." +
                 "\n\nNam at tortor in tellus interdum sagittis. Ut leo. Praesent adipiscing. Curabitur nisi.";
-            const parseOutput = parserService.parse(claimText);
-            const paragraphs = parseOutput.object;
+            const parseOutput = await parserService.parse(claimText);
+            const paragraphs = parseOutput.content;
             expect(Array.isArray(paragraphs)).toBe(true);
             expect(paragraphs.length).toEqual(2);
             expect(paragraphs[0].content.length).toEqual(3);
@@ -31,8 +31,8 @@ describe('ParserService', () => {
                 `${__dirname}/test-fixtures/claim_music.txt`,
                 "utf-8"
             );
-            const parseOutput = parserService.parse(claimText);
-            const paragraphs = parseOutput.object;
+            const parseOutput = await parserService.parse(claimText);
+            const paragraphs = parseOutput.content;
             const sentences = paragraphs[0].content;
             expect(paragraphs.length).toEqual(1);
             expect(sentences.length).toEqual(46);
@@ -46,8 +46,8 @@ describe('ParserService', () => {
 
         it("Ph.D word is not confused with end of sentence", async () => {
             const claimText = "Jose is Ph.D. and Maria is a Ph.D.";
-            const parseOutput = parserService.parse(claimText);
-            const paragraphs = parseOutput.object;
+            const parseOutput = await parserService.parse(claimText);
+            const paragraphs = parseOutput.content;
             expect(paragraphs.length).toEqual( 1);
             expect(paragraphs[0].content.length).toEqual( 1);
         });
@@ -55,8 +55,8 @@ describe('ParserService', () => {
         it("Prefixes are not confused with end of sentence", async () => {
             const claimText =
                 "Mr. Jose and Mrs. Maria lives in St. Monica with Ms. Butterfly their Dr. of the year";
-            const parseOutput = parserService.parse(claimText);
-            const paragraphs = parseOutput.object;
+            const parseOutput = await parserService.parse(claimText);
+            const paragraphs = parseOutput.content;
             expect(paragraphs.length).toEqual( 1);
             expect(paragraphs[0].content.length).toEqual( 1);
         });
