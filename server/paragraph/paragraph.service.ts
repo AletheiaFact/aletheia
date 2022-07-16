@@ -11,7 +11,10 @@ export class ParagraphService {
     ) {}
 
     async create(paragraphBody) {
-        const newParagraph = await new this.ParagraphModel(paragraphBody).save();
-        return newParagraph._id
+        return await Promise.all(paragraphBody.content).then(async(paragraph) => {
+            paragraphBody.content = paragraph
+            const newParagraph = await new this.ParagraphModel(paragraphBody).save();
+            return newParagraph._id
+        })
     }
 }
