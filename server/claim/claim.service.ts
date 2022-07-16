@@ -166,7 +166,7 @@ export class ClaimService {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             const revision = await this.claimRevisionService.getRevision({
                 _id: revisionId,
-                personality: match.personality
+                claimId: rawClaim._id
             })
 
             if (!revision || !rawClaim) {
