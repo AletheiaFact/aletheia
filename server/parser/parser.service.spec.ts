@@ -1,11 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { ParserService } from "./parser.service";
 import * as fs from "fs";
+import { SpeechModule } from '../speech/speech.module';
+import { ParagraphModule } from '../paragraph/paragraph.module';
+import { SentenceModule } from '../sentence/sentence.module';
 
 describe('ParserService', () => {
     let parserService : ParserService
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
+            imports: [
+                SpeechModule,
+                ParagraphModule,
+                SentenceModule,
+            ],
             providers: [
                 ParserService,
             ],
@@ -18,7 +26,18 @@ describe('ParserService', () => {
             const claimText =
                 "Pellentesque auctor neque nec urna. Nulla facilisi. Praesent nec nisl a purus blandit viverra." +
                 "\n\nNam at tortor in tellus interdum sagittis. Ut leo. Praesent adipiscing. Curabitur nisi.";
-            const parseOutput = await parserService.parse(claimText);
+            const parseOutput = await (
+                await parserService.parse(claimText))
+                .populate({ 
+                    path: 'content',
+                    populate: {
+                        path: 'content',
+                        populate: {
+                            path: 'content'
+                        }
+                    }
+                })
+            console.log("parseOutput", parseOutput)
             const paragraphs = parseOutput.content;
             expect(Array.isArray(paragraphs)).toBe(true);
             expect(paragraphs.length).toEqual(2);
