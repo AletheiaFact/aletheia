@@ -30,7 +30,7 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                         backgroundColor: "rgba(0,0,0,0.6)"
                     }}
                 ></div>
-                <Carousel autoplay dots={false} style={{ backgroundColor: '#222' }}>
+                <Carousel autoplay dots={false}>
                     {personalities.map(
                         (p, i) => p && (
                             <div key={i}>
