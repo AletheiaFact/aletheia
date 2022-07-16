@@ -182,7 +182,10 @@ export class ClaimService {
                     populate: { 
                         path: 'content',
                         populate: {
-                            path: 'content'
+                            path: 'content',
+                            populate: {
+                                path: 'content'
+                            }
                         }
                     }
                 })

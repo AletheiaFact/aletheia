@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { SentenceService } from "../sentence/sentence.service";
 import { ParagraphService } from "../paragraph/paragraph.service";
 import { SpeechService } from "../speech/speech.service";
 const md5 = require("md5");
@@ -20,6 +21,7 @@ export class ParserService {
     constructor(
         private speechService: SpeechService,
         private paragraphService: ParagraphService,
+        private sentenceService: SentenceService,
     ) {}
     paragraphSequence: number;
     sentenceSequence: number;
@@ -42,14 +44,15 @@ export class ParserService {
             );
 
             if (sentences && sentences.length) {
-                const newParagraph = {
-                    data_hash: paragraphDataHash,
-                    props: {
-                        id: paragraphId,
-                    },
-                    content: sentences.map((sentence) => this.parseSentence(sentence, paragraphDataHash)),
-                }
-                return result.push(this.paragraphService.create(newParagraph))
+                return result.push(
+                    this.paragraphService.create({
+                        data_hash: paragraphDataHash,
+                        props: {
+                            id: paragraphId,
+                        },
+                        content: sentences.map((sentence) => this.parseSentence(sentence, paragraphDataHash)),
+                    })
+                )
             }
         })
 
@@ -84,13 +87,13 @@ export class ParserService {
             `${paragraphDataHash}${this.sentenceSequence}${sentenceContent}`
         );
 
-        return {
+        return this.sentenceService.create({
             data_hash: sentenceDataHash,
             props: {
                 id: sentenceId,
             },
             content: sentenceContent,
-        };
+        });
     }
 
     createParagraphId() {
