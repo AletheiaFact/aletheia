@@ -80,7 +80,7 @@ const PersonalityCard = ({
                             <Avatar
                                 size={style.avatarSize}
                                 style={{ aspectRatio: "auto" }}
-                                src={personality.image}
+                                src={personality.avatar}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,
                                 })}

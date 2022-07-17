@@ -148,7 +148,7 @@ const SearchOverlay = ({ overlay }) => {
                                                 avatar={
                                                     <Avatar
                                                         size={30}
-                                                        src={p.image}
+                                                        src={p.avatar}
                                                     />
                                                 }  
                                                 name={p.name}
