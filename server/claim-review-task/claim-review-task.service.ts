@@ -19,29 +19,27 @@ export class ClaimReviewTaskService {
         private reportService: ReportService
     ) { }
 
-    async listAll(page, pageSize, order, value, userId) {
-        let filters = {
+    async listAll(page, pageSize, order, value) {
+        const reviewTasks = await this.ClaimReviewTaskModel.find({
             "machine.value": value,
-        }
-
-        if (userId) {
-            filters["machine.context.reviewData.userId"] = Types.ObjectId(userId)
-        }
-
-        const reviewTasks = await this.ClaimReviewTaskModel.find(filters)
+        })
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
-            .populate({path: "machine.context.reviewData.userId", model: "User", select: "name"})
-            .lean()
-            
-        return reviewTasks.map(({sentence_hash, machine}) => {
+            .populate({
+                path: "machine.context.reviewData.userId",
+                model: "User",
+                select: "name",
+            })
+            .lean();
+
+        return reviewTasks.map(({ sentence_hash, machine }) => {
             return {
                 sentence_hash,
                 userName: machine.context.reviewData.userId.name,
-                value: machine.value
-            }
-        })
+                value: machine.value,
+            };
+        });
     }
 
     getById(claimReviewTaskId: string) {
@@ -49,7 +47,9 @@ export class ClaimReviewTaskService {
     }
 
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
-        claimReviewTaskBody.machine.context.reviewData.userId = Types.ObjectId(claimReviewTaskBody.machine.context.reviewData.userId);
+        claimReviewTaskBody.machine.context.reviewData.userId = Types.ObjectId(
+            claimReviewTaskBody.machine.context.reviewData.userId
+        );
         const newClaimReviewTask = new this.ClaimReviewTaskModel(
             claimReviewTaskBody
         );
@@ -63,7 +63,10 @@ export class ClaimReviewTaskService {
     ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         try {
-            newClaimReviewTaskBody.machine.context.reviewData.userId = Types.ObjectId(newClaimReviewTaskBody.machine.context.reviewData.userId);
+            newClaimReviewTaskBody.machine.context.reviewData.userId =
+                Types.ObjectId(
+                    newClaimReviewTaskBody.machine.context.reviewData.userId
+                );
             const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
                 sentence_hash
             );
@@ -83,7 +86,7 @@ export class ClaimReviewTaskService {
                 const newReport = Object.assign(
                     newClaimReviewTaskMachine.context.reviewData,
                     { sentence_hash }
-                )
+                );
 
                 const report = await this.reportService.create(newReport);
 

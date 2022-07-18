@@ -15,7 +15,4 @@ export class GetTasksDTO {
     @IsString()
     value: string;
 
-    @IsString()
-    @IsOptional()
-    userId: string;
 }

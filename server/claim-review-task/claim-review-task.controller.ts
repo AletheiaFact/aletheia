@@ -16,11 +16,12 @@ export class ClaimReviewController {
     @IsPublic()
     @Get("api/claimreviewtask")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
-        const { page = 0, pageSize = 10, order = 1, value, userId } = getTasksDTO;
-        return this.claimReviewTaskService.listAll(page, pageSize, order, value, userId)
-            .then(tasks => {
-                const totalTasks = tasks.length
-                const totalPages = Math.ceil(totalTasks / pageSize)
+        const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
+        return this.claimReviewTaskService
+            .listAll(page, pageSize, order, value)
+            .then((tasks) => {
+                const totalTasks = tasks.length;
+                const totalPages = Math.ceil(totalTasks / pageSize);
 
                 return {
                     tasks,
@@ -28,9 +29,8 @@ export class ClaimReviewController {
                     totalPages,
                     page,
                     pageSize,
-
-                }
-            })
+                };
+            });
     }
 
     @Get("api/claimreviewtask/:id")

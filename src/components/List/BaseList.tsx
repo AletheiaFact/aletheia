@@ -44,18 +44,6 @@ const BaseList = ({
         });
     }, [query, apiCall]);
 
-    useEffect(() => {
-        setLoading(true);
-        setExecLoadMore(false);
-
-        setQuery({
-            page: 1,
-            pageSize: 10,
-            fetchOnly: true,
-            order: sortByOrder,
-            ...filter,
-        });
-    }, [filter]);
 
     const loadMoreData = () => {
         if (execLoadMore !== true) {

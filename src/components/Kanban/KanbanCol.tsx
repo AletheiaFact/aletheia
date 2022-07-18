@@ -1,5 +1,5 @@
 import { useTranslation } from "next-i18next";
-import React from "react";
+import React, { useEffect } from "react";
 
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
 import { ReviewTaskStates } from "../../machine/enums";
@@ -9,12 +9,10 @@ import KanbanCard from "./KanbanCard";
 
 interface KanbanColProps {
     state: ReviewTaskStates,
-    filters?: any
 }
 
-const KabanCol = ({ state, filters }: KanbanColProps) => {
+const KanbanCol = ({ state }: KanbanColProps) => {
     const { t } = useTranslation();
-
     return (
         <div
             style={{
@@ -25,7 +23,7 @@ const KabanCol = ({ state, filters }: KanbanColProps) => {
             <BaseList
                 title={t(`claimReviewTask:${state}`)}
                 apiCall={ClaimReviewTaskApi.getClaimReviewTasks}
-                filter={{ value: state, ...filters }}
+                filter={{ value: state }}
                 renderItem={task => (
                     <KanbanCard reviewTask={task} />
                 )}
@@ -35,4 +33,4 @@ const KabanCol = ({ state, filters }: KanbanColProps) => {
     )
 }
 
-export default KabanCol
+export default KanbanCol
