@@ -183,7 +183,7 @@ export class ClaimService {
                 .populate("personality", "_id name")
                 .populate("sources", "_id link classification")
                 .populate("latestRevision")
-            claim = claim.toObject()
+                .lean()
         }
         if (!claim) {
             throw new NotFoundException()
