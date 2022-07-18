@@ -131,7 +131,12 @@ const OryLoginForm = () => {
                             display: "flex",
                         }}
                     >
-                        <Button type={ButtonType.blue} htmlType="submit" data-cy={"loginButton"}>
+                        <Button
+                            type={ButtonType.blue}
+                            htmlType="submit"
+                            data-cy={"loginButton"}
+                            disabled={isFormSubmitted}
+                        >
                             {t("login:submitButton")}
                         </Button>
                     </div>

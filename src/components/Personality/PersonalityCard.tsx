@@ -206,6 +206,7 @@ const PersonalityCard = ({
                                                 onClick(personality)
                                             }
                                         }}
+                                        disabled={isFormSubmitted}
                                         data-cy={personality.name}
                                         style={{
                                             display: "flex",

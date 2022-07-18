@@ -110,6 +110,7 @@ const AletheiaMenu = () => {
             {hasSession && <Menu.Item
                 data-cy={"testLogout"}
                 key="/home"
+                disabled={isFormSubmitted}
                 style={{
                     fontSize: "18px"
                 }}
