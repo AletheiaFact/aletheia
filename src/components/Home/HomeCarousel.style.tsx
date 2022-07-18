@@ -2,6 +2,10 @@ import { Row } from "antd";
 import styled from "styled-components";
 
 const HomeCarouselStyle = styled(Row)`
+    .ant-carousel .slick-slider {
+        background: #222;
+    }
+
     .carousel-title-container {
         margin: 64px 0 32px 0;
     }
