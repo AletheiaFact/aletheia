@@ -21,5 +21,9 @@ export class CreatePersonality {
 
     @IsString()
     @IsOptional()
+    avatar?: string
+
+    @IsString()
+    @IsOptional()
     wikipedia?: string
 }
