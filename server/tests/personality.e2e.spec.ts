@@ -7,7 +7,6 @@ import {SessionGuardMock} from "./mocks/SessionGuardMock";
 import {TestConfigOptions} from "./utils/TestConfigOptions";
 import {SeedTestUser} from "./utils/SeedTestUser";
 
-jest.setTimeout(10000);
 describe('LocationController (e2e)', () => {
     let app: any
     let db: any
