@@ -36,6 +36,7 @@ const CTASection = ({ isLoggedIn }) => {
                             href="#create_account"
                             type={ButtonType.white}
                             className="CTA-button"
+                            rounded
                             style={{
                                 height: "40px",
                                 display: "flex",

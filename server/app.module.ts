@@ -52,6 +52,7 @@ export class AppModule implements NestModule {
         // TODO: interface app with service-runner metrics interface
         return {
             module: AppModule,
+            global: true,
             imports: [
                 MongooseModule.forRoot(
                     options.config.db.connection_uri,
@@ -98,8 +99,9 @@ export class AppModule implements NestModule {
                 },
                 {
                     provide: APP_GUARD,
-                    useClass: SessionGuard,
+                    useExisting: SessionGuard,
                 },
+                SessionGuard
             ],
         };
     }

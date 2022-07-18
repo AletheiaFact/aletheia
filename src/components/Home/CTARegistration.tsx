@@ -7,7 +7,7 @@ import colors from "../../styles/colors";
 
 function CTARegistration() {
     const { t } = useTranslation();
-    
+
     return (
         <CTARegistrationStyle
             style={{
@@ -59,6 +59,7 @@ function CTARegistration() {
                 onClick={() => { umami?.trackEvent('cta-registration-button', 'registration') }}
                 type={ButtonType.white}
                 target="_blank"
+                rounded
                 href={t("common:registrationLink")}
                 className="CTA-registration-button"
                 style={{

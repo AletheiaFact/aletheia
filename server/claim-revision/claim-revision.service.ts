@@ -25,10 +25,11 @@ export class ClaimRevisionService {
     }
 
     /** get ClaimRevision by ID */
-    getRevision(claimId) {
+    getRevision(match) {
         try {
-            return this.ClaimRevisionModel.findById(claimId)
+            return this.ClaimRevisionModel.findOne(match)
                 .populate("personality", "_id name")
+                .lean()
         } catch {
             throw new NotFoundException()
         }
