@@ -111,4 +111,8 @@ export class ClaimReviewTaskService {
     getClaimReviewTaskBySentenceHash(sentence_hash: string) {
         return this.ClaimReviewTaskModel.findOne({ sentence_hash });
     }
+
+    count(query: any = {}) {
+        return this.ClaimReviewTaskModel.count().where(query)
+    }
 }

@@ -17,20 +17,21 @@ export class ClaimReviewController {
     @Get("api/claimreviewtask")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
         const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
-        return this.claimReviewTaskService
-            .listAll(page, pageSize, order, value)
-            .then((tasks) => {
-                const totalTasks = tasks.length;
-                const totalPages = Math.ceil(totalTasks / pageSize);
+        return Promise.all([
+            this.claimReviewTaskService.listAll(page, pageSize, order, value),
+            // This should count the number of documents for the original query without pagination
+            this.claimReviewTaskService.count({ "machine.value": value }),
+        ]).then(([tasks, totalTasks]) => {
+            const totalPages = Math.ceil(totalTasks / pageSize);
 
-                return {
-                    tasks,
-                    totalTasks,
-                    totalPages,
-                    page,
-                    pageSize,
-                };
-            });
+            return {
+                tasks,
+                totalTasks,
+                totalPages,
+                page,
+                pageSize,
+            };
+        });
     }
 
     @Get("api/claimreviewtask/:id")

@@ -1,4 +1,5 @@
-import { IsOptional, IsInt, IsNumber, IsString, Min } from 'class-validator';
+import { IsInt, IsNumber, IsString, Min } from "class-validator";
+
 export class GetTasksDTO {
     @IsNumber()
     @IsInt()
