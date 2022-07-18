@@ -11,7 +11,7 @@
         "seed": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/command.js -c config.seed.yaml",
         "seed:ci": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/command.js -c config.seed.test.ci.yaml",
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
-        "test": "env-cmd --silent jest",
+        "test": "env-cmd --silent jest --detectOpenHandles --forceExit",
         "build": "yarn build-ts && yarn build-nest && yarn copy-static-assets && yarn copy-html-files && next build",
         "build-ts": "tsc",
         "build-nest": "nest build -p ./server/tsconfig.json",
