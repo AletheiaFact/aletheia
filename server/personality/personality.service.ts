@@ -177,7 +177,7 @@ export class PersonalityService {
                     (await this.getReviewStats(personality._id)),
                 claims:
                     personality.claims &&
-                    Array.isArray(personality.claims) ? personality.claims : [personality.claims]
+                    this.extractClaimWithTextSummary(personality.claims),
             });
         }
         return personality;
@@ -261,6 +261,16 @@ export class PersonalityService {
 
     count(query: any = {}) {
         return this.PersonalityModel.countDocuments().where(query);
+    }
+
+    extractClaimWithTextSummary(claims: any) {
+        claims = Array.isArray(claims) ? claims : [claims];
+        return claims.map((claim) => {
+            if (!claim.content) {
+                return claim;
+            }
+            return { ...claim, content: claim.content.text };
+        });
     }
 
     verifyInputsQuery(query) {
