@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { SentenceService } from "../sentence/sentence.service";
 import { ParagraphService } from "../paragraph/paragraph.service";
 import { SpeechService } from "../speech/speech.service";
-import {Speech, SpeechDocument} from "../speech/schemas/speech.schema";
+import { SpeechDocument } from "../speech/schemas/speech.schema";
 const md5 = require("md5");
 const nlp = require('compromise')
 nlp.extend(require('compromise-sentences'))

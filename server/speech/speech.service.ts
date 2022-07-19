@@ -10,7 +10,7 @@ export class SpeechService {
         private SpeechModel: Model<SpeechDocument>
     ) {}
 
-    async create(speechBody) {
-        return await new this.SpeechModel(speechBody).save();
+    create(speechBody) {
+        return new this.SpeechModel(speechBody).save();
     }
 }
