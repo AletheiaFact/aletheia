@@ -34,6 +34,9 @@ import { DisableBodyParserMiddleware } from "./middleware/disable-body-parser.mi
 import OryController from "./ory/ory.controller";
 import { JsonBodyMiddleware } from "./middleware/json-body.middleware";
 import { CaptchaModule } from "./captcha/captcha.module";
+import { SpeechModule } from "./speech/speech.module";
+import { ParagraphModule } from "./paragraph/paragraph.module";
+import { SentenceModule } from "./sentence/sentence.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -72,6 +75,9 @@ export class AppModule implements NestModule {
                 ClaimRevisionModule,
                 HistoryModule,
                 SourceModule,
+                SpeechModule,
+                ParagraphModule,
+                SentenceModule,
                 StatsModule,
                 ViewModule,
                 HomeModule,

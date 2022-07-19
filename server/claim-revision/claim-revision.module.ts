@@ -7,6 +7,8 @@ import { HttpModule } from "@nestjs/axios";
 import { ViewModule } from "../view/view.module";
 import { SourceModule } from "../source/source.module";
 import { ClaimRevisionService } from "./claim-revision.service";
+import { ParagraphModule } from "../paragraph/paragraph.module";
+import { SpeechModule } from "../speech/speech.module";
 
 const ClaimRevisionModel = MongooseModule.forFeature([
     {
@@ -20,6 +22,8 @@ const ClaimRevisionModel = MongooseModule.forFeature([
     imports: [
         ClaimRevisionModel,
         ParserModule,
+        ParagraphModule,
+        SpeechModule,
         ConfigModule,
         HttpModule,
         ViewModule,
