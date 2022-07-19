@@ -36,8 +36,18 @@ export class ClaimService {
             query.personality = Types.ObjectId(query.personality)
         }
         const claims = await this.ClaimModel.find(query)
-            .populate({ path: 'latestRevision', populate: { path: 'content', select: "content" } })
-            .populate("speeches")
+            .populate({
+                path: 'latestRevision',
+                populate: {
+                    path: 'content',
+                    populate: {
+                        path: 'content',
+                        populate: {
+                            path: 'content'
+                        }
+                    }
+                }
+            })
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
