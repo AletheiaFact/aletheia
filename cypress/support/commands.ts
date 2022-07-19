@@ -22,6 +22,7 @@ Cypress.Commands.add('checkRecaptcha', () => {
 
     const getIframeBody = () => {
         return getIframeDocument()
+            .wait(5000)
             // automatically retries until body is not empty or fails with timeout
             .its('body').should('not.be.empty')
             // wraps "body" DOM element to allow
