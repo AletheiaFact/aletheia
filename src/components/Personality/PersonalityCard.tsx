@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, Spin, Col, Row, Typography, Divider } from "antd";
 import { useTranslation } from "next-i18next";
 import { PlusOutlined } from "@ant-design/icons";
@@ -22,6 +22,7 @@ const PersonalityCard = ({
     hrefBase?: string;
     onClick?: (personality: any) => {};
 }) => {
+    const [ isFormSubmitted, setIsFormSubmitted ] = useState(false)
     const { t } = useTranslation();
     const style = {
         titleSpan: 14,
@@ -199,7 +200,13 @@ const PersonalityCard = ({
                                 ) : (
                                     <Button
                                         type={ButtonType.blue}
-                                        onClick={() => onClick(personality)}
+                                        onClick={() => {
+                                            if(!isFormSubmitted) {
+                                                setIsFormSubmitted(true)
+                                                onClick(personality)
+                                            }
+                                        }}
+                                        disabled={isFormSubmitted}
                                         data-cy={personality.name}
                                         style={{
                                             display: "flex",
