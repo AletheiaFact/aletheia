@@ -1,5 +1,5 @@
 import { Avatar, Col, Comment, Row, Typography } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
 import CardBase from "../CardBase";
@@ -13,6 +13,21 @@ const { Paragraph, Title } = Typography;
 const ClaimCard = ({ personality, claim }) => {
     const { t } = useTranslation();
     const review = claim?.stats?.reviews[0];
+    const [ claimContent, setClaimContent ] = useState("")
+    
+    const CreateFirstParagraph = () => {
+        let textContent = "";
+        claim.content.forEach((paragraph) => {
+            paragraph.content.forEach((sentence) => {
+                return textContent += sentence.content
+            })
+        })
+        setClaimContent(textContent)
+    }
+
+    useEffect(() => {
+        CreateFirstParagraph()
+    }, [])
 
     if (!claim) {
         return <div></div>;
@@ -62,7 +77,7 @@ const ClaimCard = ({ personality, claim }) => {
                                                 lineHeight: 1.6,
                                                 height: '6.4em'
                                             }}>
-                                            {claim?.content?.text || claim?.title}
+                                            {claimContent || claim?.title}
                                         </p>
                                     </cite>
                                 </Paragraph>
