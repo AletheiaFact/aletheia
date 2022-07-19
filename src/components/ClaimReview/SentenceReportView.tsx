@@ -9,7 +9,7 @@ import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import Link from "next/link";
 import AletheiaButton, { ButtonType } from "../Button";
 import CTARegistration from "../Home/CTARegistration";
-import styled from "styled-components";
+import SentenceReportViewStyle from "./SentenceReportView.style";
 
 const SentenceReportView = ({
     personality,
@@ -33,28 +33,10 @@ const SentenceReportView = ({
         lineHeight: "30px",
     };
 
-    const CardStyle1 = styled.div`
-        .sentence-report-card {
-            padding-right: 20px;
-        }
-
-        @media (max-width: 1280px) {
-            .sentence-report-card {
-                padding-right: 25px;
-                padding-left: 20px
-            }
-        }
-
-        @media (max-width: 720px) {
-            .sentence-report-card {
-                padding-right: 0px;
-                padding-left: 0px
-            }
-        }
-    `;
+   
 
     return (
-        <CardStyle1>
+        <SentenceReportViewStyle>
             <Row className="main-content">
                 <Col offset={3} span={18}>
                     <Row style={{ borderBottom: "1px solid #dfdfdf" }}>
@@ -175,12 +157,14 @@ const SentenceReportView = ({
                                                     url={link}
                                                     borderRadius="10px"
                                                     backgroundColor={
-                                                        colors.lightGray
+                                                        colors.white
                                                     }
-                                                    borderColor="transparent"
+                                                    borderColor="rgba(177, 194, 205, 0.4)"
                                                     imageHeight="156px"
                                                     height={244}
-                                                    secondaryTextColor="#515151"
+                                                    secondaryTextColor={
+                                                        colors.grayPrimary
+                                                    }
                                                     fallback={
                                                         <Link href={link}>
                                                             {link}
@@ -268,7 +252,7 @@ const SentenceReportView = ({
                     />
                 </Col>
             </Row>
-        </CardStyle1>
+        </SentenceReportViewStyle>
     );
 };
 

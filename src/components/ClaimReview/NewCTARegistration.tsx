@@ -29,7 +29,7 @@ function NewCTARegistration({ style = {} }) {
                     }}
                 >
                     {t(
-                        "AletheiaFact.org é um movimento e plataforma coletivo de verificação de fatos que imagina uma sociedade onde todos podem ter"
+                        "NewCTARegistration:body"
                     )}
                 </Col>
                 <Col xs={0} sm={0} md={24}>
@@ -43,7 +43,7 @@ function NewCTARegistration({ style = {} }) {
                         type={ButtonType.blue}
                         target="_blank"
                         href={t("common:registrationLink")}
-                        className="New-CTA-registration-button"
+                        className="new-cta-registration-button"
                         style={{
                             alignItems: "center",
                             justifyContent: "center",
