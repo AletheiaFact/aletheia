@@ -135,7 +135,7 @@ const SentenceReportView = ({ personality, claim, sentence, href, context }) => 
                             )
                         })}
                     </>}
-                    {sources?.length > 5 && <AletheiaButton
+                    {sources?.length > 6 && <AletheiaButton
                                     style={{
                                         width: "100%",
                                         marginTop: "21px",
