@@ -10,6 +10,7 @@ const ClaimParagraph = ({ paragraph, showHighlights, generateHref }) => {
                     key={sentence.props.id}
                     content={sentence.content}
                     properties={sentence.props}
+                    data_hash={sentence.data_hash}
                     showHighlights={showHighlights}
                     generateHref={generateHref}
                 />

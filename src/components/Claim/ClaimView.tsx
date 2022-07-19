@@ -30,7 +30,7 @@ const Claim = ({ personality, claim, href }) => {
         message.info(t("claim:initialInfo"));
     });
 
-    const generateHref = (data) => `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.properties["data-hash"]}`;
+    const generateHref = (data) => `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.data_hash}`;
 
     if (paragraphs && personality) {
         return (

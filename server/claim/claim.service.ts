@@ -223,9 +223,9 @@ export class ClaimService {
         claim.content = claim.content[0].content
 
         if (claim) {
-            if (claim?.content?.object) {
-                claim.content.object = this.transformContentObject(
-                    claim.content.object,
+            if (claim?.content) {
+                claim.content = this.transformContentObject(
+                    claim.content,
                     reviews
                 );
             }
@@ -243,8 +243,8 @@ export class ClaimService {
     private calculateOverallStats(claim) {
         let totalClaims = 0;
         let totalClaimsReviewed = 0;
-        if (claim?.content?.object) {
-            claim.content.object.forEach((p) => {
+        if (claim?.content) {
+            claim.content.forEach((p) => {
                 totalClaims += p.content.length;
                 p.content.forEach((sentence) => {
                     if (sentence.props.classification) {
@@ -266,7 +266,7 @@ export class ClaimService {
         claimContent.forEach((paragraph, paragraphIndex) => {
             paragraph.content.forEach((sentence, sentenceIndex) => {
                 const claimReview = reviews.find((review) => {
-                    return review._id.sentence_hash === sentence.props["data-hash"];
+                    return review._id.sentence_hash === sentence.data_hash;
                 });
                 if (claimReview) {
                     claimContent[paragraphIndex].content[sentenceIndex].props =
