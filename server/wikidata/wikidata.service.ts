@@ -59,6 +59,7 @@ export class WikidataService {
             isAllowedProp: undefined,
             image: undefined,
             wikipedia: undefined,
+            avatar: undefined,
         };
         if (!wikidata) {
             return {};
@@ -85,7 +86,8 @@ export class WikidataService {
         // Extract image if it exists
         if (wikidata.claims.P18) {
             const fileName = wikidata.claims.P18[0].mainsnak.datavalue.value;
-            wikidataProps.image = await this.getCommonsThumbURL(fileName);
+            wikidataProps.image = await this.getCommonsThumbURL(fileName, 400);
+            wikidataProps.avatar = await this.getCommonsThumbURL(fileName, 100);
         }
         const siteLinkName = this.getSiteLinkName(language);
         if (wikidata.sitelinks[siteLinkName]) {
@@ -150,7 +152,7 @@ export class WikidataService {
             });
     }
 
-    async getCommonsThumbURL(imageTitle) {
+    async getCommonsThumbURL(imageTitle, imageSize) {
         const { data } = await axios.get(
             "https://commons.wikimedia.org/w/api.php",
             {
@@ -159,7 +161,7 @@ export class WikidataService {
                     titles: `File:${imageTitle}`,
                     prop: "imageinfo",
                     iiprop: "url",
-                    iiurlwidth: 400,
+                    iiurlwidth: imageSize,
                     format: "json",
                     formatversion: "2",
                 },
@@ -171,6 +173,6 @@ export class WikidataService {
         }
         const imageinfo =
             pages[0] && pages[0].imageinfo && pages[0].imageinfo[0];
-        return imageinfo.url;
+        return imageinfo.thumburl;
     }
 }
