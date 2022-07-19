@@ -1,43 +1,52 @@
+import { Col, Row, Typography } from "antd";
+import Link from "next/link";
 import React from "react";
-import { Avatar, Col, Row } from "antd";
-import { Typography } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import colors from "../../styles/colors";
+
 import CardBase from "../CardBase";
 
-const { Title } = Typography
+const { Text } = Typography
 
 const KanbanCard = ({ reviewTask }) => {
+
     return (
-        <CardBase>
-            <Row style={{ padding: "10px", width: "100%" }}>
-                <Col style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "16px",
-                }}>
-                    <Avatar size={20} icon={<UserOutlined />} />
-                    <Title
-                        level={3}
+        <CardBase style={{ width: '100%', minWidth: '300px' }}>
+            <Row style={{ width: '100%', padding: "10px" }}>
+                <Col span={24} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <strong
                         style={{
-                            fontSize: 16,
-                            lineHeight: "20px",
-                            margin: "0 0 0 5px",
+                            fontSize: 14,
                         }}
                     >
-                        {reviewTask.userName}
-                    </Title>
-                </Col>
-                <Col>
-                    <Title
-                        level={3}
+                        {reviewTask.claimTitle}
+                    </strong>
+                    <Text
+                    >
+                        claim by {reviewTask.personalityName}
+                    </Text>
+                    <Text
                         style={{
-                            fontSize: 18,
-                            lineHeight: "24px",
+                            fontSize: 12,
                             width: "100%",
                         }}
                     >
-                        {reviewTask.sentence_hash}
-                    </Title>
+                        Assigned to {reviewTask.userName}
+                    </Text>
+                    <Link href={reviewTask.reviewHref} passHref>
+                        <Text
+                            style={{
+                                color: colors.bluePrimary,
+                                fontWeight: 'bold',
+                                fontSize: 12,
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                                textAlign: "right"
+                            }}
+
+                        >
+                            #{reviewTask.sentence_hash}
+                        </Text>
+                    </Link>
                 </Col>
             </Row>
         </CardBase>

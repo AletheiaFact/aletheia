@@ -16,7 +16,7 @@ export class ClaimReviewTaskService {
         @InjectModel(ClaimReviewTask.name)
         private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
-        private reportService: ReportService
+        private reportService: ReportService,
     ) { }
 
     async listAll(page, pageSize, order, value) {
@@ -31,13 +31,33 @@ export class ClaimReviewTaskService {
                 model: "User",
                 select: "name",
             })
-            .lean();
+            .populate({
+                path: "machine.context.claimReview.personality",
+                model: "Personality",
+                select: "slug name"
+            })
+            .populate({
+                path: "machine.context.claimReview.claim",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    select: "title"
+                },
+                select: "slug"
+            })
+
 
         return reviewTasks.map(({ sentence_hash, machine }) => {
+            const { personality, claim } = machine.context.claimReview;
+            const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
+
             return {
                 sentence_hash,
                 userName: machine.context.reviewData.userId.name,
                 value: machine.value,
+                personalityName: personality.name,
+                claimTitle: claim.latestRevision.title,
+                reviewHref
             };
         });
     }
@@ -113,6 +133,6 @@ export class ClaimReviewTaskService {
     }
 
     count(query: any = {}) {
-        return this.ClaimReviewTaskModel.count().where(query)
+        return this.ClaimReviewTaskModel.countDocuments().where(query)
     }
 }

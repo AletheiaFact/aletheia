@@ -28,6 +28,7 @@ const KanbanCol = ({ state }: KanbanColProps) => {
                     <KanbanCard reviewTask={task} />
                 )}
                 emptyFallback={<EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />}
+                showDividers={false}
             />
         </div>
     )

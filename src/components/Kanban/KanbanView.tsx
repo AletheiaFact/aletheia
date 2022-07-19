@@ -6,25 +6,25 @@ import KanbanCol from "./KanbanCol";
 
 
 const KanbanView = () => {
-    const states = Object.keys(ReviewTaskStates);
+    // Don't show unassigned column because we don't save tasks in this state
+    const states = Object.keys(ReviewTaskStates).filter(state => state !== ReviewTaskStates.unassigned);
 
     return (
         <Row justify="center" style={{ paddingTop: "5vh" }}>
-            <Col span={22}>
-                <Row>
-                    {states.map((state) => {
-                        // Don't show unassigned column because we
-                        // don't save tasks in this state
-                        if (state !== ReviewTaskStates.unassigned) {
-                            return (
-                                <KanbanCol
-                                    key={state}
-                                    state={ReviewTaskStates[state]}
-                                />
-                            );
-                        }
-                    })}
-                </Row>
+            <Col span={22} style={{
+                display: "flex",
+                flexDirection: 'row',
+                flexWrap: "nowrap",
+                overflowX: 'auto'
+            }}>
+                {states.map((state) => {
+                    return (
+                        <KanbanCol
+                            key={state}
+                            state={ReviewTaskStates[state]}
+                        />
+                    );
+                })}
             </Col>
         </Row>
     );
