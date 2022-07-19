@@ -19,6 +19,7 @@ import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonality } from "./dto/create-personality.dto";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { TargetModel } from "../history/schema/history.schema";
+import { BaseRequest } from "../types";
 
 @Controller()
 export class PersonalityController {
@@ -26,7 +27,7 @@ export class PersonalityController {
     constructor(
         private personalityService: PersonalityService,
         private viewService: ViewService
-    ) {}
+    ) { }
 
     @IsPublic()
     @Get("api/personality")
@@ -102,22 +103,28 @@ export class PersonalityController {
 
     @IsPublic()
     @Get("personality/:slug")
-    public async personalityPage(@Req() req: Request, @Res() res: Response) {
+    public async personalityPage(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
 
         const personality = await this.personalityService.getBySlug(
             req.params.slug,
-            // @ts-ignore
             req.language
         );
+
+        const { personalities } = await this.personalityService.combinedListAll({
+            language: req.language,
+            order: 'random',
+            pageSize: 6,
+            fetchOnly: true
+        });
+
         await this.viewService
             .getNextServer()
             .render(
                 req,
                 res,
                 "/personality-page",
-                Object.assign(parsedUrl.query, { personality })
+                Object.assign(parsedUrl.query, { personality, personalities })
             );
     }
 

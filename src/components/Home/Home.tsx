@@ -19,6 +19,7 @@ const Home = ({ personalities, stats, href, isLoggedIn }) => {
                     personalities={personalities}
                     href={href}
                     isLoggedIn={isLoggedIn}
+                    title={t("home:sectionTitle1")}
                 />
             </>
         );

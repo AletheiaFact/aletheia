@@ -9,18 +9,6 @@ const HomeContentStyle = styled.div`
         margin-left: 20px;
     }
 
-    @media (min-width: 1370px) {
-        .personality-card {
-            flex: 1 1 326.75px;
-            max-width: 450px;
-        }
-    }
-
-    @media (max-width: 1369px) {
-        .personality-card {
-            flex: 1 1 326.75px;
-        }
-    }
 
     @media (max-width: 1024px) {
         .main-content {
@@ -49,7 +37,7 @@ const HomeContentStyle = styled.div`
             max-width: 75%;
         }
     }
-    
+
     @media (max-width: 900px) {
         .ant-col-12.personalities-container,
         .CTA-registration-container,
@@ -72,7 +60,7 @@ const HomeContentStyle = styled.div`
         .section-title-container {
             margin-left: 4.16666667%;
             max-width: 91.666666%;
-        },
+        }
 
         .CTA-registration-container,
         .join-container-logged-in {

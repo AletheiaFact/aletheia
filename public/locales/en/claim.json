@@ -1,6 +1,6 @@
 {
     "cardOverallReviewPrefix": "Most",
-    "cardReviewButton": "Review",
+    "cardReviewButton": "View",
     "cardLinkToFullText": "see full speech",
     "showHighlightsButton": "Show highlights",
     "hideHighlightsButton": "Hide highlights",
@@ -11,7 +11,7 @@
     "initialInfo": "Choose a sentence to review by clicking on it",
     "sourceSectionTitle": "Sources:",
     "sourceFooter": "Unable to find reliable source linking this speech to this personality?",
-    "sourceFooter2":"Is this source unreliable?",
+    "sourceFooter2": "Is this source unreliable?",
     "sourceFooterReport": "Please, report here. ",
     "cardHeader1": "Stated on",
     "cardHeader2": "in",

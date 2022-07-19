@@ -161,14 +161,20 @@ export class ClaimService {
     private async _getClaim(match: ClaimMatchParameters, revisionId = undefined, postprocess = true) {
         let claim
         if(revisionId) {
-            const rawClaim = await this.ClaimModel.aggregate([
-                { $match: match },
-                { $project: { "latestRevision": 0}}
-            ])
+            const rawClaim = await this.ClaimModel.findOne(match)
+                .select({"latestRevision": 0})
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            const revision = (await this.claimRevisionService.getRevision(revisionId)).toObject()
+            const revision = await this.claimRevisionService.getRevision({
+                _id: revisionId,
+                claimId: rawClaim._id
+            })
+
+            if (!revision || !rawClaim) {
+                throw new NotFoundException()
+            }
+
             claim = {
-                ...rawClaim[0],
+                ...rawClaim,
                 revision
             }
         } else {
@@ -177,7 +183,7 @@ export class ClaimService {
                 .populate("personality", "_id name")
                 .populate("sources", "_id link classification")
                 .populate("latestRevision")
-            claim = claim.toObject()
+                .lean()
         }
         if (!claim) {
             throw new NotFoundException()

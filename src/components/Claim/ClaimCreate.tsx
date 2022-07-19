@@ -64,6 +64,7 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
     const [disableSubmit, setDisableSubmit] = useState(true);
     const [sources, setSources] = useState([""]);
     const [recaptcha, setRecaptcha] = useState("");
+    const [ isFormSubmitted, setIsFormSubmitted ] = useState(false)
 
     useEffect(() => {
         const setTitleAndContent = async () => {
@@ -78,29 +79,35 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
 
 
     const saveClaim = async () => {
-        const { slug } = await claimApi.save(t, {
-            content,
-            title,
-            personality: personality._id,
-            // TODO: add a new input when twitter is supported
-            type: "speech",
-            date,
-            sources,
-            recaptcha
-        });
-        // Redirect to personality profile in case slug is not present
-        const path = slug ? `/personality/${personality.slug}/claim/${slug}` : `/personality/${personality.slug}`;
-        router.push(path);
+        if(!isFormSubmitted) {
+            setIsFormSubmitted(true)
+            const { slug } = await claimApi.save(t, {
+                content,
+                title,
+                personality: personality._id,
+                // TODO: add a new input when twitter is supported
+                type: "speech",
+                date,
+                sources,
+                recaptcha
+            });
+            // Redirect to personality profile in case slug is not present
+            const path = slug ? `/personality/${personality.slug}/claim/${slug}` : `/personality/${personality.slug}`;
+            router.push(path);
+        }
     }
 
     const updateClaim = async () => {
-        await claimApi.update(claim._id, t, {
-            title,
-            content
-        });
-        // Redirect to personality profile in case _id is not present
-        const path = `/personality/${personality._id}`;
-        router.push(path);
+        if(!isFormSubmitted) {
+            setIsFormSubmitted(true)
+            await claimApi.update(claim._id, t, {
+                title,
+                content
+            });
+            // Redirect to personality profile in case _id is not present
+            const path = `/personality/${personality._id}`;
+            router.push(path);
+        }
     }
 
     useEffect(() => {
@@ -280,7 +287,7 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                         <Button
                             type={ButtonType.blue}
                             htmlType="submit"
-                            disabled={disableSubmit}
+                            disabled={disableSubmit || isFormSubmitted}
                         >
                             {t("claimForm:updateButton")}
                         </Button>
@@ -288,7 +295,7 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                         <Button
                             type={ButtonType.blue}
                             htmlType="submit"
-                            disabled={disableSubmit}
+                            disabled={disableSubmit || isFormSubmitted}
                             data-cy={'testSaveButton'}
                         >
                             {t("claimForm:saveButton")}

@@ -19,10 +19,11 @@ const ClaimCard = ({ personality, claim }) => {
     }
     return (
         <CardBase>
-            <Row>
+            <Row style={{ width: '100%' }}>
                 <Comment
                     style={{
-                        padding: "15px 15px 0px 15px"
+                        padding: "15px 15px 0px 15px",
+                        width: '100%'
                     }}
                     author={
                         <ClaimCardHeader
@@ -40,37 +41,39 @@ const ClaimCard = ({ personality, claim }) => {
                     content={
                         <ClaimSummary
                             style={{
-                                padding: "15px"
+                                padding: "15px",
+                                width: "100%"
                             }}
                         >
                             <Col>
-                                <Col>
-                                    <Paragraph
-                                        ellipsis={{
-                                            rows: 4,
-                                            expandable: false
-                                        }}
-                                    >
-                                        <cite style={{ fontStyle: "normal" }}>
-                                            <p
-                                                style={{
-                                                    fontSize: 14,
-                                                    color: colors.blackPrimary,
-                                                    fontWeight: 400,
-                                                    margin: 0,
-                                                    lineHeight: 1.5715,
-                                                }}>
-                                                {claim?.content?.text || claim?.title}
-                                            </p>
-                                        </cite>
-                                    </Paragraph>
-                                </Col>
+                                <Paragraph
+                                    ellipsis={{
+                                        rows: 4,
+                                        expandable: false
+                                    }}
+                                >
+                                    <cite style={{ fontStyle: "normal" }}>
+                                        <p
+                                            style={{
+                                                fontSize: 14,
+                                                color: colors.blackPrimary,
+                                                fontWeight: 400,
+                                                margin: 0,
+                                                lineHeight: 1.6,
+                                                height: '6.4em'
+                                            }}>
+                                            {claim?.content?.text || claim?.title}
+                                        </p>
+                                    </cite>
+                                </Paragraph>
                                 <a
                                     href={`/personality/${personality.slug}/claim/${claim.slug}`}
                                     style={{
+                                        color: colors.bluePrimary,
+                                        fontWeight: 'bold',
                                         textDecoration: "underline"
                                     }}
-                                    data-cy={"testSeeFullSpeech"} 
+                                    data-cy={"testSeeFullSpeech"}
                                 >
                                     {t("claim:cardLinkToFullText")}
                                 </a>
@@ -85,6 +88,7 @@ const ClaimCard = ({ personality, claim }) => {
                     padding: "0px 15px 15px 15px",
                     width: "100%"
                 }}
+                justify="space-between"
             >
                 <Col
                     span={16}
@@ -105,21 +109,20 @@ const ClaimCard = ({ personality, claim }) => {
                                 ?.stats?.total
                         })}
                     </p>{" "}
-                    {review && (
-                        <Paragraph
-                            style={{
-                                fontSize: "10px",
-                                marginTop: 5,
-                                marginBottom: 0,
-                                display: 'flex'
-                            }}
-                        >
-                            <p style={{ margin: 0}}>
-                                {t(
-                                    "claim:cardOverallReviewPrefix"
-                                )}
-                            </p>
-                            <p
+                    <Paragraph
+                        style={{
+                            fontSize: "10px",
+                            marginTop: 5,
+                            marginBottom: 0,
+                            display: 'flex'
+                        }}
+                    >
+                        {review && <span style={{ margin: 0 }}>
+                            {t(
+                                "claim:cardOverallReviewPrefix"
+                            )}
+
+                            <span
                                 style={{
                                     color:
                                         ReviewColors[
@@ -133,23 +136,14 @@ const ClaimCard = ({ personality, claim }) => {
                             >
                                 {t(
                                     `claimReviewForm:${review?._id}`
-                                )}{" "}
-                            </p>
-                            <p style={{ margin: 0 }}>
-                                ({review.count})
-                            </p>
-                        </Paragraph>
-                    )}
+                                )}
+                            </span>
+                            ({0})
+                        </span>}
+                    </Paragraph>
                 </Col>
-                <Col span={8}>
+                <Col>
                     <Button
-                        style={{
-                            width: "100%",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            paddingBottom: 0,
-                        }}
                         type={ButtonType.blue}
                         href={`/personality/${personality.slug}/claim/${claim.slug}`}
                         data-cy={personality.name}
