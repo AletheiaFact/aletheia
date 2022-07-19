@@ -66,12 +66,27 @@ const orySubmitSettings = ({router, flow, setFlow, t, values}) => {
         .then(() => {
             router.push('/')
         })
+        .catch((err: AxiosError) =>  {handleAxiosError(err, setFlow)
+            throw err
+        })
         .catch(handleFlowError(router, 'settings', setFlow, t))
-        .catch((err: AxiosError) =>  handleAxiosError(err, setFlow))
+}
+
+const orySubmitTotp = ({router, flow, setFlow, t, values}) => {
+    return ory
+        .submitSelfServiceSettingsFlow(String(flow?.id), undefined, values)
+        .then(({data}) => {
+            setFlow(data)
+        })
+        .catch((err: AxiosError) =>  {handleAxiosError(err, setFlow)
+            throw err
+        })
+        .catch(handleFlowError(router, 'settings', setFlow, t))
 }
 
 
 export {
+    orySubmitTotp,
     oryGetLoginFlow,
     orySubmitLogin,
     oryGetSettingsFlow,

@@ -2,9 +2,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import {
     SelfServiceSettingsFlow,
     SubmitSelfServiceSettingsFlowWithPasswordMethodBody as ValuesType,
-    UiNodeInputAttributes,
 } from "@ory/client";
-import { isUiNodeInputAttributes } from "@ory/integrations/ui";
 import { Alert, Form, FormInstance, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -13,6 +11,8 @@ import { oryGetSettingsFlow, orySubmitSettings } from "../../api/ory";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
 import api from "../../api/user";
+import { Totp } from "./Totp";
+import { getUiNode } from "../../lib/orysdk/utils";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
@@ -32,18 +32,11 @@ const OryProfileView = ({ user }) => {
     };
 
     const initializeCsrf = () => {
-        if (flow?.ui?.nodes) {
-            const { nodes } = flow?.ui;
-            const csrfNode = nodes.find(
-                (node) =>
-                    isUiNodeInputAttributes(node.attributes) &&
-                    node.attributes.name === "csrf_token"
-            ).attributes as UiNodeInputAttributes;
+        const csrfNode = getUiNode(flow, "name", "csrf_token")
             if (csrfNode) {
                 flowValues.csrf_token = csrfNode.value;
             }
-        }
-    };
+    }
 
     const onSubmit = (values: ValuesType) => {
         orySubmitSettings({ router, flow, setFlow, t, values });
@@ -146,6 +139,10 @@ const OryProfileView = ({ user }) => {
                     </Button>
                 </Form.Item>
             </Form>
+            <Totp 
+                flow={flow}
+                setFlow={setFlow}
+            />
         </>
     );
 };
