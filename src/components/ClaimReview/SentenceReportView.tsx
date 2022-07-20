@@ -212,7 +212,7 @@ const SentenceReportView = ({
                                     })}
                                 </>
                             )}
-                            {sources?.length > 5 && (
+                            {sources?.length > 6 && (
                                 <AletheiaButton
                                     style={{
                                         width: "100%",
