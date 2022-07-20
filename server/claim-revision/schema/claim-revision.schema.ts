@@ -5,6 +5,11 @@ import { Personality } from "../../personality/schemas/personality.schema"
 
 export type ClaimRevisionDocument = ClaimRevision & mongoose.Document;
 
+export enum ContentModelEnum {
+    Speech = "Speech",
+    Twitter = "Twitter",
+}
+
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class ClaimRevision {
     @Prop({ required: true })
@@ -13,8 +18,23 @@ export class ClaimRevision {
     @Prop({ required: true })
     slug: string;
 
-    @Prop({ type: Object, required: true })
-    content: object;
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "Speech",
+    })
+    contentId: mongoose.Types.ObjectId;
+
+    @Prop({
+        required: true,
+        validate: {
+            validator: (v) => {
+                return v === ContentModelEnum.Speech || v === ContentModelEnum.Twitter;
+            },
+        },
+        message: (tag) => `${tag} is not a valid claim type.`,
+    })
+    contentModel: ContentModelEnum;
 
     @Prop({ required: true })
     date: Date;
@@ -25,17 +45,6 @@ export class ClaimRevision {
         ref: "Claim",
     })
     claimId: Claim;
-
-    @Prop({
-        required: true,
-        validate: {
-            validator: (v) => {
-                return ["speech", "twitter"].indexOf(v) !== -1;
-            },
-        },
-        message: (tag) => `${tag} is not a valid claim type.`,
-    })
-    type: string;
 
     @Prop({
         type: mongoose.Types.ObjectId,
@@ -57,5 +66,11 @@ ClaimRevisionSchemaRaw.virtual('reviews', {
     localField: '_id',
     foreignField: 'claim'
 });
+
+ClaimRevisionSchemaRaw.virtual('content', {
+    ref: 'Speech',
+    localField: 'contentId',
+    foreignField: '_id'
+})
 
 export const ClaimRevisionSchema = ClaimRevisionSchemaRaw;

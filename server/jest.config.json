@@ -17,5 +17,5 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "preset": "@shelf/jest-mongodb",
-    "modulePathIgnorePatterns": ["./dist/"]
+    "modulePathIgnorePatterns": ["./dist/", "./tests/"]
 }

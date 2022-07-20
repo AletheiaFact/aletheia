@@ -36,7 +36,18 @@ export class ClaimService {
             query.personality = Types.ObjectId(query.personality)
         }
         const claims = await this.ClaimModel.find(query)
-            .populate("latestRevision")
+            .populate({
+                path: 'latestRevision',
+                populate: {
+                    path: 'content',
+                    populate: {
+                        path: 'content',
+                        populate: {
+                            path: 'content'
+                        }
+                    }
+                }
+            })
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
@@ -161,14 +172,20 @@ export class ClaimService {
     private async _getClaim(match: ClaimMatchParameters, revisionId = undefined, postprocess = true) {
         let claim
         if(revisionId) {
-            const rawClaim = await this.ClaimModel.aggregate([
-                { $match: match },
-                { $project: { "latestRevision": 0}}
-            ])
+            const rawClaim = await this.ClaimModel.findOne(match)
+                .select({"latestRevision": 0})
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            const revision = (await this.claimRevisionService.getRevision(revisionId)).toObject()
+            const revision = await this.claimRevisionService.getRevision({
+                _id: revisionId,
+                claimId: rawClaim._id
+            })
+
+            if (!revision || !rawClaim) {
+                throw new NotFoundException()
+            }
+
             claim = {
-                ...rawClaim[0],
+                ...rawClaim,
                 revision
             }
         } else {
@@ -176,8 +193,20 @@ export class ClaimService {
             claim = await this.ClaimModel.findOne(match)
                 .populate("personality", "_id name")
                 .populate("sources", "_id link classification")
-                .populate("latestRevision")
-            claim = claim.toObject()
+                .populate({
+                    path: 'latestRevision',
+                    populate: {
+                        path: 'content',
+                        populate: {
+                            path: 'content',
+                            populate: {
+                                path: 'content'
+                            }
+                        }
+                    }
+                })
+                .lean()
+
         }
         if (!claim) {
             throw new NotFoundException()
@@ -200,10 +229,13 @@ export class ClaimService {
         const reviews = await this.claimReviewService.getReviewsByClaimId(
             claim._id
         );
+
+        claim.content = claim.content[0].content
+
         if (claim) {
-            if (claim?.content?.object) {
-                claim.content.object = this.transformContentObject(
-                    claim.content.object,
+            if (claim?.content) {
+                claim.content = this.transformContentObject(
+                    claim.content,
                     reviews
                 );
             }
@@ -221,8 +253,8 @@ export class ClaimService {
     private calculateOverallStats(claim) {
         let totalClaims = 0;
         let totalClaimsReviewed = 0;
-        if (claim?.content?.object) {
-            claim.content.object.forEach((p) => {
+        if (claim?.content) {
+            claim.content.forEach((p) => {
                 totalClaims += p.content.length;
                 p.content.forEach((sentence) => {
                     if (sentence.props.classification) {
@@ -244,7 +276,7 @@ export class ClaimService {
         claimContent.forEach((paragraph, paragraphIndex) => {
             paragraph.content.forEach((sentence, sentenceIndex) => {
                 const claimReview = reviews.find((review) => {
-                    return review._id.sentence_hash === sentence.props["data-hash"];
+                    return review._id.sentence_hash === sentence.data_hash;
                 });
                 if (claimReview) {
                     claimContent[paragraphIndex].content[sentenceIndex].props =

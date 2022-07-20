@@ -25,10 +25,11 @@ export class ClaimRevisionService {
     }
 
     /** get ClaimRevision by ID */
-    getRevision(claimId) {
+    getRevision(match) {
         try {
-            return this.ClaimRevisionModel.findById(claimId)
+            return this.ClaimRevisionModel.findOne(match)
                 .populate("personality", "_id name")
+                .lean()
         } catch {
             throw new NotFoundException()
         }
@@ -41,14 +42,18 @@ export class ClaimRevisionService {
      */
     async create(claimId, claim) {
         claim.claimId = claimId;
-        if (typeof claim.content === "string") {
-            claim.content = this.parserService.parse(claim.content);
-        }
         claim.slug = slugify(claim.title, {
             lower: true,     // convert to lower case, defaults to `false`
             strict: true     // strip special characters except replacement, defaults to `false`
         })
+
+        if (typeof claim.content === "string") {
+            const newSpeech = await this.parserService.parse(claim.content);
+            claim.contentId = newSpeech._id;
+        }
+
         const newClaimRevision = new this.ClaimRevisionModel(claim);
+
         if (claim.sources && Array.isArray(claim.sources)) {
             try {
                 for (let source of claim.sources) {

@@ -20,6 +20,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 
 const OryLoginForm = () => {
     const [flow, setFlow] = useState<SelfServiceLoginFlow>()
+    const [ isFormSubmitted, setIsFormSubmitted ] = useState(false)
     const { t } = useTranslation()
     const router = useRouter()
 
@@ -28,7 +29,9 @@ const OryLoginForm = () => {
     }, [])
 
     const onSubmit = (values: SubmitSelfServiceLoginFlowBody) => {
-        orySubmitLogin({ router, flow, setFlow, t, values })
+        orySubmitLogin({ router, flow, setFlow, t, values }).then(() => {
+            setIsFormSubmitted(false)
+        })
     }
 
     if (!flow) {
@@ -58,14 +61,17 @@ const OryLoginForm = () => {
     }
 
     const onFinish = (values) => {
-        const { password, email } = values
-        initializeCsrf()
-        flowValues = {
-            ...flowValues,
-            password,
-            password_identifier: email
+        if(!isFormSubmitted) {
+            setIsFormSubmitted(true)
+            const { password, email } = values
+            initializeCsrf()
+            flowValues = {
+                ...flowValues,
+                password,
+                password_identifier: email
+            }
+            onSubmit(flowValues)
         }
-        onSubmit(flowValues)
     }
 
     const onFinishFailed = errorInfo => {
@@ -125,7 +131,12 @@ const OryLoginForm = () => {
                             display: "flex",
                         }}
                     >
-                        <Button type={ButtonType.blue} htmlType="submit" data-cy={"loginButton"}>
+                        <Button
+                            type={ButtonType.blue}
+                            htmlType="submit"
+                            data-cy={"loginButton"}
+                            disabled={isFormSubmitted}
+                        >
                             {t("login:submitButton")}
                         </Button>
                     </div>

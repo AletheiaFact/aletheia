@@ -12,11 +12,16 @@ const AletheiaMenu = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const router = useRouter();
-    const onLogout = () => { CreateLogoutHandler() 
-        .then(() => router.push("/"))
-        .then(() => router.reload())
+    const onLogout = () => { 
+        if(!isFormSubmitted) {
+            setIsFormSubmitted(true)
+            CreateLogoutHandler() 
+                .then(() => router.push("/"))
+                .then(() => router.reload())
+        }
     }
     const [hasSession, setHasSession] = useState<boolean>(false)
+    const [ isFormSubmitted, setIsFormSubmitted ] = useState(false)
     
     const { menuCollapsed } = useAppSelector(
         (state) => {
@@ -105,6 +110,7 @@ const AletheiaMenu = () => {
             {hasSession && <Menu.Item
                 data-cy={"testLogout"}
                 key="/home"
+                disabled={isFormSubmitted}
                 style={{
                     fontSize: "18px"
                 }}
