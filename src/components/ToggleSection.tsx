@@ -40,7 +40,6 @@ const ToggleSection = (props: ToggleSectionProps) => {
             defaultValue={props.defaultValue}
             buttonStyle="solid"
             onChange={props.onChange}
-            style={{ width: "100%" }}
         >
             <RadioButton
                 className="radio-button"

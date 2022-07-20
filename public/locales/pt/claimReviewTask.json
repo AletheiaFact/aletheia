@@ -11,5 +11,9 @@
     "FINISH_REPORT": "Concluir Relatório",
     "PUBLISH": "Publicar",
     "SAVE_DRAFT": "Salvar rascunho",
-    "errorWhileFetching": "Erro ao buscar a máquina"
+    "errorWhileFetching": "Erro ao buscar a máquina",
+    "assigned": "Usuário atribuído",
+    "reported": "Relatório finalizado",
+    "published": "Publicado",
+    "draft": "Rascunho"
 }

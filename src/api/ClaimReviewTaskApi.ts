@@ -7,6 +7,31 @@ const request = axios.create({
     baseURL: `/api/claimreviewtask`,
 });
 
+const getClaimReviewTasks = (options) => {
+    const params = {
+        page: options.page ? options.page - 1 : 0,
+        order: options.order || 'asc',
+        pageSize: options.pageSize ? options.pageSize : 5,
+        value: options.value,
+        userId: options.userId
+    };
+
+    return request
+        .get(`/`, { params })
+        .then((response) => {
+            const { tasks, totalPages, totalTasks } = response.data;
+
+            return {
+                data: tasks || [],
+                total: totalTasks,
+                totalPages
+            }
+        })
+        .catch((e) => {
+            throw e;
+        });
+};
+
 const getMachineBySentenceHash = (params, t) => {
     return request
         .get(`/sentence/${params}`)
@@ -53,6 +78,7 @@ const ClaimReviewTaskApi = {
     getMachineBySentenceHash,
     createClaimReviewTask,
     updateClaimReviewTask,
+    getClaimReviewTasks
 }
 
 export default ClaimReviewTaskApi
