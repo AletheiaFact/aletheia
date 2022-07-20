@@ -8,5 +8,7 @@
     "headerClaimsTotal": "{{totalClaims}} discursos adicionados",
     "speechesListHeader": "Discursos",
     "errorWhileFetching": "Erro ao buscar personalidade",
-    "otherPersonalitiesTitle": "Personalidades no site"
+    "otherPersonalitiesTitle": "Personalidades no site",
+    "seeAllMetricsOverviews": "Veja todos",
+    "seeLessMetricsOverviews": "Veja menos"
 }
