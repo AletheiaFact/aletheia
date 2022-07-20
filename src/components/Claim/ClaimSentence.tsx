@@ -14,7 +14,7 @@ const ClaimSentence = styled.a`
     }
 `;
 
-const Sentence = ({ showHighlights, properties, content, generateHref }) => {
+const Sentence = ({ showHighlights, properties, data_hash, content, generateHref }) => {
     let style = {};
     if (properties.classification && showHighlights) {
         style = {
@@ -22,13 +22,13 @@ const Sentence = ({ showHighlights, properties, content, generateHref }) => {
             backgroundColor: highlightColors[properties.classification]
         };
     }
-    const href = generateHref({ properties });
+    const href = generateHref({ data_hash });
     return (
         <>
             <ClaimSentence
                 href={href}
-                id={properties["data-hash"]}
-                data-hash={properties["data-hash"]}
+                id={data_hash}
+                data-hash={data_hash}
                 style={style}
                 className="claim-sentence"
                 data-cy={`frase${properties.id}`}

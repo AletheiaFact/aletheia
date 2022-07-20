@@ -12,5 +12,6 @@ const colors = {
     white: "rgb(255, 255, 255)",
     blackPrimary: "rgb(17, 17, 17)",
     blackSecondary: "rgb(81, 81, 81)",
+    lightYellow: "rgba(219, 159, 13, 0.3)"
 };
 export default colors

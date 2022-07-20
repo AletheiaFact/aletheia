@@ -168,6 +168,7 @@ export class PersonalityService {
             if (wikidataExtract.isAllowedProp === false) {
                 return;
             }
+            
             return Object.assign(
                 wikidataExtract,
                 personality, {

@@ -9,5 +9,5 @@ export default {
 } as ComponentMeta<typeof SocialMediaShare>;
 
 export const Default: ComponentStory<typeof SocialMediaShare> = () => (
-    <SocialMediaShare />
+    <SocialMediaShare isLoggedIn={"isLoggedIn"} />
 );
