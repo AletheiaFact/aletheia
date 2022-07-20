@@ -1,70 +1,54 @@
-import React from "react";
-import { Progress, ProgressProps } from "antd";
-import ReviewColors from "../../constants/reviewColors";
-import StatsReviewColors from "../../constants/statsReviewColors";
+import React, { useState } from "react";
+import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useTranslation } from "next-i18next";
-import colors from "../../styles/colors";
+import AletheiaButton, { ButtonType } from "../Button";
+import ReviewProgress from "./ReviewProgress";
+import AletheiaTitle from "../AletheiaTitle";
 
 const ReviewStats = (props) => {
-    const { reviews } = props?.stats || {};
     const { t } = useTranslation();
-
-    const getStyle = (reviewId) => {
-        const defaultStyle: ProgressProps = {
-            strokeWidth: props.strokeWidth || 18,
-            width: props.width || 80,
-            strokeLinecap: props.type === "circle" ? "square" : "round",
-            trailColor: colors.grayTertiary
-        };
-
-        return {
-            ...defaultStyle,
-            strokeColor: StatsReviewColors[reviewId] || "#000"
-        };
-    }
-
+    const [ showAllReviews, setShowAllReviews ] = useState<boolean>(false)
+    const { reviews } = props?.stats || {};
+    
     return (
         <>
-            {reviews &&
-                reviews.map(review => {
-                    const format =
-                        props.format === "count"
-                            ? () => review.count
-                            : null;
-                    return (
-                        <div
-                            style={props.type === "circle" ? {
-                                display: "flex",
-                                flexDirection: "column-reverse",
-                                alignItems: "center",
-                                paddingRight: "10px"
-                            } : {}}
-                            key={review._id}
+            {reviews && <ReviewProgress reviews={reviews.slice(0, 3)} statsProps={props} /> }
+            {reviews && showAllReviews && <ReviewProgress reviews={reviews.slice(3)} statsProps={props} /> }
+            {reviews && reviews?.length > 3 && props.type === "line" && (
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center"
+                    }}
+                >
+                    {!showAllReviews && (
+                        <AletheiaButton
+                            style={{
+                                marginTop: "24px",
+                                paddingBottom: 0,
+                            }}
+                            type={ButtonType.blue}
+                            onClick={() => setShowAllReviews(true)}
                         >
-                            <span
-                                style={{
-                                    color:
-                                        ReviewColors[review._id] || "#000",
-                                    fontWeight: "bold",
-                                    textTransform: "uppercase",
-                                    textAlign: "center",
-                                    fontSize: "10px",
-                                    marginTop: "5px"
-                                }}
-                            >
-                                {props.countInTitle &&
-                                    `${review.count} `}
-                                {t(`claimReviewForm:${review._id}`)}
-                            </span>
-                            <Progress
-                                percent={review.percentage}
-                                type={props.type}
-                                format={format}
-                                {...getStyle(review._id)}
-                            />
-                        </div>
-                    );
-                })}
+                            <AletheiaTitle level={4}>{t(`personality:seeAllMetricsOverviews`)}</AletheiaTitle>
+                            <ArrowDownOutlined style={{ marginLeft: 5, fontSize: 14 }} />
+                        </AletheiaButton>
+                    )}
+                    {showAllReviews && (
+                        <AletheiaButton
+                            style={{
+                                marginTop: "24px",
+                                paddingBottom: 0,
+                            }}
+                            type={ButtonType.blue}
+                            onClick={() => setShowAllReviews(false)}
+                        >
+                            <AletheiaTitle level={4}>{t(`personality:seeLessMetricsOverviews`)}</AletheiaTitle>
+                            <ArrowUpOutlined style={{ marginLeft: 5, fontSize: 14 }} />
+                        </AletheiaButton>
+                    )}
+                </div>
+            )}
         </>
     );
 }
