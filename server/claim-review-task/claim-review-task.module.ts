@@ -6,13 +6,10 @@ import {
 import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ClaimReviewController } from "./claim-review-task.controller";
-import { UtilService } from "../util";
-import { SourceModule } from "../source/source.module";
-import { HttpModule } from "@nestjs/axios";
-import { ConfigModule } from "@nestjs/config";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ReportModule } from "../report/report.module";
 import { CaptchaModule } from "../captcha/captcha.module";
+import { ViewModule } from "../view/view.module";
 
 export const ClaimReviewTaskModel = MongooseModule.forFeature([
     {
@@ -26,13 +23,11 @@ export const ClaimReviewTaskModel = MongooseModule.forFeature([
         ClaimReviewTaskModel,
         ClaimReviewModule,
         ReportModule,
-        SourceModule,
-        HttpModule,
-        ConfigModule,
         CaptchaModule,
+        ViewModule
     ],
-    providers: [UtilService, ClaimReviewTaskService],
+    providers: [ClaimReviewTaskService],
     exports: [ClaimReviewTaskService],
     controllers: [ClaimReviewController],
 })
-export class ClaimReviewTaskModule {}
+export class ClaimReviewTaskModule { }

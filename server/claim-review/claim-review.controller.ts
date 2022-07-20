@@ -11,11 +11,13 @@ import { ClaimReviewService } from "./claim-review.service";
 import { CreateClaimReview } from "./dto/create-claim-review.dto";
 import { IsPublic } from "../decorators/is-public.decorator";
 
-@Controller("api/claimreview")
+@Controller()
 export class ClaimReviewController {
-    constructor(private claimReviewService: ClaimReviewService) {}
+    constructor(
+        private claimReviewService: ClaimReviewService,
+    ) { }
 
-    @Post(":sentence_hash")
+    @Post("api/review/:sentence_hash")
     async create(
         @Body() createClaimReview: CreateClaimReview,
         @Req() req,
@@ -31,12 +33,12 @@ export class ClaimReviewController {
     }
 
     @IsPublic()
-    @Get(":id")
+    @Get("api/review/:id")
     get(@Param() params) {
         return this.claimReviewService.getById(params.id);
     }
 
-    @Delete(":id")
+    @Delete("api/review/:id")
     delete(@Param() params) {
         return this.claimReviewService.delete(params.id);
     }

@@ -16,9 +16,14 @@ export const ClaimReviewModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [ClaimReviewModel, HistoryModule, SourceModule, ConfigModule],
+    imports: [
+        ClaimReviewModel,
+        HistoryModule,
+        SourceModule,
+        ConfigModule,
+    ],
     providers: [UtilService, ClaimReviewService],
     exports: [ClaimReviewService],
     controllers: [ClaimReviewController],
 })
-export class ClaimReviewModule {}
+export class ClaimReviewModule { }
