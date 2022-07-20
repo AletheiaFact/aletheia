@@ -1,14 +1,15 @@
 import { useTranslation } from "next-i18next";
-import React, { useEffect } from "react";
+import React from "react";
 
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
 import { ReviewTaskStates } from "../../machine/enums";
+import colors from "../../styles/colors";
 import BaseList from "../List/BaseList";
 import EmptyKanbanCol from "./EmptyKanbanCol";
 import KanbanCard from "./KanbanCard";
 
 interface KanbanColProps {
-    state: ReviewTaskStates,
+    state: ReviewTaskStates;
 }
 
 const KanbanCol = ({ state }: KanbanColProps) => {
@@ -16,22 +17,24 @@ const KanbanCol = ({ state }: KanbanColProps) => {
     return (
         <div
             style={{
-                padding: 10,
-                width: '400px'
+                padding: "0 10px",
+                width: "400px",
+                backgroundColor: colors.lightGraySecondary,
+                borderRadius: 4,
             }}
         >
             <BaseList
                 title={t(`claimReviewTask:${state}`)}
                 apiCall={ClaimReviewTaskApi.getClaimReviewTasks}
                 filter={{ value: state }}
-                renderItem={task => (
-                    <KanbanCard reviewTask={task} />
-                )}
-                emptyFallback={<EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />}
+                renderItem={(task) => <KanbanCard reviewTask={task} />}
+                emptyFallback={
+                    <EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />
+                }
                 showDividers={false}
             />
         </div>
-    )
-}
+    );
+};
 
-export default KanbanCol
+export default KanbanCol;

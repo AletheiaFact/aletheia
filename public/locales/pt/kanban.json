@@ -1,5 +1,4 @@
 {
-    "filterUser": "Filtrar tarefas",
-    "filterMyTasks": "Minhas",
-    "filterAllTasks": "Todas"
+    "claimBy": "Afirmação de",
+    "assignedTo": "Checador"
 }

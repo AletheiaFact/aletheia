@@ -1,5 +1,4 @@
 {
-    "filterUser": "Filter tasks",
-    "filterMyTasks": "Mine",
-    "filterAllTasks": "All"
+    "claimBy": "Claim by",
+    "assignedTo": "Fact-checker"
 }
