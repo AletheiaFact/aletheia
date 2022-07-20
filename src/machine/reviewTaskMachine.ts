@@ -105,7 +105,12 @@ export const transitionHandler = (state) => {
             t,
             event,
         )
-        .then(() => setCurrentFormAndNextEvents(event))
+        .then(() => {
+            setCurrentFormAndNextEvents(event)
+            if(event === ReviewTaskEvents.publish) {
+                window.location.reload()
+            }
+        })
         .catch((e) => e)
     }
 };
