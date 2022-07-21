@@ -46,7 +46,7 @@ export class PersonalityService {
                 { $sample: { size: pageSize } },
             ])
 
-            
+
         } else {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             personalities = await this.PersonalityModel.find(query)
@@ -81,7 +81,7 @@ export class PersonalityService {
      */
     async create(personality) {
         try {
-            const personalityExists = 
+            const personalityExists =
                 await this.getDeletedPersonalityByWikidata(personality.wikidata)
 
             if(personalityExists) {
@@ -95,9 +95,9 @@ export class PersonalityService {
                 this.logger.log(
                     `Attempting to create new personality with data ${personality}`
                 );
-    
+
                 const user = this.req.user
-    
+
                 const history = this.history.getHistoryParams(
                     newPersonality._id,
                     TargetModel.Personality,
@@ -105,9 +105,9 @@ export class PersonalityService {
                     HistoryType.Create,
                     personality
                 )
-    
+
                 this.history.createHistory(history)
-    
+
                 return newPersonality.save();
             }
         } catch (err) {}
@@ -149,7 +149,7 @@ export class PersonalityService {
                     ...claim.lastestRevision,
                     ...claim
                 }
-            })) 
+            }))
             this.logger.log(`Found personality ${personality._id}`);
             return await this.postProcess(personality.toObject(), language);
         } catch {
@@ -168,7 +168,7 @@ export class PersonalityService {
             if (wikidataExtract.isAllowedProp === false) {
                 return;
             }
-            
+
             return Object.assign(
                 wikidataExtract,
                 personality, {
@@ -233,7 +233,7 @@ export class PersonalityService {
                 previousPersonality
             )
         await this.history.createHistory(history)
-        
+
         return personalityUpdate;
     }
 

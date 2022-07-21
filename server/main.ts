@@ -2,8 +2,6 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { join } from "path";
 import Logger from "./logger";
-import * as passport from "passport";
-import * as session from "express-session";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
 const MongoStore = require("connect-mongo");
@@ -36,19 +34,6 @@ const initApp = async (options) => {
     )
 
     app.use(cookieParser());
-    app.use(
-        session({
-            secret: "replace_me",
-            resave: false,
-            saveUninitialized: false,
-            store: MongoStore.create({
-                mongoUrl: options.config.db.connection_uri,
-                mongoOptions: options.config.db.options
-            })
-        })
-    );
-    app.use(passport.initialize());
-    app.use(passport.session());
     app.useStaticAssets(join(__dirname, "..", "public"));
     // app.setGlobalPrefix("api");
     await app.listen(options.config.port);
