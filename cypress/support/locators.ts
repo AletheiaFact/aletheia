@@ -1,21 +1,26 @@
+import personality from "../fixtures/personality";
+
 const locators = {
-    LOGIN: {
+    login: {
         USER: "#basic_email",
         PASSWORD: "#basic_password",
         BTN_LOGIN: "[data-cy=loginButton]",
     },
 
-    PERSONALITY: {
+    personality: {
         BTN_SEE_MORE_PERSONALITY: "[data-cy=testSeeMorePersonality]",
         BTN_ADD_PERSONALITY: "[data-cy=testButtonCreatePersonality]",
         INPUT_SEARCH_PERSONALITY: "[data-cy=testInputSearchPersonality]",
+        SELECT_PERSONALITY: `[data-cy=${personality.name}]`
     },
 
-    CLAIM_REVIEW: {
+    claimReview: {
         BTN_START_CLAIM_REVIEW: "[data-cy=testAddReviewButton]",
+        INPUT_USER: "[data-cy=testClaimReviewuserId]",
+        BTN_ASSIGN_USER: "[data-cy=testClaimReviewASSIGN_USER]",
     },
 
-    MENU: {
+    menu: {
         SIDE_MENU: "[data-cy=testSideMenuClosed]"
     }
 };

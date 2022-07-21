@@ -1,10 +1,11 @@
-import locators from "./locator";
+import user from "../fixtures/user";
+import locators from "./locators";
 
 Cypress.Commands.add('login', () => {
     cy.visit("http://localhost:3000/login");
-    cy.get(locators.LOGIN.USER).type("test@aletheiafact.org");
-    cy.get(locators.LOGIN.PASSWORD).type("TEST_USER_PASS");
-    cy.get(locators.LOGIN.BTN_LOGIN).click();
+    cy.get(locators.login.USER).type(user.email);
+    cy.get(locators.login.PASSWORD).type(user.password);
+    cy.get(locators.login.BTN_LOGIN).click();
     cy.intercept("/api/.ory/sessions/whoami").as("confirmLogin");
     cy.wait("@confirmLogin", { timeout: 10000 });
 })
