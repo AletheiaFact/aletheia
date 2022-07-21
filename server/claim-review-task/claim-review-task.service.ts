@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import {
     ClaimReviewTask,
     ClaimReviewTaskDocument,
@@ -16,14 +16,60 @@ export class ClaimReviewTaskService {
         @InjectModel(ClaimReviewTask.name)
         private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
-        private reportService: ReportService
-    ) {}
+        private reportService: ReportService,
+    ) { }
+
+    async listAll(page, pageSize, order, value) {
+        const reviewTasks = await this.ClaimReviewTaskModel.find({
+            "machine.value": value,
+        })
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .sort({ _id: order })
+            .populate({
+                path: "machine.context.reviewData.userId",
+                model: "User",
+                select: "name",
+            })
+            .populate({
+                path: "machine.context.claimReview.personality",
+                model: "Personality",
+                select: "slug name"
+            })
+            .populate({
+                path: "machine.context.claimReview.claim",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    select: "title"
+                },
+                select: "slug"
+            })
+
+
+        return reviewTasks.map(({ sentence_hash, machine }) => {
+            const { personality, claim } = machine.context.claimReview;
+            const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
+
+            return {
+                sentence_hash,
+                userName: machine.context.reviewData.userId.name,
+                value: machine.value,
+                personalityName: personality.name,
+                claimTitle: claim.latestRevision.title,
+                reviewHref
+            };
+        });
+    }
 
     getById(claimReviewTaskId: string) {
         return this.ClaimReviewTaskModel.findById(claimReviewTaskId);
     }
 
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
+        claimReviewTaskBody.machine.context.reviewData.userId = Types.ObjectId(
+            claimReviewTaskBody.machine.context.reviewData.userId
+        );
         const newClaimReviewTask = new this.ClaimReviewTaskModel(
             claimReviewTaskBody
         );
@@ -37,6 +83,10 @@ export class ClaimReviewTaskService {
     ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         try {
+            newClaimReviewTaskBody.machine.context.reviewData.userId =
+                Types.ObjectId(
+                    newClaimReviewTaskBody.machine.context.reviewData.userId
+                );
             const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
                 sentence_hash
             );
@@ -50,13 +100,13 @@ export class ClaimReviewTaskService {
             );
 
             if (newClaimReviewTaskMachine.value === "published") {
-                const claimReviewData = 
+                const claimReviewData =
                     newClaimReviewTaskMachine.context.claimReview;
 
                 const newReport = Object.assign(
                     newClaimReviewTaskMachine.context.reviewData,
                     { sentence_hash }
-                )
+                );
 
                 const report = await this.reportService.create(newReport);
 
@@ -80,5 +130,9 @@ export class ClaimReviewTaskService {
 
     getClaimReviewTaskBySentenceHash(sentence_hash: string) {
         return this.ClaimReviewTaskModel.findOne({ sentence_hash });
+    }
+
+    count(query: any = {}) {
+        return this.ClaimReviewTaskModel.countDocuments().where(query)
     }
 }

@@ -3,7 +3,7 @@ import { randomBytes } from "crypto";
 
 @Injectable()
 export class UtilService {
-    formatStats(reviews, slice = false) {
+    formatStats(reviews) {
         const total = reviews.reduce((agg, review) => {
             agg += review.count;
             return agg;
@@ -16,7 +16,7 @@ export class UtilService {
                 count: review.count,
             };
         });
-        return { total, reviews: slice ? result.slice(0, 3) : result };
+        return { total, reviews: result };
     }
 
     /**

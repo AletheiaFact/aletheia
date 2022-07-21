@@ -116,9 +116,9 @@ export class ClaimController {
         ]).then(([stats, claimObj, userReview]) => {
             let sentenceObj;
 
-            claimObj.content.object.forEach((p) => {
+            claimObj.content.forEach((p) => {
                 p.content.forEach((sentence) => {
-                    if (sentence.props["data-hash"] === sentence_hash) {
+                    if (sentence.data_hash === sentence_hash) {
                         sentenceObj = sentence;
                     }
                 });

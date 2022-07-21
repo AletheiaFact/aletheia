@@ -1,14 +1,52 @@
-import { Body, Controller, Post, Param, Get, Put } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Post,
+    Param,
+    Get,
+    Put,
+    Query,
+    Req,
+    Res,
+} from "@nestjs/common";
 import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 import { CaptchaService } from "../captcha/captcha.service";
+import { IsPublic } from "../decorators/is-public.decorator";
+import { parse } from "url";
+import { Request, Response } from "express";
+import { ViewService } from "../view/view.service";
+import { GetTasksDTO } from "./dto/get-tasks.dto";
+
 @Controller()
 export class ClaimReviewController {
     constructor(
         private claimReviewTaskService: ClaimReviewTaskService,
-        private captchaService: CaptchaService
+        private captchaService: CaptchaService,
+        private viewService: ViewService
     ) { }
+
+    @IsPublic()
+    @Get("api/claimreviewtask")
+    public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
+        const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
+        return Promise.all([
+            this.claimReviewTaskService.listAll(page, pageSize, order, value),
+            // This should count the number of documents for the original query without pagination
+            this.claimReviewTaskService.count({ "machine.value": value }),
+        ]).then(([tasks, totalTasks]) => {
+            const totalPages = Math.ceil(totalTasks / pageSize);
+
+            return {
+                tasks,
+                totalTasks,
+                totalPages,
+                page,
+                pageSize,
+            };
+        });
+    }
 
     @Get("api/claimreviewtask/:id")
     async getById(@Param("id") id: string) {
@@ -48,5 +86,19 @@ export class ClaimReviewController {
         return this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
             sentence_hash
         );
+    }
+
+    @Get("kanban")
+    public async personalityList(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/kanban-page",
+                Object.assign(parsedUrl.query, {})
+            );
     }
 }

@@ -4,7 +4,7 @@ import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
 import { saveContext } from "./actions";
-import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
+import { DraftStates, ReviewTaskEvents, ReviewTaskStates } from "./enums";
 
 export const createNewMachine = ({ value, context }) => {
     return createMachine<
@@ -24,12 +24,12 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             assigned: {
-                initial: ReviewTaskStates.undraft,
+                initial: DraftStates.undraft,
                 states: {
                     undraft: {
                         on: {
                             SAVE_DRAFT: {
-                                target: ReviewTaskStates.draft,
+                                target: DraftStates.draft,
                                 actions: [saveContext]
                             }
                         }
@@ -37,7 +37,7 @@ export const createNewMachine = ({ value, context }) => {
                     draft: {
                         on: {
                             SAVE_DRAFT: {
-                                target: ReviewTaskStates.draft,
+                                target: DraftStates.draft,
                                 actions: [saveContext],
                             }
                         }
@@ -51,12 +51,12 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             reported: {
-                initial: ReviewTaskStates.undraft,
+                initial: DraftStates.undraft,
                 states: {
                     undraft: {
                         on: {
                             SAVE_DRAFT: {
-                                target: ReviewTaskStates.draft,
+                                target: DraftStates.draft,
                                 actions: [saveContext]
                             }
                         }
@@ -64,7 +64,7 @@ export const createNewMachine = ({ value, context }) => {
                     draft: {
                         on: {
                             SAVE_DRAFT: {
-                                target: ReviewTaskStates.draft,
+                                target: DraftStates.draft,
                                 actions: [saveContext],
                             }
                         }
@@ -97,16 +97,21 @@ export const transitionHandler = (state) => {
             t,
             event,
         )
-        .then(() => setCurrentFormAndNextEvents(event))
-        .catch((e) => e)
+            .then(() => setCurrentFormAndNextEvents(event))
+            .catch((e) => e)
     } else if (event !== ReviewTaskEvents.init) {
         api.updateClaimReviewTask(
             { sentence_hash, machine: state, recaptcha },
             t,
             event,
         )
-        .then(() => setCurrentFormAndNextEvents(event))
-        .catch((e) => e)
+            .then(() => {
+                setCurrentFormAndNextEvents(event)
+                if(event === ReviewTaskEvents.publish) {
+                    window.location.reload()
+                }
+            })
+            .catch((e) => e)
     }
 };
 

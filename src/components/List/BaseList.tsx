@@ -13,6 +13,7 @@ const BaseList = ({
     footer = <></>,
     title = "",
     grid = null,
+    showDividers = true,
 }) => {
     const { t } = useTranslation();
 
@@ -43,6 +44,7 @@ const BaseList = ({
             );
         });
     }, [query, apiCall]);
+
 
     const loadMoreData = () => {
         if (execLoadMore !== true) {
@@ -93,6 +95,7 @@ const BaseList = ({
                 <List
                     itemLayout="horizontal"
                     grid={grid}
+                    split={showDividers}
                     header={
                         <Row align="middle" justify="space-between">
                             <Col>

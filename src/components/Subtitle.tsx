@@ -11,6 +11,7 @@ const Subtitle = (props) => {
                 fontWeight: 600,
                 fontSize: 24,
                 lineHeight: 1.35,
+                ...props.style
             }}
         >
             {props.children}

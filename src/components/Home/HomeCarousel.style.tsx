@@ -6,6 +6,10 @@ const HomeCarouselStyle = styled(Row)`
         background: #222;
     }
 
+    .slick-slide > div > div > span {
+        min-height: 443px;
+    }
+
     .carousel-title-container {
         margin: 64px 0 32px 0;
     }
@@ -62,14 +66,14 @@ const HomeCarouselStyle = styled(Row)`
             order: 3;
             display: flex;
         }
-        
+
         .stats-container {
             order: 2;
             flex-direction: column;
             margin: 0 0 16px 0;
             height: auto;
         }
-        
+
         .ant-col-7.stats-child-container {
             max-width: 100%;
             margin-left: 0;
@@ -124,8 +128,8 @@ const HomeCarouselStyle = styled(Row)`
     @media (max-width: 610px) {
         .carousel-subtitle-container {
             width: 100%;
-        }   
-        
+        }
+
         .CTA-container {
             display: grid;
             grid-template-columns: 1fr 1fr;

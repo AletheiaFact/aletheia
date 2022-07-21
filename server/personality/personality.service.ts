@@ -168,6 +168,7 @@ export class PersonalityService {
             if (wikidataExtract.isAllowedProp === false) {
                 return;
             }
+            
             return Object.assign(
                 wikidataExtract,
                 personality, {
@@ -190,7 +191,7 @@ export class PersonalityService {
             isPublished: true,
         });
         this.logger.log(`Got stats ${reviews}`);
-        return this.util.formatStats(reviews, true);
+        return this.util.formatStats(reviews);
     }
 
     /**

@@ -2,6 +2,7 @@ import { Carousel, Col, Row } from 'antd';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import React from 'react';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 import colors from '../../styles/colors';
 import CTASection from './CTASection';
@@ -9,7 +10,9 @@ import HomeCarouselStyle from './HomeCarousel.style';
 import HomeStats from './HomeStats';
 
 const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
-    const { t } = useTranslation();
+    const isMobile = useMediaQuery("(max-width: 767px)")
+
+    const { t } = useTranslation()
 
     return (
         <HomeCarouselStyle>
@@ -40,13 +43,12 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                                     width="100%"
                                     height="100%"
                                     layout="responsive"
-                                    objectFit="contain"
-                                    objectPosition={"center calc(443px / 2 * -1)"}
+                                    objectFit={isMobile ? "cover" : "contain"}
+                                    objectPosition={`center ${isMobile ? '-50px' : 'calc(443px / 2 * -1)'}`}
                                     style={{
                                         color: colors.white,
                                         lineHeight: "160px",
                                         textAlign: "center",
-                                        width: "auto",
                                         filter: "grayscale(100%)",
                                         background: 'none',
                                     }}
@@ -97,7 +99,7 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                                     margin: 0,
                                 }}
                             >
-                                <span className="carousel-subtitle">{t("home:subtitle0")}</span>
+                                <span className="carousel-subtitle">{t("home:subtitle0")}</span>{' '}
                                 <span className="carousel-subtitle">{t("home:subtitle1")}</span>
                             </h2>
                         </Row>

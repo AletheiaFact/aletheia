@@ -11,5 +11,9 @@
     "FINISH_REPORT": "Finish Report",
     "PUBLISH": "Publish",
     "SAVE_DRAFT": "Save Draft",
-    "errorWhileFetching": "Error while fetching machine"
+    "errorWhileFetching": "Error while fetching machine",
+    "assigned": "User assigned",
+    "reported": "Report finished",
+    "published": "Published",
+    "draft": "Draft"
 }

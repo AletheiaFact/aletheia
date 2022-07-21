@@ -13,7 +13,7 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
     const { t } = useTranslation();
     const claimId = claim._id;
     const personalityId = personality._id;
-    const sentenceHash = sentence?.props["data-hash"];
+    const sentenceHash = sentence.data_hash;
     const stats = sentence?.stats;
     const [formCollapsed, setFormCollapsed] = useState(claimReviewTask ? false : true);
 
