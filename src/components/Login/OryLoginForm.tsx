@@ -40,14 +40,13 @@ const OryLoginForm = () => {
         ory
             .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
             // We logged in successfully! Let's bring the user home.
-            .then((res) => {
+            .then(() => {
                 if (flow?.return_to) {
                     window.location.href = flow?.return_to;
                     return;
                 }
                 router.push("/");
             })
-            .then(() => {})
             .catch(handleFlowError(router, "login", setFlow, t))
             .catch((err: AxiosError) => {
                 // If the previous handler did not catch the error it's most likely a form validation error

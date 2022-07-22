@@ -3,11 +3,10 @@ import { Form, Row, Typography } from "antd";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { orySubmitTotp } from "../../api/ory";
-import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
 import { getUiNode } from "../../lib/orysdk/utils";
 import { useRouter } from "next/router";
-import AletheiaButton from "../Button";
+import AletheiaButton, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
 
 export const Totp = ({ flow, setFlow }) => {
@@ -66,9 +65,7 @@ export const Totp = ({ flow, setFlow }) => {
                 setErrorMessage("");
             })
             .catch(() => {
-                setErrorMessage(
-                    t("profile:totpIncorectCodeMessage")
-                );
+                setErrorMessage(t("profile:totpIncorectCodeMessage"));
             });
     };
 
@@ -175,11 +172,11 @@ export const Totp = ({ flow, setFlow }) => {
                             },
                         ]}
                     >
-                        <InputPassword/>
+                        <InputPassword />
                     </Form.Item>
-                    <Button type={ButtonType.blue} htmlType="submit">
+                    <AletheiaButton type={ButtonType.blue} htmlType="submit">
                         {t("login:submitButton")}
-                    </Button>
+                    </AletheiaButton>
                 </Form>
             )}
             {!showForm && (
@@ -208,6 +205,5 @@ export const Totp = ({ flow, setFlow }) => {
                 </AletheiaButton>
             )}
         </>
-        //Find a better way to set this message
     );
 };
