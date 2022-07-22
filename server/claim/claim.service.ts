@@ -8,7 +8,6 @@ import { HistoryService } from "../history/history.service"
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
 import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
 import {BaseRequest} from "../types";
 
 type ClaimMatchParameters = ({ _id: string } | { personality: string, slug: string }) & FilterQuery<ClaimDocument>;

@@ -3,8 +3,8 @@ import { Row, Col, Card } from "antd";
 import colors from "../../styles/colors";
 import OryLoginForm from "./OryLoginForm";
 
-const LoginView = (props) => {
-    const [formType, setFormType] = useState("login");
+const LoginView = () => {
+    const [formType] = useState("login");
     return (
         <>
             <Row justify="center">

@@ -1,6 +1,6 @@
 import {
     Controller,
-    Get, Logger,
+    Get,
     Query, Req,
     Res,
 } from "@nestjs/common";
