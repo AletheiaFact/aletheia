@@ -6,6 +6,7 @@
     "license": "MIT",
     "main": "./dist/server/main.js",
     "scripts": {
+        "prepare": "husky install",
         "start": "service-runner",
         "copy-html-files": "copyfiles -u 1 server/**/*.html dist/server/",
         "seed": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/command.js -c config.seed.yaml",
@@ -55,11 +56,6 @@
             "url": "https://github.com/mateusbs17"
         }
     ],
-    "husky": {
-        "hooks": {
-            "pre-commit": "yarn lint"
-        }
-    },
     "dependencies": {
         "@ant-design/icons": "^4.6.2",
         "@ant-design/icons-svg": "^4.1.0",
@@ -170,6 +166,7 @@
         "eslint-plugin-react-hooks": "^4.0.8",
         "husky": "^8.0.1",
         "jest": "^27.4.7",
+        "lint-staged": "^13.0.3",
         "mongodb-memory-server": "^8.6.0",
         "nodemon": "^2.0.12",
         "prettier": "2.3.2",
@@ -206,6 +203,12 @@
         ],
         "coverageReporters": [
             "lcov"
+        ]
+    },
+    "lint-staged": {
+        "*.(ts|js|tsx)": [
+            "prettier --write",
+            "eslint --fix"
         ]
     }
 }
