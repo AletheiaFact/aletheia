@@ -84,6 +84,9 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                <a href="#redirect" >redirect</a>
+                            </li>
+                            <li>
                                     <span class="modifier">Public</span>
                                     <span class="modifier">Async</span>
                                 <a href="#showHome" >showHome</a>
@@ -109,6 +112,78 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="redirect"></a>
+                    <span class="name">
+                        <span ><b>redirect</b></span>
+                        <a href="#redirect"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>redirect(res)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Get(&#x27;/home&#x27;)<br /></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="23"
+                            class="link-to-prism">server/home/home.controller.ts:23</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>res</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="showHome"></a>
                     <span class="name">
                         <span class="modifier">Public</span>
@@ -121,7 +196,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>showHome(req: Request, res: Response)</code>
+                    <code>showHome(req: <a href="../undefineds/BaseRequest.html" target="_self">BaseRequest</a>, res: Response)</code>
                 </td>
             </tr>
 
@@ -129,14 +204,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@IsPublic()<br />@Get(&#x27;home&#x27;)<br /></code>
+                    <code>@IsPublic()<br />@Get()<br /></code>
                 </td>
             </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="19"
-                            class="link-to-prism">server/home/home.controller.ts:19</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="29"
+                            class="link-to-prism">server/home/home.controller.ts:29</a></div>
                 </td>
             </tr>
 
@@ -159,7 +234,7 @@
                                 <tr>
                                     <td>req</td>
                                     <td>
-                                            <code>Request</code>
+                                                <code><a href="../miscellaneous/typealiases.html#BaseRequest" target="_self" >BaseRequest</a></code>
                                     </td>
 
                                     <td>
@@ -202,11 +277,12 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Req, Res } from &quot;@nestjs/common&quot;;
 import { ViewService } from &quot;../view/view.service&quot;;
-import { Request, Response } from &quot;express&quot;;
+import { Response } from &quot;express&quot;;
 import { parse } from &quot;url&quot;;
 import { PersonalityService } from &quot;../personality/personality.service&quot;;
 import { StatsService } from &quot;../stats/stats.service&quot;;
 import { IsPublic } from &quot;../decorators/is-public.decorator&quot;;
+import { BaseRequest } from &quot;../types&quot;;
 
 @Controller(&quot;/&quot;)
 export class HomeController {
@@ -214,20 +290,29 @@ export class HomeController {
         private viewService: ViewService,
         private personalityService: PersonalityService,
         private statsService: StatsService
-    ) {}
+    ) { }
+
+    @Get(&#x27;/home&#x27;)
+    /**
+     * Redirect /home to / for backwards compatibility
+     * @param res
+     */
+    redirect(@Res() res) {
+        return res.redirect(&#x27;/&#x27;);
+    }
 
     @IsPublic()
-    @Get(&quot;home&quot;)
-    public async showHome(@Req() req: Request, @Res() res: Response) {
+    @Get()
+    public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
+
         const { personalities } &#x3D; await this.personalityService.combinedListAll({
-            // @ts-ignore
             language: req.language,
             order: &#x27;random&#x27;,
-            pageSize: 5,
+            pageSize: 6,
             fetchOnly: true
         });
+
         const stats &#x3D; await this.statsService.getHomeStats();
         await this.viewService
             .getNextServer()

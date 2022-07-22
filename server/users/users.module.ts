@@ -5,18 +5,12 @@ import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
 import { ViewModule } from "../view/view.module";
 import OryModule from "../ory/ory.module";
-import {ConfigModule} from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 
-const UserModel = MongooseModule.forFeatureAsync([
+const UserModel = MongooseModule.forFeature([
     {
         name: User.name,
-        useFactory: () => {
-            const schema = UserSchema;
-            schema.plugin(require("passport-local-mongoose"), {
-                usernameField: "email",
-            });
-            return schema;
-        },
+        schema: UserSchema,
     },
 ]);
 

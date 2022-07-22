@@ -217,8 +217,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="42"
-                            class="link-to-prism">server/claim-revision/claim-revision.service.ts:42</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="43"
+                            class="link-to-prism">server/claim-revision/claim-revision.service.ts:43</a></div>
                 </td>
             </tr>
 
@@ -294,7 +294,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getRevision(claimId)</code>
+<code>getRevision(match)</code>
                 </td>
             </tr>
 
@@ -324,7 +324,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>claimId</td>
+                                    <td>match</td>
 
                                     <td>
                                         No
@@ -441,10 +441,11 @@ export class ClaimRevisionService {
     }
 
     /** get ClaimRevision by ID */
-    getRevision(claimId) {
+    getRevision(match) {
         try {
-            return this.ClaimRevisionModel.findById(claimId)
+            return this.ClaimRevisionModel.findOne(match)
                 .populate(&quot;personality&quot;, &quot;_id name&quot;)
+                .lean()
         } catch {
             throw new NotFoundException()
         }
@@ -457,14 +458,18 @@ export class ClaimRevisionService {
      */
     async create(claimId, claim) {
         claim.claimId &#x3D; claimId;
-        if (typeof claim.content &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
-            claim.content &#x3D; this.parserService.parse(claim.content);
-        }
         claim.slug &#x3D; slugify(claim.title, {
             lower: true,     // convert to lower case, defaults to &#x60;false&#x60;
             strict: true     // strip special characters except replacement, defaults to &#x60;false&#x60;
         })
+
+        if (typeof claim.content &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+            const newSpeech &#x3D; await this.parserService.parse(claim.content);
+            claim.contentId &#x3D; newSpeech._id;
+        }
+
         const newClaimRevision &#x3D; new this.ClaimRevisionModel(claim);
+
         if (claim.sources &amp;&amp; Array.isArray(claim.sources)) {
             try {
                 for (let source of claim.sources) {

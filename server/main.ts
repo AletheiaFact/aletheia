@@ -4,7 +4,6 @@ import { join } from "path";
 import Logger from "./logger";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
-const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 
 const initApp = async (options) => {
