@@ -9,6 +9,7 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+import {BaseRequest} from "../types";
 
 type ClaimMatchParameters = ({ _id: string } | { personality: string, slug: string }) & FilterQuery<ClaimDocument>;
 
@@ -18,7 +19,7 @@ export class ClaimService {
     private readonly logger = new Logger("ClaimService");
 
     constructor(
-        @Inject(REQUEST) private req: Request,
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Claim.name)
         private ClaimModel: ISoftDeletedModel<ClaimDocument> & Model<ClaimDocument>,
         private claimReviewService: ClaimReviewService,

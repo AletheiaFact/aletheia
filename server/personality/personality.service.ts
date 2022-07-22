@@ -11,6 +11,7 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+import {BaseRequest} from "../types";
 
 @Injectable({ scope: Scope.REQUEST })
 export class PersonalityService {
@@ -21,7 +22,7 @@ export class PersonalityService {
     };
 
     constructor(
-        @Inject(REQUEST) private req: Request,
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Personality.name)
         private PersonalityModel: ISoftDeletedModel<PersonalityDocument> & Model<PersonalityDocument>,
         private claimReview: ClaimReviewService,
