@@ -171,9 +171,10 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Module } from &quot;@nestjs/common&quot;;
 import { ViewController } from &quot;./view.controller&quot;;
 import { ViewService } from &quot;./view.service&quot;;
+import {ConfigModule} from &quot;@nestjs/config&quot;;
 
 @Module({
-    imports: [],
+    imports: [ConfigModule],
     providers: [ViewService],
     controllers: [ViewController],
     exports: [ViewService]

@@ -78,16 +78,9 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Public</span>
                                     <span class="modifier">Async</span>
-                                <a href="#changePassword" >changePassword</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Async</span>
-                                <a href="#findAll" >findAll</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Async</span>
-                                <a href="#login" >login</a>
+                                <a href="#getAll" >getAll</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
@@ -120,18 +113,19 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="changePassword"></a>
+                    <a name="getAll"></a>
                     <span class="name">
+                        <span class="modifier">Public</span>
                         <span class="modifier">Async</span>
-                        <span ><b>changePassword</b></span>
-                        <a href="#changePassword"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>getAll</b></span>
+                        <a href="#getAll"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>changePassword(req, res)</code>
+                    <code>getAll(getUsers)</code>
                 </td>
             </tr>
 
@@ -139,14 +133,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Put(&#x27;api/user/:id/password&#x27;)<br /></code>
+                    <code>@IsPublic()<br />@Get(&#x27;api/user&#x27;)<br /></code>
                 </td>
             </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="43"
-                            class="link-to-prism">server/users/users.controller.ts:43</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="56"
+                            class="link-to-prism">server/users/users.controller.ts:56</a></div>
                 </td>
             </tr>
 
@@ -166,173 +160,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>req</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>res</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="findAll"></a>
-                    <span class="name">
-                        <span class="modifier">Async</span>
-                        <span ><b>findAll</b></span>
-                        <a href="#findAll"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>findAll(req)</code>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <b>Decorators : </b>
-                    <br />
-                    <code>@Get(&#x27;api/user/validate&#x27;)<br /></code>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="28"
-                            class="link-to-prism">server/users/users.controller.ts:28</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>req</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="login"></a>
-                    <span class="name">
-                        <span class="modifier">Async</span>
-                        <span ><b>login</b></span>
-                        <a href="#login"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>login(req, res)</code>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <b>Decorators : </b>
-                    <br />
-                    <code>@IsPublic()<br />@UseGuards(LocalAuthGuard)<br />@Post(&#x27;api/user/signin&#x27;)<br /></code>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="35"
-                            class="link-to-prism">server/users/users.controller.ts:35</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>req</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>res</td>
+                                    <td>getUsers</td>
 
                                     <td>
                                         No
@@ -386,8 +214,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="72"
-                            class="link-to-prism">server/users/users.controller.ts:72</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="26"
+                            class="link-to-prism">server/users/users.controller.ts:26</a></div>
                 </td>
             </tr>
 
@@ -463,7 +291,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>profile(req: Request, res: Response)</code>
+                    <code>profile(req: <a href="../undefineds/BaseRequest.html" target="_self">BaseRequest</a>, res: Response)</code>
                 </td>
             </tr>
 
@@ -477,8 +305,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="86"
-                            class="link-to-prism">server/users/users.controller.ts:86</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="40"
+                            class="link-to-prism">server/users/users.controller.ts:40</a></div>
                 </td>
             </tr>
 
@@ -501,7 +329,7 @@
                                 <tr>
                                     <td>req</td>
                                     <td>
-                                            <code>Request</code>
+                                                <code><a href="../miscellaneous/typealiases.html#BaseRequest" target="_self" >BaseRequest</a></code>
                                     </td>
 
                                     <td>
@@ -545,71 +373,25 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
     Controller,
     Get, Logger,
-    Post, Put, Req,
+    Query, Req,
     Res,
-    UseGuards,
 } from &quot;@nestjs/common&quot;;
 import {Request, Response} from &quot;express&quot;;
 import { UsersService } from &quot;./users.service&quot;;
-import { LocalAuthGuard } from &quot;../auth/local-auth.guard&quot;;
 import { parse } from &quot;url&quot;;
 import { ViewService } from &quot;../view/view.service&quot;;
-import * as mongoose from &quot;mongoose&quot;;
 import {ConfigService} from &quot;@nestjs/config&quot;;
 import {IsPublic} from &quot;../decorators/is-public.decorator&quot;;
+import { BaseRequest } from &quot;../types&quot;;
+
 
 @Controller()
 export class UsersController {
-    private readonly logger &#x3D; new Logger(&quot;UserController&quot;);
     constructor(
         private readonly usersService: UsersService,
         private viewService: ViewService,
         private configService: ConfigService
     ) {}
-
-    // TODO: this seems to be deprecated
-    @Get(&quot;api/user/validate&quot;)
-    async findAll(@Req() req): Promise&lt;any&gt; {
-        return { login: true, user: req.user };
-    }
-
-    @IsPublic()
-    @UseGuards(LocalAuthGuard)
-    @Post(&quot;api/user/signin&quot;)
-    async login(@Req() req, @Res() res) {
-        return req.logIn(req.user, (err) &#x3D;&gt; {
-            return res.send({ login: true });
-        });
-    }
-
-    // TODO: move old logic to ory
-    @Put(&quot;api/user/:id/password&quot;)
-    async changePassword(@Req() req, @Res() res) {
-        const { currentPassword, newPassword, repeatedNewPassword } &#x3D; req.body;
-
-        try {
-            if (req.params.id !&#x3D;&#x3D; req.user._id.toString()) {
-                throw Error(&quot;Invalid user attempting to change password&quot;);
-            }
-            if (newPassword !&#x3D;&#x3D; repeatedNewPassword) {
-                throw Error(&quot;Repeated password doesn&#x27;t match&quot;);
-            }
-            this.usersService
-                .changePassword(mongoose.Types.ObjectId(req.params.id), currentPassword, newPassword)
-                .then(() &#x3D;&gt; {
-                    res.status(200).json({
-                        success: true,
-                        message: &quot;Password reset successful&quot;
-                    });
-                }).catch(e &#x3D;&gt; {
-                    this.logger.error(e);
-                    res.status(500).json({ message: e.message });
-                });
-        } catch (e) {
-            this.logger.error(e);
-            res.status(500).json({ message: e.message });
-        }
-    }
 
     @IsPublic()
     @Get(&quot;login&quot;)
@@ -627,8 +409,9 @@ export class UsersController {
     }
 
     @Get(&quot;profile&quot;)
-    public async profile(@Req() req: Request, @Res() res: Response) {
+    public async profile(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
+        const user &#x3D; await this.usersService.getById(req.user._id);
 
         await this.viewService
             .getNextServer()
@@ -636,8 +419,14 @@ export class UsersController {
                 req,
                 res,
                 &quot;/profile-page&quot;,
-                Object.assign(parsedUrl.query, {})
+                Object.assign(parsedUrl.query, {user})
             );
+    }
+
+    @IsPublic()
+    @Get(&quot;api/user&quot;)
+    public async getAll(@Query() getUsers) {
+        return this.usersService.findAll(getUsers);
     }
 }
 </code></pre>

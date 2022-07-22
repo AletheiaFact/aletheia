@@ -6,7 +6,6 @@ import {
 } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from "./users/users.module";
-import { AuthModule } from "./auth/auth.module";
 import { WikidataModule } from "./wikidata/wikidata.module";
 import { PersonalityModule } from "./personality/personality.module";
 import { ClaimModule } from "./claim/claim.module";
@@ -66,7 +65,6 @@ export class AppModule implements NestModule {
                     limit: options.config.throttle.limit,
                 }),
                 UsersModule,
-                AuthModule,
                 WikidataModule,
                 PersonalityModule,
                 ClaimModule,

@@ -50,7 +50,67 @@ cd aletheia</code></pre></div></li>
 <div><pre class="line-numbers"><code class="language-sh">yarn seed</code></pre></div><h2 id="build-to-production">Build to production</h2>
 </li>
 <li><p>The build step should be run as follow:</p>
-<div><pre class="line-numbers"><code class="language-none">yarn build</code></pre></div></li>
+<div><pre class="line-numbers"><code class="language-none">yarn build</code></pre></div><h2 id="configuring-ory">Configuring Ory</h2>
+</li>
+</ul>
+<h4 id="taking-what-you-need">Taking What You Need:</h4>
+<ul>
+<li>Create an account and a project on <a href="https://console.ory.sh/login">https://console.ory.sh/login</a>.</li>
+<li>Copy the SDK Configuration url and save it.</li>
+<li>Scroll down in the same page and create a Personal Access Tokens, copy the acess token that gonna show up on the bottom of your screen and save it.</li>
+<li>Go to Identity Schema and click on Customize Identity Schema then change the actual schema to the code below and click Update after the change:<div><pre class="line-numbers"><code class="language-none">{
+&quot;$id&quot;: &quot;https://schemas.ory.sh/presets/kratos/identity.email.schema.json&quot;,
+&quot;title&quot;: &quot;Person&quot;,
+&quot;type&quot;: &quot;object&quot;,
+&quot;properties&quot;: {
+  &quot;traits&quot;: {
+    &quot;type&quot;: &quot;object&quot;,
+    &quot;properties&quot;: {
+      &quot;email&quot;: {
+        &quot;type&quot;: &quot;string&quot;,
+        &quot;format&quot;: &quot;email&quot;,
+        &quot;title&quot;: &quot;E-Mail&quot;,
+        &quot;ory.sh/kratos&quot;: {
+          &quot;credentials&quot;: {
+            &quot;password&quot;: {
+              &quot;identifier&quot;: true
+            },
+            &quot;webauthn&quot;: {
+              &quot;identifier&quot;: true
+            },
+            &quot;totp&quot;: {
+              &quot;account_name&quot;: true
+            }
+          },
+          &quot;recovery&quot;: {
+            &quot;via&quot;: &quot;email&quot;
+          },
+          &quot;verification&quot;: {
+            &quot;via&quot;: &quot;email&quot;
+          }
+        },
+        &quot;maxLength&quot;: 320
+      },
+      &quot;user_id&quot;: {
+        &quot;type&quot;: &quot;string&quot;
+      }
+    },
+    &quot;required&quot;: [
+      &quot;email&quot;,
+      &quot;user_id&quot;
+    ],
+    &quot;additionalProperties&quot;: false
+  }
+}
+}</code></pre></div></li>
+<li>Go to SDK Configuration url that you saved and add /schemas in the end of the url then copy the first id on the page and save it.</li>
+</ul>
+<h4 id="making-the-changes-on-your-code">Making The Changes On Your Code:</h4>
+<ul>
+<li>First you gonna have to change the <code>authentication_type: </code> to ory on your config.yaml and config.seed.yaml.</li>
+<li>Now take SDK Configuration url and paste on <code>url: </code> in both pages config.yaml, config.seed.yaml and on <code>ORY_SDK_URL=</code> in your .env too. </li>
+<li>Now Paste the acess token that you saved on <code>access_token: </code> in your config.yaml and congig.seed.yaml.</li>
+<li>Do the same as above but now with the id that you saved and paste it on <code>schema_id: </code>.</li>
 </ul>
 
 

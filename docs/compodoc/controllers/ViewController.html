@@ -110,11 +110,6 @@
                             <li>
                                     <span class="modifier">Public</span>
                                     <span class="modifier">Async</span>
-                                <a href="#showHome" >showHome</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Public</span>
-                                    <span class="modifier">Async</span>
                                 <a href="#showPrivacyPolicyPage" >showPrivacyPolicyPage</a>
                             </li>
                         </ul>
@@ -164,8 +159,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="66"
-                            class="link-to-prism">server/view/view.controller.ts:66</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="51"
+                            class="link-to-prism">server/view/view.controller.ts:51</a></div>
                 </td>
             </tr>
 
@@ -255,8 +250,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="55"
-                            class="link-to-prism">server/view/view.controller.ts:55</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="41"
+                            class="link-to-prism">server/view/view.controller.ts:41</a></div>
                 </td>
             </tr>
 
@@ -429,8 +424,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="81"
-                            class="link-to-prism">server/view/view.controller.ts:81</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="65"
+                            class="link-to-prism">server/view/view.controller.ts:65</a></div>
                 </td>
             </tr>
 
@@ -523,99 +518,8 @@ The render404() method was not used here as it conflicts with our i18n strategy.
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="33"
-                            class="link-to-prism">server/view/view.controller.ts:33</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Type</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>req</td>
-                                    <td>
-                                            <code>Request</code>
-                                    </td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>res</td>
-                                    <td>
-                                            <code>Response</code>
-                                    </td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="showHome"></a>
-                    <span class="name">
-                        <span class="modifier">Public</span>
-                        <span class="modifier">Async</span>
-                        <span ><b>showHome</b></span>
-                        <a href="#showHome"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>showHome(req: Request, res: Response)</code>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <b>Decorators : </b>
-                    <br />
-                    <code>@IsPublic()<br />@Get()<br /></code>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="22"
-                            class="link-to-prism">server/view/view.controller.ts:22</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="21"
+                            class="link-to-prism">server/view/view.controller.ts:21</a></div>
                 </td>
             </tr>
 
@@ -705,8 +609,8 @@ The render404() method was not used here as it conflicts with our i18n strategy.
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="44"
-                            class="link-to-prism">server/view/view.controller.ts:44</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="31"
+                            class="link-to-prism">server/view/view.controller.ts:31</a></div>
                 </td>
             </tr>
 
@@ -782,7 +686,6 @@ export class ViewController {
 
     async handler(req: Request, res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -790,21 +693,9 @@ export class ViewController {
     }
 
     @IsPublic()
-    @Get()
-    public async showHome(@Req() req: Request, @Res() res: Response) {
-        const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
-
-        await this.viewService
-            .getNextServer()
-            .render(req, res, &quot;/landing-page&quot;, Object.assign(parsedUrl.query));
-    }
-
-    @IsPublic()
     @Get(&quot;about&quot;)
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -815,7 +706,6 @@ export class ViewController {
     @Get(&quot;privacy-policy&quot;)
     public async showPrivacyPolicyPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -826,7 +716,6 @@ export class ViewController {
     @Get(&quot;code-of-conduct&quot;)
     public async codeOfConductPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -837,7 +726,6 @@ export class ViewController {
     @Get(&quot;_next*&quot;)
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()
@@ -852,7 +740,6 @@ export class ViewController {
     @Get(&quot;404&quot;)
     public async show404(@Req() req: Request, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
 
         await this.viewService
             .getNextServer()

@@ -96,10 +96,6 @@
                         <ul class="index-list">
                             <li>
                                     <span class="modifier">Async</span>
-                                <a href="#changePassword" >changePassword</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Async</span>
                                 <a href="#findAll" >findAll</a>
                             </li>
                             <li>
@@ -109,6 +105,10 @@
                             <li>
                                     <span class="modifier">Async</span>
                                 <a href="#register" >register</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#registerPasswordChange" >registerPasswordChange</a>
                             </li>
                         </ul>
                     </td>
@@ -133,7 +133,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">server/users/users.service.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">server/users/users.service.ts:10</a></div>
                             </td>
                         </tr>
 
@@ -192,26 +192,26 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="changePassword"></a>
+                    <a name="findAll"></a>
                     <span class="name">
                         <span class="modifier">Async</span>
-                        <span ><b>changePassword</b></span>
-                        <a href="#changePassword"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>findAll</b></span>
+                        <a href="#findAll"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>changePassword(userId, currentPassword, newPassword)</code>
+                    <code>findAll(getUsers)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="40"
-                            class="link-to-prism">server/users/users.service.ts:40</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="16"
+                            class="link-to-prism">server/users/users.service.ts:16</a></div>
                 </td>
             </tr>
 
@@ -231,25 +231,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>userId</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>currentPassword</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>newPassword</td>
+                                    <td>getUsers</td>
 
                                     <td>
                                         No
@@ -263,50 +245,11 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>    <code>unknown</code>
+                        <b>Returns : </b>        <code><a href="../classes/User.html" target="_self" >Promise&lt;User[]&gt;</a></code>
 
                     </div>
                     <div class="io-description">
                         
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="findAll"></a>
-                    <span class="name">
-                        <span class="modifier">Async</span>
-                        <span ><b>findAll</b></span>
-                        <a href="#findAll"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>findAll()</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="15"
-                            class="link-to-prism">server/users/users.service.ts:15</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="../classes/User.html" target="_self" >Promise&lt;User[]&gt;</a></code>
-
                     </div>
                 </td>
             </tr>
@@ -334,8 +277,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="34"
-                            class="link-to-prism">server/users/users.service.ts:34</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="49"
+                            class="link-to-prism">server/users/users.service.ts:49</a></div>
                 </td>
             </tr>
 
@@ -401,8 +344,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="19"
-                            class="link-to-prism">server/users/users.service.ts:19</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="24"
+                            class="link-to-prism">server/users/users.service.ts:24</a></div>
                 </td>
             </tr>
 
@@ -446,6 +389,73 @@
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="registerPasswordChange"></a>
+                    <span class="name">
+                        <span class="modifier">Async</span>
+                        <span ><b>registerPasswordChange</b></span>
+                        <a href="#registerPasswordChange"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>registerPasswordChange(userId)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="55"
+                            class="link-to-prism">server/users/users.service.ts:55</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>userId</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
             <section>
     
@@ -472,7 +482,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">server/users/users.service.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">server/users/users.service.ts:10</a></div>
                         </td>
                     </tr>
 
@@ -485,11 +495,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Model } from &quot;mongoose&quot;;
-import {Injectable, Logger} from &quot;@nestjs/common&quot;;
-import { InjectModel } from &quot;@nestjs/mongoose&quot;;
-import { User, UserDocument } from &quot;./schemas/user.schema&quot;;
-import OryService from &quot;../ory/ory.service&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Logger } from &#x27;@nestjs/common&#x27;;
+import { InjectModel } from &#x27;@nestjs/mongoose&#x27;;
+import { Model } from &#x27;mongoose&#x27;;
+
+import OryService from &#x27;../ory/ory.service&#x27;;
+import { User, UserDocument } from &#x27;./schemas/user.schema&#x27;;
 
 @Injectable()
 export class UsersService {
@@ -499,22 +510,36 @@ export class UsersService {
         private oryService: OryService
     ) {}
 
-    async findAll(): Promise&lt;User[]&gt; {
-        return this.UserModel.find().exec();
+    async findAll(getUsers): Promise&lt;User[]&gt; {
+        const { searchName } &#x3D; getUsers;
+        return this.UserModel.aggregate([
+            { $match: { name: { $regex: searchName, $options: &quot;i&quot; } } },
+            { $project: { _id: 1, name: 1 } },
+        ]);
     }
 
     async register(user) {
-        const newUser &#x3D; new this.UserModel(user)
-        const { data: oryUser } &#x3D; await this.oryService.createIdentity(newUser, user.password);
-        newUser.oryId &#x3D; oryUser.id;
-        try {
-            // @ts-ignore
-            return this.UserModel.register(
+        const newUser &#x3D; new this.UserModel(user);
+
+        if (!newUser.oryId) {
+            this.logger.log(&quot;No user id provided, creating a new ory identity&quot;)
+            const { data: oryUser } &#x3D; await this.oryService.createIdentity(
                 newUser,
                 user.password
             );
+            newUser.oryId &#x3D; oryUser.id;
+        } else {
+            this.logger.log(&quot;User id provided, updating a new ory identity&quot;)
+            await this.oryService.updateIdentity(
+                newUser,
+                user.password
+            );
+        }
+        try {
+            // @ts-ignore
+            return this.UserModel.register(newUser, user.password);
         } catch (e) {
-            await this.oryService.deleteIdentity(oryUser.id)
+            this.logger.error(&#x60;Error registering user ${user.email}&#x60;);
         }
     }
 
@@ -524,17 +549,13 @@ export class UsersService {
         return user;
     }
 
-    async changePassword(userId, currentPassword, newPassword) {
+    async registerPasswordChange(userId) {
         const user &#x3D; await this.getById(userId);
-        // @ts-ignore
-        return user.changePassword(currentPassword, newPassword).then(() &#x3D;&gt; {
-            if (user.firstPasswordChanged &#x3D;&#x3D;&#x3D; false) {
-                this.logger.log(&#x60;User ${user._id} changed first password&#x60;);
-                user.firstPasswordChanged &#x3D; true;
-            }
-            this.logger.log(&#x60;User ${user._id} changed password&#x60;);
+        if (user.firstPasswordChanged &#x3D;&#x3D;&#x3D; false) {
+            user.firstPasswordChanged &#x3D; true;
+            this.logger.log(&#x60;User ${user._id} changed first password&#x60;);
             user.save();
-        });
+        }
     }
 }
 </code></pre>

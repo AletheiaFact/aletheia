@@ -279,8 +279,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="161"
-                            class="link-to-prism">server/claim/claim.service.ts:161</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="172"
+                            class="link-to-prism">server/claim/claim.service.ts:172</a></div>
                 </td>
             </tr>
 
@@ -381,8 +381,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="221"
-                            class="link-to-prism">server/claim/claim.service.ts:221</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="253"
+                            class="link-to-prism">server/claim/claim.service.ts:253</a></div>
                 </td>
             </tr>
 
@@ -446,8 +446,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="56"
-                            class="link-to-prism">server/claim/claim.service.ts:56</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="67"
+                            class="link-to-prism">server/claim/claim.service.ts:67</a></div>
                 </td>
             </tr>
 
@@ -521,8 +521,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="66"
-                            class="link-to-prism">server/claim/claim.service.ts:66</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="77"
+                            class="link-to-prism">server/claim/claim.service.ts:77</a></div>
                 </td>
             </tr>
 
@@ -597,8 +597,8 @@ Also creates a History Module that tracks creation of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="137"
-                            class="link-to-prism">server/claim/claim.service.ts:137</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="148"
+                            class="link-to-prism">server/claim/claim.service.ts:148</a></div>
                 </td>
             </tr>
 
@@ -674,8 +674,8 @@ Also creates a History Module that tracks deletion of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="153"
-                            class="link-to-prism">server/claim/claim.service.ts:153</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="164"
+                            class="link-to-prism">server/claim/claim.service.ts:164</a></div>
                 </td>
             </tr>
 
@@ -741,8 +741,8 @@ Also creates a History Module that tracks deletion of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="157"
-                            class="link-to-prism">server/claim/claim.service.ts:157</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="168"
+                            class="link-to-prism">server/claim/claim.service.ts:168</a></div>
                 </td>
             </tr>
 
@@ -929,8 +929,8 @@ Also creates a History Module that tracks deletion of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="193"
-                            class="link-to-prism">server/claim/claim.service.ts:193</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="222"
+                            class="link-to-prism">server/claim/claim.service.ts:222</a></div>
                 </td>
             </tr>
 
@@ -1004,8 +1004,8 @@ Also creates a History Module that tracks deletion of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="240"
-                            class="link-to-prism">server/claim/claim.service.ts:240</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="272"
+                            class="link-to-prism">server/claim/claim.service.ts:272</a></div>
                 </td>
             </tr>
 
@@ -1080,8 +1080,8 @@ Also creates a History Module that tracks deletion of claims.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="101"
-                            class="link-to-prism">server/claim/claim.service.ts:101</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="112"
+                            class="link-to-prism">server/claim/claim.service.ts:112</a></div>
                 </td>
             </tr>
 
@@ -1252,7 +1252,18 @@ export class ClaimService {
             query.personality &#x3D; Types.ObjectId(query.personality)
         }
         const claims &#x3D; await this.ClaimModel.find(query)
-            .populate(&quot;latestRevision&quot;)
+            .populate({
+                path: &#x27;latestRevision&#x27;,
+                populate: {
+                    path: &#x27;content&#x27;,
+                    populate: {
+                        path: &#x27;content&#x27;,
+                        populate: {
+                            path: &#x27;content&#x27;
+                        }
+                    }
+                }
+            })
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
@@ -1377,14 +1388,20 @@ export class ClaimService {
     private async _getClaim(match: ClaimMatchParameters, revisionId &#x3D; undefined, postprocess &#x3D; true) {
         let claim
         if(revisionId) {
-            const rawClaim &#x3D; await this.ClaimModel.aggregate([
-                { $match: match },
-                { $project: { &quot;latestRevision&quot;: 0}}
-            ])
+            const rawClaim &#x3D; await this.ClaimModel.findOne(match)
+                .select({&quot;latestRevision&quot;: 0})
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            const revision &#x3D; (await this.claimRevisionService.getRevision(revisionId)).toObject()
+            const revision &#x3D; await this.claimRevisionService.getRevision({
+                _id: revisionId,
+                claimId: rawClaim._id
+            })
+
+            if (!revision || !rawClaim) {
+                throw new NotFoundException()
+            }
+
             claim &#x3D; {
-                ...rawClaim[0],
+                ...rawClaim,
                 revision
             }
         } else {
@@ -1392,8 +1409,20 @@ export class ClaimService {
             claim &#x3D; await this.ClaimModel.findOne(match)
                 .populate(&quot;personality&quot;, &quot;_id name&quot;)
                 .populate(&quot;sources&quot;, &quot;_id link classification&quot;)
-                .populate(&quot;latestRevision&quot;)
-            claim &#x3D; claim.toObject()
+                .populate({
+                    path: &#x27;latestRevision&#x27;,
+                    populate: {
+                        path: &#x27;content&#x27;,
+                        populate: {
+                            path: &#x27;content&#x27;,
+                            populate: {
+                                path: &#x27;content&#x27;
+                            }
+                        }
+                    }
+                })
+                .lean()
+
         }
         if (!claim) {
             throw new NotFoundException()
@@ -1416,10 +1445,13 @@ export class ClaimService {
         const reviews &#x3D; await this.claimReviewService.getReviewsByClaimId(
             claim._id
         );
+
+        claim.content &#x3D; claim.content[0].content
+
         if (claim) {
-            if (claim?.content?.object) {
-                claim.content.object &#x3D; this.transformContentObject(
-                    claim.content.object,
+            if (claim?.content) {
+                claim.content &#x3D; this.transformContentObject(
+                    claim.content,
                     reviews
                 );
             }
@@ -1437,11 +1469,11 @@ export class ClaimService {
     private calculateOverallStats(claim) {
         let totalClaims &#x3D; 0;
         let totalClaimsReviewed &#x3D; 0;
-        if (claim?.content?.object) {
-            claim.content.object.forEach((p) &#x3D;&gt; {
+        if (claim?.content) {
+            claim.content.forEach((p) &#x3D;&gt; {
                 totalClaims +&#x3D; p.content.length;
                 p.content.forEach((sentence) &#x3D;&gt; {
-                    if (sentence.props.topClassification) {
+                    if (sentence.props.classification) {
                         totalClaimsReviewed++;
                     }
                 });
@@ -1460,12 +1492,12 @@ export class ClaimService {
         claimContent.forEach((paragraph, paragraphIndex) &#x3D;&gt; {
             paragraph.content.forEach((sentence, sentenceIndex) &#x3D;&gt; {
                 const claimReview &#x3D; reviews.find((review) &#x3D;&gt; {
-                    return review._id &#x3D;&#x3D;&#x3D; sentence.props[&quot;data-hash&quot;];
+                    return review._id.sentence_hash &#x3D;&#x3D;&#x3D; sentence.data_hash;
                 });
                 if (claimReview) {
                     claimContent[paragraphIndex].content[sentenceIndex].props &#x3D;
                         Object.assign(sentence.props, {
-                            topClassification: claimReview.topClassification,
+                            classification: claimReview._id.classification[0],
                         });
                 }
             });
