@@ -1,5 +1,5 @@
 import { SubmitSelfServiceSettingsFlowWithTotpMethodBody as ValuesType } from "@ory/client";
-import { Form, Row, Typography } from "antd";
+import { Form, message, Row, Typography } from "antd";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { orySubmitTotp } from "../../api/ory";
@@ -54,19 +54,11 @@ export const Totp = ({ flow, setFlow }) => {
             setShowForm(false);
         }
     }, [flow]);
-    //Remove When Task Finished
-    useEffect(() => {
-        console.log(flow, "Flow");
-    }, [flow]);
 
     const onSubmitLink = (values: ValuesType) => {
-        orySubmitTotp({ router, flow, setFlow, t, values })
-            .then(() => {
-                setErrorMessage("");
-            })
-            .catch(() => {
-                setErrorMessage(t("profile:totpIncorectCodeMessage"));
-            });
+        orySubmitTotp({ router, flow, setFlow, t, values }).catch(() => {
+            message.error(t("profile:totpIncorectCodeMessage"));
+        });
     };
 
     const onSubmitUnLink = () => {
@@ -76,13 +68,9 @@ export const Totp = ({ flow, setFlow }) => {
             totp_unlink: true,
             method: "totp",
         };
-        orySubmitTotp({ router, flow, setFlow, t, values })
-            .then(() => {
-                setErrorMessage("");
-            })
-            .catch(() => {
-                setErrorMessage("Erro UnLink.");
-            });
+        orySubmitTotp({ router, flow, setFlow, t, values }).catch(() => {
+            message.error(t("prifile:totpUnLinkErrorMessage"));
+        });
     };
 
     const onFinish = (values) => {
@@ -102,7 +90,7 @@ export const Totp = ({ flow, setFlow }) => {
                 </Typography.Title>
             </Row>
             {showForm && (
-                <Form onFinish={onFinish}>
+                <Form onFinish={onFinish} style={{ marginBottom: "20px" }}>
                     <Form.Item>
                         <p>
                             <Trans
@@ -157,8 +145,6 @@ export const Totp = ({ flow, setFlow }) => {
                         </code>
                     </Form.Item>
                     <Form.Item
-                        validateStatus="error"
-                        help={errorMessage}
                         name="totp"
                         label={t("profile:totpInputTittle")}
                         wrapperCol={{ sm: 24 }}

@@ -36,7 +36,7 @@ const OryLoginForm = () => {
         });
     };
 
-    const onSubmitLink = (values: SubmitSelfServiceLoginFlowBody) =>
+    const onSubmitTotp = (values: SubmitSelfServiceLoginFlowBody) =>
         ory
             .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
             // We logged in successfully! Let's bring the user home.
@@ -53,7 +53,7 @@ const OryLoginForm = () => {
                 if (err.response?.status === 400) {
                     // Yup, it is!
                     setFlow(err.response?.data);
-                    return;
+                    return message.error(t("profile:totpIncorectCodeMessage"));
                 }
 
                 return Promise.reject(err);
@@ -118,7 +118,7 @@ const OryLoginForm = () => {
             ...totpValues,
             totp_code: values.totp,
         };
-        onSubmitLink(totpValues);
+        onSubmitTotp(totpValues);
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -200,6 +200,7 @@ const OryLoginForm = () => {
                     <Row>
                         <h2>{t("totp:formHeader")}</h2>
                     </Row>
+                    <p>{t("totp:totpMessage")}</p>
                     <Form name="basic" onFinish={onFinishTotp}>
                         <Form.Item
                             label={t("totp:inputLabel")}
