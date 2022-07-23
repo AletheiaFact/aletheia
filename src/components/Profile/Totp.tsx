@@ -13,7 +13,6 @@ export const Totp = ({ flow, setFlow }) => {
     const [imgSource, setImgSource] = useState("");
     const { Title } = Typography;
     const [textSource, setTextSource] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
     const [showForm, setShowForm] = useState(true);
     const { t } = useTranslation();
     const router = useRouter();
