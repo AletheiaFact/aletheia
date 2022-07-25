@@ -26,6 +26,7 @@ const DynamicForm = ({
         handleSubmit,
         control,
         getValues,
+        reset,
         formState: { errors },
     } = useForm();
     const [service, setService] = useState(null);
@@ -38,14 +39,17 @@ const DynamicForm = ({
     const recaptchaRef = useRef(null);
 
     const setDefaultValuesOfCurrentForm = (machine, form) => {
-        machine &&
-            form.map((input) => {
+        if (machine) {
+            const machineValues = machine.context.reviewData
+            reset(machineValues)
+            form.forEach((input) => {
                 Object.keys(machine.context.reviewData).forEach((value) => {
                     if (input.fieldName === value) {
                         input.defaultValue = machine.context.reviewData[value];
                     }
                 });
             });
+        }
     };
 
     const setCurrentFormAndNextEvents = (param, machine = null) => {
@@ -177,7 +181,6 @@ const DynamicForm = ({
 
     const onClickSaveDraft = () => {
         const values = getValues();
-        console.log("formValues", values);
         sendEventToMachine(values, ReviewTaskEvents.draft);
     };
 
