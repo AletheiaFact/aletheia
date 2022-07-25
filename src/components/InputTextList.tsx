@@ -16,7 +16,7 @@ export default function InputTextList({ placeholder, onChange, inputType, addInp
     })
 
     const { register, control, watch } = useForm<FormValues>({
-        defaultValues: { fieldArray: contents.length ? contents : [{ content: ""}] }
+        defaultValues: { fieldArray: contents.length ? contents : [{ content: "" }] }
     });
     const { fields, append, remove } = useFieldArray({
         control,
@@ -49,6 +49,7 @@ export default function InputTextList({ placeholder, onChange, inputType, addInp
                                 placeholder={placeholder}
                                 type={inputType}
                                 required={true}
+                                pattern="\s*\S+.*"
                             />
                         </Col>
                         {index > 0 && <Col span={3}>

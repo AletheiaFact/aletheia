@@ -11,14 +11,14 @@ export type FormField = {
     defaultValue: string | [];
 };
 
-interface createFormFieldProps extends Partial<FormField> {
+interface CreateFormFieldProps extends Partial<FormField> {
     fieldName: string;
     type: string;
     i18nKey?: string;
     i18nNamespace?: string;
 }
 
-const createFormField = (props: createFormFieldProps): FormField => {
+const createFormField = (props: CreateFormFieldProps): FormField => {
     const {
         fieldName,
         type,
@@ -33,6 +33,10 @@ const createFormField = (props: createFormFieldProps): FormField => {
         placeholder: `${i18nNamespace}:${i18nKey}Placeholder`,
         rules: {
             required: "common:requiredFieldError",
+            pattern: {
+                value: /\s*\S+.*/,
+                message: "common:requiredFieldError",
+            }
         },
         defaultValue,
         ...props,
