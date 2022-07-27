@@ -11,6 +11,7 @@ import Button, { ButtonType } from "../Button";
 import Input from "../AletheiaInput";
 import TextArea from "../TextArea";
 import AletheiaCaptcha from "../AletheiaCaptcha";
+import moment from "moment";
 
 const formRef = React.createRef<FormInstance>();
 
@@ -75,6 +76,11 @@ const ClaimCreate = ({
         };
         setTitleAndContent();
     }, []);
+
+
+    const disabledDate = (current) => {
+        return current && current > moment().endOf("day");
+    };
 
     const saveClaim = async () => {
         if (!isFormSubmitted) {
@@ -208,6 +214,7 @@ const ClaimCreate = ({
                         placeholder={t("claimForm:dateFieldPlaceholder")}
                         onChange={(value) => setDate(value)}
                         data-cy={"dataAserSelecionada"}
+                        disabledDate={disabledDate}
                     />
                 </Form.Item>
                 <SourceInput

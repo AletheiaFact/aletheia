@@ -1,8 +1,8 @@
-import React from 'react'
-import { Row, Col } from 'antd'
-import Button, { ButtonType } from '../Button';
-import { useTranslation } from 'next-i18next';
-import colors from '../../styles/colors';
+import React from "react";
+import { Row, Col } from "antd";
+import Button, { ButtonType } from "../Button";
+import { useTranslation } from "next-i18next";
+import colors from "../../styles/colors";
 
 const CTASection = ({ isLoggedIn }) => {
     const { t } = useTranslation();
@@ -21,7 +21,7 @@ const CTASection = ({ isLoggedIn }) => {
                     {t("home:statsFooter")}
                 </h2>
             </Col>
-            {!isLoggedIn &&
+            {!isLoggedIn && (
                 <Row
                     style={{
                         height: "15%",
@@ -33,7 +33,14 @@ const CTASection = ({ isLoggedIn }) => {
                 >
                     <Col className="CTA-button-container">
                         <Button
-                            href="#create_account"
+                            onClick={() => {
+                                umami?.trackEvent(
+                                    "carousel-cta-registration-button",
+                                    "registration"
+                                );
+                            }}
+                            href={t("common:registrationLink")}
+                            target="_blank"
                             type={ButtonType.white}
                             className="CTA-button"
                             rounded
@@ -51,9 +58,9 @@ const CTASection = ({ isLoggedIn }) => {
                         </Button>
                     </Col>
                 </Row>
-            }
+            )}
         </Row>
-    )
-}
+    );
+};
 
-export default CTASection
+export default CTASection;

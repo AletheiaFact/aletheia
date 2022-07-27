@@ -166,8 +166,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="37"
-                            class="link-to-prism">server/personality/personality.controller.ts:37</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="39"
+                            class="link-to-prism">server/personality/personality.controller.ts:39</a></div>
                 </td>
             </tr>
 
@@ -244,8 +244,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="68"
-                            class="link-to-prism">server/personality/personality.controller.ts:68</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="70"
+                            class="link-to-prism">server/personality/personality.controller.ts:70</a></div>
                 </td>
             </tr>
 
@@ -318,8 +318,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="54"
-                            class="link-to-prism">server/personality/personality.controller.ts:54</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="56"
+                            class="link-to-prism">server/personality/personality.controller.ts:56</a></div>
                 </td>
             </tr>
 
@@ -399,8 +399,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="79"
-                            class="link-to-prism">server/personality/personality.controller.ts:79</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="81"
+                            class="link-to-prism">server/personality/personality.controller.ts:81</a></div>
                 </td>
             </tr>
 
@@ -473,8 +473,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="32"
-                            class="link-to-prism">server/personality/personality.controller.ts:32</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="34"
+                            class="link-to-prism">server/personality/personality.controller.ts:34</a></div>
                 </td>
             </tr>
 
@@ -552,8 +552,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="88"
-                            class="link-to-prism">server/personality/personality.controller.ts:88</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="90"
+                            class="link-to-prism">server/personality/personality.controller.ts:90</a></div>
                 </td>
             </tr>
 
@@ -643,8 +643,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="139"
-                            class="link-to-prism">server/personality/personality.controller.ts:139</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="147"
+                            class="link-to-prism">server/personality/personality.controller.ts:147</a></div>
                 </td>
             </tr>
 
@@ -734,8 +734,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="125"
-                            class="link-to-prism">server/personality/personality.controller.ts:125</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="133"
+                            class="link-to-prism">server/personality/personality.controller.ts:133</a></div>
                 </td>
             </tr>
 
@@ -811,7 +811,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>personalityPage(req: Request, res: Response)</code>
+                    <code>personalityPage(req: <a href="../undefineds/BaseRequest.html" target="_self">BaseRequest</a>, res: Response)</code>
                 </td>
             </tr>
 
@@ -825,8 +825,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="104"
-                            class="link-to-prism">server/personality/personality.controller.ts:104</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="106"
+                            class="link-to-prism">server/personality/personality.controller.ts:106</a></div>
                 </td>
             </tr>
 
@@ -849,7 +849,7 @@
                                 <tr>
                                     <td>req</td>
                                     <td>
-                                            <code>Request</code>
+                                                <code><a href="../miscellaneous/typealiases.html#BaseRequest" target="_self" >BaseRequest</a></code>
                                     </td>
 
                                     <td>
@@ -915,8 +915,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="63"
-                            class="link-to-prism">server/personality/personality.controller.ts:63</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="65"
+                            class="link-to-prism">server/personality/personality.controller.ts:65</a></div>
                 </td>
             </tr>
 
@@ -992,7 +992,9 @@ import { ViewService } from &quot;../view/view.service&quot;;
 import { PersonalityService } from &quot;./personality.service&quot;;
 import { GetPersonalities } from &quot;./dto/get-personalities.dto&quot;;
 import { CreatePersonality } from &quot;./dto/create-personality.dto&quot;;
-import {IsPublic} from &quot;../decorators/is-public.decorator&quot;;
+import { IsPublic } from &quot;../decorators/is-public.decorator&quot;;
+import { TargetModel } from &quot;../history/schema/history.schema&quot;;
+import { BaseRequest } from &quot;../types&quot;;
 
 @Controller()
 export class PersonalityController {
@@ -1000,7 +1002,7 @@ export class PersonalityController {
     constructor(
         private personalityService: PersonalityService,
         private viewService: ViewService
-    ) {}
+    ) { }
 
     @IsPublic()
     @Get(&quot;api/personality&quot;)
@@ -1011,7 +1013,7 @@ export class PersonalityController {
     @Post(&quot;api/personality&quot;)
     async create(@Body() createPersonality: CreatePersonality) {
         try {
-            return this.personalityService.create(createPersonality);
+            return await this.personalityService.create(createPersonality);
         } catch (error) {
             if (
                 error.name &#x3D;&#x3D;&#x3D; &quot;MongoError&quot; &amp;&amp;
@@ -1076,22 +1078,28 @@ export class PersonalityController {
 
     @IsPublic()
     @Get(&quot;personality/:slug&quot;)
-    public async personalityPage(@Req() req: Request, @Res() res: Response) {
+    public async personalityPage(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl &#x3D; parse(req.url, true);
-        // @ts-ignore
 
         const personality &#x3D; await this.personalityService.getBySlug(
             req.params.slug,
-            // @ts-ignore
             req.language
         );
+
+        const { personalities } &#x3D; await this.personalityService.combinedListAll({
+            language: req.language,
+            order: &#x27;random&#x27;,
+            pageSize: 6,
+            fetchOnly: true
+        });
+
         await this.viewService
             .getNextServer()
             .render(
                 req,
                 res,
                 &quot;/personality-page&quot;,
-                Object.assign(parsedUrl.query, { personality })
+                Object.assign(parsedUrl.query, { personality, personalities })
             );
     }
 
@@ -1123,10 +1131,9 @@ export class PersonalityController {
                 req,
                 res,
                 &quot;/history-page&quot;,
-                Object.assign(parsedUrl.query, { targetId: personality._id, targetModel: &quot;personality&quot; })
+                Object.assign(parsedUrl.query, { targetId: personality._id, targetModel: TargetModel.Personality })
             );
     }
-
 }
 </code></pre>
     </div>

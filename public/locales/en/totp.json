@@ -1,0 +1,7 @@
+{
+  "formHeader": "Two-Factor Authentication",
+  "totpMessage": "Please complete the second authentication challenge.",
+  "inputLabel": "Authentication code",
+  "submitButton": "Use Authenticator",
+  "totpErrorMessage": "Please, insert your verification code"
+}

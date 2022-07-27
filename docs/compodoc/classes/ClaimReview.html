@@ -86,10 +86,7 @@
                                 <a href="#claim" >claim</a>
                             </li>
                             <li>
-                                <a href="#classification" >classification</a>
-                            </li>
-                            <li>
-                                <a href="#isDeleted" >isDeleted</a>
+                                <a href="#isPublished" >isPublished</a>
                             </li>
                             <li>
                                 <a href="#personality" >personality</a>
@@ -98,13 +95,10 @@
                                 <a href="#report" >report</a>
                             </li>
                             <li>
-                                <a href="#sentence_content" >sentence_content</a>
-                            </li>
-                            <li>
                                 <a href="#sentence_hash" >sentence_hash</a>
                             </li>
                             <li>
-                                <a href="#user" >user</a>
+                                <a href="#userId" >userId</a>
                             </li>
                         </ul>
                     </td>
@@ -153,7 +147,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:51</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:18</a></div>
                         </td>
                     </tr>
 
@@ -164,45 +158,10 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="classification"></a>
+                    <a name="isPublished"></a>
                     <span class="name">
-                        <span ><b>classification</b></span>
-                        <a href="#classification"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <b>Decorators : </b>
-                        <br />
-                        <code>
-                            @Prop({required: true, validate: undefined, message: tag &#x3D;&gt; })<br />
-                        </code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:44</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="isDeleted"></a>
-                    <span class="name">
-                        <span ><b>isDeleted</b></span>
-                        <a href="#isDeleted"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>isPublished</b></span>
+                        <a href="#isPublished"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -217,13 +176,13 @@
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @Prop({required: false})<br />
+                            @Prop({required: true})<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:77</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:45</a></div>
                         </td>
                     </tr>
 
@@ -258,7 +217,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:58</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:25</a></div>
                         </td>
                     </tr>
 
@@ -278,7 +237,7 @@
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                        <i>Type : </i>        <code><a href="../classes/Report.html" target="_self" >Report</a></code>
 
                     </td>
                 </tr>
@@ -287,48 +246,13 @@
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @Prop({required: true})<br />
+                            @Prop({type: undefined, required: true, ref: &#x27;Report&#x27;})<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:67</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="sentence_content"></a>
-                    <span class="name">
-                        <span ><b>sentence_content</b></span>
-                        <a href="#sentence_content"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <b>Decorators : </b>
-                        <br />
-                        <code>
-                            @Prop({required: true})<br />
-                        </code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:64</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -363,7 +287,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:61</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -374,10 +298,10 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="user"></a>
+                    <a name="userId"></a>
                     <span class="name">
-                        <span ><b>user</b></span>
-                        <a href="#user"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>userId</b></span>
+                        <a href="#userId"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -398,7 +322,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:74</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">server/claim-review/schemas/claim-review.schema.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -420,48 +344,15 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Prop, Schema, SchemaFactory } from &quot;@nestjs/mongoose&quot;;
 import { Personality } from &quot;../../personality/schemas/personality.schema&quot;;
 import * as mongoose from &quot;mongoose&quot;;
-import { User } from &quot;../../users/schemas/user.schema&quot;;
 import { Claim } from &quot;../../claim/schemas/claim.schema&quot;;
 import { softDeletePlugin } from &#x27;mongoose-softdelete-typescript&#x27;;
+import { Report } from &quot;../../report/schemas/report.schema&quot;;
+import { User } from &quot;../../users/schemas/user.schema&quot;;
 
 export type ClaimReviewDocument &#x3D; ClaimReview &amp; mongoose.Document;
 
-export enum ClassificationEnum {
-    &quot;not-fact&quot;,
-    &quot;true&quot;,
-    &quot;true-but&quot;,
-    &quot;arguable&quot;,
-    &quot;misleading&quot;,
-    &quot;false&quot;,
-    &quot;unsustainable&quot;,
-    &quot;exaggerated&quot;,
-    &quot;unverifiable&quot;,
-};
 @Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
 export class ClaimReview {
-    @Prop({
-        required: true,
-        validate: {
-            validator: (v) &#x3D;&gt; {
-                return (
-                    [
-                        &quot;not-fact&quot;,
-                        &quot;true&quot;,
-                        &quot;true-but&quot;,
-                        &quot;arguable&quot;,
-                        &quot;misleading&quot;,
-                        &quot;false&quot;,
-                        &quot;unsustainable&quot;,
-                        &quot;exaggerated&quot;,
-                        &quot;unverifiable&quot;,
-                    ].indexOf(v) !&#x3D;&#x3D; -1
-                );
-            },
-        },
-        message: (tag) &#x3D;&gt; &#x60;${tag} is not a valid classification.&#x60;,
-    })
-    classification: string;
-
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
@@ -476,24 +367,25 @@ export class ClaimReview {
     })
     personality: Personality;
 
-    @Prop({ required: true })
-    sentence_hash: string;
-
-    @Prop({ required: true })
-    sentence_content: string;
-
-    @Prop({ required: true })
-    report: string;
-
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
         ref: &quot;User&quot;,
     })
-    user: User;
+    userId: User;
 
-    @Prop({ required: false })
-    isDeleted: boolean;
+    @Prop({ required: true })
+    sentence_hash: string;
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: &quot;Report&quot;,
+    })
+    report: Report;
+
+    @Prop({ required: true })
+    isPublished: boolean;
 }
 
 const ClaimReviewSchemaRaw &#x3D; SchemaFactory.createForClass(ClaimReview);

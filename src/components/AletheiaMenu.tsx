@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useAppSelector } from "../store/store";
 import { CreateLogoutHandler } from "./Login/LogoutAction";
 import { ory } from "../lib/orysdk";
-import { AxiosError } from "axios";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
@@ -45,17 +44,11 @@ const AletheiaMenu = () => {
         .then(() => {
         setHasSession(true)
         })
-        .catch((err: AxiosError) => {
-        switch (err.response?.status) {
-            case 403:
-            case 422:
-                return router.push("/login")
-            case 401:
-                return
-        }
-        return Promise.reject(err)
+        .catch(() => {
+            setHasSession(false)
         })
     }, [])
+
 
     return (
         <Menu

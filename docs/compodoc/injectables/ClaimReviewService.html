@@ -95,19 +95,10 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#_reviewsBySentenceHashAggregated" >_reviewsBySentenceHashAggregated</a>
-                            </li>
-                            <li>
-                                <a href="#_topClassificationAccumulator" >_topClassificationAccumulator</a>
-                            </li>
-                            <li>
                                 <a href="#agreggateClassification" >agreggateClassification</a>
                             </li>
                             <li>
                                 <a href="#count" >count</a>
-                            </li>
-                            <li>
-                                <a href="#countReviewsBySentenceHash" >countReviewsBySentenceHash</a>
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
@@ -121,10 +112,10 @@
                                 <a href="#getById" >getById</a>
                             </li>
                             <li>
-                                <a href="#getReviewsByClaimId" >getReviewsByClaimId</a>
+                                <a href="#getReviewBySentenceHash" >getReviewBySentenceHash</a>
                             </li>
                             <li>
-                                <a href="#getReviewsBySentenceHash" >getReviewsBySentenceHash</a>
+                                <a href="#getReviewsByClaimId" >getReviewsByClaimId</a>
                             </li>
                             <li>
                                     <span class="modifier">Async</span>
@@ -135,6 +126,7 @@
                                 <a href="#getReviewStatsBySentenceHash" >getReviewStatsBySentenceHash</a>
                             </li>
                             <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#getUserReviewBySentenceHash" >getUserReviewBySentenceHash</a>
                             </li>
                         </ul>
@@ -155,12 +147,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(ClaimReviewModel, historyService: <a href="../injectables/HistoryService.html" target="_self">HistoryService</a>, sourceService: <a href="../injectables/SourceService.html" target="_self">SourceService</a>, util: <a href="../injectables/UtilService.html" target="_self">UtilService</a>)</code>
+<code>constructor(ClaimReviewModel, historyService: <a href="../injectables/HistoryService.html" target="_self">HistoryService</a>, util: <a href="../injectables/UtilService.html" target="_self">UtilService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">server/claim-review/claim-review.service.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">server/claim-review/claim-review.service.ts:12</a></div>
                             </td>
                         </tr>
 
@@ -201,18 +193,6 @@
                                                     
                                                 </tr>
                                                 <tr>
-                                                        <td>sourceService</td>
-                                                  
-                                                        <td>
-                                                                        <code><a href="../injectables/SourceService.html" target="_self" >SourceService</a></code>
-                                                        </td>
-                                                  
-                                                    <td>
-                                                            No
-                                                    </td>
-                                                    
-                                                </tr>
-                                                <tr>
                                                         <td>util</td>
                                                   
                                                         <td>
@@ -242,108 +222,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="_reviewsBySentenceHashAggregated"></a>
-                    <span class="name">
-                        <span ><b>_reviewsBySentenceHashAggregated</b></span>
-                        <a href="#_reviewsBySentenceHashAggregated"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>_reviewsBySentenceHashAggregated(sentenceHash)</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="101"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:101</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>sentenceHash</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="_topClassificationAccumulator"></a>
-                    <span class="name">
-                        <span ><b>_topClassificationAccumulator</b></span>
-                        <a href="#_topClassificationAccumulator"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>_topClassificationAccumulator()</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="126"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:126</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Returns : </b>    <code>{ $accumulator: { init: () &#x3D;&gt; {}; accumulate: (state: any, classification: any) &#x3D;&gt; any; accumulateArgs: {}; merge: (state1: any, state2: any) &#x3D;&gt; any; finalize: (state: any) &#x3D;&gt; { classification: any; count: any; }; lang: string; }; }</code>
-
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="agreggateClassification"></a>
                     <span class="name">
                         <span ><b>agreggateClassification</b></span>
@@ -360,8 +238,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="23"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:23</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="20"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:20</a></div>
                 </td>
             </tr>
 
@@ -429,8 +307,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="31"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:31</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="36"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:36</a></div>
                 </td>
             </tr>
 
@@ -486,71 +364,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="countReviewsBySentenceHash"></a>
-                    <span class="name">
-                        <span ><b>countReviewsBySentenceHash</b></span>
-                        <a href="#countReviewsBySentenceHash"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>countReviewsBySentenceHash(sentenceHash)</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="85"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:85</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>sentenceHash</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="create"></a>
                     <span class="name">
                         <span class="modifier">Async</span>
@@ -562,15 +375,15 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>create(claimReview)</code>
+                    <code>create(claimReview, sentence_hash)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="176"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:176</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="118"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:118</a></div>
                 </td>
             </tr>
 
@@ -604,6 +417,17 @@ Also creates a History Module that tracks creation of claim reviews.</p>
                                     <td>
                                         <p>ClaimReviewBody received of the client.</p>
 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>sentence_hash</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                    <td>
                                     </td>
                                 </tr>
                             </tbody>
@@ -645,8 +469,8 @@ Also creates a History Module that tracks creation of claim reviews.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="224"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:224</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="169"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:169</a></div>
                 </td>
             </tr>
 
@@ -720,8 +544,8 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="211"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:211</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="150"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:150</a></div>
                 </td>
             </tr>
 
@@ -769,6 +593,71 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getReviewBySentenceHash"></a>
+                    <span class="name">
+                        <span ><b>getReviewBySentenceHash</b></span>
+                        <a href="#getReviewBySentenceHash"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getReviewBySentenceHash(sentence_hash)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="156"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:156</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>sentence_hash</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getReviewsByClaimId"></a>
                     <span class="name">
                         <span ><b>getReviewsByClaimId</b></span>
@@ -785,8 +674,8 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="58"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:58</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="79"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:79</a></div>
                 </td>
             </tr>
 
@@ -841,98 +730,6 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getReviewsBySentenceHash"></a>
-                    <span class="name">
-                        <span ><b>getReviewsBySentenceHash</b></span>
-                        <a href="#getReviewsBySentenceHash"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>getReviewsBySentenceHash(sentenceHash, page, pageSize, order)</code>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="91"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:91</a></div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                    <div class="io-description">
-                        <b>Parameters :</b>
-                        
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Optional</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>sentenceHash</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>page</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>pageSize</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>order</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="getReviewStatsByClaimId"></a>
                     <span class="name">
                         <span class="modifier">Async</span>
@@ -951,8 +748,8 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="44"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:44</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="57"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:57</a></div>
                 </td>
             </tr>
 
@@ -1018,8 +815,8 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="35"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:35</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="40"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:40</a></div>
                 </td>
             </tr>
 
@@ -1073,6 +870,7 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
                 <td class="col-md-4">
                     <a name="getUserReviewBySentenceHash"></a>
                     <span class="name">
+                        <span class="modifier">Async</span>
                         <span ><b>getUserReviewBySentenceHash</b></span>
                         <a href="#getUserReviewBySentenceHash"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -1080,15 +878,16 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getUserReviewBySentenceHash(sentenceHash, userId)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserReviewBySentenceHash(sentence_hash)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="70"
-                            class="link-to-prism">server/claim-review/claim-review.service.ts:70</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="99"
+                            class="link-to-prism">server/claim-review/claim-review.service.ts:99</a></div>
                 </td>
             </tr>
 
@@ -1108,16 +907,7 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>sentenceHash</td>
-
-                                    <td>
-                                        No
-                                    </td>
-
-
-                                </tr>
-                                <tr>
-                                    <td>userId</td>
+                                    <td>sentence_hash</td>
 
                                     <td>
                                         No
@@ -1131,7 +921,7 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                        <b>Returns : </b>    <code>unknown</code>
 
                     </div>
                     <div class="io-description">
@@ -1167,7 +957,7 @@ Also creates a History Module that tracks deletion of claim reviews.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">server/claim-review/claim-review.service.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">server/claim-review/claim-review.service.ts:12</a></div>
                         </td>
                     </tr>
 
@@ -1185,11 +975,9 @@ import { Model, Types } from &quot;mongoose&quot;;
 import { ClaimReview, ClaimReviewDocument } from &quot;./schemas/claim-review.schema&quot;;
 import { InjectModel } from &quot;@nestjs/mongoose&quot;;
 import { UtilService } from &quot;../util&quot;;
-import { SourceService } from &quot;../source/source.service&quot;;
 import { HistoryService } from &quot;../history/history.service&quot;;
 import { HistoryType, TargetModel } from &quot;../history/schema/history.schema&quot;;
 import { ISoftDeletedModel } from &#x27;mongoose-softdelete-typescript&#x27;;
-import { SourceTargetModel } from &#x27;../source/schemas/source.schema&#x27;
 
 @Injectable()
 export class ClaimReviewService {
@@ -1198,14 +986,21 @@ export class ClaimReviewService {
         @InjectModel(ClaimReview.name)
         private ClaimReviewModel: Model&lt;ClaimReviewDocument&gt; &amp; ISoftDeletedModel&lt;ClaimReviewDocument&gt;,
         private historyService: HistoryService,
-        private sourceService: SourceService,
         private util: UtilService
     ) {}
 
     agreggateClassification(match: any) {
         return this.ClaimReviewModel.aggregate([
             { $match: match },
-            { $group: { _id: &quot;$classification&quot;, count: { $sum: 1 } } },
+            {
+                $lookup: {
+                    from: &#x27;reports&#x27;,
+                    localField: &#x27;report&#x27;,
+                    foreignField: &#x27;_id&#x27;,
+                    as: &#x27;report&#x27;
+                }
+            },
+            { $group: { _id: &quot;$report.classification&quot;, count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
     }
@@ -1217,7 +1012,15 @@ export class ClaimReviewService {
     async getReviewStatsBySentenceHash(match: any) {
         const reviews &#x3D; await this.ClaimReviewModel.aggregate([
             { $match: match },
-            { $group: { _id: &quot;$classification&quot;, count: { $sum: 1 } } },
+            {
+                $lookup: {
+                    from: &#x27;reports&#x27;,
+                    localField: &#x27;report&#x27;,
+                    foreignField: &#x27;_id&#x27;,
+                    as: &#x27;report&#x27;
+                }
+            },
+            { $group: { _id: &quot;$report.classification&quot;, count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
         return this.util.formatStats(reviews);
@@ -1225,8 +1028,16 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews &#x3D; await this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false } },
-            { $group: { _id: &quot;$classification&quot;, count: { $sum: 1 } } },
+            { $match: { claim: claimId, isDeleted: false, isPublished: true, } },
+            {
+                $lookup: {
+                    from: &#x27;reports&#x27;,
+                    localField: &#x27;report&#x27;,
+                    foreignField: &#x27;_id&#x27;,
+                    as: &#x27;report&#x27;
+                }
+            },
+            { $group: { _id: &quot;$report.classification&quot;, count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
         return this.util.formatStats(reviews);
@@ -1239,115 +1050,36 @@ export class ClaimReviewService {
      */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false } },
+            { $match: { claim: claimId, isDeleted: false, isPublished: true } },
+            {
+                $lookup: {
+                    from: &#x27;reports&#x27;,
+                    localField: &#x27;report&#x27;,
+                    foreignField: &#x27;_id&#x27;,
+                    as: &#x27;report&#x27;
+                }
+            },
             {
                 $group: {
-                    _id: &quot;$sentence_hash&quot;,
-                    topClassification: this._topClassificationAccumulator(),
+                    _id: {sentence_hash: &quot;$sentence_hash&quot;, classification: &quot;$report.classification&quot;},
+                    count: { $sum: 1 }
                 },
             },
         ]).option({ serializeFunctions: true });
     }
 
-    getUserReviewBySentenceHash(sentenceHash, userId) {
-        if (!userId) {
-            return Promise.resolve(undefined);
-        }
-        return this.ClaimReviewModel.findOne(
-            { sentence_hash: sentenceHash, user: userId, isDeleted: false },
+    async getUserReviewBySentenceHash(sentence_hash) {
+        const user &#x3D; await this.ClaimReviewModel.findOne(
+            { sentence_hash, isDeleted: false, isPublished: true },
             {
-                sources: 1,
-                _id: 1,
-                classification: 1,
-                user: 1,
+                userId: 1,
             }
         );
+        const userReview &#x3D; user?.userId
+        return userReview
     }
 
-    countReviewsBySentenceHash(sentenceHash) {
-        return this._reviewsBySentenceHashAggregated(sentenceHash).count(
-            &quot;count&quot;
-        );
-    }
 
-    getReviewsBySentenceHash(sentenceHash, page, pageSize, order) {
-        pageSize &#x3D; parseInt(pageSize);
-        page &#x3D; parseInt(page);
-
-        return this._reviewsBySentenceHashAggregated(sentenceHash)
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .sort({ _id: order });
-    }
-
-    _reviewsBySentenceHashAggregated(sentenceHash) {
-        return this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash: sentenceHash, isDeleted: false } },
-            // Virtual Populates doesn&#x27;t work with aggregate
-            // https://stackoverflow.com/questions/47669178/mongoose-virtual-populate-and-aggregates
-            {
-                $lookup: {
-                    from: &#x27;sources&#x27;,
-                    localField: &#x27;_id&#x27;,
-                    foreignField: &#x27;targetId&#x27;,
-                    as: &#x27;sources&#x27;
-                }
-            },
-            {
-                $project: {
-                    _id: 1,
-                    sources: 1,
-                    report: 1,
-                    classification: 1,
-                    user: 1,
-                },
-            },
-        ]);
-    }
-
-    _topClassificationAccumulator() {
-        return {
-            $accumulator: {
-                init: function () {
-                    return {};
-                },
-                accumulate: function (state, classification) {
-                    if (!state[classification]) {
-                        state[classification] &#x3D; 1;
-                    } else {
-                        state[classification]++;
-                    }
-
-                    return state;
-                },
-                accumulateArgs: [&quot;$classification&quot;],
-                merge: function (state1, state2) {
-                    return { ...state1, ...state2 };
-                },
-                finalize: function (state) {
-                    // Find the classification with bigger count
-                    const topClassification &#x3D; Object.keys(state).reduce(
-                        (acc, classification) &#x3D;&gt; {
-                            if (!state[acc]) {
-                                return classification;
-                            } else {
-                                return state[acc] &gt;&#x3D; state[classification]
-                                    ? acc
-                                    : classification;
-                            }
-                        },
-                        &quot;&quot;
-                    );
-                    // TODO: what can we do about ties?
-                    return {
-                        classification: topClassification,
-                        count: state[topClassification],
-                    };
-                },
-                lang: &quot;js&quot;,
-            },
-        };
-    }
 
     /**
      * This function creates a new claim review.
@@ -1355,45 +1087,48 @@ export class ClaimReviewService {
      * @param claimReview ClaimReviewBody received of the client.
      * @returns Return a new claim review object.
      */
-    async create(claimReview) {
-        // Cast ObjectId
-        claimReview.personality &#x3D; Types.ObjectId(claimReview.personality);
-        claimReview.claim &#x3D; Types.ObjectId(claimReview.claim);
-        claimReview.user &#x3D; Types.ObjectId(claimReview.user);
-        const newClaimReview &#x3D; new this.ClaimReviewModel(claimReview);
-        if (claimReview.sources &amp;&amp; Array.isArray(claimReview.sources)) {
-            try {
-                for (let i &#x3D; 0; i &lt; claimReview.sources.length ; i++) {
-                    await this.sourceService.create({
-                        link: claimReview.sources[i],
-                        targetId: newClaimReview.id,
-                        targetModel: SourceTargetModel.ClaimReview,
-                    });
-                }
-            } catch (e) {
-                this.logger.error(e);
-                throw e;
-            }
+    async create(claimReview, sentence_hash) {
+        const review &#x3D; await this.getReviewBySentenceHash(claimReview.sentence_hash)
+
+        if (review.length) {
+            throw new Error(&quot;This Claim already has a review&quot;);
+            //TODO: verify if already start a review and isn&#x27;t published
+        } else {
+            // Cast ObjectId
+            claimReview.personality &#x3D; Types.ObjectId(claimReview.personality);
+            claimReview.claim &#x3D; Types.ObjectId(claimReview.claim);
+            claimReview.report &#x3D; Types.ObjectId(claimReview.report._id)
+            claimReview.userId &#x3D; Types.ObjectId(claimReview.userId)
+            claimReview.sentence_hash &#x3D; sentence_hash
+            const newClaimReview &#x3D; new this.ClaimReviewModel(claimReview)
+
+            newClaimReview.isPublished &#x3D; true
+
+            const history &#x3D; 
+                this.historyService.getHistoryParams(
+                    newClaimReview._id,
+                    TargetModel.ClaimReview,
+                    claimReview.userId,
+                    HistoryType.Create,
+                    newClaimReview
+                )
+
+            this.historyService.createHistory(history)
+
+            return newClaimReview.save();
         }
-
-        const history &#x3D; 
-            this.historyService.getHistoryParams(
-                newClaimReview._id,
-                TargetModel.ClaimReview,
-                claimReview.user,
-                HistoryType.Create,
-                newClaimReview
-            )
-
-        this.historyService.createHistory(history)
-
-        return newClaimReview.save();
     }
 
     getById(claimReviewId) {
         return this.ClaimReviewModel.findById(claimReviewId)
             .populate(&quot;claims&quot;, &quot;_id title&quot;)
             .populate(&quot;sources&quot;, &quot;_id link classification&quot;);
+    }
+
+    getReviewBySentenceHash(sentence_hash) {
+        return this.ClaimReviewModel.aggregate([
+            { $match: { sentence_hash } },
+        ])
     }
 
     /**
@@ -1410,7 +1145,7 @@ export class ClaimReviewService {
             this.historyService.getHistoryParams(
                 claimReview._id,
                 TargetModel.ClaimReview,
-                claimReview.user,
+                claimReview.userId,
                 HistoryType.Delete,
                 null,
                 claimReview

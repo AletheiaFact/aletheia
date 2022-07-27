@@ -105,6 +105,7 @@
                                 <a href="#createSentenceId" >createSentenceId</a>
                             </li>
                             <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#parse" >parse</a>
                             </li>
                             <li>
@@ -125,6 +126,78 @@
     </table>
 </section>
 
+            <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(speechService: <a href="../injectables/SpeechService.html" target="_self">SpeechService</a>, paragraphService: <a href="../injectables/ParagraphService.html" target="_self">ParagraphService</a>, sentenceService: <a href="../injectables/SentenceService.html" target="_self">SentenceService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">server/parser/parser.service.ts:21</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>speechService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SpeechService.html" target="_self" >SpeechService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>paragraphService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ParagraphService.html" target="_self" >ParagraphService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>sentenceService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SentenceService.html" target="_self" >SentenceService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
 
             <section>
     
@@ -151,8 +224,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="86"
-                            class="link-to-prism">server/parser/parser.service.ts:86</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="100"
+                            class="link-to-prism">server/parser/parser.service.ts:100</a></div>
                 </td>
             </tr>
 
@@ -188,8 +261,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="91"
-                            class="link-to-prism">server/parser/parser.service.ts:91</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="105"
+                            class="link-to-prism">server/parser/parser.service.ts:105</a></div>
                 </td>
             </tr>
 
@@ -211,6 +284,7 @@
                 <td class="col-md-4">
                     <a name="parse"></a>
                     <span class="name">
+                        <span class="modifier">Async</span>
                         <span ><b>parse</b></span>
                         <a href="#parse"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -218,15 +292,16 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>parse(content: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>parse(content: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="22"
-                            class="link-to-prism">server/parser/parser.service.ts:22</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="31"
+                            class="link-to-prism">server/parser/parser.service.ts:31</a></div>
                 </td>
             </tr>
 
@@ -264,7 +339,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>    <code>{ object: {}; text: any; }</code>
+                        <b>Returns : </b>        <code><a href="../classes/Speech.html" target="_self" >Promise&lt;SpeechDocument&gt;</a></code>
 
                     </div>
                     <div class="io-description">
@@ -287,15 +362,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>parseSentence(sentenceContent)</code>
+<code>parseSentence(sentenceContent, paragraphDataHash)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="70"
-                            class="link-to-prism">server/parser/parser.service.ts:70</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="85"
+                            class="link-to-prism">server/parser/parser.service.ts:85</a></div>
                 </td>
             </tr>
 
@@ -323,13 +398,22 @@
 
 
                                 </tr>
+                                <tr>
+                                    <td>paragraphDataHash</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>    <code>{ type: string; props: { id: number; &quot;data-hash&quot;: any; }; content: any; }</code>
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                     </div>
                     <div class="io-description">
@@ -359,8 +443,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="50"
-                            class="link-to-prism">server/parser/parser.service.ts:50</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="65"
+                            class="link-to-prism">server/parser/parser.service.ts:65</a></div>
                 </td>
             </tr>
 
@@ -434,7 +518,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">server/parser/parser.service.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">server/parser/parser.service.ts:29</a></div>
                         </td>
                     </tr>
 
@@ -460,7 +544,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">server/parser/parser.service.ts:18</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">server/parser/parser.service.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -486,7 +570,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">server/parser/parser.service.ts:19</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">server/parser/parser.service.ts:28</a></div>
                         </td>
                     </tr>
 
@@ -500,6 +584,10 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@nestjs/common&quot;;
+import { SentenceService } from &quot;../sentence/sentence.service&quot;;
+import { ParagraphService } from &quot;../paragraph/paragraph.service&quot;;
+import { SpeechService } from &quot;../speech/speech.service&quot;;
+import { SpeechDocument } from &quot;../speech/schemas/speech.schema&quot;;
 const md5 &#x3D; require(&quot;md5&quot;);
 const nlp &#x3D; require(&#x27;compromise&#x27;)
 nlp.extend(require(&#x27;compromise-sentences&#x27;))
@@ -516,36 +604,47 @@ const phdRegex &#x3D; /Ph\.D\./g;
 
 @Injectable()
 export class ParserService {
+    constructor(
+        private speechService: SpeechService,
+        private paragraphService: ParagraphService,
+        private sentenceService: SentenceService,
+    ) {}
     paragraphSequence: number;
     sentenceSequence: number;
     nlpOptions: object &#x3D; { trim:true };
 
-    parse(content: string) {
+    async parse(content: string): Promise&lt;SpeechDocument&gt; {
         this.paragraphSequence &#x3D; 0;
         this.sentenceSequence &#x3D; 0;
         const result &#x3D; [];
         const nlpContent &#x3D; nlp(content);
         const paragraphs &#x3D; nlpContent.paragraphs();
+        const text &#x3D; nlpContent.text(this.nlpOptions)
 
         paragraphs.forEach((paragraph) &#x3D;&gt; {
             const paragraphId &#x3D; this.createParagraphId();
             const sentences &#x3D; this.postProcessSentences(paragraph.sentences());
 
-            if (sentences &amp;&amp; sentences.length) {
-                result.push({
-                    type: &quot;paragraph&quot;,
-                    props: {
-                        id: paragraphId,
-                    },
-                    content: sentences.map((sentence) &#x3D;&gt; this.parseSentence(sentence)),
-                });
-            }
-        });
+            const paragraphDataHash &#x3D; md5(
+                &#x60;${this.paragraphSequence}${text}${paragraph}&#x60;
+            );
 
-        return {
-            object: result,
-            text: nlpContent.text(this.nlpOptions),
-        };
+            if (sentences &amp;&amp; sentences.length) {
+                return result.push(
+                    this.paragraphService.create({
+                        data_hash: paragraphDataHash,
+                        props: {
+                            id: paragraphId,
+                        },
+                        content: sentences.map((sentence) &#x3D;&gt; this.parseSentence(sentence, paragraphDataHash)),
+                    })
+                )
+            }
+        })
+
+        return await Promise.all(result).then((object): Promise&lt;SpeechDocument&gt; &#x3D;&gt; {
+            return this.speechService.create({ content: object })
+        })
     }
 
     postProcessSentences(sentences) {
@@ -568,20 +667,19 @@ export class ParserService {
         return newSentences;
     }
 
-    parseSentence(sentenceContent) {
+    parseSentence(sentenceContent, paragraphDataHash) {
         const sentenceId &#x3D; this.createSentenceId();
         const sentenceDataHash &#x3D; md5(
-            &#x60;${this.paragraphSequence}${this.sentenceSequence}${sentenceContent}&#x60;
+            &#x60;${paragraphDataHash}${this.sentenceSequence}${sentenceContent}&#x60;
         );
 
-        return {
-            type: &quot;sentence&quot;,
+        return this.sentenceService.create({
+            data_hash: sentenceDataHash,
             props: {
                 id: sentenceId,
-                &quot;data-hash&quot;: sentenceDataHash,
             },
             content: sentenceContent,
-        };
+        });
     }
 
     createParagraphId() {

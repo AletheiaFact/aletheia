@@ -34,9 +34,7 @@ export class SessionGuard implements CanActivate {
                 request.user = { _id: session?.identity?.traits?.user_id };
                 return true
             }
-            if ((type === 'passport') && request.isAuthenticated && request.isAuthenticated()) {
-                return true;
-            }
+
             return this.next(request, response, isPublic);
         } catch (e) {
             // TODO: logging

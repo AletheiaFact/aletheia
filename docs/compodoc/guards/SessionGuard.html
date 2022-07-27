@@ -257,8 +257,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="47"
-                            class="link-to-prism">server/auth/session.guard.ts:47</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="45"
+                            class="link-to-prism">server/auth/session.guard.ts:45</a></div>
                 </td>
             </tr>
 
@@ -361,9 +361,7 @@ export class SessionGuard implements CanActivate {
                 request.user &#x3D; { _id: session?.identity?.traits?.user_id };
                 return true
             }
-            if ((type &#x3D;&#x3D;&#x3D; &#x27;passport&#x27;) &amp;&amp; request.isAuthenticated &amp;&amp; request.isAuthenticated()) {
-                return true;
-            }
+
             return this.next(request, response, isPublic);
         } catch (e) {
             // TODO: logging

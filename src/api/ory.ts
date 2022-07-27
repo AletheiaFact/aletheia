@@ -34,7 +34,30 @@ const oryGetLoginFlow = ({ router, setFlow, t }) => {
 const orySubmitLogin = ({router, flow, setFlow, t, values}) => {
     return ory
         .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
-        .then(() => {
+        .then((response) => {
+            return ory.toSession()
+            .then(() => response)
+            .catch((err: AxiosError) => {
+                switch (err.response?.status) {
+                    case 403:
+                    // This is a legacy error code thrown. See code 422 for
+                    // more details.
+                    case 422:
+                        // This status code is returned when we are trying to
+                        // validate a session which has not yet completed
+                        // it's second factor
+                        return router.push("/login?aal=aal2");
+                        case 401:
+                        // do nothing, the user is not logged in
+                        return;
+                }
+
+                // Something else happened!
+                return Promise.reject(err);
+            });
+        })
+        .then((response) => {
+            console.log(response.data.session.authenticator_assurance_level)
             message.success(
                 `${t("login:loginSuccessfulMessage")}`
             );
@@ -66,12 +89,27 @@ const orySubmitSettings = ({router, flow, setFlow, t, values}) => {
         .then(() => {
             router.push('/')
         })
+        .catch((err: AxiosError) =>  {handleAxiosError(err, setFlow)
+            throw err
+        })
         .catch(handleFlowError(router, 'settings', setFlow, t))
-        .catch((err: AxiosError) =>  handleAxiosError(err, setFlow))
+}
+
+const orySubmitTotp = ({router, flow, setFlow, t, values}) => {
+    return ory
+        .submitSelfServiceSettingsFlow(String(flow?.id), undefined, values)
+        .then(({data}) => {
+            setFlow(data)
+        })
+        .catch((err: AxiosError) =>  {handleAxiosError(err, setFlow)
+            throw err
+        })
+        .catch(handleFlowError(router, 'settings', setFlow, t))
 }
 
 
 export {
+    orySubmitTotp,
     oryGetLoginFlow,
     orySubmitLogin,
     oryGetSettingsFlow,

@@ -32,7 +32,7 @@ services:
       throttle:
         ttl: 60
         limit: 1000
-      authentication_type: passport
+      authentication_type: ory
       ory:
         url: ORY_SDK_URL
         access_token: ORY_ACCESS_TOKEN
