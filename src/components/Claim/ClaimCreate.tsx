@@ -77,7 +77,6 @@ const ClaimCreate = ({
         setTitleAndContent();
     }, []);
 
-
     const disabledDate = (current) => {
         return current && current > moment().endOf("day");
     };
@@ -145,10 +144,7 @@ const ClaimCreate = ({
                         {
                             required: true,
                             message: t("claimForm:titleFieldError"),
-                        },
-                        {
-                            pattern: /\s*\S+.*/,
-                            message: t("claimForm:titleFieldError"),
+                            whitespace: true,
                         },
                     ]}
                     wrapperCol={{ sm: 24 }}
@@ -169,10 +165,7 @@ const ClaimCreate = ({
                     rules={[
                         {
                             required: true,
-                            message: t("claimForm:contentFieldError"),
-                        },
-                        {
-                            pattern: /\s*\S+.*/,
+                            whitespace: true,
                             message: t("claimForm:contentFieldError"),
                         },
                     ]}

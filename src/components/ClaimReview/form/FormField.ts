@@ -25,22 +25,39 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         i18nKey = fieldName,
         i18nNamespace = "claimReviewForm",
         defaultValue,
+        rules,
     } = props;
     return {
         fieldName,
         type,
         label: `${i18nNamespace}:${i18nKey}Label`,
         placeholder: `${i18nNamespace}:${i18nKey}Placeholder`,
-        rules: {
-            required: "common:requiredFieldError",
-            pattern: {
-                value: /\s*\S+.*/,
-                message: "common:requiredFieldError",
-            }
-        },
         defaultValue,
         ...props,
+        rules: {
+            required: "common:requiredFieldError",
+            ...rules,
+            validate: {
+                notBlank: (v) =>
+                    validateBlank(v) || "common:requiredFieldError",
+                ...rules?.validate,
+            },
+        },
     };
 };
 
-export { createFormField };
+const validateBlank = (value): boolean => {
+    return fieldValidation(value, (value) => !!value.trim());
+};
+
+const fieldValidation = (value, validationFunction) => {
+    if (typeof value === "string") {
+        return validationFunction(value);
+    }
+    if (typeof value === "object") {
+        return value.every((v) => validationFunction(v));
+    }
+    return false;
+};
+
+export { createFormField, fieldValidation };

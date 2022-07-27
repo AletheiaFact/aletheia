@@ -40,8 +40,8 @@ const DynamicForm = ({
 
     const setDefaultValuesOfCurrentForm = (machine, form) => {
         if (machine) {
-            const machineValues = machine.context.reviewData
-            reset(machineValues)
+            const machineValues = machine.context.reviewData;
+            reset(machineValues);
             form.forEach((input) => {
                 Object.keys(machine.context.reviewData).forEach((value) => {
                     if (input.fieldName === value) {
@@ -107,7 +107,6 @@ const DynamicForm = ({
                 label,
                 placeholder,
                 type,
-                inputType,
                 addInputLabel,
                 defaultValue,
             } = fieldItem;
@@ -138,7 +137,6 @@ const DynamicForm = ({
                                     placeholder={placeholder}
                                     onChange={field.onChange}
                                     value={field.value}
-                                    inputType={inputType}
                                     addInputLabel={addInputLabel}
                                     defaultValue={defaultValue}
                                     data-cy={`testClaimReview${fieldName}`}
