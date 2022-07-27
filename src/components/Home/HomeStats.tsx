@@ -1,7 +1,7 @@
-import React from 'react';
-import { Row, Col } from 'antd';
-import { useTranslation } from 'next-i18next';
-import colors from '../../styles/colors';
+import React from "react";
+import { Row, Col } from "antd";
+import { useTranslation } from "next-i18next";
+import colors from "../../styles/colors";
 
 const HomeStats = ({ stats }) => {
     const { t } = useTranslation();
@@ -18,85 +18,72 @@ const HomeStats = ({ stats }) => {
             <Col
                 span={7}
                 className="stats-child-container"
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                }}
             >
-                <p
+                <h3
+                    className="number-stats"
                     style={{
-                        display: "flex",
-                        alignItems: "center",
+                        color: colors.lightBlueSecondary,
+                        marginRight: "20px",
                         marginBottom: 0,
                     }}
                 >
-                    <span
-                        className="number-stats"
-                        style={{
-                            color: colors.lightBlueSecondary,
-                            lineHeight: "55px",
-                            marginRight: "20px",
-                        }}
-                    >
-                        {stats.personalities}
-                    </span>{" "}
-                    <span className="title-stats">
-                        {t("home:statsPersonalities")}
-                    </span>
+                    {stats.personalities}
+                </h3>{" "}
+                <p className="title-stats" style={{ marginBottom: 0 }}>
+                    {t("home:statsPersonalities")}
                 </p>
             </Col>
             <Col
                 span={7}
-                offset={2}
                 className="stats-child-container"
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                }}
             >
-                <p
+                <h3
+                    className="number-stats"
                     style={{
-                        display: "flex",
-                        alignItems: "center",
+                        color: colors.lightBlueSecondary,
+                        marginRight: "20px",
                         marginBottom: 0,
                     }}
                 >
-                    <span
-                        className="number-stats"
-                        style={{
-                            color: colors.lightBlueSecondary,
-                            lineHeight: "55px",
-                            marginRight: "20px",
-                        }}
-                    >
-                        {stats.claims}
-                    </span>{" "}
-                    <span className="title-stats">
-                        {t("home:statsClaims")}
-                    </span>
+                    {stats.claims}
+                </h3>{" "}
+                <p className="title-stats" style={{ marginBottom: 0 }}>
+                    {t("home:statsClaims")}
                 </p>
             </Col>
             <Col
                 span={7}
-                offset={1}
                 className="stats-child-container"
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                }}
             >
-                <p
+                <h3
+                    className="number-stats"
                     style={{
-                        display: "flex",
-                        alignItems: "center",
+                        color: colors.lightBlueSecondary,
                         marginBottom: 0,
+                        lineHeight: "55px",
+                        marginRight: "20px",
                     }}
                 >
-                    <span
-                        className="number-stats"
-                        style={{
-                            color: colors.lightBlueSecondary,
-                            lineHeight: "55px",
-                            marginRight: "20px",
-                        }}
-                    >
-                        {stats.reviews}
-                    </span>{" "}
-                    <span className="title-stats">
-                        {t("home:statsClaimReviews")}
-                    </span>
+                    {stats.reviews}
+                </h3>{" "}
+                <p className="title-stats" style={{ marginBottom: 0 }}>
+                    {t("home:statsClaimReviews")}
                 </p>
             </Col>
         </Row>
-    )
-}
+    );
+};
 
-export default HomeStats
+export default HomeStats;

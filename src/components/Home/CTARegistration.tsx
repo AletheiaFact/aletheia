@@ -18,8 +18,7 @@ function CTARegistration() {
                 justifyContent: "center",
             }}
         >
-            <Typography.Title
-                level={2}
+            <p
                 style={{
                     width: "100%",
                     color: colors.white,
@@ -30,7 +29,7 @@ function CTARegistration() {
                 }}
             >
                 {t("CTARegistration:title")}
-            </Typography.Title>
+            </p>
             <p
                 style={{
                     color: "rgba(255, 255, 255, 0.8)",
@@ -48,7 +47,7 @@ function CTARegistration() {
                     color: "rgba(255, 255, 255, 0.8)",
                     padding: "0 16px 0 16px",
                     fontSize: "14px",
-                    fontWeight: 400,
+                    fontWeight: 600,
                     lineHeight: "22px",
                     marginBottom: "32px",
                 }}
@@ -56,7 +55,12 @@ function CTARegistration() {
                 {t("CTARegistration:footer")}
             </p>
             <Button
-                onClick={() => { umami?.trackEvent('cta-registration-button', 'registration') }}
+                onClick={() => {
+                    umami?.trackEvent(
+                        "cta-registration-button",
+                        "registration"
+                    );
+                }}
                 type={ButtonType.white}
                 target="_blank"
                 rounded
