@@ -5,6 +5,7 @@ import Logger from "./logger";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
 const cookieParser = require("cookie-parser");
+const mongoose = require("mongoose");
 
 const initApp = async (options) => {
     const corsOptions = {
@@ -23,14 +24,16 @@ const initApp = async (options) => {
         }
     );
 
+    mongoose.set("useCreateIndex", true);
+
     app.useGlobalPipes(
         new ValidationPipe({
             transform: true,
-            transformOptions: {enableImplicitConversion: true},
+            transformOptions: { enableImplicitConversion: true },
             whitelist: true,
             forbidNonWhitelisted: true,
-        }),
-    )
+        })
+    );
 
     app.use(cookieParser());
     app.useStaticAssets(join(__dirname, "..", "public"));
