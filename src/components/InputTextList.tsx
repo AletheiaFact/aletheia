@@ -10,7 +10,7 @@ type FormValues = {
 };
 
 
-export default function InputTextList({ placeholder, onChange, inputType, addInputLabel, defaultValue}) {
+export default function InputTextList({ placeholder, onChange, inputType, addInputLabel, defaultValue, dataCy }) {
     const contents = defaultValue.map((item) => {
         return { content: item }
     })
@@ -50,12 +50,14 @@ export default function InputTextList({ placeholder, onChange, inputType, addInp
                                 type={inputType}
                                 required={true}
                                 pattern="\s*\S+.*"
+                                data-cy={`${dataCy}${index}`}
                             />
                         </Col>
                         {index > 0 && <Col span={3}>
                             <Button
                                 style={{ height: "40px", margin: '0 auto' }}
                                 onClick={() => remove(index)}
+                                data-cy={`${dataCy}Remove${index}`}
                             >
                                 <DeleteOutlined />
                             </Button>
@@ -80,6 +82,7 @@ export default function InputTextList({ placeholder, onChange, inputType, addInp
                             content: ""
                         })
                     }
+                    data-cy={`${dataCy}Add`}
                 >
                     <PlusOutlined /> {addInputLabel}
                 </a>

@@ -26,6 +26,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
                     defaultValue={props.defaultValue}
+                    data-cy={props['data-cy']}
                 />
             )
         case "inputSearch":
@@ -42,6 +43,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     inputType={props.inputType}
                     addInputLabel={t(props.addInputLabel)}
                     defaultValue={props.defaultValue}
+                    dataCy={props['data-cy']}
                 />
             )
         case "select":
