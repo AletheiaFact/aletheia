@@ -1,46 +1,49 @@
 import React from "react";
 import ReviewStats from "./ReviewStats";
-import { Col, Row, Typography } from "antd";
+import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
-
-const { Title } = Typography;
+import colors from "../../styles/colors";
 
 const MetricsOverview = ({ stats }) => {
     const { t } = useTranslation();
 
     return (
-        <Row style={{
-            background: "white",
-            marginTop: "15px"
-        }}>
+        <Row>
             <Col
                 style={{
                     width: "100%",
                     color: "#262626",
-                    padding: "10px 0 25px 0px"
                 }}
                 offset={2}
                 span={18}
             >
-                <div
-                    style={{
-                        textAlign: "center",
-                        marginBottom: "5px"
-                    }}
-                >
-                    <Title level={4}>{t("metrics:headerTitle")}</Title>
-                    {stats.totalClaims && (
-                        <p style={{ marginBottom: 0 }}>{t("metrics:header", stats)}</p>
-                    )}
+                <div>
+                    <p
+                        style={{
+                            fontSize: 14,
+                            lineHeight: "20px",
+                            fontWeight: 700,
+                            color: colors.blackSecondary,
+                            marginBottom: 0,
+                        }}
+                    >
+                        {t("metrics:headerTitle")}
+                    </p>
+                    <p
+                        style={{
+                            fontSize: 14,
+                            lineHeight: "22px",
+                            color: colors.blackSecondary,
+                            marginBottom: "16px",
+                        }}
+                    >
+                        {t("metrics:header")}
+                    </p>
                 </div>
-                <ReviewStats
-                    stats={stats}
-                    countInTitle={true}
-                    type="line"
-                />
+                <ReviewStats stats={stats} countInTitle={true} type="line" />
             </Col>
         </Row>
     );
-}
+};
 
 export default MetricsOverview;
