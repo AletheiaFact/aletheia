@@ -37,7 +37,7 @@ export class UsersService {
         }
         try {
             // @ts-ignore
-            return newUser.save();
+            return await newUser.save();
         } catch (e) {
             this.logger.error(e);
             this.logger.error(`Error registering user ${user.email}`);
