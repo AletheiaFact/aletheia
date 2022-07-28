@@ -47,7 +47,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
 };
 
 const validateBlank = (value): boolean => {
-    return fieldValidation(value, (value) => !!value.trim());
+    return fieldValidation(value, (v) => !!v.trim());
 };
 
 const fieldValidation = (value, validationFunction) => {
