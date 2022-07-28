@@ -88,7 +88,10 @@ const PersonalityCard = ({
                                 })}
                             />
                         </Col>
-                        <Col span={style.titleSpan}>
+                        <Col
+                            span={style.titleSpan}
+                            className="personality-card-content"
+                        >
                             <Title
                                 level={summarized ? 2 : 1}
                                 style={{ fontSize: "16px", marginBottom: 0 }}
@@ -188,6 +191,7 @@ const PersonalityCard = ({
                                 style={{
                                     display: "flex",
                                     justifyContent: "flex-end",
+                                    border: "1px solid green",
                                 }}
                             >
                                 {personality._id ? (
@@ -197,7 +201,10 @@ const PersonalityCard = ({
                                         href={`${hrefBase || "/personality/"}${
                                             personality.slug
                                         }`}
-                                        style={{ padding: "0 12px" }}
+                                        style={{
+                                            padding: "0 12px",
+                                            fontSize: 12,
+                                        }}
                                     >
                                         {t("personality:profile_button")}
                                     </Button>
