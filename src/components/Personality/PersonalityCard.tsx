@@ -22,7 +22,7 @@ const PersonalityCard = ({
     hrefBase?: string;
     onClick?: (personality: any) => {};
 }) => {
-    const [ isFormSubmitted, setIsFormSubmitted ] = useState(false)
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const { t } = useTranslation();
     const style = {
         titleSpan: 14,
@@ -63,11 +63,12 @@ const PersonalityCard = ({
                 {" "}
                 <Col md={24} lg={header ? 12 : 24} style={{ width: "100%" }}>
                     <Row
-                        gutter={20}
+                        gutter={summarized ? 0 : 20}
                         align={header ? "middle" : "top"}
                         style={{
-                            padding: "10px 16px",
-                            marginTop: "10px",
+                            width: "100%",
+                            padding: "15px",
+                            paddingBottom: 0,
                         }}
                     >
                         <Col
@@ -150,32 +151,32 @@ const PersonalityCard = ({
                                         >
                                             {personality?.claims?.length !==
                                                 undefined && (
-                                                    <span>
-                                                        {t(
-                                                            "personality:headerClaimsTotal",
-                                                            {
-                                                                totalClaims:
-                                                                    personality
-                                                                        .claims
-                                                                        .length,
-                                                            }
-                                                        )}
-                                                    </span>
-                                                )}
+                                                <span>
+                                                    {t(
+                                                        "personality:headerClaimsTotal",
+                                                        {
+                                                            totalClaims:
+                                                                personality
+                                                                    .claims
+                                                                    .length,
+                                                        }
+                                                    )}
+                                                </span>
+                                            )}
                                             {personality.stats?.total !==
                                                 undefined && (
-                                                    <span>
-                                                        {t(
-                                                            "personality:headerReviewsTotal",
-                                                            {
-                                                                totalReviews:
-                                                                    personality
-                                                                        .stats
-                                                                        ?.total,
-                                                            }
-                                                        )}
-                                                    </span>
-                                                )}
+                                                <span>
+                                                    {t(
+                                                        "personality:headerReviewsTotal",
+                                                        {
+                                                            totalReviews:
+                                                                personality
+                                                                    .stats
+                                                                    ?.total,
+                                                        }
+                                                    )}
+                                                </span>
+                                            )}
                                         </Row>
                                     )}
                                 </Row>
@@ -193,7 +194,10 @@ const PersonalityCard = ({
                                     <Button
                                         type={ButtonType.blue}
                                         data-cy={personality.name}
-                                        href={`${hrefBase || "/personality/"}${personality.slug}`}
+                                        href={`${hrefBase || "/personality/"}${
+                                            personality.slug
+                                        }`}
+                                        style={{ padding: "0 12px" }}
                                     >
                                         {t("personality:profile_button")}
                                     </Button>
@@ -201,9 +205,9 @@ const PersonalityCard = ({
                                     <Button
                                         type={ButtonType.blue}
                                         onClick={() => {
-                                            if(!isFormSubmitted) {
-                                                setIsFormSubmitted(true)
-                                                onClick(personality)
+                                            if (!isFormSubmitted) {
+                                                setIsFormSubmitted(true);
+                                                onClick(personality);
                                             }
                                         }}
                                         disabled={isFormSubmitted}
@@ -226,10 +230,12 @@ const PersonalityCard = ({
                 </Col>
                 {enableStats && (
                     <Col
+                        xs={24}
                         sm={24}
-                        md={header ? 12 : 24}
+                        md={24}
+                        lg={header ? 12 : 24}
                         style={{
-                            padding: "5px 30px",
+                            padding: "5px 15px",
                             display: "flex",
                             alignItems: "center",
                         }}
