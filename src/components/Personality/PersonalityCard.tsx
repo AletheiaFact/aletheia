@@ -13,6 +13,7 @@ const PersonalityCard = ({
     enableStats = true,
     header = false,
     hrefBase = "",
+    mobile = false,
     onClick,
 }: {
     personality: any;
@@ -20,6 +21,7 @@ const PersonalityCard = ({
     enableStats?: boolean;
     header?: boolean;
     hrefBase?: string;
+    mobile?: boolean;
     onClick?: (personality: any) => {};
 }) => {
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
@@ -61,7 +63,11 @@ const PersonalityCard = ({
                 }}
             >
                 {" "}
-                <Col md={24} lg={header ? 12 : 24} style={{ width: "100%" }}>
+                <Col
+                    md={24}
+                    lg={header && !mobile ? 12 : 24}
+                    style={{ width: "100%" }}
+                >
                     <Row
                         gutter={summarized ? 0 : 20}
                         align={header ? "middle" : "top"}
@@ -191,7 +197,6 @@ const PersonalityCard = ({
                                 style={{
                                     display: "flex",
                                     justifyContent: "flex-end",
-                                    border: "1px solid green",
                                 }}
                             >
                                 {personality._id ? (
@@ -240,7 +245,7 @@ const PersonalityCard = ({
                         xs={24}
                         sm={24}
                         md={24}
-                        lg={header ? 12 : 24}
+                        lg={header && !mobile ? 12 : 24}
                         style={{
                             padding: "5px 15px",
                             display: "flex",
