@@ -1,6 +1,5 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { Typography } from "antd";
 import Button, { ButtonType } from "../Button";
 import CTARegistrationStyle from "./CTARegistration.style";
 import colors from "../../styles/colors";
