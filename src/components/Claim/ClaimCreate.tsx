@@ -129,7 +129,11 @@ const ClaimCreate = ({
 
     return (
         <>
-            <PersonalityCard personality={personality} header={true} />
+            <PersonalityCard
+                personality={personality}
+                header={true}
+                mobile={true}
+            />
 
             <ClaimForm
                 ref={formRef}
