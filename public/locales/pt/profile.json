@@ -14,5 +14,6 @@
     "totpSectionTittle": "Gerencie o aplicativo autenticador TOTP 2FA",
     "totpSectionDescription": "Adicione um aplicativo de autenticação TOTP para melhorar a segurança de sua conta. Os apps autenticadores populares são <0>LastPass</0> e Google Authenticator (<1>iOS</1>, <2>Android</2>).",
     "totpIncorectCodeMessage": "O código de autenticação fornecido é inválido, por favor tente novamente.",
-    "totpUnLinkErrorMessage": "Erro ao desvincular"
+    "totpUnLinkErrorMessage": "Erro ao desvincular",
+    "changesSaved": "Suas mudanças foram salvas!"
 }
