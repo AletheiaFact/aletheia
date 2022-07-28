@@ -1,4 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Noticia+Text:wght@400;700&family=Open+Sans:wght@400;500;600;700;800&display=swap');
+@font-face {
+    font-family: "Open Sans";
+    src: url(../../public/fonts/Open_Sans/static/OpenSans-Bold.ttf);
+    font-style: normal;
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url(../../public/fonts/Open_Sans/static/OpenSans-ExtraBold.ttf);
+    font-style: normal;
+    font-weight: 800;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url(../../public/fonts/Open_Sans/static/OpenSans-Italic.ttf);
+    font-style: italic;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url(../../public/fonts/Open_Sans/static/OpenSans-Regular.ttf);
+    font-style: normal;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url(../../public/fonts/Open_Sans/static/OpenSans-SemiBold.ttf);
+    font-style: normal;
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url(../../public/fonts/Open_Sans/static/OpenSans-Medium.ttf);
+    font-style: normal;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: "Noticia Text";
+    src: url(../../public/fonts/Noticia_Text/NoticiaText-Regular.ttf);
+    font-style: normal;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "Noticia Text";
+    src: url(../../public/fonts/Noticia_Text/NoticiaText-Bold.ttf);
+    font-style: normal;
+    font-weight: 700;
+}
 
 html,
 body {
