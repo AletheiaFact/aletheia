@@ -1,17 +1,12 @@
-import {
-    Controller,
-    Get,
-    Query, Req,
-    Res,
-} from "@nestjs/common";
-import {Request, Response} from "express";
+import { Controller, Get, Put, Query, Req, Res } from "@nestjs/common";
+import { Request, Response } from "express";
 import { UsersService } from "./users.service";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
-import {ConfigService} from "@nestjs/config";
-import {IsPublic} from "../decorators/is-public.decorator";
+import { ConfigService } from "@nestjs/config";
+import { IsPublic } from "../decorators/is-public.decorator";
 import { BaseRequest } from "../types";
-
+import { Types } from "mongoose";
 
 @Controller()
 export class UsersController {
@@ -25,7 +20,7 @@ export class UsersController {
     @Get("login")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        const authType = this.configService.get<string>("authentication_type")
+        const authType = this.configService.get<string>("authentication_type");
         await this.viewService
             .getNextServer()
             .render(
@@ -34,6 +29,25 @@ export class UsersController {
                 "/login",
                 Object.assign(parsedUrl.query, { authType })
             );
+    }
+
+    @Put("api/user/:id/password")
+    async changePassword(@Req() req: BaseRequest, @Res() res) {
+        try {
+            this.usersService
+                .registerPasswordChange(Types.ObjectId(req.params.id))
+                .then(() => {
+                    res.status(200).json({
+                        success: true,
+                        message: "Password reset successful",
+                    });
+                })
+                .catch((e) => {
+                    res.status(500).json({ message: e.message });
+                });
+        } catch (e) {
+            res.status(500).json({ message: e.message });
+        }
     }
 
     @Get("profile")
@@ -47,7 +61,7 @@ export class UsersController {
                 req,
                 res,
                 "/profile-page",
-                Object.assign(parsedUrl.query, {user})
+                Object.assign(parsedUrl.query, { user })
             );
     }
 

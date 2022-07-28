@@ -170,6 +170,7 @@ export const Totp = ({ flow, setFlow }) => {
                     style={{
                         width: "100%",
                         marginTop: "21px",
+                        marginBottom: "21px",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
