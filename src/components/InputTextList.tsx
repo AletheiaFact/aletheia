@@ -9,31 +9,40 @@ type FormValues = {
     fieldArray: { content: string }[];
 };
 
-
-export default function InputTextList({ placeholder, onChange, inputType, addInputLabel, defaultValue}) {
+export default function InputTextList({
+    placeholder,
+    onChange,
+    addInputLabel,
+    defaultValue,
+    dataCy,
+}) {
     const contents = defaultValue.map((item) => {
-        return { content: item }
-    })
+        return { content: item };
+    });
 
     const { register, control, watch } = useForm<FormValues>({
-        defaultValues: { fieldArray: contents.length ? contents : [{ content: ""}] }
+        defaultValues: {
+            fieldArray: contents.length ? contents : [{ content: "" }],
+        },
     });
     const { fields, append, remove } = useFieldArray({
         control,
-        name: "fieldArray"
+        name: "fieldArray",
     });
     const watchFieldArray = watch("fieldArray");
     const controlledFields = fields.map((field, index) => {
         return {
             ...field,
-            ...watchFieldArray[index]
+            ...watchFieldArray[index],
         };
     });
 
     React.useEffect(() => {
         const subscription = watch((value) => {
-            const contentArray = value.fieldArray.flatMap(field => field.content)
-            onChange(contentArray)
+            const contentArray = value.fieldArray.flatMap(
+                (field) => field.content
+            );
+            onChange(contentArray);
         });
         return () => subscription.unsubscribe();
     }, [watch]);
@@ -42,25 +51,36 @@ export default function InputTextList({ placeholder, onChange, inputType, addInp
         <div>
             {controlledFields.map((_field, index) => {
                 return (
-                    <Row key={`fieldArray.${index}.content`} style={{ marginBottom: 20, justifyContent: 'space-between' }}>
+                    <Row
+                        key={`fieldArray.${index}.content`}
+                        style={{
+                            marginBottom: 20,
+                            justifyContent: "space-between",
+                        }}
+                    >
                         <Col span={index > 0 ? 20 : 24}>
                             <AletheiaInput
-                                {...register(`fieldArray.${index}.content` as const)}
+                                {...register(
+                                    `fieldArray.${index}.content` as const
+                                )}
                                 placeholder={placeholder}
-                                type={inputType}
-                                required={true}
+                                type="text"
+                                data-cy={`${dataCy}${index}`}
                             />
                         </Col>
-                        {index > 0 && <Col span={3}>
-                            <Button
-                                style={{ height: "40px", margin: '0 auto' }}
-                                onClick={() => remove(index)}
-                            >
-                                <DeleteOutlined />
-                            </Button>
-                        </Col>}
+                        {index > 0 && (
+                            <Col span={3}>
+                                <Button
+                                    style={{ height: "40px", margin: "0 auto" }}
+                                    onClick={() => remove(index)}
+                                    data-cy={`${dataCy}Remove${index}`}
+                                >
+                                    <DeleteOutlined />
+                                </Button>
+                            </Col>
+                        )}
                     </Row>
-                )
+                );
             })}
 
             <div
@@ -72,13 +92,14 @@ export default function InputTextList({ placeholder, onChange, inputType, addInp
             >
                 <a
                     style={{
-                        textDecoration: "underline"
+                        textDecoration: "underline",
                     }}
                     onClick={() =>
                         append({
-                            content: ""
+                            content: "",
                         })
                     }
+                    data-cy={`${dataCy}Add`}
                 >
                     <PlusOutlined /> {addInputLabel}
                 </a>

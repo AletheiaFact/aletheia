@@ -144,6 +144,7 @@ const ClaimCreate = ({
                         {
                             required: true,
                             message: t("claimForm:titleFieldError"),
+                            whitespace: true,
                         },
                     ]}
                     wrapperCol={{ sm: 24 }}
@@ -164,6 +165,7 @@ const ClaimCreate = ({
                     rules={[
                         {
                             required: true,
+                            whitespace: true,
                             message: t("claimForm:contentFieldError"),
                         },
                     ]}
