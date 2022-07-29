@@ -94,7 +94,10 @@ const PersonalityCard = ({
                                 })}
                             />
                         </Col>
-                        <Col span={style.titleSpan} className="personality-card-content">
+                        <Col
+                            span={style.titleSpan}
+                            className="personality-card-content"
+                        >
                             {summarized && (
                                 <Paragraph
                                     style={{
@@ -135,7 +138,7 @@ const PersonalityCard = ({
                                     <Paragraph
                                         style={{
                                             fontSize: "10px",
-                                            fontWeight: 500,
+                                            fontWeight: 600,
                                             lineHeight: "15px",
                                             color: colors.blackSecondary,
                                         }}

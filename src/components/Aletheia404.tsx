@@ -6,16 +6,16 @@ const Aletheia404 = () => {
     return (
         <div
             style={{
-                width: '100%',
-                marginTop: '60px',
-                textAlign: 'center',
+                width: "100%",
+                marginTop: "60px",
+                textAlign: "center",
                 fontSize: "1rem",
-                fontWeight: 500,
+                fontWeight: 600,
             }}
         >
             <div> {t("notFound:message")}</div>
         </div>
     );
-}
+};
 
-export default Aletheia404
+export default Aletheia404;
