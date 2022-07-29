@@ -33,7 +33,7 @@ export class ReportService {
             newReport.save();
             return newReport;
         } else {
-            throw new Error();
+            throw new Error("Classification doesn't match options");
         }
     }
 
