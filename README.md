@@ -97,3 +97,5 @@ yarn build
 - Now Paste the acess token that you saved on ``access_token: `` in your config.yaml and congig.seed.yaml.
 - Do the same as above but now with the id that you saved and paste it on ``schema_id: ``. 
 
+### Setting up your own UI to make the right redirects:
+- Go to User Interface on Ory Console and rewrite these fields: Login UI with http://localhost:3000/login and Settings UI with http://localhost:3000/profile. 
