@@ -36,7 +36,7 @@ const SentenceReportCard = ({
                     <Row className="content-card">
                         <Col>
                             <Avatar
-                                size={133}
+                                size={117}
                                 src={personality.image}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,
