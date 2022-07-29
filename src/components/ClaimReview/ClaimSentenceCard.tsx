@@ -1,9 +1,15 @@
 import { Avatar, Col, Comment } from "antd";
 import React from "react";
+import colors from "../../styles/colors";
 import ClaimCardHeader from "../Claim/ClaimCardHeader";
 import ClaimSummary from "../Claim/ClaimSummary";
 
-const ClaimSentenceCard = ({ personality, sentence, claimType, summaryClassName = "" }) => {
+const ClaimSentenceCard = ({
+    personality,
+    sentence,
+    claimType,
+    summaryClassName = "",
+}) => {
     const content = sentence?.content;
 
     if (content) {
@@ -21,6 +27,12 @@ const ClaimSentenceCard = ({ personality, sentence, claimType, summaryClassName 
                         <Avatar
                             src={personality.image}
                             alt={personality.name}
+                            style={{
+                                outlineColor: colors.blueQuartiary,
+                                outlineStyle: "solid",
+                                outlineWidth: "1.5px",
+                                outlineOffset: "2px",
+                            }}
                         />
                     }
                     content={
@@ -29,13 +41,11 @@ const ClaimSentenceCard = ({ personality, sentence, claimType, summaryClassName 
                                 <Col>
                                     <cite
                                         style={{
-                                            marginBottom: '1em',
-                                            fontStyle: 'normal'
+                                            marginBottom: "1em",
+                                            fontStyle: "normal",
                                         }}
                                     >
-                                        <p>
-                                            {content}
-                                        </p>
+                                        <p>{content}</p>
                                     </cite>
                                 </Col>
                             </ClaimSummary>
@@ -47,6 +57,6 @@ const ClaimSentenceCard = ({ personality, sentence, claimType, summaryClassName 
     } else {
         return <></>;
     }
-}
+};
 
 export default ClaimSentenceCard;

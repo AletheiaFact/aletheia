@@ -87,7 +87,13 @@ const PersonalityCard = ({
                         >
                             <Avatar
                                 size={style.avatarSize}
-                                style={{ aspectRatio: "auto" }}
+                                style={{
+                                    aspectRatio: "auto",
+                                    outlineColor: colors.blueQuartiary,
+                                    outlineStyle: "solid",
+                                    outlineWidth: summarized ? "1.5px" : "2px",
+                                    outlineOffset: summarized ? "2px" : "4px",
+                                }}
                                 src={personality.avatar}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,
