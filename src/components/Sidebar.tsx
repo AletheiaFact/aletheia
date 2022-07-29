@@ -18,7 +18,7 @@ const Sidebar = ({ menuCollapsed, onToggleSidebar }) => {
                 position: "fixed",
                 top: 0,
                 left: 0,
-                height: "100%",
+                height: "100vh",
                 overflow: "hidden",
                 zIndex: 4,
                 background: "#F5F5F5",
