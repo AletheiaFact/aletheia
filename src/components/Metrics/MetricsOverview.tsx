@@ -17,29 +17,31 @@ const MetricsOverview = ({ stats }) => {
                 offset={2}
                 span={18}
             >
-                <div>
-                    <p
-                        style={{
-                            fontSize: 14,
-                            lineHeight: "20px",
-                            fontWeight: 700,
-                            color: colors.blackSecondary,
-                            marginBottom: 0,
-                        }}
-                    >
-                        {t("metrics:headerTitle")}
-                    </p>
-                    <p
-                        style={{
-                            fontSize: 14,
-                            lineHeight: "22px",
-                            color: colors.blackSecondary,
-                            marginBottom: "16px",
-                        }}
-                    >
-                        {t("metrics:header")}
-                    </p>
-                </div>
+                {stats?.reviews && stats?.reviews.lenght && (
+                    <div>
+                        <p
+                            style={{
+                                fontSize: 14,
+                                lineHeight: "20px",
+                                fontWeight: 700,
+                                color: colors.blackSecondary,
+                                marginBottom: 0,
+                            }}
+                        >
+                            {t("metrics:headerTitle")}
+                        </p>
+                        <p
+                            style={{
+                                fontSize: 14,
+                                lineHeight: "22px",
+                                color: colors.blackSecondary,
+                                marginBottom: "16px",
+                            }}
+                        >
+                            {t("metrics:header")}
+                        </p>
+                    </div>
+                )}
                 <ReviewStats stats={stats} countInTitle={true} type="line" />
             </Col>
         </Row>
