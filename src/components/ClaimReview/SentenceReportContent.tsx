@@ -22,7 +22,6 @@ const SentenceReportContent = ({ context, personality, claim }) => {
         lineHeight: "30px",
     };
 
-    console.log("context", context);
     return (
         <>
             <Row>
