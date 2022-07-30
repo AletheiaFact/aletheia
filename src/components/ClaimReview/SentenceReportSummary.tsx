@@ -23,6 +23,23 @@ const SentenceReportSummary = styled(Row)`
         border-bottom-color: ${colors.lightYellow};
     }
 
+    ${({ smallDialogBox }) =>
+        smallDialogBox &&
+        `
+            &:after {
+                content: " ";
+                position: absolute;
+                left: -10px;
+                top: 24px;
+                border-top: none;
+                border-right: 6px solid transparent;
+                border-left: 6px solid transparent;
+                border-bottom: 9px solid ${colors.lightGray};
+                transform: rotate(-90deg);
+                border-bottom-color: ${colors.lightYellow};
+            }
+        `}
+
     @media (max-width: 767px) {
         &:after {
             display: none;
