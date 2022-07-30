@@ -56,10 +56,14 @@ function CTARegistration() {
                 {t("CTARegistration:footer")}
             </p>
             <Button
-                onClick={() => { umami?.trackEvent('cta-registration-button', 'registration') }}
+                onClick={() => {
+                    umami?.trackEvent(
+                        "cta-registration-button",
+                        "registration"
+                    );
+                }}
                 type={ButtonType.white}
                 target="_blank"
-                rounded
                 href={t("common:registrationLink")}
                 className="CTA-registration-button"
                 style={{
@@ -68,6 +72,7 @@ function CTARegistration() {
                     height: "40px",
                     padding: "0 15px",
                     fontWeight: 700,
+                    borderRadius: "30px",
                 }}
             >
                 {t("CTARegistration:button")}
