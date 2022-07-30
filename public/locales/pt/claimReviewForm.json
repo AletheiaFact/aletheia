@@ -31,5 +31,6 @@
     "verificationPlaceholder": "Insira como a verificação foi feita",
     "sourcesLabel": "Forneça ao menos um link de uma fonte confiável",
     "sourcesPlaceholder": "Cole uma URL",
-    "addSourceLabel": "Incluir outra fonte"
+    "addSourceLabel": "Incluir outra fonte",
+    "loginButton": "Faça login para continuar"
 }
