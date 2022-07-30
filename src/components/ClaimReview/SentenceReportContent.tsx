@@ -81,10 +81,7 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                     </Typography.Title>
                     <Paragraph style={paragraphStyle}>{verification}</Paragraph>
                 </Col>
-                <Col
-                    span={24}
-                    style={{ marginTop: "33px", border: "1px solid red" }}
-                >
+                <Col span={24} style={{ marginTop: "33px" }}>
                     <Row
                         style={{
                             display: "inline-flex",
