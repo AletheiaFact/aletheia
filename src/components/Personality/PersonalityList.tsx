@@ -5,16 +5,16 @@ import PersonalityCard from "./PersonalityCard";
 import PersonalityCreateCTA from "./PersonalityCreateCTA";
 import BaseList from "../List/BaseList";
 import { useTranslation } from "next-i18next";
-import { NextSeo } from 'next-seo';
+import { NextSeo } from "next-seo";
 
 const PersonalityList = () => {
-    const { i18n, t } = useTranslation()
+    const { i18n, t } = useTranslation();
     const createPersonalityCTA = (
         <Row
             style={{
                 flexDirection: "column",
                 alignItems: "center",
-                width: "100%"
+                width: "100%",
             }}
         >
             <PersonalityCreateCTA href="/personality/search" />
@@ -23,16 +23,16 @@ const PersonalityList = () => {
     return (
         <>
             <NextSeo
-                title={t('seo:personalityListTitle')}
-                description={t('seo:personalityListDescription')}
+                title={t("seo:personalityListTitle")}
+                description={t("seo:personalityListDescription")}
             />
             <BaseList
                 apiCall={api.getPersonalities}
                 filter={{
-                    i18n
+                    i18n,
                 }}
                 emptyFallback={createPersonalityCTA}
-                renderItem={p =>
+                renderItem={(p) =>
                     p && (
                         <PersonalityCard
                             personality={p}
@@ -42,8 +42,9 @@ const PersonalityList = () => {
                     )
                 }
                 footer={createPersonalityCTA}
+                type="personality"
             />
         </>
     );
-}
+};
 export default PersonalityList;

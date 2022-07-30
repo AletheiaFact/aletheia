@@ -32,6 +32,7 @@ const KanbanCol = ({ state }: KanbanColProps) => {
                     <EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />
                 }
                 showDividers={false}
+                type="kanban"
             />
         </div>
     );

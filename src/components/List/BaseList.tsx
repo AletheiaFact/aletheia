@@ -1,6 +1,10 @@
-import { Button, Col, List, Row, Spin } from "antd";
+import { Button, Col, List, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
+import ClaimListSkeleton from "../../Skeleton/claim/ClaimListSkeleton";
+import HistoryListSkeleton from "../../Skeleton/history/HistoryListSkeleton";
+import KanbanListSkeleton from "../../Skeleton/kanban/KanbanListSkeleton";
+import PersonalityListSkeleton from "../../Skeleton/personality/PersonalityListSkeleton";
 
 import SortByButton from "./SortByButton";
 
@@ -14,6 +18,7 @@ const BaseList = ({
     title = "",
     grid = null,
     showDividers = true,
+    type = "",
 }) => {
     const { t } = useTranslation();
 
@@ -32,7 +37,6 @@ const BaseList = ({
         order: sortByOrder,
         ...filter,
     });
-
     useEffect(() => {
         apiCall(query).then((newItems) => {
             setInitLoading(false);
@@ -44,7 +48,6 @@ const BaseList = ({
             );
         });
     }, [query, apiCall]);
-
 
     const loadMoreData = () => {
         if (execLoadMore !== true) {
@@ -145,15 +148,15 @@ const BaseList = ({
     } else {
         if (initLoading) {
             return (
-                <Spin
-                    tip={t("global:loading")}
-                    style={{
-                        textAlign: "center",
-                        position: "absolute",
-                        top: "50%",
-                        left: "calc(50% - 40px)",
-                    }}
-                ></Spin>
+                <>
+                    {type === "claim" && <ClaimListSkeleton />}
+
+                    {type === "kanban" && <KanbanListSkeleton />}
+
+                    {type === "history" && <HistoryListSkeleton />}
+
+                    {type === "personality" && <PersonalityListSkeleton />}
+                </>
             );
         } else {
             return emptyFallback;

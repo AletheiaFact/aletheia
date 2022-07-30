@@ -30,6 +30,7 @@ const ClaimList = ({ personality }) => {
                     />
                 )
             }
+            type="claim"
         />
     );
 };
