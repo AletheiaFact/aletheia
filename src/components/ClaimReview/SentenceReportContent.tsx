@@ -88,7 +88,6 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                             flexWrap: "wrap",
                             gap: "38px 38px",
                             width: "100%",
-                            border: "1px solid green",
                         }}
                     >
                         <Typography.Title style={{ width: "100%" }} level={3}>
