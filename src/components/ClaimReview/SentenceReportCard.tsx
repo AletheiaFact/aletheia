@@ -32,7 +32,7 @@ const SentenceReportCard = ({
     return (
         <SentenceReportCardStyle>
             <Row className="main-content">
-                <Col md={6} sm={24} style={{ border: "1px solid red" }}>
+                <Col md={6} sm={24}>
                     <Row
                         className="content-card"
                         style={{
