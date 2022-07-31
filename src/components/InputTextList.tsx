@@ -15,6 +15,7 @@ export default function InputTextList({
     addInputLabel,
     defaultValue,
     dataCy,
+    white = false,
 }) {
     const contents = defaultValue.map((item) => {
         return { content: item };
@@ -66,6 +67,7 @@ export default function InputTextList({
                                 placeholder={placeholder}
                                 type="text"
                                 data-cy={`${dataCy}${index}`}
+                                white={white}
                             />
                         </Col>
                         {index > 0 && (
