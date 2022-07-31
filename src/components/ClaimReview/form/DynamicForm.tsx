@@ -4,7 +4,11 @@ import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import { initialContext } from "../../../machine/context";
 import { createNewMachineService } from "../../../machine/reviewTaskMachine";
-import { ReviewTaskEvents, ReviewTaskStates } from "../../../machine/enums";
+import {
+    ClassificationEnum,
+    ReviewTaskEvents,
+    ReviewTaskStates,
+} from "../../../machine/enums";
 import AletheiaButton, { ButtonType } from "../../Button";
 import colors from "../../../styles/colors";
 import DynamicInput from "../form/DynamicInput";
@@ -172,9 +176,23 @@ const DynamicForm = ({
         recaptchaRef.current?.resetRecaptcha();
     };
 
+    /**
+     * Verify if classification exists and is a valid type
+     * Send Event and data to state machine
+     * Reset recaptcha
+     * @param data data from form
+     * @param e event
+     */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        sendEventToMachine(data, event);
+        if (
+            data?.classification &&
+            Object.values(ClassificationEnum).includes(data.classification)
+        ) {
+            sendEventToMachine(data, event);
+        } else if (!data?.classification) {
+            sendEventToMachine(data, event);
+        }
     };
 
     const onClickSaveDraft = () => {

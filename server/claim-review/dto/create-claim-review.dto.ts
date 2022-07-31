@@ -7,7 +7,18 @@ import {
 } from "class-validator";
 import { Personality } from "../../personality/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
-import { ClassificationEnum } from "../../report/schemas/report.schema";
+
+export enum ClassificationEnum {
+    "not-fact",
+    "true",
+    "true-but",
+    "arguable",
+    "misleading",
+    "false",
+    "unsustainable",
+    "exaggerated",
+    "unverifiable",
+}
 
 export class CreateClaimReview {
     @IsNotEmpty()
