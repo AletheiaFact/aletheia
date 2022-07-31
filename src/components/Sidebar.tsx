@@ -1,11 +1,12 @@
 import React from "react";
 import { Col, Layout, Row } from "antd";
-import { MenuOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import AletheiaMenu from "./AletheiaMenu";
 import Logo from "./Header/Logo";
+import colors from "../styles/colors";
 
 const { Sider } = Layout;
-const Sidebar = ({menuCollapsed, onToggleSidebar}) => {
+const Sidebar = ({ menuCollapsed, onToggleSidebar }) => {
     return (
         <Sider
             collapsible
@@ -21,7 +22,7 @@ const Sidebar = ({menuCollapsed, onToggleSidebar}) => {
                 overflow: "hidden",
                 zIndex: 4,
                 background: "#F5F5F5",
-                boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.25)"
+                boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.25)",
             }}
         >
             <Row
@@ -30,7 +31,7 @@ const Sidebar = ({menuCollapsed, onToggleSidebar}) => {
                     lineHeight: "39px",
                     textAlign: "center",
                     color: "#111111",
-                    padding: "15px 20px"
+                    padding: "15px 20px",
                 }}
             >
                 <Col span={20}>
@@ -38,11 +39,11 @@ const Sidebar = ({menuCollapsed, onToggleSidebar}) => {
                 </Col>
                 <Col span={4}>
                     <a onClick={onToggleSidebar}>
-                        <MenuOutlined
+                        <CloseOutlined
                             style={{
                                 fontSize: "22px",
-                                color: "#B1C2CD",
-                                padding: "8px"
+                                color: colors.blackPrimary,
+                                padding: "8px",
                             }}
                         />
                     </a>
@@ -51,6 +52,6 @@ const Sidebar = ({menuCollapsed, onToggleSidebar}) => {
             <AletheiaMenu />
         </Sider>
     );
-}
+};
 
 export default Sidebar;

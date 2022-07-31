@@ -23,6 +23,7 @@ const SentenceReportCard = ({
     date: any;
     claimType: string;
     context: any;
+    summarized: boolean;
 }) => {
     const { t } = useTranslation();
     const speechTypeTranslation =
@@ -35,11 +36,17 @@ const SentenceReportCard = ({
                     <Row className="content-card">
                         <Col>
                             <Avatar
-                                size={133}
+                                size={117}
                                 src={personality.image}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,
                                 })}
+                                style={{
+                                    outlineColor: colors.blueQuartiary,
+                                    outlineStyle: "solid",
+                                    outlineWidth: "2px",
+                                    outlineOffset: "4px",
+                                }}
                             />
                         </Col>
                         <Row>

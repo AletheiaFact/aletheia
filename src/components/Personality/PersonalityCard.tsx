@@ -36,10 +36,10 @@ const PersonalityCard = ({
         style.titleSpan = 10;
         style.avatarSpan = 5;
         style.buttonSpan = 9;
-        style.avatarSize = 50;
+        style.avatarSize = 43;
     }
     if (header) {
-        style.avatarSize = 120;
+        style.avatarSize = 144;
     }
 
     let cardStyle;
@@ -87,7 +87,13 @@ const PersonalityCard = ({
                         >
                             <Avatar
                                 size={style.avatarSize}
-                                style={{ aspectRatio: "auto" }}
+                                style={{
+                                    aspectRatio: "auto",
+                                    outlineColor: colors.blueQuartiary,
+                                    outlineStyle: "solid",
+                                    outlineWidth: summarized ? "1.5px" : "2px",
+                                    outlineOffset: summarized ? "2px" : "5px",
+                                }}
                                 src={personality.avatar}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,

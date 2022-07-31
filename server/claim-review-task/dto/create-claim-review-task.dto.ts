@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsObject, IsString } from "class-validator";
 import { User } from "../../users/schemas/user.schema";
-import { ClassificationEnum } from "../../report/schemas/report.schema";
+import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
 import { Personality } from "../../personality/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
 

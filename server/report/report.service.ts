@@ -4,6 +4,7 @@ import { Model } from "mongoose";
 import { SourceService } from "../source/source.service";
 import { SourceTargetModel } from "../source/schemas/source.schema";
 import { Report, ReportDocument } from "./schemas/report.schema";
+import { ClassificationEnum } from "../claim-review/dto/create-claim-review.dto";
 
 @Injectable()
 export class ReportService {
@@ -14,25 +15,29 @@ export class ReportService {
     ) {}
 
     async create(report) {
-        const newReport = new this.ReportModel(report);
-        if (report.sources && Array.isArray(report.sources)) {
-            try {
-                for (let i = 0; i < report.sources.length ; i++) {
-                    await this.sourceService.create({
-                        link: report.sources[i],
-                        targetId: newReport.id,
-                        targetModel: SourceTargetModel.ClaimReview,
-                    });
+        if (Object.values(ClassificationEnum).includes(report.classification)) {
+            const newReport = new this.ReportModel(report);
+            if (report.sources && Array.isArray(report.sources)) {
+                try {
+                    for (let i = 0; i < report.sources.length; i++) {
+                        await this.sourceService.create({
+                            link: report.sources[i],
+                            targetId: newReport.id,
+                            targetModel: SourceTargetModel.ClaimReview,
+                        });
+                    }
+                } catch (e) {
+                    throw e;
                 }
-            } catch (e) {
-                throw e;
             }
+            newReport.save();
+            return newReport;
+        } else {
+            throw new Error("Classification doesn't match options");
         }
-        newReport.save();
-        return newReport;
     }
 
     findBySentenceHash(sentence_hash) {
-        return this.ReportModel.findOne({ sentence_hash })
+        return this.ReportModel.findOne({ sentence_hash });
     }
 }
