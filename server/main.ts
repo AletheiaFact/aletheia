@@ -36,7 +36,16 @@ const initApp = async (options) => {
     );
 
     app.use(cookieParser());
-    app.useStaticAssets(join(__dirname, "..", "public"));
+    app.useStaticAssets(join(__dirname, "..", "public"), {
+        setHeaders: (res: any, path: string) => {
+            if (path.includes("fonts")) {
+                res.setHeader(
+                    "Cache-Control",
+                    "public, max-age=31536000, immutable"
+                );
+            }
+        },
+    });
     // app.setGlobalPrefix("api");
     await app.listen(options.config.port);
     options.logger.log(

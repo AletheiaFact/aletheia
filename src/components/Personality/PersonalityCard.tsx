@@ -104,18 +104,37 @@ const PersonalityCard = ({
                             span={style.titleSpan}
                             className="personality-card-content"
                         >
-                            <Title
-                                level={summarized ? 2 : 1}
-                                style={{ fontSize: "16px", marginBottom: 0 }}
-                            >
-                                {personality.name}
-                            </Title>
+                            {summarized && (
+                                <Paragraph
+                                    style={{
+                                        fontSize: "14px",
+                                        lineHeight: "20px",
+                                        fontWeight: 600,
+                                        marginBottom: 4,
+                                    }}
+                                >
+                                    {personality.name}
+                                </Paragraph>
+                            )}
+                            {!summarized && (
+                                <Title
+                                    level={1}
+                                    style={{
+                                        fontSize: "24px",
+                                        lineHeight: "32px",
+                                        fontWeight: 400,
+                                        marginBottom: 4,
+                                    }}
+                                >
+                                    {personality.name}
+                                </Title>
+                            )}
                             <Paragraph
-                                style={
-                                    summarized && {
-                                        fontSize: "10px",
-                                    }
-                                }
+                                style={{
+                                    fontSize: summarized ? "10px" : "14px",
+                                    color: colors.blackSecondary,
+                                    marginBottom: 4,
+                                }}
                             >
                                 {personality.description}
                             </Paragraph>
@@ -125,6 +144,9 @@ const PersonalityCard = ({
                                     <Paragraph
                                         style={{
                                             fontSize: "10px",
+                                            fontWeight: 600,
+                                            lineHeight: "15px",
+                                            color: colors.blackSecondary,
                                         }}
                                     >
                                         <b>
@@ -143,6 +165,8 @@ const PersonalityCard = ({
                                 <a
                                     style={{
                                         fontWeight: "bold",
+                                        fontSize: "12px",
+                                        lineHeight: "16px",
                                         color: colors.bluePrimary,
                                         textDecoration: "underline",
                                     }}
@@ -153,7 +177,9 @@ const PersonalityCard = ({
                                     {t("personality:wikipediaPage")}
                                 </a>
                             )}
-                            {!summarized && <Divider />}
+                            {!summarized && (
+                                <Divider style={{ margin: "16px 0" }} />
+                            )}
                             {enableStats && (
                                 <Row>
                                     {!summarized && (
@@ -213,11 +239,15 @@ const PersonalityCard = ({
                                             personality.slug
                                         }`}
                                         style={{
-                                            padding: "0 12px",
-                                            fontSize: 12,
+                                            fontSize: "12px",
+                                            lineHeight: "20px",
+                                            height: "auto",
+                                            padding: "4px 12px",
                                         }}
                                     >
-                                        {t("personality:profile_button")}
+                                        <span style={{ marginTop: 4 }}>
+                                            {t("personality:profile_button")}
+                                        </span>
                                     </Button>
                                 ) : (
                                     <Button

@@ -41,7 +41,7 @@ const PersonalityView = ({ personality, href, isLoggedIn, personalities }) => {
                 </Col>
             </Row>
 
-            <Row justify="center">
+            <Row justify="center" style={{ marginTop: "64px" }}>
                 <Col sm={22} md={14} lg={12}>
                     <ClaimList personality={personality} />
                 </Col>
