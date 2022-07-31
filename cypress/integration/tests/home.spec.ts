@@ -1,7 +1,8 @@
 /* eslint-disable no-undef */
 /// <reference types="cypress" />
 
-import locators from "../../support/locator";
+import user from "../../fixtures/user";
+import locators from "../../support/locators";
 
 describe("Test the side menu routes", () => {
     it("Open side bar and Login", () => {
@@ -10,37 +11,37 @@ describe("Test the side menu routes", () => {
         cy.title().should("contain", "AletheiaFact.org");
         cy.get("#rcc-confirm-button").click();
 
-        cy.get(locators.MENU.SIDE_MENU).click();
+        cy.get(locators.menu.SIDE_MENU).click();
         cy.get("[data-cy=testMyAccountItem]").click();
-        cy.get(locators.LOGIN.USER).type("test@aletheiafact.org");
-        cy.get(locators.LOGIN.PASSWORD).type("TEST_USER_PASS");
-        cy.get(locators.LOGIN.BTN_LOGIN).click();
+        cy.get(locators.login.USER).type(user.email);
+        cy.get(locators.login.PASSWORD).type(user.password);
+        cy.get(locators.login.BTN_LOGIN).click();
     });
 
     it("Open side bar and click about", () => {
-        cy.get(locators.MENU.SIDE_MENU).click();
+        cy.get(locators.menu.SIDE_MENU).click();
         cy.get("[data-cy=testAboutItem]").click();
     });
 
     it("Open side bar and click privacy policy", () => {
-        cy.get(locators.MENU.SIDE_MENU).click();
+        cy.get(locators.menu.SIDE_MENU).click();
         cy.get("[data-cy=testPrivacyPolicyItem]").click();
     });
 
     it("Open side bar and click code of conduct", () => {
-        cy.get(locators.MENU.SIDE_MENU).click();
+        cy.get(locators.menu.SIDE_MENU).click();
         cy.get("[data-cy=testCodeOfConductItem]").should("contain", "Condu");
         cy.get("[data-cy=testCodeOfConductItem]").click();
     });
 
     it("Should not show log out when not logged in", () => {
-        cy.get(locators.MENU.SIDE_MENU).click();
+        cy.get(locators.menu.SIDE_MENU).click();
         cy.get("[data-cy=testLogout]").should("not.exist");
     });
 
     it("Should be able to log out when logged in", () => {
         cy.login();
-        cy.get(locators.MENU.SIDE_MENU).click();
+        cy.get(locators.menu.SIDE_MENU).click();
         cy.get("[data-cy=testLogout]").should("exist").click();
         cy.url().should(
             "contains",

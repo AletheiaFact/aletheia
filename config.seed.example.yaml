@@ -17,11 +17,10 @@ services:
     module: dist/server/seed.js
     conf:
       web_url: https://test.aletheiafact.org
-      smtp_host: SMTP_HOST
-      smtp_port: SMTP_PORT
-      smtp_secure: false
-      smtp_email_user: SMTP_EMAIL_USER
-      smtp_email_pass: SMTP_EMAIL_PASS
+      smtp_host: {env(SMTP_CLIENT_HOST)}
+      smtp_port: {env(SMTP_CLIENT_PORT)}
+      smtp_secure: true
+      smtp_email_user: {env(SMTP_EMAIL_USER)}
       db:
         connection_uri: MONGODB_URI
         options:

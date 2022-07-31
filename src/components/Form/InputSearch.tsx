@@ -10,9 +10,9 @@ const InputSearchStyled = styled(Input.Search)`
     span.ant-input-affix-wrapper {
         background: ${colors.lightGray};
         box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-        border-radius: 30px!important;
+        border-radius: 4px;
         &:focus-within {
-            border-color: #d9d9d9 ;
+            border-color: #d9d9d9;
         }
     }
     input.ant-input {
@@ -22,7 +22,7 @@ const InputSearchStyled = styled(Input.Search)`
             color: ${colors.blackSecondary};
         }
     }
-`
+`;
 
 const InputSearch = (props) => {
     let timeout: NodeJS.Timeout;
@@ -36,7 +36,7 @@ const InputSearch = (props) => {
             props.callback(searchText);
             loading = false;
         }, 300);
-    }
+    };
 
     return (
         <InputSearchStyled
@@ -45,11 +45,11 @@ const InputSearch = (props) => {
             loading={loading}
             addonAfter={false}
             addonBefore={false}
-            onChange={e => doSearch(e)}
+            onChange={(e) => doSearch(e)}
             suffix={props.suffix || <></>}
             data-cy={"testInputSearchPersonality"}
         />
     );
-}
+};
 
 export default InputSearch;

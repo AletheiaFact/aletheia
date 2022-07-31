@@ -7,5 +7,13 @@
     "currentPasswordLabel": "Current password",
     "newPasswordLabel": "New password",
     "repeatedNewPasswordLabel": "Confirm new password",
-    "passwordMatchErrorMessage": "The two passwords that you entered do not match"
+    "passwordMatchErrorMessage": "The two passwords that you entered do not match",
+    "totpUnLinkSubmit": "Unlink TOTP Authenticator App",
+    "totpInputTittle": "Verify code",
+    "totpCodeDescription": "This is your authenticator app secret. Use it if you can not scan the QR code.",
+    "totpSectionTittle": "Manage 2FA TOTP Authenticator App",
+    "totpSectionDescription": "Add a TOTP Authenticator App to your account to improve your account security. Popular Authenticator Apps are <0>LastPass</0> and Google Authenticator (<1>iOS</1>, <2>Android</2>).",
+    "totpIncorectCodeMessage": "The provided authentication code is invalid, please try again.",
+    "totpUnLinkErrorMessage": "Error while unlinking",
+    "changesSaved": "Your changes have been saved!"
 }

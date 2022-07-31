@@ -1,31 +1,22 @@
-import locators from "./locator";
+import user from "../fixtures/user";
+import locators from "./locators";
 
 Cypress.Commands.add('login', () => {
     cy.visit("http://localhost:3000/login");
-    cy.get(locators.LOGIN.USER).type("test@aletheiafact.org");
-    cy.get(locators.LOGIN.PASSWORD).type("TEST_USER_PASS");
-    cy.get(locators.LOGIN.BTN_LOGIN).click();
+    cy.get(locators.login.USER).type(user.email);
+    cy.get(locators.login.PASSWORD).type(user.password);
+    cy.get(locators.login.BTN_LOGIN).click();
     cy.intercept("/api/.ory/sessions/whoami").as("confirmLogin");
     cy.wait("@confirmLogin", { timeout: 10000 });
 })
 
 Cypress.Commands.add('checkRecaptcha', () => {
-
-    const getIframeDocument = () => {
-        return cy
-            .get('[title="reCAPTCHA"]')
-            // Cypress yields jQuery element, which has the real
-            // DOM element under property "0".
-            .its('0.contentDocument').should('exist')
-    }
-
-
     const getIframeBody = () => {
-        return getIframeDocument()
-            // automatically retries until body is not empty or fails with timeout
-            .its('body').should('not.be.empty')
-            // wraps "body" DOM element to allow
-            // chaining more Cypress commands, like ".find(...)"
+        // get the iframe > document > body
+        // and retries until the body is not empty or fails with timeout
+        return cy
+            .get('iframe[title="reCAPTCHA"]')
+            .its('0.contentDocument.body').should('not.be.empty')
             .then(cy.wrap)
     }
 

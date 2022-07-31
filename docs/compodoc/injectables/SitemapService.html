@@ -384,7 +384,6 @@ export class SitemapService {
     async getSitemap(hostname) {
         const sites: any[] &#x3D; [
             { url: &quot;/&quot; },
-            { url: &quot;/home&quot; },
             { url: &quot;/about&quot; },
             { url: &quot;/privacy-policy&quot; },
             { url: &quot;/code-of-conduct&quot; },
@@ -414,6 +413,7 @@ export class SitemapService {
                     url: &#x60;/personality/${personality.slug}/claim/${claim.slug}&#x60;,
                 });
                 // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+                //TODO: maybe with the changes, we have to change something
                 const reviews &#x3D;
                     await this.claimReviewService.getReviewsByClaimId(
                         claim._id

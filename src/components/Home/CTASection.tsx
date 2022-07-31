@@ -1,8 +1,8 @@
-import React from 'react'
-import { Row, Col } from 'antd'
-import Button, { ButtonType } from '../Button';
-import { useTranslation } from 'next-i18next';
-import colors from '../../styles/colors';
+import React from "react";
+import { Row, Col } from "antd";
+import Button, { ButtonType } from "../Button";
+import { useTranslation } from "next-i18next";
+import colors from "../../styles/colors";
 
 const CTASection = ({ isLoggedIn }) => {
     const { t } = useTranslation();
@@ -10,7 +10,7 @@ const CTASection = ({ isLoggedIn }) => {
     return (
         <Row className="CTA-container">
             <Col span={14}>
-                <h2
+                <p
                     className="CTA-title"
                     style={{
                         lineHeight: "20px",
@@ -19,9 +19,9 @@ const CTASection = ({ isLoggedIn }) => {
                     }}
                 >
                     {t("home:statsFooter")}
-                </h2>
+                </p>
             </Col>
-            {!isLoggedIn &&
+            {!isLoggedIn && (
                 <Row
                     style={{
                         height: "15%",
@@ -33,16 +33,23 @@ const CTASection = ({ isLoggedIn }) => {
                 >
                     <Col className="CTA-button-container">
                         <Button
-                            href="#create_account"
+                            onClick={() => {
+                                umami?.trackEvent(
+                                    "carousel-cta-registration-button",
+                                    "registration"
+                                );
+                            }}
+                            href={t("common:registrationLink")}
+                            target="_blank"
                             type={ButtonType.white}
                             className="CTA-button"
-                            rounded
                             style={{
                                 height: "40px",
                                 display: "flex",
                                 padding: 0,
                                 justifyContent: "center",
                                 alignItems: "center",
+                                borderRadius: "30px",
                             }}
                         >
                             <span style={{ fontWeight: 700 }}>
@@ -51,9 +58,9 @@ const CTASection = ({ isLoggedIn }) => {
                         </Button>
                     </Col>
                 </Row>
-            }
+            )}
         </Row>
-    )
-}
+    );
+};
 
-export default CTASection
+export default CTASection;

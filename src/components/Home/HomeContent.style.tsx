@@ -9,6 +9,11 @@ const HomeContentStyle = styled.div`
         margin-left: 20px;
     }
 
+    @media (min-width: 1025px) and (max-width: 1108px) {
+        .ant-col-10.personality-card-content {
+            flex: 0 0 80px;
+        }
+    }
 
     @media (max-width: 1024px) {
         .main-content {
@@ -68,6 +73,6 @@ const HomeContentStyle = styled.div`
             max-width: 100%;
         }
     }
-`
+`;
 
-export default HomeContentStyle
+export default HomeContentStyle;

@@ -46,20 +46,17 @@ const SearchOverlay = ({ overlay }) => {
                 personalities: state?.search?.searchResults || [],
                 page: state?.search?.searchCurPage || 1,
                 pageSize: state?.search?.searchPageSize || 10,
-                searchName: state?.search?.searchInput || null
+                searchName: state?.search?.searchInput || null,
             };
         }
     );
     const handleSearchClick = (slug) => {
         dispatch({
-            type:
-                "ENABLE_SEARCH_OVERLAY",
-            overlay: false
+            type: "ENABLE_SEARCH_OVERLAY",
+            overlay: false,
         });
-        router.push(
-            `/personality/${slug}`
-        );
-    }
+        router.push(`/personality/${slug}`);
+    };
 
     const dispatch = useDispatch();
     const { t, i18n } = useTranslation();
@@ -68,21 +65,25 @@ const SearchOverlay = ({ overlay }) => {
     const handleInputSearch = (name) => {
         dispatch({
             type: "SET_SEARCH_NAME",
-            searchName: name
+            searchName: name,
         });
 
-        api.getPersonalities({
-            personalities,
-            page,
-            pageSize,
-            searchName: name,
-            i18n
-        }, dispatch);
-    }
+        api.getPersonalities(
+            {
+                personalities,
+                page,
+                pageSize,
+                searchName: name,
+                i18n,
+            },
+            dispatch
+        );
+    };
 
     return (
         <OverlayDiv>
-            <Row className="aletheia-header"
+            <Row
+                className="aletheia-header"
                 style={{
                     backgroundColor: colors.bluePrimary,
                     boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
@@ -92,18 +93,17 @@ const SearchOverlay = ({ overlay }) => {
                     justifyContent: "center",
                 }}
             >
-
                 <Col
                     span={3}
                     style={{
-                        textAlign: "center"
+                        textAlign: "center",
                     }}
                 >
                     <a
                         onClick={() => {
                             dispatch({
                                 type: "ENABLE_SEARCH_OVERLAY",
-                                overlay: false
+                                overlay: false,
                             });
                         }}
                     >
@@ -111,7 +111,7 @@ const SearchOverlay = ({ overlay }) => {
                             style={{
                                 fontSize: "24px",
                                 color: "white",
-                                padding: "8px"
+                                padding: "8px",
                             }}
                         />
                     </a>
@@ -132,7 +132,7 @@ const SearchOverlay = ({ overlay }) => {
                         height: "100vh",
                         zIndex: 3,
                         position: "relative",
-                        flexDirection: "column"
+                        flexDirection: "column",
                     }}
                 >
                     {personalities &&
@@ -144,13 +144,25 @@ const SearchOverlay = ({ overlay }) => {
                                         p && (
                                             <SearchResult
                                                 key={i}
-                                                handleOnClick={() => handleSearchClick(p.slug)}
+                                                handleOnClick={() =>
+                                                    handleSearchClick(p.slug)
+                                                }
                                                 avatar={
                                                     <Avatar
                                                         size={30}
                                                         src={p.avatar}
+                                                        style={{
+                                                            outlineColor:
+                                                                colors.blueQuartiary,
+                                                            outlineStyle:
+                                                                "solid",
+                                                            outlineWidth:
+                                                                "1.5px",
+                                                            outlineOffset:
+                                                                "2px",
+                                                        }}
                                                     />
-                                                }  
+                                                }
                                                 name={p.name}
                                                 searchName={searchName}
                                             />
@@ -162,7 +174,6 @@ const SearchOverlay = ({ overlay }) => {
             )}
         </OverlayDiv>
     );
-}
-
+};
 
 export default SearchOverlay;

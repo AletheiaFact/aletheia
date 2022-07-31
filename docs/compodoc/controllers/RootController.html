@@ -58,12 +58,6 @@
             <code>server/root/root.controller.ts</code>
         </p>
 
-            <p class="comment">
-                <h3>Prefix</h3>
-            </p>
-            <p class="comment">
-                <code>api</code>
-            </p>
 
 
 
@@ -127,7 +121,7 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@IsPublic()<br />@Get(&#x27;health&#x27;)<br /></code>
+                    <code>@IsPublic()<br />@Get(&#x27;api/health&#x27;)<br /></code>
                 </td>
             </tr>
 
@@ -238,19 +232,19 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Req, Res } from &quot;@nestjs/common&quot;;
 import { IsPublic } from &quot;../decorators/is-public.decorator&quot;;
 
-@Controller(&quot;api&quot;)
+@Controller(&quot;&quot;)
 export class RootController {
     @IsPublic()
     @Get(&quot;robots.txt&quot;)
     robots(@Res() res, @Req() req) {
         const host &#x3D; req.protocol + &quot;://&quot; + req.get(&quot;host&quot;);
         res.type(&quot;text/plain&quot;).end(
-            &#x60;User-agent: *\nDisallow: /api\nSitemap: ${host}/sitemap.xml&#x60;
+            &#x60;User-agent: *\nDisallow: /api\nDisallow: /_next\nSitemap: ${host}/sitemap.xml&#x60;
         );
     }
 
     @IsPublic()
-    @Get(&quot;health&quot;)
+    @Get(&quot;api/health&quot;)
     health() {
         return { status: &quot;ok&quot; };
     }

@@ -9,11 +9,9 @@ const path = require("path");
 export class EmailService {
     private readonly logger = new Logger("EmailService");
 
-    constructor(
-        private configService: ConfigService,
-    ) {}
+    constructor(private configService: ConfigService) {}
 
-    getEmailBody (options, templatePath = "./template/email.html") {
+    getEmailBody(options, templatePath = "./template/email.html") {
         const html = fs.readFileSync(path.resolve(__dirname, templatePath), {
             encoding: "utf-8",
         });
@@ -30,8 +28,11 @@ export class EmailService {
             port: this.configService.get<string>("smtp_port"),
             secure: this.configService.get<string>("smtp_secure"),
             auth: {
-                user: this.configService.get<string>("smtp_email_user"),
-                pass: this.configService.get<string>("smtp_email_pass")
+                type: "OAuth2",
+                user: process.env.GMAIL_ADDRESS,
+                clientId: process.env.SMTP_CLIENT_ID,
+                clientSecret: process.env.SMTP_CLIENT_SECRET,
+                refreshToken: process.env.SMTP_REFRESH_TOKEN,
             },
         });
         return transporter;
@@ -40,9 +41,15 @@ export class EmailService {
     async sendEmail(to, subject, text, templateOptions, templatePath) {
         const transporter = await this.createTransport();
         const html = this.getEmailBody(templateOptions, templatePath);
-        const from = this.configService.get<string>("smtp_email_user")
+        const from = this.configService.get<string>("smtp_email_user");
         this.logger.log(`Sending e-mail to ${to} ...`);
-        const emailResult = await transporter.sendMail({ from, to, subject, text, html })//.then(() => transporter.close());
+        const emailResult = await transporter.sendMail({
+            from,
+            to,
+            subject,
+            text,
+            html,
+        }); //.then(() => transporter.close());
         return emailResult;
     }
 }

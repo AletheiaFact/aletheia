@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "draft-js/dist/Draft.css";
-import {
-    DatePicker,
-    Form,
-    Row,
-    Checkbox,
-    FormInstance,
-} from "antd";
+import { DatePicker, Form, Row, Checkbox, FormInstance } from "antd";
 import claimApi from "../../api/claim";
 import { useTranslation } from "next-i18next";
 import styled from "styled-components";
@@ -17,12 +11,14 @@ import Button, { ButtonType } from "../Button";
 import Input from "../AletheiaInput";
 import TextArea from "../TextArea";
 import AletheiaCaptcha from "../AletheiaCaptcha";
+import moment from "moment";
+import colors from "../../styles/colors";
 
 const formRef = React.createRef<FormInstance>();
 
 const ClaimForm = styled(Form)`
     #createClaim .ant-form-item-control {
-        flex-direction: column-reverse
+        flex-direction: column-reverse;
     }
 
     #createClaim .ant-form-item-extra {
@@ -31,9 +27,9 @@ const ClaimForm = styled(Form)`
 `;
 
 const DatePickerInput = styled(DatePicker)`
-    background: #F5F5F5;
+    background: ${(props) => (props.white ? colors.white : colors.lightGray)};
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    border-radius: 30px;
+    border-radius: 4px;
     border: none;
     height: 40px;
 
@@ -55,7 +51,12 @@ const DatePickerInput = styled(DatePicker)`
     }
 `;
 
-const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }) => {
+const ClaimCreate = ({
+    personality,
+    claim = { _id: "" },
+    sitekey,
+    edit = false,
+}) => {
     const { t } = useTranslation();
     const router = useRouter();
     const [title, setTitle] = useState("");
@@ -64,7 +65,7 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
     const [disableSubmit, setDisableSubmit] = useState(true);
     const [sources, setSources] = useState([""]);
     const [recaptcha, setRecaptcha] = useState("");
-    const [ isFormSubmitted, setIsFormSubmitted ] = useState(false)
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
     useEffect(() => {
         const setTitleAndContent = async () => {
@@ -73,14 +74,17 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                 setTitle(fetchedClaim.title);
                 setContent(fetchedClaim.content.text);
             }
-        }
-        setTitleAndContent()
+        };
+        setTitleAndContent();
     }, []);
 
+    const disabledDate = (current) => {
+        return current && current > moment().endOf("day");
+    };
 
     const saveClaim = async () => {
-        if(!isFormSubmitted) {
-            setIsFormSubmitted(true)
+        if (!isFormSubmitted) {
+            setIsFormSubmitted(true);
             const { slug } = await claimApi.save(t, {
                 content,
                 title,
@@ -89,26 +93,28 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                 contentModel: "Speech",
                 date,
                 sources,
-                recaptcha
+                recaptcha,
             });
             // Redirect to personality profile in case slug is not present
-            const path = slug ? `/personality/${personality.slug}/claim/${slug}` : `/personality/${personality.slug}`;
+            const path = slug
+                ? `/personality/${personality.slug}/claim/${slug}`
+                : `/personality/${personality.slug}`;
             router.push(path);
         }
-    }
+    };
 
     const updateClaim = async () => {
-        if(!isFormSubmitted) {
-            setIsFormSubmitted(true)
+        if (!isFormSubmitted) {
+            setIsFormSubmitted(true);
             await claimApi.update(claim._id, t, {
                 title,
-                content
+                content,
             });
             // Redirect to personality profile in case _id is not present
             const path = `/personality/${personality._id}`;
             router.push(path);
         }
-    }
+    };
 
     useEffect(() => {
         if (formRef.current) {
@@ -116,26 +122,25 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
         }
     }, [content]);
 
-
     const onChangeCaptcha = (captchaString) => {
         setRecaptcha(captchaString);
         const hasRecaptcha = !!captchaString;
         setDisableSubmit(!hasRecaptcha);
-    }
+    };
 
     return (
         <>
-            <PersonalityCard personality={personality} header={true} />
+            <PersonalityCard
+                personality={personality}
+                header={true}
+                mobile={true}
+            />
 
             <ClaimForm
                 ref={formRef}
                 layout="vertical"
                 id="createClaim"
-                onFinish={
-                    edit
-                        ? updateClaim
-                        : saveClaim
-                }
+                onFinish={edit ? updateClaim : saveClaim}
             >
                 <Form.Item
                     name="title"
@@ -143,24 +148,19 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                     rules={[
                         {
                             required: true,
-                            message: t(
-                                "claimForm:titleFieldError"
-                            )
-                        }
+                            message: t("claimForm:titleFieldError"),
+                            whitespace: true,
+                        },
                     ]}
                     wrapperCol={{ sm: 24 }}
                     style={{
-                        width: "100%"
+                        width: "100%",
                     }}
                 >
                     <Input
                         value={title || ""}
-                        onChange={e =>
-                            setTitle(e.target.value)
-                        }
-                        placeholder={t(
-                            "claimForm:titleFieldPlaceholder"
-                        )}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder={t("claimForm:titleFieldPlaceholder")}
                         data-cy={"testTitleClaimForm"}
                     />
                 </Form.Item>
@@ -170,27 +170,22 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                     rules={[
                         {
                             required: true,
-                            message: t(
-                                "claimForm:contentFieldError"
-                            )
-                        }
+                            whitespace: true,
+                            message: t("claimForm:contentFieldError"),
+                        },
                     ]}
                     extra={t("claimForm:contentFieldHelp")}
                     wrapperCol={{ sm: 24 }}
                     style={{
                         width: "100%",
-                        marginBottom: "24px"
+                        marginBottom: "24px",
                     }}
                 >
                     <TextArea
                         rows={4}
                         value={content || ""}
-                        onChange={e =>
-                            setContent(e.target.value)
-                        }
-                        placeholder={t(
-                            "claimForm:contentFieldPlaceholder"
-                        )}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder={t("claimForm:contentFieldPlaceholder")}
                         data-cy={"testContentClaim"}
                     />
                 </Form.Item>
@@ -200,53 +195,52 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                     rules={[
                         {
                             required: true,
-                            message: t(
-                                "claimForm:dateFieldError"
-                            )
-                        }
+                            message: t("claimForm:dateFieldError"),
+                        },
                     ]}
                     extra={t("claimForm:dateFieldHelp")}
                     wrapperCol={{ sm: 24 }}
                     style={{
                         width: "100%",
-                        marginBottom: "24px"
+                        marginBottom: "24px",
                     }}
                 >
                     <DatePickerInput
                         style={{
-                            width: "100%"
+                            width: "100%",
                         }}
-                        placeholder={t(
-                            "claimForm:dateFieldPlaceholder"
-                        )}
-                        onChange={value =>
-                            setDate(value)
-                        }
+                        placeholder={t("claimForm:dateFieldPlaceholder")}
+                        onChange={(value) => setDate(value)}
                         data-cy={"dataAserSelecionada"}
+                        disabledDate={disabledDate}
                     />
                 </Form.Item>
                 <SourceInput
                     name="source"
                     label={t("sourceForm:label")}
                     onChange={(e, index) => {
-                        setSources(sources.map((source, i) => {
-                            return i === index ? e.target.value : source;
-                        }));
+                        setSources(
+                            sources.map((source, i) => {
+                                return i === index ? e.target.value : source;
+                            })
+                        );
                     }}
                     addSource={() => {
                         setSources(sources.concat(""));
                     }}
                     removeSource={(index) => {
-                        setSources(sources.filter((_source, i) => {
-                            return i !== index
-                        }))
+                        setSources(
+                            sources.filter((_source, i) => {
+                                return i !== index;
+                            })
+                        );
                     }}
                     placeholder={t("sourceForm:placeholder")}
                     sources={sources}
                 />
                 <Form.Item
                     style={{
-                        color: "#973A3A"
+                        color: "#973A3A",
                     }}
                 >
                     {t("claimForm:disclaimer")}
@@ -256,10 +250,8 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                     rules={[
                         {
                             required: true,
-                            message: t(
-                                "claimForm:errorAcceptTerms"
-                            )
-                        }
+                            message: t("claimForm:errorAcceptTerms"),
+                        },
                     ]}
                     valuePropName="checked"
                 >
@@ -277,10 +269,13 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                 <Row
                     style={{
                         justifyContent: "space-evenly",
-                        marginBottom: "20px"
+                        marginBottom: "20px",
                     }}
                 >
-                    <Button type={ButtonType.white} onClick={() => router.back()}>
+                    <Button
+                        type={ButtonType.white}
+                        onClick={() => router.back()}
+                    >
                         {t("claimForm:cancelButton")}
                     </Button>
                     {edit ? (
@@ -296,7 +291,7 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
                             type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit || isFormSubmitted}
-                            data-cy={'testSaveButton'}
+                            data-cy={"testSaveButton"}
                         >
                             {t("claimForm:saveButton")}
                         </Button>
@@ -305,6 +300,6 @@ const ClaimCreate = ({ personality, claim = { _id: '' }, sitekey, edit = false }
             </ClaimForm>
         </>
     );
-}
+};
 
 export default ClaimCreate;

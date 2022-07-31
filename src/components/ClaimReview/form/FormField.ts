@@ -11,32 +11,53 @@ export type FormField = {
     defaultValue: string | [];
 };
 
-interface createFormFieldProps extends Partial<FormField> {
+interface CreateFormFieldProps extends Partial<FormField> {
     fieldName: string;
     type: string;
     i18nKey?: string;
     i18nNamespace?: string;
 }
 
-const createFormField = (props: createFormFieldProps): FormField => {
+const createFormField = (props: CreateFormFieldProps): FormField => {
     const {
         fieldName,
         type,
         i18nKey = fieldName,
         i18nNamespace = "claimReviewForm",
         defaultValue,
+        rules,
     } = props;
     return {
         fieldName,
         type,
         label: `${i18nNamespace}:${i18nKey}Label`,
         placeholder: `${i18nNamespace}:${i18nKey}Placeholder`,
-        rules: {
-            required: "common:requiredFieldError",
-        },
         defaultValue,
         ...props,
+        rules: {
+            required: "common:requiredFieldError",
+            ...rules,
+            validate: {
+                notBlank: (v) =>
+                    validateBlank(v) || "common:requiredFieldError",
+                ...rules?.validate,
+            },
+        },
     };
 };
 
-export { createFormField };
+const validateBlank = (value): boolean => {
+    return fieldValidation(value, (v) => !!v.trim());
+};
+
+const fieldValidation = (value, validationFunction) => {
+    if (typeof value === "string") {
+        return validationFunction(value);
+    }
+    if (typeof value === "object") {
+        return value.every((v) => validationFunction(v));
+    }
+    return false;
+};
+
+export { createFormField, fieldValidation };

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Row, Col, Card } from "antd";
 import colors from "../../styles/colors";
-import PassportLoginForm from "./PassportLoginForm";
 import OryLoginForm from "./OryLoginForm";
 
-const LoginView = (props) => {
-    const [formType, setFormType] = useState("login");
+const LoginView = () => {
+    const [formType] = useState("login");
     return (
         <>
             <Row justify="center">
@@ -18,10 +17,7 @@ const LoginView = (props) => {
                             })
                         }}
                     >
-                        {props.type === 'ory'
-                            ? <OryLoginForm />
-                            : <PassportLoginForm {...props} formType={formType} setFormType={setFormType} />
-                        }
+                        <OryLoginForm />
                     </Card>
                 </Col>
             </Row>

@@ -277,8 +277,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="111"
-                            class="link-to-prism">server/wikidata/wikidata.service.ts:111</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="113"
+                            class="link-to-prism">server/wikidata/wikidata.service.ts:113</a></div>
                 </td>
             </tr>
 
@@ -422,15 +422,15 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getCommonsThumbURL(imageTitle)</code>
+                    <code>getCommonsThumbURL(imageTitle, imageSize)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="153"
-                            class="link-to-prism">server/wikidata/wikidata.service.ts:153</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="155"
+                            class="link-to-prism">server/wikidata/wikidata.service.ts:155</a></div>
                 </td>
             </tr>
 
@@ -451,6 +451,15 @@
                             <tbody>
                                 <tr>
                                     <td>imageTitle</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>imageSize</td>
 
                                     <td>
                                         No
@@ -494,8 +503,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="104"
-                            class="link-to-prism">server/wikidata/wikidata.service.ts:104</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="106"
+                            class="link-to-prism">server/wikidata/wikidata.service.ts:106</a></div>
                 </td>
             </tr>
 
@@ -559,8 +568,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="125"
-                            class="link-to-prism">server/wikidata/wikidata.service.ts:125</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="127"
+                            class="link-to-prism">server/wikidata/wikidata.service.ts:127</a></div>
                 </td>
             </tr>
 
@@ -759,6 +768,7 @@ export class WikidataService {
             isAllowedProp: undefined,
             image: undefined,
             wikipedia: undefined,
+            avatar: undefined,
         };
         if (!wikidata) {
             return {};
@@ -785,7 +795,8 @@ export class WikidataService {
         // Extract image if it exists
         if (wikidata.claims.P18) {
             const fileName &#x3D; wikidata.claims.P18[0].mainsnak.datavalue.value;
-            wikidataProps.image &#x3D; await this.getCommonsThumbURL(fileName);
+            wikidataProps.image &#x3D; await this.getCommonsThumbURL(fileName, 400);
+            wikidataProps.avatar &#x3D; await this.getCommonsThumbURL(fileName, 100);
         }
         const siteLinkName &#x3D; this.getSiteLinkName(language);
         if (wikidata.sitelinks[siteLinkName]) {
@@ -850,7 +861,7 @@ export class WikidataService {
             });
     }
 
-    async getCommonsThumbURL(imageTitle) {
+    async getCommonsThumbURL(imageTitle, imageSize) {
         const { data } &#x3D; await axios.get(
             &quot;https://commons.wikimedia.org/w/api.php&quot;,
             {
@@ -859,7 +870,7 @@ export class WikidataService {
                     titles: &#x60;File:${imageTitle}&#x60;,
                     prop: &quot;imageinfo&quot;,
                     iiprop: &quot;url&quot;,
-                    iiurlwidth: 400,
+                    iiurlwidth: imageSize,
                     format: &quot;json&quot;,
                     formatversion: &quot;2&quot;,
                 },
@@ -871,7 +882,7 @@ export class WikidataService {
         }
         const imageinfo &#x3D;
             pages[0] &amp;&amp; pages[0].imageinfo &amp;&amp; pages[0].imageinfo[0];
-        return imageinfo.url;
+        return imageinfo.thumburl;
     }
 }
 </code></pre>

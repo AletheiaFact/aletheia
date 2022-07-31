@@ -13,6 +13,7 @@ const PersonalityCard = ({
     enableStats = true,
     header = false,
     hrefBase = "",
+    mobile = false,
     onClick,
 }: {
     personality: any;
@@ -20,9 +21,10 @@ const PersonalityCard = ({
     enableStats?: boolean;
     header?: boolean;
     hrefBase?: string;
+    mobile?: boolean;
     onClick?: (personality: any) => {};
 }) => {
-    const [ isFormSubmitted, setIsFormSubmitted ] = useState(false)
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const { t } = useTranslation();
     const style = {
         titleSpan: 14,
@@ -34,10 +36,10 @@ const PersonalityCard = ({
         style.titleSpan = 10;
         style.avatarSpan = 5;
         style.buttonSpan = 9;
-        style.avatarSize = 50;
+        style.avatarSize = 43;
     }
     if (header) {
-        style.avatarSize = 120;
+        style.avatarSize = 144;
     }
 
     let cardStyle;
@@ -61,13 +63,18 @@ const PersonalityCard = ({
                 }}
             >
                 {" "}
-                <Col md={24} lg={header ? 12 : 24} style={{ width: "100%" }}>
+                <Col
+                    md={24}
+                    lg={header && !mobile ? 12 : 24}
+                    style={{ width: "100%" }}
+                >
                     <Row
-                        gutter={20}
+                        gutter={summarized ? 0 : 20}
                         align={header ? "middle" : "top"}
                         style={{
-                            padding: "10px 16px",
-                            marginTop: "10px",
+                            width: "100%",
+                            padding: "15px",
+                            paddingBottom: 0,
                         }}
                     >
                         <Col
@@ -80,26 +87,54 @@ const PersonalityCard = ({
                         >
                             <Avatar
                                 size={style.avatarSize}
-                                style={{ aspectRatio: "auto" }}
+                                style={{
+                                    aspectRatio: "auto",
+                                    outlineColor: colors.blueQuartiary,
+                                    outlineStyle: "solid",
+                                    outlineWidth: summarized ? "1.5px" : "2px",
+                                    outlineOffset: summarized ? "2px" : "5px",
+                                }}
                                 src={personality.avatar}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,
                                 })}
                             />
                         </Col>
-                        <Col span={style.titleSpan}>
-                            <Title
-                                level={summarized ? 2 : 1}
-                                style={{ fontSize: "16px", marginBottom: 0 }}
-                            >
-                                {personality.name}
-                            </Title>
+                        <Col
+                            span={style.titleSpan}
+                            className="personality-card-content"
+                        >
+                            {summarized && (
+                                <Paragraph
+                                    style={{
+                                        fontSize: "14px",
+                                        lineHeight: "20px",
+                                        fontWeight: 600,
+                                        marginBottom: 4,
+                                    }}
+                                >
+                                    {personality.name}
+                                </Paragraph>
+                            )}
+                            {!summarized && (
+                                <Title
+                                    level={1}
+                                    style={{
+                                        fontSize: "24px",
+                                        lineHeight: "32px",
+                                        fontWeight: 400,
+                                        marginBottom: 4,
+                                    }}
+                                >
+                                    {personality.name}
+                                </Title>
+                            )}
                             <Paragraph
-                                style={
-                                    summarized && {
-                                        fontSize: "10px",
-                                    }
-                                }
+                                style={{
+                                    fontSize: summarized ? "10px" : "14px",
+                                    color: colors.blackSecondary,
+                                    marginBottom: 4,
+                                }}
                             >
                                 {personality.description}
                             </Paragraph>
@@ -109,6 +144,9 @@ const PersonalityCard = ({
                                     <Paragraph
                                         style={{
                                             fontSize: "10px",
+                                            fontWeight: 600,
+                                            lineHeight: "15px",
+                                            color: colors.blackSecondary,
                                         }}
                                     >
                                         <b>
@@ -127,6 +165,8 @@ const PersonalityCard = ({
                                 <a
                                     style={{
                                         fontWeight: "bold",
+                                        fontSize: "12px",
+                                        lineHeight: "16px",
                                         color: colors.bluePrimary,
                                         textDecoration: "underline",
                                     }}
@@ -137,7 +177,9 @@ const PersonalityCard = ({
                                     {t("personality:wikipediaPage")}
                                 </a>
                             )}
-                            {!summarized && <Divider />}
+                            {!summarized && (
+                                <Divider style={{ margin: "16px 0" }} />
+                            )}
                             {enableStats && (
                                 <Row>
                                     {!summarized && (
@@ -150,32 +192,32 @@ const PersonalityCard = ({
                                         >
                                             {personality?.claims?.length !==
                                                 undefined && (
-                                                    <span>
-                                                        {t(
-                                                            "personality:headerClaimsTotal",
-                                                            {
-                                                                totalClaims:
-                                                                    personality
-                                                                        .claims
-                                                                        .length,
-                                                            }
-                                                        )}
-                                                    </span>
-                                                )}
+                                                <span>
+                                                    {t(
+                                                        "personality:headerClaimsTotal",
+                                                        {
+                                                            totalClaims:
+                                                                personality
+                                                                    .claims
+                                                                    .length,
+                                                        }
+                                                    )}
+                                                </span>
+                                            )}
                                             {personality.stats?.total !==
                                                 undefined && (
-                                                    <span>
-                                                        {t(
-                                                            "personality:headerReviewsTotal",
-                                                            {
-                                                                totalReviews:
-                                                                    personality
-                                                                        .stats
-                                                                        ?.total,
-                                                            }
-                                                        )}
-                                                    </span>
-                                                )}
+                                                <span>
+                                                    {t(
+                                                        "personality:headerReviewsTotal",
+                                                        {
+                                                            totalReviews:
+                                                                personality
+                                                                    .stats
+                                                                    ?.total,
+                                                        }
+                                                    )}
+                                                </span>
+                                            )}
                                         </Row>
                                     )}
                                 </Row>
@@ -193,17 +235,27 @@ const PersonalityCard = ({
                                     <Button
                                         type={ButtonType.blue}
                                         data-cy={personality.name}
-                                        href={`${hrefBase || "/personality/"}${personality.slug}`}
+                                        href={`${hrefBase || "/personality/"}${
+                                            personality.slug
+                                        }`}
+                                        style={{
+                                            fontSize: "12px",
+                                            lineHeight: "20px",
+                                            height: "auto",
+                                            padding: "4px 12px",
+                                        }}
                                     >
-                                        {t("personality:profile_button")}
+                                        <span style={{ marginTop: 4 }}>
+                                            {t("personality:profile_button")}
+                                        </span>
                                     </Button>
                                 ) : (
                                     <Button
                                         type={ButtonType.blue}
                                         onClick={() => {
-                                            if(!isFormSubmitted) {
-                                                setIsFormSubmitted(true)
-                                                onClick(personality)
+                                            if (!isFormSubmitted) {
+                                                setIsFormSubmitted(true);
+                                                onClick(personality);
                                             }
                                         }}
                                         disabled={isFormSubmitted}
@@ -226,10 +278,12 @@ const PersonalityCard = ({
                 </Col>
                 {enableStats && (
                     <Col
+                        xs={24}
                         sm={24}
-                        md={header ? 12 : 24}
+                        md={24}
+                        lg={header && !mobile ? 12 : 24}
                         style={{
-                            padding: "5px 30px",
+                            padding: "5px 15px",
                             display: "flex",
                             alignItems: "center",
                         }}

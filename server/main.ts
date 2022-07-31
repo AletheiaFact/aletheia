@@ -2,12 +2,10 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { join } from "path";
 import Logger from "./logger";
-import * as passport from "passport";
-import * as session from "express-session";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
-const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
+const mongoose = require("mongoose");
 
 const initApp = async (options) => {
     const corsOptions = {
@@ -26,30 +24,28 @@ const initApp = async (options) => {
         }
     );
 
+    mongoose.set("useCreateIndex", true);
+
     app.useGlobalPipes(
         new ValidationPipe({
             transform: true,
-            transformOptions: {enableImplicitConversion: true},
+            transformOptions: { enableImplicitConversion: true },
             whitelist: true,
             forbidNonWhitelisted: true,
-        }),
-    )
-
-    app.use(cookieParser());
-    app.use(
-        session({
-            secret: "replace_me",
-            resave: false,
-            saveUninitialized: false,
-            store: MongoStore.create({
-                mongoUrl: options.config.db.connection_uri,
-                mongoOptions: options.config.db.options
-            })
         })
     );
-    app.use(passport.initialize());
-    app.use(passport.session());
-    app.useStaticAssets(join(__dirname, "..", "public"));
+
+    app.use(cookieParser());
+    app.useStaticAssets(join(__dirname, "..", "public"), {
+        setHeaders: (res: any, path: string) => {
+            if (path.includes("fonts")) {
+                res.setHeader(
+                    "Cache-Control",
+                    "public, max-age=31536000, immutable"
+                );
+            }
+        },
+    });
     // app.setGlobalPrefix("api");
     await app.listen(options.config.port);
     options.logger.log(

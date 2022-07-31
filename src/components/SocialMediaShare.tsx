@@ -8,7 +8,7 @@ import {
     WhatsappShareButton,
     WhatsappIcon,
     TelegramShareButton,
-    TelegramIcon
+    TelegramIcon,
 } from "react-share";
 import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
@@ -16,24 +16,29 @@ import SocialMediaShareStyle from "./SocialMediaShare.style";
 
 const { Title } = Typography;
 
-const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }) => {
+const SocialMediaShare = ({
+    isLoggedIn,
+    quote = null,
+    href = "",
+    claim = null,
+}) => {
     const { t } = useTranslation();
     quote = quote || t("share:quote");
 
-    const trimPersonality = quote.replace(" ", ""); 
+    const trimPersonality = quote.replace(" ", "");
 
-    let claimCamelize
-    if(claim !== null) {
-        claimCamelize = claim
-            .split(",").join("")
-            .split(".").join("")
-    }        
-    function camelize(str) {
-        return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
-            return index === 0 ? word.toLowerCase() : word.toUpperCase();
-        }).replace(/\s+/g, '');
+    let claimCamelize;
+    if (claim !== null) {
+        claimCamelize = claim.split(",").join("").split(".").join("");
     }
-    
+    function camelize(str) {
+        return str
+            .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
+                return index === 0 ? word.toLowerCase() : word.toUpperCase();
+            })
+            .replace(/\s+/g, "");
+    }
+
     return (
         <SocialMediaShareStyle
             isLoggedIn={isLoggedIn}
@@ -45,7 +50,7 @@ const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }
             }}
         >
             <Title
-                level={2}
+                level={3}
                 style={{
                     width: "auto",
                     textAlign: "center",
@@ -76,11 +81,17 @@ const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }
                             url={href}
                             quote={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             hashtag={trimPersonality}
-                            beforeOnClick={() => {umami?.trackEvent('facebook-share-button', 'share')}}
+                            beforeOnClick={() => {
+                                umami?.trackEvent(
+                                    "facebook-share-button",
+                                    "share"
+                                );
+                            }}
                         >
-                            <FacebookIcon size={33}
+                            <FacebookIcon
+                                size={33}
                                 round
-                                bgStyle={{fill: colors.bluePrimary }} 
+                                bgStyle={{ fill: colors.bluePrimary }}
                             />
                         </FacebookShareButton>
                     </li>
@@ -88,12 +99,26 @@ const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }
                         <TwitterShareButton
                             url={`\n\n${href}\n\n`}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
-                            hashtags={["aletheia", trimPersonality, `${claim !== null ? camelize(claimCamelize) : ''}\n`]}
-                            beforeOnClick={() => {umami?.trackEvent('twitter-share-button', 'sharing')}}
+                            hashtags={[
+                                "aletheia",
+                                trimPersonality,
+                                `${
+                                    claim !== null
+                                        ? camelize(claimCamelize)
+                                        : ""
+                                }\n`,
+                            ]}
+                            beforeOnClick={() => {
+                                umami?.trackEvent(
+                                    "twitter-share-button",
+                                    "sharing"
+                                );
+                            }}
                         >
-                            <TwitterIcon size={33} 
+                            <TwitterIcon
+                                size={33}
                                 round
-                                bgStyle={{fill: colors.bluePrimary }} 
+                                bgStyle={{ fill: colors.bluePrimary }}
                             />
                         </TwitterShareButton>
                     </li>
@@ -101,11 +126,17 @@ const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }
                         <WhatsappShareButton
                             url={href}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
-                            beforeOnClick={() => {umami?.trackEvent('whatsapp-share-button', 'sharing')}}
+                            beforeOnClick={() => {
+                                umami?.trackEvent(
+                                    "whatsapp-share-button",
+                                    "sharing"
+                                );
+                            }}
                         >
-                            <WhatsappIcon size={33} 
+                            <WhatsappIcon
+                                size={33}
                                 round
-                                bgStyle={{fill: colors.bluePrimary }} 
+                                bgStyle={{ fill: colors.bluePrimary }}
                             />
                         </WhatsappShareButton>
                     </li>
@@ -113,11 +144,17 @@ const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }
                         <TelegramShareButton
                             url={href}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
-                            beforeOnClick={() => {umami?.trackEvent('telegram-share-button', 'sharing')}}
+                            beforeOnClick={() => {
+                                umami?.trackEvent(
+                                    "telegram-share-button",
+                                    "sharing"
+                                );
+                            }}
                         >
-                            <TelegramIcon size={33} 
+                            <TelegramIcon
+                                size={33}
                                 round
-                                bgStyle={{fill: colors.bluePrimary }} 
+                                bgStyle={{ fill: colors.bluePrimary }}
                             />
                         </TelegramShareButton>
                     </li>
@@ -125,6 +162,6 @@ const SocialMediaShare = ({ isLoggedIn, quote = null, href = '', claim = null, }
             </nav>
         </SocialMediaShareStyle>
     );
-}
+};
 
 export default SocialMediaShare;

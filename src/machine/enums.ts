@@ -3,7 +3,7 @@ enum ReviewTaskEvents {
     assignUser = "ASSIGN_USER",
     finishReport = "FINISH_REPORT",
     publish = "PUBLISH",
-    draft = "SAVE_DRAFT"
+    draft = "SAVE_DRAFT",
 }
 
 enum ReviewTaskStates {
@@ -15,7 +15,19 @@ enum ReviewTaskStates {
 
 enum DraftStates {
     undraft = "undraft",
-    draft = "draft"
+    draft = "draft",
 }
 
-export { ReviewTaskEvents, ReviewTaskStates, DraftStates };
+enum ClassificationEnum {
+    "not-fact",
+    "true",
+    "true-but",
+    "arguable",
+    "misleading",
+    "false",
+    "unsustainable",
+    "exaggerated",
+    "unverifiable",
+}
+
+export { ReviewTaskEvents, ReviewTaskStates, DraftStates, ClassificationEnum };

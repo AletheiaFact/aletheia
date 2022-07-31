@@ -16,12 +16,11 @@ export function handleGetFlowError<S>(
     resetFlow: Dispatch<SetStateAction<S | undefined>>,
     t: TFunction
 ) {
-
     return async (err: AxiosError) => {
         switch (err.response?.data.error?.id) {
             case "session_refresh_required":
                 // set refresh to true so we can redirect back to profile after login
-                await router.push("/login?refresh=true");
+                window.location.href = err.response?.data.redirect_browser_to;
                 return;
             case "session_aal2_required":
                 // 2FA is enabled and enforced, but user did not perform 2fa yet
@@ -59,8 +58,7 @@ export function handleGetFlowError<S>(
             return;
         }
 
-        // We are not able to handle the error? Return it.
-        return message.error(t("login:loginFailedMessage"))
+        return Promise.reject(err);
 
         async function requestNewFlow() {
             resetFlow(undefined);

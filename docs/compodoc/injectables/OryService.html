@@ -104,6 +104,9 @@
                             <li>
                                 <a href="#deleteIdentity" >deleteIdentity</a>
                             </li>
+                            <li>
+                                <a href="#updateIdentity" >updateIdentity</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -190,8 +193,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="26"
-                            class="link-to-prism">server/ory/ory.service.ts:26</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="44"
+                            class="link-to-prism">server/ory/ory.service.ts:44</a></div>
                 </td>
             </tr>
 
@@ -264,8 +267,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="44"
-                            class="link-to-prism">server/ory/ory.service.ts:44</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="62"
+                            class="link-to-prism">server/ory/ory.service.ts:62</a></div>
                 </td>
             </tr>
 
@@ -286,6 +289,80 @@
                             <tbody>
                                 <tr>
                                     <td>identityId</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateIdentity"></a>
+                    <span class="name">
+                        <span ><b>updateIdentity</b></span>
+                        <a href="#updateIdentity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateIdentity(user, password)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="26"
+                            class="link-to-prism">server/ory/ory.service.ts:26</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>Optional</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>user</td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>password</td>
 
                                     <td>
                                         No
@@ -404,6 +481,24 @@ export default class OryService {
                 },
             })
         );
+    }
+
+    updateIdentity(user, password): Promise&lt;any&gt; {
+        const { access_token: token, url, schema_id } &#x3D; this.configService.get(&quot;ory&quot;);
+        return axios({
+            method: &quot;put&quot;,
+            url: &#x60;${url}/${this.adminEndpoint}/identities/${user.oryId}&#x60;,
+            data: {
+                schema_id,
+                traits: { email: user.email, user_id: user._id },
+                credentials: {
+                    password: {
+                        config: { password },
+                    },
+                },
+            },
+            headers: { Authorization: &#x60;Bearer ${token}&#x60; },
+        });
     }
 
     createIdentity(user, password): Promise&lt;any&gt; {
