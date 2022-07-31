@@ -23,27 +23,30 @@ const SentenceReportCard = ({
     date: any;
     claimType: string;
     context: any;
+    summarized: boolean;
 }) => {
     const { t } = useTranslation();
     const speechTypeTranslation =
         claimType === "speech" ? t("claim:typeSpeech") : t("claim:typeTwitter");
 
-   
     return (
         <SentenceReportCardStyle>
-            <Row
-                gutter={40}
-                className="main-content"
-            >
+            <Row gutter={40} className="main-content">
                 <Col md={6} sm={24}>
                     <Row className="content-card">
                         <Col>
                             <Avatar
-                                size={133}
+                                size={117}
                                 src={personality.image}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,
                                 })}
+                                style={{
+                                    outlineColor: colors.blueQuartiary,
+                                    outlineStyle: "solid",
+                                    outlineWidth: "2px",
+                                    outlineOffset: "4px",
+                                }}
                             />
                         </Col>
                         <Row>
@@ -54,7 +57,7 @@ const SentenceReportCard = ({
                                         marginTop: "3px",
                                     }}
                                     className="personality-name"
-                                >                                    
+                                >
                                     {personality.name}
                                 </Title>
                                 <Paragraph
@@ -87,7 +90,7 @@ const SentenceReportCard = ({
                             width: "100%",
                             fontWeight: 800,
                             marginTop: "18px",
-                            marginLeft: "8px"
+                            marginLeft: "8px",
                         }}
                         className="context-classification"
                     >
@@ -139,7 +142,7 @@ const SentenceReportCard = ({
                             lineHeight: "15px",
                             marginBottom: 21,
                             marginTop: 10,
-                            paddingLeft: "8px"
+                            paddingLeft: "8px",
                         }}
                     >
                         {t("claim:cardHeader1")}&nbsp;
