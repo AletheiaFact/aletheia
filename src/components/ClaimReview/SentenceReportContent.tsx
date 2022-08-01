@@ -32,9 +32,16 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                         borderBottom: "1px solid #dfdfdf",
                     }}
                 >
-                    <Typography.Title level={3}>
+                    <Paragraph
+                        style={{
+                            fontSize: "16px",
+                            lineHeight: "24px",
+                            fontWeight: 700,
+                            textTransform: "uppercase",
+                        }}
+                    >
                         {t("claimReview:firstParagraphTittle")}
-                    </Typography.Title>
+                    </Paragraph>
                     <Paragraph style={paragraphStyle}>{summary}</Paragraph>
                 </Col>
             </Row>
@@ -46,9 +53,16 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                         borderBottom: "1px solid #dfdfdf",
                     }}
                 >
-                    <Typography.Title level={3}>
+                    <Paragraph
+                        style={{
+                            fontSize: "16px",
+                            lineHeight: "24px",
+                            fontWeight: 700,
+                            textTransform: "uppercase",
+                        }}
+                    >
                         {t("claimReview:secondParagraphTittle")}
-                    </Typography.Title>
+                    </Paragraph>
                     {questions.map((item) => {
                         return (
                             <li key={item} style={paragraphStyle}>
@@ -64,9 +78,16 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                         borderBottom: "1px solid #dfdfdf",
                     }}
                 >
-                    <Typography.Title level={3}>
+                    <Paragraph
+                        style={{
+                            fontSize: "16px",
+                            lineHeight: "24px",
+                            fontWeight: 700,
+                            textTransform: "uppercase",
+                        }}
+                    >
                         {t("claimReview:thirdParagraphTittle")}
-                    </Typography.Title>
+                    </Paragraph>
                     <Paragraph style={paragraphStyle}>{report}</Paragraph>
                 </Col>
                 <Col
@@ -76,9 +97,16 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                         borderBottom: "1px solid #dfdfdf",
                     }}
                 >
-                    <Typography.Title level={3}>
+                    <Paragraph
+                        style={{
+                            fontSize: "16px",
+                            lineHeight: "24px",
+                            fontWeight: 700,
+                            textTransform: "uppercase",
+                        }}
+                    >
                         {t("claimReview:fourthParagraphTittle")}
-                    </Typography.Title>
+                    </Paragraph>
                     <Paragraph style={paragraphStyle}>{verification}</Paragraph>
                 </Col>
                 <Col span={24} style={{ marginTop: "33px" }}>
@@ -90,9 +118,17 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                             width: "100%",
                         }}
                     >
-                        <Typography.Title style={{ width: "100%" }} level={3}>
+                        <Paragraph
+                            style={{
+                                width: "100%",
+                                fontSize: "16px",
+                                lineHeight: "24px",
+                                fontWeight: 700,
+                                textTransform: "uppercase",
+                            }}
+                        >
                             {t("claim:sourceSectionTitle")}
-                        </Typography.Title>
+                        </Paragraph>
                         {sources &&
                             sources.slice(0, 6).map((link) => {
                                 return (

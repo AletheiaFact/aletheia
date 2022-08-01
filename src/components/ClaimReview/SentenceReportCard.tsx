@@ -55,33 +55,31 @@ const SentenceReportCard = ({
                                 }}
                             />
                         </Col>
-                        <Row>
-                            <Col className="personality">
+                        <Row className="personality">
+                            <Col>
                                 <Title
+                                    className="personality-name"
                                     style={{
                                         marginBottom: 0,
-                                        marginTop: "16px",
                                         color: colors.bluePrimary,
-                                        fontSize: 16,
                                         lineHeight: "20px",
                                         fontWeight: 400,
                                     }}
-                                    className="personality-name"
                                 >
                                     {personality.name}
                                 </Title>
                                 <Paragraph
-                                    className="personality-description"
+                                    className="personality-description-content"
                                     style={{
-                                        marginTop: "4px",
-                                        fontSize: "10px",
                                         lineHeight: "14px",
                                         color: colors.blackSecondary,
                                     }}
                                 >
-                                    {personality.description}
-                                    <br />
+                                    <span className="personality-description">
+                                        {personality.description}
+                                    </span>
                                     <a
+                                        className="personality-profile"
                                         href={`/personality/${personality.slug}`}
                                         style={{
                                             color: colors.blackSecondary,
@@ -96,7 +94,7 @@ const SentenceReportCard = ({
                         </Row>
                     </Row>
                 </Col>
-                <Col md={18} sm={24}>
+                <Col md={18} sm={24} style={{ paddingLeft: 10 }}>
                     <div
                         style={{
                             display: "flex",
@@ -128,7 +126,7 @@ const SentenceReportCard = ({
                     <SentenceReportSummary
                         smallDialogBox={true}
                         style={{
-                            marginLeft: "11px",
+                            marginLeft: "4px",
                         }}
                     >
                         <Paragraph
