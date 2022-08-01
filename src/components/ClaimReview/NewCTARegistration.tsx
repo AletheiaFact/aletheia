@@ -8,55 +8,55 @@ function NewCTARegistration({ style = {} }) {
     const { t } = useTranslation();
 
     return (
-            <Row
+        <Row
+            style={{
+                backgroundColor: colors.graySecondary,
+                textAlign: "center",
+                padding: "100px 20px 20px 20px",
+                margin: "0px -5px",
+                display: "grid",
+                justifyContent: "center",
+                ...style,
+            }}
+        >
+            <Col
                 style={{
-                    backgroundColor: colors.graySecondary,
+                    color: colors.blackPrimary,
+                    fontSize: "18px",
+                    fontStyle: "italic",
+                    lineHeight: "22px",
                     textAlign: "center",
-                    padding: "100px 20px 20px 20px",
-                    margin: "0px -5px",
-                    display: "grid",
-                    justifyContent: "center",
-                    ...style,
                 }}
             >
-                <Col
+                {t("NewCTARegistration:body")}
+            </Col>
+            <Col xs={0} sm={0} md={24}>
+                <Button
+                    onClick={() => {
+                        umami?.trackEvent(
+                            "cta-registration-button",
+                            "registration"
+                        );
+                    }}
+                    type={ButtonType.blue}
+                    target="_blank"
+                    href={t("common:registrationLink")}
+                    className="new-cta-registration-button"
+                    rounded
                     style={{
-                        color: "#fff",
-                        fontSize: "18px",
-                        fontWeight: 600,
-                        lineHeight: "21px",
-                        textAlign: "center",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: "88px",
+                        marginTop: "20px",
+                        fontWeight: 900,
+                        fontSize: 18,
+                        lineHeight: "22px",
                     }}
                 >
-                    {t(
-                        "NewCTARegistration:body"
-                    )}
-                </Col>
-                <Col xs={0} sm={0} md={24}>
-                    <Button
-                        onClick={() => {
-                            umami?.trackEvent(
-                                "cta-registration-button",
-                                "registration"
-                            );
-                        }}
-                        type={ButtonType.blue}
-                        target="_blank"
-                        href={t("common:registrationLink")}
-                        className="new-cta-registration-button"
-                        style={{
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: "40px",
-                            marginTop: "20px",
-                            padding: "0 15px",
-                            fontWeight: 700,
-                        }}
-                    >
-                        {t("CTARegistration:button")}
-                    </Button>
-                </Col>
-            </Row>
+                    {t("CTARegistration:button")}
+                </Button>
+            </Col>
+        </Row>
     );
 }
 

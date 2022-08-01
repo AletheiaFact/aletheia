@@ -10,7 +10,7 @@ const CTASection = ({ isLoggedIn }) => {
     return (
         <Row className="CTA-container">
             <Col span={14}>
-                <h2
+                <p
                     className="CTA-title"
                     style={{
                         lineHeight: "20px",
@@ -19,7 +19,7 @@ const CTASection = ({ isLoggedIn }) => {
                     }}
                 >
                     {t("home:statsFooter")}
-                </h2>
+                </p>
             </Col>
             {!isLoggedIn && (
                 <Row
@@ -43,13 +43,13 @@ const CTASection = ({ isLoggedIn }) => {
                             target="_blank"
                             type={ButtonType.white}
                             className="CTA-button"
-                            rounded
                             style={{
                                 height: "40px",
                                 display: "flex",
                                 padding: 0,
                                 justifyContent: "center",
                                 alignItems: "center",
+                                borderRadius: "30px",
                             }}
                         >
                             <span style={{ fontWeight: 700 }}>

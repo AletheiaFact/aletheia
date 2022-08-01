@@ -2,7 +2,7 @@ import React from "react";
 import CTARegistration from "./CTARegistration";
 import { Row, Col } from "antd";
 import SocialMediaShare from "../SocialMediaShare";
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from "next-i18next";
 import SectionTitle from "../SectionTitle";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import HomeContentStyle from "./HomeContent.style";
@@ -10,20 +10,23 @@ const HomeContent = ({ personalities, href, isLoggedIn, title }) => {
     const { t } = useTranslation();
 
     return (
-        <HomeContentStyle>
-            <Row
-                className="main-content"
-                style={{ paddingTop: "32px" }}
-            >
+        <HomeContentStyle style={{ width: "100%" }}>
+            <Row className="main-content" style={{ paddingTop: "32px" }}>
                 <PersonalitiesGrid
                     personalities={personalities}
                     isLoggedIn={isLoggedIn}
                     title={title}
                 />
 
-                <Col span={isLoggedIn ? 24 : 6}
-                    className={`${isLoggedIn ? "join-container-logged-in" : "join-container-logged-out"}`}>
-                    {!isLoggedIn &&
+                <Col
+                    span={isLoggedIn ? 24 : 6}
+                    className={`${
+                        isLoggedIn
+                            ? "join-container-logged-in"
+                            : "join-container-logged-out"
+                    }`}
+                >
+                    {!isLoggedIn && (
                         <>
                             <Row className="section-title-container">
                                 <SectionTitle>
@@ -31,16 +34,19 @@ const HomeContent = ({ personalities, href, isLoggedIn, title }) => {
                                 </SectionTitle>
                             </Row>
 
-                            <Row id="create_account" className="CTA-registration-container">
+                            <Row
+                                id="create_account"
+                                className="CTA-registration-container"
+                            >
                                 <CTARegistration />
                             </Row>
                         </>
-                    }
+                    )}
                     <SocialMediaShare isLoggedIn={isLoggedIn} href={href} />
                 </Col>
             </Row>
         </HomeContentStyle>
-    )
-}
+    );
+};
 
-export default HomeContent
+export default HomeContent;
