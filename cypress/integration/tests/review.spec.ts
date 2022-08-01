@@ -43,9 +43,6 @@ describe("Test claim review", () => {
     });
 
     it("should be able to assign a user", () => {
-        cy.visit("http://localhost:3000");
-
-        cy.title().should("contain", "AletheiaFact.org");
         cy.login();
         goToClaimReviewPage();
         cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW)
@@ -65,9 +62,6 @@ describe("Test claim review", () => {
     });
 
     it("should only allow to submit report without any blank fields", () => {
-        cy.visit("http://localhost:3000");
-
-        cy.title().should("contain", "AletheiaFact.org");
         cy.login();
         goToClaimReviewPage();
         // all fields are left empty
@@ -114,9 +108,6 @@ describe("Test claim review", () => {
     });
 
     it("should only allow to submit review after choosing classification", () => {
-        cy.visit("http://localhost:3000");
-
-        cy.title().should("contain", "AletheiaFact.org");
         cy.login();
         goToClaimReviewPage();
         cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
