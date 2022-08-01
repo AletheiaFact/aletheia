@@ -5,7 +5,7 @@ import React from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import colors from "../../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
-import InfoAlert from "./InfoAlert";
+import FooterInfo from "./FooterInfo";
 
 const Footer = () => {
     const { t } = useTranslation();
@@ -71,7 +71,7 @@ const Footer = () => {
                         flexDirection: "column",
                     }}
                 >
-                    <InfoAlert />
+                    <FooterInfo />
                     <Row>
                         <h3
                             style={{

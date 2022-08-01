@@ -7,7 +7,7 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
 
-const InfoAlert = () => {
+const FooterInfo = () => {
     const { t } = useTranslation();
     const isMobile = useMediaQuery("(max-width: 767px)");
     return (
@@ -40,4 +40,4 @@ const InfoAlert = () => {
     );
 };
 
-export default InfoAlert;
+export default FooterInfo;
