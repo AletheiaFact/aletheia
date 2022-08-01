@@ -6,9 +6,7 @@ import claim from "../../fixtures/claim";
 import personality from "../../fixtures/personality";
 
 describe("Create personality and claim", () => {
-    beforeEach("login", () => {
-        cy.login();
-    });
+    beforeEach("login", () => cy.login());
 
     it("Should search and create a new Personality", () => {
         cy.get(locators.personality.BTN_SEE_MORE_PERSONALITY)
