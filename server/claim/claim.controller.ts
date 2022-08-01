@@ -151,7 +151,10 @@ export class ClaimController {
             claimSlug
         );
 
-        const sentence = await this._getSentenceByHashAndClaimId(sentence_hash, claim._id);
+        const sentence = await this._getSentenceByHashAndClaimId(
+            sentence_hash,
+            claim._id
+        );
 
         const claimReviewTask =
             await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
@@ -223,7 +226,10 @@ export class ClaimController {
     }
 
     @Get("personality/:personalitySlug/claim/:claimSlug/revision/:revisionId")
-    public async personalityClaimPageWithRevision(@Req() req: Request, @Res() res: Response) {
+    public async personalityClaimPageWithRevision(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
         const personality = await this.personalityService.getBySlug(
@@ -267,9 +273,42 @@ export class ClaimController {
             .render(
                 req,
                 res,
-                "/claim-sources-page",
-                Object.assign(parsedUrl.query, { claimId: claim._id })
+                "/sources-page",
+                Object.assign(parsedUrl.query, { targetId: claim._id })
             );
+    }
+
+    @IsPublic()
+    @Get(
+        "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash/sources"
+    )
+    public async sourcesReportPage(@Req() req: Request, @Res() res: Response) {
+        const { sentence_hash, personalitySlug, claimSlug } = req.params;
+        const parsedUrl = parse(req.url, true);
+
+        const personality = await this.personalityService.getBySlug(
+            personalitySlug
+        );
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            claimSlug
+        );
+
+        const report = await this.claimReviewService.getReport({
+            personality: personality._id,
+            claim: claim._id,
+            sentence_hash,
+        });
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/sources-page",
+            Object.assign(parsedUrl.query, {
+                targetId: report._id,
+            })
+        );
     }
 
     @Get("personality/:personalitySlug/claim/:claimSlug/history")
@@ -288,13 +327,14 @@ export class ClaimController {
             req.params.claimSlug
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/history-page",
-                Object.assign(parsedUrl.query, { targetId: claim._id, targetModel: TargetModel.Claim })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/history-page",
+            Object.assign(parsedUrl.query, {
+                targetId: claim._id,
+                targetModel: TargetModel.Claim,
+            })
+        );
     }
 }
