@@ -7,6 +7,9 @@ import personality from "../../fixtures/personality";
 
 describe("Create personality and claim", () => {
     beforeEach("login", () => {
+        cy.visit("http://localhost:3000");
+
+        cy.title().should("contain", "AletheiaFact.org");
         cy.login();
     });
 
