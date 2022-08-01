@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Model, Types } from "mongoose";
+import { LeanDocument, Model, Types } from "mongoose";
 import {
     ClaimReview,
     ClaimReviewDocument,
@@ -9,6 +9,7 @@ import { UtilService } from "../util";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
+import { ReportDocument } from "../report/schemas/report.schema";
 
 @Injectable()
 export class ClaimReviewService {
@@ -163,7 +164,7 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.aggregate([{ $match: { sentence_hash } }]);
     }
 
-    async getReport(match) {
+    async getReport(match): Promise<LeanDocument<ReportDocument>> {
         const claimReview = await this.ClaimReviewModel.findOne(match)
             .populate("report")
             .lean();
