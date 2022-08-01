@@ -254,7 +254,7 @@ const SentenceReportView = ({
                                         marginBottom: "10px",
                                     }}
                                     type={ButtonType.blue}
-                                    href={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
+                                    href={`/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence.data_hash}/sources`}
                                 >
                                     <Title
                                         level={4}

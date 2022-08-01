@@ -1,18 +1,23 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Model, Types } from "mongoose";
-import { ClaimReview, ClaimReviewDocument } from "./schemas/claim-review.schema";
+import { LeanDocument, Model, Types } from "mongoose";
+import {
+    ClaimReview,
+    ClaimReviewDocument,
+} from "./schemas/claim-review.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { UtilService } from "../util";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
-import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
+import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
+import { ReportDocument } from "../report/schemas/report.schema";
 
 @Injectable()
 export class ClaimReviewService {
     private readonly logger = new Logger("ClaimReviewService");
     constructor(
         @InjectModel(ClaimReview.name)
-        private ClaimReviewModel: Model<ClaimReviewDocument> & ISoftDeletedModel<ClaimReviewDocument>,
+        private ClaimReviewModel: Model<ClaimReviewDocument> &
+            ISoftDeletedModel<ClaimReviewDocument>,
         private historyService: HistoryService,
         private util: UtilService
     ) {}
@@ -22,11 +27,11 @@ export class ClaimReviewService {
             { $match: match },
             {
                 $lookup: {
-                    from: 'reports',
-                    localField: 'report',
-                    foreignField: '_id',
-                    as: 'report'
-                }
+                    from: "reports",
+                    localField: "report",
+                    foreignField: "_id",
+                    as: "report",
+                },
             },
             { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
@@ -42,11 +47,11 @@ export class ClaimReviewService {
             { $match: match },
             {
                 $lookup: {
-                    from: 'reports',
-                    localField: 'report',
-                    foreignField: '_id',
-                    as: 'report'
-                }
+                    from: "reports",
+                    localField: "report",
+                    foreignField: "_id",
+                    as: "report",
+                },
             },
             { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
@@ -56,14 +61,14 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false, isPublished: true, } },
+            { $match: { claim: claimId, isDeleted: false, isPublished: true } },
             {
                 $lookup: {
-                    from: 'reports',
-                    localField: 'report',
-                    foreignField: '_id',
-                    as: 'report'
-                }
+                    from: "reports",
+                    localField: "report",
+                    foreignField: "_id",
+                    as: "report",
+                },
             },
             { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
@@ -81,16 +86,19 @@ export class ClaimReviewService {
             { $match: { claim: claimId, isDeleted: false, isPublished: true } },
             {
                 $lookup: {
-                    from: 'reports',
-                    localField: 'report',
-                    foreignField: '_id',
-                    as: 'report'
-                }
+                    from: "reports",
+                    localField: "report",
+                    foreignField: "_id",
+                    as: "report",
+                },
             },
             {
                 $group: {
-                    _id: {sentence_hash: "$sentence_hash", classification: "$report.classification"},
-                    count: { $sum: 1 }
+                    _id: {
+                        sentence_hash: "$sentence_hash",
+                        classification: "$report.classification",
+                    },
+                    count: { $sum: 1 },
                 },
             },
         ]).option({ serializeFunctions: true });
@@ -103,11 +111,9 @@ export class ClaimReviewService {
                 userId: 1,
             }
         );
-        const userReview = user?.userId
-        return userReview
+        const userReview = user?.userId;
+        return userReview;
     }
-
-
 
     /**
      * This function creates a new claim review.
@@ -116,7 +122,9 @@ export class ClaimReviewService {
      * @returns Return a new claim review object.
      */
     async create(claimReview, sentence_hash) {
-        const review = await this.getReviewBySentenceHash(claimReview.sentence_hash)
+        const review = await this.getReviewBySentenceHash(
+            claimReview.sentence_hash
+        );
 
         if (review.length) {
             throw new Error("This Claim already has a review");
@@ -125,23 +133,22 @@ export class ClaimReviewService {
             // Cast ObjectId
             claimReview.personality = Types.ObjectId(claimReview.personality);
             claimReview.claim = Types.ObjectId(claimReview.claim);
-            claimReview.report = Types.ObjectId(claimReview.report._id)
-            claimReview.userId = Types.ObjectId(claimReview.userId)
-            claimReview.sentence_hash = sentence_hash
-            const newClaimReview = new this.ClaimReviewModel(claimReview)
+            claimReview.report = Types.ObjectId(claimReview.report._id);
+            claimReview.userId = Types.ObjectId(claimReview.userId);
+            claimReview.sentence_hash = sentence_hash;
+            const newClaimReview = new this.ClaimReviewModel(claimReview);
 
-            newClaimReview.isPublished = true
+            newClaimReview.isPublished = true;
 
-            const history = 
-                this.historyService.getHistoryParams(
-                    newClaimReview._id,
-                    TargetModel.ClaimReview,
-                    claimReview.userId,
-                    HistoryType.Create,
-                    newClaimReview
-                )
+            const history = this.historyService.getHistoryParams(
+                newClaimReview._id,
+                TargetModel.ClaimReview,
+                claimReview.userId,
+                HistoryType.Create,
+                newClaimReview
+            );
 
-            this.historyService.createHistory(history)
+            this.historyService.createHistory(history);
 
             return newClaimReview.save();
         }
@@ -154,9 +161,14 @@ export class ClaimReviewService {
     }
 
     getReviewBySentenceHash(sentence_hash) {
-        return this.ClaimReviewModel.aggregate([
-            { $match: { sentence_hash } },
-        ])
+        return this.ClaimReviewModel.aggregate([{ $match: { sentence_hash } }]);
+    }
+
+    async getReport(match): Promise<LeanDocument<ReportDocument>> {
+        const claimReview = await this.ClaimReviewModel.findOne(match)
+            .populate("report")
+            .lean();
+        return claimReview.report;
     }
 
     /**
@@ -168,17 +180,16 @@ export class ClaimReviewService {
      */
     async delete(claimReviewId) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const claimReview = await this.getById(claimReviewId)
-        const history = 
-            this.historyService.getHistoryParams(
-                claimReview._id,
-                TargetModel.ClaimReview,
-                claimReview.userId,
-                HistoryType.Delete,
-                null,
-                claimReview
-            )
-        this.historyService.createHistory(history)
+        const claimReview = await this.getById(claimReviewId);
+        const history = this.historyService.getHistoryParams(
+            claimReview._id,
+            TargetModel.ClaimReview,
+            claimReview.userId,
+            HistoryType.Delete,
+            null,
+            claimReview
+        );
+        this.historyService.createHistory(history);
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
     }
 }
