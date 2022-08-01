@@ -21,7 +21,7 @@ describe("Create personality and claim", () => {
         cy.get(`${locators.personality.SELECT_PERSONALITY}`).click();
     });
 
-    it.only("Should create a Claim", () => {
+    it("Should create a Claim", () => {
         cy.get(locators.personality.BTN_SEE_MORE_PERSONALITY)
             .should("be.visible")
             .click();
