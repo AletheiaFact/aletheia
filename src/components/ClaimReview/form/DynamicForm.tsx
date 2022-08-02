@@ -95,14 +95,27 @@ const DynamicForm = ({
         isLoggedIn &&
             api
                 .getMachineBySentenceHash(sentence_hash, t)
-                .then((claimReviewTask) => {
-                    const machine = claimReviewTask.machine || {
+                .then(({ machine }) => {
+                    // The states assigned and reported have compound states
+                    // and when we going to save we get "assigned: undraft" as a value.
+                    // The machine doesn't recognize when we try to persist state the initial value
+                    // 'cause the value it's an object. So for these states, we get only the key value
+                    if (machine) {
+                        machine.value =
+                            machine.value !== ReviewTaskStates.published
+                                ? (machine.value = Object.keys(
+                                      machine.value
+                                  )[0])
+                                : machine.value;
+                    }
+
+                    const newMachine = machine || {
                         context: initialContext,
                         value: ReviewTaskStates.unassigned,
                     };
-                    machine.context.utils = { t };
-                    setService(createNewMachineService(machine));
-                    setCurrentFormAndNextEvents(machine.value, machine);
+                    newMachine.context.utils = { t };
+                    setService(createNewMachineService(newMachine));
+                    setCurrentFormAndNextEvents(newMachine.value, newMachine);
                 });
     }, []);
 

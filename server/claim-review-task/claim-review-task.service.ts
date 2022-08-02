@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, Scope } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import {
     ClaimReviewTask,
@@ -9,14 +9,20 @@ import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ReportService } from "../report/report.service";
+import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { HistoryService } from "../history/history.service";
+import { REQUEST } from "@nestjs/core";
+import { BaseRequest } from "../types";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
     constructor(
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ClaimReviewTask.name)
         private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
-        private reportService: ReportService
+        private reportService: ReportService,
+        private historyService: HistoryService
     ) {}
 
     async listAll(page, pageSize, order, value) {
@@ -68,6 +74,63 @@ export class ClaimReviewTaskService {
         return this.ClaimReviewTaskModel.findById(claimReviewTaskId);
     }
 
+    _createReviewTaskHistory(
+        newClaimReviewTask,
+        previousClaimReviewTask = null
+    ) {
+        let historyType;
+
+        if (typeof newClaimReviewTask.machine.value === "object") {
+            historyType =
+                newClaimReviewTask.machine.value?.[
+                    Object.keys(newClaimReviewTask.machine.value)[0]
+                ] === "draft"
+                    ? HistoryType.Draft
+                    : Object.keys(newClaimReviewTask.machine.value)[0];
+        }
+
+        const user = this.req.user;
+
+        const history = this.historyService.getHistoryParams(
+            newClaimReviewTask._id,
+            TargetModel.ClaimReviewTask,
+            user,
+            historyType || HistoryType.Update,
+            {
+                ...newClaimReviewTask.machine.context.reviewData,
+                value: newClaimReviewTask.machine.value,
+            },
+            previousClaimReviewTask && {
+                ...previousClaimReviewTask.machine.context.reviewData,
+                value: previousClaimReviewTask.machine.value,
+            }
+        );
+
+        this.historyService.createHistory(history);
+    }
+
+    _tranformUserIdInObjectId(userId) {
+        return (userId = Types.ObjectId(userId));
+    }
+
+    async _createReportAndClaimReview(sentence_hash, machine) {
+        const claimReviewData = machine.context.claimReview;
+
+        const newReport = Object.assign(machine.context.reviewData, {
+            sentence_hash,
+        });
+
+        const report = await this.reportService.create(newReport);
+
+        this.claimReviewService.create(
+            {
+                ...claimReviewData,
+                report,
+            },
+            sentence_hash
+        );
+    }
+
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
         const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
             claimReviewTaskBody.sentence_hash
@@ -90,6 +153,7 @@ export class ClaimReviewTaskService {
                 claimReviewTaskBody
             );
             newClaimReviewTask.save();
+            this._createReviewTaskHistory(newClaimReviewTask);
             return newClaimReviewTask;
         }
     }
@@ -103,34 +167,25 @@ export class ClaimReviewTaskService {
             const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
                 sentence_hash
             );
-            const newClaimReviewTaskMachine = Object.assign(
-                claimReviewTask.machine,
-                newClaimReviewTaskBody.machine
-            );
-            const newClaimReviewTask = Object.assign(
-                claimReviewTask,
-                newClaimReviewTaskMachine
-            );
+
+            const newClaimReviewTaskMachine = {
+                ...claimReviewTask.machine,
+                ...newClaimReviewTaskBody.machine,
+            };
+
+            const newClaimReviewTask = {
+                ...claimReviewTask.toObject(),
+                machine: newClaimReviewTaskMachine,
+            };
 
             if (newClaimReviewTaskMachine.value === "published") {
-                const claimReviewData =
-                    newClaimReviewTaskMachine.context.claimReview;
-
-                const newReport = Object.assign(
-                    newClaimReviewTaskMachine.context.reviewData,
-                    { sentence_hash }
-                );
-
-                const report = await this.reportService.create(newReport);
-
-                this.claimReviewService.create(
-                    {
-                        ...claimReviewData,
-                        report,
-                    },
-                    sentence_hash
+                this._createReportAndClaimReview(
+                    sentence_hash,
+                    newClaimReviewTask
                 );
             }
+
+            this._createReviewTaskHistory(newClaimReviewTask, claimReviewTask);
 
             return this.ClaimReviewTaskModel.updateOne(
                 { _id: newClaimReviewTask._id },
