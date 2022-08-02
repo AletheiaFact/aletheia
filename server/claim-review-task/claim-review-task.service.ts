@@ -95,7 +95,7 @@ export class ClaimReviewTaskService {
             newClaimReviewTask._id,
             TargetModel.ClaimReviewTask,
             user,
-            historyType || HistoryType.Update,
+            historyType || HistoryType.Published,
             {
                 ...newClaimReviewTask.machine.context.reviewData,
                 value: newClaimReviewTask.machine.value,
