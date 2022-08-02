@@ -109,10 +109,6 @@ export class ClaimReviewTaskService {
         this.historyService.createHistory(history);
     }
 
-    _tranformUserIdInObjectId(userId) {
-        return (userId = Types.ObjectId(userId));
-    }
-
     async _createReportAndClaimReview(sentence_hash, machine) {
         const claimReviewData = machine.context.claimReview;
 
@@ -158,10 +154,7 @@ export class ClaimReviewTaskService {
         }
     }
 
-    async update(
-        sentence_hash: string,
-        newClaimReviewTaskBody: UpdateClaimReviewTaskDTO
-    ) {
+    async update(sentence_hash: string, { machine }: UpdateClaimReviewTaskDTO) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         try {
             const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
@@ -170,7 +163,7 @@ export class ClaimReviewTaskService {
 
             const newClaimReviewTaskMachine = {
                 ...claimReviewTask.machine,
-                ...newClaimReviewTaskBody.machine,
+                ...machine,
             };
 
             const newClaimReviewTask = {
@@ -181,7 +174,7 @@ export class ClaimReviewTaskService {
             if (newClaimReviewTaskMachine.value === "published") {
                 this._createReportAndClaimReview(
                     sentence_hash,
-                    newClaimReviewTask
+                    newClaimReviewTask.machine
                 );
             }
 
