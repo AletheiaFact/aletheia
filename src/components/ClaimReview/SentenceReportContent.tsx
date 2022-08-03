@@ -110,25 +110,25 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                     <Paragraph style={paragraphStyle}>{verification}</Paragraph>
                 </Col>
                 <Col span={24} style={{ marginTop: "33px" }}>
+                    <Paragraph
+                        style={{
+                            width: "100%",
+                            fontSize: "16px",
+                            lineHeight: "24px",
+                            fontWeight: 700,
+                            textTransform: "uppercase",
+                        }}
+                    >
+                        {t("claim:sourceSectionTitle")}
+                    </Paragraph>
                     <Row
                         style={{
                             display: "inline-flex",
                             flexWrap: "wrap",
-                            gap: "38px 38px",
                             width: "100%",
                         }}
+                        gutter={38}
                     >
-                        <Paragraph
-                            style={{
-                                width: "100%",
-                                fontSize: "16px",
-                                lineHeight: "24px",
-                                fontWeight: 700,
-                                textTransform: "uppercase",
-                            }}
-                        >
-                            {t("claim:sourceSectionTitle")}
-                        </Paragraph>
                         {sources &&
                             sources.slice(0, 6).map((link) => {
                                 return (

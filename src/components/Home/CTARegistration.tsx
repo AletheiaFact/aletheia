@@ -64,13 +64,13 @@ function CTARegistration() {
                 target="_blank"
                 href={t("common:registrationLink")}
                 className="CTA-registration-button"
+                rounded="true"
                 style={{
                     alignItems: "center",
                     justifyContent: "center",
                     height: "40px",
                     padding: "0 15px",
                     fontWeight: 700,
-                    borderRadius: "30px",
                 }}
             >
                 {t("CTARegistration:button")}

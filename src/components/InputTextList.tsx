@@ -15,7 +15,7 @@ export default function InputTextList({
     addInputLabel,
     defaultValue,
     dataCy,
-    white = false,
+    white = undefined,
 }) {
     const contents = defaultValue.map((item) => {
         return { content: item };

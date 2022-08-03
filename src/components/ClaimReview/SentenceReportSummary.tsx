@@ -23,8 +23,8 @@ const SentenceReportSummary = styled(Row)`
         border-bottom-color: ${colors.lightYellow};
     }
 
-    ${({ smallDialogBox }) =>
-        smallDialogBox &&
+    ${({ smalldialogbox }) =>
+        smalldialogbox &&
         `
             &:after {
                 content: " ";

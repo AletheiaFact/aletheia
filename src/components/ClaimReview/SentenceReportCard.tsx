@@ -110,21 +110,17 @@ const SentenceReportCard = ({
                                 color: colors.blackSecondary,
                                 fontSize: 16,
                                 fontWeight: 400,
-                                lineHeight: "20px",
                             }}
                         >
                             {t("claimReview:claimReview")}&nbsp;
                         </Title>
                         <ClassificationText
-                            style={{
-                                fontSize: 16,
-                                lineHeight: "20px",
-                            }}
+                            style={{ fontSize: 16 }}
                             classification={context.classification}
                         />
                     </div>
                     <SentenceReportSummary
-                        smallDialogBox={true}
+                        smalldialogbox="true"
                         style={{
                             marginLeft: "4px",
                         }}

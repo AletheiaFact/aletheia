@@ -38,6 +38,8 @@ function NewCTARegistration() {
                     type={ButtonType.blue}
                     target="_blank"
                     href={t("common:registrationLink")}
+                    className="new-cta-registration-button"
+                    rounded="true"
                     style={{
                         alignItems: "center",
                         justifyContent: "center",
@@ -47,6 +49,7 @@ function NewCTARegistration() {
                         fontWeight: 900,
                         fontSize: 18,
                         lineHeight: "22px",
+                        whiteSpace: "pre-wrap",
                     }}
                 >
                     {t("CTARegistration:button")}
