@@ -123,8 +123,8 @@ export class ClaimReviewTaskService {
                 newClaimReviewTask.machine.value?.[
                     Object.keys(newClaimReviewTask.machine.value)[0]
                 ] === "draft"
-                    ? (draft = true)
-                    : (draft = false);
+                    ? true
+                    : false;
 
             typeModel = Object.keys(newClaimReviewTask.machine.value)[0];
         }
