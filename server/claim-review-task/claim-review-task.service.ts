@@ -119,12 +119,14 @@ export class ClaimReviewTaskService {
         let draft = false;
 
         if (typeof newClaimReviewTask.machine.value === "object") {
-            typeModel =
+            draft =
                 newClaimReviewTask.machine.value?.[
                     Object.keys(newClaimReviewTask.machine.value)[0]
                 ] === "draft"
                     ? (draft = true)
-                    : Object.keys(newClaimReviewTask.machine.value)[0];
+                    : (draft = false);
+
+            typeModel = Object.keys(newClaimReviewTask.machine.value)[0];
         }
 
         const historyTrack = this.historyTrackService.getHistoryTrackParams(
@@ -132,8 +134,8 @@ export class ClaimReviewTaskService {
                 newClaimReviewTask.machine.context.claimReview.claim
             ),
             typeModel || TypeModel.Published,
-            newClaimReviewTask._id,
-            draft
+            draft,
+            newClaimReviewTask._id
         );
 
         this.historyTrackService.createHistoryTrack(historyTrack);
