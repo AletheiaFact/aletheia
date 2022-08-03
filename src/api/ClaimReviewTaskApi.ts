@@ -1,6 +1,5 @@
 import axios from "axios";
 import { message } from "antd";
-import { ParseMachineState } from "../utils/ParseMachineState";
 
 const request = axios.create({
     withCredentials: true,
@@ -44,7 +43,6 @@ const getMachineBySentenceHash = (params, t) => {
 };
 
 const createClaimReviewTask = (params, t, type) => {
-    params.machine = ParseMachineState(params.machine);
     return request
         .post("/", { ...params })
         .then((response) => {

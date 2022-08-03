@@ -11,6 +11,8 @@ import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ReportService } from "../report/report.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { HistoryService } from "../history/history.service";
+import { HistoryTrackService } from "../history-track/history-track.service";
+import { TypeModel } from "../history-track/schema/history-track.schema";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
 
@@ -22,7 +24,8 @@ export class ClaimReviewTaskService {
         private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
         private reportService: ReportService,
-        private historyService: HistoryService
+        private historyService: HistoryService,
+        private historyTrackService: HistoryTrackService
     ) {}
 
     async listAll(page, pageSize, order, value) {
@@ -98,15 +101,42 @@ export class ClaimReviewTaskService {
             historyType || HistoryType.Published,
             {
                 ...newClaimReviewTask.machine.context.reviewData,
+                ...newClaimReviewTask.machine.context.claimReview.claim,
                 value: newClaimReviewTask.machine.value,
             },
             previousClaimReviewTask && {
                 ...previousClaimReviewTask.machine.context.reviewData,
+                ...previousClaimReviewTask.machine.context.claimReview.claim,
                 value: previousClaimReviewTask.machine.value,
             }
         );
 
         this.historyService.createHistory(history);
+    }
+
+    _createHistoryTrack(newClaimReviewTask) {
+        let typeModel;
+        let draft = false;
+
+        if (typeof newClaimReviewTask.machine.value === "object") {
+            typeModel =
+                newClaimReviewTask.machine.value?.[
+                    Object.keys(newClaimReviewTask.machine.value)[0]
+                ] === "draft"
+                    ? (draft = true)
+                    : Object.keys(newClaimReviewTask.machine.value)[0];
+        }
+
+        const historyTrack = this.historyTrackService.getHistoryTrackParams(
+            Types.ObjectId(
+                newClaimReviewTask.machine.context.claimReview.claim
+            ),
+            typeModel || TypeModel.Published,
+            newClaimReviewTask._id,
+            draft
+        );
+
+        this.historyTrackService.createHistoryTrack(historyTrack);
     }
 
     async _createReportAndClaimReview(sentence_hash, machine) {
@@ -150,6 +180,7 @@ export class ClaimReviewTaskService {
             );
             newClaimReviewTask.save();
             this._createReviewTaskHistory(newClaimReviewTask);
+            this._createHistoryTrack(newClaimReviewTask);
             return newClaimReviewTask;
         }
     }
@@ -179,6 +210,7 @@ export class ClaimReviewTaskService {
             }
 
             this._createReviewTaskHistory(newClaimReviewTask, claimReviewTask);
+            this._createHistoryTrack(newClaimReviewTask);
 
             return this.ClaimReviewTaskModel.updateOne(
                 { _id: newClaimReviewTask._id },

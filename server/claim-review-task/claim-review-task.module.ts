@@ -11,6 +11,7 @@ import { ReportModule } from "../report/report.module";
 import { CaptchaModule } from "../captcha/captcha.module";
 import { ViewModule } from "../view/view.module";
 import { HistoryModule } from "../history/history.module";
+import { HistoryTrackModule } from "../history-track/history-track.module";
 
 export const ClaimReviewTaskModel = MongooseModule.forFeature([
     {
@@ -25,6 +26,7 @@ export const ClaimReviewTaskModel = MongooseModule.forFeature([
         ClaimReviewModule,
         ReportModule,
         HistoryModule,
+        HistoryTrackModule,
         CaptchaModule,
         ViewModule,
     ],
