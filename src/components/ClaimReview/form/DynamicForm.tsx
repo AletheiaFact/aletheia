@@ -103,9 +103,7 @@ const DynamicForm = ({
                     if (machine) {
                         machine.value =
                             machine.value !== ReviewTaskStates.published
-                                ? (machine.value = Object.keys(
-                                      machine.value
-                                  )[0])
+                                ? Object.keys(machine.value)[0]
                                 : machine.value;
                     }
 
