@@ -11,9 +11,9 @@ import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 import { HistoryService } from "../history/history.service";
-import { HistoryTrackService } from "../history-track/history-track.service";
+import { StateEventService } from "../state-event/state-event.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
-import { TypeModel } from "../history-track/schema/history-track.schema";
+import { TypeModel } from "../state-event/schema/state-event.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
@@ -36,7 +36,7 @@ export class ClaimService {
             Model<ClaimDocument>,
         private claimReviewService: ClaimReviewService,
         private historyService: HistoryService,
-        private historyTrackService: HistoryTrackService,
+        private stateEventService: StateEventService,
         private claimRevisionService: ClaimRevisionService
     ) {
         this.optionsToUpdate = {
@@ -107,13 +107,13 @@ export class ClaimService {
             HistoryType.Create,
             newClaim.latestRevision
         );
-        const historyTrack = this.historyTrackService.getHistoryTrackParams(
+        const stateEvent = this.stateEventService.getStateEventParams(
             newClaim._id,
             TypeModel.Claim
         );
 
         this.historyService.createHistory(history);
-        this.historyTrackService.createHistoryTrack(historyTrack);
+        this.stateEventService.createStateEvent(stateEvent);
 
         newClaim.save();
 

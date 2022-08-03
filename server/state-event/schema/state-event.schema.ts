@@ -3,7 +3,7 @@ import * as mongoose from "mongoose";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { ClaimReviewTask } from "../../claim-review-task/schemas/claim-review-task.schema";
 
-export type HistoryTrackDocument = HistoryTrack & mongoose.Document;
+export type StateEventDocument = StateEvent & mongoose.Document;
 
 export enum TypeModel {
     Claim = "claim",
@@ -13,7 +13,7 @@ export enum TypeModel {
 }
 
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
-export class HistoryTrack {
+export class StateEvent {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
@@ -46,4 +46,4 @@ export class HistoryTrack {
     date: mongoose.Date;
 }
 
-export const HistoryTrackSchema = SchemaFactory.createForClass(HistoryTrack);
+export const StateEventSchema = SchemaFactory.createForClass(StateEvent);

@@ -11,8 +11,8 @@ import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ReportService } from "../report/report.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { HistoryService } from "../history/history.service";
-import { HistoryTrackService } from "../history-track/history-track.service";
-import { TypeModel } from "../history-track/schema/history-track.schema";
+import { StateEventService } from "../state-event/state-event.service";
+import { TypeModel } from "../state-event/schema/state-event.schema";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
 
@@ -25,7 +25,7 @@ export class ClaimReviewTaskService {
         private claimReviewService: ClaimReviewService,
         private reportService: ReportService,
         private historyService: HistoryService,
-        private historyTrackService: HistoryTrackService
+        private stateEventService: StateEventService
     ) {}
 
     async listAll(page, pageSize, order, value) {
@@ -114,7 +114,7 @@ export class ClaimReviewTaskService {
         this.historyService.createHistory(history);
     }
 
-    _createHistoryTrack(newClaimReviewTask) {
+    _createStateEvent(newClaimReviewTask) {
         let typeModel;
         let draft = false;
 
@@ -129,7 +129,7 @@ export class ClaimReviewTaskService {
             typeModel = Object.keys(newClaimReviewTask.machine.value)[0];
         }
 
-        const historyTrack = this.historyTrackService.getHistoryTrackParams(
+        const stateEvent = this.stateEventService.getStateEventParams(
             Types.ObjectId(
                 newClaimReviewTask.machine.context.claimReview.claim
             ),
@@ -138,7 +138,7 @@ export class ClaimReviewTaskService {
             newClaimReviewTask._id
         );
 
-        this.historyTrackService.createHistoryTrack(historyTrack);
+        this.stateEventService.createStateEvent(stateEvent);
     }
 
     async _createReportAndClaimReview(sentence_hash, machine) {
@@ -182,7 +182,7 @@ export class ClaimReviewTaskService {
             );
             newClaimReviewTask.save();
             this._createReviewTaskHistory(newClaimReviewTask);
-            this._createHistoryTrack(newClaimReviewTask);
+            this._createStateEvent(newClaimReviewTask);
             return newClaimReviewTask;
         }
     }
@@ -212,7 +212,7 @@ export class ClaimReviewTaskService {
             }
 
             this._createReviewTaskHistory(newClaimReviewTask, claimReviewTask);
-            this._createHistoryTrack(newClaimReviewTask);
+            this._createStateEvent(newClaimReviewTask);
 
             return this.ClaimReviewTaskModel.updateOne(
                 { _id: newClaimReviewTask._id },
