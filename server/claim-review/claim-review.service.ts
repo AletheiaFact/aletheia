@@ -134,7 +134,7 @@ export class ClaimReviewService {
             claimReview.personality = Types.ObjectId(claimReview.personality);
             claimReview.claim = Types.ObjectId(claimReview.claim);
             claimReview.usersId = claimReview.report.usersId.map((userId) => {
-                return (userId = Types.ObjectId(userId));
+                return Types.ObjectId(userId);
             });
             claimReview.report = Types.ObjectId(claimReview.report._id);
             claimReview.sentence_hash = sentence_hash;

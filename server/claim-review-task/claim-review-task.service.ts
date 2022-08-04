@@ -76,7 +76,7 @@ export class ClaimReviewTaskService {
         claimReviewTaskBody.machine.context.reviewData.usersId =
             claimReviewTaskBody.machine.context.reviewData.usersId.map(
                 (userId) => {
-                    return (userId = Types.ObjectId(userId));
+                    return Types.ObjectId(userId);
                 }
             );
 
