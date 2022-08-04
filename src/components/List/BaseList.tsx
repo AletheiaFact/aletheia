@@ -1,3 +1,4 @@
+import { LoadingOutlined } from "@ant-design/icons";
 import { Button, Col, List, Row, Spin } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
@@ -28,6 +29,17 @@ const BaseList = ({
     const [items, setItems] = useState([]);
     const [sortByOrder] = useState("asc");
     const [execLoadMore, setExecLoadMore] = useState<boolean>(true);
+
+    const loadingIcon = (
+        <LoadingOutlined
+            spin
+            style={{ fontSize: 48, color: colors.bluePrimary }}
+        />
+    );
+    const loadingProps = {
+        spinning: true,
+        indicator: loadingIcon,
+    };
 
     const [query, setQuery] = useState({
         page: 1,
@@ -127,7 +139,7 @@ const BaseList = ({
                     }
                     style={style || {}}
                     loadMore={loadMoreButton}
-                    loading={loading}
+                    loading={loading && loadingProps}
                     dataSource={items}
                     renderItem={(item) => {
                         return <List.Item>{renderItem(item)}</List.Item>;
@@ -158,13 +170,18 @@ const BaseList = ({
                         <SkeletonList listItem={skeleton} repeat={4} />
                     ) : (
                         <Spin
-                            tip={t("global:loading")}
+                            tip={
+                                <span style={{ color: colors.bluePrimary }}>
+                                    {t("global:loading")}
+                                </span>
+                            }
                             style={{
                                 textAlign: "center",
                                 position: "absolute",
-                                top: "50%",
+                                top: "20%",
                                 left: "calc(50% - 40px)",
                             }}
+                            indicator={loadingIcon}
                         />
                     )}
                 </>
