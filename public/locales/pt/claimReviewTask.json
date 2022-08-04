@@ -10,6 +10,7 @@
     "ASSIGN_USER": "Atribuir",
     "FINISH_REPORT": "Concluir Relatório",
     "PUBLISH": "Publicar",
+    "GO_BACK": "Voltar",
     "SAVE_DRAFT": "Salvar rascunho",
     "errorWhileFetching": "Erro ao buscar a máquina",
     "assigned": "Usuário atribuído",

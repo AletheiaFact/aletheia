@@ -1,18 +1,30 @@
-import { FilePdfOutlined } from '@ant-design/icons';
-import { Alert, Button } from 'antd';
-import { Trans, useTranslation } from 'next-i18next';
-import React from 'react';
+import { FilePdfOutlined } from "@ant-design/icons";
+import { Alert, Button } from "antd";
+import { useTranslation } from "next-i18next";
+import React from "react";
 
-const InfoAlert= () => {
-    const { t } = useTranslation()
+const InfoAlert = () => {
+    const { t } = useTranslation();
     return (
         <Alert
             type="info"
             style={{
                 marginBottom: "15px",
-                padding: "50px 25px 50px 25px"
+                padding: "50px 25px 50px 25px",
             }}
-            message={<>{t("about:alertInfo")} <a style={{whiteSpace: "pre-wrap"}} href="https://github.com/AletheiaFact/aletheia" target="_blank" rel="noreferrer">https://github.com/AletheiaFact/aletheia</a></>}
+            message={
+                <>
+                    {t("about:alertInfo")}{" "}
+                    <a
+                        style={{ whiteSpace: "pre-wrap" }}
+                        href="https://github.com/AletheiaFact/aletheia"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        https://github.com/AletheiaFact/aletheia
+                    </a>
+                </>
+            }
             action={
                 <Button
                     type="primary"
@@ -31,7 +43,7 @@ const InfoAlert= () => {
                 </Button>
             }
         />
-    )
-}
+    );
+};
 
-export default InfoAlert
+export default InfoAlert;

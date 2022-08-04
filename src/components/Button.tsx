@@ -48,9 +48,9 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
         case ButtonType.whiteBlue:
             buttonStyle = {
                 ...buttonStyle,
-                background: colors.white,
-                borderColor: colors.bluePrimary,
-                color: colors.bluePrimary,
+                background: colors.bluePrimary,
+                borderColor: colors.white,
+                color: colors.white,
             };
             break;
         case ButtonType.whiteBlack:
