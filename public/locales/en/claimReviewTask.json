@@ -11,6 +11,7 @@
     "FINISH_REPORT": "Finish Report",
     "PUBLISH": "Publish",
     "SAVE_DRAFT": "Save Draft",
+    "GO_BACK": "Go Back",
     "errorWhileFetching": "Error while fetching machine",
     "assigned": "User assigned",
     "reported": "Report finished",

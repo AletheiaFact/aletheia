@@ -4,6 +4,7 @@ enum ReviewTaskEvents {
     finishReport = "FINISH_REPORT",
     publish = "PUBLISH",
     draft = "SAVE_DRAFT",
+    goback = "GO_BACK",
 }
 
 enum ReviewTaskStates {
@@ -13,7 +14,7 @@ enum ReviewTaskStates {
     published = "published",
 }
 
-enum DraftStates {
+enum CompoundStates {
     undraft = "undraft",
     draft = "draft",
 }
@@ -30,4 +31,9 @@ enum ClassificationEnum {
     "unverifiable",
 }
 
-export { ReviewTaskEvents, ReviewTaskStates, DraftStates, ClassificationEnum };
+export {
+    ReviewTaskEvents,
+    ReviewTaskStates,
+    CompoundStates,
+    ClassificationEnum,
+};

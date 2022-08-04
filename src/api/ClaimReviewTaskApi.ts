@@ -10,10 +10,10 @@ const request = axios.create({
 const getClaimReviewTasks = (options) => {
     const params = {
         page: options.page ? options.page - 1 : 0,
-        order: options.order || 'asc',
+        order: options.order || "asc",
         pageSize: options.pageSize ? options.pageSize : 5,
         value: options.value,
-        userId: options.userId
+        userId: options.userId,
     };
 
     return request
@@ -24,8 +24,8 @@ const getClaimReviewTasks = (options) => {
             return {
                 data: tasks || [],
                 total: totalTasks,
-                totalPages
-            }
+                totalPages,
+            };
         })
         .catch((e) => {
             throw e;
@@ -44,41 +44,23 @@ const getMachineBySentenceHash = (params, t) => {
 };
 
 const createClaimReviewTask = (params, t, type) => {
-    params.machine = ParseMachineState(params.machine)
+    params.machine = ParseMachineState(params.machine);
     return request
-        .post('/', { ...params })
+        .post("/", { ...params })
         .then((response) => {
-            message.success(t(`claimReviewTask:${type}_SUCCESS`))
-            return response.data
+            message.success(t(`claimReviewTask:${type}_SUCCESS`));
+            return response.data;
         })
-        .catch(err => {
-            message.error(t(`claimReviewTask:${type}_ERROR`))
-            throw err
-        })
-}
-
-const updateClaimReviewTask = (params, t, type) => {
-    params.machine = ParseMachineState(params.machine)
-    return request
-        .put(
-            `/${params.sentence_hash}`,
-            { ...params },
-        )
-        .then((response) => {
-            message.success(t(`claimReviewTask:${type}_SUCCESS`))
-            return response.data
-        })
-        .catch(err => {
-            message.error(t(`claimReviewTask:${type}_ERROR`))
-            throw err
-        })
-}
+        .catch((err) => {
+            message.error(t(`claimReviewTask:${type}_ERROR`));
+            throw err;
+        });
+};
 
 const ClaimReviewTaskApi = {
     getMachineBySentenceHash,
     createClaimReviewTask,
-    updateClaimReviewTask,
-    getClaimReviewTasks
-}
+    getClaimReviewTasks,
+};
 
-export default ClaimReviewTaskApi
+export default ClaimReviewTaskApi;
