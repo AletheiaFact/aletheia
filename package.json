@@ -94,6 +94,7 @@
         "express-session": "^1.17.2",
         "handlebars": "^4.7.7",
         "i18next": "^21.6.10",
+        "js-cookie": "^3.0.1",
         "md5": "^2.3.0",
         "mongoose": "^  5.13.5",
         "mongoose-softdelete-typescript": "^0.0.3",

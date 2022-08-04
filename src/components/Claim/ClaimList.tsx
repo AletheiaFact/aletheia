@@ -13,6 +13,8 @@ const ClaimList = ({ personality }) => {
             apiCall={claimApi.get}
             filter={{ personality: personality._id, i18n }}
             title={t("personality:speechesListHeader")}
+            showDividers={false}
+            bluePrimary={true}
             grid={{
                 gutter: 20,
                 // sizes not declared will show 1 column (xs and sm)

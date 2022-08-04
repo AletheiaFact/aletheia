@@ -9,13 +9,24 @@ import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
 
-const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, isLoggedIn, review, sitekey }) => {
+const ClaimReviewView = ({
+    personality,
+    claim,
+    sentence,
+    href,
+    claimReviewTask,
+    isLoggedIn,
+    review,
+    sitekey,
+}) => {
     const { t } = useTranslation();
     const claimId = claim._id;
     const personalityId = personality._id;
     const sentenceHash = sentence.data_hash;
     const stats = sentence?.stats;
-    const [formCollapsed, setFormCollapsed] = useState(claimReviewTask ? false : true);
+    const [formCollapsed, setFormCollapsed] = useState(
+        claimReviewTask ? false : true
+    );
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
@@ -28,8 +39,8 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                 span={18}
                 style={{
                     background: colors.lightGray,
-                    padding: "0px 15px",
-                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)"
+                    padding: "0px 15px 20px",
+                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
                 }}
             >
                 <ClaimSentenceCard
@@ -44,44 +55,52 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                             justifyContent: "center",
                             flexWrap: "wrap",
                             width: "100%",
-                            paddingBottom: "1em"
+                            paddingBottom: "1em",
                         }}
                     >
-                        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                width: "100%",
+                                justifyContent: "center",
+                            }}
+                        >
                             <p style={{ marginBottom: 0 }}>
                                 {t("claimReview:claimReview")}&nbsp;
                             </p>
                             <ClassificationText
-                                classification={
-                                    sentence.props?.classification
-                                }
+                                classification={sentence.props?.classification}
                             />
                         </div>
                     </Row>
                 )}
                 {formCollapsed && (
-                    <Row style={{ width: "100%", padding: "0px 0px 15px 0px", justifyContent: 'space-between' }}>
+                    <Row
+                        style={{
+                            width: "100%",
+                            padding: "0px 0px 15px 0px",
+                            justifyContent: "space-between",
+                        }}
+                    >
                         {!sentence.userReview && (
                             <>
                                 <span
                                     style={{
-                                        fontSize: "14px"
+                                        fontSize: "14px",
                                     }}
                                 >
                                     {t("claim:metricsHeaderInfo", {
-                                        totalReviews: stats?.total
+                                        totalReviews: stats?.total,
                                     })}
                                 </span>{" "}
                                 <br />
                                 {review && (
                                     <span
                                         style={{
-                                            fontSize: "10px"
+                                            fontSize: "10px",
                                         }}
                                     >
-                                        {t(
-                                            "claim:cardOverallReviewPrefix"
-                                        )}{" "}
+                                        {t("claim:cardOverallReviewPrefix")}{" "}
                                         <ClassificationText
                                             classification={
                                                 review?.classification
@@ -90,7 +109,7 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                                         ({review?.count})
                                     </span>
                                 )}
-                                {!review && isLoggedIn &&
+                                {!review && isLoggedIn && (
                                     <Button
                                         type={ButtonType.blue}
                                         onClick={toggleFormCollapse}
@@ -99,12 +118,19 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                                     >
                                         {t("claimReviewForm:addReviewButton")}
                                     </Button>
-                                }
+                                )}
                             </>
                         )}
                     </Row>
                 )}
-                {!formCollapsed &&
+                <Col style={{ display: "flex", justifyContent: "center" }}>
+                    {!isLoggedIn && (
+                        <Button href="/login">
+                            {t("claimReviewForm:loginButton")}
+                        </Button>
+                    )}
+                </Col>
+                {!formCollapsed && (
                     <DynamicForm
                         sentence_hash={sentenceHash}
                         personality={personalityId}
@@ -112,11 +138,16 @@ const ClaimReviewView = ({ personality, claim, sentence, href, claimReviewTask, 
                         isLoggedIn={isLoggedIn}
                         sitekey={sitekey}
                     />
-                }
+                )}
             </Col>
-            <SocialMediaShare isLoggedIn={isLoggedIn}  quote={personality?.name} href={href} claim={claim?.title} />
+            <SocialMediaShare
+                isLoggedIn={isLoggedIn}
+                quote={personality?.name}
+                href={href}
+                claim={claim?.title}
+            />
         </>
-    )
-}
+    );
+};
 
 export default ClaimReviewView;

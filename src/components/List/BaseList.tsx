@@ -1,6 +1,7 @@
 import { Button, Col, List, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
+import colors from "../../styles/colors";
 import ClaimListSkeleton from "../../Skeleton/claim/ClaimListSkeleton";
 import HistoryListSkeleton from "../../Skeleton/history/HistoryListSkeleton";
 import KanbanListSkeleton from "../../Skeleton/kanban/KanbanListSkeleton";
@@ -18,6 +19,7 @@ const BaseList = ({
     title = "",
     grid = null,
     showDividers = true,
+    bluePrimary = false,
     type = "",
 }) => {
     const { t } = useTranslation();
@@ -102,15 +104,18 @@ const BaseList = ({
                     header={
                         <Row align="middle" justify="space-between">
                             <Col>
-                                <Row>
-                                    <span
-                                        style={{
-                                            fontSize: 24,
-                                        }}
-                                    >
-                                        {title}
-                                    </span>
-                                </Row>
+                                <h2
+                                    style={{
+                                        fontSize: "24px",
+                                        lineHeight: "32px",
+                                        color: bluePrimary
+                                            ? colors.bluePrimary
+                                            : colors.blackPrimary,
+                                        marginBottom: 0,
+                                    }}
+                                >
+                                    {title}
+                                </h2>
 
                                 {t("list:totalItems", {
                                     total: totalItems,
@@ -135,6 +140,9 @@ const BaseList = ({
                     style={{
                         textAlign: "center",
                         display: "block",
+                        fontSize: "14px",
+                        lineHeight: "22px",
+                        color: colors.blackSecondary,
                         marginBottom: "20px",
                     }}
                 >

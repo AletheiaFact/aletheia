@@ -29,11 +29,9 @@ const SentenceReportView = ({
         margin: "10px 0px",
         width: "100%",
         fontWeight: 400,
-        fontSize: "18px",
+        fontSize: "16px",
         lineHeight: "30px",
     };
-
-   
 
     return (
         <SentenceReportViewStyle>
@@ -71,9 +69,16 @@ const SentenceReportView = ({
                                 borderBottom: "1px solid #dfdfdf",
                             }}
                         >
-                            <Typography.Title level={3}>
+                            <Paragraph
+                                style={{
+                                    fontSize: "16px",
+                                    lineHeight: "24px",
+                                    fontWeight: 700,
+                                    textTransform: "uppercase",
+                                }}
+                            >
                                 {t("claimReview:firstParagraphTittle")}
-                            </Typography.Title>
+                            </Paragraph>
                             <Paragraph style={paragraphStyle}>
                                 {summary}
                             </Paragraph>
@@ -87,9 +92,16 @@ const SentenceReportView = ({
                                 borderBottom: "1px solid #dfdfdf",
                             }}
                         >
-                            <Typography.Title level={3}>
+                            <Paragraph
+                                style={{
+                                    fontSize: "16px",
+                                    lineHeight: "24px",
+                                    fontWeight: 700,
+                                    textTransform: "uppercase",
+                                }}
+                            >
                                 {t("claimReview:secondParagraphTittle")}
-                            </Typography.Title>
+                            </Paragraph>
                             {questions.map((item) => {
                                 return (
                                     <li key={item} style={paragraphStyle}>
@@ -105,9 +117,16 @@ const SentenceReportView = ({
                                 borderBottom: "1px solid #dfdfdf",
                             }}
                         >
-                            <Typography.Title level={3}>
+                            <Paragraph
+                                style={{
+                                    fontSize: "16px",
+                                    lineHeight: "24px",
+                                    fontWeight: 700,
+                                    textTransform: "uppercase",
+                                }}
+                            >
                                 {t("claimReview:thirdParagraphTittle")}
-                            </Typography.Title>
+                            </Paragraph>
                             <Paragraph style={paragraphStyle}>
                                 {report}
                             </Paragraph>
@@ -119,9 +138,16 @@ const SentenceReportView = ({
                                 borderBottom: "1px solid #dfdfdf",
                             }}
                         >
-                            <Typography.Title level={3}>
+                            <Paragraph
+                                style={{
+                                    fontSize: "16px",
+                                    lineHeight: "24px",
+                                    fontWeight: 700,
+                                    textTransform: "uppercase",
+                                }}
+                            >
                                 {t("claimReview:fourthParagraphTittle")}
-                            </Typography.Title>
+                            </Paragraph>
                             <Paragraph style={paragraphStyle}>
                                 {verification}
                             </Paragraph>
@@ -136,12 +162,16 @@ const SentenceReportView = ({
                                 width: "100%",
                             }}
                         >
-                            <Typography.Title
-                                style={{ width: "100%" }}
-                                level={3}
+                            <Paragraph
+                                style={{
+                                    fontSize: "16px",
+                                    lineHeight: "24px",
+                                    fontWeight: 700,
+                                    textTransform: "uppercase",
+                                }}
                             >
                                 {t("claim:sourceSectionTitle")}
-                            </Typography.Title>
+                            </Paragraph>
                             {sources && (
                                 <>
                                     {sources.slice(0, 6).map((link) => {
@@ -224,7 +254,7 @@ const SentenceReportView = ({
                                         marginBottom: "10px",
                                     }}
                                     type={ButtonType.blue}
-                                    href={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
+                                    href={`/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence.data_hash}/sources`}
                                 >
                                     <Title
                                         level={4}

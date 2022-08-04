@@ -4,7 +4,11 @@ import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import { initialContext } from "../../../machine/context";
 import { createNewMachineService } from "../../../machine/reviewTaskMachine";
-import { ReviewTaskEvents, ReviewTaskStates } from "../../../machine/enums";
+import {
+    ClassificationEnum,
+    ReviewTaskEvents,
+    ReviewTaskStates,
+} from "../../../machine/enums";
 import AletheiaButton, { ButtonType } from "../../Button";
 import colors from "../../../styles/colors";
 import DynamicInput from "../form/DynamicInput";
@@ -33,7 +37,6 @@ const DynamicForm = ({
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
     const [recaptchaString, setRecaptchaString] = useState("");
-    const [showSaveDraft, setShowSaveDraft] = useState(true);
     const { t } = useTranslation();
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
@@ -59,27 +62,32 @@ const DynamicForm = ({
         ) {
             setDefaultValuesOfCurrentForm(machine, assignedForm);
             setCurrentForm(assignedForm);
-            setNextEvents([ReviewTaskEvents.finishReport]);
-            setShowSaveDraft(true);
+            setNextEvents([
+                ReviewTaskEvents.goback,
+                ReviewTaskEvents.draft,
+                ReviewTaskEvents.finishReport,
+            ]);
         } else if (
             param === ReviewTaskStates.reported ||
             param === ReviewTaskEvents.finishReport
         ) {
             setDefaultValuesOfCurrentForm(machine, reportedForm);
             setCurrentForm(reportedForm);
-            setNextEvents([ReviewTaskEvents.publish]);
-            setShowSaveDraft(true);
+            setNextEvents([
+                ReviewTaskEvents.goback,
+                ReviewTaskEvents.draft,
+                ReviewTaskEvents.publish,
+            ]);
         } else if (
             param === ReviewTaskStates.published ||
             param === ReviewTaskEvents.publish
         ) {
             setCurrentForm([]);
             setNextEvents([]);
-            setShowSaveDraft(false);
         } else if (param !== ReviewTaskEvents.draft) {
+            setDefaultValuesOfCurrentForm(machine, unassignedForm);
             setCurrentForm(unassignedForm);
             setNextEvents([ReviewTaskEvents.assignUser]);
-            setShowSaveDraft(false);
         }
     };
 
@@ -172,9 +180,23 @@ const DynamicForm = ({
         recaptchaRef.current?.resetRecaptcha();
     };
 
+    /**
+     * Verify if classification exists and is a valid type
+     * Send Event and data to state machine
+     * Reset recaptcha
+     * @param data data from form
+     * @param e event
+     */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        sendEventToMachine(data, event);
+        if (
+            data?.classification &&
+            Object.values(ClassificationEnum).includes(data.classification)
+        ) {
+            sendEventToMachine(data, event);
+        } else if (!data?.classification) {
+            sendEventToMachine(data, event);
+        }
     };
 
     const onClickSaveDraft = () => {
@@ -182,51 +204,62 @@ const DynamicForm = ({
         sendEventToMachine(values, ReviewTaskEvents.draft);
     };
 
+    const onClickGoBack = () => {
+        sendEventToMachine({}, ReviewTaskEvents.goback);
+    };
+
     return (
-        <>
-            <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
-                {formInputs && (
-                    <>
-                        {formInputs}
-                        {currentForm?.length > 0 && (
-                            <AletheiaCaptcha
-                                onChange={setRecaptchaString}
-                                sitekey={sitekey}
-                                ref={recaptchaRef}
-                            />
-                        )}
-                    </>
-                )}
-                <Row>
-                    {showSaveDraft && (
-                        <AletheiaButton
-                            type={ButtonType.blue}
-                            style={{ margin: 20 }}
-                            disabled={!hasCaptcha}
-                            onClick={onClickSaveDraft}
-                            data-cy={`testClaimReview${ReviewTaskEvents.draft}`}
-                        >
-                            {t(`claimReviewTask:${ReviewTaskEvents.draft}`)}
-                        </AletheiaButton>
+        <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
+            {formInputs && (
+                <>
+                    {formInputs}
+                    {currentForm?.length > 0 && (
+                        <AletheiaCaptcha
+                            onChange={setRecaptchaString}
+                            sitekey={sitekey}
+                            ref={recaptchaRef}
+                        />
                     )}
-                    {nextEvents?.map((event) => {
-                        return (
-                            <AletheiaButton
-                                key={event}
-                                type={ButtonType.blue}
-                                htmlType="submit"
-                                event={event}
-                                style={{ margin: 20 }}
-                                disabled={!hasCaptcha}
-                                data-cy={`testClaimReview${event}`}
-                            >
-                                {t(`claimReviewTask:${event}`)}
-                            </AletheiaButton>
-                        );
-                    })}
-                </Row>
-            </form>
-        </>
+                </>
+            )}
+            <Row
+                style={{
+                    padding: "32px 0 0",
+                    justifyContent: "space-evenly",
+                }}
+            >
+                {nextEvents?.map((event) => {
+                    return (
+                        <AletheiaButton
+                            key={event}
+                            type={ButtonType.blue}
+                            htmlType={
+                                event === ReviewTaskEvents.goback ||
+                                event === ReviewTaskEvents.draft
+                                    ? "button"
+                                    : "submit"
+                            }
+                            onClick={
+                                event === ReviewTaskEvents.goback
+                                    ? onClickGoBack
+                                    : event === ReviewTaskEvents.draft
+                                    ? onClickSaveDraft
+                                    : () => {}
+                            }
+                            event={event}
+                            disabled={
+                                event === ReviewTaskEvents.goback
+                                    ? false
+                                    : !hasCaptcha
+                            }
+                            data-cy={`testClaimReview${event}`}
+                        >
+                            {t(`claimReviewTask:${event}`)}
+                        </AletheiaButton>
+                    );
+                })}
+            </Row>
+        </form>
     );
 };
 

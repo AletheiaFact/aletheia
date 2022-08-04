@@ -1,20 +1,9 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
 import * as mongoose from "mongoose";
 import { User } from "../../users/schemas/user.schema";
 
 export type ReportDocument = Report & mongoose.Document;
-
-export enum ClassificationEnum {
-    "not-fact",
-    "true",
-    "true-but",
-    "arguable",
-    "misleading",
-    "false",
-    "unsustainable",
-    "exaggerated",
-    "unverifiable",
-}
 
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Report {
@@ -30,7 +19,7 @@ export class Report {
 
     @Prop({ required: true })
     summary: string;
-    
+
     @Prop({ required: true })
     questions: string[];
 
@@ -45,34 +34,17 @@ export class Report {
 
     @Prop({
         required: true,
-        validate: {
-            validator: (v) => {
-                return (
-                    [
-                        "not-fact",
-                        "true",
-                        "true-but",
-                        "arguable",
-                        "misleading",
-                        "false",
-                        "unsustainable",
-                        "exaggerated",
-                        "unverifiable",
-                    ].indexOf(v) !== -1
-                );
-            },
-        },
-        message: (tag) => `${tag} is not a valid classification.`,
+        enum: ClassificationEnum,
     })
     classification: string;
 }
 
 const ReportSchemaRaw = SchemaFactory.createForClass(Report);
 
-ReportSchemaRaw.virtual('reviews', {
-    ref: 'ClaimReview',
-    localField: '_id',
-    foreignField: 'report'
-})
+ReportSchemaRaw.virtual("reviews", {
+    ref: "ClaimReview",
+    localField: "_id",
+    foreignField: "report",
+});
 
 export const ReportSchema = ReportSchemaRaw;

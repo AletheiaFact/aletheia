@@ -4,7 +4,7 @@ import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
 import { saveContext } from "./actions";
-import { DraftStates, ReviewTaskEvents, ReviewTaskStates } from "./enums";
+import { CompoundStates, ReviewTaskEvents, ReviewTaskStates } from "./enums";
 
 export const createNewMachine = ({ value, context }) => {
     return createMachine<
@@ -24,26 +24,29 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             assigned: {
-                initial: DraftStates.undraft,
+                initial: CompoundStates.undraft,
                 states: {
                     undraft: {
                         on: {
                             SAVE_DRAFT: {
-                                target: DraftStates.draft,
-                                actions: [saveContext]
-                            }
-                        }
+                                target: CompoundStates.draft,
+                                actions: [saveContext],
+                            },
+                        },
                     },
                     draft: {
                         on: {
                             SAVE_DRAFT: {
-                                target: DraftStates.draft,
+                                target: CompoundStates.draft,
                                 actions: [saveContext],
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 on: {
+                    GO_BACK: {
+                        target: ReviewTaskStates.unassigned,
+                    },
                     FINISH_REPORT: {
                         target: ReviewTaskStates.reported,
                         actions: [saveContext],
@@ -51,26 +54,30 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             reported: {
-                initial: DraftStates.undraft,
+                initial: CompoundStates.undraft,
                 states: {
                     undraft: {
                         on: {
                             SAVE_DRAFT: {
-                                target: DraftStates.draft,
-                                actions: [saveContext]
-                            }
-                        }
+                                target: CompoundStates.draft,
+                                actions: [saveContext],
+                            },
+                        },
                     },
                     draft: {
                         on: {
                             SAVE_DRAFT: {
-                                target: DraftStates.draft,
+                                target: CompoundStates.draft,
                                 actions: [saveContext],
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
                 on: {
+                    GO_BACK: {
+                        target: ReviewTaskStates.assigned,
+                    },
+
                     PUBLISH: {
                         target: ReviewTaskStates.published,
                         actions: [saveContext],
@@ -82,36 +89,30 @@ export const createNewMachine = ({ value, context }) => {
             },
         },
     });
-}
+};
 
 export const transitionHandler = (state) => {
     const sentence_hash = state.event.sentence_hash;
     const t = state.event.t;
     const event = state.event.type;
     const recaptcha = state.event.recaptchaString;
-    const setCurrentFormAndNextEvents = state.event.setCurrentFormAndNextEvents
+    const setCurrentFormAndNextEvents = state.event.setCurrentFormAndNextEvents;
 
-    if (event === ReviewTaskEvents.assignUser) {
+    if (event !== ReviewTaskEvents.init && event !== ReviewTaskEvents.goback) {
         api.createClaimReviewTask(
             { sentence_hash, machine: state, recaptcha },
             t,
-            event,
-        )
-            .then(() => setCurrentFormAndNextEvents(event))
-            .catch((e) => e)
-    } else if (event !== ReviewTaskEvents.init) {
-        api.updateClaimReviewTask(
-            { sentence_hash, machine: state, recaptcha },
-            t,
-            event,
+            event
         )
             .then(() => {
-                setCurrentFormAndNextEvents(event)
-                if(event === ReviewTaskEvents.publish) {
-                    window.location.reload()
+                setCurrentFormAndNextEvents(event);
+                if (event === ReviewTaskEvents.publish) {
+                    window.location.reload();
                 }
             })
-            .catch((e) => e)
+            .catch((e) => e);
+    } else if (event === ReviewTaskEvents.goback) {
+        setCurrentFormAndNextEvents(Object.keys(state.value)[0], state);
     }
 };
 
@@ -119,4 +120,4 @@ export const createNewMachineService = (machine: any) => {
     return interpret(createNewMachine(machine))
         .onTransition(transitionHandler)
         .start();
-}
+};

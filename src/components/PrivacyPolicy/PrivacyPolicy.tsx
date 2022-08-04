@@ -8,7 +8,7 @@ import Paragraph from "../Paragraph";
 
 const { Title } = Typography;
 
-const PrivacyPolicy = () =>{
+const PrivacyPolicy = () => {
     const { t } = useTranslation();
     return (
         <Row
@@ -18,8 +18,8 @@ const PrivacyPolicy = () =>{
                 width: "100%",
                 fontSize: "1rem",
                 letterSpacing: "1px",
-                fontWeight: 500,
-                padding: "20px"
+                fontWeight: 600,
+                padding: "20px",
             }}
         >
             <Title level={1}>{t("privacyPolicy:title")}</Title>
@@ -49,26 +49,56 @@ const PrivacyPolicy = () =>{
             <Collapse
                 style={{
                     width: "100%",
-                    margin: "15px 0px"
+                    margin: "15px 0px",
                 }}
             >
-                <Collapse.Panel header={t("privacyPolicy:trackingToolsPanelRecaptchaHeader")} key={1}>
+                <Collapse.Panel
+                    header={t(
+                        "privacyPolicy:trackingToolsPanelRecaptchaHeader"
+                    )}
+                    key={1}
+                >
                     <Trans
-                        i18nKey={"privacyPolicy:trackingToolsPanelReCaptchaContent"}
+                        i18nKey={
+                            "privacyPolicy:trackingToolsPanelReCaptchaContent"
+                        }
                         components={[
-                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/privacy?hl=en" target="_blank" rel="noreferrer"></a>,
-                            <a style={{whiteSpace: "pre-wrap"}} href="https://policies.google.com/terms?hl=en" target="_blank" rel="noreferrer"></a>
+                            <a
+                                style={{ whiteSpace: "pre-wrap" }}
+                                href="https://policies.google.com/privacy?hl=en"
+                                target="_blank"
+                                rel="noreferrer"
+                            ></a>,
+                            <a
+                                style={{ whiteSpace: "pre-wrap" }}
+                                href="https://policies.google.com/terms?hl=en"
+                                target="_blank"
+                                rel="noreferrer"
+                            ></a>,
                         ]}
                     />
                 </Collapse.Panel>
-                <Collapse.Panel header={t("privacyPolicy:trackingToolsPanelSessionCookiesHeader")} key={2}>
+                <Collapse.Panel
+                    header={t(
+                        "privacyPolicy:trackingToolsPanelSessionCookiesHeader"
+                    )}
+                    key={2}
+                >
                     {t("privacyPolicy:trackingToolsPanelSessionCookiesContent")}
                 </Collapse.Panel>
-                <Collapse.Panel header={t("privacyPolicy:trackingToolsPanelUmamiHeader")} key={3}>
+                <Collapse.Panel
+                    header={t("privacyPolicy:trackingToolsPanelUmamiHeader")}
+                    key={3}
+                >
                     <Trans
                         i18nKey={"privacyPolicy:trackingToolsPanelUmamiContent"}
                         components={[
-                            <a style={{whiteSpace: "pre-wrap"}} href="https://umami.is/" target="_blank" rel="noreferrer"></a>,
+                            <a
+                                style={{ whiteSpace: "pre-wrap" }}
+                                href="https://umami.is/"
+                                target="_blank"
+                                rel="noreferrer"
+                            ></a>,
                             <h3 style={{ marginTop: "10px" }}></h3>,
                             <h3 style={{ marginTop: "10px" }}></h3>,
                         ]}
@@ -88,13 +118,18 @@ const PrivacyPolicy = () =>{
             <Subtitle>{t("privacyPolicy:subTitleContact")}</Subtitle>
             <Trans
                 i18nKey={"privacyPolicy:contact"}
-                values={{ email: t("common:contactEmail")}}
+                values={{ email: t("common:contactEmail") }}
                 components={[
-                    <a style={{whiteSpace: "pre-wrap"}} href={`mailto:${t("common:contactEmail")}`} target="_blank" rel="noreferrer"></a>,
+                    <a
+                        style={{ whiteSpace: "pre-wrap" }}
+                        href={`mailto:${t("common:contactEmail")}`}
+                        target="_blank"
+                        rel="noreferrer"
+                    ></a>,
                 ]}
             />
         </Row>
-    )
-}
+    );
+};
 
 export default PrivacyPolicy;

@@ -13,56 +13,54 @@ const ReviewProgress = ({ reviews, statsProps }) => {
             strokeWidth: statsProps.strokeWidth || 18,
             width: statsProps.width || 80,
             strokeLinecap: statsProps.type === "circle" ? "square" : "round",
-            trailColor: colors.grayTertiary
+            trailColor: colors.grayTertiary,
         };
 
         return {
             ...defaultStyle,
-            strokeColor: StatsReviewColors[reviewId] || "#000"
+            strokeColor: StatsReviewColors[reviewId] || "#000",
         };
-    }
-    
-    return (
-        reviews.map(review => {
-            const format =
-                statsProps.format === "count"
-                    ? () => review.count
-                    : null;
-            return (
-                <div
-                    style={statsProps.type === "circle" ? {
-                        display: "flex",
-                        flexDirection: "column-reverse",
-                        alignItems: "center",
-                        paddingRight: "10px"
-                    } : {}}
-                    key={review._id}
+    };
+
+    return reviews.map((review) => {
+        const format =
+            statsProps.format === "count" ? () => review.count : null;
+        return (
+            <div
+                style={
+                    statsProps.type === "circle"
+                        ? {
+                              display: "flex",
+                              flexDirection: "column-reverse",
+                              alignItems: "center",
+                              paddingRight: "10px",
+                          }
+                        : {}
+                }
+                key={review._id}
+            >
+                <span
+                    style={{
+                        color: ReviewColors[review._id] || "#000",
+                        fontWeight: "700",
+                        textTransform: "uppercase",
+                        textAlign: "center",
+                        fontSize: "10px",
+                        marginTop: "5px",
+                    }}
                 >
-                    <span
-                        style={{
-                            color:
-                                ReviewColors[review._id] || "#000",
-                            fontWeight: "bold",
-                            textTransform: "uppercase",
-                            textAlign: "center",
-                            fontSize: "10px",
-                            marginTop: "5px"
-                        }}
-                    >
-                        {statsProps.countInTitle &&
-                            `${review.count} `}
-                        {t(`claimReviewForm:${review._id}`)}
-                    </span>
-                    <Progress
-                        percent={review.percentage}
-                        type={statsProps.type}
-                        format={format}
-                        {...getStyle(review._id)}
-                    />
-                </div>
-            );
-        })
-    )
-}
+                    {statsProps.countInTitle && `${review.count} `}
+                    {t(`claimReviewForm:${review._id}`)}
+                </span>
+                <Progress
+                    percent={review.percentage}
+                    type={statsProps.type}
+                    format={format}
+                    {...getStyle(review._id)}
+                />
+            </div>
+        );
+    });
+};
 
 export default ReviewProgress;

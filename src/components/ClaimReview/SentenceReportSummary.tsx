@@ -1,13 +1,13 @@
-import {Row} from "antd";
+import { Row } from "antd";
 import colors from "../../styles/colors";
 import styled from "styled-components";
 
 const SentenceReportSummary = styled(Row)`
     position: relative;
     background: ${colors.lightGray};
-    display:flex;
-    padding: 20px 20px 20px 20px;
-    border-radius:10px;
+    display: flex;
+    padding: 16px 24px;
+    border-radius: 10px;
     background-color: ${colors.lightYellow};
 
     &:after {
@@ -23,7 +23,7 @@ const SentenceReportSummary = styled(Row)`
         border-bottom-color: ${colors.lightYellow};
     }
 
-    @media (max-width: 767px) {             
+    @media (max-width: 767px) {
         &:after {
             display: none;
         }

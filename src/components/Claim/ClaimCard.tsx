@@ -1,4 +1,4 @@
-import { Avatar, Col, Comment, Row, Typography } from "antd";
+import { Col, Comment, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";
@@ -7,39 +7,42 @@ import ClaimSummary from "./ClaimSummary";
 import Button, { ButtonType } from "../Button";
 import ClaimCardHeader from "./ClaimCardHeader";
 import colors from "../../styles/colors";
+import styled from "styled-components";
 
-const { Paragraph, Title } = Typography;
+const { Paragraph } = Typography;
+
+const CommentStyled = styled(Comment)`
+    .ant-comment-inner {
+        padding: 0;
+    }
+`;
 
 const ClaimCard = ({ personality, claim }) => {
     const { t } = useTranslation();
     const review = claim?.stats?.reviews[0];
-    const [ claimContent, setClaimContent ] = useState("")
-    
+    const [claimContent, setClaimContent] = useState("");
+
     const CreateFirstParagraph = () => {
         let textContent = "";
         claim.content.forEach((paragraph) => {
             paragraph.content.forEach((sentence) => {
-                return textContent += sentence.content
-            })
-        })
-        setClaimContent(textContent)
-    }
+                return (textContent += sentence.content);
+            });
+        });
+        setClaimContent(textContent);
+    };
 
     useEffect(() => {
-        CreateFirstParagraph()
-    }, [])
+        CreateFirstParagraph();
+    }, []);
 
     if (!claim) {
         return <div></div>;
     }
     return (
-        <CardBase>
-            <Row style={{ width: '100%' }}>
-                <Comment
-                    style={{
-                        padding: "15px 15px 0px 15px",
-                        width: '100%'
-                    }}
+        <CardBase style={{ padding: "16px 12px" }}>
+            <Row>
+                <CommentStyled
                     author={
                         <ClaimCardHeader
                             personality={personality}
@@ -47,36 +50,32 @@ const ClaimCard = ({ personality, claim }) => {
                             claimType={claim?.type}
                         />
                     }
-                    avatar={
-                        <Avatar
-                            src={personality.image}
-                            alt={personality.name}
-                        />
-                    }
                     content={
                         <ClaimSummary
                             style={{
-                                padding: "15px",
-                                width: "100%"
+                                padding: "12px 16px",
+                                width: "100%",
                             }}
                         >
                             <Col>
                                 <Paragraph
+                                    style={{ marginBottom: 0 }}
                                     ellipsis={{
                                         rows: 4,
-                                        expandable: false
+                                        expandable: false,
                                     }}
                                 >
                                     <cite style={{ fontStyle: "normal" }}>
                                         <p
                                             style={{
-                                                fontSize: 14,
+                                                fontSize: 16,
                                                 color: colors.blackPrimary,
                                                 fontWeight: 400,
                                                 margin: 0,
                                                 lineHeight: 1.6,
-                                                height: '6.4em'
-                                            }}>
+                                                height: "6.4em",
+                                            }}
+                                        >
                                             {claimContent || claim?.title}
                                         </p>
                                     </cite>
@@ -84,9 +83,10 @@ const ClaimCard = ({ personality, claim }) => {
                                 <a
                                     href={`/personality/${personality.slug}/claim/${claim.slug}`}
                                     style={{
+                                        fontSize: 14,
                                         color: colors.bluePrimary,
-                                        fontWeight: 'bold',
-                                        textDecoration: "underline"
+                                        fontWeight: "bold",
+                                        textDecoration: "underline",
                                     }}
                                     data-cy={"testSeeFullSpeech"}
                                 >
@@ -94,14 +94,13 @@ const ClaimCard = ({ personality, claim }) => {
                                 </a>
                             </Col>
                         </ClaimSummary>
-
                     }
                 />
             </Row>
             <Row
                 style={{
-                    padding: "0px 15px 15px 15px",
-                    width: "100%"
+                    padding: "4px 15px 0 0",
+                    width: "100%",
                 }}
                 justify="space-between"
             >
@@ -114,47 +113,43 @@ const ClaimCard = ({ personality, claim }) => {
                 >
                     <p
                         style={{
-                            width: '100%',
+                            width: "100%",
                             fontSize: "14px",
+                            lineHeight: "18px",
+                            color: colors.blackSecondary,
                             margin: 0,
                         }}
                     >
                         {t("claim:metricsHeaderInfo", {
-                            totalReviews: claim
-                                ?.stats?.total
+                            totalReviews: claim?.stats?.total,
                         })}
                     </p>{" "}
                     <Paragraph
                         style={{
                             fontSize: "10px",
+                            lineHeight: "18px",
                             marginTop: 5,
                             marginBottom: 0,
-                            display: 'flex'
+                            display: "flex",
                         }}
                     >
-                        {review && <span style={{ margin: 0 }}>
-                            {t(
-                                "claim:cardOverallReviewPrefix"
-                            )}
-
-                            <span
-                                style={{
-                                    color:
-                                        ReviewColors[
-                                        review?._id
-                                        ] || "#000",
-                                    fontWeight: "bold",
-                                    textTransform:
-                                        "uppercase",
-                                    margin: '0px 3px'
-                                }}
-                            >
-                                {t(
-                                    `claimReviewForm:${review?._id}`
-                                )}
+                        {review && (
+                            <span style={{ margin: 0 }}>
+                                {t("claim:cardOverallReviewPrefix")}
+                                <span
+                                    style={{
+                                        color:
+                                            ReviewColors[review?._id] || "#000",
+                                        fontWeight: 900,
+                                        textTransform: "uppercase",
+                                        margin: "0px 3px",
+                                    }}
+                                >
+                                    {t(`claimReviewForm:${review?._id}`)}
+                                </span>
+                                ({0})
                             </span>
-                            ({0})
-                        </span>}
+                        )}
                     </Paragraph>
                 </Col>
                 <Col>
@@ -163,24 +158,23 @@ const ClaimCard = ({ personality, claim }) => {
                         href={`/personality/${personality.slug}/claim/${claim.slug}`}
                         data-cy={personality.name}
                     >
-                        <Title
-                            level={4}
+                        <span
                             style={{
                                 color: colors.white,
-                                fontSize: 14,
+                                fontSize: 16,
                                 fontWeight: 400,
                                 margin: 0,
                                 padding: 0,
-                                lineHeight: '32px',
+                                lineHeight: "24px",
                             }}
                         >
                             {t("claim:cardReviewButton")}
-                        </Title>
+                        </span>
                     </Button>
                 </Col>
             </Row>
         </CardBase>
     );
-}
+};
 
 export default ClaimCard;

@@ -45,6 +45,7 @@ const HomeCarouselStyle = styled(Row)`
 
     .number-stats {
         font-size: 40px;
+        line-height: 55px;
     }
 
     .title-stats {
@@ -86,7 +87,6 @@ const HomeCarouselStyle = styled(Row)`
             max-width: 75%;
         }
     }
-
 
     @media (max-width: 900px) {
         .carousel-container {
@@ -199,6 +199,6 @@ const HomeCarouselStyle = styled(Row)`
             width: 150px;
         }
     }
-`
+`;
 
-export default HomeCarouselStyle
+export default HomeCarouselStyle;
