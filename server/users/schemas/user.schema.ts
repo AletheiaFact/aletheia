@@ -16,6 +16,9 @@ export class User {
     @Prop({ required: true, unique: true })
     oryId: string;
 
+    @Prop({ required: true })
+    role: string;
+
     @Prop({ required: true, default: false })
     firstPasswordChanged: boolean;
 }
