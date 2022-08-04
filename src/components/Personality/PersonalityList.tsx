@@ -6,6 +6,7 @@ import PersonalityCreateCTA from "./PersonalityCreateCTA";
 import BaseList from "../List/BaseList";
 import { useTranslation } from "next-i18next";
 import { NextSeo } from "next-seo";
+import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 
 const PersonalityList = () => {
     const { i18n, t } = useTranslation();
@@ -42,7 +43,7 @@ const PersonalityList = () => {
                     )
                 }
                 footer={createPersonalityCTA}
-                type="personality"
+                skeleton={<PersonalitySkeleton />}
             />
         </>
     );

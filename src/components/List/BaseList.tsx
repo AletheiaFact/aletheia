@@ -1,11 +1,8 @@
-import { Button, Col, List, Row } from "antd";
+import { Button, Col, List, Row, Spin } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import colors from "../../styles/colors";
-import ClaimListSkeleton from "../../Skeleton/claim/ClaimListSkeleton";
-import HistoryListSkeleton from "../../Skeleton/history/HistoryListSkeleton";
-import KanbanListSkeleton from "../../Skeleton/kanban/KanbanListSkeleton";
-import PersonalityListSkeleton from "../../Skeleton/personality/PersonalityListSkeleton";
+import SkeletonList from "../Skeleton/SkeletonList";
 
 import SortByButton from "./SortByButton";
 
@@ -20,7 +17,7 @@ const BaseList = ({
     grid = null,
     showDividers = true,
     bluePrimary = false,
-    type = "",
+    skeleton = null,
 }) => {
     const { t } = useTranslation();
 
@@ -157,13 +154,19 @@ const BaseList = ({
         if (initLoading) {
             return (
                 <>
-                    {type === "claim" && <ClaimListSkeleton />}
-
-                    {type === "kanban" && <KanbanListSkeleton />}
-
-                    {type === "history" && <HistoryListSkeleton />}
-
-                    {type === "personality" && <PersonalityListSkeleton />}
+                    {skeleton ? (
+                        <SkeletonList listItem={skeleton} repeat={4} />
+                    ) : (
+                        <Spin
+                            tip={t("global:loading")}
+                            style={{
+                                textAlign: "center",
+                                position: "absolute",
+                                top: "50%",
+                                left: "calc(50% - 40px)",
+                            }}
+                        />
+                    )}
                 </>
             );
         } else {

@@ -3,6 +3,7 @@ import React from "react";
 
 import claimApi from "../../api/claim";
 import BaseList from "../List/BaseList";
+import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import ClaimCard from "./ClaimCard";
 
 const ClaimList = ({ personality }) => {
@@ -32,7 +33,7 @@ const ClaimList = ({ personality }) => {
                     />
                 )
             }
-            type="claim"
+            skeleton={<ClaimSkeleton />}
         />
     );
 };

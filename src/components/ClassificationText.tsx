@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 
 const ClassificationText = (props: {
     classification: string;
-    style: object;
+    style?: object;
 }) => {
     const { t } = useTranslation();
 

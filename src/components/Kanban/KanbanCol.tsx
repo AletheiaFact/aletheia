@@ -3,6 +3,7 @@ import React from "react";
 
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
 import { ReviewTaskStates } from "../../machine/enums";
+import KanbanSkeleton from "../Skeleton/KanbanSkeleton";
 import colors from "../../styles/colors";
 import BaseList from "../List/BaseList";
 import EmptyKanbanCol from "./EmptyKanbanCol";
@@ -32,7 +33,7 @@ const KanbanCol = ({ state }: KanbanColProps) => {
                     <EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />
                 }
                 showDividers={false}
-                type="kanban"
+                skeleton={<KanbanSkeleton />}
             />
         </div>
     );
