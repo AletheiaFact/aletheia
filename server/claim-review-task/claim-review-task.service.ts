@@ -16,8 +16,8 @@ export class ClaimReviewTaskService {
         @InjectModel(ClaimReviewTask.name)
         private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
-        private reportService: ReportService,
-    ) { }
+        private reportService: ReportService
+    ) {}
 
     async listAll(page, pageSize, order, value) {
         const reviewTasks = await this.ClaimReviewTaskModel.find({
@@ -34,18 +34,17 @@ export class ClaimReviewTaskService {
             .populate({
                 path: "machine.context.claimReview.personality",
                 model: "Personality",
-                select: "slug name"
+                select: "slug name",
             })
             .populate({
                 path: "machine.context.claimReview.claim",
                 model: "Claim",
                 populate: {
                     path: "latestRevision",
-                    select: "title"
+                    select: "title",
                 },
-                select: "slug"
-            })
-
+                select: "slug",
+            });
 
         return reviewTasks.map(({ sentence_hash, machine }) => {
             const { personality, claim } = machine.context.claimReview;
@@ -57,7 +56,7 @@ export class ClaimReviewTaskService {
                 value: machine.value,
                 personalityName: personality.name,
                 claimTitle: claim.latestRevision.title,
-                reviewHref
+                reviewHref,
             };
         });
     }
@@ -67,14 +66,26 @@ export class ClaimReviewTaskService {
     }
 
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
-        claimReviewTaskBody.machine.context.reviewData.userId = Types.ObjectId(
-            claimReviewTaskBody.machine.context.reviewData.userId
+        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
+            claimReviewTaskBody.sentence_hash
         );
-        const newClaimReviewTask = new this.ClaimReviewTaskModel(
-            claimReviewTaskBody
-        );
-        newClaimReviewTask.save();
-        return newClaimReviewTask;
+
+        if (claimReviewTask) {
+            return this.update(
+                claimReviewTaskBody.sentence_hash,
+                claimReviewTaskBody
+            );
+        } else {
+            claimReviewTaskBody.machine.context.reviewData.userId =
+                Types.ObjectId(
+                    claimReviewTaskBody.machine.context.reviewData.userId
+                );
+            const newClaimReviewTask = new this.ClaimReviewTaskModel(
+                claimReviewTaskBody
+            );
+            newClaimReviewTask.save();
+            return newClaimReviewTask;
+        }
     }
 
     async update(
@@ -133,6 +144,6 @@ export class ClaimReviewTaskService {
     }
 
     count(query: any = {}) {
-        return this.ClaimReviewTaskModel.countDocuments().where(query)
+        return this.ClaimReviewTaskModel.countDocuments().where(query);
     }
 }
