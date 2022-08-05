@@ -123,21 +123,12 @@ export class ClaimController {
                     sentence_hash
                 ),
             ]).then(([stats, claimObj, userReview]) => {
-                let sentenceObj;
-
-                claimObj.content.forEach((p) => {
-                    p.content.forEach((sentence) => {
-                        if (sentence.data_hash === sentence_hash) {
-                            sentenceObj = sentence;
-                        }
-                    });
-                });
                 return {
                     userReview,
                     date: claimObj.date,
                     personality: claimObj.personality,
                     stats,
-                    ...sentenceObj,
+                    ...sentence.toObject(),
                 };
             });
         } else {
