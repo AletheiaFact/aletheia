@@ -1,7 +1,9 @@
+import { LoadingOutlined } from "@ant-design/icons";
 import { Button, Col, List, Row, Spin } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import colors from "../../styles/colors";
+import SkeletonList from "../Skeleton/SkeletonList";
 
 import SortByButton from "./SortByButton";
 
@@ -16,6 +18,7 @@ const BaseList = ({
     grid = null,
     showDividers = true,
     bluePrimary = false,
+    skeleton = null,
 }) => {
     const { t } = useTranslation();
 
@@ -27,6 +30,17 @@ const BaseList = ({
     const [sortByOrder] = useState("asc");
     const [execLoadMore, setExecLoadMore] = useState<boolean>(true);
 
+    const loadingIcon = (
+        <LoadingOutlined
+            spin
+            style={{ fontSize: 48, color: colors.bluePrimary }}
+        />
+    );
+    const loadingProps = {
+        spinning: true,
+        indicator: loadingIcon,
+    };
+
     const [query, setQuery] = useState({
         page: 1,
         pageSize: 10,
@@ -34,7 +48,6 @@ const BaseList = ({
         order: sortByOrder,
         ...filter,
     });
-
     useEffect(() => {
         apiCall(query).then((newItems) => {
             setInitLoading(false);
@@ -126,7 +139,7 @@ const BaseList = ({
                     }
                     style={style || {}}
                     loadMore={loadMoreButton}
-                    loading={loading}
+                    loading={loading && loadingProps}
                     dataSource={items}
                     renderItem={(item) => {
                         return <List.Item>{renderItem(item)}</List.Item>;
@@ -152,15 +165,26 @@ const BaseList = ({
     } else {
         if (initLoading) {
             return (
-                <Spin
-                    tip={t("global:loading")}
-                    style={{
-                        textAlign: "center",
-                        position: "absolute",
-                        top: "50%",
-                        left: "calc(50% - 40px)",
-                    }}
-                ></Spin>
+                <>
+                    {skeleton ? (
+                        <SkeletonList listItem={skeleton} repeat={4} />
+                    ) : (
+                        <Spin
+                            tip={
+                                <span style={{ color: colors.bluePrimary }}>
+                                    {t("global:loading")}
+                                </span>
+                            }
+                            style={{
+                                textAlign: "center",
+                                position: "absolute",
+                                top: "20%",
+                                left: "calc(50% - 40px)",
+                            }}
+                            indicator={loadingIcon}
+                        />
+                    )}
+                </>
             );
         } else {
             return emptyFallback;
