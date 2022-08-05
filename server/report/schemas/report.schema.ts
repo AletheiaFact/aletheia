@@ -15,7 +15,7 @@ export class Report {
         required: true,
         ref: "User",
     })
-    userId: User;
+    usersId: User[];
 
     @Prop({ required: true })
     summary: string;

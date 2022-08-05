@@ -51,7 +51,7 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.INPUT_USER)
             .should("exist")
             .type(review.username, { delay: 200 });
-        cy.contains(review.username).first().click();
+        cy.get(".ant-select-item-option-active").click();
         cy.get('[title="reCAPTCHA"]').should("exist");
         cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
         cy.checkRecaptcha();

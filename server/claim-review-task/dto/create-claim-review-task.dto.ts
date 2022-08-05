@@ -6,7 +6,7 @@ import { Claim } from "../../claim/schemas/claim.schema";
 
 export type ReviewTaskMachineContext = {
     reviewData: {
-        userId?: any;
+        usersId?: any[];
         summary?: string;
         questions?: string[];
         report?: string;
@@ -16,7 +16,7 @@ export type ReviewTaskMachineContext = {
         sentence_hash: string;
     };
     claimReview: {
-        userId?: User;
+        usersId?: User[];
         sentence_hash: string;
         personality: Personality;
         claim: Claim;

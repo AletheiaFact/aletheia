@@ -11,12 +11,12 @@ const locators = {
         BTN_SEE_MORE_PERSONALITY: "[data-cy=testSeeMorePersonality]",
         BTN_ADD_PERSONALITY: "[data-cy=testButtonCreatePersonality]",
         INPUT_SEARCH_PERSONALITY: "[data-cy=testInputSearchPersonality]",
-        SELECT_PERSONALITY: `[data-cy=${personality.name}]`
+        SELECT_PERSONALITY: `[data-cy=${personality.name}]`,
     },
 
     claimReview: {
         BTN_START_CLAIM_REVIEW: "[data-cy=testAddReviewButton]",
-        INPUT_USER: "[data-cy=testClaimReviewuserId]",
+        INPUT_USER: "[data-cy=testClaimReviewusersId]",
         BTN_ASSIGN_USER: "[data-cy=testClaimReviewASSIGN_USER]",
         INPUT_SUMMARY: "[data-cy=testClaimReviewsummary]",
         INPUT_QUESTION: "[data-cy=testClaimReviewquestions0]",
@@ -34,7 +34,7 @@ const locators = {
     },
 
     menu: {
-        SIDE_MENU: "[data-cy=testSideMenuClosed]"
-    }
+        SIDE_MENU: "[data-cy=testSideMenuClosed]",
+    },
 };
 export default locators;

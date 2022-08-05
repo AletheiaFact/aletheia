@@ -13,9 +13,7 @@ import { IsPublic } from "../decorators/is-public.decorator";
 
 @Controller()
 export class ClaimReviewController {
-    constructor(
-        private claimReviewService: ClaimReviewService,
-    ) { }
+    constructor(private claimReviewService: ClaimReviewService) {}
 
     @Post("api/review/:sentence_hash")
     async create(
@@ -26,7 +24,7 @@ export class ClaimReviewController {
         return this.claimReviewService.create(
             {
                 ...createClaimReview,
-                userId: req?.user?._id,
+                usersId: req?.user?._id,
             },
             sentence_hash
         );

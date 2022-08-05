@@ -1,18 +1,18 @@
 export type ReviewData = {
-    userId: string;
+    usersId: string;
     summary: string;
     questions: string[];
     report: string;
     verification: string;
     sources: string[];
     classification: string;
-}
+};
 
 export type ClaimReview = {
     personality: string;
     claim: string;
-    userId: string;
-}
+    usersId: string;
+};
 
 export type SaveEvent = {
     type: string;
@@ -20,4 +20,4 @@ export type SaveEvent = {
     claimReview: ClaimReview;
 };
 
-export type ReviewTaskMachineEvents = SaveEvent
+export type ReviewTaskMachineEvents = SaveEvent;
