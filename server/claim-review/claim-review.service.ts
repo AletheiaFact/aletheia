@@ -111,8 +111,7 @@ export class ClaimReviewService {
                 usersId: 1,
             }
         );
-        const userReview = user?.usersId;
-        return userReview;
+        return user?.usersId;
     }
 
     /**
@@ -122,6 +121,7 @@ export class ClaimReviewService {
      * @returns Return a new claim review object.
      */
     async create(claimReview, sentence_hash) {
+        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const review = await this.getReviewBySentenceHash(
             claimReview.sentence_hash
         );
