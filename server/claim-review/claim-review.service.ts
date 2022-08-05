@@ -111,7 +111,7 @@ export class ClaimReviewService {
                 usersId: 1,
             }
         );
-        return user?.userId;
+        return user?.usersId;
     }
 
     /**
