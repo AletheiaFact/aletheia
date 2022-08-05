@@ -25,7 +25,7 @@ const ClaimSentenceCard = ({
                     }
                     avatar={
                         <Avatar
-                            src={personality.image}
+                            src={personality.avatar}
                             alt={personality.name}
                             size={43}
                             style={{

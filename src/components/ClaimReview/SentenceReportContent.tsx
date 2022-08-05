@@ -130,10 +130,10 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                         gutter={38}
                     >
                         {sources &&
-                            sources.slice(0, 6).map((link) => {
+                            sources.slice(0, 6).map((link, index) => {
                                 return (
                                     <Col
-                                        key={link}
+                                        key={`source-${index}`}
                                         style={{
                                             display: "block",
                                             flex: "1 1 30%",
@@ -153,6 +153,8 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                                                 <Link href={link}>{link}</Link>
                                             }
                                             width="100%"
+                                            showLoader
+                                            descriptionLength={140}
                                         />
                                         <Paragraph
                                             style={{
