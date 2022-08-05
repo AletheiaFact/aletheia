@@ -43,7 +43,24 @@ const KanbanCard = ({ reviewTask }) => {
                                 width: "100%",
                             }}
                         >
-                            {t("kanban:assignedTo")}: {reviewTask.userName}
+                            {t("kanban:assignedTo")}:{" "}
+                            {reviewTask.usersName &&
+                                reviewTask.usersName.map((user, index) => {
+                                    return (
+                                        <>
+                                            <span style={{ marginRight: 5 }}>
+                                                {user}
+                                                {reviewTask.usersName.length -
+                                                    1 <=
+                                                index ? (
+                                                    <></>
+                                                ) : (
+                                                    ","
+                                                )}
+                                            </span>
+                                        </>
+                                    );
+                                })}
                         </Text>
                         <Text
                             style={{

@@ -4,17 +4,14 @@ import { SaveEvent } from "./events";
 
 export const saveContext = assign<ReviewTaskMachineContext, SaveEvent>(
     (context, event) => {
-        const claimReview = event.claimReview
-        const reviewData = event.reviewData
-        const userId = event.reviewData.userId
         return {
             reviewData: {
                 ...context.reviewData,
-                ...reviewData,
+                ...event.reviewData,
             },
             claimReview: {
-                ...claimReview,
-                userId,
-            }
+                ...event.claimReview,
+            },
         };
-});
+    }
+);

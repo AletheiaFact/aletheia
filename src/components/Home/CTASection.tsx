@@ -43,13 +43,13 @@ const CTASection = ({ isLoggedIn }) => {
                             target="_blank"
                             type={ButtonType.white}
                             className="CTA-button"
+                            rounded="true"
                             style={{
                                 height: "40px",
                                 display: "flex",
                                 padding: 0,
                                 justifyContent: "center",
                                 alignItems: "center",
-                                borderRadius: "30px",
                             }}
                         >
                             <span style={{ fontWeight: 700 }}>

@@ -13,7 +13,7 @@ const getClaimReviewTasks = (options) => {
         order: options.order || "asc",
         pageSize: options.pageSize ? options.pageSize : 5,
         value: options.value,
-        userId: options.userId,
+        usersId: options.usersId,
     };
 
     return request

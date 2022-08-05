@@ -29,7 +29,7 @@ export class ClaimReview {
         required: true,
         ref: "User",
     })
-    userId: User;
+    usersId: User[];
 
     @Prop({ required: true })
     sentence_hash: string;

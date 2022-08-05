@@ -5,7 +5,9 @@ import { NextSeo } from "next-seo";
 import { useTranslation } from "next-i18next";
 import { GetLocale } from "../utils/GetLocale";
 
-const HomePage: NextPage<{ data: any }> = (props) => {
+const HomePage: NextPage<{ personalities; stats; href; isLoggedIn }> = (
+    props
+) => {
     const { t } = useTranslation();
     return (
         <>
@@ -15,7 +17,7 @@ const HomePage: NextPage<{ data: any }> = (props) => {
     );
 };
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = GetLocale(req, locale, locales)
+    locale = GetLocale(req, locale, locales);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
@@ -24,9 +26,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personalities: JSON.parse(JSON.stringify(query.personalities)),
             stats: JSON.parse(JSON.stringify(query.stats)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
-            isLoggedIn: req.user ? true : false
+            isLoggedIn: req.user ? true : false,
         },
     };
 }
 export default HomePage;
-
