@@ -12,6 +12,10 @@ export class SentenceService {
 
     async create(sentenceBody) {
         const newSentence = await new this.SentenceModel(sentenceBody).save();
-        return newSentence._id
+        return newSentence._id;
+    }
+
+    getByDataHash(data_hash) {
+        return this.SentenceModel.findOne({ data_hash });
     }
 }
