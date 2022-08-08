@@ -32,7 +32,8 @@ const InfoAlert = () => {
                     shape="round"
                     icon={<FilePdfOutlined />}
                     href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/AletheiaFact/miscellaneous/290b19847f0da521963f74e7947d7863bf5d5624/documents/org_legal_register.pdf"
-                    target={"_blank"}
+                    target="_blank"
+                    rel="noreferrer"
                     style={{
                         position: "absolute",
                         bottom: "15px",
