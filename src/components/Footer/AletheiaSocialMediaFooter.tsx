@@ -24,24 +24,28 @@ const AletheiaSocialMediaFooter = () => {
                     url="https://www.instagram.com/aletheiafact"
                     bgColor={colors.bluePrimary}
                     target="_blank"
+                    rel="noreferrer"
                     fgColor="white"
                 />
                 <SocialIcon
                     url="https://www.facebook.com/AletheiaFactorg-107521791638412"
                     bgColor={colors.bluePrimary}
                     target="_blank"
+                    rel="noreferrer"
                     fgColor="white"
                 />
                 <SocialIcon
                     url="https://www.linkedin.com/company/aletheiafact-org"
                     bgColor={colors.bluePrimary}
                     target="_blank"
+                    rel="noreferrer"
                     fgColor="white"
                 />
                 <SocialIcon
                     url="https://github.com/AletheiaFact/aletheia"
                     bgColor={colors.bluePrimary}
                     target="_blank"
+                    rel="noreferrer"
                     fgColor="white"
                 />
             </Col>

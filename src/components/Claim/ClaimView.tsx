@@ -220,6 +220,8 @@ const Claim = ({ personality, claim, href }) => {
                                             style={{
                                                 color: colors.blueSecondary,
                                             }}
+                                            target="_blank"
+                                            rel="noreferrer"
                                         >
                                             {" "}
                                             {t("claim:sourceFooterReport")}

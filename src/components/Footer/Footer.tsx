@@ -34,8 +34,9 @@ const Footer = () => {
                     >
                         <Col style={{ marginBottom: "16px" }}>
                             <a
-                                rel="license"
+                                rel="license noreferrer"
                                 href="https://creativecommons.org/licenses/by-sa/4.0/"
+                                target="_blank"
                             >
                                 <img
                                     height={31}
@@ -53,8 +54,9 @@ const Footer = () => {
                                 display: "inline-block",
                                 color: "white",
                             }}
-                            rel="license"
+                            rel="license noreferrer"
                             href="https://creativecommons.org/licenses/by-sa/4.0/"
+                            target="_blank"
                         >
                             Creative Commons Attribution-ShareAlike 4.0
                             International License
