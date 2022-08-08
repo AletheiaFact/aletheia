@@ -4,6 +4,7 @@ import {
     Delete,
     Get,
     Logger,
+    NotFoundException,
     Param,
     Post,
     Put,
@@ -26,6 +27,7 @@ import { IsPublic } from "../decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
+import { SentenceService } from "../sentence/sentence.service";
 
 @Controller()
 export class ClaimController {
@@ -35,6 +37,7 @@ export class ClaimController {
         private claimReviewTaskService: ClaimReviewTaskService,
         private personalityService: PersonalityService,
         private claimService: ClaimService,
+        private sentenceService: SentenceService,
         private configService: ConfigService,
         private viewService: ViewService,
         private captchaService: CaptchaService
@@ -104,33 +107,33 @@ export class ClaimController {
         return this.claimService.delete(claimId);
     }
 
-    _getSentenceByHashAndClaimId(sentence_hash, claimId) {
-        return Promise.all([
-            this.claimReviewService.getReviewStatsBySentenceHash({
-                sentence_hash,
-                isDeleted: false,
-                isPublished: true,
-            }),
-            this.claimService.getById(claimId),
-            this.claimReviewService.getUserReviewBySentenceHash(sentence_hash),
-        ]).then(([stats, claimObj, userReview]) => {
-            let sentenceObj;
-
-            claimObj.content.forEach((p) => {
-                p.content.forEach((sentence) => {
-                    if (sentence.data_hash === sentence_hash) {
-                        sentenceObj = sentence;
-                    }
-                });
+    async _getSentenceByHashAndClaimId(sentence_hash, claimId) {
+        const sentence = await this.sentenceService.getByDataHash(
+            sentence_hash
+        );
+        if (sentence) {
+            return Promise.all([
+                this.claimReviewService.getReviewStatsBySentenceHash({
+                    sentence_hash,
+                    isDeleted: false,
+                    isPublished: true,
+                }),
+                this.claimService.getById(claimId),
+                this.claimReviewService.getUserReviewBySentenceHash(
+                    sentence_hash
+                ),
+            ]).then(([stats, claimObj, userReview]) => {
+                return {
+                    userReview,
+                    date: claimObj.date,
+                    personality: claimObj.personality,
+                    stats,
+                    ...sentence.toObject(),
+                };
             });
-            return {
-                userReview,
-                date: claimObj.date,
-                personality: claimObj.personality,
-                stats,
-                ...sentenceObj,
-            };
-        });
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @IsPublic()
