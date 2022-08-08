@@ -1,11 +1,11 @@
 import { Col, Row, Spin } from "antd";
 import { useTranslation } from "next-i18next";
-import { NextSeo } from "next-seo";
 
 import ClaimList from "../Claim/ClaimList";
 import AffixButton from "../Form/AffixButton";
 import HomeContent from "../Home/HomeContent";
 import MetricsOverview from "../Metrics/MetricsOverview";
+import Seo from "../Seo";
 import PersonalityCard from "./PersonalityCard";
 
 const PersonalityView = ({ personality, href, isLoggedIn, personalities }) => {
@@ -26,7 +26,7 @@ const PersonalityView = ({ personality, href, isLoggedIn, personalities }) => {
 
     return (
         <>
-            <NextSeo
+            <Seo
                 title={personality.name}
                 description={t("seo:personalityDescription", {
                     name: personality.name,

@@ -1,10 +1,11 @@
 import { NextPage } from "next";
-import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
-import { NextSeo } from "next-seo";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import SentenceReportView from "../components/ClaimReview/SentenceReportView";
+import JsonLd from "../components/JsonLd";
+import Seo from "../components/Seo";
 import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
 import { GetLocale } from "../utils/GetLocale";
 
@@ -63,7 +64,7 @@ const ClaimReviewPage: NextPage<{
     return (
         <>
             {review && <JsonLd {...jsonld} />}
-            <NextSeo
+            <Seo
                 title={sentence.content}
                 description={t("seo:claimReviewDescription", {
                     sentence: sentence.content,
