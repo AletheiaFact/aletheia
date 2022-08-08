@@ -43,6 +43,7 @@ const Claim = ({ personality, claim, href }) => {
                         personality={personality}
                         header={true}
                         mobile={true}
+                        titleLevel={2}
                     />
                     <section>
                         {date && (
@@ -79,7 +80,7 @@ const Claim = ({ personality, claim, href }) => {
                             <Row style={{ marginTop: "20px", width: "100%" }}>
                                 <Col offset={2} span={18}>
                                     <Title
-                                        level={2}
+                                        level={1}
                                         style={{
                                             fontSize: 20,
                                             lineHeight: 1.4,

@@ -7,6 +7,17 @@ import Button, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
 const { Title, Paragraph } = Typography;
 
+interface PersonalityCardProps {
+    personality: any;
+    summarized?: boolean;
+    enableStats?: boolean;
+    header?: boolean;
+    hrefBase?: string;
+    mobile?: boolean;
+    onClick?: (personality: any) => {};
+    titleLevel?: 1 | 2 | 3 | 4 | 5;
+}
+
 const PersonalityCard = ({
     personality,
     summarized = false,
@@ -15,15 +26,8 @@ const PersonalityCard = ({
     hrefBase = "",
     mobile = false,
     onClick,
-}: {
-    personality: any;
-    summarized?: boolean;
-    enableStats?: boolean;
-    header?: boolean;
-    hrefBase?: string;
-    mobile?: boolean;
-    onClick?: (personality: any) => {};
-}) => {
+    titleLevel = 1,
+}: PersonalityCardProps) => {
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const { t } = useTranslation();
     const style = {
@@ -118,7 +122,7 @@ const PersonalityCard = ({
                             )}
                             {!summarized && (
                                 <Title
-                                    level={1}
+                                    level={titleLevel}
                                     style={{
                                         fontSize: "24px",
                                         lineHeight: "32px",
