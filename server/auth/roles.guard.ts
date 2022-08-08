@@ -1,12 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
-import { UsersService } from "../users/users.service";
+import { Configuration, V0alpha2Api } from "@ory/client";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
     constructor(
         private reflector: Reflector,
-        private userService: UsersService
+        private configService: ConfigService
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -17,10 +18,19 @@ export class RolesGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
 
         if (request?.user) {
-            const { _id } = request.user;
-            const user = await this.userService.getById(_id);
+            const ory = new V0alpha2Api(
+                new Configuration({
+                    basePath: this.configService.get<string>("ory.url"),
+                    accessToken: this.configService.get<string>("access_token"),
+                })
+            );
+            const { data: session } = await ory.toSession(
+                undefined,
+                request.header("Cookie")
+            );
+            const userRole = session?.identity?.traits?.role;
 
-            return roles.includes(user.role);
+            return roles.includes(userRole);
         }
 
         return false;

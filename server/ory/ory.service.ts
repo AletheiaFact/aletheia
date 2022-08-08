@@ -23,7 +23,7 @@ export default class OryService {
         );
     }
 
-    updateIdentity(user, password): Promise<any> {
+    async updateIdentity(user, password, role): Promise<any> {
         const {
             access_token: token,
             url,
@@ -37,7 +37,7 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
-                    role: user.role,
+                    role,
                 },
                 credentials: {
                     password: {
@@ -49,7 +49,7 @@ export default class OryService {
         });
     }
 
-    createIdentity(user, password): Promise<any> {
+    async createIdentity(user, password, role): Promise<any> {
         const {
             access_token: token,
             url,
@@ -63,7 +63,7 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
-                    role: user.role,
+                    role,
                 },
                 credentials: {
                     password: {
