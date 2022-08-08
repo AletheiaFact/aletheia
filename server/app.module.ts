@@ -36,6 +36,7 @@ import { CaptchaModule } from "./captcha/captcha.module";
 import { SpeechModule } from "./speech/speech.module";
 import { ParagraphModule } from "./paragraph/paragraph.module";
 import { SentenceModule } from "./sentence/sentence.module";
+import { StateEventModule } from "./state-event/state-event.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -72,6 +73,7 @@ export class AppModule implements NestModule {
                 ClaimReviewTaskModule,
                 ClaimRevisionModule,
                 HistoryModule,
+                StateEventModule,
                 SourceModule,
                 SpeechModule,
                 ParagraphModule,
@@ -99,7 +101,7 @@ export class AppModule implements NestModule {
                     provide: APP_GUARD,
                     useExisting: SessionGuard,
                 },
-                SessionGuard
+                SessionGuard,
             ],
         };
     }

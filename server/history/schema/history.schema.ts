@@ -4,18 +4,23 @@ import { User } from "../../users/schemas/user.schema";
 
 export type HistoryDocument = History & mongoose.Document;
 
-export enum TargetModel { 
-  Claim = 'Claim',
-  Personality = 'Personality',
-  ClaimReview = 'ClaimReview'
+export enum TargetModel {
+    Claim = "Claim",
+    Personality = "Personality",
+    ClaimReview = "ClaimReview",
+    ClaimReviewTask = "ClaimReviewTask",
 }
 
-export enum HistoryType { 
-  Create = 'create',
-  Update = 'update',
-  Delete = 'delete'
+export enum HistoryType {
+    Create = "create",
+    Update = "update",
+    Delete = "delete",
+    Draft = "draft",
+    Reported = "reported",
+    Assigned = "assigned",
+    Published = "published",
 }
-@Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class History {
     @Prop({
         type: mongoose.Types.ObjectId,
@@ -30,28 +35,28 @@ export class History {
     targetModel: TargetModel;
 
     @Prop({
-      type: mongoose.Types.ObjectId,
-      required: true,
-      ref: "User",
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "User",
     })
     user: User;
-        
-    @Prop({
-      required: true,
-    })
-    type: HistoryType //TODO: Validate if details field(after, before) it's optional or required based on type
 
     @Prop({
-      type: Object,
-      required: true,
+        required: true,
     })
-    details: object
+    type: HistoryType; //TODO: Validate if details field(after, before) it's optional or required based on type
 
     @Prop({
-      type: Date,
-      required: true,
+        type: Object,
+        required: true,
     })
-    date: mongoose.Date
+    details: object;
+
+    @Prop({
+        type: Date,
+        required: true,
+    })
+    date: mongoose.Date;
 }
 
 export const HistorySchema = SchemaFactory.createForClass(History);

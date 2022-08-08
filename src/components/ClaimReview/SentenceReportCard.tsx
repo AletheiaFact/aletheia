@@ -43,7 +43,7 @@ const SentenceReportCard = ({
                         <Col>
                             <Avatar
                                 size={117}
-                                src={personality.image}
+                                src={personality.avatar}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,
                                 })}
