@@ -13,6 +13,8 @@ import { ClaimRevisionModule } from "../claim-revision/claim-revision.module";
 import { HistoryModule } from "../history/history.module";
 import { CaptchaModule } from "../captcha/captcha.module";
 import { ClaimReviewTaskModule } from "../claim-review-task/claim-review-task.module";
+import { StateEventModule } from "../state-event/state-event.module";
+import { UsersModule } from "../users/users.module";
 
 const ClaimModel = MongooseModule.forFeature([
     {
