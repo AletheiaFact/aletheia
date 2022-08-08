@@ -100,7 +100,11 @@ export const transitionHandler = (state) => {
 
     if (event !== ReviewTaskEvents.init && event !== ReviewTaskEvents.goback) {
         api.createClaimReviewTask(
-            { sentence_hash, machine: state, recaptcha },
+            {
+                sentence_hash,
+                machine: { context: state.context, value: state.value },
+                recaptcha,
+            },
             t,
             event
         )

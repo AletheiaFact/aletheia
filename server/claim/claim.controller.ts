@@ -315,10 +315,7 @@ export class ClaimController {
     }
 
     @Get("personality/:personalitySlug/claim/:claimSlug/history")
-    public async personalityHistoryPage(
-        @Req() req: Request,
-        @Res() res: Response
-    ) {
+    public async ClaimHistoryPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
         const personality = await this.personalityService.getBySlug(
@@ -337,6 +334,31 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 targetId: claim._id,
                 targetModel: TargetModel.Claim,
+            })
+        );
+    }
+
+    @Get(
+        "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash/history"
+    )
+    public async ClaimReviewHistoryPage(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+
+        const claimReviewTask =
+            await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
+                req.params.sentence_hash
+            );
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/history-page",
+            Object.assign(parsedUrl.query, {
+                targetId: claimReviewTask._id,
+                targetModel: TargetModel.ClaimReviewTask,
             })
         );
     }

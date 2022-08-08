@@ -108,11 +108,10 @@ export class ClaimReviewService {
         const user = await this.ClaimReviewModel.findOne(
             { sentence_hash, isDeleted: false, isPublished: true },
             {
-                userId: 1,
+                usersId: 1,
             }
         );
-        const userReview = user?.userId;
-        return userReview;
+        return user?.usersId;
     }
 
     /**
@@ -122,6 +121,7 @@ export class ClaimReviewService {
      * @returns Return a new claim review object.
      */
     async create(claimReview, sentence_hash) {
+        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const review = await this.getReviewBySentenceHash(
             claimReview.sentence_hash
         );
@@ -133,17 +133,18 @@ export class ClaimReviewService {
             // Cast ObjectId
             claimReview.personality = Types.ObjectId(claimReview.personality);
             claimReview.claim = Types.ObjectId(claimReview.claim);
+            claimReview.usersId = claimReview.report.usersId.map((userId) => {
+                return Types.ObjectId(userId);
+            });
             claimReview.report = Types.ObjectId(claimReview.report._id);
-            claimReview.userId = Types.ObjectId(claimReview.userId);
             claimReview.sentence_hash = sentence_hash;
             const newClaimReview = new this.ClaimReviewModel(claimReview);
-
             newClaimReview.isPublished = true;
 
             const history = this.historyService.getHistoryParams(
                 newClaimReview._id,
                 TargetModel.ClaimReview,
-                claimReview.userId,
+                claimReview.usersId,
                 HistoryType.Create,
                 newClaimReview
             );
@@ -184,7 +185,7 @@ export class ClaimReviewService {
         const history = this.historyService.getHistoryParams(
             claimReview._id,
             TargetModel.ClaimReview,
-            claimReview.userId,
+            claimReview.usersId,
             HistoryType.Delete,
             null,
             claimReview

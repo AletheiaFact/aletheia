@@ -2,7 +2,7 @@ import { createFormField, FormField } from "./FormField";
 
 const unassignedForm: FormField[] = [
     createFormField({
-        fieldName: "userId",
+        fieldName: "usersId",
         type: "inputSearch",
         i18nKey: "assignUser",
     }),

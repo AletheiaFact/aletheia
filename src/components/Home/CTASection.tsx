@@ -41,15 +41,16 @@ const CTASection = ({ isLoggedIn }) => {
                             }}
                             href={t("common:registrationLink")}
                             target="_blank"
+                            rel="noreferrer"
                             type={ButtonType.white}
                             className="CTA-button"
+                            rounded="true"
                             style={{
                                 height: "40px",
                                 display: "flex",
                                 padding: 0,
                                 justifyContent: "center",
                                 alignItems: "center",
-                                borderRadius: "30px",
                             }}
                         >
                             <span style={{ fontWeight: 700 }}>

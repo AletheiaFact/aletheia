@@ -4,7 +4,7 @@ import React from "react";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 
-function NewCTARegistration({ style = {} }) {
+function NewCTARegistration() {
     const { t } = useTranslation();
 
     return (
@@ -12,11 +12,8 @@ function NewCTARegistration({ style = {} }) {
             style={{
                 backgroundColor: colors.graySecondary,
                 textAlign: "center",
-                padding: "100px 20px 20px 20px",
-                margin: "0px -5px",
-                display: "grid",
+                padding: "100px 20px 20px",
                 justifyContent: "center",
-                ...style,
             }}
         >
             <Col
@@ -30,7 +27,7 @@ function NewCTARegistration({ style = {} }) {
             >
                 {t("NewCTARegistration:body")}
             </Col>
-            <Col xs={0} sm={0} md={24}>
+            <Col xs={0} sm={0} md={0} lg={20}>
                 <Button
                     onClick={() => {
                         umami?.trackEvent(
@@ -40,17 +37,20 @@ function NewCTARegistration({ style = {} }) {
                     }}
                     type={ButtonType.blue}
                     target="_blank"
+                    rel="noreferrer"
                     href={t("common:registrationLink")}
                     className="new-cta-registration-button"
-                    rounded
+                    rounded="true"
                     style={{
                         alignItems: "center",
                         justifyContent: "center",
-                        height: "88px",
+                        height: "40px",
                         marginTop: "20px",
+                        padding: "0 15px",
                         fontWeight: 900,
                         fontSize: 18,
                         lineHeight: "22px",
+                        whiteSpace: "pre-wrap",
                     }}
                 >
                     {t("CTARegistration:button")}

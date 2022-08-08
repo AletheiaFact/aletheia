@@ -10,6 +10,8 @@ import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ReportModule } from "../report/report.module";
 import { CaptchaModule } from "../captcha/captcha.module";
 import { ViewModule } from "../view/view.module";
+import { HistoryModule } from "../history/history.module";
+import { StateEventModule } from "../state-event/state-event.module";
 
 export const ClaimReviewTaskModel = MongooseModule.forFeature([
     {
@@ -23,11 +25,13 @@ export const ClaimReviewTaskModel = MongooseModule.forFeature([
         ClaimReviewTaskModel,
         ClaimReviewModule,
         ReportModule,
+        HistoryModule,
+        StateEventModule,
         CaptchaModule,
-        ViewModule
+        ViewModule,
     ],
     providers: [ClaimReviewTaskService],
     exports: [ClaimReviewTaskService],
     controllers: [ClaimReviewController],
 })
-export class ClaimReviewTaskModule { }
+export class ClaimReviewTaskModule {}

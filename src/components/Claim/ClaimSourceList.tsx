@@ -4,6 +4,7 @@ import BaseList from "../List/BaseList";
 import { useTranslation } from "next-i18next";
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import Link from "next/link";
+import SourceSkeleton from "../Skeleton/SourceSkeleton";
 
 const ClaimSourceList = ({ claimId }) => {
     const { i18n } = useTranslation();
@@ -22,9 +23,11 @@ const ClaimSourceList = ({ claimId }) => {
                         secondaryTextColor="#515151"
                         width="100%"
                         fallback={<Link href={source.link}>{source.link}</Link>}
+                        showLoader
                     />
                 )
             }
+            skeleton={<SourceSkeleton />}
         />
     );
 };

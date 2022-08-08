@@ -31,13 +31,19 @@ const SentenceReportCard = ({
 
     return (
         <SentenceReportCardStyle>
-            <Row gutter={40} className="main-content">
+            <Row className="main-content">
                 <Col md={6} sm={24}>
-                    <Row className="content-card">
+                    <Row
+                        className="content-card"
+                        style={{
+                            display: "flex",
+                            textAlign: "center",
+                        }}
+                    >
                         <Col>
                             <Avatar
                                 size={117}
-                                src={personality.image}
+                                src={personality.avatar}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,
                                 })}
@@ -49,33 +55,31 @@ const SentenceReportCard = ({
                                 }}
                             />
                         </Col>
-                        <Row>
-                            <Col className="personality">
+                        <Row className="personality">
+                            <Col>
                                 <Title
+                                    className="personality-name"
                                     style={{
                                         marginBottom: 0,
-                                        marginTop: "16px",
                                         color: colors.bluePrimary,
-                                        fontSize: 16,
                                         lineHeight: "20px",
                                         fontWeight: 400,
                                     }}
-                                    className="personality-name"
                                 >
                                     {personality.name}
                                 </Title>
                                 <Paragraph
-                                    className="personality-description"
+                                    className="personality-description-content"
                                     style={{
-                                        marginTop: "4px",
-                                        fontSize: "10px",
                                         lineHeight: "14px",
                                         color: colors.blackSecondary,
                                     }}
                                 >
-                                    {personality.description}
-                                    <br />
+                                    <span className="personality-description">
+                                        {personality.description}
+                                    </span>
                                     <a
+                                        className="personality-profile"
                                         href={`/personality/${personality.slug}`}
                                         style={{
                                             color: colors.blackSecondary,
@@ -90,14 +94,11 @@ const SentenceReportCard = ({
                         </Row>
                     </Row>
                 </Col>
-                <Col md={18} sm={24} style={{ marginTop: -20 }}>
+                <Col md={18} sm={24} style={{ paddingLeft: 10 }}>
                     <div
                         style={{
                             display: "flex",
-                            width: "100%",
                             fontWeight: 800,
-                            marginTop: "18px",
-                            marginLeft: "8px",
                             marginBottom: "16px",
                         }}
                         className="context-classification"
@@ -109,20 +110,21 @@ const SentenceReportCard = ({
                                 color: colors.blackSecondary,
                                 fontSize: 16,
                                 fontWeight: 400,
-                                lineHeight: "20px",
                             }}
                         >
                             {t("claimReview:claimReview")}&nbsp;
                         </Title>
                         <ClassificationText
-                            style={{
-                                fontSize: 16,
-                                lineHeight: "20px",
-                            }}
+                            style={{ fontSize: 16 }}
                             classification={context.classification}
                         />
                     </div>
-                    <SentenceReportSummary>
+                    <SentenceReportSummary
+                        smalldialogbox="true"
+                        style={{
+                            marginLeft: "4px",
+                        }}
+                    >
                         <Paragraph
                             ellipsis={{
                                 rows: 3,
@@ -143,7 +145,7 @@ const SentenceReportCard = ({
                                     margin: 0,
                                 }}
                             >
-                                {sentence?.content}
+                                "<span>{sentence?.content}</span>"
                             </cite>
                             <a
                                 href={`/personality/${personality.slug}/claim/${claim.slug}`}
@@ -164,7 +166,9 @@ const SentenceReportCard = ({
                             fontSize: 10,
                             fontWeight: 400,
                             lineHeight: "15px",
-                            marginTop: 16,
+                            marginBottom: 21,
+                            marginTop: 10,
+                            paddingLeft: "8px",
                         }}
                     >
                         {t("claim:cardHeader1")}&nbsp;

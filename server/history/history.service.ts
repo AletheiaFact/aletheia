@@ -1,7 +1,7 @@
-import {Injectable, Logger} from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import { HistoryDocument } from "./schema/history.schema";
+import { History, HistoryDocument } from "./schema/history.schema";
 
 @Injectable()
 export class HistoryService {
@@ -9,8 +9,8 @@ export class HistoryService {
     private readonly logger = new Logger("HistoryService");
 
     constructor(
-        @InjectModel('HISTORY_MODEL')
-        private HistoryModel: Model<HistoryDocument>,
+        @InjectModel(History.name)
+        private HistoryModel: Model<HistoryDocument>
     ) {
         this.optionsToUpdate = {
             new: true,
@@ -36,7 +36,7 @@ export class HistoryService {
         latestChange,
         previousChange = null
     ) {
-        const date = new Date()
+        const date = new Date();
         return {
             targetId: Types.ObjectId(dataId),
             targetModel,
@@ -44,10 +44,10 @@ export class HistoryService {
             type,
             details: {
                 after: latestChange,
-                before: previousChange
+                before: previousChange,
             },
             date,
-        }
+        };
     }
 
     /**
@@ -60,7 +60,6 @@ export class HistoryService {
         return newHistory.save();
     }
 
-
     /**
      * This function queries the database for the history of changes on a target.
      * @param targetId The id of the target.
@@ -70,14 +69,20 @@ export class HistoryService {
      * @param order asc or desc.
      * @returns The paginated history of a target.
      */
-    async getByTargetIdAndModel(targetId, targetModel, page, pageSize, order = "asc") {
+    async getByTargetIdAndModel(
+        targetId,
+        targetModel,
+        page,
+        pageSize,
+        order = "asc"
+    ) {
         return this.HistoryModel.find({
             targetId: Types.ObjectId(targetId),
             targetModel,
         })
-        .populate("user", "_id name")
-        .skip(page * pageSize)
-        .limit(pageSize)
-        .sort({ date: order });
+            .populate("user", "_id name")
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .sort({ date: order });
     }
 }

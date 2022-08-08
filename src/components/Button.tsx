@@ -13,6 +13,7 @@ type AletheiaButtonProps = Omit<ButtonProps, "type">;
 interface IAletheiaButtonProps extends AletheiaButtonProps {
     type?: ButtonType;
     event?: any;
+    rounded?: string;
 }
 
 const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
@@ -25,7 +26,7 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
         alignItems: "center",
         height: 40,
         paddingBottom: 0,
-        borderRadius: "4px",
+        borderRadius: props.rounded ? "30px" : "4px",
         ...props.style,
     };
     switch (props.type) {

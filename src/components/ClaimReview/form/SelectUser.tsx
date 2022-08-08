@@ -31,6 +31,7 @@ function SelectUser({ fetchOptions, ...props }) {
 
     return (
         <StyledSelect
+            mode="multiple"
             showSearch
             filterOption={false}
             onSearch={getOptions}
