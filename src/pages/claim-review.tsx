@@ -3,19 +3,27 @@ import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
-import { NextSeo } from 'next-seo';
+import { NextSeo } from "next-seo";
 import SentenceReportView from "../components/ClaimReview/SentenceReportView";
-import { ReviewTaskStates } from "../machine/enums";
+import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
 import { GetLocale } from "../utils/GetLocale";
 
-const ClaimPage: NextPage<{ personality, claim, sentence, sitekey, href, claimReviewTask, isLoggedIn }> = ({
+const ClaimPage: NextPage<{
+    personality;
+    claim;
+    sentence;
+    sitekey;
+    href;
+    claimReviewTask;
+    isLoggedIn;
+}> = ({
     personality,
     claim,
     sentence,
     href,
     claimReviewTask,
     isLoggedIn,
-    sitekey
+    sitekey,
 }) => {
     const { t } = useTranslation();
     const review = sentence?.props?.classification;
@@ -34,9 +42,9 @@ const ClaimPage: NextPage<{ personality, claim, sentence, sitekey, href, claimRe
         claimReviewed: sentence.content,
         reviewRating: {
             "@type": "Rating",
-            ratingValue: review,
-            bestRating: "true",
-            worstRating: "false",
+            ratingValue: ClassificationEnum[review],
+            bestRating: 1,
+            worstRating: 9,
             alternateName: t(`claimReviewForm:${review}`),
         },
         itemReviewed: {
@@ -54,16 +62,16 @@ const ClaimPage: NextPage<{ personality, claim, sentence, sitekey, href, claimRe
 
     return (
         <>
-            {review && (
-                <JsonLd {...jsonld} />
-            )}
+            {review && <JsonLd {...jsonld} />}
             <NextSeo
                 title={sentence.content}
-                description={t('seo:claimReviewDescription', { sentence: sentence.content })}
+                description={t("seo:claimReviewDescription", {
+                    sentence: sentence.content,
+                })}
             />
 
-            {claimReviewTask?.machine.value !== ReviewTaskStates.published
-                ? <ClaimReviewView
+            {claimReviewTask?.machine.value !== ReviewTaskStates.published ? (
+                <ClaimReviewView
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
@@ -73,19 +81,21 @@ const ClaimPage: NextPage<{ personality, claim, sentence, sitekey, href, claimRe
                     review={review}
                     sitekey={sitekey}
                 />
-                : <SentenceReportView
+            ) : (
+                <SentenceReportView
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
                     href={href}
                     context={claimReviewTask.machine.context.reviewData}
-                />}
+                />
+            )}
         </>
     );
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = GetLocale(req, locale, locales)
+    locale = GetLocale(req, locale, locales);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
@@ -97,7 +107,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             sitekey: query.sitekey,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
-            isLoggedIn: req.user ? true : false
+            isLoggedIn: req.user ? true : false,
         },
     };
 }
