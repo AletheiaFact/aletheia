@@ -25,7 +25,7 @@ export class ClaimReviewController {
         private claimReviewTaskService: ClaimReviewTaskService,
         private captchaService: CaptchaService,
         private viewService: ViewService
-    ) { }
+    ) {}
 
     @IsPublic()
     @Get("api/claimreviewtask")
@@ -33,7 +33,6 @@ export class ClaimReviewController {
         const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
         return Promise.all([
             this.claimReviewTaskService.listAll(page, pageSize, order, value),
-            // This should count the number of documents for the original query without pagination
             this.claimReviewTaskService.count({ "machine.value": value }),
         ]).then(([tasks, totalTasks]) => {
             const totalPages = Math.ceil(totalTasks / pageSize);
