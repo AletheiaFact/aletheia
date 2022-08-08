@@ -37,6 +37,7 @@ function NewCTARegistration() {
                     }}
                     type={ButtonType.blue}
                     target="_blank"
+                    rel="noreferrer"
                     href={t("common:registrationLink")}
                     className="new-cta-registration-button"
                     rounded="true"

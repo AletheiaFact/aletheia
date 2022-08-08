@@ -178,6 +178,8 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                                                 href={`mailto:${t(
                                                     "common:supportEmail"
                                                 )}`}
+                                                target="_blank"
+                                                rel="noreferrer"
                                                 style={{
                                                     color: colors.blueSecondary,
                                                 }}

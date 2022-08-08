@@ -62,6 +62,7 @@ function CTARegistration() {
                 }}
                 type={ButtonType.white}
                 target="_blank"
+                rel="noreferrer"
                 href={t("common:registrationLink")}
                 className="CTA-registration-button"
                 rounded="true"
