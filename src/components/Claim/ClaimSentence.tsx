@@ -14,12 +14,18 @@ const ClaimSentence = styled.a`
     }
 `;
 
-const Sentence = ({ showHighlights, properties, data_hash, content, generateHref }) => {
+const Sentence = ({
+    showHighlights,
+    properties,
+    data_hash,
+    content,
+    generateHref,
+}) => {
     let style = {};
     if (properties.classification && showHighlights) {
         style = {
             ...style,
-            backgroundColor: highlightColors[properties.classification]
+            backgroundColor: highlightColors[properties.classification],
         };
     }
     const href = generateHref({ data_hash });
@@ -33,17 +39,16 @@ const Sentence = ({ showHighlights, properties, data_hash, content, generateHref
                 className="claim-sentence"
                 data-cy={`frase${properties.id}`}
             >
-                {content}
+                {content}{" "}
             </ClaimSentence>
             {properties.classification && showHighlights && (
                 <sup
                     style={{
-                        color:
-                            highlightColors[properties.classification],
+                        color: highlightColors[properties.classification],
                         fontWeight: 600,
                         fontSize: "14px",
                         lineHeight: "22px",
-                        paddingLeft: "5px"
+                        paddingLeft: "5px",
                     }}
                 >
                     {1}
@@ -51,6 +56,6 @@ const Sentence = ({ showHighlights, properties, data_hash, content, generateHref
             )}
         </>
     );
-}
+};
 
 export default Sentence;
