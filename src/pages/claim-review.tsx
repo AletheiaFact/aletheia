@@ -43,8 +43,8 @@ const ClaimPage: NextPage<{
         reviewRating: {
             "@type": "Rating",
             ratingValue: ClassificationEnum[review],
-            bestRating: 1,
-            worstRating: 9,
+            bestRating: 8,
+            worstRating: 1,
             alternateName: t(`claimReviewForm:${review}`),
         },
         itemReviewed: {
