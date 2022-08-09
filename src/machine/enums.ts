@@ -20,15 +20,15 @@ enum CompoundStates {
 }
 
 enum ClassificationEnum {
-    "not-fact",
-    "true",
-    "true-but",
-    "arguable",
-    "misleading",
+    "not-fact" = 0,
     "false",
+    "misleading",
     "unsustainable",
-    "exaggerated",
     "unverifiable",
+    "exaggerated",
+    "arguable",
+    "true-but",
+    "trustworthy",
 }
 
 export {

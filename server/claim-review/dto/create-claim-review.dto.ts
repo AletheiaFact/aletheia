@@ -9,15 +9,15 @@ import { Personality } from "../../personality/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
 
 export enum ClassificationEnum {
-    "not-fact",
-    "true",
-    "true-but",
-    "arguable",
-    "misleading",
+    "not-fact" = 0,
     "false",
+    "misleading",
     "unsustainable",
-    "exaggerated",
     "unverifiable",
+    "exaggerated",
+    "arguable",
+    "true-but",
+    "trustworthy",
 }
 
 export class CreateClaimReview {
