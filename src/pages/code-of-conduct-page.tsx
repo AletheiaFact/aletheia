@@ -22,7 +22,7 @@ const AboutPage: NextPage<{ data: string }> = () => {
     );
 };
 
-export async function getServerSideProps({ query, locale, locales, req }) {
+export async function getServerSideProps({ locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
     return {
         props: {

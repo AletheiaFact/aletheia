@@ -9,7 +9,7 @@ const request = axios.create({
 const get = (options = {}) => {
     const params = {
         page: options.page ? options.page - 1 : 0,
-        order: options.order || 'asc',
+        order: options.order || "asc",
         name: options.searchName,
         pageSize: options.pageSize ? options.pageSize : 5,
         personality: options.personality,
@@ -57,14 +57,15 @@ const getClaimSentence = (id, sentenceHash) => {
             return response?.data;
         })
         .catch((e) => {
-            console.log(e);
+            // TODO: use Sentry instead
+            // console.log(e);
         });
 };
 
 const getClaimSentenceReviews = (options = {}) => {
     const params = {
         page: options.page ? options.page - 1 : 0,
-        order: options.order || 'asc',
+        order: options.order || "asc",
         name: options.searchName,
         pageSize: options.pageSize ? options.pageSize : 5,
         personality: options.personality,
@@ -85,7 +86,8 @@ const getClaimSentenceReviews = (options = {}) => {
             };
         })
         .catch((e) => {
-            console.log(e);
+            // TODO: use Sentry instead
+            // console.log(e);
         });
 };
 
@@ -103,7 +105,8 @@ const save = (t, claim = {}) => {
             const response = err && err.response;
             if (!response) {
                 // TODO: Track unknow errors
-                console.log(err);
+                // TODO: use Sentry instead
+                // console.log(err);
             }
             const { data } = response;
             message.error(
@@ -119,14 +122,17 @@ const update = (id, t, params = {}) => {
         .put(`${id}`, params)
         .then((response) => {
             const { title, _id } = response.data;
-            message.success(`"${title}" ${t("claimForm:successUpdateMessage")}`);
+            message.success(
+                `"${title}" ${t("claimForm:successUpdateMessage")}`
+            );
             return _id;
         })
         .catch((err) => {
             const response = err && err.response;
             if (!response) {
                 // TODO: Track unknow errors
-                console.log(err);
+                // TODO: use Sentry instead
+                // console.log(err);
             }
             const { data } = response;
             message.error(

@@ -5,7 +5,7 @@ const baseUrl = `/api/personality`;
 const getPersonalities = (options = {}, dispatch) => {
     const params = {
         page: options.page ? options.page - 1 : 0,
-        order: options.order || 'asc',
+        order: options.order || "asc",
         name: options.searchName,
         pageSize: options.pageSize ? options.pageSize : 5,
         withSuggestions: options.withSuggestions,
@@ -68,7 +68,8 @@ const createPersonality = (personality, t) => {
             const response = err && err.response;
             if (!response) {
                 // TODO: Track unknow errors
-                console.log(err);
+                // TODO: use Sentry instead
+                // console.log(err);
             }
             const { data } = response;
             message.error(
