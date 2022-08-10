@@ -82,9 +82,10 @@ const SocialMediaShare = ({
                             quote={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             hashtag={trimPersonality}
                             beforeOnClick={() => {
+                                //@ts-ignore
                                 umami?.trackEvent(
-                                    "facebook-share-button",
-                                    "share"
+                                    "Facebook-share-button",
+                                    "Sharing"
                                 );
                             }}
                         >
@@ -109,9 +110,10 @@ const SocialMediaShare = ({
                                 }\n`,
                             ]}
                             beforeOnClick={() => {
+                                //@ts-ignore
                                 umami?.trackEvent(
-                                    "twitter-share-button",
-                                    "sharing"
+                                    "Twitter-share-button",
+                                    "Sharing"
                                 );
                             }}
                         >
@@ -127,9 +129,10 @@ const SocialMediaShare = ({
                             url={href}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             beforeOnClick={() => {
+                                //@ts-ignore
                                 umami?.trackEvent(
-                                    "whatsapp-share-button",
-                                    "sharing"
+                                    "Whatsapp-share-button",
+                                    "Sharing"
                                 );
                             }}
                         >
@@ -145,9 +148,10 @@ const SocialMediaShare = ({
                             url={href}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             beforeOnClick={() => {
+                                //@ts-ignore
                                 umami?.trackEvent(
-                                    "telegram-share-button",
-                                    "sharing"
+                                    "Telegram-share-button",
+                                    "Sharing"
                                 );
                             }}
                         >

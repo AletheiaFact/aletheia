@@ -6,6 +6,7 @@ import UserAutocomplete from "../UserAutocomplete";
 import InputTextList from "../../InputTextList";
 
 interface DynamicInputProps {
+    fieldName: string;
     type: string;
     placeholder: string;
     value: string;
@@ -40,6 +41,7 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "textList":
             return (
                 <InputTextList
+                    fieldName={props.fieldName}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
                     addInputLabel={t(props.addInputLabel)}
