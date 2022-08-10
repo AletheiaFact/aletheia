@@ -11,7 +11,6 @@ import {
     Query,
     Req,
     Res,
-    UseGuards,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
@@ -28,9 +27,6 @@ import { IsPublic } from "../decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
-import { UserRoles } from "../auth/roles.enum";
-import { Roles } from "../auth/role.decorator";
-import { RolesGuard } from "../auth/roles.guard";
 import { SentenceService } from "../sentence/sentence.service";
 
 @Controller()
@@ -144,8 +140,6 @@ export class ClaimController {
     @Get(
         "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash"
     )
-    @UseGuards(RolesGuard)
-    @Roles(UserRoles.FACTCHECKER)
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
         const { sentence_hash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
