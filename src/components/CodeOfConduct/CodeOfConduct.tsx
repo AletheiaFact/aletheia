@@ -47,8 +47,8 @@ const CodeOfConduct = () => {
             </Paragraph>
             <ul style={{ width: "100%", marginTop: "15px" }}>
                 <li key={1}>{t("claimReviewForm:not-fact")}</li>
-                <li key={2}>{t("claimReviewForm:true")}</li>
-                <li key={3}>{t("claimReviewForm:true-but")}</li>
+                <li key={2}>{t("claimReviewForm:trustworthy")}</li>
+                <li key={3}>{t("claimReviewForm:trustworthy-but")}</li>
                 <li key={4}>{t("claimReviewForm:arguable")}</li>
                 <li key={5}>{t("claimReviewForm:misleading")}</li>
                 <li key={6}>{t("claimReviewForm:false")}</li>

@@ -1,7 +1,7 @@
 export default {
     "not-fact": "#029393",
-    true: "#00AE00",
-    "true-but": "#7BA91E",
+    trustworthy: "#00AE00",
+    "trustworthy-but": "#7BA91E",
     arguable: "#C98043",
     misleading: "#FA3C6A",
     false: "#F21709",
