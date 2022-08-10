@@ -10,6 +10,7 @@ type FormValues = {
 };
 
 export default function InputTextList({
+    fieldName,
     placeholder,
     onChange,
     addInputLabel,
@@ -74,7 +75,14 @@ export default function InputTextList({
                             <Col span={3}>
                                 <Button
                                     style={{ height: "40px", margin: "0 auto" }}
-                                    onClick={() => remove(index)}
+                                    onClick={() => {
+                                        remove(index);
+                                        //@ts-ignore
+                                        umami?.trackEvent(
+                                            `Remove ${fieldName} input`,
+                                            "Fact-checking workflow"
+                                        );
+                                    }}
                                     data-cy={`${dataCy}Remove${index}`}
                                 >
                                     <DeleteOutlined />
@@ -96,11 +104,16 @@ export default function InputTextList({
                     style={{
                         textDecoration: "underline",
                     }}
-                    onClick={() =>
+                    onClick={() => {
                         append({
                             content: "",
-                        })
-                    }
+                        });
+                        //@ts-ignore
+                        umami?.trackEvent(
+                            `Add ${fieldName} input`,
+                            "Fact-checking workflow"
+                        );
+                    }}
                     data-cy={`${dataCy}Add`}
                 >
                     <PlusOutlined /> {addInputLabel}
