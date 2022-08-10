@@ -8,7 +8,7 @@ import SentenceReportView from "../components/ClaimReview/SentenceReportView";
 import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
 import { GetLocale } from "../utils/GetLocale";
 
-const ClaimPage: NextPage<{
+const ClaimReviewPage: NextPage<{
     personality;
     claim;
     sentence;
@@ -55,7 +55,7 @@ const ClaimPage: NextPage<{
                 jobTitle: personality.description,
                 image: personality.image,
             },
-            datePublished: claim.date,
+            datePublished: sentence.date,
             name: claim.title,
         },
     };
@@ -111,4 +111,4 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         },
     };
 }
-export default ClaimPage;
+export default ClaimReviewPage;

@@ -126,7 +126,7 @@ export class ClaimReviewService {
             claimReview.sentence_hash
         );
 
-        if (review.length) {
+        if (review) {
             throw new Error("This Claim already has a review");
             //TODO: verify if already start a review and isn't published
         } else {
@@ -138,6 +138,7 @@ export class ClaimReviewService {
             });
             claimReview.report = Types.ObjectId(claimReview.report._id);
             claimReview.sentence_hash = sentence_hash;
+            claimReview.date = new Date();
             const newClaimReview = new this.ClaimReviewModel(claimReview);
             newClaimReview.isPublished = true;
 
@@ -161,8 +162,10 @@ export class ClaimReviewService {
             .populate("sources", "_id link classification");
     }
 
-    getReviewBySentenceHash(sentence_hash) {
-        return this.ClaimReviewModel.aggregate([{ $match: { sentence_hash } }]);
+    async getReviewBySentenceHash(
+        sentence_hash: string
+    ): Promise<LeanDocument<ClaimReviewDocument>> {
+        return await this.ClaimReviewModel.findOne({ sentence_hash }).lean();
     }
 
     async getReport(match): Promise<LeanDocument<ReportDocument>> {
