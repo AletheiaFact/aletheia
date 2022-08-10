@@ -8,6 +8,7 @@ import colors from "../../styles/colors";
 import Logo from "./Logo";
 import { useAppSelector } from "../../store/store";
 import SelectLanguage from "./SelectLanguage";
+import AletheiaButton from "../Button";
 
 const HeaderContent = ({ className }) => {
     const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const HeaderContent = ({ className }) => {
             }}
         >
             <Col span={4}>
-                <a
+                <AletheiaButton
                     data-cy="testSideMenuClosed"
                     onClick={() => {
                         dispatch({
@@ -52,10 +53,10 @@ const HeaderContent = ({ className }) => {
                             gap: "5px",
                         }}
                     />
-                </a>
+                </AletheiaButton>
             </Col>
             <Col lg={{ span: 16 }} md={{ span: 16 }} xs={{ span: 13 }}>
-                <a onClick={() => router.push("/")}>
+                <a href="/">
                     <Logo color="white" />
                 </a>
             </Col>
@@ -70,7 +71,7 @@ const HeaderContent = ({ className }) => {
                     paddingRight: "10px",
                 }}
             >
-                <a
+                <AletheiaButton
                     onClick={() => {
                         const pathname = router.pathname;
                         dispatch({
@@ -90,7 +91,7 @@ const HeaderContent = ({ className }) => {
                             padding: "8px",
                         }}
                     />
-                </a>
+                </AletheiaButton>
             </Col>
             <Col
                 lg={{ span: 2 }}

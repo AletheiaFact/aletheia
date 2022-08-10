@@ -41,6 +41,7 @@ const CTASection = ({ isLoggedIn }) => {
                             }}
                             href={t("common:registrationLink")}
                             target="_blank"
+                            rel="noreferrer"
                             type={ButtonType.white}
                             className="CTA-button"
                             rounded="true"

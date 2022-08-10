@@ -30,7 +30,7 @@ export class ClaimReviewTaskService {
 
     async listAll(page, pageSize, order, value) {
         const reviewTasks = await this.ClaimReviewTaskModel.find({
-            "machine.value": value,
+            [`machine.value.${value}`]: { $exists: true },
         })
             .skip(page * pageSize)
             .limit(pageSize)

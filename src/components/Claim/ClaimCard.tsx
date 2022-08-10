@@ -26,10 +26,10 @@ const ClaimCard = ({ personality, claim }) => {
         let textContent = "";
         claim.content.forEach((paragraph) => {
             paragraph.content.forEach((sentence) => {
-                return (textContent += sentence.content);
+                return (textContent += `${sentence.content} `);
             });
         });
-        setClaimContent(textContent);
+        setClaimContent(textContent.trim());
     };
 
     useEffect(() => {

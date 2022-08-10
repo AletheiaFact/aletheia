@@ -152,6 +152,7 @@ const DynamicForm = ({
                             defaultValue={defaultValue}
                             render={({ field }) => (
                                 <DynamicInput
+                                    fieldName={fieldName}
                                     type={type}
                                     placeholder={placeholder}
                                     onChange={field.onChange}
@@ -212,10 +213,20 @@ const DynamicForm = ({
 
     const onClickSaveDraft = () => {
         const values = getValues();
+        //@ts-ignore
+        umami?.trackEvent(
+            `${ReviewTaskEvents.draft}_BUTTON`,
+            "Fact-checking workflow"
+        );
         sendEventToMachine(values, ReviewTaskEvents.draft);
     };
 
     const onClickGoBack = () => {
+        //@ts-ignore
+        umami?.trackEvent(
+            `${ReviewTaskEvents.goback}_BUTTON`,
+            "Fact-checking workflow"
+        );
         sendEventToMachine({}, ReviewTaskEvents.goback);
     };
 
@@ -255,7 +266,13 @@ const DynamicForm = ({
                                     ? onClickGoBack
                                     : event === ReviewTaskEvents.draft
                                     ? onClickSaveDraft
-                                    : () => {}
+                                    : () => {
+                                          //@ts-ignore
+                                          umami?.trackEvent(
+                                              `${event}_BUTTON`,
+                                              "Fact-checking workflow"
+                                          );
+                                      }
                             }
                             event={event}
                             disabled={

@@ -54,11 +54,11 @@ const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
             <Option value="not-fact">
                 <ClassificationText classification="not-fact" />
             </Option>
-            <Option value="true">
-                <ClassificationText classification="true" />
+            <Option value="trustworthy">
+                <ClassificationText classification="trustworthy" />
             </Option>
-            <Option value="true-but">
-                <ClassificationText classification="true-but" />
+            <Option value="trustworthy-but">
+                <ClassificationText classification="trustworthy-but" />
             </Option>
             <Option value="arguable">
                 <ClassificationText classification="arguable" />
@@ -80,6 +80,6 @@ const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
             </Option>
         </SelectInput>
     );
-}
+};
 
 export default ClaimReviewSelect;
