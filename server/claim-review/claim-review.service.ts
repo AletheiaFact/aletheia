@@ -162,8 +162,10 @@ export class ClaimReviewService {
             .populate("sources", "_id link classification");
     }
 
-    getReviewBySentenceHash(sentence_hash: string) {
-        return this.ClaimReviewModel.findOne({ sentence_hash }).lean();
+    async getReviewBySentenceHash(
+        sentence_hash: string
+    ): Promise<LeanDocument<ClaimReviewDocument>> {
+        return await this.ClaimReviewModel.findOne({ sentence_hash }).lean();
     }
 
     async getReport(match): Promise<LeanDocument<ReportDocument>> {

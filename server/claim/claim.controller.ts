@@ -125,8 +125,8 @@ export class ClaimController {
             ]).then(([stats, claimReviewObj, userReview]) => {
                 return {
                     userReview,
-                    date: claimReviewObj.date,
-                    personality: claimReviewObj.personality,
+                    date: claimReviewObj?.date,
+                    personality: claimReviewObj?.personality,
                     stats,
                     ...sentence.toObject(),
                 };
