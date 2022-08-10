@@ -16,7 +16,7 @@ export enum ClassificationEnum {
     "unverifiable",
     "exaggerated",
     "arguable",
-    "true-but",
+    "trustworthy-but",
     "trustworthy",
 }
 
