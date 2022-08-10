@@ -267,10 +267,6 @@ const DynamicForm = ({
                                     : event === ReviewTaskEvents.draft
                                     ? onClickSaveDraft
                                     : () => {
-                                          console.log(
-                                              "teste",
-                                              ReviewTaskEvents[event]
-                                          );
                                           //@ts-ignore
                                           umami?.trackEvent(
                                               `${event}_BUTTON`,
