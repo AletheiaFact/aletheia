@@ -107,7 +107,7 @@ export class ClaimController {
         return this.claimService.delete(claimId);
     }
 
-    async _getSentenceByHashAndClaimId(sentence_hash, claimId) {
+    async _getSentenceByHashAndClaimId(sentence_hash) {
         const sentence = await this.sentenceService.getByDataHash(
             sentence_hash
         );
@@ -118,15 +118,15 @@ export class ClaimController {
                     isDeleted: false,
                     isPublished: true,
                 }),
-                this.claimService.getById(claimId),
+                this.claimReviewService.getReviewBySentenceHash(sentence_hash),
                 this.claimReviewService.getUserReviewBySentenceHash(
                     sentence_hash
                 ),
-            ]).then(([stats, claimObj, userReview]) => {
+            ]).then(([stats, claimReviewObj, userReview]) => {
                 return {
                     userReview,
-                    date: claimObj.date,
-                    personality: claimObj.personality,
+                    date: claimReviewObj.date,
+                    personality: claimReviewObj.personality,
                     stats,
                     ...sentence.toObject(),
                 };
@@ -154,10 +154,7 @@ export class ClaimController {
             claimSlug
         );
 
-        const sentence = await this._getSentenceByHashAndClaimId(
-            sentence_hash,
-            claim._id
-        );
+        const sentence = await this._getSentenceByHashAndClaimId(sentence_hash);
 
         const claimReviewTask =
             await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
