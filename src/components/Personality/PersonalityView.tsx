@@ -45,7 +45,7 @@ const PersonalityView = ({ personality, href, isLoggedIn, personalities }) => {
                 <Col sm={22} md={14} lg={12}>
                     <ClaimList personality={personality} />
                 </Col>
-                <Col sm={22} md={8} lg={6}>
+                <Col sm={22} md={8} lg={6} style={{ width: "100%" }}>
                     <MetricsOverview stats={personality.stats} />
                 </Col>
             </Row>
