@@ -93,7 +93,7 @@ yarn build
 }
 ```
 - Go to SDK Configuration url that you saved and add /schemas in the end of the url then copy the first id on the page and save it.
-- If you want to check you if it is the right id, at the same url paste after /schemas the /<schema_id> contaning the id that you just copied. 
+- If you want to check if it is the right id, at the same url paste after /schemas the /<schema_id> contaning the id that you just copied. 
 
 #### Making The Changes On Your Code:
 - First you gonna have to change the ``authentication_type: `` to ory on your config.yaml and config.seed.yaml.
