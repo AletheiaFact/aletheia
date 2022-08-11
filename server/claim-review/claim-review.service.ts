@@ -42,23 +42,6 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.countDocuments().where(query);
     }
 
-    async getReviewStatsBySentenceHash(match: any) {
-        const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: match },
-            {
-                $lookup: {
-                    from: "reports",
-                    localField: "report",
-                    foreignField: "_id",
-                    as: "report",
-                },
-            },
-            { $group: { _id: "$report.classification", count: { $sum: 1 } } },
-            { $sort: { count: -1 } },
-        ]);
-        return this.util.formatStats(reviews);
-    }
-
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
             { $match: { claim: claimId, isDeleted: false, isPublished: true } },
@@ -165,7 +148,9 @@ export class ClaimReviewService {
     async getReviewBySentenceHash(
         sentence_hash: string
     ): Promise<LeanDocument<ClaimReviewDocument>> {
-        return await this.ClaimReviewModel.findOne({ sentence_hash }).lean();
+        return await this.ClaimReviewModel.findOne({ sentence_hash })
+            .populate("report")
+            .lean();
     }
 
     async getReport(match): Promise<LeanDocument<ReportDocument>> {
