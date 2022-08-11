@@ -27,7 +27,7 @@ const ClaimReviewPage: NextPage<{
     sitekey,
 }) => {
     const { t } = useTranslation();
-    const review = sentence?.props?.classification;
+    const review = sentence?.stats?.reviews[0]._id;
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
