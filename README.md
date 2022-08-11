@@ -78,6 +78,9 @@ yarn build
         },
         "user_id": {
           "type": "string"
+        },
+        "role": {
+          "type": "string"
         }
       },
       "required": [
