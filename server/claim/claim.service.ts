@@ -38,12 +38,7 @@ export class ClaimService {
         private historyService: HistoryService,
         private stateEventService: StateEventService,
         private claimRevisionService: ClaimRevisionService
-    ) {
-        this.optionsToUpdate = {
-            new: true,
-            upsert: true,
-        };
-    }
+    ) {}
 
     async listAll(page, pageSize, order, query) {
         if (query.personality) {
@@ -68,8 +63,7 @@ export class ClaimService {
             .lean();
 
         return Promise.all(
-            claims.map(async (claim) => {
-                // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            claims.map((claim) => {
                 return this.postProcess({
                     ...claim.latestRevision,
                     ...claim,
@@ -191,18 +185,22 @@ export class ClaimService {
     async getByPersonalityIdAndClaimSlug(
         personalityId,
         claimSlug,
-        revisionId = undefined
+        revisionId = undefined,
+        population = true
     ) {
         return this._getClaim(
             { personality: personalityId, slug: claimSlug },
-            revisionId
+            revisionId,
+            true,
+            population
         );
     }
 
     private async _getClaim(
         match: ClaimMatchParameters,
         revisionId = undefined,
-        postprocess = true
+        postprocess = true,
+        population = true
     ) {
         let claim;
         if (revisionId) {
@@ -224,28 +222,48 @@ export class ClaimService {
                 revision,
             };
         } else {
-            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            claim = await this.ClaimModel.findOne(match)
-                .populate("personality", "_id name")
-                .populate("sources", "_id link classification")
-                .populate({
-                    path: "latestRevision",
-                    populate: {
-                        path: "content",
+            if (population) {
+                claim = await this.ClaimModel.findOne(match)
+                    .populate("personality", "_id name")
+                    .populate("sources", "_id link")
+                    .populate({
+                        path: "latestRevision",
                         populate: {
                             path: "content",
                             populate: {
                                 path: "content",
+                                populate: {
+                                    path: "content",
+                                },
                             },
                         },
-                    },
-                })
-                .lean();
+                    })
+                    .lean();
+            } else {
+                const findedClaim = await this.ClaimModel.findOne(
+                    match,
+                    "_id personality latestRevision"
+                )
+                    .populate("personality", "_id name")
+                    .populate("sources", "_id link")
+                    .populate({
+                        path: "latestRevision",
+                        select: { title: 1, contentModel: 1, date: 1, slug: 1 },
+                    })
+                    .lean();
+                claim = {
+                    ...findedClaim.latestRevision,
+                    ...findedClaim,
+                    latestRevision: undefined,
+                };
+            }
         }
         if (!claim) {
             throw new NotFoundException();
         }
-        return postprocess === true ? this.postProcess(claim) : claim;
+        return postprocess === true && population === true
+            ? this.postProcess(claim)
+            : claim;
     }
 
     /**

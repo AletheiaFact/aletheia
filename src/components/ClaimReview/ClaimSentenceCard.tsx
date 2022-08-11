@@ -6,12 +6,11 @@ import ClaimSummary from "../Claim/ClaimSummary";
 
 const ClaimSentenceCard = ({
     personality,
-    sentence,
+    date,
+    content,
     claimType,
     summaryClassName = "",
 }) => {
-    const content = sentence?.content;
-
     if (content) {
         return (
             <Col span={24}>
@@ -19,7 +18,7 @@ const ClaimSentenceCard = ({
                     author={
                         <ClaimCardHeader
                             personality={personality}
-                            date={sentence?.date}
+                            date={date}
                             claimType={claimType}
                         />
                     }
