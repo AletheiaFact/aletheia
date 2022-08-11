@@ -87,6 +87,7 @@ const ClaimReviewPage: NextPage<{
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
+                    isLoggedIn={isLoggedIn}
                     href={href}
                     context={claimReviewTask.machine.context.reviewData}
                 />
