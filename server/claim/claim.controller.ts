@@ -155,7 +155,7 @@ export class ClaimController {
         );
     }
 
-    @Get("personality/:slug/claim/create/")
+    @Get("personality/:personalitySlug/claim/create/")
     public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
         const { personalitySlug } = req.params;
         const parsedUrl = parse(req.url, true);
