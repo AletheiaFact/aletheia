@@ -93,11 +93,12 @@ yarn build
 }
 ```
 - Go to SDK Configuration url that you saved and add /schemas in the end of the url then copy the first id on the page and save it.
+- If you want to check you if it is the right id, at the same url paste after /schemas the /<schema_id> contaning the id that you just copied. 
 
 #### Making The Changes On Your Code:
 - First you gonna have to change the ``authentication_type: `` to ory on your config.yaml and config.seed.yaml.
 - Now take SDK Configuration url and paste on ``url: `` in both pages config.yaml, config.seed.yaml and on ``ORY_SDK_URL=`` in your .env too. 
-- Now Paste the acess token that you saved on ``access_token: `` in your config.yaml and congig.seed.yaml.
+- Now Paste the acess token that you saved on ``access_token: `` in your config.yaml and config.seed.yaml.
 - Do the same as above but now with the id that you saved and paste it on ``schema_id: ``. 
 
 #### Setting up your own UI to make the right redirects:
