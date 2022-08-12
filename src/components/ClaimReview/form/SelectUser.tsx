@@ -13,7 +13,7 @@ const StyledSelect = styled(Select)`
     }
 `;
 
-function SelectUser({ fetchOptions, ...props }) {
+function SelectUser({ fetchOptions, name, ...props }) {
     const [fetching, setFetching] = useState(false);
     const [options, setOptions] = useState([]);
 
@@ -31,7 +31,7 @@ function SelectUser({ fetchOptions, ...props }) {
 
     return (
         <StyledSelect
-            mode="multiple"
+            mode={name === "usersId" ? "multiple" : "tags"}
             showSearch
             filterOption={false}
             onSearch={getOptions}

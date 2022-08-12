@@ -37,6 +37,7 @@ import { SpeechModule } from "./speech/speech.module";
 import { ParagraphModule } from "./paragraph/paragraph.module";
 import { SentenceModule } from "./sentence/sentence.module";
 import { StateEventModule } from "./state-event/state-event.module";
+import { TopicModule } from "./topic/topic.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -86,6 +87,7 @@ export class AppModule implements NestModule {
                 OryModule,
                 ReportModule,
                 CaptchaModule,
+                TopicModule,
             ],
             controllers: [RootController],
             providers: [

@@ -33,6 +33,7 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "inputSearch":
             return (
                 <UserAutocomplete
+                    fieldName={props.fieldName}
                     placeholder={t(props.placeholder)}
                     onChange={props.onChange}
                     dataCy={props["data-cy"]}

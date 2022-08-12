@@ -7,6 +7,7 @@ import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
+import TopicInput from "./TopicInput";
 
 const ClaimReviewView = ({
     personality,
@@ -82,6 +83,7 @@ const ClaimReviewView = ({
                         </Button>
                     )}
                 </Col>
+                <TopicInput />
                 {!formCollapsed && (
                     <DynamicForm
                         sentence_hash={sentenceHash}
