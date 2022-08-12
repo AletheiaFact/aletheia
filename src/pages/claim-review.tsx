@@ -55,9 +55,10 @@ const ClaimReviewPage: NextPage<{
                 jobTitle: personality.description,
                 image: personality.image,
             },
-            datePublished: sentence.date,
+            datePublished: claim.date,
             name: claim.title,
         },
+        datePublished: sentence.date,
     };
 
     return (
