@@ -36,7 +36,7 @@ const Sidebar = ({ menuCollapsed, onToggleSidebar }) => {
                 </Col>
                 <Col span={4}>
                     <Button
-                        data-cy="testSideMenuClosed"
+                        data-cy="testCloseSideMenu"
                         onClick={() => onToggleSidebar()}
                         type="text"
                     >

@@ -34,7 +34,7 @@ const locators = {
     },
 
     menu: {
-        SIDE_MENU: "[data-cy=testSideMenuClosed]",
+        SIDE_MENU: "[data-cy=testOpenSideMenu]",
     },
 };
 export default locators;
