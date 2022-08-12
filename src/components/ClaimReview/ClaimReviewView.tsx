@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
 import { Col, Row } from "antd";
-import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
@@ -16,14 +15,12 @@ const ClaimReviewView = ({
     href,
     claimReviewTask,
     isLoggedIn,
-    review,
     sitekey,
 }) => {
     const { t } = useTranslation();
     const claimId = claim._id;
     const personalityId = personality._id;
     const sentenceHash = sentence.data_hash;
-    const stats = sentence?.stats;
     const [formCollapsed, setFormCollapsed] = useState(
         claimReviewTask ? false : true
     );
@@ -45,85 +42,40 @@ const ClaimReviewView = ({
             >
                 <ClaimSentenceCard
                     personality={personality}
-                    sentence={sentence}
+                    date={claim.date}
+                    content={sentence?.content}
                     summaryClassName="claim-review"
                     claimType={claim?.type}
                 />
-                {review && (
-                    <Row
-                        style={{
-                            justifyContent: "center",
-                            flexWrap: "wrap",
-                            width: "100%",
-                            paddingBottom: "1em",
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: "flex",
-                                width: "100%",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <p style={{ marginBottom: 0 }}>
-                                {t("claimReview:claimReview")}&nbsp;
-                            </p>
-                            <ClassificationText
-                                classification={sentence.props?.classification}
-                            />
-                        </div>
-                    </Row>
-                )}
                 {formCollapsed && (
                     <Row
                         style={{
                             width: "100%",
                             padding: "0px 0px 15px 0px",
-                            justifyContent: "space-between",
+                            justifyContent: "center",
                         }}
                     >
-                        {!sentence.userReview && (
-                            <>
-                                <span
-                                    style={{
-                                        fontSize: "14px",
-                                    }}
+                        <>
+                            {isLoggedIn && (
+                                <Button
+                                    type={ButtonType.blue}
+                                    onClick={toggleFormCollapse}
+                                    icon={<PlusOutlined />}
+                                    data-cy={"testAddReviewButton"}
                                 >
-                                    {t("claim:metricsHeaderInfo", {
-                                        totalReviews: stats?.total,
-                                    })}
-                                </span>{" "}
-                                <br />
-                                {review && (
-                                    <span
-                                        style={{
-                                            fontSize: "10px",
-                                        }}
-                                    >
-                                        {t("claim:cardOverallReviewPrefix")}{" "}
-                                        <ClassificationText
-                                            classification={
-                                                review?.classification
-                                            }
-                                        />
-                                        ({review?.count})
-                                    </span>
-                                )}
-                                {!review && isLoggedIn && (
-                                    <Button
-                                        type={ButtonType.blue}
-                                        onClick={toggleFormCollapse}
-                                        icon={<PlusOutlined />}
-                                        data-cy={"testAddReviewButton"}
-                                    >
-                                        {t("claimReviewForm:addReviewButton")}
-                                    </Button>
-                                )}
-                            </>
-                        )}
+                                    {t("claimReviewForm:addReviewButton")}
+                                </Button>
+                            )}
+                        </>
                     </Row>
                 )}
-                <Col style={{ display: "flex", justifyContent: "center" }}>
+                <Col
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        padding: "0px 0px 15px 0px",
+                    }}
+                >
                     {!isLoggedIn && (
                         <Button href="/login">
                             {t("claimReviewForm:loginButton")}

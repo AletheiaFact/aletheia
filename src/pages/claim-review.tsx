@@ -10,19 +10,21 @@ import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
 import { GetLocale } from "../utils/GetLocale";
 
 const ClaimReviewPage: NextPage<{
-    personality;
-    claim;
-    sentence;
-    sitekey;
-    href;
-    claimReviewTask;
-    isLoggedIn;
+    personality: any;
+    claim: any;
+    sentence: any;
+    sitekey: string;
+    href: string;
+    claimReviewTask: any;
+    claimReview: any;
+    isLoggedIn: boolean;
 }> = ({
     personality,
     claim,
     sentence,
     href,
     claimReviewTask,
+    claimReview,
     isLoggedIn,
     sitekey,
 }) => {
@@ -80,7 +82,6 @@ const ClaimReviewPage: NextPage<{
                     href={href}
                     claimReviewTask={claimReviewTask}
                     isLoggedIn={isLoggedIn}
-                    review={review}
                     sitekey={sitekey}
                 />
             ) : (
@@ -90,7 +91,7 @@ const ClaimReviewPage: NextPage<{
                     sentence={sentence}
                     isLoggedIn={isLoggedIn}
                     href={href}
-                    context={claimReviewTask.machine.context.reviewData}
+                    context={claimReview.report}
                 />
             )}
         </>
@@ -108,6 +109,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claim: JSON.parse(JSON.stringify(query.claim)),
             sentence: JSON.parse(JSON.stringify(query.sentence)),
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
+            claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,

@@ -112,10 +112,11 @@ export class PersonalityController {
     ) {
         const parsedUrl = parse(req.url, true);
 
-        const personality = await this.personalityService.getBySlug(
-            req.params.slug,
-            req.language
-        );
+        const personality =
+            await this.personalityService.getClaimsPersonalityBySlug(
+                req.params.slug,
+                req.language
+            );
 
         const { personalities } = await this.personalityService.combinedListAll(
             {
@@ -158,19 +159,18 @@ export class PersonalityController {
     ) {
         const parsedUrl = parse(req.url, true);
 
-        const personality = await this.personalityService.getBySlug(
-            req.params.slug
-        );
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/history-page",
-                Object.assign(parsedUrl.query, {
-                    targetId: personality._id,
-                    targetModel: TargetModel.Personality,
-                })
+        const personality =
+            await this.personalityService.getClaimsPersonalityBySlug(
+                req.params.slug
             );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/history-page",
+            Object.assign(parsedUrl.query, {
+                targetId: personality._id,
+                targetModel: TargetModel.Personality,
+            })
+        );
     }
 }

@@ -1,16 +1,22 @@
-import { Injectable, Inject, Logger, Scope, NotFoundException } from "@nestjs/common";
+import {
+    Injectable,
+    Inject,
+    Logger,
+    Scope,
+    NotFoundException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import slugify from 'slugify'
+import slugify from "slugify";
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
 import { WikidataService } from "../wikidata/wikidata.service";
 import { UtilService } from "../util";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
-import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
-import { REQUEST } from '@nestjs/core';
-import {BaseRequest} from "../types";
+import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
+import { REQUEST } from "@nestjs/core";
+import { BaseRequest } from "../types";
 
 @Injectable({ scope: Scope.REQUEST })
 export class PersonalityService {
@@ -23,7 +29,8 @@ export class PersonalityService {
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Personality.name)
-        private PersonalityModel: ISoftDeletedModel<PersonalityDocument> & Model<PersonalityDocument>,
+        private PersonalityModel: ISoftDeletedModel<PersonalityDocument> &
+            Model<PersonalityDocument>,
         private claimReview: ClaimReviewService,
         private history: HistoryService,
         private wikidata: WikidataService,
@@ -39,21 +46,19 @@ export class PersonalityService {
     ) {
         let personalities;
 
-        if (order === 'random') {
+        if (order === "random") {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             personalities = await this.PersonalityModel.aggregate([
                 { $match: query },
                 { $sample: { size: pageSize } },
-            ])
-
-
+            ]);
         } else {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             personalities = await this.PersonalityModel.find(query)
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order })
-                .lean()
+                .lean();
         }
 
         if (withSuggestions) {
@@ -82,21 +87,23 @@ export class PersonalityService {
     async create(personality) {
         try {
             const personalityExists =
-                await this.getDeletedPersonalityByWikidata(personality.wikidata)
+                await this.getDeletedPersonalityByWikidata(
+                    personality.wikidata
+                );
 
-            if(personalityExists) {
-                return personalityExists.restore()
+            if (personalityExists) {
+                return personalityExists.restore();
             } else {
                 personality.slug = slugify(personality.name, {
-                    lower: true,     // convert to lower case, defaults to `false`
-                    strict: true     // strip special characters except replacement, defaults to `false`
-                })
+                    lower: true, // convert to lower case, defaults to `false`
+                    strict: true, // strip special characters except replacement, defaults to `false`
+                });
                 const newPersonality = new this.PersonalityModel(personality);
                 this.logger.log(
                     `Attempting to create new personality with data ${personality}`
                 );
 
-                const user = this.req.user
+                const user = this.req.user;
 
                 const history = this.history.getHistoryParams(
                     newPersonality._id,
@@ -104,9 +111,9 @@ export class PersonalityService {
                     user,
                     HistoryType.Create,
                     personality
-                )
+                );
 
-                this.history.createHistory(history)
+                this.history.createHistory(history);
 
                 return newPersonality.save();
             }
@@ -116,8 +123,8 @@ export class PersonalityService {
     getDeletedPersonalityByWikidata(wikidata) {
         return this.PersonalityModel.findOne({
             isDeleted: true,
-            wikidata
-        })
+            wikidata,
+        });
     }
 
     async getById(personalityId, language = "en") {
@@ -131,29 +138,43 @@ export class PersonalityService {
         return await this.postProcess(personality.toObject(), language);
     }
 
-    async getBySlug(personalitySlug, language = "en") {
+    async getPersonalityBySlug(personalitySlug, language = "pt") {
         try {
-             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            const personality = await this.PersonalityModel.findOne({
+                slug: personalitySlug,
+            });
+            return await this.postProcess(personality.toObject(), language);
+        } catch {
+            throw new NotFoundException();
+        }
+    }
+
+    async getClaimsPersonalityBySlug(personalitySlug, language = "pt") {
+        try {
+            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             const personality: any = await this.PersonalityModel.findOne({
-                slug: personalitySlug
+                slug: personalitySlug,
             }).populate({
                 path: "claims",
                 populate: {
                     path: "latestRevision",
-                    select: "_id title content"
+                    select: "_id title content",
                 },
                 select: "_id",
             });
-            personality.claims = await Promise.all(personality.claims.map((claim) => {
-                return {
-                    ...claim.lastestRevision,
-                    ...claim
-                }
-            }))
+            // TODO: Do the latest revision population in the populate above
+            personality.claims = await Promise.all(
+                personality.claims.map((claim) => {
+                    return {
+                        ...claim.lastestRevision,
+                        ...claim,
+                    };
+                })
+            );
             this.logger.log(`Found personality ${personality._id}`);
             return await this.postProcess(personality.toObject(), language);
         } catch {
-            throw new NotFoundException()
+            throw new NotFoundException();
         }
     }
 
@@ -169,9 +190,7 @@ export class PersonalityService {
                 return;
             }
 
-            return Object.assign(
-                wikidataExtract,
-                personality, {
+            return Object.assign(wikidataExtract, personality, {
                 stats:
                     personality._id &&
                     (await this.getReviewStats(personality._id)),
@@ -204,35 +223,33 @@ export class PersonalityService {
      */
     async update(personalityId, newPersonalityBody) {
         // eslint-disable-next-line no-useless-catch
-        if(newPersonalityBody.name) {
+        if (newPersonalityBody.name) {
             newPersonalityBody.slug = slugify(newPersonalityBody.name, {
                 lower: true,
-                strict: true
-            })
+                strict: true,
+            });
         }
         const personality = await this.getById(personalityId);
-        const previousPersonality = {...personality}
+        const previousPersonality = { ...personality };
         const newPersonality = Object.assign(personality, newPersonalityBody);
-        const personalityUpdate =
-            await this.PersonalityModel.findByIdAndUpdate(
-                personalityId,
-                newPersonality,
-                this.optionsToUpdate
-            );
+        const personalityUpdate = await this.PersonalityModel.findByIdAndUpdate(
+            personalityId,
+            newPersonality,
+            this.optionsToUpdate
+        );
         this.logger.log(`Updated personality with data ${newPersonality}`);
 
         const user = this.req.user;
 
-        const history =
-            this.history.getHistoryParams(
-                personalityId,
-                TargetModel.Personality,
-                user,
-                HistoryType.Update,
-                personalityUpdate,
-                previousPersonality
-            )
-        await this.history.createHistory(history)
+        const history = this.history.getHistoryParams(
+            personalityId,
+            TargetModel.Personality,
+            user,
+            HistoryType.Update,
+            personalityUpdate,
+            previousPersonality
+        );
+        await this.history.createHistory(history);
 
         return personalityUpdate;
     }
@@ -245,8 +262,8 @@ export class PersonalityService {
      * @returns Returns the personality with the param isDeleted equal to true
      */
     async delete(personalityId) {
-        const user = this.req.user
-        const previousPersonality = await this.getById(personalityId)
+        const user = this.req.user;
+        const previousPersonality = await this.getById(personalityId);
         const history = this.history.getHistoryParams(
             personalityId,
             TargetModel.Personality,
@@ -254,8 +271,8 @@ export class PersonalityService {
             HistoryType.Delete,
             null,
             previousPersonality
-        )
-        await this.history.createHistory(history)
+        );
+        await this.history.createHistory(history);
         return this.PersonalityModel.softDelete({ _id: personalityId });
     }
 
@@ -282,7 +299,7 @@ export class PersonalityService {
         return queryInputs;
     }
 
-    combinedListAll(query) : any {
+    combinedListAll(query): any {
         const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = this.verifyInputsQuery(query);
 
