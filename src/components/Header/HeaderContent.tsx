@@ -35,7 +35,7 @@ const HeaderContent = ({ className }) => {
         >
             <Col span={4}>
                 <AletheiaButton
-                    data-cy="testSideMenuClosed"
+                    data-cy="testOpenSideMenu"
                     onClick={() => {
                         dispatch({
                             type: "TOGGLE_MENU",

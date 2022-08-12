@@ -4,45 +4,48 @@ import styled from "styled-components";
 
 const SentenceReportSummary = styled(Row)`
     position: relative;
-    background: ${colors.lightGray};
-    display: flex;
+    margin: 8px 0 16px 4px;
     padding: 16px 24px;
     border-radius: 10px;
     background-color: ${colors.lightYellow};
 
+    // small triangle pointing to the avatar on the side
     &:after {
         content: " ";
         position: absolute;
-        left: -31px;
-        top: 20px;
+        left: -12px;
+        top: 24px;
         border-top: none;
-        border-right: 20px solid transparent;
-        border-left: 20px solid transparent;
-        border-bottom: 22px solid ${colors.lightGray};
+        border-right: 9px solid transparent;
+        border-left: 9px solid transparent;
+        border-bottom: 9px solid ${colors.lightYellow};
         transform: rotate(-90deg);
-        border-bottom-color: ${colors.lightYellow};
     }
 
-    ${({ smalldialogbox }) =>
-        smalldialogbox &&
-        `
-            &:after {
-                content: " ";
-                position: absolute;
-                left: -10px;
-                top: 24px;
-                border-top: none;
-                border-right: 6px solid transparent;
-                border-left: 6px solid transparent;
-                border-bottom: 9px solid ${colors.lightGray};
-                transform: rotate(-90deg);
-                border-bottom-color: ${colors.lightYellow};
-            }
-        `}
+    .sentence-content {
+        font-size: 16px;
+        color: ${colors.blackSecondary};
+        margin-bottom: 0px;
+
+        cite {
+            font-style: normal;
+        }
+
+        a {
+            color: ${colors.bluePrimary};
+            font-weight: 700;
+            margin-left: 10px;
+        }
+    }
 
     @media (max-width: 767px) {
+        margin-left: 0;
+
+        // triangle pointing up
         &:after {
-            display: none;
+            left: 50px;
+            top: -8px;
+            transform: rotate(0deg);
         }
     }
 `;

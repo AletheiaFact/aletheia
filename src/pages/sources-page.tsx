@@ -1,17 +1,18 @@
 import { NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import ClaimSourceList from "../components/Claim/ClaimSourceList";
-import { NextSeo } from "next-seo";
 import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import ClaimSourceList from "../components/Claim/ClaimSourceList";
+import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 
 const ClaimSourcePage: NextPage<{ targetId }> = ({ targetId }) => {
     const { t } = useTranslation();
     return (
         <>
-            <NextSeo
+            <Seo
                 title={t("seo:sourcesTitle")}
-                description={t("seo:sourcesDescription", { targetId })}
+                description={t("seo:sourcesDescription", { claimId: targetId })}
             />
             <ClaimSourceList claimId={targetId} />
         </>

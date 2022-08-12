@@ -1,10 +1,11 @@
 import { NextPage } from "next";
-import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
-import { NextSeo } from "next-seo";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import SentenceReportView from "../components/ClaimReview/SentenceReportView";
+import JsonLd from "../components/JsonLd";
+import Seo from "../components/Seo";
 import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
 import { GetLocale } from "../utils/GetLocale";
 
@@ -26,7 +27,7 @@ const ClaimReviewPage: NextPage<{
     sitekey,
 }) => {
     const { t } = useTranslation();
-    const review = sentence?.props?.classification;
+    const review = sentence?.stats?.reviews[0]?._id;
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -64,7 +65,7 @@ const ClaimReviewPage: NextPage<{
     return (
         <>
             {review && <JsonLd {...jsonld} />}
-            <NextSeo
+            <Seo
                 title={sentence.content}
                 description={t("seo:claimReviewDescription", {
                     sentence: sentence.content,
@@ -87,6 +88,7 @@ const ClaimReviewPage: NextPage<{
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
+                    isLoggedIn={isLoggedIn}
                     href={href}
                     context={claimReviewTask.machine.context.reviewData}
                 />

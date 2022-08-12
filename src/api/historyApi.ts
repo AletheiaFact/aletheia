@@ -5,7 +5,6 @@ const request = axios.create({
     baseURL: `/api/history`,
 });
 
-
 type optionsType = {
     targetId: string;
     targetModel: string;
@@ -15,13 +14,14 @@ type optionsType = {
 };
 const getByTargetId = (options: optionsType) => {
     const params = {
-        page: options.page ? options.page-1 : 0,
+        page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
         pageSize: options.pageSize ? options.pageSize : 5,
     };
-    const { targetId, targetModel} = options;
+    const { targetId, targetModel } = options;
 
-    return request.get(`/${targetModel}/${targetId}`, { params })
+    return request
+        .get(`/${targetModel}/${targetId}`, { params })
         .then((response) => {
             const { history, totalPages, totalChanges } = response.data;
             return {
@@ -31,9 +31,9 @@ const getByTargetId = (options: optionsType) => {
             };
         })
         .catch((err) => {
-            console.log(err);
+            // TODO: use Sentry instead
+            // console.log(err);
         });
-
 };
 
 const HistoryApi = {

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import colors from "../../styles/colors";
 
 const SentenceReportCardStyle = styled.div`
     .main-content {
@@ -8,20 +9,51 @@ const SentenceReportCardStyle = styled.div`
     .personality-name {
         font-size: 16px;
         margin-top: 16px;
+        color: ${colors.bluePrimary};
+        font-weight: 400;
     }
 
-    .content-card {
-        max-width: 157px;
+    .personality-card {
+        text-align: center;
+        max-width: 167px;
         justify-content: center;
     }
 
     .personality-description-content {
         font-size: 10px;
-        margin-top: 4px;
+        color: ${colors.blackSecondary};
     }
 
     .personality-description {
         display: block;
+    }
+
+    .personality-avatar {
+        outline: ${colors.blueQuartiary} solid 2px;
+        outline-offset: 4px;
+    }
+
+    .personality-profile {
+        color: ${colors.blackSecondary};
+        text-decoration: underline;
+        font-weight: 700;
+    }
+
+    .sentence-card {
+        padding-left: 10px;
+    }
+
+    .classification {
+        font-size: 16px;
+        color: ${colors.blackSecondary};
+        font-weight: 400;
+    }
+
+    .claim-info {
+        font-size: 10px;
+        strong {
+            font-weight: 700;
+        }
     }
 
     @media (max-width: 1024px) {
@@ -40,7 +72,7 @@ const SentenceReportCardStyle = styled.div`
     }
 
     @media (max-width: 767px) {
-        .content-card {
+        .personality-card {
             max-width: 100%;
             justify-content: start;
             align-items: start;
@@ -76,17 +108,26 @@ const SentenceReportCardStyle = styled.div`
             display: inline;
         }
 
-        .context-classification {
+        .sentence-card {
+            padding-left: 0;
+        }
+
+        .classification {
             font-size: 16px;
-            flex-flow: nowrap;
+            text-align: end;
         }
     }
 
     @media (max-width: 576px) {
-        .content-card {
+        .personality-card {
             justify-content: space-around;
             align-items: center;
             padding-bottom: 10px;
+        }
+
+        .personality-description-content {
+            flex-direction: column;
+            align-items: flex-start;
         }
     }
 `;

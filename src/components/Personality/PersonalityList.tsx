@@ -1,12 +1,13 @@
-import React from "react";
-import api from "../../api/personality";
 import { Row } from "antd";
+import { useTranslation } from "next-i18next";
+import React from "react";
+
+import api from "../../api/personality";
+import BaseList from "../List/BaseList";
+import Seo from "../Seo";
+import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 import PersonalityCard from "./PersonalityCard";
 import PersonalityCreateCTA from "./PersonalityCreateCTA";
-import BaseList from "../List/BaseList";
-import { useTranslation } from "next-i18next";
-import { NextSeo } from "next-seo";
-import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 
 const PersonalityList = () => {
     const { i18n, t } = useTranslation();
@@ -23,7 +24,7 @@ const PersonalityList = () => {
     );
     return (
         <>
-            <NextSeo
+            <Seo
                 title={t("seo:personalityListTitle")}
                 description={t("seo:personalityListDescription")}
             />
