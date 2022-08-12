@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { Select } from "antd";
-import { GB, BR } from "country-flag-icons/react/3x2";
-import colors from "../../styles/colors";
+import { BR, GB } from "country-flag-icons/react/3x2";
 import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
 
 const { Option } = Select;
 
@@ -10,7 +9,8 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
     const [language, setLanguage] = useState(props.defaultLanguage);
 
     useEffect(() => {
-        const cookieLanguage = Cookies.get("default_language");
+        const cookieLanguage =
+            Cookies.get("default_language") || props.defaultLanguage;
         setLanguage(cookieLanguage);
     }, []);
 
@@ -24,21 +24,21 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
     return (
         <Select
             style={{
-                padding: 0,
-                border: "2px",
-                borderColor: colors.grayPrimary,
-                borderRadius: "4px",
-                background: "none",
+                paddingTop: 15,
+                display: "flex",
+                width: 50,
             }}
+            bordered={false}
+            showArrow={false}
             value={language}
             onSelect={setDefaultLanguage}
             data-cy={props.dataCy}
         >
-            <Option default value="pt">
-                <BR style={{ width: "22px" }} />
+            <Option default value="pt" data-cy="testLanguagePt">
+                <BR style={{ width: "25px" }} />
             </Option>
-            <Option value="en">
-                <GB title="EN" style={{ width: "22px" }} />
+            <Option value="en" data-cy="testLanguagePt">
+                <GB title="EN" style={{ width: "25px" }} />
             </Option>
         </Select>
     );

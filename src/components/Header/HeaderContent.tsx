@@ -98,12 +98,6 @@ const HeaderContent = ({ className }) => {
                 md={{ span: 2 }}
                 sm={{ span: 4 }}
                 xs={{ span: 4 }}
-                style={{
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    alignItems: "center",
-                    gap: "5px",
-                }}
             >
                 <SelectLanguage
                     dataCy={"LanguageButton"}
