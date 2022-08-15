@@ -1,9 +1,10 @@
-import React from "react";
-import { Col, Layout, Row } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
+import { Button, Col, Layout, Row } from "antd";
+import React from "react";
+
+import colors from "../styles/colors";
 import AletheiaMenu from "./AletheiaMenu";
 import Logo from "./Header/Logo";
-import colors from "../styles/colors";
 
 const { Sider } = Layout;
 const Sidebar = ({ menuCollapsed, onToggleSidebar }) => {
@@ -27,10 +28,6 @@ const Sidebar = ({ menuCollapsed, onToggleSidebar }) => {
         >
             <Row
                 style={{
-                    fontSize: "26px",
-                    lineHeight: "39px",
-                    textAlign: "center",
-                    color: "#111111",
                     padding: "15px 20px",
                 }}
             >
@@ -38,15 +35,19 @@ const Sidebar = ({ menuCollapsed, onToggleSidebar }) => {
                     <Logo color="blue" />
                 </Col>
                 <Col span={4}>
-                    <a onClick={onToggleSidebar}>
+                    <Button
+                        data-cy="testCloseSideMenu"
+                        onClick={() => onToggleSidebar()}
+                        type="text"
+                    >
                         <CloseOutlined
                             style={{
                                 fontSize: "22px",
-                                color: colors.blackPrimary,
-                                padding: "8px",
+                                color: colors.bluePrimary,
+                                marginTop: "5px",
                             }}
                         />
-                    </a>
+                    </Button>
                 </Col>
             </Row>
             <AletheiaMenu />

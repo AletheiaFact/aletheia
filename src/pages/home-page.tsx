@@ -1,8 +1,9 @@
 import { NextPage } from "next";
-import Home from "../components/Home/Home";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { NextSeo } from "next-seo";
 import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import Home from "../components/Home/Home";
+import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 
 const HomePage: NextPage<{ personalities; stats; href; isLoggedIn }> = (
@@ -11,7 +12,7 @@ const HomePage: NextPage<{ personalities; stats; href; isLoggedIn }> = (
     const { t } = useTranslation();
     return (
         <>
-            <NextSeo title="Home" description={t("landingPage:description")} />
+            <Seo title="Home" description={t("landingPage:description")} />
             <Home {...props} />
         </>
     );

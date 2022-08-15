@@ -1,32 +1,35 @@
 import { NextPage } from "next";
-import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
-import { NextSeo } from "next-seo";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import SentenceReportView from "../components/ClaimReview/SentenceReportView";
+import JsonLd from "../components/JsonLd";
+import Seo from "../components/Seo";
 import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
 import { GetLocale } from "../utils/GetLocale";
 
-const ClaimPage: NextPage<{
-    personality;
-    claim;
-    sentence;
-    sitekey;
-    href;
-    claimReviewTask;
-    isLoggedIn;
+const ClaimReviewPage: NextPage<{
+    personality: any;
+    claim: any;
+    sentence: any;
+    sitekey: string;
+    href: string;
+    claimReviewTask: any;
+    claimReview: any;
+    isLoggedIn: boolean;
 }> = ({
     personality,
     claim,
     sentence,
     href,
     claimReviewTask,
+    claimReview,
     isLoggedIn,
     sitekey,
 }) => {
     const { t } = useTranslation();
-    const review = sentence?.props?.classification;
+    const review = sentence?.stats?.reviews[0]?._id;
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -58,12 +61,13 @@ const ClaimPage: NextPage<{
             datePublished: claim.date,
             name: claim.title,
         },
+        datePublished: sentence.date,
     };
 
     return (
         <>
             {review && <JsonLd {...jsonld} />}
-            <NextSeo
+            <Seo
                 title={sentence.content}
                 description={t("seo:claimReviewDescription", {
                     sentence: sentence.content,
@@ -78,7 +82,6 @@ const ClaimPage: NextPage<{
                     href={href}
                     claimReviewTask={claimReviewTask}
                     isLoggedIn={isLoggedIn}
-                    review={review}
                     sitekey={sitekey}
                 />
             ) : (
@@ -86,8 +89,9 @@ const ClaimPage: NextPage<{
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
+                    isLoggedIn={isLoggedIn}
                     href={href}
-                    context={claimReviewTask.machine.context.reviewData}
+                    context={claimReview.report}
                 />
             )}
         </>
@@ -105,10 +109,11 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claim: JSON.parse(JSON.stringify(query.claim)),
             sentence: JSON.parse(JSON.stringify(query.sentence)),
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
+            claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
         },
     };
 }
-export default ClaimPage;
+export default ClaimReviewPage;

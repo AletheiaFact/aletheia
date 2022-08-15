@@ -1,27 +1,33 @@
 import { NextPage } from "next";
-import ClaimCreate from "../components/Claim/ClaimCreate";
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { NextSeo } from 'next-seo';
 import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+import ClaimCreate from "../components/Claim/ClaimCreate";
+import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 
-const ClaimCreatePage: NextPage<{ sitekey, personality }> = ({ sitekey, personality }) => {
+const ClaimCreatePage: NextPage<{ sitekey; personality }> = ({
+    sitekey,
+    personality,
+}) => {
     const { t } = useTranslation();
 
     return (
         <>
-            <NextSeo 
+            <Seo
                 title={t("seo:claimCreateTitle")}
-                description={t("seo:claimCreateDescription", { name: personality.name })}
+                description={t("seo:claimCreateDescription", {
+                    name: personality.name,
+                })}
             />
-            
-            <ClaimCreate sitekey={sitekey} personality={personality}/>
+
+            <ClaimCreate sitekey={sitekey} personality={personality} />
         </>
-    )
-}
+    );
+};
 
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = GetLocale(req, locale, locales)
+    locale = GetLocale(req, locale, locales);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
@@ -33,4 +39,4 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         },
     };
 }
-export default ClaimCreatePage; 
+export default ClaimCreatePage;

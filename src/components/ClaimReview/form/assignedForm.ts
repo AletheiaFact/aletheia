@@ -46,7 +46,6 @@ function isValidHttpUrl(string) {
     } catch (_) {
         return false;
     }
-    console.log(url);
 
     return url.protocol === "http:" || url.protocol === "https:";
 }

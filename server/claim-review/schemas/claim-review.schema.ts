@@ -13,7 +13,7 @@ export class ClaimReview {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: "ClaimRevision",
+        ref: "Claim",
     })
     claim: Claim;
 
@@ -43,6 +43,9 @@ export class ClaimReview {
 
     @Prop({ required: true })
     isPublished: boolean;
+
+    @Prop({ required: true })
+    date: Date;
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);

@@ -42,23 +42,6 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.countDocuments().where(query);
     }
 
-    async getReviewStatsBySentenceHash(match: any) {
-        const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: match },
-            {
-                $lookup: {
-                    from: "reports",
-                    localField: "report",
-                    foreignField: "_id",
-                    as: "report",
-                },
-            },
-            { $group: { _id: "$report.classification", count: { $sum: 1 } } },
-            { $sort: { count: -1 } },
-        ]);
-        return this.util.formatStats(reviews);
-    }
-
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
             { $match: { claim: claimId, isDeleted: false, isPublished: true } },
@@ -126,7 +109,7 @@ export class ClaimReviewService {
             claimReview.sentence_hash
         );
 
-        if (review.length) {
+        if (review) {
             throw new Error("This Claim already has a review");
             //TODO: verify if already start a review and isn't published
         } else {
@@ -138,6 +121,7 @@ export class ClaimReviewService {
             });
             claimReview.report = Types.ObjectId(claimReview.report._id);
             claimReview.sentence_hash = sentence_hash;
+            claimReview.date = new Date();
             const newClaimReview = new this.ClaimReviewModel(claimReview);
             newClaimReview.isPublished = true;
 
@@ -161,8 +145,12 @@ export class ClaimReviewService {
             .populate("sources", "_id link classification");
     }
 
-    getReviewBySentenceHash(sentence_hash) {
-        return this.ClaimReviewModel.aggregate([{ $match: { sentence_hash } }]);
+    async getReviewBySentenceHash(
+        sentence_hash: string
+    ): Promise<LeanDocument<ClaimReviewDocument>> {
+        return await this.ClaimReviewModel.findOne({ sentence_hash })
+            .populate("report")
+            .lean();
     }
 
     async getReport(match): Promise<LeanDocument<ReportDocument>> {

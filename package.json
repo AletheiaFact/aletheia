@@ -60,6 +60,7 @@
         "@ant-design/icons": "^4.6.2",
         "@ant-design/icons-svg": "^4.1.0",
         "@babel/polyfill": "^7.12.1",
+        "@casl/ability": "^6.0.0",
         "@compodoc/compodoc": "^1.1.18",
         "@dhaiwat10/react-link-preview": "^1.9.1",
         "@nestjs/axios": "^0.0.1",

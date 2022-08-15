@@ -30,7 +30,8 @@ const getByTargetId = (options: optionsType) => {
             };
         })
         .catch((err) => {
-            console.log(err);
+            // TODO: use Sentry instead
+            // console.log(err);
         });
 };
 

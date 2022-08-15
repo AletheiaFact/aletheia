@@ -3,8 +3,8 @@
     "anonymousUserName": "Anonymous",
     "claimReview": "Claim reviewed as ",
     "listTitle": "Reviews",
-    "firstParagraphTittle": "Summary of conclusion",
-    "secondParagraphTittle": "What questions should the verification answer?",
-    "thirdParagraphTittle": "Verification report",
-    "fourthParagraphTittle": "How do we check?"
+    "summarySectionTitle": "Summary of conclusion",
+    "questionsSectionTitle": "What questions should the verification answer?",
+    "verificationSectionTitle": "Verification report",
+    "howSectionTitle": "How do we check?"
 }
