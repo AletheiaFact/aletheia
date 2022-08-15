@@ -2,22 +2,34 @@ import { Col } from "antd";
 import { useState } from "react";
 import api from "../../api/topicsApi";
 import AletheiaButton from "../Button";
-import UserAutocomplete from "./UserAutocomplete";
+import AutoComplete from "./Autocomplete";
+import { useTranslation } from "next-i18next";
 
-const TopicInput = ({}) => {
+const TopicInput = ({ sentence_hash }) => {
+    const { t } = useTranslation();
     const [topics, setTopics] = useState<any>([]);
 
-    console.log(topics);
+    const fetchTopicList = async (topic) => {
+        const topicSearchResults = await api.getTopics(topic, t);
+        return topicSearchResults.map((topic) => ({
+            label: topic.name,
+            value: topic._id,
+        }));
+    };
+
     return (
         <Col>
-            <UserAutocomplete
-                placeholder="Topics"
-                dataCy="Teste"
+            <AutoComplete
+                placeholder={t("topics:placeholder")}
+                dataCy="testSearchTopics"
                 onChange={(value) => setTopics(value)}
-                fieldName="topicsInput"
+                mode="tags"
+                dataLoader={fetchTopicList}
             />
-            <AletheiaButton onClick={() => api.createTopics(topics)}>
-                Button
+            <AletheiaButton
+                onClick={() => api.createTopics({ topics, sentence_hash }, t)}
+            >
+                {t("topics:editTopicsButton")}
             </AletheiaButton>
         </Col>
     );

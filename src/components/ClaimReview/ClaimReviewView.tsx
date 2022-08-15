@@ -83,7 +83,7 @@ const ClaimReviewView = ({
                         </Button>
                     )}
                 </Col>
-                <TopicInput />
+                <TopicInput sentence_hash={sentence?.data_hash} />
                 {!formCollapsed && (
                     <DynamicForm
                         sentence_hash={sentenceHash}

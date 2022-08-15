@@ -9,6 +9,7 @@ export class Topic {
     // TODO: Better I18N
     @Prop({
         required: true,
+        unique: true,
     })
     slug: string;
 

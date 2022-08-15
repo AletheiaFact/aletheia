@@ -6,47 +6,40 @@ const request = axios.create({
     baseURL: `/api/topics`,
 });
 
-const getClaimReviewTasks = (options) => {
+const getTopics = (topicName, t) => {
     const params = {
-        page: options.page ? options.page - 1 : 0,
-        order: options.order || "asc",
-        pageSize: options.pageSize ? options.pageSize : 5,
-        value: options.value,
-        usersId: options.usersId,
+        topicName,
     };
-
     return request
         .get(`/`, { params })
         .then((response) => {
-            const { tasks, totalPages, totalTasks } = response.data;
-
-            return {
-                data: tasks || [],
-                total: totalTasks,
-                totalPages,
-            };
+            return response?.data;
         })
         .catch((e) => {
-            throw e;
+            return (
+                e?.response?.data || {
+                    message: t("login:getTopicsFailed"),
+                }
+            );
         });
 };
 
-const createTopics = (params, t, type) => {
+const createTopics = (params, t) => {
     return request
-        .post("/", params)
+        .post("/", { ...params })
         .then((response) => {
-            console.log(response.data);
+            message.success(t("topics:createTopicsSuccess"));
             return response.data;
         })
         .catch((err) => {
-            console.log(err);
+            message.error(t("topics:createTopicsError"));
             throw err;
         });
 };
 
 const TopicsApi = {
     createTopics,
-    getClaimReviewTasks,
+    getTopics,
 };
 
 export default TopicsApi;

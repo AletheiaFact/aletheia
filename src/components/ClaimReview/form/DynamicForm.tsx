@@ -16,7 +16,8 @@ import unassignedForm from "./unassignedForm";
 import assignedForm from "./assignedForm";
 import reportedForm from "./reportedForm";
 import Text from "antd/lib/typography/Text";
-import api from "../../../api/ClaimReviewTaskApi";
+import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
+import usersApi from "../../../api/user";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 
 const DynamicForm = ({
@@ -93,7 +94,7 @@ const DynamicForm = ({
 
     useEffect(() => {
         isLoggedIn &&
-            api
+            reviewTaskApi
                 .getMachineBySentenceHash(sentence_hash, t)
                 .then(({ machine }) => {
                     // The states assigned and reported have compound states
@@ -116,6 +117,14 @@ const DynamicForm = ({
                     setCurrentFormAndNextEvents(newMachine.value, newMachine);
                 });
     }, []);
+
+    const fetchUserList = async (name) => {
+        const userSearchResults = await usersApi.getUsers(name, t);
+        return userSearchResults.map((user) => ({
+            label: user.name,
+            value: user._id,
+        }));
+    };
 
     const formInputs =
         currentForm &&
@@ -160,6 +169,7 @@ const DynamicForm = ({
                                     addInputLabel={addInputLabel}
                                     defaultValue={defaultValue}
                                     data-cy={`testClaimReview${fieldName}`}
+                                    dataLoader={fetchUserList}
                                 />
                             )}
                         />
