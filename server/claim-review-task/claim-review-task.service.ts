@@ -61,7 +61,7 @@ export class ClaimReviewTaskService {
                 select: "slug",
             });
 
-        return await Promise.all(
+        return Promise.all(
             reviewTasks.map(async ({ sentence_hash, machine }) => {
                 const { personality, claim } = machine.context.claimReview;
                 const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
