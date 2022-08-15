@@ -1,10 +1,13 @@
-import React, { useState } from "react";
-import { Avatar, Spin, Col, Row, Typography, Divider } from "antd";
-import { useTranslation } from "next-i18next";
 import { PlusOutlined } from "@ant-design/icons";
-import ReviewStats from "../Metrics/ReviewStats";
-import Button, { ButtonType } from "../Button";
+import { Col, Divider, Row, Spin, Typography } from "antd";
+import { useTranslation } from "next-i18next";
+import React, { useState } from "react";
+
 import colors from "../../styles/colors";
+import AletheiaAvatar from "../AletheiaAvatar";
+import Button, { ButtonType } from "../Button";
+import ReviewStats from "../Metrics/ReviewStats";
+
 const { Title, Paragraph } = Typography;
 
 interface PersonalityCardProps {
@@ -85,19 +88,10 @@ const PersonalityCard = ({
                             span={style.avatarSpan}
                             style={{
                                 minWidth: style.avatarSize,
-                                display: "flex",
-                                justifyContent: "center",
                             }}
                         >
-                            <Avatar
+                            <AletheiaAvatar
                                 size={style.avatarSize}
-                                style={{
-                                    aspectRatio: "auto",
-                                    outlineColor: colors.blueQuartiary,
-                                    outlineStyle: "solid",
-                                    outlineWidth: summarized ? "1.5px" : "2px",
-                                    outlineOffset: summarized ? "2px" : "5px",
-                                }}
                                 src={personality.avatar}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,

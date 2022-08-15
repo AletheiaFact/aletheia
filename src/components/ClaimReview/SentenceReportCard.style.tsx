@@ -28,11 +28,6 @@ const SentenceReportCardStyle = styled.div`
         display: block;
     }
 
-    .personality-avatar {
-        outline: ${colors.blueQuartiary} solid 2px;
-        outline-offset: 4px;
-    }
-
     .personality-profile {
         color: ${colors.blackSecondary};
         text-decoration: underline;
