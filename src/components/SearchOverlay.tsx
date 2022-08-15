@@ -1,14 +1,16 @@
+import { LeftCircleFilled, SearchOutlined } from "@ant-design/icons";
+import { Col, Row } from "antd";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { Avatar, Col, Row } from "antd";
-import { LeftCircleFilled, SearchOutlined } from "@ant-design/icons";
-import InputSearch from "./Form/InputSearch";
-import { useTranslation } from "next-i18next";
-import api from "../api/personality";
-import { useRouter } from "next/router";
 import styled from "styled-components";
+
+import api from "../api/personality";
 import { useAppSelector } from "../store/store";
 import colors from "../styles/colors";
+import AletheiaAvatar from "./AletheiaAvatar";
+import InputSearch from "./Form/InputSearch";
 import SearchResult from "./SearchResult";
 
 const OverlayDiv = styled.div`
@@ -148,19 +150,15 @@ const SearchOverlay = ({ overlay }) => {
                                                     handleSearchClick(p.slug)
                                                 }
                                                 avatar={
-                                                    <Avatar
+                                                    <AletheiaAvatar
                                                         size={30}
                                                         src={p.avatar}
-                                                        style={{
-                                                            outlineColor:
-                                                                colors.blueQuartiary,
-                                                            outlineStyle:
-                                                                "solid",
-                                                            outlineWidth:
-                                                                "1.5px",
-                                                            outlineOffset:
-                                                                "2px",
-                                                        }}
+                                                        alt={t(
+                                                            "seo:personalityImageAlt",
+                                                            {
+                                                                name: p.name,
+                                                            }
+                                                        )}
                                                     />
                                                 }
                                                 name={p.name}

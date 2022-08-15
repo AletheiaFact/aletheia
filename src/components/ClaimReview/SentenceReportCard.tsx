@@ -1,10 +1,12 @@
-import React from "react";
-import { Avatar, Col, Row, Typography } from "antd";
+import { Col, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import SentenceReportSummary from "./SentenceReportSummary";
+import React from "react";
+
+import AletheiaAvatar from "../AletheiaAvatar";
 import ClassificationText from "../ClassificationText";
 import LocalizedDate from "../LocalizedDate";
 import SentenceReportCardStyle from "./SentenceReportCard.style";
+import SentenceReportSummary from "./SentenceReportSummary";
 
 const { Title, Paragraph } = Typography;
 
@@ -31,13 +33,12 @@ const SentenceReportCard = ({
                 <Col md={6} sm={24}>
                     <Row className="personality-card">
                         <Col>
-                            <Avatar
+                            <AletheiaAvatar
                                 size={117}
                                 src={personality.avatar}
                                 alt={t("seo:personalityImageAlt", {
                                     name: personality.name,
                                 })}
-                                className="personality-avatar"
                             />
                         </Col>
                         <Row className="personality">

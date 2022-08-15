@@ -1,8 +1,19 @@
-import { Avatar, Col, Comment } from "antd";
+import { Col, Comment } from "antd";
 import React from "react";
-import colors from "../../styles/colors";
+import styled from "styled-components";
+
+import AletheiaAvatar from "../AletheiaAvatar";
 import ClaimCardHeader from "../Claim/ClaimCardHeader";
 import ClaimSummary from "../Claim/ClaimSummary";
+
+const StyledComment = styled(Comment)`
+    .ant-comment-avatar {
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+`;
 
 const ClaimSentenceCard = ({
     personality,
@@ -14,7 +25,7 @@ const ClaimSentenceCard = ({
     if (content) {
         return (
             <Col span={24}>
-                <Comment
+                <StyledComment
                     author={
                         <ClaimCardHeader
                             personality={personality}
@@ -23,16 +34,10 @@ const ClaimSentenceCard = ({
                         />
                     }
                     avatar={
-                        <Avatar
+                        <AletheiaAvatar
                             src={personality.avatar}
                             alt={personality.name}
                             size={43}
-                            style={{
-                                outlineColor: colors.blueQuartiary,
-                                outlineStyle: "solid",
-                                outlineWidth: "1.5px",
-                                outlineOffset: "2px",
-                            }}
                         />
                     }
                     content={
