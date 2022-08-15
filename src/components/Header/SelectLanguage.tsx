@@ -37,7 +37,7 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
             <Option default value="pt" data-cy="testLanguagePt">
                 <BR style={{ width: "25px" }} />
             </Option>
-            <Option value="en" data-cy="testLanguagePt">
+            <Option value="en" data-cy="testLanguageEn">
                 <GB title="EN" style={{ width: "25px" }} />
             </Option>
         </Select>
