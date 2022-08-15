@@ -12,6 +12,7 @@ import { CaptchaModule } from "../captcha/captcha.module";
 import { ViewModule } from "../view/view.module";
 import { HistoryModule } from "../history/history.module";
 import { StateEventModule } from "../state-event/state-event.module";
+import { SentenceModule } from "../sentence/sentence.module";
 
 export const ClaimReviewTaskModel = MongooseModule.forFeature([
     {
@@ -29,6 +30,7 @@ export const ClaimReviewTaskModel = MongooseModule.forFeature([
         StateEventModule,
         CaptchaModule,
         ViewModule,
+        SentenceModule,
     ],
     providers: [ClaimReviewTaskService],
     exports: [ClaimReviewTaskService],

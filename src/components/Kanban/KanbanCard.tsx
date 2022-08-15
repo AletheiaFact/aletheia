@@ -1,14 +1,12 @@
 import { Col, Row, Typography } from "antd";
-import { useTranslation } from "next-i18next";
 import React from "react";
-import colors from "../../styles/colors";
 
 import CardBase from "../CardBase";
 
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 
 const KanbanCard = ({ reviewTask }) => {
-    const { t } = useTranslation();
+    console.log(reviewTask);
     return (
         <a
             href={reviewTask.reviewHref}
@@ -26,24 +24,25 @@ const KanbanCard = ({ reviewTask }) => {
                         span={24}
                         style={{ display: "flex", flexDirection: "column" }}
                     >
-                        <Text
+                        <Paragraph
+                            ellipsis={{
+                                rows: 2,
+                                expandable: false,
+                            }}
                             style={{
                                 fontSize: 14,
                                 fontWeight: "bold",
                             }}
                         >
-                            {reviewTask.claimTitle}
-                        </Text>
-                        <Text>
-                            {t("kanban:claimBy")} {reviewTask.personalityName}
-                        </Text>
+                            {reviewTask.sentenceContent}
+                        </Paragraph>
+                        <Text>{reviewTask.personalityName}</Text>
                         <Text
                             style={{
                                 fontSize: 12,
                                 width: "100%",
                             }}
                         >
-                            {t("kanban:assignedTo")}:{" "}
                             {reviewTask.usersName &&
                                 reviewTask.usersName.map((user, index) => {
                                     return (
@@ -61,17 +60,6 @@ const KanbanCard = ({ reviewTask }) => {
                                         </>
                                     );
                                 })}
-                        </Text>
-                        <Text
-                            style={{
-                                color: colors.bluePrimary,
-                                fontWeight: "bold",
-                                fontSize: 12,
-                                textDecoration: "underline",
-                                textAlign: "right",
-                            }}
-                        >
-                            #{reviewTask.sentence_hash}
                         </Text>
                     </Col>
                 </Row>

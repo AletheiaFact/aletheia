@@ -33,7 +33,11 @@ export class ClaimReviewController {
         const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
         return Promise.all([
             this.claimReviewTaskService.listAll(page, pageSize, order, value),
-            this.claimReviewTaskService.count({ "machine.value": value }),
+            this.claimReviewTaskService.count(
+                value === "published"
+                    ? { "machine.value": value }
+                    : { [`machine.value.${value}`]: { $exists: true } }
+            ),
         ]).then(([tasks, totalTasks]) => {
             const totalPages = Math.ceil(totalTasks / pageSize);
 
