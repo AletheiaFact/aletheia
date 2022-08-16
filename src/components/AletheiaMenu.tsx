@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useAppSelector } from "../store/store";
 import { CreateLogoutHandler } from "./Login/LogoutAction";
 import { ory } from "../lib/orysdk";
+import { ActionTypes } from "../store/types";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
@@ -33,7 +34,7 @@ const AletheiaMenu = () => {
 
     const handleClick = (menuItem) => {
         dispatch({
-            type: "TOGGLE_MENU",
+            type: ActionTypes.TOGGLE_MENU,
             menuCollapsed: !menuCollapsed,
         });
         router.push(menuItem.key);
