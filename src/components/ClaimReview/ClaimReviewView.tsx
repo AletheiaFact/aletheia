@@ -7,7 +7,6 @@ import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
-import TopicInput from "./TopicInput";
 
 const ClaimReviewView = ({
     personality,
@@ -44,9 +43,10 @@ const ClaimReviewView = ({
                 <ClaimSentenceCard
                     personality={personality}
                     date={claim.date}
-                    content={sentence?.content}
+                    sentence={sentence}
                     summaryClassName="claim-review"
                     claimType={claim?.type}
+                    isLoggedIn={isLoggedIn}
                 />
                 {formCollapsed && (
                     <Row
@@ -83,7 +83,6 @@ const ClaimReviewView = ({
                         </Button>
                     )}
                 </Col>
-                <TopicInput sentence_hash={sentence?.data_hash} />
                 {!formCollapsed && (
                     <DynamicForm
                         sentence_hash={sentenceHash}

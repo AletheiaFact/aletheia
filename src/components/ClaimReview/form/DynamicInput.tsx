@@ -9,7 +9,7 @@ interface DynamicInputProps {
     fieldName: string;
     type: string;
     placeholder: string;
-    value: string;
+    value: string | [];
     onChange: any;
     addInputLabel: string;
     defaultValue: string | [];
@@ -38,6 +38,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onChange={props.onChange}
                     dataCy={props["data-cy"]}
                     dataLoader={props.dataLoader}
+                    value={Array.isArray(props.value) ? props.value : []}
                 />
             );
         case "textList":

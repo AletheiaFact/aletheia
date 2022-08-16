@@ -5,6 +5,8 @@ import styled from "styled-components";
 import AletheiaAvatar from "../AletheiaAvatar";
 import ClaimCardHeader from "../Claim/ClaimCardHeader";
 import ClaimSummary from "../Claim/ClaimSummary";
+import TopicInput from "./TopicInput";
+
 
 const StyledComment = styled(Comment)`
     .ant-comment-avatar {
@@ -13,15 +15,24 @@ const StyledComment = styled(Comment)`
             height: 100%;
         }
     }
+
+    ul.ant-comment-actions li {
+        width: 100%;
+    }
 `;
 
 const ClaimSentenceCard = ({
     personality,
     date,
-    content,
+    sentence,
     claimType,
     summaryClassName = "",
+    isLoggedIn,
 }) => {
+    const content = sentence?.content;
+    const data_hash = sentence?.data_hash;
+    const topics = sentence?.topics;
+
     if (content) {
         return (
             <Col span={24}>
@@ -56,6 +67,13 @@ const ClaimSentenceCard = ({
                             </ClaimSummary>
                         </>
                     }
+                    actions={[
+                        <TopicInput
+                            sentence_hash={data_hash}
+                            topics={topics}
+                            isLoggedIn={isLoggedIn}
+                        />,
+                    ]}
                 />
             </Col>
         );

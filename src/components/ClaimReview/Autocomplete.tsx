@@ -7,6 +7,8 @@ const Autocomplete = ({
     dataCy,
     dataLoader,
     mode = "multiple",
+    style = {},
+    value = [],
 }) => {
     return (
         <SelectOptions
@@ -14,8 +16,9 @@ const Autocomplete = ({
             placeholder={placeholder}
             onChange={onChange}
             data-cy={dataCy}
-            style={{ width: "100%" }}
+            style={{ width: "100%", ...style }}
             mode={mode}
+            value={value}
         />
     );
 };

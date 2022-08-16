@@ -3,5 +3,6 @@
   "createTopicsError": "Error in saving topics",
   "placeholder": "Add sentence topics",
   "getTopicsFailed": "Error while fetching topics",
-  "editTopicsButton": "Edit topics"
+  "editTopicsButton": "Edit topics",
+  "inputRule": "Required field"
 }

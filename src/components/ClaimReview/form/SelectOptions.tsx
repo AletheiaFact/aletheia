@@ -13,7 +13,7 @@ const StyledSelect = styled(Select)`
     }
 `;
 
-function SelectOptions({ fetchOptions, mode, ...props }) {
+function SelectOptions({ fetchOptions, mode, style, value, ...props }) {
     const [fetching, setFetching] = useState(false);
     const [options, setOptions] = useState([]);
 
@@ -36,6 +36,8 @@ function SelectOptions({ fetchOptions, mode, ...props }) {
             onSearch={getOptions}
             notFoundContent={fetching ? <Spin size="small" /> : null}
             options={options}
+            style={{ ...style }}
+            value={value}
             {...props}
         />
     );
