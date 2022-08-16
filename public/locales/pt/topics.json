@@ -3,6 +3,7 @@
   "createTopicsError": "Erro ao salvar tópico",
   "placeholder": "Adicione tópicos à sentença",
   "getTopicsFailed": "Erro ao buscar tópicos",
-  "editTopicsButton": "Editar tópicos",
-  "inputRule": "Campo obrigatório"
+  "addTopicsButton": "Adicionar tópicos",
+  "inputRule": "Campo obrigatório",
+  "noTopics": "Tópicos não adicionados"
 }

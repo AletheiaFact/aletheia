@@ -5,7 +5,7 @@ import sentenceApi from "../../api/sentenceApi";
 import AutoComplete from "./Autocomplete";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
-import { SettingFilled } from "@ant-design/icons";
+import { EditFilled } from "@ant-design/icons";
 import AletheiaButton from "../Button";
 
 const TopicInput = ({ sentence_hash, topics, isLoggedIn }) => {
@@ -50,10 +50,11 @@ const TopicInput = ({ sentence_hash, topics, isLoggedIn }) => {
                     marginBottom: 12,
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "space-between",
                 }}
             >
                 <Col>
+                    {!tags.length && <span>{t("topics:noTopics")}</span>}
+
                     {tags &&
                         tags.map((tag) => (
                             <Tag
@@ -85,7 +86,7 @@ const TopicInput = ({ sentence_hash, topics, isLoggedIn }) => {
                             color: colors.bluePrimary,
                         }}
                     >
-                        <SettingFilled />
+                        <EditFilled />
                     </Button>
                 )}
             </Col>
@@ -119,7 +120,7 @@ const TopicInput = ({ sentence_hash, topics, isLoggedIn }) => {
                                 }}
                                 onClick={() => handleEdit()}
                             >
-                                {t("topics:editTopicsButton")}
+                                {t("topics:addTopicsButton")}
                             </AletheiaButton>
                         </Col>
                         <Col>
