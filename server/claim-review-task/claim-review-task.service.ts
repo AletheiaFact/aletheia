@@ -15,6 +15,8 @@ import { StateEventService } from "../state-event/state-event.service";
 import { TypeModel } from "../state-event/schema/state-event.schema";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
+import { SentenceService } from "../sentence/sentence.service";
+import { getQueryMatchForMachineValue } from "./mongo-utils";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -25,14 +27,12 @@ export class ClaimReviewTaskService {
         private claimReviewService: ClaimReviewService,
         private reportService: ReportService,
         private historyService: HistoryService,
-        private stateEventService: StateEventService
+        private stateEventService: StateEventService,
+        private senteceService: SentenceService
     ) {}
 
     async listAll(page, pageSize, order, value) {
-        const query =
-            value === "published"
-                ? { "machine.value": value }
-                : { [`machine.value.${value}`]: { $exists: true } };
+        const query = getQueryMatchForMachineValue(value);
         const reviewTasks = await this.ClaimReviewTaskModel.find({
             ...query,
         })
@@ -59,22 +59,30 @@ export class ClaimReviewTaskService {
                 select: "slug",
             });
 
-        return reviewTasks.map(({ sentence_hash, machine }) => {
-            const { personality, claim } = machine.context.claimReview;
-            const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
-            const usersName = machine.context.reviewData.usersId.map((user) => {
-                return user.name;
-            });
+        return Promise.all(
+            reviewTasks.map(async ({ sentence_hash, machine }) => {
+                const { personality, claim } = machine.context.claimReview;
+                const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
+                const usersName = machine.context.reviewData.usersId.map(
+                    (user) => {
+                        return user.name;
+                    }
+                );
 
-            return {
-                sentence_hash,
-                usersName,
-                value: machine.value,
-                personalityName: personality.name,
-                claimTitle: claim.latestRevision.title,
-                reviewHref,
-            };
-        });
+                const sentenceContent = await this.senteceService.getByDataHash(
+                    sentence_hash
+                );
+                return {
+                    sentence_hash,
+                    sentenceContent: sentenceContent.content,
+                    usersName,
+                    value: machine.value,
+                    personalityName: personality.name,
+                    claimTitle: claim.latestRevision.title,
+                    reviewHref,
+                };
+            })
+        );
     }
 
     getById(claimReviewTaskId: string) {
