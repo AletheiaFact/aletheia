@@ -43,9 +43,10 @@ const ClaimReviewView = ({
                 <ClaimSentenceCard
                     personality={personality}
                     date={claim.date}
-                    content={sentence?.content}
+                    sentence={sentence}
                     summaryClassName="claim-review"
                     claimType={claim?.type}
+                    isLoggedIn={isLoggedIn}
                 />
                 {formCollapsed && (
                     <Row

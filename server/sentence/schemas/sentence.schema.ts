@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
+import { Topic } from "../../topic/schemas/topic.schema";
 
 export type SentenceDocument = Sentence & mongoose.Document;
 
@@ -20,6 +21,9 @@ export class Sentence {
 
     @Prop({ required: true })
     content: string;
+
+    @Prop({ required: false })
+    topics: Topic[];
 }
 
 const SentenceSchemaRaw = SchemaFactory.createForClass(Sentence);
