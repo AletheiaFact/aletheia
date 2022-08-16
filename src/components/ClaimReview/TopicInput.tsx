@@ -25,13 +25,14 @@ const TopicInput = ({ sentence_hash, topics, isLoggedIn }) => {
     };
 
     const handleClose = async (removedTopic: string) => {
-        const newTopics = tags.filter((topic) => topic !== removedTopic);
+        const newTopics = topicsArray.filter((topic) => topic !== removedTopic);
         setTopicsArray(newTopics);
         sentenceApi.deleteSentenceTopic(newTopics, sentence_hash);
     };
 
     const handleEdit = () => {
         if (inputValue.length) {
+            setTopicsArray(tags);
             setCurrentInputValue([]);
             topicApi.createTopics({ topics: tags, sentence_hash }, t);
         } else {
@@ -40,8 +41,11 @@ const TopicInput = ({ sentence_hash, topics, isLoggedIn }) => {
     };
 
     useEffect(() => {
-        setTags(topicsArray.concat(inputValue));
-    }, [inputValue]);
+        const filterValues = inputValue.filter(
+            (value) => !topicsArray.includes(value)
+        );
+        setTags(topicsArray.concat(filterValues));
+    }, [inputValue, topicsArray]);
 
     return (
         <Col>
