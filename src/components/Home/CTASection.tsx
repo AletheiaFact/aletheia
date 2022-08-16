@@ -3,9 +3,13 @@ import { Row, Col } from "antd";
 import Button, { ButtonType } from "../Button";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
+import { useAppSelector } from "../../store/store";
 
-const CTASection = ({ isLoggedIn }) => {
+const CTASection = () => {
     const { t } = useTranslation();
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
 
     return (
         <Row className="CTA-container">

@@ -7,7 +7,6 @@ import ClaimCardHeader from "../Claim/ClaimCardHeader";
 import ClaimSummary from "../Claim/ClaimSummary";
 import TopicInput from "./TopicInput";
 
-
 const StyledComment = styled(Comment)`
     .ant-comment-avatar {
         img {
@@ -27,7 +26,6 @@ const ClaimSentenceCard = ({
     sentence,
     claimType,
     summaryClassName = "",
-    isLoggedIn,
 }) => {
     const content = sentence?.content;
     const data_hash = sentence?.data_hash;
@@ -71,7 +69,6 @@ const ClaimSentenceCard = ({
                         <TopicInput
                             sentence_hash={data_hash}
                             topics={topics}
-                            isLoggedIn={isLoggedIn}
                         />,
                     ]}
                 />
