@@ -16,6 +16,7 @@ import { TypeModel } from "../state-event/schema/state-event.schema";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
 import { SentenceService } from "../sentence/sentence.service";
+import { getQueryMatchForMachineValue } from "./mongo-utils";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -31,10 +32,7 @@ export class ClaimReviewTaskService {
     ) {}
 
     async listAll(page, pageSize, order, value) {
-        const query =
-            value === "published"
-                ? { "machine.value": value }
-                : { [`machine.value.${value}`]: { $exists: true } };
+        const query = getQueryMatchForMachineValue(value);
         const reviewTasks = await this.ClaimReviewTaskModel.find({
             ...query,
         })

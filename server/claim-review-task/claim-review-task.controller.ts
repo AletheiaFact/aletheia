@@ -18,6 +18,7 @@ import { parse } from "url";
 import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { GetTasksDTO } from "./dto/get-tasks.dto";
+import { getQueryMatchForMachineValue } from "./mongo-utils";
 
 @Controller()
 export class ClaimReviewController {
@@ -34,9 +35,7 @@ export class ClaimReviewController {
         return Promise.all([
             this.claimReviewTaskService.listAll(page, pageSize, order, value),
             this.claimReviewTaskService.count(
-                value === "published"
-                    ? { "machine.value": value }
-                    : { [`machine.value.${value}`]: { $exists: true } }
+                getQueryMatchForMachineValue(value)
             ),
         ]).then(([tasks, totalTasks]) => {
             const totalPages = Math.ceil(totalTasks / pageSize);
