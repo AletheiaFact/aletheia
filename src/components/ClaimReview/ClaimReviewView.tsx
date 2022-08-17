@@ -7,6 +7,7 @@ import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
+import { useAppSelector } from "../../store/store";
 
 const ClaimReviewView = ({
     personality,
@@ -14,10 +15,12 @@ const ClaimReviewView = ({
     sentence,
     href,
     claimReviewTask,
-    isLoggedIn,
     sitekey,
 }) => {
     const { t } = useTranslation();
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
     const claimId = claim._id;
     const personalityId = personality._id;
     const sentenceHash = sentence.data_hash;
@@ -46,7 +49,6 @@ const ClaimReviewView = ({
                     sentence={sentence}
                     summaryClassName="claim-review"
                     claimType={claim?.type}
-                    isLoggedIn={isLoggedIn}
                 />
                 {formCollapsed && (
                     <Row
@@ -88,13 +90,11 @@ const ClaimReviewView = ({
                         sentence_hash={sentenceHash}
                         personality={personalityId}
                         claim={claimId}
-                        isLoggedIn={isLoggedIn}
                         sitekey={sitekey}
                     />
                 )}
             </Col>
             <SocialMediaShare
-                isLoggedIn={isLoggedIn}
                 quote={personality?.name}
                 href={href}
                 claim={claim?.title}

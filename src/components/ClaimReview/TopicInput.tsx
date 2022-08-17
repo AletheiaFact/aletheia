@@ -7,9 +7,13 @@ import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import { EditFilled } from "@ant-design/icons";
 import AletheiaButton from "../Button";
+import { useAppSelector } from "../../store/store";
 
-const TopicInput = ({ sentence_hash, topics, isLoggedIn }) => {
+const TopicInput = ({ sentence_hash, topics }) => {
     const { t } = useTranslation();
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
     const [showTopicsInput, setShowTopicsInput] = useState<boolean>(false);
     const [topicsArray, setTopicsArray] = useState<string[]>(topics);
     const [inputValue, setInputValue] = useState<string[]>([]);

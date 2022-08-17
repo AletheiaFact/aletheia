@@ -19,14 +19,9 @@ import Text from "antd/lib/typography/Text";
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import usersApi from "../../../api/user";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
+import { useAppSelector } from "../../../store/store";
 
-const DynamicForm = ({
-    sentence_hash,
-    personality,
-    claim,
-    isLoggedIn,
-    sitekey,
-}) => {
+const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const {
         handleSubmit,
         control,
@@ -41,6 +36,9 @@ const DynamicForm = ({
     const { t } = useTranslation();
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
 
     const setDefaultValuesOfCurrentForm = (machine, form) => {
         if (machine) {

@@ -6,6 +6,7 @@ import Banner from "./Banner";
 import CTARegistration from "../Home/CTARegistration";
 import SentenceReportViewStyle from "./SentenceReportView.style";
 import SentenceReportContent from "./SentenceReportContent";
+import { useAppSelector } from "../../store/store";
 
 const SentenceReportView = ({
     personality,
@@ -13,8 +14,10 @@ const SentenceReportView = ({
     sentence,
     href,
     context,
-    isLoggedIn,
 }) => {
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
     return (
         <SentenceReportViewStyle>
             <Row>
@@ -52,7 +55,6 @@ const SentenceReportView = ({
                 </Col>
                 <Col span={24}>
                     <SocialMediaShare
-                        isLoggedIn={isLoggedIn}
                         quote={personality?.name}
                         href={href}
                         claim={claim?.title}

@@ -3,6 +3,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 
 import { useAppSelector } from "../store/store";
+import { ActionTypes } from "../store/types";
 import colors from "../styles/colors";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
@@ -15,7 +16,6 @@ const MainApp = ({ children }) => {
 
     const { enableOverlay, menuCollapsed } = useAppSelector((state) => {
         return {
-            isLoggedIn: state?.login || false,
             enableOverlay: state?.search?.overlay,
             menuCollapsed:
                 state?.menuCollapsed !== undefined
@@ -29,7 +29,7 @@ const MainApp = ({ children }) => {
                 menuCollapsed={menuCollapsed}
                 onToggleSidebar={() => {
                     dispatch({
-                        type: "TOGGLE_MENU",
+                        type: ActionTypes.TOGGLE_MENU,
                         menuCollapsed: !menuCollapsed,
                     });
                 }}
