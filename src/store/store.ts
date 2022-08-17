@@ -56,14 +56,18 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 login: action.login,
-                user: action.user,
+            };
+        case ActionTypes.SET_BREAKPOINTS:
+            return {
+                ...state,
+                breakpoints: action.breakpoints,
             };
         default:
             return state;
     }
 };
 
-function initStore(preloadedState = {}) {
+function initStore(preloadedState) {
     return createStore(reducer, preloadedState, applyMiddleware());
 }
 
