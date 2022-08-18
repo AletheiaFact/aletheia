@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 
-import ClaimReviewForm from "../components/ClaimReview/ClaimReviewView";
+import ClaimReviewForm from "../components/ClaimReview/ClaimReviewForm";
 import JsonLd from "../components/JsonLd";
 import SentenceReportView from "../components/SentenceReport/SentenceReportView";
 import Seo from "../components/Seo";
