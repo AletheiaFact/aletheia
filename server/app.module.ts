@@ -38,6 +38,7 @@ import { ParagraphModule } from "./paragraph/paragraph.module";
 import { SentenceModule } from "./sentence/sentence.module";
 import { StateEventModule } from "./state-event/state-event.module";
 import { TopicModule } from "./topic/topic.module";
+import { ImageModule } from "./image/image.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -88,6 +89,7 @@ export class AppModule implements NestModule {
                 ReportModule,
                 CaptchaModule,
                 TopicModule,
+                ImageModule,
             ],
             controllers: [RootController],
             providers: [
