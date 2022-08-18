@@ -71,8 +71,12 @@ export function useMediaQueryBreakpoints(): void {
             keys.forEach((media) => {
                 mediaQueries[media].addEventListener("change", listener);
             });
+        } else {
+            dispatch({
+                type: ActionTypes.SET_BREAKPOINTS,
+                breakpoints: initialValues,
+            });
         }
-
         return () => {
             keys.forEach((media) => {
                 mediaQueries[media].removeEventListener("change", listener);

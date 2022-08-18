@@ -1,15 +1,21 @@
 /* eslint-disable @next/next/no-img-element */
-import { Row, Col, Layout } from "antd";
+import { Col, Layout, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+
+import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 import FooterInfo from "./FooterInfo";
 
 const Footer = () => {
     const { t } = useTranslation();
-    const isMobile = useMediaQuery("(max-width: 767px)");
+    const { isMobile } = useAppSelector((state) => {
+        return {
+            isMobile: state.breakpoints?.sm,
+        };
+    });
+
     return (
         <Layout.Footer
             style={{
