@@ -10,11 +10,7 @@ import FooterInfo from "./FooterInfo";
 
 const Footer = () => {
     const { t } = useTranslation();
-    const { isMobile } = useAppSelector((state) => {
-        return {
-            isMobile: state.breakpoints?.sm,
-        };
-    });
+    const { vw } = useAppSelector((state) => state);
 
     return (
         <Layout.Footer
@@ -35,7 +31,7 @@ const Footer = () => {
                             width: "100%",
                             textAlign: "center",
                             flexDirection: "column",
-                            marginBottom: isMobile ? "32px" : "0",
+                            marginBottom: vw?.sm ? "32px" : "0",
                         }}
                     >
                         <Col style={{ marginBottom: "16px" }}>
@@ -87,8 +83,8 @@ const Footer = () => {
                                 fontSize: "23px",
                                 color: colors.white,
                                 marginBottom: 0,
-                                marginTop: isMobile ? "64px" : "0",
-                                textAlign: isMobile ? "center" : "left",
+                                marginTop: vw?.sm ? "64px" : "0",
+                                textAlign: vw?.sm ? "center" : "left",
                             }}
                         >
                             {t("footer:copyright")}

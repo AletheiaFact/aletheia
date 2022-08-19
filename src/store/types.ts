@@ -22,5 +22,5 @@ export interface RootState {
         searchPageSize: number;
     };
     login: boolean;
-    breakpoints: WidthBreakpoints;
+    vw: WidthBreakpoints;
 }

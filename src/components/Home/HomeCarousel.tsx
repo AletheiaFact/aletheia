@@ -2,15 +2,15 @@ import { Carousel, Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import React from "react";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
 
+import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import CTASection from "./CTASection";
 import HomeCarouselStyle from "./HomeCarousel.style";
 import HomeStats from "./HomeStats";
 
 const HomeCarousel = ({ personalities, stats }) => {
-    const isMobile = useMediaQuery("(max-width: 767px)");
+    const { vw } = useAppSelector((state) => state);
 
     const { t } = useTranslation();
 
@@ -46,11 +46,9 @@ const HomeCarousel = ({ personalities, stats }) => {
                                         width="100%"
                                         height="100%"
                                         layout="responsive"
-                                        objectFit={
-                                            isMobile ? "cover" : "contain"
-                                        }
+                                        objectFit={vw?.sm ? "cover" : "contain"}
                                         objectPosition={`center ${
-                                            isMobile
+                                            vw?.sm
                                                 ? "-50px"
                                                 : "calc(443px / 2 * -1)"
                                         }`}

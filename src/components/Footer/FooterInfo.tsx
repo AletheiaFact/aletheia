@@ -2,16 +2,17 @@ import { FileTextOutlined } from "@ant-design/icons";
 import { Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useAppSelector } from "../../store/store";
 
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
 
 const FooterInfo = () => {
     const { t } = useTranslation();
-    const isMobile = useMediaQuery("(max-width: 767px)");
+    const { vw } = useAppSelector((state) => state);
+
     return (
-        <Row justify={isMobile ? "center" : "start"}>
+        <Row justify={vw?.sm ? "center" : "start"}>
             <span style={{ textAlign: "justify", marginBottom: "16px" }}>
                 {t("about:alertInfo")}{" "}
                 <a
