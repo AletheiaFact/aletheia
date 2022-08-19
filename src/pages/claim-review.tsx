@@ -3,9 +3,9 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 
-import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import SentenceReportView from "../components/ClaimReview/SentenceReportView";
+import ClaimReviewForm from "../components/ClaimReview/ClaimReviewForm";
 import JsonLd from "../components/JsonLd";
+import SentenceReportView from "../components/SentenceReport/SentenceReportView";
 import Seo from "../components/Seo";
 import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
 import { ActionTypes } from "../store/types";
@@ -82,7 +82,7 @@ const ClaimReviewPage: NextPage<{
             />
 
             {claimReviewTask?.machine.value !== ReviewTaskStates.published ? (
-                <ClaimReviewView
+                <ClaimReviewForm
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
