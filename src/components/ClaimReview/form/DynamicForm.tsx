@@ -11,10 +11,10 @@ import {
 } from "../../../machine/enums";
 import AletheiaButton, { ButtonType } from "../../Button";
 import colors from "../../../styles/colors";
-import DynamicInput from "../form/DynamicInput";
-import unassignedForm from "./unassignedForm";
-import assignedForm from "./assignedForm";
-import reportedForm from "./reportedForm";
+import DynamicInput from "./DynamicInput";
+import unassignedForm from "./fieldLists/unassignedForm";
+import assignedForm from "./fieldLists/assignedForm";
+import reportedForm from "./fieldLists/reportedForm";
 import Text from "antd/lib/typography/Text";
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import usersApi from "../../../api/user";

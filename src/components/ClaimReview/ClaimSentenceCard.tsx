@@ -1,11 +1,9 @@
 import { Col, Comment } from "antd";
-import React from "react";
 import styled from "styled-components";
 
 import AletheiaAvatar from "../AletheiaAvatar";
 import ClaimCardHeader from "../Claim/ClaimCardHeader";
 import ClaimSummary from "../Claim/ClaimSummary";
-import TopicInput from "./TopicInput";
 
 const StyledComment = styled(Comment)`
     .ant-comment-avatar {
@@ -26,10 +24,9 @@ const ClaimSentenceCard = ({
     sentence,
     claimType,
     summaryClassName = "",
+    cardActions = [],
 }) => {
     const content = sentence?.content;
-    const data_hash = sentence?.data_hash;
-    const topics = sentence?.topics;
 
     if (content) {
         return (
@@ -65,12 +62,7 @@ const ClaimSentenceCard = ({
                             </ClaimSummary>
                         </>
                     }
-                    actions={[
-                        <TopicInput
-                            sentence_hash={data_hash}
-                            topics={topics}
-                        />,
-                    ]}
+                    actions={cardActions}
                 />
             </Col>
         );

@@ -1,4 +1,4 @@
-import { Button, Col, Tag } from "antd";
+import { Button, Col } from "antd";
 import React, { useState, useEffect } from "react";
 import topicApi from "../../api/topicsApi";
 import sentenceApi from "../../api/sentenceApi";
@@ -8,6 +8,7 @@ import colors from "../../styles/colors";
 import { EditFilled } from "@ant-design/icons";
 import AletheiaButton from "../Button";
 import { useAppSelector } from "../../store/store";
+import TagsList from "./TagsList";
 
 const TopicInput = ({ sentence_hash, topics }) => {
     const { t } = useTranslation();
@@ -60,26 +61,12 @@ const TopicInput = ({ sentence_hash, topics }) => {
                     alignItems: "center",
                 }}
             >
-                <Col>
-                    {!tags.length && <span>{t("topics:noTopics")}</span>}
+                <TagsList
+                    tags={tags}
+                    editable={isLoggedIn}
+                    handleClose={handleClose}
+                />
 
-                    {tags &&
-                        tags.map((tag) => (
-                            <Tag
-                                key={tag}
-                                color={colors.bluePrimary}
-                                closable={isLoggedIn}
-                                onClose={() => handleClose(tag)}
-                                style={{
-                                    height: 32,
-                                    borderRadius: 32,
-                                    padding: "5px 10px",
-                                }}
-                            >
-                                {tag.toUpperCase()}
-                            </Tag>
-                        ))}
-                </Col>
                 {isLoggedIn && (
                     <Button
                         onClick={() => {

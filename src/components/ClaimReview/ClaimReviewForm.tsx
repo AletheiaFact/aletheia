@@ -8,8 +8,9 @@ import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
 import { useAppSelector } from "../../store/store";
+import TopicInput from "./TopicInput";
 
-const ClaimReviewView = ({
+const ClaimReviewForm = ({
     personality,
     claim,
     sentence,
@@ -49,6 +50,12 @@ const ClaimReviewView = ({
                     sentence={sentence}
                     summaryClassName="claim-review"
                     claimType={claim?.type}
+                    cardActions={[
+                        <TopicInput
+                            sentence_hash={sentence.data_hash}
+                            topics={sentence.topics}
+                        />,
+                    ]}
                 />
                 {formCollapsed && (
                     <Row
@@ -103,4 +110,4 @@ const ClaimReviewView = ({
     );
 };
 
-export default ClaimReviewView;
+export default ClaimReviewForm;
