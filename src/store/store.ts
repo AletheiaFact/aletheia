@@ -60,7 +60,7 @@ const reducer = (state, action) => {
         case ActionTypes.SET_BREAKPOINTS:
             return {
                 ...state,
-                breakpoints: action.breakpoints,
+                vw: action.vw,
             };
         default:
             return state;

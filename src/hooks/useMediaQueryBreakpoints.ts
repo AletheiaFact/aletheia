@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import { ActionTypes } from "../store/types";
+import { queries } from "../styles/mediaQueries";
 
 export interface WidthBreakpoints {
     xs: boolean;
@@ -23,19 +24,6 @@ export function useMediaQueryBreakpoints(): void {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const maxWidth = {
-            xs: 576,
-            sm: 768,
-            md: 992,
-            lg: 1200,
-        };
-        const queries = {
-            xs: `(max-width: ${maxWidth.xs - 1}px)`,
-            sm: `(max-width: ${maxWidth.sm - 1}px)`,
-            md: `(max-width: ${maxWidth.md - 1}px)`,
-            lg: `(max-width: ${maxWidth.lg - 1}px)`,
-            xl: `(min-width: ${maxWidth.lg}px)`,
-        };
         const keys = Object.keys(queries); // [ xs, sm, md, lg, xl ]
         const mediaQueries: QueriesList = {}; // for each size will have a media query object that supports the 'matches' call
         const initialValues = {
@@ -46,36 +34,35 @@ export function useMediaQueryBreakpoints(): void {
             xl: false,
         };
 
+        const updateRedux = (newValues) => {
+            dispatch({
+                type: ActionTypes.SET_BREAKPOINTS,
+                vw: newValues,
+            });
+        };
+
         const listener = () => {
             const updateMatches = keys.reduce((results, media) => {
                 results[media] =
                     !!mediaQueries[media] && mediaQueries[media].matches;
                 return results;
             }, initialValues);
-            dispatch({
-                type: ActionTypes.SET_BREAKPOINTS,
-                breakpoints: updateMatches,
-            });
+            updateRedux(updateMatches);
         };
+
         if (window && window.matchMedia) {
             keys.forEach((media) => {
                 mediaQueries[media] = window.matchMedia(queries[media]);
                 initialValues[media] = mediaQueries[media].matches;
             });
 
-            dispatch({
-                type: ActionTypes.SET_BREAKPOINTS,
-                breakpoints: initialValues,
-            });
+            updateRedux(initialValues);
 
             keys.forEach((media) => {
                 mediaQueries[media].addEventListener("change", listener);
             });
         } else {
-            dispatch({
-                type: ActionTypes.SET_BREAKPOINTS,
-                breakpoints: initialValues,
-            });
+            updateRedux(initialValues);
         }
         return () => {
             keys.forEach((media) => {
