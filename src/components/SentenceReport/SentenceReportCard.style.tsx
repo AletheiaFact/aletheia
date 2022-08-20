@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import colors from "../../styles/colors";
+import { queries } from "../../styles/mediaQueries";
 
 const SentenceReportCardStyle = styled.div`
     .main-content {
@@ -51,22 +52,13 @@ const SentenceReportCardStyle = styled.div`
         }
     }
 
-    @media (max-width: 1024px) {
-        .main.content {
-            padding: 32px;
-            margin-left: -10px;
-            margin-right: -10px;
-            justify-content: space-around;
-        }
-    }
-
-    @media (max-width: 991px) {
+    @media ${queries.md} {
         .main-content {
             padding-top: 16px;
         }
     }
 
-    @media (max-width: 767px) {
+    @media ${queries.sm} {
         .personality-card {
             max-width: 100%;
             justify-content: start;
@@ -77,7 +69,7 @@ const SentenceReportCardStyle = styled.div`
         .personality {
             text-align: left;
             padding-left: 15px;
-            width: calc(100% - 117px);
+            width: calc(100% - 130px);
         }
 
         .personality .ant-col {
@@ -113,11 +105,10 @@ const SentenceReportCardStyle = styled.div`
         }
     }
 
-    @media (max-width: 576px) {
+    @media ${queries.xs} {
         .personality-card {
             justify-content: space-around;
             align-items: center;
-            padding-bottom: 10px;
         }
 
         .personality-description-content {

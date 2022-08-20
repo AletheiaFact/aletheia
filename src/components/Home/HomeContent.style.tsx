@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { queries } from "../../styles/mediaQueries";
 
 const HomeContentStyle = styled.div`
     .more-personalities-container {
@@ -9,13 +10,13 @@ const HomeContentStyle = styled.div`
         margin-left: 20px;
     }
 
-    @media (min-width: 1025px) and (max-width: 1108px) {
+    @media ${queries.lg} {
         .ant-col-10.personality-card-content {
             flex: 0 0 80px;
         }
     }
 
-    @media (max-width: 1024px) {
+    @media ${queries.md} {
         .main-content {
             display: grid;
             grid-template-columns: 1fr;
@@ -35,15 +36,13 @@ const HomeContentStyle = styled.div`
             margin-left: 0;
             max-width: 100%;
         }
-
+        /*
         .CTA-registration-container,
         .section-title-container {
             margin-left: 12.5%;
             max-width: 75%;
-        }
-    }
+        } */
 
-    @media (max-width: 900px) {
         .ant-col-12.personalities-container,
         .CTA-registration-container,
         .section-title-container {
@@ -52,7 +51,7 @@ const HomeContentStyle = styled.div`
         }
     }
 
-    @media (max-width: 725px) {
+    @media ${queries.sm} {
         .ant-col-12.personalities-container,
         .CTA-registration-container,
         .section-title-container {
@@ -61,7 +60,7 @@ const HomeContentStyle = styled.div`
         }
     }
 
-    @media (max-width: 548px) {
+    @media ${queries.xs} {
         .section-title-container {
             margin-left: 4.16666667%;
             max-width: 91.666666%;

@@ -1,5 +1,6 @@
 import { Row } from "antd";
 import styled from "styled-components";
+import { queries } from "../../styles/mediaQueries";
 
 const HomeCarouselStyle = styled(Row)`
     .ant-carousel .slick-slider {
@@ -34,10 +35,6 @@ const HomeCarouselStyle = styled(Row)`
         font-size: 16px;
     }
 
-    .CTA-button {
-        width: 185px;
-    }
-
     .stats-container {
         flex-direction: row;
         height: 55px;
@@ -52,13 +49,13 @@ const HomeCarouselStyle = styled(Row)`
         font-size: 20px;
     }
 
-    @media (min-width: 1171px) {
+    @media ${queries.xl} {
         .CTA-container .ant-col-14 {
             max-width: 100%;
         }
     }
 
-    @media (max-width: 1170px) {
+    @media ${queries.lg} {
         .carousel-title-container {
             margin: 32px 0 16px 0;
         }
@@ -81,14 +78,12 @@ const HomeCarouselStyle = styled(Row)`
         }
     }
 
-    @media (max-width: 950px) {
+    @media ${queries.md} {
         .ant-col-offset-4.carousel-content {
             margin-left: 12.5%;
             max-width: 75%;
         }
-    }
 
-    @media (max-width: 900px) {
         .carousel-container {
             max-width: 80%;
             margin-left: 10%;
@@ -100,11 +95,6 @@ const HomeCarouselStyle = styled(Row)`
             line-height: 42px;
         }
 
-        .ant-col-offset-4.carousel-content {
-            margin-left: 8.33333333%;
-            max-width: 83.333334%;
-        }
-
         .CTA-container {
             display: flex;
             justify-content: space-between;
@@ -112,24 +102,14 @@ const HomeCarouselStyle = styled(Row)`
         }
     }
 
-    @media (max-width: 800px) {
+    @media ${queries.sm} {
         .ant-col-offset-4.carousel-content {
-            margin-left: 4.16666667%;
+            margin: 4.16666667%;
             max-width: 91.666666%;
         }
     }
 
-    @media (max-width: 725px) {
-        .ant-col-offset-4.carousel-content {
-            margin-left: 0;
-        }
-    }
-
-    @media (max-width: 610px) {
-        .carousel-subtitle-container {
-            width: 100%;
-        }
-
+    @media ${queries.xs} {
         .CTA-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -145,9 +125,7 @@ const HomeCarouselStyle = styled(Row)`
             justify-content: flex-end;
             width: 100%;
         }
-    }
 
-    @media (max-width: 548px) {
         .ant-col-offset-4.carousel-content {
             max-width: 100%;
         }
@@ -170,7 +148,7 @@ const HomeCarouselStyle = styled(Row)`
         }
 
         .carousel-subtitle-container {
-            font-size: 16px;
+            width: 100%;
         }
 
         .carousel-subtitle {
@@ -193,10 +171,6 @@ const HomeCarouselStyle = styled(Row)`
         .CTA-title {
             font-size: 12px;
             font-weight: 700;
-        }
-
-        .CTA-button {
-            width: 150px;
         }
     }
 `;
