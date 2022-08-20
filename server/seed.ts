@@ -5,19 +5,9 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { EmailService } from "./email/email.service";
 import { ConfigService } from "@nestjs/config";
 import { UsersService } from "./users/users.service";
-import { randomBytes } from "crypto";
-
-const mongodb_host = process.env.MONGODB_HOST || "localhost";
-const mongodb_name = process.env.MONGODB_NAME || "Aletheia";
+import { UtilService } from "./util";
 
 const initApp = async (options) => {
-    options.db = {
-        connection_uri: `mongodb://${mongodb_host}/${mongodb_name}`,
-        options: {
-            useUnifiedTopology: true,
-            useNewUrlParser: true,
-        }
-    }
     options.logger.log("info", `Loading AppModule`);
     const app = await NestFactory.create<NestExpressApplication>(
         AppModule.register(options),
@@ -29,18 +19,9 @@ const initApp = async (options) => {
     const emailService = app.get(EmailService);
     const configService = app.get(ConfigService);
     const userService = app.get(UsersService);
+    const utilService = app.get(UtilService);
     const users = configService.get<any>("users");
     const disableSMTP = configService.get<any>("disable_smtp");
-
-    const generatePassword = (isTestUser = false, forcePassword = null) => {
-        const buf = randomBytes(8);
-
-        if (isTestUser) {
-            return forcePassword ? `${forcePassword}` : process.env.DEVELOPMENT_PASSWORD;
-        }
-
-        return buf.toString("hex");
-    };
 
     const seedSingleUser = async (userData, password) => {
         return userService.register({ ...userData, password})
@@ -68,7 +49,7 @@ const initApp = async (options) => {
     // Using await Promise.all to force loop to finish before continuing
     await Promise.all(
         users.map(async (userData) => {
-            const password = generatePassword(userData.isTestUser, userData.password);
+            const password = utilService.generatePassword(userData.isTestUser, userData.password);
             return seedSingleUser(userData, password);
         })
     );

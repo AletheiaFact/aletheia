@@ -18,5 +18,6 @@ export const Default: ComponentStory<typeof ClaimReviewSelect> = (args) => (
         type="select"
         onChange={undefined}
         defaultValue=""
+        placeholder={'placeholder'}
     />
 );

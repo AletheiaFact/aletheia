@@ -2,7 +2,7 @@ import React from "react";
 import { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Aletheia404 from "../components/Aletheia404";
-const parser = require('accept-language-parser');
+import { GetLocale } from "../utils/GetLocale";
 
 const Custom404Page: NextPage = () => {
     return (
@@ -11,10 +11,11 @@ const Custom404Page: NextPage = () => {
 };
 
 export async function getServerSideProps({ locale, locales, req }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = GetLocale(req, locale, locales)
     return {
         props: {
             ...(await serverSideTranslations(locale)),
+            href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };
 }

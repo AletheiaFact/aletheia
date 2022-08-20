@@ -14,42 +14,48 @@ const ClaimSentence = styled.a`
     }
 `;
 
-const Sentence = ({ showHighlights, properties, content, generateHref }) => {
+const Sentence = ({
+    showHighlights,
+    properties,
+    data_hash,
+    content,
+    generateHref,
+}) => {
     let style = {};
-    if (properties.topClassification && showHighlights) {
+    if (properties.classification && showHighlights) {
         style = {
             ...style,
-            backgroundColor: highlightColors[properties.topClassification.classification]
+            backgroundColor: highlightColors[properties.classification],
         };
     }
-    const href = generateHref({ properties });
+    const href = generateHref({ data_hash });
     return (
         <>
             <ClaimSentence
                 href={href}
-                id={properties["data-hash"]}
-                data-hash={properties["data-hash"]}
+                id={data_hash}
+                data-hash={data_hash}
                 style={style}
                 className="claim-sentence"
+                data-cy={`frase${properties.id}`}
             >
-                {content}
+                {content}{" "}
             </ClaimSentence>
-            {properties.topClassification && showHighlights && (
+            {properties.classification && showHighlights && (
                 <sup
                     style={{
-                        color:
-                            highlightColors[properties.topClassification.classification],
+                        color: highlightColors[properties.classification],
                         fontWeight: 600,
                         fontSize: "14px",
                         lineHeight: "22px",
-                        paddingLeft: "5px"
+                        paddingLeft: "5px",
                     }}
                 >
-                    {properties.topClassification.count}
+                    {1}
                 </sup>
             )}
         </>
     );
-}
+};
 
 export default Sentence;

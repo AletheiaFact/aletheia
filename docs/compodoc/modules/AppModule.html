@@ -94,8 +94,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="32"
-                            class="link-to-prism">server/app.module.ts:32</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="42"
+                            class="link-to-prism">server/app.module.ts:42</a></div>
                 </td>
             </tr>
 
@@ -165,8 +165,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="39"
-                            class="link-to-prism">server/app.module.ts:39</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="50"
+                            class="link-to-prism">server/app.module.ts:50</a></div>
                 </td>
             </tr>
 
@@ -215,10 +215,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DynamicModule, MiddlewareConsumer, Module, NestModule } from &quot;@nestjs/common&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+    DynamicModule,
+    MiddlewareConsumer,
+    Module,
+    NestModule,
+} from &quot;@nestjs/common&quot;;
 import { MongooseModule } from &quot;@nestjs/mongoose&quot;;
 import { UsersModule } from &quot;./users/users.module&quot;;
-import { AuthModule } from &quot;./auth/auth.module&quot;;
 import { WikidataModule } from &quot;./wikidata/wikidata.module&quot;;
 import { PersonalityModule } from &quot;./personality/personality.module&quot;;
 import { ClaimModule } from &quot;./claim/claim.module&quot;;
@@ -236,13 +240,19 @@ import { ThrottlerModule, ThrottlerGuard } from &quot;@nestjs/throttler&quot;;
 import { SitemapModule } from &quot;./sitemap/sitemap.module&quot;;
 import { ClaimRevisionModule } from &quot;./claim-revision/claim-revision.module&quot;;
 import { HistoryModule } from &quot;./history/history.module&quot;;
+import { ClaimReviewTaskModule } from &quot;./claim-review-task/claim-review-task.module&quot;;
 import { LoggerMiddleware } from &quot;./middleware/logger.middleware&quot;;
+import { ReportModule } from &quot;./report/report.module&quot;;
 import OryModule from &quot;./ory/ory.module&quot;;
 import { SessionGuard } from &quot;./auth/session.guard&quot;;
 import { GetLanguageMiddleware } from &quot;./middleware/language.middleware&quot;;
 import { DisableBodyParserMiddleware } from &quot;./middleware/disable-body-parser.middleware&quot;;
 import OryController from &quot;./ory/ory.controller&quot;;
 import { JsonBodyMiddleware } from &quot;./middleware/json-body.middleware&quot;;
+import { CaptchaModule } from &quot;./captcha/captcha.module&quot;;
+import { SpeechModule } from &quot;./speech/speech.module&quot;;
+import { ParagraphModule } from &quot;./paragraph/paragraph.module&quot;;
+import { SentenceModule } from &quot;./sentence/sentence.module&quot;;
 
 @Module({})
 export class AppModule implements NestModule {
@@ -250,13 +260,15 @@ export class AppModule implements NestModule {
         consumer
             .apply(DisableBodyParserMiddleware)
             .forRoutes(OryController)
-            .apply(JsonBodyMiddleware, LoggerMiddleware, GetLanguageMiddleware).forRoutes(&#x27;*&#x27;);
+            .apply(JsonBodyMiddleware, LoggerMiddleware, GetLanguageMiddleware)
+            .forRoutes(&quot;*&quot;);
     }
 
     static register(options): DynamicModule {
         // TODO: interface app with service-runner metrics interface
         return {
             module: AppModule,
+            global: true,
             imports: [
                 MongooseModule.forRoot(
                     options.config.db.connection_uri,
@@ -270,20 +282,25 @@ export class AppModule implements NestModule {
                     limit: options.config.throttle.limit,
                 }),
                 UsersModule,
-                AuthModule,
                 WikidataModule,
                 PersonalityModule,
                 ClaimModule,
                 ClaimReviewModule,
+                ClaimReviewTaskModule,
                 ClaimRevisionModule,
                 HistoryModule,
                 SourceModule,
+                SpeechModule,
+                ParagraphModule,
+                SentenceModule,
                 StatsModule,
                 ViewModule,
                 HomeModule,
                 EmailModule,
                 SitemapModule,
-                OryModule
+                OryModule,
+                ReportModule,
+                CaptchaModule,
             ],
             controllers: [RootController],
             providers: [
@@ -293,12 +310,13 @@ export class AppModule implements NestModule {
                 },
                 {
                     provide: APP_GUARD,
-                    useClass: ThrottlerGuard
+                    useClass: ThrottlerGuard,
                 },
                 {
                     provide: APP_GUARD,
-                    useClass: SessionGuard
-                }
+                    useExisting: SessionGuard,
+                },
+                SessionGuard
             ],
         };
     }

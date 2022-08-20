@@ -1,0 +1,124 @@
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import * as React from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import Button from "./Button";
+import { Col, Row } from "antd";
+import AletheiaInput from "./AletheiaInput";
+
+type FormValues = {
+    fieldArray: { content: string }[];
+};
+
+export default function InputTextList({
+    fieldName,
+    placeholder,
+    onChange,
+    addInputLabel,
+    defaultValue,
+    dataCy,
+    white = undefined,
+}) {
+    const contents = defaultValue.map((item) => {
+        return { content: item };
+    });
+
+    const { register, control, watch } = useForm<FormValues>({
+        defaultValues: {
+            fieldArray: contents.length ? contents : [{ content: "" }],
+        },
+    });
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "fieldArray",
+    });
+    const watchFieldArray = watch("fieldArray");
+    const controlledFields = fields.map((field, index) => {
+        return {
+            ...field,
+            ...watchFieldArray[index],
+        };
+    });
+
+    React.useEffect(() => {
+        const subscription = watch((value) => {
+            const contentArray = value.fieldArray.flatMap(
+                (field) => field.content
+            );
+            onChange(contentArray);
+        });
+        return () => subscription.unsubscribe();
+    }, [watch]);
+
+    return (
+        <div>
+            {controlledFields.map((_field, index) => {
+                return (
+                    <Row
+                        key={`fieldArray.${index}.content`}
+                        style={{
+                            marginBottom: 20,
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <Col span={index > 0 ? 20 : 24}>
+                            <AletheiaInput
+                                {...register(
+                                    `fieldArray.${index}.content` as const
+                                )}
+                                placeholder={placeholder}
+                                type="text"
+                                data-cy={`${dataCy}${index}`}
+                                white={white}
+                            />
+                        </Col>
+                        {index > 0 && (
+                            <Col span={3}>
+                                <Button
+                                    style={{ height: "40px", margin: "0 auto" }}
+                                    onClick={() => {
+                                        remove(index);
+                                        //@ts-ignore
+                                        umami?.trackEvent(
+                                            `Remove ${fieldName} input`,
+                                            "Fact-checking workflow"
+                                        );
+                                    }}
+                                    data-cy={`${dataCy}Remove${index}`}
+                                >
+                                    <DeleteOutlined />
+                                </Button>
+                            </Col>
+                        )}
+                    </Row>
+                );
+            })}
+
+            <div
+                style={{
+                    width: "100%",
+                    textAlign: "right",
+                    marginTop: 10,
+                }}
+            >
+                <a
+                    style={{
+                        textDecoration: "underline",
+                    }}
+                    onClick={() => {
+                        append({
+                            content: "",
+                        });
+                        //@ts-ignore
+                        umami?.trackEvent(
+                            `Add ${fieldName} input`,
+                            "Fact-checking workflow"
+                        );
+                    }}
+                    data-cy={`${dataCy}Add`}
+                >
+                    <PlusOutlined /> {addInputLabel}
+                </a>
+            </div>
+        </div>
+    );
+}

@@ -1,21 +1,24 @@
 import { NextPage } from "next";
-import Home from "../components/Home/Home";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { NextSeo } from "next-seo";
 import { useTranslation } from "next-i18next";
-const parser = require("accept-language-parser");
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-const HomePage: NextPage<{ data: any }> = (props) => {
+import Home from "../components/Home/Home";
+import Seo from "../components/Seo";
+import { GetLocale } from "../utils/GetLocale";
+
+const HomePage: NextPage<{ personalities; stats; href; isLoggedIn }> = (
+    props
+) => {
     const { t } = useTranslation();
     return (
         <>
-            <NextSeo title="Home" description={t("landingPage:description")} />
+            <Seo title="Home" description={t("landingPage:description")} />
             <Home {...props} />
         </>
     );
 };
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = GetLocale(req, locale, locales);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
@@ -24,9 +27,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personalities: JSON.parse(JSON.stringify(query.personalities)),
             stats: JSON.parse(JSON.stringify(query.stats)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
-            isLoggedIn: req.user ? true : false
+            isLoggedIn: req.user ? true : false,
         },
     };
 }
 export default HomePage;
-

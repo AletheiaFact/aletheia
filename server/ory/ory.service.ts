@@ -23,14 +23,48 @@ export default class OryService {
         );
     }
 
-    createIdentity(user, password): Promise<any> {
-        const { access_token: token, url, schema_id } = this.configService.get("ory");
+    async updateIdentity(user, password, role): Promise<any> {
+        const {
+            access_token: token,
+            url,
+            schema_id,
+        } = this.configService.get("ory");
+        return axios({
+            method: "put",
+            url: `${url}/${this.adminEndpoint}/identities/${user.oryId}`,
+            data: {
+                schema_id,
+                traits: {
+                    email: user.email,
+                    user_id: user._id,
+                    role,
+                },
+                credentials: {
+                    password: {
+                        config: { password },
+                    },
+                },
+            },
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+
+    async createIdentity(user, password, role): Promise<any> {
+        const {
+            access_token: token,
+            url,
+            schema_id,
+        } = this.configService.get("ory");
         return axios({
             method: "post",
             url: `${url}/${this.adminEndpoint}/identities`,
             data: {
                 schema_id,
-                traits: { email: user.email, user_id: user._id },
+                traits: {
+                    email: user.email,
+                    user_id: user._id,
+                    role,
+                },
                 credentials: {
                     password: {
                         config: { password },

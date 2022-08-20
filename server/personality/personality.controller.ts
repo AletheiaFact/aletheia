@@ -9,7 +9,7 @@ import {
     Put,
     Query,
     Req,
-    Res
+    Res,
 } from "@nestjs/common";
 import { parse } from "url";
 import { Request, Response } from "express";
@@ -17,7 +17,9 @@ import { ViewService } from "../view/view.service";
 import { PersonalityService } from "./personality.service";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonality } from "./dto/create-personality.dto";
-import {IsPublic} from "../decorators/is-public.decorator";
+import { IsPublic } from "../decorators/is-public.decorator";
+import { TargetModel } from "../history/schema/history.schema";
+import { BaseRequest } from "../types";
 
 @Controller()
 export class PersonalityController {
@@ -61,7 +63,7 @@ export class PersonalityController {
 
     @Put("api/personality/:id")
     async update(@Param("id") personalityId, @Body() body) {
-        return this.personalityService.update(personalityId, body)
+        return this.personalityService.update(personalityId, body);
     }
 
     @Delete("api/personality/:id")
@@ -85,7 +87,10 @@ export class PersonalityController {
     }
 
     @Get("personality/search")
-    public async personalityCreateSearch(@Req() req: Request, @Res() res: Response) {
+    public async personalityCreateSearch(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
 
@@ -101,22 +106,34 @@ export class PersonalityController {
 
     @IsPublic()
     @Get("personality/:slug")
-    public async personalityPage(@Req() req: Request, @Res() res: Response) {
+    public async personalityPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
 
-        const personality = await this.personalityService.getBySlug(
-            req.params.slug,
-            // @ts-ignore
-            req.language
+        const personality =
+            await this.personalityService.getClaimsPersonalityBySlug(
+                req.params.slug,
+                req.language
+            );
+
+        const { personalities } = await this.personalityService.combinedListAll(
+            {
+                language: req.language,
+                order: "random",
+                pageSize: 6,
+                fetchOnly: true,
+            }
         );
+
         await this.viewService
             .getNextServer()
             .render(
                 req,
                 res,
                 "/personality-page",
-                Object.assign(parsedUrl.query, { personality })
+                Object.assign(parsedUrl.query, { personality, personalities })
             );
     }
 
@@ -136,20 +153,24 @@ export class PersonalityController {
     }
 
     @Get("personality/:slug/history")
-    public async personalityHistoryPage(@Req() req: Request, @Res() res: Response) {
+    public async personalityHistoryPage(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
         const parsedUrl = parse(req.url, true);
 
-        const personality = await this.personalityService.getBySlug(
-            req.params.slug
-        );
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/history-page",
-                Object.assign(parsedUrl.query, { targetId: personality._id, targetModel: "personality" })
+        const personality =
+            await this.personalityService.getClaimsPersonalityBySlug(
+                req.params.slug
             );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/history-page",
+            Object.assign(parsedUrl.query, {
+                targetId: personality._id,
+                targetModel: TargetModel.Personality,
+            })
+        );
     }
-
 }

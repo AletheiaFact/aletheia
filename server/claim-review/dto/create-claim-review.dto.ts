@@ -1,7 +1,25 @@
-import { IsAlphanumeric, IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import {
+    IsAlphanumeric,
+    IsArray,
+    IsEnum,
+    IsNotEmpty,
+    IsString,
+} from "class-validator";
 import { Personality } from "../../personality/schemas/personality.schema";
 import { Claim } from "../../claim/schemas/claim.schema";
-import { ClassificationEnum } from "../schemas/claim-review.schema"
+
+export enum ClassificationEnum {
+    "not-fact" = 0,
+    "false",
+    "misleading",
+    "unsustainable",
+    "unverifiable",
+    "exaggerated",
+    "arguable",
+    "trustworthy-but",
+    "trustworthy",
+}
+
 export class CreateClaimReview {
     @IsNotEmpty()
     @IsString()
@@ -19,17 +37,11 @@ export class CreateClaimReview {
     @IsAlphanumeric()
     sentence_hash: string;
 
-    @IsString()
-    sentence_content: string;
-
     @IsNotEmpty()
     @IsString()
     report: string;
 
-    @IsString()
-    recaptcha: string
-
     @IsNotEmpty()
     @IsArray()
-    sources: string[]
+    sources: string[];
 }

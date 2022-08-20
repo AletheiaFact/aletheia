@@ -1,62 +1,82 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { Typography } from "antd";
-import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
+import CTARegistrationStyle from "./CTARegistration.style";
+import colors from "../../styles/colors";
 
-function CTARegistration({ style = {} }) {
+function CTARegistration() {
     const { t } = useTranslation();
 
     return (
-        <div
+        <CTARegistrationStyle
             style={{
                 backgroundColor: colors.bluePrimary,
                 textAlign: "center",
-                padding: "30px",
-                ...style
+                maxWidth: "100%",
+                display: "grid",
+                justifyContent: "center",
             }}
         >
-            <Typography.Title level={2} style={{ color: "#fff", fontSize: '24px' }}>
-                {t("CTARegistration:title")}
-            </Typography.Title>
-            <div
+            <p
                 style={{
-                    color: "#fff",
-                    fontSize: "14px",
+                    width: "100%",
+                    color: colors.white,
+                    fontSize: "22px",
+                    lineHeight: "34px",
+                    fontWeight: 800,
+                    marginBottom: 0,
+                }}
+            >
+                {t("CTARegistration:title")}
+            </p>
+            <p
+                style={{
+                    color: "rgba(255, 255, 255, 0.8)",
+                    padding: "0 16px 0 16px",
+                    fontSize: "16px",
                     fontWeight: 600,
-                    lineHeight: "21px",
-                    marginBottom: "10px",
-                    textAlign: 'center'
+                    lineHeight: "24px",
+                    margin: "32px 0 13px 0",
                 }}
             >
                 {t("CTARegistration:body")}
-            </div>
-            <div
+            </p>
+            <p
                 style={{
-                    color: "#fff",
-                    fontSize: "10px",
+                    color: "rgba(255, 255, 255, 0.8)",
+                    padding: "0 16px 0 16px",
+                    fontSize: "14px",
                     fontWeight: 600,
-                    lineHeight: "15px",
-                    marginBottom: "17px"
+                    lineHeight: "22px",
+                    marginBottom: "32px",
                 }}
             >
                 {t("CTARegistration:footer")}
-            </div>
+            </p>
             <Button
-                onClick={() => { umami?.trackEvent('cta-registration-button', 'registration') }}
+                onClick={() => {
+                    umami?.trackEvent(
+                        "cta-registration-button",
+                        "registration"
+                    );
+                }}
                 type={ButtonType.white}
                 target="_blank"
+                rel="noreferrer"
                 href={t("common:registrationLink")}
+                className="CTA-registration-button"
+                rounded="true"
+                style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "40px",
+                    padding: "0 15px",
+                    fontWeight: 700,
+                }}
             >
-                <b
-                    style={{
-                        fontSize: "14px"
-                    }}
-                >
-                    {t("CTARegistration:button")}
-                </b>
+                {t("CTARegistration:button")}
             </Button>
-        </div>
+        </CTARegistrationStyle>
     );
 }
 

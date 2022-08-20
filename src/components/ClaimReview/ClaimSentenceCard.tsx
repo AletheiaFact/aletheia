@@ -1,26 +1,43 @@
-import { Avatar, Col, Comment } from "antd";
+import { Col, Comment } from "antd";
 import React from "react";
+import styled from "styled-components";
+
+import AletheiaAvatar from "../AletheiaAvatar";
 import ClaimCardHeader from "../Claim/ClaimCardHeader";
 import ClaimSummary from "../Claim/ClaimSummary";
 
-const ClaimSentenceCard = ({ personality, sentence, claimType, summaryClassName = "" }) => {
-    const content = sentence?.content;
+const StyledComment = styled(Comment)`
+    .ant-comment-avatar {
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+`;
 
+const ClaimSentenceCard = ({
+    personality,
+    date,
+    content,
+    claimType,
+    summaryClassName = "",
+}) => {
     if (content) {
         return (
             <Col span={24}>
-                <Comment
+                <StyledComment
                     author={
                         <ClaimCardHeader
                             personality={personality}
-                            date={sentence?.date}
+                            date={date}
                             claimType={claimType}
                         />
                     }
                     avatar={
-                        <Avatar
-                            src={personality.image}
+                        <AletheiaAvatar
+                            src={personality.avatar}
                             alt={personality.name}
+                            size={43}
                         />
                     }
                     content={
@@ -29,13 +46,11 @@ const ClaimSentenceCard = ({ personality, sentence, claimType, summaryClassName 
                                 <Col>
                                     <cite
                                         style={{
-                                            marginBottom: '1em',
-                                            fontStyle: 'normal'
+                                            marginBottom: "1em",
+                                            fontStyle: "normal",
                                         }}
                                     >
-                                        <p>
-                                            {content}
-                                        </p>
+                                        <p>{content}</p>
                                     </cite>
                                 </Col>
                             </ClaimSummary>
@@ -47,6 +62,6 @@ const ClaimSentenceCard = ({ personality, sentence, claimType, summaryClassName 
     } else {
         return <></>;
     }
-}
+};
 
 export default ClaimSentenceCard;

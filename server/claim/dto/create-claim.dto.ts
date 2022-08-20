@@ -1,4 +1,12 @@
-import { ArrayNotEmpty, IsAlpha, IsArray, IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import {
+    ArrayNotEmpty,
+    IsEnum,
+    IsArray,
+    IsDateString,
+    IsNotEmpty,
+    IsString,
+} from "class-validator";
+import { ContentModelEnum } from "../../claim-revision/schema/claim-revision.schema";
 import { Personality } from "../../personality/schemas/personality.schema";
 
 export class CreateClaimDTO {
@@ -17,8 +25,8 @@ export class CreateClaimDTO {
 
     @IsNotEmpty()
     @IsString()
-    @IsAlpha()
-    type: string;
+    @IsEnum(ContentModelEnum)
+    contentModel: string;
 
     @IsArray()
     @ArrayNotEmpty()

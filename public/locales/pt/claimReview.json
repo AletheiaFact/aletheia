@@ -1,7 +1,10 @@
 {
     "cardAuthor": "{{name}} avaliou essa afirmação como:",
     "anonymousUserName": "Anônimo",
-    "userReviewPrefix": "Você avaliou essa afirmação como ",
-    "userReviewSuffix": "A maioria ({{count}}) foi avaliada como ",
-    "listTitle": "Avaliações"
+    "claimReview": "Afirmação avaliada como ",
+    "listTitle": "Avaliações",
+    "summarySectionTitle": "Resumo da conclusão",
+    "questionsSectionTitle": "Quais perguntas a verificação deverá responder?",
+    "verificationSectionTitle": "Relatório da verificação",
+    "howSectionTitle": "Como verificamos?"
 }

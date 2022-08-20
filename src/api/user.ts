@@ -33,20 +33,6 @@ const login = (params, t) => {
         });
 };
 
-const validateSession = (params, t) => {
-    return request
-        .get(`/validate`, { withCredentials: true })
-        .then((response) => {
-            return { login: true, ...response };
-        })
-        .catch((e) => {
-            const response = e?.response?.data || {
-                message: t("login:failedMessage"),
-            };
-            return { login: false, ...response };
-        });
-};
-
 const updatePassword = (params, t) => {
     return request
         .put(
@@ -62,9 +48,25 @@ const updatePassword = (params, t) => {
         });
 };
 
+const getUsers = (searchName, t) => {
+    const params = {
+        searchName,
+    }
+    return request
+        .get(`/`, { params })
+        .then((response) => {
+            return response?.data;
+        })
+        .catch((e) => {
+            return e?.response?.data || {
+                message: t("login:getUsersFailed"),
+            };
+        })
+}
+
 export default {
     login,
-    validateSession,
     updatePassword,
     getById,
+    getUsers
 };

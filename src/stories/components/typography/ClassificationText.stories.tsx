@@ -1,12 +1,11 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import React from 'react';
+import { ComponentStory, ComponentMeta } from "@storybook/react";
+import React from "react";
 
-import ClassificationText from '../../../components/ClassificationText';
-import { classifications } from '../../fixtures';
-
+import ClassificationText from "../../../components/ClassificationText";
+import { classifications } from "../../fixtures";
 
 export default {
-    title: 'Components/Typography/ClassificationText',
+    title: "Components/Typography/ClassificationText",
     component: ClassificationText,
     argTypes: {
         classification: {
@@ -14,7 +13,7 @@ export default {
             control: {
                 type: "select",
             },
-        }
+        },
     },
 } as ComponentMeta<typeof ClassificationText>;
 
@@ -24,45 +23,45 @@ const Template: ComponentStory<typeof ClassificationText> = (args) => (
 
 export const True = Template.bind({});
 True.args = {
-    classification: "true"
+    classification: "trustworthy",
 };
 
 export const TrueBut = Template.bind({});
 TrueBut.args = {
-    classification: "true-but"
+    classification: "trustworthy-but",
 };
 
 export const Arguable = Template.bind({});
 Arguable.args = {
-    classification: "arguable"
+    classification: "arguable",
 };
 
 export const Misleading = Template.bind({});
 Misleading.args = {
-    classification: "misleading"
+    classification: "misleading",
 };
 
 export const False = Template.bind({});
 False.args = {
-    classification: "false"
+    classification: "false",
 };
 
 export const Unsustainable = Template.bind({});
 Unsustainable.args = {
-    classification: "unsustainable"
+    classification: "unsustainable",
 };
 
 export const Exaggerated = Template.bind({});
 Exaggerated.args = {
-    classification: "exaggerated"
+    classification: "exaggerated",
 };
 
 export const NotFact = Template.bind({});
 NotFact.args = {
-    classification: "not-fact"
+    classification: "not-fact",
 };
 
 export const Unverifiable = Template.bind({});
 Unverifiable.args = {
-    classification: "unverifiable"
+    classification: "unverifiable",
 };

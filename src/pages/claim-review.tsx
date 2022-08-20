@@ -1,20 +1,35 @@
 import { NextPage } from "next";
-import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import JsonLd from "../components/JsonLd";
 import { useTranslation } from "next-i18next";
-import { NextSeo } from 'next-seo';
-const parser = require("accept-language-parser");
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
+import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
+import SentenceReportView from "../components/ClaimReview/SentenceReportView";
+import JsonLd from "../components/JsonLd";
+import Seo from "../components/Seo";
+import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
+import { GetLocale } from "../utils/GetLocale";
+
+const ClaimReviewPage: NextPage<{
+    personality: any;
+    claim: any;
+    sentence: any;
+    sitekey: string;
+    href: string;
+    claimReviewTask: any;
+    claimReview: any;
+    isLoggedIn: boolean;
+}> = ({
     personality,
     claim,
     sentence,
-    sitekey,
     href,
+    claimReviewTask,
+    claimReview,
+    isLoggedIn,
+    sitekey,
 }) => {
     const { t } = useTranslation();
-    const review = sentence?.props?.topClassification;
+    const review = sentence?.stats?.reviews[0]?._id;
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -30,10 +45,10 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
         claimReviewed: sentence.content,
         reviewRating: {
             "@type": "Rating",
-            ratingValue: review?.classification,
-            bestRating: "true",
-            worstRating: "false",
-            alternateName: t(`claimReviewForm:${review?.classification}`),
+            ratingValue: ClassificationEnum[review],
+            bestRating: 8,
+            worstRating: 1,
+            alternateName: t(`claimReviewForm:${review}`),
         },
         itemReviewed: {
             "@type": "CreativeWork",
@@ -46,30 +61,45 @@ const ClaimPage: NextPage<{ personality; claim; sentence; sitekey, href}> = ({
             datePublished: claim.date,
             name: claim.title,
         },
+        datePublished: sentence.date,
     };
 
     return (
         <>
-            {review && (
-                <JsonLd {...jsonld} />
-            )}
-            <NextSeo
+            {review && <JsonLd {...jsonld} />}
+            <Seo
                 title={sentence.content}
-                description={t('seo:claimReviewDescription', { sentence: sentence.content })}
+                description={t("seo:claimReviewDescription", {
+                    sentence: sentence.content,
+                })}
             />
-            <ClaimReviewView
-                personality={personality}
-                claim={claim}
-                sentence={sentence}
-                sitekey={sitekey}
-                href={href}
-            />
+
+            {claimReviewTask?.machine.value !== ReviewTaskStates.published ? (
+                <ClaimReviewView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                    href={href}
+                    claimReviewTask={claimReviewTask}
+                    isLoggedIn={isLoggedIn}
+                    sitekey={sitekey}
+                />
+            ) : (
+                <SentenceReportView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                    isLoggedIn={isLoggedIn}
+                    href={href}
+                    context={claimReview.report}
+                />
+            )}
         </>
     );
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = GetLocale(req, locale, locales);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
@@ -78,9 +108,12 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personality: JSON.parse(JSON.stringify(query.personality)),
             claim: JSON.parse(JSON.stringify(query.claim)),
             sentence: JSON.parse(JSON.stringify(query.sentence)),
+            claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
+            claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            isLoggedIn: req.user ? true : false,
         },
     };
 }
-export default ClaimPage;
+export default ClaimReviewPage;

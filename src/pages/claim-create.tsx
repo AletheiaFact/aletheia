@@ -1,27 +1,33 @@
 import { NextPage } from "next";
-import ClaimCreate from "../components/Claim/ClaimCreate";
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { NextSeo } from 'next-seo';
 import { useTranslation } from "next-i18next";
-const parser = require('accept-language-parser');
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-const ClaimCreatePage: NextPage<{ sitekey, personality }> = ({ sitekey, personality }) => {
+import ClaimCreate from "../components/Claim/ClaimCreate";
+import Seo from "../components/Seo";
+import { GetLocale } from "../utils/GetLocale";
+
+const ClaimCreatePage: NextPage<{ sitekey; personality }> = ({
+    sitekey,
+    personality,
+}) => {
     const { t } = useTranslation();
 
     return (
         <>
-            <NextSeo 
+            <Seo
                 title={t("seo:claimCreateTitle")}
-                description={t("seo:claimCreateDescription", { name: personality.name })}
+                description={t("seo:claimCreateDescription", {
+                    name: personality.name,
+                })}
             />
-            
-            <ClaimCreate sitekey={sitekey} personality={personality}/>
+
+            <ClaimCreate sitekey={sitekey} personality={personality} />
         </>
-    )
-}
+    );
+};
 
 export async function getServerSideProps({ query, locale, locales, req }) {
-    locale = parser.pick(locales, req.language) || locale || "en";
+    locale = GetLocale(req, locale, locales);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
@@ -29,7 +35,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: JSON.parse(JSON.stringify(query.personality)),
+            href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };
 }
-export default ClaimCreatePage; 
+export default ClaimCreatePage;

@@ -82,6 +82,9 @@
                                 <a href="#formatStats" >formatStats</a>
                             </li>
                             <li>
+                                <a href="#generatePassword" >generatePassword</a>
+                            </li>
+                            <li>
                                 <a href="#mergeObjectsInUnique" >mergeObjectsInUnique</a>
                             </li>
                         </ul>
@@ -115,15 +118,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>formatStats(reviews, slice)</code>
+<code>formatStats(reviews)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="5"
-                            class="link-to-prism">server/util.ts:5</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="6"
+                            class="link-to-prism">server/util.ts:6</a></div>
                 </td>
             </tr>
 
@@ -139,7 +142,6 @@
                                 <tr>
                                     <td>Name</td>
                                     <td>Optional</td>
-                                    <td>Default value</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -150,12 +152,70 @@
                                         No
                                     </td>
 
-                                    <td>
-                                    </td>
 
                                 </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Returns : </b>    <code>{ total: any; reviews: any; }</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generatePassword"></a>
+                    <span class="name">
+                        <span ><b>generatePassword</b></span>
+                        <a href="#generatePassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>generatePassword(isTestUser, forcePassword: null)</code>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-line">Defined in <a href="" data-line="43"
+                            class="link-to-prism">server/util.ts:43</a></div>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                    <div class="io-description">
+                        <b>Parameters :</b>
+                        
+                        <table class="params">
+                            <thead>
                                 <tr>
-                                    <td>slice</td>
+                                    <td>Name</td>
+                                    <td>Type</td>
+                                    <td>Optional</td>
+                                    <td>Default value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>isTestUser</td>
+                                    <td>
+                                    </td>
 
                                     <td>
                                         No
@@ -166,13 +226,28 @@
                                     </td>
 
                                 </tr>
+                                <tr>
+                                    <td>forcePassword</td>
+                                    <td>
+                                            <code>null</code>
+                                    </td>
+
+                                    <td>
+                                        No
+                                    </td>
+
+                                    <td>
+                                        <code>null</code>
+                                    </td>
+
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>    <code>{ total: any; reviews: any; }</code>
+                        <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                     </div>
                     <div class="io-description">
@@ -202,8 +277,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="26"
-                            class="link-to-prism">server/util.ts:26</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="27"
+                            class="link-to-prism">server/util.ts:27</a></div>
                 </td>
             </tr>
 
@@ -280,10 +355,11 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@nestjs/common&quot;;
+import { randomBytes } from &quot;crypto&quot;;
 
 @Injectable()
 export class UtilService {
-    formatStats(reviews, slice &#x3D; false) {
+    formatStats(reviews) {
         const total &#x3D; reviews.reduce((agg, review) &#x3D;&gt; {
             agg +&#x3D; review.count;
             return agg;
@@ -291,12 +367,12 @@ export class UtilService {
         const result &#x3D; reviews.map((review) &#x3D;&gt; {
             const percentage &#x3D; (review.count / total) * 100;
             return {
-                _id: review._id,
+                _id: review._id[0],
                 percentage: percentage.toFixed(0),
                 count: review.count,
             };
         });
-        return { total, reviews: slice ? result.slice(0, 3) : result };
+        return { total, reviews: result };
     }
 
     /**
@@ -319,6 +395,16 @@ export class UtilService {
 
         return Array.from(newArray.values());
     }
+
+    generatePassword(isTestUser &#x3D; false, forcePassword &#x3D; null) {
+        const buf &#x3D; randomBytes(8);
+
+        if (isTestUser) {
+            return forcePassword ? &#x60;${forcePassword}&#x60; : process.env.DEVELOPMENT_PASSWORD;
+        }
+
+        return buf.toString(&quot;hex&quot;);
+    };
 }
 </code></pre>
     </div>

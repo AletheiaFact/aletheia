@@ -1,10 +1,13 @@
 {
     "title": "checagem de afirmações",
-    "subtitle": "das suas personalidades favoritas",
+    "subtitle0": "das suas",
+    "subtitle1": "personalidades favoritas", 
     "statsPersonalities": "personalidades",
     "statsClaims": "afirmações",
     "statsClaimReviews": "afirmações revisadas",
-    "statsFooter": "contribua para uma internet livre de desinformação",
-    "createAccountButton": "Crie sua conta",
-    "seeMorePersonalitiesButton": "Veja mais personalidades"
+    "statsFooter": "Contribua para uma internet livre de desinformação",
+    "createAccountButton": "Seja um revisor",
+    "seeMorePersonalitiesButton": "Veja mais personalidades",
+    "sectionTitle1": "Personalidades",
+    "sectionTitle2": "Junte-se ao movimento"
 }

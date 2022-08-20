@@ -1,5 +1,4 @@
 {
-    "headerTitle": "Metrics Overview",
-    "header":
-    "The statistics below consider the most voted classification of individual claims. This speech contains {{totalClaims}} claims, of which {{totalClaimsReviewed}} received a total of {{total}} (100%) reviews:"
+    "headerTitle": "Claims ratings",
+    "header": "Considering all reviewed claims"
 }

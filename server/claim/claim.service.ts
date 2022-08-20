@@ -1,16 +1,28 @@
-import { Injectable, Inject, Logger, Scope, NotFoundException } from "@nestjs/common";
+import {
+    Injectable,
+    Inject,
+    Logger,
+    Scope,
+    NotFoundException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
-import { HistoryService } from "../history/history.service"
+import { HistoryService } from "../history/history.service";
+import { StateEventService } from "../state-event/state-event.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
-import { ISoftDeletedModel } from 'mongoose-softdelete-typescript';
-import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
+import { TypeModel } from "../state-event/schema/state-event.schema";
+import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
+import { REQUEST } from "@nestjs/core";
+import { BaseRequest } from "../types";
 
-type ClaimMatchParameters = ({ _id: string } | { personality: string, slug: string }) & FilterQuery<ClaimDocument>;
+type ClaimMatchParameters = (
+    | { _id: string }
+    | { personality: string; slug: string }
+) &
+    FilterQuery<ClaimDocument>;
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimService {
@@ -18,36 +30,43 @@ export class ClaimService {
     private readonly logger = new Logger("ClaimService");
 
     constructor(
-        @Inject(REQUEST) private req: Request,
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Claim.name)
-        private ClaimModel: ISoftDeletedModel<ClaimDocument> & Model<ClaimDocument>,
+        private ClaimModel: ISoftDeletedModel<ClaimDocument> &
+            Model<ClaimDocument>,
         private claimReviewService: ClaimReviewService,
         private historyService: HistoryService,
-        private claimRevisionService: ClaimRevisionService,
-    ) {
-        this.optionsToUpdate = {
-            new: true,
-            upsert: true,
-        };
-    }
+        private stateEventService: StateEventService,
+        private claimRevisionService: ClaimRevisionService
+    ) {}
 
     async listAll(page, pageSize, order, query) {
         if (query.personality) {
-            query.personality = Types.ObjectId(query.personality)
+            query.personality = Types.ObjectId(query.personality);
         }
         const claims = await this.ClaimModel.find(query)
-            .populate("latestRevision")
+            .populate({
+                path: "latestRevision",
+                populate: {
+                    path: "content",
+                    populate: {
+                        path: "content",
+                        populate: {
+                            path: "content",
+                        },
+                    },
+                },
+            })
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
 
         return Promise.all(
-            claims.map(async (claim) => {
-                // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
+            claims.map((claim) => {
                 return this.postProcess({
                     ...claim.latestRevision,
-                    ...claim
+                    ...claim,
                 });
             })
         );
@@ -66,28 +85,36 @@ export class ClaimService {
     async create(claim) {
         claim.personality = Types.ObjectId(claim.personality);
         const newClaim = new this.ClaimModel(claim);
-        const newClaimRevision = await this.claimRevisionService.create(newClaim._id, claim)
-        newClaim.latestRevision = newClaimRevision._id
-        newClaim.slug = newClaimRevision.slug
+        const newClaimRevision = await this.claimRevisionService.create(
+            newClaim._id,
+            claim
+        );
+        newClaim.latestRevision = newClaimRevision._id;
+        newClaim.slug = newClaimRevision.slug;
 
-        const user = this.req.user
+        const user = this.req.user;
 
-        const history =
-            this.historyService.getHistoryParams(
-                newClaim._id,
-                TargetModel.Claim,
-                user,
-                HistoryType.Create,
-                newClaim.latestRevision
-            )
-        await this.historyService.createHistory(history)
+        const history = this.historyService.getHistoryParams(
+            newClaim._id,
+            TargetModel.Claim,
+            user,
+            HistoryType.Create,
+            newClaim.latestRevision
+        );
+        const stateEvent = this.stateEventService.getStateEventParams(
+            newClaim._id,
+            TypeModel.Claim
+        );
+
+        this.historyService.createHistory(history);
+        this.stateEventService.createStateEvent(stateEvent);
 
         newClaim.save();
 
         return {
             ...newClaim.toObject(),
-            ...newClaimRevision.toObject()
-        }
+            ...newClaimRevision.toObject(),
+        };
     }
 
     /**
@@ -100,30 +127,31 @@ export class ClaimService {
      */
     async update(claimId, claimRevisionUpdate) {
         const claim = await this._getClaim({ _id: claimId }, undefined, false);
-        const previousRevision = claim.toObject().latestRevision
-        delete previousRevision._id
-        const newClaimRevision =
-            await this.claimRevisionService.create(claim._id, {
+        const previousRevision = claim.toObject().latestRevision;
+        delete previousRevision._id;
+        const newClaimRevision = await this.claimRevisionService.create(
+            claim._id,
+            {
                 ...previousRevision,
-                ...claimRevisionUpdate
-            })
-        claim.latestRevision = newClaimRevision._id
-        claim.slug = newClaimRevision.slug
+                ...claimRevisionUpdate,
+            }
+        );
+        claim.latestRevision = newClaimRevision._id;
+        claim.slug = newClaimRevision.slug;
 
-        const user = this.req.user
+        const user = this.req.user;
 
-        const history =
-            this.historyService.getHistoryParams(
-                claimId,
-                TargetModel.Claim,
-                user,
-                HistoryType.Update,
-                newClaimRevision,
-                previousRevision
-            )
-        await this.historyService.createHistory(history)
+        const history = this.historyService.getHistoryParams(
+            claimId,
+            TargetModel.Claim,
+            user,
+            HistoryType.Update,
+            newClaimRevision,
+            previousRevision
+        );
+        await this.historyService.createHistory(history);
 
-        claim.save()
+        claim.save();
         return newClaimRevision;
     }
 
@@ -135,8 +163,8 @@ export class ClaimService {
      * @returns Returns the claim with the param isDeleted equal to true
      */
     async delete(claimId) {
-        const user = this.req.user
-        const previousClaim = await this.getById(claimId)
+        const user = this.req.user;
+        const previousClaim = await this.getById(claimId);
         const history = this.historyService.getHistoryParams(
             claimId,
             TargetModel.Claim,
@@ -144,45 +172,98 @@ export class ClaimService {
             HistoryType.Delete,
             null,
             previousClaim
-        )
-        await this.historyService.createHistory(history)
+        );
+        await this.historyService.createHistory(history);
         return this.ClaimModel.softDelete({ _id: claimId });
     }
 
     // TODO: add optional revisionId that will fetch a specifc revision that matches
     async getById(claimId) {
-        return this._getClaim({_id: claimId})
+        return this._getClaim({ _id: claimId });
     }
 
-    async getByPersonalityIdAndClaimSlug(personalityId, claimSlug, revisionId = undefined) {
-        return this._getClaim({personality: personalityId, slug: claimSlug}, revisionId)
+    async getByPersonalityIdAndClaimSlug(
+        personalityId,
+        claimSlug,
+        revisionId = undefined,
+        population = true
+    ) {
+        return this._getClaim(
+            { personality: personalityId, slug: claimSlug },
+            revisionId,
+            true,
+            population
+        );
     }
 
-    private async _getClaim(match: ClaimMatchParameters, revisionId = undefined, postprocess = true) {
-        let claim
-        if(revisionId) {
-            const rawClaim = await this.ClaimModel.aggregate([
-                { $match: match },
-                { $project: { "latestRevision": 0}}
-            ])
+    private async _getClaim(
+        match: ClaimMatchParameters,
+        revisionId = undefined,
+        postprocess = true,
+        population = true
+    ) {
+        let claim;
+        if (revisionId) {
+            const rawClaim = await this.ClaimModel.findOne(match).select({
+                latestRevision: 0,
+            });
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            const revision = (await this.claimRevisionService.getRevision(revisionId)).toObject()
-            claim = {
-                ...rawClaim[0],
-                revision
+            const revision = await this.claimRevisionService.getRevision({
+                _id: revisionId,
+                claimId: rawClaim._id,
+            });
+
+            if (!revision || !rawClaim) {
+                throw new NotFoundException();
             }
+
+            claim = {
+                ...rawClaim,
+                revision,
+            };
         } else {
-            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            claim = await this.ClaimModel.findOne(match)
-                .populate("personality", "_id name")
-                .populate("sources", "_id link classification")
-                .populate("latestRevision")
-            claim = claim.toObject()
+            if (population) {
+                claim = await this.ClaimModel.findOne(match)
+                    .populate("personality", "_id name")
+                    .populate("sources", "_id link")
+                    .populate({
+                        path: "latestRevision",
+                        populate: {
+                            path: "content",
+                            populate: {
+                                path: "content",
+                                populate: {
+                                    path: "content",
+                                },
+                            },
+                        },
+                    })
+                    .lean();
+            } else {
+                const findedClaim = await this.ClaimModel.findOne(
+                    match,
+                    "_id personality latestRevision"
+                )
+                    .populate("personality", "_id name")
+                    .populate("sources", "_id link")
+                    .populate({
+                        path: "latestRevision",
+                        select: { title: 1, contentModel: 1, date: 1, slug: 1 },
+                    })
+                    .lean();
+                claim = {
+                    ...findedClaim.latestRevision,
+                    ...findedClaim,
+                    latestRevision: undefined,
+                };
+            }
         }
         if (!claim) {
-            throw new NotFoundException()
+            throw new NotFoundException();
         }
-        return postprocess === true ? this.postProcess(claim) : claim;
+        return postprocess === true && population === true
+            ? this.postProcess(claim)
+            : claim;
     }
 
     /**
@@ -195,15 +276,18 @@ export class ClaimService {
         claim = {
             ...(claim?.latestRevision || claim?.revision),
             ...claim,
-            latestRevision: undefined
-        }
+            latestRevision: undefined,
+        };
         const reviews = await this.claimReviewService.getReviewsByClaimId(
             claim._id
         );
+
+        claim.content = claim.content[0].content;
+
         if (claim) {
-            if (claim?.content?.object) {
-                claim.content.object = this.transformContentObject(
-                    claim.content.object,
+            if (claim?.content) {
+                claim.content = this.transformContentObject(
+                    claim.content,
                     reviews
                 );
             }
@@ -221,11 +305,11 @@ export class ClaimService {
     private calculateOverallStats(claim) {
         let totalClaims = 0;
         let totalClaimsReviewed = 0;
-        if (claim?.content?.object) {
-            claim.content.object.forEach((p) => {
+        if (claim?.content) {
+            claim.content.forEach((p) => {
                 totalClaims += p.content.length;
                 p.content.forEach((sentence) => {
-                    if (sentence.props.topClassification) {
+                    if (sentence.props.classification) {
                         totalClaimsReviewed++;
                     }
                 });
@@ -244,12 +328,12 @@ export class ClaimService {
         claimContent.forEach((paragraph, paragraphIndex) => {
             paragraph.content.forEach((sentence, sentenceIndex) => {
                 const claimReview = reviews.find((review) => {
-                    return review._id === sentence.props["data-hash"];
+                    return review._id.sentence_hash === sentence.data_hash;
                 });
                 if (claimReview) {
                     claimContent[paragraphIndex].content[sentenceIndex].props =
                         Object.assign(sentence.props, {
-                            topClassification: claimReview.topClassification,
+                            classification: claimReview._id.classification[0],
                         });
                 }
             });

@@ -1,0 +1,40 @@
+# Number of worker processes to spawn.
+# Set to 0 to run everything in a single process without clustering.
+# Use 'ncpu' to run as many workers as there are CPU units
+num_workers: 1
+
+# Logger info
+logging:
+  level: trace
+  streams:
+    - type: stdout # log to stdout
+      named_levels: true # emit log level name instead of index. e.g. INFO vs 30
+
+# Using config.yaml with wikimedia service-runner pattern
+services:
+  - name: service-aletheia
+    # path relative to the __dirname variable
+    module: dist/server/seed.js
+    conf:
+      disable_smtp: true
+      db:
+        connection_uri: {env(CI_MONGODB_URI)}
+        options:
+          useUnifiedTopology: true
+          useNewUrlParser: true
+      users:
+        - name: Test User
+          email: test-cypress@aletheiafact.org
+          password: TEST_USER_PASS
+          sendAuthDetails: false
+          isTestUser: true
+          oryId: {env(CI_ORY_USERID)}
+          role: fact-checker
+      throttle:
+        ttl: 60
+        limit: 1000
+      authentication_type: ory
+      ory:
+        url: {env(ORY_SDK_URL)}
+        access_token: {env(ORY_ACCESS_TOKEN)}
+        schema_id: {env(ALETHEIA_SCHEMA_ID)}

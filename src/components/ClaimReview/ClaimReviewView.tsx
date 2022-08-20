@@ -1,24 +1,29 @@
 import React, { useState } from "react";
 import ClaimSentenceCard from "./ClaimSentenceCard";
 import { Col, Row } from "antd";
-import ClaimReviewForm from "./ClaimReviewForm";
-import ClaimReviewList from "./ClaimReviewList";
-import ClassificationText from "../ClassificationText";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
+import DynamicForm from "./form/DynamicForm";
 
-const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
+const ClaimReviewView = ({
+    personality,
+    claim,
+    sentence,
+    href,
+    claimReviewTask,
+    isLoggedIn,
+    sitekey,
+}) => {
     const { t } = useTranslation();
-    const personalityId = personality._id;
     const claimId = claim._id;
-    const sentenceHash = sentence?.props["data-hash"];
-    const stats = sentence?.stats;
-    const review = sentence?.props?.topClassification;
-
-    const [formCollapsed, setFormCollapsed] = useState(true);
+    const personalityId = personality._id;
+    const sentenceHash = sentence.data_hash;
+    const [formCollapsed, setFormCollapsed] = useState(
+        claimReviewTask ? false : true
+    );
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
@@ -26,130 +31,75 @@ const ClaimReviewView = ({ personality, claim, sentence, sitekey, href }) => {
 
     return (
         <>
-            <Row
+            <Col
+                offset={3}
+                span={18}
                 style={{
                     background: colors.lightGray,
-                    margin: "2px -15px 0px -15px",
-                    padding: "0px 15px",
-                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)"
+                    padding: "0px 15px 20px",
+                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
                 }}
             >
                 <ClaimSentenceCard
                     personality={personality}
-                    sentence={sentence}
+                    date={claim.date}
+                    content={sentence?.content}
                     summaryClassName="claim-review"
                     claimType={claim?.type}
                 />
-                {sentence.userReview && (
+                {formCollapsed && (
                     <Row
                         style={{
+                            width: "100%",
+                            padding: "0px 0px 15px 0px",
                             justifyContent: "center",
-                            flexWrap: "wrap"
                         }}
                     >
-                        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-                            <p style={{ marginBottom: 0 }}>
-                                {t("claimReview:userReviewPrefix")}&nbsp;
-                            </p>
-                            <ClassificationText
-                                classification={
-                                    sentence.userReview?.classification
-                                }
-                            />
-                        </div>
-                        <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
-                            <p style={{ marginBottom: 0 }}>
-                                {t("claimReview:userReviewSuffix", {
-                                    count: review?.count
-                                })}
-                            &nbsp;
-                            </p>
-                            <ClassificationText
-                                classification={review?.classification}
-                            />
-                        </div>
+                        <>
+                            {isLoggedIn && (
+                                <Button
+                                    type={ButtonType.blue}
+                                    onClick={toggleFormCollapse}
+                                    icon={<PlusOutlined />}
+                                    data-cy={"testAddReviewButton"}
+                                >
+                                    {t("claimReviewForm:addReviewButton")}
+                                </Button>
+                            )}
+                        </>
                     </Row>
                 )}
-                {formCollapsed && (
-                    <Row style={{ width: "100%", padding: "0px 0px 15px 0px" }}>
-                        {!sentence.userReview && (
-                            <>
-                                <Col span={14}>
-                                    <span
-                                        style={{
-                                            fontSize: "14px"
-                                        }}
-                                    >
-                                        {t("claim:metricsHeaderInfo", {
-                                            totalReviews: stats?.total
-                                        })}
-                                    </span>{" "}
-                                    <br />
-                                    {review && (
-                                        <span
-                                            style={{
-                                                fontSize: "10px"
-                                            }}
-                                        >
-                                            {t(
-                                                "claim:cardOverallReviewPrefix"
-                                            )}{" "}
-                                            <ClassificationText
-                                                classification={
-                                                    review?.classification
-                                                }
-                                            />
-                                            ({review?.count})
-                                        </span>
-                                    )}
-                                </Col>
-                                {!review && <Col span={10}>
-                                        <Button
-                                            type={ButtonType.blue}
-                                            onClick={toggleFormCollapse}
-                                            icon={<PlusOutlined />}
-                                        >
-                                            <h3 style={{
-                                                marginLeft: 8,
-                                                lineHeight: 1.5715,
-                                                fontWeight: 400,
-                                                fontSize: 14,
-                                                marginBottom: 0,
-                                                color: colors.white,
-                                                display: "inline-block",
-
-                                            }}>
-                                                {t("claimReviewForm:addReviewButton")}
-                                            </h3>
-                                        </Button>
-                                    </Col>
-                                }
-                            </>
-                        )}
-                    </Row>
-                )}
+                <Col
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        padding: "0px 0px 15px 0px",
+                    }}
+                >
+                    {!isLoggedIn && (
+                        <Button href="/login">
+                            {t("claimReviewForm:loginButton")}
+                        </Button>
+                    )}
+                </Col>
                 {!formCollapsed && (
-                    <Row>
-                        <ClaimReviewForm
-                            claimId={claimId}
-                            personalityId={personalityId}
-                            handleOk={toggleFormCollapse}
-                            handleCancel={toggleFormCollapse}
-                            highlight={sentence}
-                            sitekey={sitekey}
-                        />
-                    </Row>
+                    <DynamicForm
+                        sentence_hash={sentenceHash}
+                        personality={personalityId}
+                        claim={claimId}
+                        isLoggedIn={isLoggedIn}
+                        sitekey={sitekey}
+                    />
                 )}
-            </Row>
-            <Row>
-                <ClaimReviewList
-                    sentenceHash={sentenceHash}
-                    claimId={claimId}
-                />
-            </Row>
-            <SocialMediaShare quote={personality?.name} href={href} claim={claim?.title} />
+            </Col>
+            <SocialMediaShare
+                isLoggedIn={isLoggedIn}
+                quote={personality?.name}
+                href={href}
+                claim={claim?.title}
+            />
         </>
-    )
-}
+    );
+};
 
 export default ClaimReviewView;

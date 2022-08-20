@@ -1,4 +1,8 @@
 import { Injectable } from "@nestjs/common";
+import { SentenceService } from "../sentence/sentence.service";
+import { ParagraphService } from "../paragraph/paragraph.service";
+import { SpeechService } from "../speech/speech.service";
+import { SpeechDocument } from "../speech/schemas/speech.schema";
 const md5 = require("md5");
 const nlp = require('compromise')
 nlp.extend(require('compromise-sentences'))
@@ -15,36 +19,47 @@ const phdRegex = /Ph\.D\./g;
 
 @Injectable()
 export class ParserService {
+    constructor(
+        private speechService: SpeechService,
+        private paragraphService: ParagraphService,
+        private sentenceService: SentenceService,
+    ) {}
     paragraphSequence: number;
     sentenceSequence: number;
     nlpOptions: object = { trim:true };
 
-    parse(content: string) {
+    async parse(content: string): Promise<SpeechDocument> {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
         const result = [];
         const nlpContent = nlp(content);
         const paragraphs = nlpContent.paragraphs();
+        const text = nlpContent.text(this.nlpOptions)
 
         paragraphs.forEach((paragraph) => {
             const paragraphId = this.createParagraphId();
             const sentences = this.postProcessSentences(paragraph.sentences());
 
-            if (sentences && sentences.length) {
-                result.push({
-                    type: "paragraph",
-                    props: {
-                        id: paragraphId,
-                    },
-                    content: sentences.map((sentence) => this.parseSentence(sentence)),
-                });
-            }
-        });
+            const paragraphDataHash = md5(
+                `${this.paragraphSequence}${text}${paragraph}`
+            );
 
-        return {
-            object: result,
-            text: nlpContent.text(this.nlpOptions),
-        };
+            if (sentences && sentences.length) {
+                return result.push(
+                    this.paragraphService.create({
+                        data_hash: paragraphDataHash,
+                        props: {
+                            id: paragraphId,
+                        },
+                        content: sentences.map((sentence) => this.parseSentence(sentence, paragraphDataHash)),
+                    })
+                )
+            }
+        })
+
+        return await Promise.all(result).then((object): Promise<SpeechDocument> => {
+            return this.speechService.create({ content: object })
+        })
     }
 
     postProcessSentences(sentences) {
@@ -67,20 +82,19 @@ export class ParserService {
         return newSentences;
     }
 
-    parseSentence(sentenceContent) {
+    parseSentence(sentenceContent, paragraphDataHash) {
         const sentenceId = this.createSentenceId();
         const sentenceDataHash = md5(
-            `${this.paragraphSequence}${this.sentenceSequence}${sentenceContent}`
+            `${paragraphDataHash}${this.sentenceSequence}${sentenceContent}`
         );
 
-        return {
-            type: "sentence",
+        return this.sentenceService.create({
+            data_hash: sentenceDataHash,
             props: {
                 id: sentenceId,
-                "data-hash": sentenceDataHash,
             },
             content: sentenceContent,
-        };
+        });
     }
 
     createParagraphId() {
