@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import styled from "styled-components";
 
 import colors from "../styles/colors";
+import { queries } from "../styles/mediaQueries";
 import BackButton from "./BackButton";
 
 const { Content } = Layout;
@@ -13,10 +14,10 @@ const StyledContent = styled(Content)`
     ${({ layout }: { layout: string }) =>
         layout === "mobile" &&
         `
-        padding: 0 15px;
+        padding: 0 30%;
 
-        @media (min-width: 768px) {
-            padding: 0 30%;
+        @media ${queries.sm} {
+            padding: 0 15px;
         }
     `}
 `;
@@ -25,7 +26,12 @@ const ContentWrapper = ({ children }) => {
     const router = useRouter();
 
     // TODO: we can remove this when we have desktop layout for all the pages
-    const desktopReadyPages = ["claim-review", "home", "kanban-page", "personality-page"];
+    const desktopReadyPages = [
+        "claim-review",
+        "home",
+        "kanban-page",
+        "personality-page",
+    ];
 
     const layout = desktopReadyPages.some((page) =>
         router.pathname.includes(page)

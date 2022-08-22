@@ -1,3 +1,5 @@
+import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
+
 export enum ActionTypes {
     TOGGLE_MENU,
     ENABLE_SEARCH_OVERLAY,
@@ -6,6 +8,7 @@ export enum ActionTypes {
     SET_CUR_PAGE,
     SET_SEARCH_NAME,
     SET_LOGIN_STATUS,
+    SET_BREAKPOINTS,
 }
 
 export interface RootState {
@@ -19,5 +22,5 @@ export interface RootState {
         searchPageSize: number;
     };
     login: boolean;
-    user: any;
+    vw: WidthBreakpoints;
 }

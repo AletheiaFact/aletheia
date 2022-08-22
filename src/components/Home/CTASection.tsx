@@ -47,12 +47,11 @@ const CTASection = () => {
                             target="_blank"
                             rel="noreferrer"
                             type={ButtonType.white}
-                            className="CTA-button"
                             rounded="true"
                             style={{
                                 height: "40px",
                                 display: "flex",
-                                padding: 0,
+                                padding: "0 20px",
                                 justifyContent: "center",
                                 alignItems: "center",
                             }}

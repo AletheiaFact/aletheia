@@ -41,12 +41,12 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
 
     return (
         <SocialMediaShareStyle
-            isLoggedIn={isLoggedIn}
+            className={!isLoggedIn && "logged-out"}
             style={{
                 background: colors.lightGray,
                 padding: "20px 8px",
                 justifyContent: "center",
-                alignItens: "center",
+                alignItems: "center",
             }}
         >
             <Title

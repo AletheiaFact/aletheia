@@ -109,10 +109,4 @@ const HeaderContent = ({ className }) => {
     );
 };
 
-export default styled(HeaderContent)`
-    @media (min-width: 768px) {
-        .aletheia-header {
-            padding: 0 30%;
-        }
-    }
-`;
+export default HeaderContent;

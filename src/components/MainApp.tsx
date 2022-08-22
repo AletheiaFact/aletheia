@@ -2,6 +2,7 @@ import { Layout } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 
+import { useMediaQueryBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { useAppSelector } from "../store/store";
 import { ActionTypes } from "../store/types";
 import colors from "../styles/colors";
@@ -23,6 +24,10 @@ const MainApp = ({ children }) => {
                     : true,
         };
     });
+
+    // Setup to provide breakpoints object on redux
+    useMediaQueryBreakpoints();
+
     return (
         <Layout style={{ minHeight: "100vh" }}>
             <Sidebar

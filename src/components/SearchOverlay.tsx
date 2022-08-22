@@ -32,13 +32,7 @@ const OverlayDiv = styled.div`
         font-weight: 300;
         font-size: 14px;
         line-height: 20px;
-        color: #515151;
-    }
-
-    @media (min-width: 768px) {
-        .aletheia-header {
-            padding: 0 30%;
-        }
+        color: ${colors.blackSecondary};
     }
 `;
 

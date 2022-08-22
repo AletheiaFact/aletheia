@@ -9,8 +9,9 @@ import HomeContentStyle from "./HomeContent.style";
 import { useAppSelector } from "../../store/store";
 const HomeContent = ({ personalities, href, title }) => {
     const { t } = useTranslation();
-    const { isLoggedIn } = useAppSelector((state) => ({
+    const { isLoggedIn, vw } = useAppSelector((state) => ({
         isLoggedIn: state.login,
+        vw: state.vw,
     }));
 
     return (
@@ -31,11 +32,13 @@ const HomeContent = ({ personalities, href, title }) => {
                 >
                     {!isLoggedIn && (
                         <>
-                            <Row className="section-title-container">
-                                <SectionTitle>
-                                    {t("home:sectionTitle2")}
-                                </SectionTitle>
-                            </Row>
+                            {!vw?.md && (
+                                <Row className="section-title-container">
+                                    <SectionTitle>
+                                        {t("home:sectionTitle2")}
+                                    </SectionTitle>
+                                </Row>
+                            )}
 
                             <Row
                                 id="create_account"
