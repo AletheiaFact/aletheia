@@ -39,6 +39,7 @@ import { SentenceModule } from "./sentence/sentence.module";
 import { StateEventModule } from "./state-event/state-event.module";
 import { TopicModule } from "./topic/topic.module";
 import { ImageModule } from "./image/image.module";
+import { SearchModule } from "./search/search.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -90,6 +91,7 @@ export class AppModule implements NestModule {
                 CaptchaModule,
                 TopicModule,
                 ImageModule,
+                SearchModule,
             ],
             controllers: [RootController],
             providers: [

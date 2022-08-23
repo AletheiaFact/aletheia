@@ -6,13 +6,12 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
-import api from "../api/personality";
+import searchApi from "../api/searchApi";
 import { useAppSelector } from "../store/store";
 import { ActionTypes } from "../store/types";
 import colors from "../styles/colors";
-import AletheiaAvatar from "./AletheiaAvatar";
 import InputSearch from "./Form/InputSearch";
-import SearchResult from "./SearchResult";
+import SearchCard from "./SearchCard";
 
 const OverlayDiv = styled.div`
     width: 100%;
@@ -37,22 +36,38 @@ const OverlayDiv = styled.div`
 `;
 
 const SearchOverlay = ({ overlay }) => {
-    const { personalities, page, pageSize, searchName } = useAppSelector(
-        (state) => {
+    const { personalities, sentences, page, pageSize, searchName } =
+        useAppSelector((state) => {
             return {
-                personalities: state?.search?.searchResults || [],
+                personalities:
+                    state?.search?.searchResults?.personalities || [],
+                sentences: state?.search?.searchResults?.sentences || [],
                 page: state?.search?.searchCurPage || 1,
-                pageSize: state?.search?.searchPageSize || 10,
+                pageSize: state?.search?.searchPageSize || 5,
                 searchName: state?.search?.searchInput || null,
             };
-        }
-    );
-    const handleSearchClick = (slug) => {
+        });
+
+    const handlePersonalitySearchClick = (slug) => {
         dispatch({
             type: ActionTypes.ENABLE_SEARCH_OVERLAY,
             overlay: false,
         });
         router.push(`/personality/${slug}`);
+    };
+
+    const handleSentenceSearchClick = ({
+        claimSlug,
+        personalitySlug,
+        data_hash,
+    }) => {
+        dispatch({
+            type: ActionTypes.ENABLE_SEARCH_OVERLAY,
+            overlay: false,
+        });
+        router.push(
+            `/personality/${personalitySlug}/claim/${claimSlug}/sentence/${data_hash}`
+        );
     };
 
     const dispatch = useDispatch();
@@ -65,12 +80,11 @@ const SearchOverlay = ({ overlay }) => {
             searchName: name,
         });
 
-        api.getPersonalities(
+        searchApi.getResults(
             {
-                personalities,
                 page,
                 pageSize,
-                searchName: name,
+                searchText: name,
                 i18n,
             },
             dispatch
@@ -132,37 +146,20 @@ const SearchOverlay = ({ overlay }) => {
                         flexDirection: "column",
                     }}
                 >
-                    {personalities &&
-                        Array.isArray(personalities) &&
-                        personalities.length > 0 && (
-                            <>
-                                {personalities.map(
-                                    (p, i) =>
-                                        p && (
-                                            <SearchResult
-                                                key={i}
-                                                handleOnClick={() =>
-                                                    handleSearchClick(p.slug)
-                                                }
-                                                avatar={
-                                                    <AletheiaAvatar
-                                                        size={30}
-                                                        src={p.avatar}
-                                                        alt={t(
-                                                            "seo:personalityImageAlt",
-                                                            {
-                                                                name: p.name,
-                                                            }
-                                                        )}
-                                                    />
-                                                }
-                                                name={p.name}
-                                                searchName={searchName}
-                                            />
-                                        )
-                                )}
-                            </>
-                        )}
+                    <SearchCard
+                        title={t("search:personalityHeaderTitle")}
+                        content={personalities}
+                        searchName={searchName}
+                        handleSearchClick={handlePersonalitySearchClick}
+                    />
+
+                    <SearchCard
+                        title={t("search:sentenceHeaderTitle")}
+                        content={sentences}
+                        searchName={searchName}
+                        handleSearchClick={handleSentenceSearchClick}
+                        avatar={false}
+                    />
                 </Row>
             )}
         </OverlayDiv>
