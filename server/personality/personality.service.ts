@@ -189,8 +189,8 @@ export class PersonalityService {
             if (wikidataExtract.isAllowedProp === false) {
                 return;
             }
-
-            return Object.assign(wikidataExtract, personality, {
+            //The order of wikidataExtract should be after personality
+            return Object.assign(personality, wikidataExtract, {
                 stats:
                     personality._id &&
                     (await this.getReviewStats(personality._id)),
