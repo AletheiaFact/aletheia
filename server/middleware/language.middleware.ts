@@ -7,7 +7,7 @@ export class GetLanguageMiddleware implements NestMiddleware {
         res: Response,
         next: NextFunction
     ) {
-        req.language = req.cookies.default_language || "pt";
+        req.language = req.cookies?.default_language || "pt";
         next();
     }
 }
