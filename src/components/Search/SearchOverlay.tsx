@@ -6,11 +6,11 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
-import searchApi from "../api/searchApi";
-import { useAppSelector } from "../store/store";
-import { ActionTypes } from "../store/types";
-import colors from "../styles/colors";
-import InputSearch from "./Form/InputSearch";
+import searchApi from "../../api/searchApi";
+import { useAppSelector } from "../../store/store";
+import { ActionTypes } from "../../store/types";
+import colors from "../../styles/colors";
+import InputSearch from "../Form/InputSearch";
 import SearchCard from "./SearchCard";
 
 const OverlayDiv = styled.div`
@@ -36,38 +36,44 @@ const OverlayDiv = styled.div`
 `;
 
 const SearchOverlay = ({ overlay }) => {
-    const { personalities, sentences, page, pageSize, searchName } =
+    const { personalities, sentences, claims, page, pageSize, searchName } =
         useAppSelector((state) => {
             return {
                 personalities:
                     state?.search?.searchResults?.personalities || [],
                 sentences: state?.search?.searchResults?.sentences || [],
+                claims: state?.search?.searchResults?.claims || [],
                 page: state?.search?.searchCurPage || 1,
                 pageSize: state?.search?.searchPageSize || 5,
                 searchName: state?.search?.searchInput || null,
             };
         });
 
-    const handlePersonalitySearchClick = (slug) => {
-        dispatch({
-            type: ActionTypes.ENABLE_SEARCH_OVERLAY,
-            overlay: false,
-        });
-        router.push(`/personality/${slug}`);
-    };
-
-    const handleSentenceSearchClick = ({
-        claimSlug,
-        personalitySlug,
-        data_hash,
+    const handleSearchClick = ({
+        type,
+        claimSlug = "",
+        personalitySlug = "",
+        data_hash = "",
     }) => {
         dispatch({
             type: ActionTypes.ENABLE_SEARCH_OVERLAY,
             overlay: false,
         });
-        router.push(
-            `/personality/${personalitySlug}/claim/${claimSlug}/sentence/${data_hash}`
-        );
+        switch (type) {
+            case "personality":
+                router.push(`/personality/${personalitySlug}`);
+                break;
+            case "claim":
+                router.push(
+                    `/personality/${personalitySlug}/claim/${claimSlug}`
+                );
+                break;
+            case "sentence":
+                router.push(
+                    `/personality/${personalitySlug}/claim/${claimSlug}/sentence/${data_hash}`
+                );
+                break;
+        }
     };
 
     const dispatch = useDispatch();
@@ -90,6 +96,7 @@ const SearchOverlay = ({ overlay }) => {
             dispatch
         );
     };
+    console.log(sentences);
 
     return (
         <OverlayDiv>
@@ -150,15 +157,26 @@ const SearchOverlay = ({ overlay }) => {
                         title={t("search:personalityHeaderTitle")}
                         content={personalities}
                         searchName={searchName}
-                        handleSearchClick={handlePersonalitySearchClick}
+                        handleSearchClick={handleSearchClick}
+                        type="personality"
+                    />
+
+                    <SearchCard
+                        title={t("search:claimHeaderTitle")}
+                        content={claims}
+                        searchName={searchName}
+                        handleSearchClick={handleSearchClick}
+                        avatar={false}
+                        type="claim"
                     />
 
                     <SearchCard
                         title={t("search:sentenceHeaderTitle")}
                         content={sentences}
                         searchName={searchName}
-                        handleSearchClick={handleSentenceSearchClick}
+                        handleSearchClick={handleSearchClick}
                         avatar={false}
+                        type="sentence"
                     />
                 </Row>
             )}

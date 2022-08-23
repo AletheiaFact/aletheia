@@ -1,4 +1,5 @@
 import { Controller, Get, Logger, Query } from "@nestjs/common";
+import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { PersonalityService } from "../personality/personality.service";
 import { SentenceService } from "../sentence/sentence.service";
@@ -8,7 +9,8 @@ export class SearchController {
     private readonly logger = new Logger("SearchController");
     constructor(
         private personalityService: PersonalityService,
-        private sentenceService: SentenceService
+        private sentenceService: SentenceService,
+        private claimRevisionService: ClaimRevisionService
     ) {}
 
     @IsPublic()
@@ -19,11 +21,13 @@ export class SearchController {
         return Promise.all([
             this.personalityService.findAll(searchText, pageSize, language),
             this.sentenceService.findAll(searchText, pageSize),
+            this.claimRevisionService.findAll(searchText, pageSize),
         ])
-            .then(([personalities, sentences]) => {
+            .then(([personalities, sentences, claims]) => {
                 return {
                     personalities,
                     sentences,
+                    claims,
                 };
             })
             .catch((error) => this.logger.error(error));

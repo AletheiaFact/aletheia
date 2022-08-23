@@ -8,8 +8,6 @@ const request = axios.create({
 
 const getResults = (options = {}, dispatch) => {
     const params = {
-        page: options.page ? options.page - 1 : 0,
-        order: options.order || "asc",
         searchText: options.searchText,
         pageSize: options.pageSize ? options.pageSize : 5,
         language: options?.i18n?.languages[0],
@@ -18,15 +16,11 @@ const getResults = (options = {}, dispatch) => {
     return request
         .get(`/`, { params })
         .then((response) => {
-            const { personalities, sentences } = response.data;
+            const { personalities, sentences, claims } = response.data;
 
             dispatch({
                 type: ActionTypes.SEARCH_RESULTS,
-                results: { personalities, sentences },
-            });
-            dispatch({
-                type: ActionTypes.SET_TOTAL_PAGES,
-                totalPages: 1,
+                results: { personalities, sentences, claims },
             });
         })
         .catch((e) => {

@@ -42,8 +42,8 @@ export class SentenceService {
         return this.SentenceModel.updateOne({ _id: sentence._id }, newSentence);
     }
 
-    findAll(searchText, pageSize) {
-        return this.SentenceModel.aggregate([
+    async findAll(searchText, pageSize) {
+        const sentences = await this.SentenceModel.aggregate([
             {
                 $search: {
                     index: "sentence_fields",
@@ -92,10 +92,23 @@ export class SentenceService {
                 $project: {
                     content: 1,
                     data_hash: 1,
+                    props: 1,
                     "personality.slug": 1,
+                    "personality.name": 1,
                     "claim.slug": 1,
+                    "claim.date": 1,
+                    "claim.contentModel": 1,
                 },
             },
         ]);
+
+        return Promise.all(
+            sentences.map(async (sentence) => {
+                const sentenceWithProps = await this.getByDataHash(
+                    sentence.data_hash
+                );
+                return Object.assign(sentence, sentenceWithProps.toObject());
+            })
+        );
     }
 }
