@@ -2,56 +2,57 @@ import React from "react";
 import CTARegistration from "./CTARegistration";
 import { Row, Col } from "antd";
 import SocialMediaShare from "../SocialMediaShare";
-import { useTranslation } from "next-i18next";
 import SectionTitle from "../SectionTitle";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
-import HomeContentStyle from "./HomeContent.style";
 import { useAppSelector } from "../../store/store";
+import ReviewsCarousel from "../ClaimReview/ReviewsCarousel";
+import { useTranslation } from "next-i18next";
 const HomeContent = ({ personalities, href, title }) => {
-    const { t } = useTranslation();
     const { isLoggedIn, vw } = useAppSelector((state) => ({
         isLoggedIn: state.login,
         vw: state.vw,
     }));
 
+    const { t } = useTranslation();
+
     return (
-        <HomeContentStyle style={{ width: "100%" }}>
-            <Row className="main-content" style={{ paddingTop: "32px" }}>
+        <Row
+            style={{
+                width: "100%",
+                paddingTop: "32px",
+                justifyContent: "center",
+            }}
+        >
+            <Col
+                xs={{ span: 22, order: 2 }}
+                sm={{ span: 22, order: 2 }}
+                md={{ span: 12, order: 1 }}
+            >
                 <PersonalitiesGrid
                     personalities={personalities}
                     title={title}
+                    loggedInMaxColums={2}
                 />
+            </Col>
+            <Col
+                xs={{ span: 20, order: 1 }}
+                sm={{ span: 20, order: 1 }}
+                md={{ span: 6, order: 2 }}
+                style={{ paddingLeft: vw?.sm ? 0 : 50 }}
+            >
+                <SectionTitle>{t("home:latestReviewsTitle")}</SectionTitle>
+                <ReviewsCarousel />
+            </Col>
 
-                <Col
-                    span={isLoggedIn ? 24 : 6}
-                    className={`${
-                        isLoggedIn
-                            ? "join-container-logged-in"
-                            : "join-container-logged-out"
-                    }`}
-                >
-                    {!isLoggedIn && (
-                        <>
-                            {!vw?.md && (
-                                <Row className="section-title-container">
-                                    <SectionTitle>
-                                        {t("home:sectionTitle2")}
-                                    </SectionTitle>
-                                </Row>
-                            )}
-
-                            <Row
-                                id="create_account"
-                                className="CTA-registration-container"
-                            >
-                                <CTARegistration />
-                            </Row>
-                        </>
-                    )}
-                    <SocialMediaShare href={href} />
+            {!isLoggedIn && (
+                <Col xs={24} lg={18} order={3}>
+                    <CTARegistration />
                 </Col>
-            </Row>
-        </HomeContentStyle>
+            )}
+            <Col span={24} order={4}>
+                <SocialMediaShare href={href} />
+            </Col>
+        </Row>
     );
 };
 
