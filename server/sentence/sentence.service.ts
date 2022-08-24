@@ -31,4 +31,14 @@ export class SentenceService {
             throw new NotFoundException();
         }
     }
+
+    async updateSentenceWithTopics(topics, data_hash) {
+        const sentence = await this.getByDataHash(data_hash);
+
+        const newSentence = {
+            ...sentence.toObject(),
+            topics,
+        };
+        return this.SentenceModel.updateOne({ _id: sentence._id }, newSentence);
+    }
 }

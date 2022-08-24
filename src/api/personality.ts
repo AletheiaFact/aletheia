@@ -1,5 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
+import { ActionTypes } from "../store/types";
 
 const baseUrl = `/api/personality`;
 const getPersonalities = (options = {}, dispatch) => {
@@ -26,11 +27,11 @@ const getPersonalities = (options = {}, dispatch) => {
             }
 
             dispatch({
-                type: "SEARCH_RESULTS",
+                type: ActionTypes.SEARCH_RESULTS,
                 results: personalities,
             });
             dispatch({
-                type: "SET_TOTAL_PAGES",
+                type: ActionTypes.SET_TOTAL_PAGES,
                 totalPages,
             });
         })

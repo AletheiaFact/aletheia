@@ -8,6 +8,7 @@ import styled from "styled-components";
 
 import api from "../api/personality";
 import { useAppSelector } from "../store/store";
+import { ActionTypes } from "../store/types";
 import colors from "../styles/colors";
 import AletheiaAvatar from "./AletheiaAvatar";
 import InputSearch from "./Form/InputSearch";
@@ -31,13 +32,7 @@ const OverlayDiv = styled.div`
         font-weight: 300;
         font-size: 14px;
         line-height: 20px;
-        color: #515151;
-    }
-
-    @media (min-width: 768px) {
-        .aletheia-header {
-            padding: 0 30%;
-        }
+        color: ${colors.blackSecondary};
     }
 `;
 
@@ -54,7 +49,7 @@ const SearchOverlay = ({ overlay }) => {
     );
     const handleSearchClick = (slug) => {
         dispatch({
-            type: "ENABLE_SEARCH_OVERLAY",
+            type: ActionTypes.ENABLE_SEARCH_OVERLAY,
             overlay: false,
         });
         router.push(`/personality/${slug}`);
@@ -66,7 +61,7 @@ const SearchOverlay = ({ overlay }) => {
 
     const handleInputSearch = (name) => {
         dispatch({
-            type: "SET_SEARCH_NAME",
+            type: ActionTypes.SET_SEARCH_NAME,
             searchName: name,
         });
 
@@ -104,7 +99,7 @@ const SearchOverlay = ({ overlay }) => {
                     <a
                         onClick={() => {
                             dispatch({
-                                type: "ENABLE_SEARCH_OVERLAY",
+                                type: ActionTypes.ENABLE_SEARCH_OVERLAY,
                                 overlay: false,
                             });
                         }}

@@ -13,16 +13,16 @@ import {
 import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
 import SocialMediaShareStyle from "./SocialMediaShare.style";
+import { useAppSelector } from "../store/store";
 
 const { Title } = Typography;
 
-const SocialMediaShare = ({
-    isLoggedIn,
-    quote = null,
-    href = "",
-    claim = null,
-}) => {
+const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
     const { t } = useTranslation();
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
+
     quote = quote || t("share:quote");
 
     const trimPersonality = quote.replace(" ", "");
@@ -41,12 +41,12 @@ const SocialMediaShare = ({
 
     return (
         <SocialMediaShareStyle
-            isLoggedIn={isLoggedIn}
+            className={!isLoggedIn && "logged-out"}
             style={{
                 background: colors.lightGray,
                 padding: "20px 8px",
                 justifyContent: "center",
-                alignItens: "center",
+                alignItems: "center",
             }}
         >
             <Title

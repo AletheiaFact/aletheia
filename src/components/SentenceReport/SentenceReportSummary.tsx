@@ -1,6 +1,7 @@
 import { Row } from "antd";
 import colors from "../../styles/colors";
 import styled from "styled-components";
+import { queries } from "../../styles/mediaQueries";
 
 const SentenceReportSummary = styled(Row)`
     position: relative;
@@ -38,7 +39,7 @@ const SentenceReportSummary = styled(Row)`
         }
     }
 
-    @media (max-width: 767px) {
+    @media ${queries.sm} {
         margin-left: 0;
 
         // triangle pointing up

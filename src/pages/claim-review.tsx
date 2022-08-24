@@ -1,12 +1,14 @@
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useDispatch } from "react-redux";
 
-import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import SentenceReportView from "../components/ClaimReview/SentenceReportView";
+import ClaimReviewForm from "../components/ClaimReview/ClaimReviewForm";
 import JsonLd from "../components/JsonLd";
+import SentenceReportView from "../components/SentenceReport/SentenceReportView";
 import Seo from "../components/Seo";
 import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
+import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
 const ClaimReviewPage: NextPage<{
@@ -29,6 +31,11 @@ const ClaimReviewPage: NextPage<{
     sitekey,
 }) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
+    dispatch({
+        type: ActionTypes.SET_LOGIN_STATUS,
+        login: isLoggedIn,
+    });
     const review = sentence?.stats?.reviews[0]?._id;
     const jsonld = {
         "@context": "https://schema.org",
@@ -75,13 +82,12 @@ const ClaimReviewPage: NextPage<{
             />
 
             {claimReviewTask?.machine.value !== ReviewTaskStates.published ? (
-                <ClaimReviewView
+                <ClaimReviewForm
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
                     href={href}
                     claimReviewTask={claimReviewTask}
-                    isLoggedIn={isLoggedIn}
                     sitekey={sitekey}
                 />
             ) : (
@@ -89,7 +95,6 @@ const ClaimReviewPage: NextPage<{
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
-                    isLoggedIn={isLoggedIn}
                     href={href}
                     context={claimReview.report}
                 />

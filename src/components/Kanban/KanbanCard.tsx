@@ -1,18 +1,16 @@
-import { Col, Row, Typography } from "antd";
-import { useTranslation } from "next-i18next";
+import { Avatar, Col, Row, Typography } from "antd";
 import React from "react";
-import colors from "../../styles/colors";
 
 import CardBase from "../CardBase";
+import UserTag from "./UserTag";
 
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 
 const KanbanCard = ({ reviewTask }) => {
-    const { t } = useTranslation();
     return (
         <a
             href={reviewTask.reviewHref}
-            style={{ width: "100%", minWidth: "320px" }}
+            style={{ width: "100%", minWidth: "330px" }}
         >
             <CardBase
                 style={{
@@ -26,53 +24,30 @@ const KanbanCard = ({ reviewTask }) => {
                         span={24}
                         style={{ display: "flex", flexDirection: "column" }}
                     >
-                        <Text
+                        <Paragraph
+                            ellipsis={{
+                                rows: 2,
+                                expandable: false,
+                            }}
                             style={{
                                 fontSize: 14,
                                 fontWeight: "bold",
                             }}
                         >
-                            {reviewTask.claimTitle}
-                        </Text>
-                        <Text>
-                            {t("kanban:claimBy")} {reviewTask.personalityName}
-                        </Text>
-                        <Text
-                            style={{
-                                fontSize: 12,
-                                width: "100%",
-                            }}
-                        >
-                            {t("kanban:assignedTo")}:{" "}
+                            {reviewTask.sentenceContent}
+                        </Paragraph>
+                        <Text>{reviewTask.personalityName}</Text>
+                    </Col>
+                    <Col
+                        span={24}
+                        style={{ display: "flex", justifyContent: "flex-end" }}
+                    >
+                        <Avatar.Group>
                             {reviewTask.usersName &&
                                 reviewTask.usersName.map((user, index) => {
-                                    return (
-                                        <>
-                                            <span style={{ marginRight: 5 }}>
-                                                {user}
-                                                {reviewTask.usersName.length -
-                                                    1 <=
-                                                index ? (
-                                                    <></>
-                                                ) : (
-                                                    ","
-                                                )}
-                                            </span>
-                                        </>
-                                    );
+                                    return <UserTag user={user} key={index} />;
                                 })}
-                        </Text>
-                        <Text
-                            style={{
-                                color: colors.bluePrimary,
-                                fontWeight: "bold",
-                                fontSize: 12,
-                                textDecoration: "underline",
-                                textAlign: "right",
-                            }}
-                        >
-                            #{reviewTask.sentence_hash}
-                        </Text>
+                        </Avatar.Group>
                     </Col>
                 </Row>
             </CardBase>

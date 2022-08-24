@@ -1,5 +1,4 @@
 import { Col, Comment } from "antd";
-import React from "react";
 import styled from "styled-components";
 
 import AletheiaAvatar from "../AletheiaAvatar";
@@ -13,15 +12,22 @@ const StyledComment = styled(Comment)`
             height: 100%;
         }
     }
+
+    ul.ant-comment-actions li {
+        width: 100%;
+    }
 `;
 
 const ClaimSentenceCard = ({
     personality,
     date,
-    content,
+    sentence,
     claimType,
     summaryClassName = "",
+    cardActions = [],
 }) => {
+    const content = sentence?.content;
+
     if (content) {
         return (
             <Col span={24}>
@@ -56,6 +62,7 @@ const ClaimSentenceCard = ({
                             </ClaimSummary>
                         </>
                     }
+                    actions={cardActions}
                 />
             </Col>
         );

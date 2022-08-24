@@ -9,6 +9,7 @@ export enum TargetModel {
     Personality = "Personality",
     ClaimReview = "ClaimReview",
     ClaimReviewTask = "ClaimReviewTask",
+    Image = "Image",
 }
 
 export enum HistoryType {

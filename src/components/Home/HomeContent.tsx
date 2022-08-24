@@ -6,15 +6,19 @@ import { useTranslation } from "next-i18next";
 import SectionTitle from "../SectionTitle";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import HomeContentStyle from "./HomeContent.style";
-const HomeContent = ({ personalities, href, isLoggedIn, title }) => {
+import { useAppSelector } from "../../store/store";
+const HomeContent = ({ personalities, href, title }) => {
     const { t } = useTranslation();
+    const { isLoggedIn, vw } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+        vw: state.vw,
+    }));
 
     return (
         <HomeContentStyle style={{ width: "100%" }}>
             <Row className="main-content" style={{ paddingTop: "32px" }}>
                 <PersonalitiesGrid
                     personalities={personalities}
-                    isLoggedIn={isLoggedIn}
                     title={title}
                 />
 
@@ -28,11 +32,13 @@ const HomeContent = ({ personalities, href, isLoggedIn, title }) => {
                 >
                     {!isLoggedIn && (
                         <>
-                            <Row className="section-title-container">
-                                <SectionTitle>
-                                    {t("home:sectionTitle2")}
-                                </SectionTitle>
-                            </Row>
+                            {!vw?.md && (
+                                <Row className="section-title-container">
+                                    <SectionTitle>
+                                        {t("home:sectionTitle2")}
+                                    </SectionTitle>
+                                </Row>
+                            )}
 
                             <Row
                                 id="create_account"
@@ -42,7 +48,7 @@ const HomeContent = ({ personalities, href, isLoggedIn, title }) => {
                             </Row>
                         </>
                     )}
-                    <SocialMediaShare isLoggedIn={isLoggedIn} href={href} />
+                    <SocialMediaShare href={href} />
                 </Col>
             </Row>
         </HomeContentStyle>

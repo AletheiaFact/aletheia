@@ -1,18 +1,18 @@
-import { Carousel, Col, Row } from 'antd';
-import { useTranslation } from 'next-i18next';
-import Image from 'next/image';
-import React from 'react';
-import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { Carousel, Col, Row } from "antd";
+import { useTranslation } from "next-i18next";
+import Image from "next/image";
+import React from "react";
 
-import colors from '../../styles/colors';
-import CTASection from './CTASection';
-import HomeCarouselStyle from './HomeCarousel.style';
-import HomeStats from './HomeStats';
+import { useAppSelector } from "../../store/store";
+import colors from "../../styles/colors";
+import CTASection from "./CTASection";
+import HomeCarouselStyle from "./HomeCarousel.style";
+import HomeStats from "./HomeStats";
 
-const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
-    const isMobile = useMediaQuery("(max-width: 767px)")
+const HomeCarousel = ({ personalities, stats }) => {
+    const { vw } = useAppSelector((state) => state);
 
-    const { t } = useTranslation()
+    const { t } = useTranslation();
 
     return (
         <HomeCarouselStyle>
@@ -21,7 +21,7 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                 style={{
                     height: "443px",
                     overflow: "hidden",
-                    position: "relative"
+                    position: "relative",
                 }}
             >
                 <div
@@ -30,31 +30,38 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                         height: "100%",
                         position: "absolute",
                         zIndex: 1,
-                        backgroundColor: "rgba(0,0,0,0.6)"
+                        backgroundColor: "rgba(0,0,0,0.6)",
                     }}
                 ></div>
                 <Carousel autoplay dots={false}>
                     {personalities.map(
-                        (p, i) => p && (
-                            <div key={i}>
-                                <Image
-                                    alt={t('seo:personalityImageAlt', { name: p.name })}
-                                    src={p.image}
-                                    width="100%"
-                                    height="100%"
-                                    layout="responsive"
-                                    objectFit={isMobile ? "cover" : "contain"}
-                                    objectPosition={`center ${isMobile ? '-50px' : 'calc(443px / 2 * -1)'}`}
-                                    style={{
-                                        color: colors.white,
-                                        lineHeight: "160px",
-                                        textAlign: "center",
-                                        filter: "grayscale(100%)",
-                                        background: 'none',
-                                    }}
-                                />
-                            </div>
-                        )
+                        (p, i) =>
+                            p && (
+                                <div key={i}>
+                                    <Image
+                                        alt={t("seo:personalityImageAlt", {
+                                            name: p.name,
+                                        })}
+                                        src={p.image}
+                                        width="100%"
+                                        height="100%"
+                                        layout="responsive"
+                                        objectFit={vw?.sm ? "cover" : "contain"}
+                                        objectPosition={`center ${
+                                            vw?.sm
+                                                ? "-50px"
+                                                : "calc(443px / 2 * -1)"
+                                        }`}
+                                        style={{
+                                            color: colors.white,
+                                            lineHeight: "160px",
+                                            textAlign: "center",
+                                            filter: "grayscale(100%)",
+                                            background: "none",
+                                        }}
+                                    />
+                                </div>
+                            )
                     )}
                 </Carousel>
             </Col>
@@ -66,11 +73,7 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                     height: "443px",
                 }}
             >
-                <Col
-                    span={18}
-                    offset={3}
-                    className="carousel-container"
-                >
+                <Col span={18} offset={3} className="carousel-container">
                     <Col
                         offset={4}
                         span={16}
@@ -99,19 +102,23 @@ const HomeCarousel = ({ isLoggedIn, personalities, stats }) => {
                                     margin: 0,
                                 }}
                             >
-                                <span className="carousel-subtitle">{t("home:subtitle0")}</span>{' '}
-                                <span className="carousel-subtitle">{t("home:subtitle1")}</span>
+                                <span className="carousel-subtitle">
+                                    {t("home:subtitle0")}
+                                </span>{" "}
+                                <span className="carousel-subtitle">
+                                    {t("home:subtitle1")}
+                                </span>
                             </h2>
                         </Row>
 
-                        <CTASection isLoggedIn={isLoggedIn} />
+                        <CTASection />
 
                         <HomeStats stats={stats} />
                     </Col>
                 </Col>
             </div>
         </HomeCarouselStyle>
-    )
-}
+    );
+};
 
-export default HomeCarousel
+export default HomeCarousel;

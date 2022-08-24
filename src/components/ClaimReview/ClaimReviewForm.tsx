@@ -7,17 +7,21 @@ import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
+import { useAppSelector } from "../../store/store";
+import TopicInput from "./TopicInput";
 
-const ClaimReviewView = ({
+const ClaimReviewForm = ({
     personality,
     claim,
     sentence,
     href,
     claimReviewTask,
-    isLoggedIn,
     sitekey,
 }) => {
     const { t } = useTranslation();
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
     const claimId = claim._id;
     const personalityId = personality._id;
     const sentenceHash = sentence.data_hash;
@@ -43,9 +47,15 @@ const ClaimReviewView = ({
                 <ClaimSentenceCard
                     personality={personality}
                     date={claim.date}
-                    content={sentence?.content}
+                    sentence={sentence}
                     summaryClassName="claim-review"
                     claimType={claim?.type}
+                    cardActions={[
+                        <TopicInput
+                            sentence_hash={sentence.data_hash}
+                            topics={sentence.topics}
+                        />,
+                    ]}
                 />
                 {formCollapsed && (
                     <Row
@@ -87,13 +97,11 @@ const ClaimReviewView = ({
                         sentence_hash={sentenceHash}
                         personality={personalityId}
                         claim={claimId}
-                        isLoggedIn={isLoggedIn}
                         sitekey={sitekey}
                     />
                 )}
             </Col>
             <SocialMediaShare
-                isLoggedIn={isLoggedIn}
                 quote={personality?.name}
                 href={href}
                 claim={claim?.title}
@@ -102,4 +110,4 @@ const ClaimReviewView = ({
     );
 };
 
-export default ClaimReviewView;
+export default ClaimReviewForm;

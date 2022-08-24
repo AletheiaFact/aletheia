@@ -1,15 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
-import { Row, Col, Layout } from "antd";
+import { Col, Layout, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+
+import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 import FooterInfo from "./FooterInfo";
 
 const Footer = () => {
     const { t } = useTranslation();
-    const isMobile = useMediaQuery("(max-width: 767px)");
+    const { vw } = useAppSelector((state) => state);
+
     return (
         <Layout.Footer
             style={{
@@ -29,7 +31,7 @@ const Footer = () => {
                             width: "100%",
                             textAlign: "center",
                             flexDirection: "column",
-                            marginBottom: isMobile ? "32px" : "0",
+                            marginBottom: vw?.sm ? "32px" : "0",
                         }}
                     >
                         <Col style={{ marginBottom: "16px" }}>
@@ -81,8 +83,8 @@ const Footer = () => {
                                 fontSize: "23px",
                                 color: colors.white,
                                 marginBottom: 0,
-                                marginTop: isMobile ? "64px" : "0",
-                                textAlign: isMobile ? "center" : "left",
+                                marginTop: vw?.sm ? "64px" : "0",
+                                textAlign: vw?.sm ? "center" : "left",
                             }}
                         >
                             {t("footer:copyright")}

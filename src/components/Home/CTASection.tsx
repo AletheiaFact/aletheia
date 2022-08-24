@@ -3,9 +3,13 @@ import { Row, Col } from "antd";
 import Button, { ButtonType } from "../Button";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
+import { useAppSelector } from "../../store/store";
 
-const CTASection = ({ isLoggedIn }) => {
+const CTASection = () => {
     const { t } = useTranslation();
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
 
     return (
         <Row className="CTA-container">
@@ -43,12 +47,11 @@ const CTASection = ({ isLoggedIn }) => {
                             target="_blank"
                             rel="noreferrer"
                             type={ButtonType.white}
-                            className="CTA-button"
                             rounded="true"
                             style={{
                                 height: "40px",
                                 display: "flex",
-                                padding: 0,
+                                padding: "0 20px",
                                 justifyContent: "center",
                                 alignItems: "center",
                             }}

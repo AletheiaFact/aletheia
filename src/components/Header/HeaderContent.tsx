@@ -9,6 +9,7 @@ import Logo from "./Logo";
 import { useAppSelector } from "../../store/store";
 import SelectLanguage from "./SelectLanguage";
 import AletheiaButton from "../Button";
+import { ActionTypes } from "../../store/types";
 
 const HeaderContent = ({ className }) => {
     const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const HeaderContent = ({ className }) => {
                     data-cy="testOpenSideMenu"
                     onClick={() => {
                         dispatch({
-                            type: "TOGGLE_MENU",
+                            type: ActionTypes.TOGGLE_MENU,
                             menuCollapsed: !menuCollapsed,
                         });
                     }}
@@ -75,7 +76,7 @@ const HeaderContent = ({ className }) => {
                     onClick={() => {
                         const pathname = router.pathname;
                         dispatch({
-                            type: "ENABLE_SEARCH_OVERLAY",
+                            type: ActionTypes.ENABLE_SEARCH_OVERLAY,
                             overlay: {
                                 search: true,
                                 results: pathname !== "/personality",
@@ -108,10 +109,4 @@ const HeaderContent = ({ className }) => {
     );
 };
 
-export default styled(HeaderContent)`
-    @media (min-width: 768px) {
-        .aletheia-header {
-            padding: 0 30%;
-        }
-    }
-`;
+export default HeaderContent;

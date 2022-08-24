@@ -11,21 +11,17 @@ import {
 } from "../../../machine/enums";
 import AletheiaButton, { ButtonType } from "../../Button";
 import colors from "../../../styles/colors";
-import DynamicInput from "../form/DynamicInput";
-import unassignedForm from "./unassignedForm";
-import assignedForm from "./assignedForm";
-import reportedForm from "./reportedForm";
+import DynamicInput from "./DynamicInput";
+import unassignedForm from "./fieldLists/unassignedForm";
+import assignedForm from "./fieldLists/assignedForm";
+import reportedForm from "./fieldLists/reportedForm";
 import Text from "antd/lib/typography/Text";
-import api from "../../../api/ClaimReviewTaskApi";
+import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
+import usersApi from "../../../api/user";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
+import { useAppSelector } from "../../../store/store";
 
-const DynamicForm = ({
-    sentence_hash,
-    personality,
-    claim,
-    isLoggedIn,
-    sitekey,
-}) => {
+const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const {
         handleSubmit,
         control,
@@ -40,6 +36,9 @@ const DynamicForm = ({
     const { t } = useTranslation();
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
 
     const setDefaultValuesOfCurrentForm = (machine, form) => {
         if (machine) {
@@ -93,7 +92,7 @@ const DynamicForm = ({
 
     useEffect(() => {
         isLoggedIn &&
-            api
+            reviewTaskApi
                 .getMachineBySentenceHash(sentence_hash, t)
                 .then(({ machine }) => {
                     // The states assigned and reported have compound states
@@ -116,6 +115,14 @@ const DynamicForm = ({
                     setCurrentFormAndNextEvents(newMachine.value, newMachine);
                 });
     }, []);
+
+    const fetchUserList = async (name) => {
+        const userSearchResults = await usersApi.getUsers(name, t);
+        return userSearchResults.map((user) => ({
+            label: user.name,
+            value: user._id,
+        }));
+    };
 
     const formInputs =
         currentForm &&
@@ -160,6 +167,7 @@ const DynamicForm = ({
                                     addInputLabel={addInputLabel}
                                     defaultValue={defaultValue}
                                     data-cy={`testClaimReview${fieldName}`}
+                                    dataLoader={fetchUserList}
                                 />
                             )}
                         />

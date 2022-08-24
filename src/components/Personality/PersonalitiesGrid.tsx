@@ -5,10 +5,13 @@ import { useTranslation } from "next-i18next";
 import Button, { ButtonType } from "../Button";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import SectionTitle from "../SectionTitle";
+import { useAppSelector } from "../../store/store";
 
-const PersonalitiesGrid = ({ isLoggedIn, personalities, title }) => {
+const PersonalitiesGrid = ({ personalities, title }) => {
     const { t } = useTranslation();
-
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
     const gridLayout = isLoggedIn
         ? {
               xl: 3,

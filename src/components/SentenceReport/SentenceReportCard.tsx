@@ -41,24 +41,22 @@ const SentenceReportCard = ({
                                 })}
                             />
                         </Col>
-                        <Row className="personality">
-                            <Col>
-                                <Title level={2} className="personality-name">
-                                    {personality.name}
-                                </Title>
-                                <Paragraph className="personality-description-content">
-                                    <span className="personality-description">
-                                        {personality.description}
-                                    </span>
-                                    <a
-                                        className="personality-profile"
-                                        href={`/personality/${personality.slug}`}
-                                    >
-                                        {t("personality:profile_button")}
-                                    </a>
-                                </Paragraph>
-                            </Col>
-                        </Row>
+                        <Col className="personality">
+                            <Title level={2} className="personality-name">
+                                {personality.name}
+                            </Title>
+                            <Paragraph className="personality-description-content">
+                                <span className="personality-description">
+                                    {personality.description}
+                                </span>
+                                <a
+                                    className="personality-profile"
+                                    href={`/personality/${personality.slug}`}
+                                >
+                                    {t("personality:profile_button")}
+                                </a>
+                            </Paragraph>
+                        </Col>
                     </Row>
                 </Col>
                 <Col md={18} sm={24} className="sentence-card">

@@ -8,6 +8,13 @@ import colors from "../../styles/colors";
 import BaseList from "../List/BaseList";
 import EmptyKanbanCol from "./EmptyKanbanCol";
 import KanbanCard from "./KanbanCard";
+import styled from "styled-components";
+
+const StyledColumn = styled.div`
+    .ant-list-item {
+        padding: 6px 0;
+    }
+`;
 
 interface KanbanColProps {
     state: ReviewTaskStates;
@@ -16,7 +23,7 @@ interface KanbanColProps {
 const KanbanCol = ({ state }: KanbanColProps) => {
     const { t } = useTranslation();
     return (
-        <div
+        <StyledColumn
             style={{
                 padding: "0 10px",
                 width: "400px",
@@ -35,7 +42,7 @@ const KanbanCol = ({ state }: KanbanColProps) => {
                 showDividers={false}
                 skeleton={<KanbanSkeleton />}
             />
-        </div>
+        </StyledColumn>
     );
 };
 
