@@ -226,5 +226,17 @@ export class ClaimReviewService {
                 };
             })
         );
+    async hideOrUnhideReview(sentence_hash, hide) {
+        const review = await this.getReviewBySentenceHash(sentence_hash);
+
+        const newReview = {
+            ...review,
+            ...{
+                report: review?.report?._id,
+                isHidden: hide,
+            },
+        };
+
+        return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
     }
 }

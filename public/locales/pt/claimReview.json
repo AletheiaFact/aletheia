@@ -6,5 +6,7 @@
     "summarySectionTitle": "Resumo da conclusão",
     "questionsSectionTitle": "Quais perguntas a verificação deverá responder?",
     "verificationSectionTitle": "Relatório da verificação",
-    "howSectionTitle": "Como verificamos?"
+    "howSectionTitle": "Como verificamos?",
+    "reviewHidded": "Avaliação escondida",
+    "reviewUnhidded": "Avaliação revelada"
 }
