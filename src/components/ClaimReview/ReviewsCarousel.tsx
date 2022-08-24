@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Button, Col, Comment, Skeleton, Typography } from "antd";
+import { Button, Comment, Typography } from "antd";
 import AletheiaButton, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
 import CardBase from "../CardBase";
@@ -11,6 +11,7 @@ import ClaimSummary from "../Claim/ClaimSummary";
 import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import TagsList from "./TagsList";
+import ReviewCarouselSkeleton from "../Skeleton/ReviewCarouselSkeleton";
 const { Paragraph } = Typography;
 
 const StyledComment = styled(Comment)`
@@ -43,22 +44,13 @@ const ReviewsCarousel = () => {
         else setCurrIndex(reviewsList.length - 1);
     };
 
+    if (loading) {
+        return <ReviewCarouselSkeleton />;
+    }
+
     return (
         <CardBase style={{ width: "fit-content" }}>
-            {loading ? (
-                <div style={{ flex: 1, padding: "0 30px" }}>
-                    <Skeleton active paragraph={{ rows: 5 }} round={true} />
-                    <div
-                        style={{
-                            display: "flex",
-                            padding: "10px 0",
-                        }}
-                    >
-                        <Skeleton title={false} paragraph={{ rows: 1 }} />
-                        <Skeleton.Button active />
-                    </div>
-                </div>
-            ) : (
+            {reviewsList.length > 0 ? (
                 <div
                     style={{
                         width: "100%",
@@ -133,7 +125,7 @@ const ReviewsCarousel = () => {
                                     </span>
                                     <AletheiaButton
                                         type={ButtonType.blue}
-                                        href={currentReview.reviewHref}
+                                        href={currentReview?.reviewHref}
                                     >
                                         <span
                                             style={{
@@ -156,6 +148,8 @@ const ReviewsCarousel = () => {
                         <RightOutlined />
                     </Button>
                 </div>
+            ) : (
+                <></>
             )}
         </CardBase>
     );
