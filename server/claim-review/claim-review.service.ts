@@ -46,7 +46,14 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false, isPublished: true } },
+            {
+                $match: {
+                    claim: claimId,
+                    isDeleted: false,
+                    isPublished: true,
+                    isHidden: false,
+                },
+            },
             {
                 $lookup: {
                     from: "reports",
@@ -68,7 +75,14 @@ export class ClaimReviewService {
      */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false, isPublished: true } },
+            {
+                $match: {
+                    claim: claimId,
+                    isDeleted: false,
+                    isPublished: true,
+                    isHidden: false,
+                },
+            },
             {
                 $lookup: {
                     from: "reports",
@@ -91,7 +105,12 @@ export class ClaimReviewService {
 
     async getUserReviewBySentenceHash(sentence_hash) {
         const user = await this.ClaimReviewModel.findOne(
-            { sentence_hash, isDeleted: false, isPublished: true },
+            {
+                sentence_hash,
+                isDeleted: false,
+                isPublished: true,
+                isHidden: false,
+            },
             {
                 usersId: 1,
             }
