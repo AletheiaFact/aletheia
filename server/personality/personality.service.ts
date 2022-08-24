@@ -345,9 +345,7 @@ export class PersonalityService {
                     },
                 },
             },
-            {
-                $limit: parseInt(pageSize, 10),
-            },
+            { $limit: parseInt(pageSize, 10) },
         ]);
 
         return Promise.all(

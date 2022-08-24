@@ -36,18 +36,18 @@ const OverlayDiv = styled.div`
 `;
 
 const SearchOverlay = ({ overlay }) => {
-    const { personalities, sentences, claims, page, pageSize, searchName } =
-        useAppSelector((state) => {
-            return {
-                personalities:
-                    state?.search?.searchResults?.personalities || [],
-                sentences: state?.search?.searchResults?.sentences || [],
-                claims: state?.search?.searchResults?.claims || [],
-                page: state?.search?.searchCurPage || 1,
-                pageSize: state?.search?.searchPageSize || 5,
-                searchName: state?.search?.searchInput || null,
-            };
-        });
+    const { results, page, pageSize, searchName } = useAppSelector((state) => {
+        return {
+            results: [
+                state?.search?.searchResults?.personalities || [],
+                state?.search?.searchResults?.claims || [],
+                state?.search?.searchResults?.sentences || [],
+            ],
+            page: state?.search?.searchCurPage || 1,
+            pageSize: state?.search?.searchPageSize || 5,
+            searchName: state?.search?.searchInput || null,
+        };
+    });
 
     const handleSearchClick = ({
         type,
@@ -96,7 +96,6 @@ const SearchOverlay = ({ overlay }) => {
             dispatch
         );
     };
-    console.log(sentences);
 
     return (
         <OverlayDiv>
@@ -153,31 +152,24 @@ const SearchOverlay = ({ overlay }) => {
                         flexDirection: "column",
                     }}
                 >
-                    <SearchCard
-                        title={t("search:personalityHeaderTitle")}
-                        content={personalities}
-                        searchName={searchName}
-                        handleSearchClick={handleSearchClick}
-                        type="personality"
-                    />
-
-                    <SearchCard
-                        title={t("search:claimHeaderTitle")}
-                        content={claims}
-                        searchName={searchName}
-                        handleSearchClick={handleSearchClick}
-                        avatar={false}
-                        type="claim"
-                    />
-
-                    <SearchCard
-                        title={t("search:sentenceHeaderTitle")}
-                        content={sentences}
-                        searchName={searchName}
-                        handleSearchClick={handleSearchClick}
-                        avatar={false}
-                        type="sentence"
-                    />
+                    {results.map((result, i) => {
+                        const type =
+                            i === 0
+                                ? "personality"
+                                : i === 1
+                                ? "claim"
+                                : "sentence";
+                        return (
+                            <SearchCard
+                                title={t(`search:${type}HeaderTitle`)}
+                                content={result}
+                                searchName={searchName}
+                                handleSearchClick={handleSearchClick}
+                                type={type}
+                                avatar={i !== 0 ? false : true}
+                            />
+                        );
+                    })}
                 </Row>
             )}
         </OverlayDiv>

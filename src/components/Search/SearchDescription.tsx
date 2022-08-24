@@ -3,6 +3,7 @@ import { useTranslation } from "next-i18next";
 import reviewColors from "../../constants/reviewColors";
 import { Typography } from "antd";
 import LocalizedDate from "../LocalizedDate";
+import ClassificationText from "../ClassificationText";
 
 const { Paragraph } = Typography;
 
@@ -30,7 +31,9 @@ const SearchDescription = ({ personalityName, claimDate, sentence = null }) => {
                             fontWeight: "900",
                         }}
                     >
-                        {sentence?.props?.classification}
+                        <ClassificationText
+                            classification={sentence?.props?.classification}
+                        />
                     </span>
                 </>
             )}
