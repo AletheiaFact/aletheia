@@ -23,6 +23,7 @@ import { handleFlowError } from "../../lib/orysdk/errors";
 const OryLoginForm = () => {
     const [flow, setFlow] = useState<SelfServiceLoginFlow>();
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
     const router = useRouter();
 
@@ -96,6 +97,13 @@ const OryLoginForm = () => {
         if (csrfNode) {
             totpValues.csrf_token = csrfNode.value;
         }
+    };
+
+    const onClick = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
     };
 
     const onFinish = (values) => {
@@ -183,6 +191,8 @@ const OryLoginForm = () => {
                                 }}
                             >
                                 <Button
+                                    onClick={onClick}
+                                    loading={loading}
                                     type={ButtonType.blue}
                                     htmlType="submit"
                                     disabled={isFormSubmitted}
@@ -222,6 +232,8 @@ const OryLoginForm = () => {
                                 }}
                             >
                                 <Button
+                                    onClick={onClick}
+                                    loading={loading}
                                     type={ButtonType.blue}
                                     htmlType="submit"
                                 >

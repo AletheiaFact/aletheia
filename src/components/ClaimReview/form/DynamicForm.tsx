@@ -36,6 +36,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const { t } = useTranslation();
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
+    const [loading, setLoading] = useState(false);
     const { isLoggedIn } = useAppSelector((state) => ({
         isLoggedIn: state.login,
     }));
@@ -238,6 +239,13 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         sendEventToMachine({}, ReviewTaskEvents.goback);
     };
 
+    const onClick = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+    };
+
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {formInputs && (
@@ -261,6 +269,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                 {nextEvents?.map((event) => {
                     return (
                         <AletheiaButton
+                            loading={loading}
                             key={event}
                             type={ButtonType.blue}
                             htmlType={
@@ -274,6 +283,8 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                                     ? onClickGoBack
                                     : event === ReviewTaskEvents.draft
                                     ? onClickSaveDraft
+                                    : event
+                                    ? onClick
                                     : () => {
                                           //@ts-ignore
                                           umami?.trackEvent(

@@ -66,6 +66,7 @@ const ClaimCreate = ({
     const [sources, setSources] = useState([""]);
     const [recaptcha, setRecaptcha] = useState("");
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const setTitleAndContent = async () => {
@@ -126,6 +127,13 @@ const ClaimCreate = ({
         setRecaptcha(captchaString);
         const hasRecaptcha = !!captchaString;
         setDisableSubmit(!hasRecaptcha);
+    };
+
+    const onClick = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
     };
 
     return (
@@ -280,6 +288,8 @@ const ClaimCreate = ({
                     </Button>
                     {edit ? (
                         <Button
+                            onClick={onClick}
+                            loading={loading}
                             type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit || isFormSubmitted}
@@ -288,6 +298,8 @@ const ClaimCreate = ({
                         </Button>
                     ) : (
                         <Button
+                            onClick={onClick}
+                            loading={loading}
                             type={ButtonType.blue}
                             htmlType="submit"
                             disabled={disableSubmit || isFormSubmitted}

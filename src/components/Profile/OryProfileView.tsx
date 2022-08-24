@@ -16,7 +16,8 @@ import { getUiNode } from "../../lib/orysdk/utils";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
-    const [ isFormSubmitted, setIsFormSubmitted ] = useState(false)
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { t } = useTranslation();
     const formRef = useRef<FormInstance>();
@@ -32,22 +33,29 @@ const OryProfileView = ({ user }) => {
     };
 
     const initializeCsrf = () => {
-        const csrfNode = getUiNode(flow, "name", "csrf_token")
-            if (csrfNode) {
-                flowValues.csrf_token = csrfNode.value;
-            }
-    }
+        const csrfNode = getUiNode(flow, "name", "csrf_token");
+        if (csrfNode) {
+            flowValues.csrf_token = csrfNode.value;
+        }
+    };
 
     const onSubmit = (values: ValuesType) => {
         orySubmitSettings({ router, flow, setFlow, t, values });
         api.updatePassword({ userId: user._id }, t).then(() => {
-            setIsFormSubmitted(false)
-        })
+            setIsFormSubmitted(false);
+        });
+    };
+
+    const onClick = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
     };
 
     const onFinish = (values) => {
-        if(!isFormSubmitted) {
-            setIsFormSubmitted(true)
+        if (!isFormSubmitted) {
+            setIsFormSubmitted(true);
             initializeCsrf();
             flowValues = {
                 ...flowValues,
@@ -131,6 +139,8 @@ const OryProfileView = ({ user }) => {
                 </Form.Item>
                 <Form.Item>
                     <Button
+                        onClick={onClick}
+                        loading={loading}
                         type={ButtonType.blue}
                         htmlType="submit"
                         disabled={isFormSubmitted}
@@ -139,10 +149,7 @@ const OryProfileView = ({ user }) => {
                     </Button>
                 </Form.Item>
             </Form>
-            <Totp 
-                flow={flow}
-                setFlow={setFlow}
-            />
+            <Totp flow={flow} setFlow={setFlow} />
         </>
     );
 };
