@@ -7,15 +7,16 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 import SectionTitle from "../SectionTitle";
 import { useAppSelector } from "../../store/store";
 
-const PersonalitiesGrid = ({ personalities, title }) => {
+const PersonalitiesGrid = ({ personalities, title, loggedInMaxColums = 3 }) => {
     const { t } = useTranslation();
+
     const { isLoggedIn } = useAppSelector((state) => ({
         isLoggedIn: state.login,
     }));
     const gridLayout = isLoggedIn
         ? {
-              xl: 3,
-              xxl: 3,
+              xl: loggedInMaxColums,
+              xxl: loggedInMaxColums,
           }
         : {
               xl: 2,
@@ -23,11 +24,7 @@ const PersonalitiesGrid = ({ personalities, title }) => {
           };
 
     return (
-        <Col
-            span={isLoggedIn ? 18 : 12}
-            offset={3}
-            className="personalities-container"
-        >
+        <>
             <SectionTitle>{title}</SectionTitle>
 
             <Row>
@@ -39,7 +36,7 @@ const PersonalitiesGrid = ({ personalities, title }) => {
                         gutter: 10,
                         xs: 1,
                         sm: 1,
-                        md: 2,
+                        md: loggedInMaxColums - 1,
                         lg: 2,
                         ...gridLayout,
                     }}
@@ -62,10 +59,10 @@ const PersonalitiesGrid = ({ personalities, title }) => {
             </Row>
 
             <Col
-                className="more-personalities-container"
                 style={{
                     display: "flex",
                     justifyContent: "center",
+                    margin: "48px 0 64px 0",
                 }}
             >
                 <Button
@@ -85,7 +82,7 @@ const PersonalitiesGrid = ({ personalities, title }) => {
                     </span>
                 </Button>
             </Col>
-        </Col>
+        </>
     );
 };
 
