@@ -102,6 +102,7 @@ const ClaimReviewPage: NextPage<{
                     claim={claim}
                     sentence={sentence}
                     href={href}
+                    isHidden={claimReview.isHidden}
                     context={claimReview.report}
                 />
             )}
