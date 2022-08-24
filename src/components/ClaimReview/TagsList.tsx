@@ -1,5 +1,5 @@
 import { Col, Tag } from "antd";
-import { t } from "i18next";
+import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 
@@ -10,6 +10,8 @@ interface TagsListProps {
 }
 
 const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
+    const { t } = useTranslation();
+
     return (
         <Col>
             {!tags.length && <span>{t("topics:noTopics")}</span>}
