@@ -16,6 +16,24 @@ const SearchCard = ({
 }) => {
     const { t } = useTranslation();
 
+    const getParams = (type, c) => {
+        if (type === "personality") {
+            return { type: type, personalitySlug: c.slug };
+        } else if (type === "claim") {
+            return {
+                type: type,
+                personalitySlug: c.personality[0].slug,
+                claimSlug: c.slug,
+            };
+        }
+        return {
+            type: type,
+            personalitySlug: c.personality[0].slug,
+            claimSlug: c.claim[0].slug,
+            data_hash: c.data_hash,
+        };
+    };
+
     return (
         <Row
             style={{
@@ -41,28 +59,7 @@ const SearchCard = ({
                                 <SearchResult
                                     key={i}
                                     handleOnClick={() =>
-                                        handleSearchClick(
-                                            type === "personality"
-                                                ? {
-                                                      type: type,
-                                                      personalitySlug: c.slug,
-                                                  }
-                                                : type === "sentence"
-                                                ? {
-                                                      type: type,
-                                                      personalitySlug:
-                                                          c.personality[0].slug,
-                                                      claimSlug:
-                                                          c.claim[0].slug,
-                                                      data_hash: c.data_hash,
-                                                  }
-                                                : {
-                                                      type: type,
-                                                      personalitySlug:
-                                                          c.personality[0].slug,
-                                                      claimSlug: c.slug,
-                                                  }
-                                        )
+                                        handleSearchClick(getParams(type, c))
                                     }
                                     avatar={
                                         avatar && (

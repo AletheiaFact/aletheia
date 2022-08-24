@@ -6,7 +6,7 @@ const request = axios.create({
     baseURL: `/api/search`,
 });
 
-const getResults = (options = {}, dispatch) => {
+const getResults = (dispatch, options = {}) => {
     const params = {
         searchText: options.searchText,
         pageSize: options.pageSize ? options.pageSize : 5,

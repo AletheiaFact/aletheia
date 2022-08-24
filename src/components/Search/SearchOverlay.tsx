@@ -86,15 +86,12 @@ const SearchOverlay = ({ overlay }) => {
             searchName: name,
         });
 
-        searchApi.getResults(
-            {
-                page,
-                pageSize,
-                searchText: name,
-                i18n,
-            },
-            dispatch
-        );
+        searchApi.getResults(dispatch, {
+            page,
+            pageSize,
+            searchText: name,
+            i18n,
+        });
     };
 
     return (
@@ -153,12 +150,7 @@ const SearchOverlay = ({ overlay }) => {
                     }}
                 >
                     {results.map((result, i) => {
-                        const type =
-                            i === 0
-                                ? "personality"
-                                : i === 1
-                                ? "claim"
-                                : "sentence";
+                        const type = ["personality", "claim", "sentence"][i];
                         return (
                             <SearchCard
                                 title={t(`search:${type}HeaderTitle`)}
