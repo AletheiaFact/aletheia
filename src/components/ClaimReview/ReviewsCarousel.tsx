@@ -10,6 +10,7 @@ import ClaimCardHeader from "../Claim/ClaimCardHeader";
 import ClaimSummary from "../Claim/ClaimSummary";
 import { useTranslation } from "next-i18next";
 import styled from "styled-components";
+import TagsList from "./TagsList";
 const { Paragraph } = Typography;
 
 const StyledComment = styled(Comment)`
@@ -109,6 +110,9 @@ const ReviewsCarousel = () => {
                                 </ClaimSummary>
                             }
                             actions={[
+                                <TagsList
+                                    tags={currentReview.sentenceContent.topics}
+                                />,
                                 <div
                                     style={{
                                         display: "flex",
