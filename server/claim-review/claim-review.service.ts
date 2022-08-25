@@ -10,6 +10,7 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
+import { SentenceService } from "../sentence/sentence.service";
 
 @Injectable()
 export class ClaimReviewService {
@@ -19,7 +20,8 @@ export class ClaimReviewService {
         private ClaimReviewModel: Model<ClaimReviewDocument> &
             ISoftDeletedModel<ClaimReviewDocument>,
         private historyService: HistoryService,
-        private util: UtilService
+        private util: UtilService,
+        private senteceService: SentenceService
     ) {}
 
     agreggateClassification(match: any) {
@@ -180,5 +182,49 @@ export class ClaimReviewService {
         );
         this.historyService.createHistory(history);
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
+    }
+
+    async getLatestReviews() {
+        const claimReviews = await this.ClaimReviewModel.find({
+            isDeleted: false,
+        })
+            .sort({ date: -1 })
+            .limit(5)
+            .populate({
+                path: "personality",
+                model: "Personality",
+                select: "name description slug avatar",
+            })
+            .populate({
+                path: "claim",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    select: "date contentModel",
+                },
+                select: "slug",
+            });
+
+        return Promise.all(
+            claimReviews.map(async (review) => {
+                const { personality, sentence_hash } = review;
+                const sentenceContent = await this.senteceService.getByDataHash(
+                    sentence_hash
+                );
+                const claim = {
+                    contentModel: review.claim.latestRevision.contentModel,
+                    date: review.claim.latestRevision.date,
+                };
+                const reviewHref = `/personality/${personality.slug}/claim/${review.claim.slug}/sentence/${sentence_hash}`;
+
+                return {
+                    sentenceContent,
+                    sentence_hash,
+                    personality,
+                    reviewHref,
+                    claim,
+                };
+            })
+        );
     }
 }

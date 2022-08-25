@@ -18,12 +18,14 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                 tags.map((tag) => (
                     <Tag
                         key={tag}
-                        color={colors.bluePrimary}
+                        color={colors.blueSecondary}
                         closable={editable}
                         onClose={() => handleClose(tag)}
                         style={{
                             borderRadius: 32,
                             padding: "4px 10px 2px",
+                            marginTop: 4,
+                            marginBottom: 4,
                         }}
                     >
                         {tag.toUpperCase()}

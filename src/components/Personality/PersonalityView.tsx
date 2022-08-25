@@ -4,9 +4,9 @@ import { useAppSelector } from "../../store/store";
 
 import ClaimList from "../Claim/ClaimList";
 import AffixButton from "../Form/AffixButton";
-import HomeContent from "../Home/HomeContent";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import Seo from "../Seo";
+import MorePersonalities from "./MorePersonalities";
 import PersonalityCard from "./PersonalityCard";
 
 const PersonalityView = ({ personality, href, personalities }) => {
@@ -54,13 +54,12 @@ const PersonalityView = ({ personality, href, personalities }) => {
                 </Col>
             </Row>
 
-            <Row>
-                <HomeContent
-                    personalities={personalities}
-                    href={href}
-                    title={t("personality:otherPersonalitiesTitle")}
-                />
-            </Row>
+            <MorePersonalities
+                personalities={personalities}
+                href={href}
+                title={t("personality:otherPersonalitiesTitle")}
+            />
+
             {isLoggedIn && (
                 <AffixButton
                     tooltipTitle={t("personality:affixButtonTitle")}
