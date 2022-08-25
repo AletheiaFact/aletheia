@@ -90,7 +90,6 @@ const SearchOverlay = ({ overlay }) => {
             page,
             pageSize,
             searchText: name,
-            i18n,
         });
     };
 

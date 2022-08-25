@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Query } from "@nestjs/common";
+import { Controller, Get, Logger, Query, Req } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 import { IsPublic } from "../decorators/is-public.decorator";
@@ -17,11 +17,16 @@ export class SearchController {
 
     @IsPublic()
     @Get("api/search")
-    async listAll(@Query() query) {
-        const { pageSize, searchText, language } = query;
+    async listAll(@Query() query, @Req() req) {
+        const { pageSize, searchText } = query;
+
         if (this.configService.get<string>("db.atlas")) {
             return Promise.all([
-                this.personalityService.findAll(searchText, pageSize, language),
+                this.personalityService.findAll(
+                    searchText,
+                    pageSize,
+                    req.language
+                ),
                 this.sentenceService.findAll(searchText, pageSize),
                 this.claimRevisionService.findAll(searchText, pageSize),
             ])
@@ -37,7 +42,7 @@ export class SearchController {
             return this.personalityService.combinedListAll({
                 name: searchText,
                 pageSize,
-                language,
+                language: req.language,
             });
         }
     }

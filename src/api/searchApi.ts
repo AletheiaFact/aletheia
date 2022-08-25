@@ -10,7 +10,6 @@ const getResults = (dispatch, options = {}) => {
     const params = {
         searchText: options.searchText,
         pageSize: options.pageSize ? options.pageSize : 5,
-        language: options?.i18n?.languages[0],
     };
 
     return request
