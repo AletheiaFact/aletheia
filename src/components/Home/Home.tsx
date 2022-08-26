@@ -1,8 +1,9 @@
-import React from "react";
-import { Spin } from "antd";
 import { useTranslation } from "next-i18next";
-import HomeContent from "./HomeContent";
+import React from "react";
+
+import Loading from "../Loading";
 import HomeCarousel from "./HomeCarousel";
+import HomeContent from "./HomeContent";
 
 const Home = ({ personalities, stats, href }) => {
     const { t } = useTranslation();
@@ -19,17 +20,7 @@ const Home = ({ personalities, stats, href }) => {
             </>
         );
     } else {
-        return (
-            <Spin
-                tip={t("common:loading")}
-                style={{
-                    textAlign: "center",
-                    position: "absolute",
-                    top: "50%",
-                    left: "calc(50% - 40px)",
-                }}
-            />
-        );
+        return <Loading />;
     }
 };
 
