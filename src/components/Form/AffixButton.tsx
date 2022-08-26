@@ -102,6 +102,7 @@ const AffixButton = (props) => {
                     <AletheiaButton
                         type={ButtonType.blue}
                         onClick={handleHideModal}
+                        data-cy={"testButtonTutorialOk"}
                     >
                         {t("tutorial:okButton")}
                     </AletheiaButton>

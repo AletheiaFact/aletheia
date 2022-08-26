@@ -17,6 +17,7 @@ const goToClaimReviewPage = () => {
         "contains",
         `http://localhost:3000/personality/${personality.slug}`
     );
+    cy.get(`${locators.claim.BTN_OK_TUTORIAL}`).click();
     cy.get("[data-cy=testSeeFullSpeech]").first().click();
     cy.url().should(
         "contains",
