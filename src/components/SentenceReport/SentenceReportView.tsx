@@ -23,6 +23,7 @@ const SentenceReportView = ({
     isHidden,
     context,
     sitekey,
+    hideDescription,
 }) => {
     const { t } = useTranslation();
     const { isLoggedIn } = useAppSelector((state) => ({
@@ -144,6 +145,7 @@ const SentenceReportView = ({
 
             <WarningModal
                 width={"90%"}
+                hideDescription={hideDescription}
                 visible={isWarningModalVisible}
                 closable={false}
             />

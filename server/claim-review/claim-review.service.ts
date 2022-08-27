@@ -281,4 +281,21 @@ export class ClaimReviewService {
 
         return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
     }
+
+    async verifyIfReviewIsHdden(review) {
+        if (review.isHidden) {
+            const history = await this.historyService.getByTargetIdModelAndType(
+                review._id,
+                TargetModel.ClaimReview,
+                0,
+                1,
+                "desc",
+                HistoryType.Hide
+            );
+
+            return history[0]?.details?.after?.description;
+        }
+
+        return "";
+    }
 }

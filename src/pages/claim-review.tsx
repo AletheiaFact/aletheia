@@ -21,6 +21,7 @@ const ClaimReviewPage: NextPage<{
     claimReviewTask: any;
     claimReview: any;
     isLoggedIn: boolean;
+    description: string;
 }> = ({
     personality,
     claim,
@@ -30,6 +31,7 @@ const ClaimReviewPage: NextPage<{
     claimReview,
     isLoggedIn,
     sitekey,
+    description,
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -105,6 +107,7 @@ const ClaimReviewPage: NextPage<{
                     isHidden={claimReview.isHidden}
                     context={claimReview.report}
                     sitekey={sitekey}
+                    hideDescription={description}
                 />
             )}
             <AffixButton personalitySlug={personality.slug} />
@@ -125,6 +128,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
+            description: query.description,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
         },

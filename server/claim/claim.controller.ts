@@ -140,6 +140,10 @@ export class ClaimController {
                 sentence_hash
             );
 
+        const description = await this.claimReviewService.verifyIfReviewIsHdden(
+            claimReview
+        );
+
         await this.viewService.getNextServer().render(
             req,
             res,
@@ -151,6 +155,7 @@ export class ClaimController {
                 claimReviewTask,
                 claimReview,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                description,
             })
         );
     }
