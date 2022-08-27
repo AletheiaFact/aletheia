@@ -15,9 +15,15 @@ const getLatestReviews = () => {
         .catch();
 };
 
-const hideReview = (sentence_hash, hide, t) => {
+const hideReview = (
+    sentence_hash,
+    hide,
+    t,
+    description = "",
+    recaptcha = ""
+) => {
     return request
-        .put(`/${sentence_hash}`, { hide })
+        .put(`/${sentence_hash}`, { hide, description, recaptcha })
         .then((response) => {
             message.success(
                 t(`claimReview:${hide ? "reviewHidded" : "reviewUnhidded"}`)

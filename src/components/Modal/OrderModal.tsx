@@ -15,6 +15,7 @@ const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
             footer={false}
             onCancel={handleCancel}
             title={t("orderModal:title")}
+            width={300}
         >
             <OrderRadio value={value} setValue={setValue} />
 

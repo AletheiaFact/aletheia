@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
 import { LeanDocument, Model, Types } from "mongoose";
 import {
     ClaimReview,
@@ -10,12 +10,18 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
+<<<<<<< HEAD
 import { SentenceService } from "../sentence/sentence.service";
+=======
+import { REQUEST } from "@nestjs/core";
+import { BaseRequest } from "types";
+>>>>>>> - add recaptcha validation on hide report
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
     private readonly logger = new Logger("ClaimReviewService");
     constructor(
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ClaimReview.name)
         private ClaimReviewModel: Model<ClaimReviewDocument> &
             ISoftDeletedModel<ClaimReviewDocument>,
@@ -245,16 +251,33 @@ export class ClaimReviewService {
                 };
             })
         );
-    async hideOrUnhideReview(sentence_hash, hide) {
-        const review = await this.getReviewBySentenceHash(sentence_hash);
+    }
 
+    async hideOrUnhideReview(sentence_hash, hide, description) {
+        const review = await this.getReviewBySentenceHash(sentence_hash);
         const newReview = {
             ...review,
             ...{
                 report: review?.report?._id,
                 isHidden: hide,
+                description: hide ? description : undefined,
             },
         };
+
+        const before = { isHidden: !hide };
+        const after = hide
+            ? { isHidden: hide, description }
+            : { isHidden: hide };
+
+        const history = this.historyService.getHistoryParams(
+            newReview._id,
+            TargetModel.ClaimReview,
+            this.req?.user,
+            hide ? HistoryType.Hide : HistoryType.Unhide,
+            after,
+            before
+        );
+        this.historyService.createHistory(history);
 
         return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
     }

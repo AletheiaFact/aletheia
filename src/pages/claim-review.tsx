@@ -104,6 +104,7 @@ const ClaimReviewPage: NextPage<{
                     href={href}
                     isHidden={claimReview.isHidden}
                     context={claimReview.report}
+                    sitekey={sitekey}
                 />
             )}
             <AffixButton personalitySlug={personality.slug} />

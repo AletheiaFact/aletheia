@@ -16,6 +16,8 @@ export enum HistoryType {
     Create = "create",
     Update = "update",
     Delete = "delete",
+    Hide = "hide",
+    Unhide = "unhide",
     Draft = "draft",
     Reported = "reported",
     Assigned = "assigned",
