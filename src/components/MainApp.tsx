@@ -9,7 +9,7 @@ import colors from "../styles/colors";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
-import SearchOverlay from "./SearchOverlay";
+import SearchOverlay from "./Search/SearchOverlay";
 import Sidebar from "./Sidebar";
 
 const MainApp = ({ children }) => {

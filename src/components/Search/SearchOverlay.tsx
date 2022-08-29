@@ -6,13 +6,12 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
-import api from "../api/personality";
-import { useAppSelector } from "../store/store";
-import { ActionTypes } from "../store/types";
-import colors from "../styles/colors";
-import AletheiaAvatar from "./AletheiaAvatar";
-import InputSearch from "./Form/InputSearch";
-import SearchResult from "./SearchResult";
+import searchApi from "../../api/searchApi";
+import { useAppSelector } from "../../store/store";
+import { ActionTypes } from "../../store/types";
+import colors from "../../styles/colors";
+import InputSearch from "../Form/InputSearch";
+import SearchCard from "./SearchCard";
 
 const OverlayDiv = styled.div`
     width: 100%;
@@ -37,22 +36,44 @@ const OverlayDiv = styled.div`
 `;
 
 const SearchOverlay = ({ overlay }) => {
-    const { personalities, page, pageSize, searchName } = useAppSelector(
-        (state) => {
-            return {
-                personalities: state?.search?.searchResults || [],
-                page: state?.search?.searchCurPage || 1,
-                pageSize: state?.search?.searchPageSize || 10,
-                searchName: state?.search?.searchInput || null,
-            };
-        }
-    );
-    const handleSearchClick = (slug) => {
+    const { results, page, pageSize, searchName } = useAppSelector((state) => {
+        return {
+            results: [
+                state?.search?.searchResults?.personalities || [],
+                state?.search?.searchResults?.claims || [],
+                state?.search?.searchResults?.sentences || [],
+            ],
+            page: state?.search?.searchCurPage || 1,
+            pageSize: state?.search?.searchPageSize || 5,
+            searchName: state?.search?.searchInput || null,
+        };
+    });
+
+    const handleSearchClick = ({
+        type,
+        claimSlug = "",
+        personalitySlug = "",
+        data_hash = "",
+    }) => {
         dispatch({
             type: ActionTypes.ENABLE_SEARCH_OVERLAY,
             overlay: false,
         });
-        router.push(`/personality/${slug}`);
+        switch (type) {
+            case "personality":
+                router.push(`/personality/${personalitySlug}`);
+                break;
+            case "claim":
+                router.push(
+                    `/personality/${personalitySlug}/claim/${claimSlug}`
+                );
+                break;
+            case "sentence":
+                router.push(
+                    `/personality/${personalitySlug}/claim/${claimSlug}/sentence/${data_hash}`
+                );
+                break;
+        }
     };
 
     const dispatch = useDispatch();
@@ -65,16 +86,11 @@ const SearchOverlay = ({ overlay }) => {
             searchName: name,
         });
 
-        api.getPersonalities(
-            {
-                personalities,
-                page,
-                pageSize,
-                searchName: name,
-                i18n,
-            },
-            dispatch
-        );
+        searchApi.getResults(dispatch, {
+            page,
+            pageSize,
+            searchText: name,
+        });
     };
 
     return (
@@ -132,37 +148,19 @@ const SearchOverlay = ({ overlay }) => {
                         flexDirection: "column",
                     }}
                 >
-                    {personalities &&
-                        Array.isArray(personalities) &&
-                        personalities.length > 0 && (
-                            <>
-                                {personalities.map(
-                                    (p, i) =>
-                                        p && (
-                                            <SearchResult
-                                                key={i}
-                                                handleOnClick={() =>
-                                                    handleSearchClick(p.slug)
-                                                }
-                                                avatar={
-                                                    <AletheiaAvatar
-                                                        size={30}
-                                                        src={p.avatar}
-                                                        alt={t(
-                                                            "seo:personalityImageAlt",
-                                                            {
-                                                                name: p.name,
-                                                            }
-                                                        )}
-                                                    />
-                                                }
-                                                name={p.name}
-                                                searchName={searchName}
-                                            />
-                                        )
-                                )}
-                            </>
-                        )}
+                    {results.map((result, i) => {
+                        const type = ["personality", "claim", "sentence"][i];
+                        return (
+                            <SearchCard
+                                title={t(`search:${type}HeaderTitle`)}
+                                content={result}
+                                searchName={searchName}
+                                handleSearchClick={handleSearchClick}
+                                type={type}
+                                avatar={i !== 0 ? false : true}
+                            />
+                        );
+                    })}
                 </Row>
             )}
         </OverlayDiv>
