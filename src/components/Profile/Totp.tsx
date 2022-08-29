@@ -14,7 +14,7 @@ export const Totp = ({ flow, setFlow }) => {
     const { Title } = Typography;
     const [textSource, setTextSource] = useState("");
     const [showForm, setShowForm] = useState(true);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const router = useRouter();
 
@@ -56,32 +56,33 @@ export const Totp = ({ flow, setFlow }) => {
     }, [flow]);
 
     const onSubmitLink = (values: ValuesType) => {
-        orySubmitTotp({ router, flow, setFlow, t, values }).catch(() => {
-            message.error(t("profile:totpIncorectCodeMessage"));
-        });
+        orySubmitTotp({ router, flow, setFlow, t, values })
+            .then(() => setIsLoading(false))
+            .catch(() => {
+                message.error(t("profile:totpIncorectCodeMessage"));
+                setIsLoading(false);
+            });
     };
 
     const onSubmitUnLink = () => {
         initializeCsrf();
+        setIsLoading(true);
         const values = {
             csrf_token: flowValues.csrf_token,
             totp_unlink: true,
             method: "totp",
         };
-        orySubmitTotp({ router, flow, setFlow, t, values }).catch(() => {
-            message.error(t("prifile:totpUnLinkErrorMessage"));
-        });
-    };
-
-    const onClick = () => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
+        orySubmitTotp({ router, flow, setFlow, t, values })
+            .then(() => setIsLoading(false))
+            .catch(() => {
+                message.error(t("prifile:totpUnLinkErrorMessage"));
+                setIsLoading(false);
+            });
     };
 
     const onFinish = (values) => {
         initializeCsrf();
+        setIsLoading(true);
         flowValues = {
             ...flowValues,
             totp_code: values.totp,
@@ -170,8 +171,7 @@ export const Totp = ({ flow, setFlow }) => {
                     <AletheiaButton
                         type={ButtonType.blue}
                         htmlType="submit"
-                        loading={loading}
-                        onClick={onClick}
+                        loading={isLoading}
                     >
                         {t("login:submitButton")}
                     </AletheiaButton>
@@ -180,9 +180,8 @@ export const Totp = ({ flow, setFlow }) => {
             {!showForm && (
                 <Form onFinish={onSubmitUnLink}>
                     <AletheiaButton
-                        loading={loading}
+                        loading={isLoading}
                         htmlType="submit"
-                        onClick={onClick}
                         style={{
                             width: "100%",
                             marginTop: "21px",

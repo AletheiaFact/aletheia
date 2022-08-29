@@ -16,8 +16,7 @@ import { getUiNode } from "../../lib/orysdk/utils";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { t } = useTranslation();
     const formRef = useRef<FormInstance>();
@@ -42,20 +41,13 @@ const OryProfileView = ({ user }) => {
     const onSubmit = (values: ValuesType) => {
         orySubmitSettings({ router, flow, setFlow, t, values });
         api.updatePassword({ userId: user._id }, t).then(() => {
-            setIsFormSubmitted(false);
+            setIsLoading(false);
         });
     };
 
-    const onClick = () => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
-    };
-
     const onFinish = (values) => {
-        if (!isFormSubmitted) {
-            setIsFormSubmitted(true);
+        if (!isLoading) {
+            setIsLoading(true);
             initializeCsrf();
             flowValues = {
                 ...flowValues,
@@ -139,11 +131,9 @@ const OryProfileView = ({ user }) => {
                 </Form.Item>
                 <Form.Item>
                     <Button
-                        onClick={onClick}
-                        loading={loading}
+                        loading={isLoading}
                         type={ButtonType.blue}
                         htmlType="submit"
-                        disabled={isFormSubmitted}
                     >
                         {t("login:submitButton")}
                     </Button>

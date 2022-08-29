@@ -36,7 +36,9 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const { t } = useTranslation();
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
-    const [loading, setLoading] = useState(false);
+    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+    const [isLoadingGoBack, setIsLoadingGoBack] = useState(false);
+    const [isLoadingDraft, setIsLoadingDraft] = useState(false);
     const { isLoggedIn } = useAppSelector((state) => ({
         isLoggedIn: state.login,
     }));
@@ -183,6 +185,18 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         });
 
     const sendEventToMachine = (formData, eventName) => {
+        if (eventName === ReviewTaskEvents.draft) {
+            setIsLoadingDraft(true);
+        } else if (eventName !== ReviewTaskEvents.goback) {
+            setIsLoadingSubmit(true);
+        }
+
+        const setIsLoading =
+            eventName === ReviewTaskEvents.goback
+                ? setIsLoadingGoBack
+                : eventName === ReviewTaskEvents.draft
+                ? setIsLoadingDraft
+                : setIsLoadingSubmit;
         service.send(eventName, {
             sentence_hash,
             reviewData: {
@@ -196,6 +210,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
             t,
             recaptchaString,
             setCurrentFormAndNextEvents,
+            setIsLoading,
         });
         setRecaptchaString("");
         recaptchaRef.current?.resetRecaptcha();
@@ -239,13 +254,6 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         sendEventToMachine({}, ReviewTaskEvents.goback);
     };
 
-    const onClick = () => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
-    };
-
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {formInputs && (
@@ -269,7 +277,13 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                 {nextEvents?.map((event) => {
                     return (
                         <AletheiaButton
-                            loading={loading}
+                            loading={
+                                event === ReviewTaskEvents.goback
+                                    ? isLoadingGoBack
+                                    : event === ReviewTaskEvents.draft
+                                    ? isLoadingDraft
+                                    : isLoadingSubmit
+                            }
                             key={event}
                             type={ButtonType.blue}
                             htmlType={
@@ -283,8 +297,6 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                                     ? onClickGoBack
                                     : event === ReviewTaskEvents.draft
                                     ? onClickSaveDraft
-                                    : event
-                                    ? onClick
                                     : () => {
                                           //@ts-ignore
                                           umami?.trackEvent(

@@ -97,6 +97,7 @@ export const transitionHandler = (state) => {
     const event = state.event.type;
     const recaptcha = state.event.recaptchaString;
     const setCurrentFormAndNextEvents = state.event.setCurrentFormAndNextEvents;
+    const setIsLoading = state.event.setIsLoading;
 
     if (event !== ReviewTaskEvents.init && event !== ReviewTaskEvents.goback) {
         api.createClaimReviewTask(
@@ -109,6 +110,7 @@ export const transitionHandler = (state) => {
             event
         )
             .then(() => {
+                setIsLoading(false);
                 setCurrentFormAndNextEvents(event);
                 if (event === ReviewTaskEvents.publish) {
                     window.location.reload();
@@ -116,6 +118,7 @@ export const transitionHandler = (state) => {
             })
             .catch((e) => e);
     } else if (event === ReviewTaskEvents.goback) {
+        setIsLoading(false);
         setCurrentFormAndNextEvents(Object.keys(state.value)[0], state);
     }
 };
