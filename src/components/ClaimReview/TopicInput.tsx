@@ -5,7 +5,7 @@ import sentenceApi from "../../api/sentenceApi";
 import AutoComplete from "./Autocomplete";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
-import { EditFilled } from "@ant-design/icons";
+import { EditFilled, PlusOutlined } from "@ant-design/icons";
 import AletheiaButton from "../Button";
 import { useAppSelector } from "../../store/store";
 import TagsList from "./TagsList";
@@ -81,7 +81,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
                             color: colors.bluePrimary,
                         }}
                     >
-                        <EditFilled />
+                        {tags.length ? <EditFilled /> : <PlusOutlined />}
                     </Button>
                 )}
             </Col>
