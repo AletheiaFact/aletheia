@@ -1,4 +1,3 @@
-import { LoadingOutlined } from "@ant-design/icons";
 import {
     SelfServiceSettingsFlow,
     SubmitSelfServiceSettingsFlowWithPasswordMethodBody as ValuesType,
@@ -7,12 +6,14 @@ import { Alert, Form, FormInstance, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
+
 import { oryGetSettingsFlow, orySubmitSettings } from "../../api/ory";
+import api from "../../api/user";
+import { getUiNode } from "../../lib/orysdk/utils";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
-import api from "../../api/user";
+import Loading from "../Loading";
 import { Totp } from "./Totp";
-import { getUiNode } from "../../lib/orysdk/utils";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
@@ -58,7 +59,7 @@ const OryProfileView = ({ user }) => {
     };
 
     if (!flow) {
-        return <LoadingOutlined />;
+        return <Loading />;
     }
 
     return (

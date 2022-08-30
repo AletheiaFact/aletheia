@@ -36,7 +36,7 @@ const ClaimReviewPage: NextPage<{
         type: ActionTypes.SET_LOGIN_STATUS,
         login: isLoggedIn,
     });
-    const review = sentence?.stats?.reviews[0]?._id;
+    const review = sentence?.props?.classification;
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",

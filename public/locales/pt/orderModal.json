@@ -1,5 +1,7 @@
 {
-  "title": "Ordenar por",
-  "radioAsc": "Mais antigo",
-  "radioDesc": "Mais recente"
+    "title": "Ordenar por",
+    "radioAsc": "Mais antigo",
+    "radioDesc": "Mais recente",
+    "okButton": "Pronto",
+    "cancelButton": "Cancelar"
 }

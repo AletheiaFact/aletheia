@@ -1,5 +1,5 @@
 import { Col, Tag } from "antd";
-import { t } from "i18next";
+import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 
@@ -10,6 +10,8 @@ interface TagsListProps {
 }
 
 const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
+    const { t } = useTranslation();
+
     return (
         <Col>
             {!tags.length && <span>{t("topics:noTopics")}</span>}
@@ -18,12 +20,14 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                 tags.map((tag) => (
                     <Tag
                         key={tag}
-                        color={colors.bluePrimary}
+                        color={colors.blueSecondary}
                         closable={editable}
                         onClose={() => handleClose(tag)}
                         style={{
                             borderRadius: 32,
                             padding: "4px 10px 2px",
+                            marginTop: 4,
+                            marginBottom: 4,
                         }}
                     >
                         {tag.toUpperCase()}

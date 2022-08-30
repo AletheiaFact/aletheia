@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from "react";
-import ClaimParagraph from "./ClaimParagraph";
-import { Row, Col, Typography, message, Spin, Affix } from "antd";
-import PersonalityCard from "../Personality/PersonalityCard";
-import { useTranslation } from "next-i18next";
-import MetricsOverview from "../Metrics/MetricsOverview";
-import ToggleSection from "../ToggleSection";
-import moment from "moment";
 import "moment/locale/pt";
-import SocialMediaShare from "../SocialMediaShare";
+
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
-import colors from "../../styles/colors";
+import { Affix, Col, message, Row, Typography } from "antd";
+import moment from "moment";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import React, { useEffect, useState } from "react";
+
+import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
+import Loading from "../Loading";
+import MetricsOverview from "../Metrics/MetricsOverview";
+import PersonalityCard from "../Personality/PersonalityCard";
+import SocialMediaShare from "../SocialMediaShare";
+import ToggleSection from "../ToggleSection";
+import ClaimParagraph from "./ClaimParagraph";
 
 const { Title, Paragraph } = Typography;
 
-const Claim = ({ personality, claim, href }) => {
+const ClaimView = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
     moment.locale(i18n.language);
     const { title, stats } = claim;
@@ -30,7 +33,7 @@ const Claim = ({ personality, claim, href }) => {
 
     useEffect(() => {
         message.info(t("claim:initialInfo"));
-    });
+    }, [t]);
 
     const generateHref = (data) =>
         `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.data_hash}`;
@@ -234,7 +237,6 @@ const Claim = ({ personality, claim, href }) => {
                     {stats.total !== 0 && <MetricsOverview stats={stats} />}
                 </article>
                 <SocialMediaShare
-                    isLoggedIn={"isLoggedIn"}
                     quote={personality?.name}
                     href={href}
                     claim={claim?.title}
@@ -242,18 +244,8 @@ const Claim = ({ personality, claim, href }) => {
             </>
         );
     } else {
-        return (
-            <Spin
-                tip={t("global:loading")}
-                style={{
-                    textAlign: "center",
-                    position: "absolute",
-                    top: "50%",
-                    left: "calc(50% - 40px)",
-                }}
-            ></Spin>
-        );
+        return <Loading />;
     }
 };
 
-export default Claim;
+export default ClaimView;

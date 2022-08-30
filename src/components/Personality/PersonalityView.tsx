@@ -1,12 +1,13 @@
-import { Col, Row, Spin } from "antd";
+import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
-import { useAppSelector } from "../../store/store";
 
+import { useAppSelector } from "../../store/store";
 import ClaimList from "../Claim/ClaimList";
 import AffixButton from "../Form/AffixButton";
-import HomeContent from "../Home/HomeContent";
+import Loading from "../Loading";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import Seo from "../Seo";
+import MorePersonalities from "./MorePersonalities";
 import PersonalityCard from "./PersonalityCard";
 
 const PersonalityView = ({ personality, href, personalities }) => {
@@ -15,17 +16,7 @@ const PersonalityView = ({ personality, href, personalities }) => {
     }));
     const { t } = useTranslation();
     if (!personality) {
-        return (
-            <Spin
-                tip={t("global:loading")}
-                style={{
-                    textAlign: "center",
-                    position: "absolute",
-                    top: "50%",
-                    left: "calc(50% - 40px)",
-                }}
-            ></Spin>
-        );
+        return <Loading />;
     }
 
     return (
@@ -54,13 +45,12 @@ const PersonalityView = ({ personality, href, personalities }) => {
                 </Col>
             </Row>
 
-            <Row>
-                <HomeContent
-                    personalities={personalities}
-                    href={href}
-                    title={t("personality:otherPersonalitiesTitle")}
-                />
-            </Row>
+            <MorePersonalities
+                personalities={personalities}
+                href={href}
+                title={t("personality:otherPersonalitiesTitle")}
+            />
+
             {isLoggedIn && (
                 <AffixButton
                     tooltipTitle={t("personality:affixButtonTitle")}

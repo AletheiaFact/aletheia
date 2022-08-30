@@ -40,4 +40,10 @@ export class ClaimReviewController {
     delete(@Param() params) {
         return this.claimReviewService.delete(params.id);
     }
+
+    @IsPublic()
+    @Get("api/latest-reviews")
+    getLatestReviews() {
+        return this.claimReviewService.getLatestReviews();
+    }
 }

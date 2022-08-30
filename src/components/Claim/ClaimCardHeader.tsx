@@ -9,7 +9,9 @@ const { Paragraph } = Typography;
 const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
     const { t } = useTranslation();
     const speechTypeTranslation =
-        claimType === "speech" ? t("claim:typeSpeech") : t("claim:typeTwitter");
+        claimType.toLowerCase() === "speech"
+            ? t("claim:typeSpeech")
+            : t("claim:typeTwitter");
     return (
         <Col
             span={24}
