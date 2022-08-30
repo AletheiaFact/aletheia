@@ -1,9 +1,10 @@
-import { Col, Row, Spin } from "antd";
+import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
-import { useAppSelector } from "../../store/store";
 
+import { useAppSelector } from "../../store/store";
 import ClaimList from "../Claim/ClaimList";
 import AffixButton from "../Form/AffixButton";
+import Loading from "../Loading";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import Seo from "../Seo";
 import MorePersonalities from "./MorePersonalities";
@@ -15,17 +16,7 @@ const PersonalityView = ({ personality, href, personalities }) => {
     }));
     const { t } = useTranslation();
     if (!personality) {
-        return (
-            <Spin
-                tip={t("global:loading")}
-                style={{
-                    textAlign: "center",
-                    position: "absolute",
-                    top: "50%",
-                    left: "calc(50% - 40px)",
-                }}
-            ></Spin>
-        );
+        return <Loading />;
     }
 
     return (

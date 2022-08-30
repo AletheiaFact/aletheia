@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Col, Divider, Row, Spin, Typography } from "antd";
+import { Col, Divider, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useState } from "react";
 
@@ -7,6 +7,7 @@ import colors from "../../styles/colors";
 import AletheiaAvatar from "../AletheiaAvatar";
 import Button, { ButtonType } from "../Button";
 import ReviewStats from "../Metrics/ReviewStats";
+import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 
 const { Title, Paragraph } = Typography;
 
@@ -306,17 +307,7 @@ const PersonalityCard = ({
             </Row>
         );
     } else {
-        return (
-            <Spin
-                tip={t("common:loading")}
-                style={{
-                    textAlign: "center",
-                    position: "absolute",
-                    top: "50%",
-                    left: "calc(50% - 40px)",
-                }}
-            ></Spin>
-        );
+        return <PersonalitySkeleton />;
     }
 };
 
