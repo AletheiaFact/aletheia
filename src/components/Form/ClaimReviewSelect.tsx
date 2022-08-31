@@ -1,8 +1,11 @@
 import { Select } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import ClassificationText from "../ClassificationText";
+import ClassificationModal from "./ClassificationModal";
+
 const { Option } = Select;
 
 const SelectInput = styled(Select)`
@@ -41,44 +44,82 @@ const SelectInput = styled(Select)`
 `;
 
 const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
+    const { vw } = useAppSelector((state) => state);
+    const [visible, setVisible] = useState(false);
+    const [value, setValue] = useState("");
+
+    const onChangeSelect = (e) => {
+        setValue(e);
+    };
+
+    useEffect(() => {
+        onChange(value);
+    }, [value, onChange]);
+
+    const handleCloseModal = () => {
+        setVisible(false);
+    };
+
+    const handleOnClick = () => {
+        if (vw?.sm) {
+            setVisible(true);
+        }
+    };
+
+    const handleChangeOk = () => {
+        setVisible(false);
+    };
+
     return (
-        <SelectInput
-            type={type}
-            onChange={onChange}
-            defaultValue={defaultValue}
-            data-cy={"testClassificationText"}
-        >
-            <Option value="" disabled>
-                {placeholder}
-            </Option>
-            <Option value="not-fact">
-                <ClassificationText classification="not-fact" />
-            </Option>
-            <Option value="trustworthy">
-                <ClassificationText classification="trustworthy" />
-            </Option>
-            <Option value="trustworthy-but">
-                <ClassificationText classification="trustworthy-but" />
-            </Option>
-            <Option value="arguable">
-                <ClassificationText classification="arguable" />
-            </Option>
-            <Option value="misleading">
-                <ClassificationText classification="misleading" />
-            </Option>
-            <Option value="false">
-                <ClassificationText classification="false" />
-            </Option>
-            <Option value="unsustainable">
-                <ClassificationText classification="unsustainable" />
-            </Option>
-            <Option value="exaggerated">
-                <ClassificationText classification="exaggerated" />
-            </Option>
-            <Option value="unverifiable">
-                <ClassificationText classification="unverifiable" />
-            </Option>
-        </SelectInput>
+        <>
+            <SelectInput
+                type={type}
+                onChange={onChangeSelect}
+                onClick={handleOnClick}
+                value={value}
+                defaultValue={defaultValue}
+                data-cy={"testClassificationText"}
+                dropdownStyle={vw?.sm && { display: "none" }}
+            >
+                <Option value="" disabled>
+                    {placeholder}
+                </Option>
+                <Option value="not-fact">
+                    <ClassificationText classification="not-fact" />
+                </Option>
+                <Option value="trustworthy">
+                    <ClassificationText classification="trustworthy" />
+                </Option>
+                <Option value="trustworthy-but">
+                    <ClassificationText classification="trustworthy-but" />
+                </Option>
+                <Option value="arguable">
+                    <ClassificationText classification="arguable" />
+                </Option>
+                <Option value="misleading">
+                    <ClassificationText classification="misleading" />
+                </Option>
+                <Option value="false">
+                    <ClassificationText classification="false" />
+                </Option>
+                <Option value="unsustainable">
+                    <ClassificationText classification="unsustainable" />
+                </Option>
+                <Option value="exaggerated">
+                    <ClassificationText classification="exaggerated" />
+                </Option>
+                <Option value="unverifiable">
+                    <ClassificationText classification="unverifiable" />
+                </Option>
+            </SelectInput>
+            <ClassificationModal
+                visible={visible}
+                value={value}
+                setValue={setValue}
+                handleOk={handleChangeOk}
+                handleCancel={handleCloseModal}
+            />
+        </>
     );
 };
 
