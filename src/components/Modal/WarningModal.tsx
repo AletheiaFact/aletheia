@@ -27,7 +27,7 @@ const WarningModal = ({ visible, hideDescription, closable, width }) => {
                 >
                     Lorem ipsum dolor sit amet
                 </span>
-                <p>{hideDescription}</p>
+                <p style={{ marginTop: 10 }}>{hideDescription}</p>
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                     do eiusmod tempor incididunt ut labore et dolore magna

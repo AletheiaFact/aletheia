@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Row } from "antd";
 import SocialMediaShare from "../SocialMediaShare";
 import SentenceReportCard from "./SentenceReportCard";
@@ -14,6 +14,7 @@ import { useTranslation } from "next-i18next";
 import HideReviewModal from "../Modal/HideReviewModal";
 import WarningModal from "../Modal/WarningModal";
 import UnhideReviewModal from "../Modal/UnhideReview";
+import { ory } from "../../lib/orysdk";
 
 const SentenceReportView = ({
     personality,
@@ -32,9 +33,16 @@ const SentenceReportView = ({
 
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
-    const [isWarningModalVisible] = useState(false);
-
+    const [role, setRole] = useState(null);
     const [hide, setHide] = useState(isHidden);
+
+    useEffect(() => {
+        (function getRole() {
+            ory.toSession().then((session) => {
+                setRole(session?.data?.identity?.traits?.role);
+            });
+        })();
+    }, []);
 
     return (
         <>
@@ -49,49 +57,51 @@ const SentenceReportView = ({
                                 xs={{ order: 2, span: 24 }}
                                 className="sentence-report-card"
                             >
-                                <Col
-                                    style={{
-                                        marginTop: 10,
-                                        textAlign: "right",
-                                    }}
-                                >
-                                    {hide ? (
-                                        <Button
-                                            onClick={() =>
-                                                setIsUnhideModalVisible(
-                                                    !isUnhideModalVisible
-                                                )
-                                            }
-                                            style={{
-                                                padding: "5px",
-                                                background: "none",
-                                                border: "none",
-                                                fontSize: 16,
-                                                color: colors.bluePrimary,
-                                            }}
-                                        >
-                                            <EyeFilled />
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            onClick={() =>
-                                                setIsHideModalVisible(
-                                                    !isHideModalVisible
-                                                )
-                                            }
-                                            style={{
-                                                padding: "5px",
-                                                background: "none",
-                                                border: "none",
-                                                fontSize: 16,
-                                                color: colors.bluePrimary,
-                                                textAlign: "right",
-                                            }}
-                                        >
-                                            <EyeInvisibleFilled />
-                                        </Button>
-                                    )}
-                                </Col>
+                                {role && role === "admin" && (
+                                    <Col
+                                        style={{
+                                            marginTop: 10,
+                                            textAlign: "right",
+                                        }}
+                                    >
+                                        {hide ? (
+                                            <Button
+                                                onClick={() =>
+                                                    setIsUnhideModalVisible(
+                                                        !isUnhideModalVisible
+                                                    )
+                                                }
+                                                style={{
+                                                    padding: "5px",
+                                                    background: "none",
+                                                    border: "none",
+                                                    fontSize: 16,
+                                                    color: colors.bluePrimary,
+                                                }}
+                                            >
+                                                <EyeFilled />
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                onClick={() =>
+                                                    setIsHideModalVisible(
+                                                        !isHideModalVisible
+                                                    )
+                                                }
+                                                style={{
+                                                    padding: "5px",
+                                                    background: "none",
+                                                    border: "none",
+                                                    fontSize: 16,
+                                                    color: colors.bluePrimary,
+                                                    textAlign: "right",
+                                                }}
+                                            >
+                                                <EyeInvisibleFilled />
+                                            </Button>
+                                        )}
+                                    </Col>
+                                )}
                                 <SentenceReportCard
                                     personality={personality}
                                     claim={claim}
@@ -146,7 +156,7 @@ const SentenceReportView = ({
             <WarningModal
                 width={"90%"}
                 hideDescription={hideDescription}
-                visible={isWarningModalVisible}
+                visible={role === "fact-checker" && isHidden}
                 closable={false}
             />
 
