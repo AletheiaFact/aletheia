@@ -185,18 +185,21 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         });
 
     const sendEventToMachine = (formData, eventName) => {
-        if (eventName === ReviewTaskEvents.draft) {
-            setIsLoadingDraft(true);
-        } else if (eventName !== ReviewTaskEvents.goback) {
-            setIsLoadingSubmit(true);
-        }
+        const buttonLoading = (eventName) => {
+            if (eventName === ReviewTaskEvents.draft) {
+                setIsLoadingDraft(true);
+            } else if (eventName !== ReviewTaskEvents.goback) {
+                setIsLoadingSubmit(true);
+            }
 
-        const setIsLoading =
-            eventName === ReviewTaskEvents.goback
+            return eventName === ReviewTaskEvents.goback
                 ? setIsLoadingGoBack
                 : eventName === ReviewTaskEvents.draft
                 ? setIsLoadingDraft
                 : setIsLoadingSubmit;
+        };
+
+        const setIsLoading = buttonLoading(eventName);
         service.send(eventName, {
             sentence_hash,
             reviewData: {
