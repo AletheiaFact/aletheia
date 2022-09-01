@@ -1,5 +1,9 @@
-import { PlusCircleFilled, PlusOutlined } from "@ant-design/icons";
-import { Button, Tooltip } from "antd";
+import {
+    FileAddFilled,
+    PlusCircleFilled,
+    PlusOutlined,
+    UserAddOutlined,
+} from "@ant-design/icons";
 import Cookies from "js-cookie";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
@@ -8,9 +12,34 @@ import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
 import { AletheiaModal } from "../Modal/AletheiaModal.style";
 import PulseAnimation from "../PulseAnimation";
+import Fab from "./Fab";
 
-const AffixButton = (props) => {
+interface AffixButtonProps {
+    personalitySlug?: string;
+}
+
+/*** Floating action button that displays the Create Personality option
+ * @param personalitySlug if present will display the Create Claim option too
+ */
+const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isOptionsVisible, setIsOptionsVisible] = useState(false);
+    const { t } = useTranslation();
+    const actions = [
+        {
+            icon: <UserAddOutlined />,
+            tooltip: t("affix:affixButtonCreatePersonality"),
+            href: `/personality/search`,
+        },
+    ];
+
+    if (personalitySlug) {
+        actions.push({
+            icon: <FileAddFilled />,
+            tooltip: t("affix:affixButtonCreateClaim"),
+            href: `/personality/${personalitySlug}/claim/create`,
+        });
+    }
 
     useEffect(() => {
         const tutorialShown = Cookies.get("tutorial_shown") || false;
@@ -21,54 +50,69 @@ const AffixButton = (props) => {
         Cookies.set("tutorial_shown", true);
         setIsModalVisible(false);
     };
-    const { t } = useTranslation();
+
+    const toggleFloatingdrawer = () => {
+        setIsOptionsVisible((value) => !value);
+    };
+
+    const handleClick = () => {
+        if (isModalVisible) {
+            handleHideModal();
+        }
+        toggleFloatingdrawer();
+    };
+
     return (
         <>
-            <PulseAnimation
-                pulse={isModalVisible}
-                startColor={colors.blueSecondary}
-                endColor={colors.bluePrimary}
-                startSize={0}
-                endSize={65}
+            <ul
                 style={{
-                    width: "70px",
-                    height: "70px",
                     position: "fixed",
                     bottom: "3%",
                     right: "2%",
+                    display: "flex",
+                    flexDirection: "column-reverse",
+                    alignItems: "center",
+                    gap: "1rem",
                     zIndex: 9999,
-                    borderRadius: "100%",
                 }}
             >
-                <Tooltip placement="left" title={props.tooltipTitle}>
-                    <Button
-                        style={{
-                            background: colors.white,
-                            color: colors.bluePrimary,
-                            borderColor: colors.white,
-                            boxShadow: "rgba(0, 0, 0, 0.35) 0px 8px 24px",
-                            width: "70px",
-                            height: "70px",
-                        }}
-                        size="large"
-                        shape="circle"
-                        href={props.href}
-                        onClick={handleHideModal}
+                <PulseAnimation
+                    pulse={isModalVisible}
+                    startColor={colors.blueSecondary}
+                    endColor={colors.bluePrimary}
+                    startSize={0}
+                    endSize={65}
+                    style={{
+                        width: "70px",
+                        height: "70px",
+                        borderRadius: "100%",
+                    }}
+                >
+                    <Fab
+                        tooltipText={t("affix:affixButtonTitle")}
+                        size="70px"
+                        onClick={handleClick}
                         data-cy={"testButtonAddClaim"}
-                        type="primary"
                         icon={
                             <PlusOutlined
                                 style={{
-                                    padding: "21px",
                                     fontSize: "27px",
-                                    display: "block",
                                 }}
                             />
                         }
                     />
-                </Tooltip>
-            </PulseAnimation>
+                </PulseAnimation>
 
+                {isOptionsVisible &&
+                    actions.map((action) => (
+                        <Fab
+                            tooltipText={action.tooltip}
+                            icon={action.icon}
+                            href={action.href}
+                            size="50px"
+                        />
+                    ))}
+            </ul>
             <AletheiaModal
                 className="ant-modal-content"
                 visible={isModalVisible}

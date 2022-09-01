@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 
 import { useAppSelector } from "../../store/store";
 import ClaimList from "../Claim/ClaimList";
-import AffixButton from "../Form/AffixButton";
+import AffixButton from "../AffixButton/AffixButton";
 import Loading from "../Loading";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import Seo from "../Seo";
@@ -51,12 +51,7 @@ const PersonalityView = ({ personality, href, personalities }) => {
                 title={t("personality:otherPersonalitiesTitle")}
             />
 
-            {isLoggedIn && (
-                <AffixButton
-                    tooltipTitle={t("personality:affixButtonTitle")}
-                    href={`/personality/${personality.slug}/claim/create`}
-                />
-            )}
+            {isLoggedIn && <AffixButton personalitySlug={personality.slug} />}
         </>
     );
 };
