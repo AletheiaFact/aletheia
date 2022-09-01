@@ -16,8 +16,8 @@ const AletheiaAlert = ({
                 padding: "50px 25px 50px 25px",
             }}
             message={message}
-            description={description && description}
-            action={action && action}
+            description={description}
+            action={action}
             showIcon={showIcon}
         />
     );

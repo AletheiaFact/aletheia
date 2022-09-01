@@ -140,7 +140,7 @@ const SentenceReportView = ({
                 visible={isHideModalVisible}
                 isLoading={isLoading}
                 handleOk={({ description, recaptcha }) => {
-                    setIsLoading(!isLoading);
+                    setIsLoading(true);
                     ReviewApi.hideReview(
                         sentence.data_hash,
                         !hide,
@@ -151,7 +151,7 @@ const SentenceReportView = ({
                         setHide(!hide);
                         setIsHideModalVisible(!isHideModalVisible);
                         setDescription(description);
-                        setIsLoading(!isLoading);
+                        setIsLoading(false);
                     });
                 }}
                 handleCancel={() => setIsHideModalVisible(false)}
@@ -162,12 +162,12 @@ const SentenceReportView = ({
                 visible={isUnhideModalVisible}
                 isLoading={isLoading}
                 handleOk={() => {
-                    setIsLoading(!isLoading);
+                    setIsLoading(true);
                     ReviewApi.hideReview(sentence.data_hash, !hide, t).then(
                         () => {
                             setHide(!hide);
                             setIsUnhideModalVisible(!isUnhideModalVisible);
-                            setIsLoading(!isLoading);
+                            setIsLoading(false);
                         }
                     );
                 }}
