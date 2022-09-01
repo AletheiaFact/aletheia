@@ -93,6 +93,15 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         }
     };
 
+    const isButtonLoading = (eventName) => {
+        if (eventName === ReviewTaskEvents.goback) {
+            return isLoadingGoBack;
+        }
+        return eventName === ReviewTaskEvents.draft
+            ? isLoadingDraft
+            : isLoadingSubmit;
+    };
+
     useEffect(() => {
         isLoggedIn &&
             reviewTaskApi
@@ -281,13 +290,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                 {nextEvents?.map((event) => {
                     return (
                         <AletheiaButton
-                            loading={
-                                event === ReviewTaskEvents.goback
-                                    ? isLoadingGoBack
-                                    : event === ReviewTaskEvents.draft
-                                    ? isLoadingDraft
-                                    : isLoadingSubmit
-                            }
+                            loading={isButtonLoading(event)}
                             key={event}
                             type={ButtonType.blue}
                             htmlType={
