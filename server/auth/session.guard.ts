@@ -37,7 +37,10 @@ export class SessionGuard implements CanActivate {
                     undefined,
                     request.header("Cookie")
                 );
-                request.user = { _id: session?.identity?.traits?.user_id };
+                request.user = {
+                    _id: session?.identity?.traits?.user_id,
+                    role: session?.identity?.traits?.role,
+                };
                 return true;
             }
 

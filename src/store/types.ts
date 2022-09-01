@@ -10,6 +10,7 @@ export enum ActionTypes {
     SET_LOGIN_STATUS,
     SET_AUTO_SAVE,
     SET_BREAKPOINTS,
+    SET_USER_ROLE,
 }
 
 export interface RootState {
@@ -24,5 +25,6 @@ export interface RootState {
     };
     login: boolean;
     autoSave: boolean;
+    role: string;
     vw: WidthBreakpoints;
 }

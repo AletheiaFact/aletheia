@@ -13,6 +13,8 @@ import HideReviewModal from "../Modal/HideReviewModal";
 import UnhideReviewModal from "../Modal/UnhideReview";
 import AletheiaAlert from "../AletheiaAlert";
 import HideContentButton from "../HideContentButton";
+import { Roles } from "../../machine/enums";
+import colors from "../../styles/colors";
 
 const SentenceReportView = ({
     personality,
@@ -23,12 +25,14 @@ const SentenceReportView = ({
     context,
     sitekey,
     hideDescription,
-    role,
 }) => {
     const { t } = useTranslation();
-    const { isLoggedIn } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-    }));
+    const { isLoggedIn, role } = useAppSelector((state) => {
+        return {
+            isLoggedIn: state?.login,
+            role: state?.role,
+        };
+    });
 
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
@@ -40,6 +44,39 @@ const SentenceReportView = ({
             <SentenceReportViewStyle>
                 <Row>
                     <Col offset={3} span={18}>
+                        {role === Roles.Admin && (
+                            <Col
+                                style={{
+                                    marginBottom: 8,
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        width: "100%",
+                                        borderBottom: `1px solid ${colors.lightGraySecondary}`,
+                                    }}
+                                ></div>
+                                <HideContentButton
+                                    hide={hide}
+                                    handleHide={() =>
+                                        setIsUnhideModalVisible(
+                                            !isUnhideModalVisible
+                                        )
+                                    }
+                                    handleUnhide={() =>
+                                        setIsHideModalVisible(
+                                            !isHideModalVisible
+                                        )
+                                    }
+                                    style={{
+                                        borderBottom: `1px solid ${colors.bluePrimary}`,
+                                        width: 26,
+                                    }}
+                                />
+                            </Col>
+                        )}
                         <Row>
                             <Col
                                 lg={{ order: 1, span: 16 }}
@@ -48,29 +85,6 @@ const SentenceReportView = ({
                                 xs={{ order: 2, span: 24 }}
                                 className="sentence-report-card"
                             >
-                                {role && role === "admin" && (
-                                    <Col
-                                        style={{
-                                            marginTop: 10,
-                                            textAlign: "right",
-                                            height: 32,
-                                        }}
-                                    >
-                                        <HideContentButton
-                                            hide={hide}
-                                            handleHide={() =>
-                                                setIsUnhideModalVisible(
-                                                    !isUnhideModalVisible
-                                                )
-                                            }
-                                            handleUnhide={() =>
-                                                setIsHideModalVisible(
-                                                    !isHideModalVisible
-                                                )
-                                            }
-                                        />
-                                    </Col>
-                                )}
                                 <SentenceReportCard
                                     personality={personality}
                                     claim={claim}

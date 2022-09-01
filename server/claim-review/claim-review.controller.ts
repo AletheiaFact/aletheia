@@ -1,7 +1,9 @@
-import { Body, Controller, Param, Put, Get } from "@nestjs/common";
+import { Body, Controller, Param, Put, Get, UseGuards } from "@nestjs/common";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewService } from "./claim-review.service";
+import { AbilitiesGuard } from "../ability/abilities.guard";
+import { AdminUserAbility, CheckAbilities } from "../ability/ability.decorator";
 
 @Controller()
 export class ClaimReviewController {
@@ -11,6 +13,8 @@ export class ClaimReviewController {
     ) {}
 
     @Put("api/review/:sentence_hash")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     async update(@Param("sentence_hash") sentence_hash, @Body() body) {
         if (body.hide === true) {
             const validateCaptcha = await this.captchaService.validate(

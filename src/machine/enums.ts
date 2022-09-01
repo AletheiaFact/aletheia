@@ -31,9 +31,16 @@ enum ClassificationEnum {
     "trustworthy",
 }
 
+enum Roles {
+    Regular = "regular",
+    FactChecker = "fact-checker",
+    Admin = "admin",
+}
+
 export {
     ReviewTaskEvents,
     ReviewTaskStates,
     CompoundStates,
     ClassificationEnum,
+    Roles,
 };

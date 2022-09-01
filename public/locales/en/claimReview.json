@@ -9,7 +9,9 @@
     "howSectionTitle": "How do we check?",
     "reviewHidded": "Hidden review",
     "reviewUnhidded": "Unhidden review",
-    "warningAlertTitle": "This report is hidden for legal reasons",
+    "warningAlertTitle": "This report is hidden for the reason below:",
     "unhideModalTitle": "Are you sure you want to unhide this report",
-    "hideModalTitle": "Are you sure you want to hide this report"
+    "hideModalTitle": "Are you sure you want to hide this report",
+    "descriptionInputPlaceholder": "Insert the description",
+    "descriptionInputError": "Insert the description"
 }

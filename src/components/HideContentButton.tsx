@@ -3,7 +3,7 @@ import { Button } from "antd";
 import { EyeInvisibleFilled, EyeFilled } from "@ant-design/icons";
 import colors from "../styles/colors";
 
-const HideContentButton = ({ hide, handleHide, handleUnhide }) => {
+const HideContentButton = ({ hide, handleHide, handleUnhide, style = {} }) => {
     const buttonStyle = {
         padding: "5px",
         background: "none",
@@ -13,7 +13,7 @@ const HideContentButton = ({ hide, handleHide, handleUnhide }) => {
     };
 
     return (
-        <>
+        <div style={{ ...style }}>
             {hide ? (
                 <Button onClick={handleHide} style={buttonStyle}>
                     <EyeFilled />
@@ -23,7 +23,7 @@ const HideContentButton = ({ hide, handleHide, handleUnhide }) => {
                     <EyeInvisibleFilled />
                 </Button>
             )}
-        </>
+        </div>
     );
 };
 

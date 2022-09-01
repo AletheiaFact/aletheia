@@ -46,12 +46,17 @@ const HideReviewModal = ({ visible, handleOk, handleCancel, sitekey }) => {
                     rules={[
                         {
                             required: true,
-                            message: "preencha a descrição",
+                            message: t("claimReview:descriptionInputError"),
                         },
                     ]}
                     style={{ marginBottom: 16 }}
                 >
-                    <TextArea white="white" placeholder="description" />
+                    <TextArea
+                        white="white"
+                        placeholder={t(
+                            "claimReview:descriptionInputPlaceholder"
+                        )}
+                    />
                 </Form.Item>
 
                 <Form.Item name="recaptcha">
