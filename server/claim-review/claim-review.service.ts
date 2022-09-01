@@ -12,7 +12,7 @@ import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
 import { SentenceService } from "../sentence/sentence.service";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "types";
+import { BaseRequest } from "../types";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
