@@ -68,7 +68,7 @@ function MyApp({ Component, pageProps }) {
                         location="bottom"
                         buttonText={t("cookieConsent:button")}
                         cookieName="termsAgreementCookie"
-                        style={{ background: colors.bluePrimary }}
+                        style={{ background: colors.grayPrimary }}
                         buttonStyle={{
                             background: colors.white,
                             color: colors.bluePrimary,
