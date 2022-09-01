@@ -46,7 +46,7 @@ const SelectInput = styled(Select)`
 const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
     const { vw } = useAppSelector((state) => state);
     const [visible, setVisible] = useState(false);
-    const [value, setValue] = useState("");
+    const [value, setValue] = useState(defaultValue);
 
     const onChangeSelect = (e) => {
         setValue(e);
@@ -77,7 +77,6 @@ const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
                 onChange={onChangeSelect}
                 onClick={handleOnClick}
                 value={value}
-                defaultValue={defaultValue}
                 data-cy={"testClassificationText"}
                 dropdownStyle={vw?.sm && { display: "none" }}
             >
