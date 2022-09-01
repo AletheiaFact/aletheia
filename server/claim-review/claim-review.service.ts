@@ -10,12 +10,9 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
-<<<<<<< HEAD
 import { SentenceService } from "../sentence/sentence.service";
-=======
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "types";
->>>>>>> - add recaptcha validation on hide report
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -283,7 +280,7 @@ export class ClaimReviewService {
     }
 
     async verifyIfReviewIsHdden(review) {
-        if (review.isHidden) {
+        if (review?.isHidden) {
             const history = await this.historyService.getByTargetIdModelAndType(
                 review._id,
                 TargetModel.ClaimReview,

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -11,6 +12,8 @@ import Seo from "../components/Seo";
 import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
+import { ory } from "../lib/orysdk";
+import Loading from "../components/Loading";
 
 const ClaimReviewPage: NextPage<{
     personality: any;
@@ -35,6 +38,15 @@ const ClaimReviewPage: NextPage<{
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const [role, setRole] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const isnotPublished =
+        claimReviewTask?.machine.value !== ReviewTaskStates.published;
+
+    const isHiddenAndUserDontHavePermission =
+        claimReview?.isHidden && (role === "regular" || role === null);
+
     dispatch({
         type: ActionTypes.SET_LOGIN_STATUS,
         login: isLoggedIn,
@@ -45,6 +57,17 @@ const ClaimReviewPage: NextPage<{
     });
 
     const review = sentence?.props?.classification;
+
+    useEffect(() => {
+        isLoggedIn &&
+            (function getRole() {
+                ory.toSession().then((session) => {
+                    setRole(session?.data?.identity?.traits?.role);
+                    setLoading(!loading);
+                });
+            })();
+    }, []);
+
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -79,6 +102,14 @@ const ClaimReviewPage: NextPage<{
         datePublished: sentence.date,
     };
 
+    if (loading) {
+        return (
+            <div style={{ margin: "10vh 0" }}>
+                <Loading />
+            </div>
+        );
+    }
+
     return (
         <>
             {review && <JsonLd {...jsonld} />}
@@ -89,7 +120,7 @@ const ClaimReviewPage: NextPage<{
                 })}
             />
 
-            {claimReviewTask?.machine.value !== ReviewTaskStates.published ? (
+            {isnotPublished || isHiddenAndUserDontHavePermission ? (
                 <ClaimReviewForm
                     personality={personality}
                     claim={claim}
@@ -104,10 +135,11 @@ const ClaimReviewPage: NextPage<{
                     claim={claim}
                     sentence={sentence}
                     href={href}
-                    isHidden={claimReview.isHidden}
+                    isHidden={claimReview?.isHidden}
                     context={claimReview.report}
                     sitekey={sitekey}
                     hideDescription={description}
+                    role={role}
                 />
             )}
             <AffixButton personalitySlug={personality.slug} />

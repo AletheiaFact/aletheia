@@ -1,4 +1,5 @@
-import { Body, Controller, Param, Put } from "@nestjs/common";
+import { Body, Controller, Param, Put, Get } from "@nestjs/common";
+import { IsPublic } from "../decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewService } from "./claim-review.service";
 
@@ -24,17 +25,6 @@ export class ClaimReviewController {
             body.hide,
             body.description
         );
-    }
-
-    @IsPublic()
-    @Get("api/review/:id")
-    get(@Param() params) {
-        return this.claimReviewService.getById(params.id);
-    }
-
-    @Delete("api/review/:id")
-    delete(@Param() params) {
-        return this.claimReviewService.delete(params.id);
     }
 
     @IsPublic()

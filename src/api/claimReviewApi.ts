@@ -23,7 +23,7 @@ const hideReview = (
     recaptcha = ""
 ) => {
     return request
-        .put(`/${sentence_hash}`, { hide, description, recaptcha })
+        .put(`/review/${sentence_hash}`, { hide, description, recaptcha })
         .then((response) => {
             message.success(
                 t(`claimReview:${hide ? "reviewHidded" : "reviewUnhidded"}`)

@@ -1,13 +1,9 @@
+import React from "react";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Col } from "antd";
 import { useTranslation } from "next-i18next";
-import React from "react";
-import colors from "../../styles/colors";
-import {
-    AletheiaModal,
-    ModalCancelButton,
-    ModalOkButton,
-} from "./AletheiaModal";
+import AletheiaButton, { ButtonType } from "../Button";
+import { AletheiaModal, ModalCancelButton } from "./AletheiaModal";
 
 const UnhideReviewModal = ({ visible, handleOk, handleCancel }) => {
     const { t } = useTranslation();
@@ -32,7 +28,7 @@ const UnhideReviewModal = ({ visible, handleOk, handleCancel }) => {
                         lineHeight: "16px",
                     }}
                 >
-                    Are you sure you want to Unhide this report
+                    {t("claimReview:unhideModalTitle")}
                 </span>
             </Col>
             <Col
@@ -42,31 +38,19 @@ const UnhideReviewModal = ({ visible, handleOk, handleCancel }) => {
                     justifyContent: "space-around",
                 }}
             >
-                <ModalCancelButton onClick={handleCancel} shape="round">
+                <ModalCancelButton type="text" onClick={handleCancel}>
                     <span
                         style={{
-                            color: colors.blueSecondary,
                             textDecorationLine: "underline",
-                            textAlign: "center",
-                            fontWeight: 700,
-                            fontSize: 14,
                         }}
                     >
-                        Cancel
+                        {t("orderModal:cancelButton")}
                     </span>
                 </ModalCancelButton>
-                <ModalOkButton onClick={handleOk} shape="round">
-                    <span
-                        style={{
-                            color: colors.white,
-                            textAlign: "center",
-                            fontWeight: 700,
-                            fontSize: 14,
-                        }}
-                    >
-                        Done
-                    </span>
-                </ModalOkButton>
+
+                <AletheiaButton type={ButtonType.blue} onClick={handleOk}>
+                    {t("orderModal:okButton")}
+                </AletheiaButton>
             </Col>
         </AletheiaModal>
     );

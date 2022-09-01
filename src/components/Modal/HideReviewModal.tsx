@@ -1,22 +1,17 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Col, Form } from "antd";
-import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { AletheiaModal, ModalOkButton } from "./AletheiaModal";
+import { AletheiaModal } from "./AletheiaModal";
 import TextArea from "../TextArea";
 import AletheiaCaptcha from "../AletheiaCaptcha";
+import AletheiaButton, { ButtonType } from "../Button";
 
 const HideReviewModal = ({ visible, handleOk, handleCancel, sitekey }) => {
     const { t } = useTranslation();
-    const [disableSubmit, setDisableSubmit] = useState(true);
     const [recaptcha, setRecaptcha] = useState("");
-
-    const onChangeCaptcha = (captchaString) => {
-        setRecaptcha(captchaString);
-        const hasRecaptcha = !!captchaString;
-        setDisableSubmit(!hasRecaptcha);
-    };
+    const hasCaptcha = !!recaptcha;
+    const recaptchaRef = useRef(null);
 
     return (
         <AletheiaModal
@@ -38,13 +33,12 @@ const HideReviewModal = ({ visible, handleOk, handleCancel, sitekey }) => {
                         fontWeight: 600,
                     }}
                 >
-                    Are you sure you want to hide this report
+                    {t("claimReview:hideModalTitle")}
                 </span>
             </Col>
             <Form
                 style={{ marginTop: 16, justifyContent: "space-around" }}
                 name="basic"
-                initialValues={{ remember: true }}
                 onFinish={handleOk}
             >
                 <Form.Item
@@ -62,31 +56,21 @@ const HideReviewModal = ({ visible, handleOk, handleCancel, sitekey }) => {
 
                 <Form.Item name="recaptcha">
                     <AletheiaCaptcha
+                        onChange={setRecaptcha}
                         sitekey={sitekey}
-                        onChange={onChangeCaptcha}
+                        ref={recaptchaRef}
                     />
                 </Form.Item>
 
-                <Col>
-                    <Form.Item>
-                        <ModalOkButton
-                            disable={disableSubmit}
-                            style={{ position: "absolute", top: 0, right: 0 }}
-                            htmlType="submit"
-                            shape="round"
-                        >
-                            <span
-                                style={{
-                                    color: colors.white,
-                                    textAlign: "center",
-                                    fontWeight: 700,
-                                    fontSize: 14,
-                                }}
-                            >
-                                Done
-                            </span>
-                        </ModalOkButton>
-                    </Form.Item>
+                <Col style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <AletheiaButton
+                        disabled={!hasCaptcha}
+                        htmlType="submit"
+                        type={ButtonType.blue}
+                        onClick={() => recaptchaRef.current?.resetRecaptcha()}
+                    >
+                        {t("orderModal:okButton")}
+                    </AletheiaButton>
                 </Col>
             </Form>
         </AletheiaModal>

@@ -8,5 +8,8 @@
     "verificationSectionTitle": "Verification report",
     "howSectionTitle": "How do we check?",
     "reviewHidded": "Hidden review",
-    "reviewUnhidded": "Unhidden review"
+    "reviewUnhidded": "Unhidden review",
+    "warningAlertTitle": "This report is hidden for legal reasons",
+    "unhideModalTitle": "Are you sure you want to unhide this report",
+    "hideModalTitle": "Are you sure you want to hide this report"
 }

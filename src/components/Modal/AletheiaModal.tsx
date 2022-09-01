@@ -36,12 +36,3 @@ export const ModalCancelButton = styled(Button)`
     height: 40px;
     width: 120px;
 `;
-
-export const ModalOkButton = styled(Button)`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: ${colors.bluePrimary};
-    width: 120px;
-    height: 40px;
-`;

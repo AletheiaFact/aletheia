@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, Col, Row } from "antd";
+import React, { useState } from "react";
+import { Col, Row } from "antd";
 import SocialMediaShare from "../SocialMediaShare";
 import SentenceReportCard from "./SentenceReportCard";
 import Banner from "./Banner";
@@ -8,13 +8,11 @@ import SentenceReportViewStyle from "./SentenceReportView.style";
 import SentenceReportContent from "./SentenceReportContent";
 import { useAppSelector } from "../../store/store";
 import ReviewApi from "../../api/claimReviewApi";
-import { EyeInvisibleFilled, EyeFilled } from "@ant-design/icons";
-import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import HideReviewModal from "../Modal/HideReviewModal";
-import WarningModal from "../Modal/WarningModal";
 import UnhideReviewModal from "../Modal/UnhideReview";
-import { ory } from "../../lib/orysdk";
+import AletheiaAlert from "../AletheiaAlert";
+import HideContentButton from "../HideContentButton";
 
 const SentenceReportView = ({
     personality,
@@ -25,6 +23,7 @@ const SentenceReportView = ({
     context,
     sitekey,
     hideDescription,
+    role,
 }) => {
     const { t } = useTranslation();
     const { isLoggedIn } = useAppSelector((state) => ({
@@ -33,16 +32,8 @@ const SentenceReportView = ({
 
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
-    const [role, setRole] = useState(null);
+    const [description, setDescription] = useState(hideDescription);
     const [hide, setHide] = useState(isHidden);
-
-    useEffect(() => {
-        (function getRole() {
-            ory.toSession().then((session) => {
-                setRole(session?.data?.identity?.traits?.role);
-            });
-        })();
-    }, []);
 
     return (
         <>
@@ -62,44 +53,22 @@ const SentenceReportView = ({
                                         style={{
                                             marginTop: 10,
                                             textAlign: "right",
+                                            height: 32,
                                         }}
                                     >
-                                        {hide ? (
-                                            <Button
-                                                onClick={() =>
-                                                    setIsUnhideModalVisible(
-                                                        !isUnhideModalVisible
-                                                    )
-                                                }
-                                                style={{
-                                                    padding: "5px",
-                                                    background: "none",
-                                                    border: "none",
-                                                    fontSize: 16,
-                                                    color: colors.bluePrimary,
-                                                }}
-                                            >
-                                                <EyeFilled />
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                onClick={() =>
-                                                    setIsHideModalVisible(
-                                                        !isHideModalVisible
-                                                    )
-                                                }
-                                                style={{
-                                                    padding: "5px",
-                                                    background: "none",
-                                                    border: "none",
-                                                    fontSize: 16,
-                                                    color: colors.bluePrimary,
-                                                    textAlign: "right",
-                                                }}
-                                            >
-                                                <EyeInvisibleFilled />
-                                            </Button>
-                                        )}
+                                        <HideContentButton
+                                            hide={hide}
+                                            handleHide={() =>
+                                                setIsUnhideModalVisible(
+                                                    !isUnhideModalVisible
+                                                )
+                                            }
+                                            handleUnhide={() =>
+                                                setIsHideModalVisible(
+                                                    !isHideModalVisible
+                                                )
+                                            }
+                                        />
                                     </Col>
                                 )}
                                 <SentenceReportCard
@@ -115,7 +84,24 @@ const SentenceReportView = ({
                             >
                                 <Banner />
                             </Col>
-                            <Col order={3}>
+
+                            {hide && (
+                                <Col
+                                    style={{ marginTop: 16, width: "100%" }}
+                                    order={3}
+                                >
+                                    <AletheiaAlert
+                                        type="warning"
+                                        message={t(
+                                            "claimReview:warningAlertTitle"
+                                        )}
+                                        description={description}
+                                        showIcon={true}
+                                    />
+                                </Col>
+                            )}
+
+                            <Col order={4}>
                                 <SentenceReportContent
                                     context={context}
                                     personality={personality}
@@ -147,17 +133,11 @@ const SentenceReportView = ({
                     ).then(() => {
                         setHide(!hide);
                         setIsHideModalVisible(!isHideModalVisible);
+                        setDescription(description);
                     });
                 }}
                 handleCancel={() => setIsHideModalVisible(false)}
                 sitekey={sitekey}
-            />
-
-            <WarningModal
-                width={"90%"}
-                hideDescription={hideDescription}
-                visible={role === "fact-checker" && isHidden}
-                closable={false}
             />
 
             <UnhideReviewModal

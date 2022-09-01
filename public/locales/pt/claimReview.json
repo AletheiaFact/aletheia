@@ -8,5 +8,8 @@
     "verificationSectionTitle": "Relatório da verificação",
     "howSectionTitle": "Como verificamos?",
     "reviewHidded": "Avaliação escondida",
-    "reviewUnhidded": "Avaliação revelada"
+    "reviewUnhidded": "Avaliação revelada",
+    "warningAlertTitle": "Este relatório está oculto por questões juridicas",
+    "unhideModalTitle": "Você tem certeza que deseja mostrar este relatório",
+    "hideModalTitle": "Você tem certeza que deseja esconder este relatório"
 }
