@@ -38,6 +38,7 @@ const SentenceReportView = ({
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
     const [description, setDescription] = useState(hideDescription);
     const [hide, setHide] = useState(isHidden);
+    const [isLoading, setIsLoading] = useState(false);
 
     return (
         <>
@@ -60,11 +61,11 @@ const SentenceReportView = ({
                                 ></div>
                                 <HideContentButton
                                     hide={hide}
-                                    handleHide={() =>
+                                    handleHide={() => {
                                         setIsUnhideModalVisible(
                                             !isUnhideModalVisible
-                                        )
-                                    }
+                                        );
+                                    }}
                                     handleUnhide={() =>
                                         setIsHideModalVisible(
                                             !isHideModalVisible
@@ -137,7 +138,9 @@ const SentenceReportView = ({
 
             <HideReviewModal
                 visible={isHideModalVisible}
+                isLoading={isLoading}
                 handleOk={({ description, recaptcha }) => {
+                    setIsLoading(!isLoading);
                     ReviewApi.hideReview(
                         sentence.data_hash,
                         !hide,
@@ -148,6 +151,7 @@ const SentenceReportView = ({
                         setHide(!hide);
                         setIsHideModalVisible(!isHideModalVisible);
                         setDescription(description);
+                        setIsLoading(!isLoading);
                     });
                 }}
                 handleCancel={() => setIsHideModalVisible(false)}
@@ -156,14 +160,17 @@ const SentenceReportView = ({
 
             <UnhideReviewModal
                 visible={isUnhideModalVisible}
-                handleOk={() =>
+                isLoading={isLoading}
+                handleOk={() => {
+                    setIsLoading(!isLoading);
                     ReviewApi.hideReview(sentence.data_hash, !hide, t).then(
                         () => {
                             setHide(!hide);
                             setIsUnhideModalVisible(!isUnhideModalVisible);
+                            setIsLoading(!isLoading);
                         }
-                    )
-                }
+                    );
+                }}
                 handleCancel={() =>
                     setIsUnhideModalVisible(!isUnhideModalVisible)
                 }

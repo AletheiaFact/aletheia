@@ -7,7 +7,13 @@ import TextArea from "../TextArea";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../Button";
 
-const HideReviewModal = ({ visible, handleOk, handleCancel, sitekey }) => {
+const HideReviewModal = ({
+    visible,
+    isLoading,
+    handleOk,
+    handleCancel,
+    sitekey,
+}) => {
     const { t } = useTranslation();
     const [recaptcha, setRecaptcha] = useState("");
     const hasCaptcha = !!recaptcha;
@@ -70,6 +76,7 @@ const HideReviewModal = ({ visible, handleOk, handleCancel, sitekey }) => {
                 <Col style={{ display: "flex", justifyContent: "flex-end" }}>
                     <AletheiaButton
                         disabled={!hasCaptcha}
+                        loading={isLoading}
                         htmlType="submit"
                         type={ButtonType.blue}
                         onClick={() => recaptchaRef.current?.resetRecaptcha()}

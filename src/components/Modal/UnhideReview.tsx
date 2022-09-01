@@ -5,7 +5,7 @@ import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../Button";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal";
 
-const UnhideReviewModal = ({ visible, handleOk, handleCancel }) => {
+const UnhideReviewModal = ({ visible, isLoading, handleOk, handleCancel }) => {
     const { t } = useTranslation();
 
     return (
@@ -48,7 +48,11 @@ const UnhideReviewModal = ({ visible, handleOk, handleCancel }) => {
                     </span>
                 </ModalCancelButton>
 
-                <AletheiaButton type={ButtonType.blue} onClick={handleOk}>
+                <AletheiaButton
+                    loading={isLoading}
+                    type={ButtonType.blue}
+                    onClick={handleOk}
+                >
                     {t("orderModal:okButton")}
                 </AletheiaButton>
             </Col>
