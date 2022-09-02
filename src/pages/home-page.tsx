@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
+import AffixButton from "../components/AffixButton/AffixButton";
 
 import Home from "../components/Home/Home";
 import Seo from "../components/Seo";
@@ -21,6 +22,7 @@ const HomePage: NextPage<{ personalities; stats; href; isLoggedIn }> = (
         <>
             <Seo title="Home" description={t("landingPage:description")} />
             <Home {...props} />
+            <AffixButton />
         </>
     );
 };

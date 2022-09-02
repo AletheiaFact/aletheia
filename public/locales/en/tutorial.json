@@ -1,6 +1,6 @@
 {
-    "modalTitle": "Adding speeches",
+    "modalTitle": "Adding personalities and speeches",
     "modalBody": "Use the + button on the bottom right corner to add a new speech to the database!",
-    "modalContent": "Use the <0></0> button on the bottom right corner to add a new speech to the database!",
+    "modalContent": "Use the <0></0> button on the bottom right corner to add a new personality or speech to the database!",
     "okButton": "Got it!"
 }
