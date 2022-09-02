@@ -31,9 +31,8 @@ describe("Create personality and claim", () => {
             `http://localhost:3000/personality/${personality.slug}`
         );
 
-        cy.get("[data-cy=testButtonAddClaim] > .anticon")
-            .should("be.visible")
-            .click();
+        cy.get(locators.floatButton.FLOAT_BUTTON).should("be.visible").click();
+        cy.get(locators.floatButton.ADD_CLAIM).should("be.visible").click();
 
         cy.get("[ data-cy=testTitleClaimForm]")
             .should("be.visible")

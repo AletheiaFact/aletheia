@@ -33,6 +33,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
             icon: <UserAddOutlined />,
             tooltip: t("affix:affixButtonCreatePersonality"),
             href: `/personality/search`,
+            dataCy: "testFloatButtonAddPersonality",
         },
     ];
 
@@ -41,6 +42,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
             icon: <FileAddFilled />,
             tooltip: t("affix:affixButtonCreateClaim"),
             href: `/personality/${personalitySlug}/claim/create`,
+            dataCy: "testFloatButtonAddClaim",
         });
     }
 
@@ -99,7 +101,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                         tooltipText={t("affix:affixButtonTitle")}
                         size="70px"
                         onClick={handleClick}
-                        data-cy={"testButtonAddClaim"}
+                        data-cy={"testFloatButton"}
                         icon={
                             <PlusOutlined
                                 style={{
@@ -117,6 +119,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                             icon={action.icon}
                             href={action.href}
                             size="50px"
+                            data-cy={action.dataCy}
                         />
                     ))}
             </div>
