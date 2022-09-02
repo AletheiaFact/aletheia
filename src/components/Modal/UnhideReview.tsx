@@ -3,7 +3,7 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Col } from "antd";
 import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../Button";
-import { AletheiaModal, ModalCancelButton } from "./AletheiaModal";
+import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 
 const UnhideReviewModal = ({ visible, isLoading, handleOk, handleCancel }) => {
     const { t } = useTranslation();
@@ -14,12 +14,11 @@ const UnhideReviewModal = ({ visible, isLoading, handleOk, handleCancel }) => {
             visible={visible}
             footer={false}
             onCancel={handleCancel}
+            width={500}
         >
-            <Col
-                style={{ fontSize: 16, display: "flex", alignItems: "center" }}
-            >
+            <Col style={{ fontSize: 16, display: "flex" }}>
                 <ExclamationCircleOutlined
-                    style={{ fontSize: 24, color: "#DB9F0D" }}
+                    style={{ fontSize: 24, color: "#DB9F0D", marginTop: -4 }}
                 />
                 <span
                     style={{

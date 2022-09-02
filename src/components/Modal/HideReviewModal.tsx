@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Col, Form } from "antd";
 import { useTranslation } from "next-i18next";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { AletheiaModal } from "./AletheiaModal";
+import { AletheiaModal } from "./AletheiaModal.style";
 import TextArea from "../TextArea";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../Button";
@@ -25,9 +25,14 @@ const HideReviewModal = ({
             visible={visible}
             footer={false}
             onCancel={handleCancel}
+            width={500}
         >
             <Col
-                style={{ fontSize: 16, display: "flex", alignItems: "center" }}
+                style={{
+                    fontSize: 16,
+                    display: "flex",
+                    width: "calc(100% - 20px)",
+                }}
             >
                 <ExclamationCircleOutlined
                     style={{ fontSize: 24, color: "#CA1105" }}

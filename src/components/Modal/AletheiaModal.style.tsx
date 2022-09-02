@@ -8,12 +8,12 @@ const AletheiaModal = styled(Modal)`
     padding: 0;
 
     .ant-modal-content {
-        width: 300px;
+        width: ${(props) => (props.width ? props.width : "300px")};
         margin: 0 auto;
         border-radius: 8px;
         background-color: ${colors.lightGray};
         box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
-        padding: 12px 24px 24px 24px;
+        padding: 26px 26px;
     }
 
     .ant-modal-body {
@@ -23,7 +23,7 @@ const AletheiaModal = styled(Modal)`
     .ant-modal-header {
         background: none;
         border-bottom: 0px;
-        padding: 10px;
+        padding: 0 0 10px 0;
     }
 
     .ant-modal-title {
