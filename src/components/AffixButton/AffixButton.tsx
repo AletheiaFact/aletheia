@@ -14,7 +14,6 @@ import AletheiaButton, { ButtonType } from "../Button";
 import { AletheiaModal } from "../Modal/AletheiaModal.style";
 import PulseAnimation from "../PulseAnimation";
 import Fab from "./Fab";
-
 interface AffixButtonProps {
     personalitySlug?: string;
 }
@@ -72,7 +71,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
 
     return (
         <>
-            <ul
+            <div
                 style={{
                     position: "fixed",
                     bottom: "3%",
@@ -120,7 +119,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                             size="50px"
                         />
                     ))}
-            </ul>
+            </div>
             <AletheiaModal
                 className="ant-modal-content"
                 visible={isModalVisible}
