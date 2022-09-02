@@ -21,7 +21,7 @@ import Loading from "../Loading";
 
 const OryLoginForm = () => {
     const [flow, setFlow] = useState<SelfServiceLoginFlow>();
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const router = useRouter();
 
@@ -31,7 +31,7 @@ const OryLoginForm = () => {
 
     const onSubmit = (values: SubmitSelfServiceLoginFlowBody) => {
         orySubmitLogin({ router, flow, setFlow, t, values }).then(() => {
-            setIsFormSubmitted(false);
+            setIsLoading(false);
         });
     };
 
@@ -91,8 +91,8 @@ const OryLoginForm = () => {
     };
 
     const onFinish = (values) => {
-        if (!isFormSubmitted) {
-            setIsFormSubmitted(true);
+        if (!isLoading) {
+            setIsLoading(true);
             const { password, email } = values;
             initializeCsrf();
             flowValues = {
@@ -175,9 +175,9 @@ const OryLoginForm = () => {
                                 }}
                             >
                                 <Button
+                                    loading={isLoading}
                                     type={ButtonType.blue}
                                     htmlType="submit"
-                                    disabled={isFormSubmitted}
                                     data-cy={"loginButton"}
                                 >
                                     {t("login:submitButton")}
@@ -214,6 +214,7 @@ const OryLoginForm = () => {
                                 }}
                             >
                                 <Button
+                                    loading={isLoading}
                                     type={ButtonType.blue}
                                     htmlType="submit"
                                 >

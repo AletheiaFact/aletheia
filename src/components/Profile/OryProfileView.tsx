@@ -17,7 +17,7 @@ import { Totp } from "./Totp";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { t } = useTranslation();
     const formRef = useRef<FormInstance>();
@@ -42,13 +42,13 @@ const OryProfileView = ({ user }) => {
     const onSubmit = (values: ValuesType) => {
         orySubmitSettings({ router, flow, setFlow, t, values });
         api.updatePassword({ userId: user._id }, t).then(() => {
-            setIsFormSubmitted(false);
+            setIsLoading(false);
         });
     };
 
     const onFinish = (values) => {
-        if (!isFormSubmitted) {
-            setIsFormSubmitted(true);
+        if (!isLoading) {
+            setIsLoading(true);
             initializeCsrf();
             flowValues = {
                 ...flowValues,
@@ -132,9 +132,9 @@ const OryProfileView = ({ user }) => {
                 </Form.Item>
                 <Form.Item>
                     <Button
+                        loading={isLoading}
                         type={ButtonType.blue}
                         htmlType="submit"
-                        disabled={isFormSubmitted}
                     >
                         {t("login:submitButton")}
                     </Button>
