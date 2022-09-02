@@ -13,7 +13,7 @@ const AletheiaModal = styled(Modal)`
         border-radius: 8px;
         background-color: ${colors.lightGray};
         box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
-        padding: 16px 24px;
+        padding: 12px 24px 24px 24px;
     }
 
     .ant-modal-body {
@@ -36,8 +36,8 @@ const AletheiaModal = styled(Modal)`
 
     svg[data-icon="close"] {
         margin-top: 26px;
-        width: 10px;
-        height: 10px;
+        width: 13px;
+        height: 13px;
         color: ${colors.blackPrimary};
         margin-right: 20px;
     }
