@@ -1,9 +1,7 @@
 import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 
-import { useAppSelector } from "../../store/store";
 import ClaimList from "../Claim/ClaimList";
-import AffixButton from "../AffixButton/AffixButton";
 import Loading from "../Loading";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import Seo from "../Seo";
@@ -11,9 +9,6 @@ import MorePersonalities from "./MorePersonalities";
 import PersonalityCard from "./PersonalityCard";
 
 const PersonalityView = ({ personality, href, personalities }) => {
-    const { isLoggedIn } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-    }));
     const { t } = useTranslation();
     if (!personality) {
         return <Loading />;
@@ -50,8 +45,6 @@ const PersonalityView = ({ personality, href, personalities }) => {
                 href={href}
                 title={t("personality:otherPersonalitiesTitle")}
             />
-
-            {isLoggedIn && <AffixButton personalitySlug={personality.slug} />}
         </>
     );
 };

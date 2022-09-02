@@ -7,6 +7,7 @@ import {
 import Cookies from "js-cookie";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
+import { useAppSelector } from "../../store/store";
 
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
@@ -22,6 +23,9 @@ interface AffixButtonProps {
  * @param personalitySlug if present will display the Create Claim option too
  */
 const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state.login,
+    }));
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsVisible, setIsOptionsVisible] = useState(false);
     const { t } = useTranslation();
@@ -61,6 +65,10 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
         }
         toggleFloatingdrawer();
     };
+
+    if (!isLoggedIn) {
+        return null;
+    }
 
     return (
         <>
