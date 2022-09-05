@@ -53,7 +53,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
     }, [inputValue, topicsArray]);
 
     return (
-        <Col>
+        <>
             <Col
                 style={{
                     marginBottom: 12,
@@ -134,7 +134,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
                     </>
                 )}
             </Col>
-        </Col>
+        </>
     );
 };
 

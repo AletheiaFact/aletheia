@@ -21,24 +21,33 @@ import usersApi from "../../../api/user";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import { useAppSelector } from "../../../store/store";
 
-const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
+const DynamicForm = ({
+    sentence_hash,
+    personality,
+    claim,
+    sitekey,
+    isEnableAutoSave,
+}) => {
     const {
         handleSubmit,
         control,
         getValues,
         reset,
         formState: { errors },
+        watch,
     } = useForm();
     const [service, setService] = useState(null);
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
-    const [recaptchaString, setRecaptchaString] = useState("");
     const { t } = useTranslation();
+    const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
+
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
     const [isLoadingGoBack, setIsLoadingGoBack] = useState(false);
     const [isLoadingDraft, setIsLoadingDraft] = useState(false);
+
     const { isLoggedIn } = useAppSelector((state) => ({
         isLoggedIn: state.login,
     }));
@@ -127,6 +136,29 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                     setCurrentFormAndNextEvents(newMachine.value, newMachine);
                 });
     }, []);
+
+    useEffect(() => {
+        let timeout: NodeJS.Timeout;
+        const subscription = watch((value) => {
+            if (!isEnableAutoSave || timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (isEnableAutoSave)
+                    reviewTaskApi.autoSaveDraft({
+                        sentence_hash,
+                        machine: {
+                            context: {
+                                reviewData: value,
+                                claimReview: {
+                                    personality,
+                                    claim,
+                                },
+                            },
+                        },
+                    });
+            }, 10000);
+        });
+        return () => subscription.unsubscribe();
+    }, [isEnableAutoSave, watch]);
 
     const fetchUserList = async (name) => {
         const userSearchResults = await usersApi.getUsers(name, t);

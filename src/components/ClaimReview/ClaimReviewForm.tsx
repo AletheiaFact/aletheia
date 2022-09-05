@@ -9,6 +9,7 @@ import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
 import { useAppSelector } from "../../store/store";
 import TopicInput from "./TopicInput";
+import SaveDraftSwitch from "./SaveDraftSwitch";
 
 const ClaimReviewForm = ({
     personality,
@@ -28,6 +29,7 @@ const ClaimReviewForm = ({
     const [formCollapsed, setFormCollapsed] = useState(
         claimReviewTask ? false : true
     );
+    const [isEnableAutoSave, setIsEnableAutoSave] = useState(false);
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
@@ -42,8 +44,14 @@ const ClaimReviewForm = ({
                     background: colors.lightGray,
                     padding: "0px 15px 20px",
                     boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
+                    marginBottom: 32,
                 }}
             >
+                <SaveDraftSwitch
+                    isEnableAutoSave={isEnableAutoSave}
+                    setIsEnableAutoSave={setIsEnableAutoSave}
+                />
+
                 <ClaimSentenceCard
                     personality={personality}
                     date={claim.date}
@@ -98,6 +106,7 @@ const ClaimReviewForm = ({
                         personality={personalityId}
                         claim={claimId}
                         sitekey={sitekey}
+                        isEnableAutoSave={isEnableAutoSave}
                     />
                 )}
             </Col>
