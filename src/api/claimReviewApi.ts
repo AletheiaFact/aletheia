@@ -15,13 +15,7 @@ const getLatestReviews = () => {
         .catch();
 };
 
-const hideReview = (
-    sentence_hash,
-    hide,
-    t,
-    description = "",
-    recaptcha = ""
-) => {
+const hideReview = (sentence_hash, hide, t, recaptcha, description = "") => {
     return request
         .put(`/review/${sentence_hash}`, { hide, description, recaptcha })
         .then((response) => {

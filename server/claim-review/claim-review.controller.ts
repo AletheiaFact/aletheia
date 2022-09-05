@@ -16,13 +16,11 @@ export class ClaimReviewController {
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     async update(@Param("sentence_hash") sentence_hash, @Body() body) {
-        if (body.hide === true) {
-            const validateCaptcha = await this.captchaService.validate(
-                body.recaptcha
-            );
-            if (!validateCaptcha) {
-                throw new Error("Error validating captcha");
-            }
+        const validateCaptcha = await this.captchaService.validate(
+            body.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
         }
         return this.claimReviewService.hideOrUnhideReview(
             sentence_hash,

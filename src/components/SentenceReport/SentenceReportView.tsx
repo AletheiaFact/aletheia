@@ -10,7 +10,7 @@ import { useAppSelector } from "../../store/store";
 import ReviewApi from "../../api/claimReviewApi";
 import { useTranslation } from "next-i18next";
 import HideReviewModal from "../Modal/HideReviewModal";
-import UnhideReviewModal from "../Modal/UnhideReview";
+import UnhideReviewModal from "../Modal/UnhideReviewModal";
 import AletheiaAlert from "../AletheiaAlert";
 import HideContentButton from "../HideContentButton";
 import { Roles } from "../../machine/enums";
@@ -145,8 +145,8 @@ const SentenceReportView = ({
                         sentence.data_hash,
                         !hide,
                         t,
-                        description,
-                        recaptcha
+                        recaptcha,
+                        description
                     ).then(() => {
                         setHide(!hide);
                         setIsHideModalVisible(!isHideModalVisible);
@@ -161,19 +161,23 @@ const SentenceReportView = ({
             <UnhideReviewModal
                 visible={isUnhideModalVisible}
                 isLoading={isLoading}
-                handleOk={() => {
+                handleOk={({ recaptcha }) => {
                     setIsLoading(true);
-                    ReviewApi.hideReview(sentence.data_hash, !hide, t).then(
-                        () => {
-                            setHide(!hide);
-                            setIsUnhideModalVisible(!isUnhideModalVisible);
-                            setIsLoading(false);
-                        }
-                    );
+                    ReviewApi.hideReview(
+                        sentence.data_hash,
+                        !hide,
+                        t,
+                        recaptcha
+                    ).then(() => {
+                        setHide(!hide);
+                        setIsUnhideModalVisible(!isUnhideModalVisible);
+                        setIsLoading(false);
+                    });
                 }}
                 handleCancel={() =>
                     setIsUnhideModalVisible(!isUnhideModalVisible)
                 }
+                sitekey={sitekey}
             />
         </>
     );

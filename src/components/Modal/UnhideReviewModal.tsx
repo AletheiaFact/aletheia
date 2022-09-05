@@ -1,13 +1,12 @@
 import React, { useRef, useState } from "react";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Col, Form } from "antd";
 import { useTranslation } from "next-i18next";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { AletheiaModal } from "./AletheiaModal.style";
-import TextArea from "../TextArea";
-import AletheiaCaptcha from "../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../Button";
+import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
+import AletheiaCaptcha from "../AletheiaCaptcha";
 
-const HideReviewModal = ({
+const UnhideReviewModal = ({
     visible,
     isLoading,
     handleOk,
@@ -28,24 +27,18 @@ const HideReviewModal = ({
             onCancel={handleCancel}
             width={500}
         >
-            <Col
-                style={{
-                    fontSize: 16,
-                    display: "flex",
-                    width: "calc(100% - 20px)",
-                }}
-            >
+            <Col style={{ fontSize: 16, display: "flex" }}>
                 <ExclamationCircleOutlined
-                    style={{ fontSize: 24, color: "#CA1105" }}
+                    style={{ fontSize: 24, color: "#DB9F0D", marginTop: -4 }}
                 />
                 <span
                     style={{
                         marginLeft: 10,
-                        lineHeight: "16px",
                         fontWeight: 600,
+                        lineHeight: "16px",
                     }}
                 >
-                    {t("claimReview:hideModalTitle")}
+                    {t("claimReview:unhideModalTitle")}
                 </span>
             </Col>
             <Form
@@ -53,24 +46,6 @@ const HideReviewModal = ({
                 name="basic"
                 onFinish={handleOk}
             >
-                <Form.Item
-                    name="description"
-                    rules={[
-                        {
-                            required: true,
-                            message: t("claimReview:descriptionInputError"),
-                        },
-                    ]}
-                    style={{ marginBottom: 16 }}
-                >
-                    <TextArea
-                        white="white"
-                        placeholder={t(
-                            "claimReview:descriptionInputPlaceholder"
-                        )}
-                    />
-                </Form.Item>
-
                 <Form.Item name="recaptcha">
                     <AletheiaCaptcha
                         onChange={setRecaptcha}
@@ -79,7 +54,30 @@ const HideReviewModal = ({
                     />
                 </Form.Item>
 
-                <Col style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Col
+                    style={{
+                        marginTop: 32,
+                        display: "flex",
+                        justifyContent: "space-around",
+                    }}
+                >
+                    <ModalCancelButton
+                        type="text"
+                        onClick={() => {
+                            setRecaptcha("");
+                            recaptchaRef.current?.resetRecaptcha();
+                            handleCancel();
+                        }}
+                    >
+                        <span
+                            style={{
+                                textDecorationLine: "underline",
+                            }}
+                        >
+                            {t("orderModal:cancelButton")}
+                        </span>
+                    </ModalCancelButton>
+
                     <AletheiaButton
                         disabled={!hasCaptcha}
                         loading={isLoading}
@@ -95,4 +93,4 @@ const HideReviewModal = ({
     );
 };
 
-export default HideReviewModal;
+export default UnhideReviewModal;
