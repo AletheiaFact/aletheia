@@ -21,13 +21,7 @@ import usersApi from "../../../api/user";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import { useAppSelector } from "../../../store/store";
 
-const DynamicForm = ({
-    sentence_hash,
-    personality,
-    claim,
-    sitekey,
-    isEnableAutoSave,
-}) => {
+const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const {
         handleSubmit,
         control,
@@ -48,8 +42,9 @@ const DynamicForm = ({
     const [isLoadingGoBack, setIsLoadingGoBack] = useState(false);
     const [isLoadingDraft, setIsLoadingDraft] = useState(false);
 
-    const { isLoggedIn } = useAppSelector((state) => ({
+    const { isLoggedIn, autoSave } = useAppSelector((state) => ({
         isLoggedIn: state.login,
+        autoSave: state.autoSave,
     }));
 
     const setDefaultValuesOfCurrentForm = (machine, form) => {
@@ -139,26 +134,28 @@ const DynamicForm = ({
 
     useEffect(() => {
         let timeout: NodeJS.Timeout;
-        const subscription = watch((value) => {
-            if (!isEnableAutoSave || timeout) clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                if (isEnableAutoSave)
-                    reviewTaskApi.autoSaveDraft({
-                        sentence_hash,
-                        machine: {
-                            context: {
-                                reviewData: value,
-                                claimReview: {
-                                    personality,
-                                    claim,
+        autoSave &&
+            watch((value) => {
+                if (timeout) clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    reviewTaskApi.autoSaveDraft(
+                        {
+                            sentence_hash,
+                            machine: {
+                                context: {
+                                    reviewData: value,
+                                    claimReview: {
+                                        personality,
+                                        claim,
+                                    },
                                 },
                             },
                         },
-                    });
-            }, 10000);
-        });
-        return () => subscription.unsubscribe();
-    }, [isEnableAutoSave, watch]);
+                        t
+                    );
+                }, 10000);
+            });
+    }, [watch]);
 
     const fetchUserList = async (name) => {
         const userSearchResults = await usersApi.getUsers(name, t);
