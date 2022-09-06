@@ -32,25 +32,31 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
     };
 
     return (
-        <SelectInput
+        <div
             style={{
-                paddingTop: 6,
                 display: "flex",
-                width: 70,
             }}
-            bordered={false}
-            showArrow={true}
-            value={language}
-            onSelect={setDefaultLanguage}
-            data-cy={props.dataCy}
         >
-            <Option default value="pt" data-cy="testLanguagePt">
-                <BR style={{ width: "25px" }} />
-            </Option>
-            <Option value="en" data-cy="testLanguageEn">
-                <GB title="EN" style={{ width: "25px" }} />
-            </Option>
-        </SelectInput>
+            <SelectInput
+                style={{
+                    paddingTop: 6,
+                    display: "flex",
+                    width: 70,
+                }}
+                bordered={false}
+                showArrow={true}
+                value={language}
+                onSelect={setDefaultLanguage}
+                data-cy={props.dataCy}
+            >
+                <Option default value="pt" data-cy="testLanguagePt">
+                    <BR style={{ width: "25px" }} />
+                </Option>
+                <Option value="en" data-cy="testLanguageEn">
+                    <GB title="EN" style={{ width: "25px" }} />
+                </Option>
+            </SelectInput>
+        </div>
     );
 };
 

@@ -9,7 +9,7 @@ import colors from "../styles/colors";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
-import SearchOverlay from "./Search/SearchOverlay";
+import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Sidebar";
 
 const MainApp = ({ children }) => {
@@ -17,7 +17,7 @@ const MainApp = ({ children }) => {
 
     const { enableOverlay, menuCollapsed } = useAppSelector((state) => {
         return {
-            enableOverlay: state?.search?.overlay,
+            enableOverlay: state?.search?.overlayVisible,
             menuCollapsed:
                 state?.menuCollapsed !== undefined
                     ? state?.menuCollapsed
@@ -43,8 +43,7 @@ const MainApp = ({ children }) => {
                 <Header />
                 <ContentWrapper>{children}</ContentWrapper>
                 <Footer />
-
-                {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
+                {enableOverlay && <OverlaySearchResults />}
             </Layout>
         </Layout>
     );
