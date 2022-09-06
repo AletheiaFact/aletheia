@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { S3 } from 'aws-sdk';
+import { Injectable } from "@nestjs/common";
+import { S3 } from "aws-sdk";
 
 @Injectable()
 export class FileManagementService {
@@ -25,18 +25,18 @@ export class FileManagementService {
      */
     async upload(file, bucket?: string) {
         if (!bucket && !this.bucket) {
-            throw Error('S3 bucket is not defined');
+            throw Error("S3 bucket is not defined");
         }
         const name = file.originalname;
         const fileExtension = name.substring(
-            name.lastIndexOf('.') + 1,
-            name.length,
+            name.lastIndexOf(".") + 1,
+            name.length
         );
         const fileName = `${name.substring(
             0,
-            name.indexOf('.'),
+            name.indexOf(".")
         )}-${new Date().toISOString()}.${fileExtension}`;
-      
+
         const { Location, Key } = await this.s3
             .upload({
                 Bucket: bucket || this.bucket,
@@ -45,14 +45,14 @@ export class FileManagementService {
                 ContentEncoding: file?.encoding,
                 ContentLength: file?.size,
                 Body: file.buffer,
-                ACL: 'public-read', // TODO: remove on future to create security
+                ACL: "public-read", // TODO: remove on future to create security
             })
             .promise();
-    
+
         const result = {
             FileURL: Location,
             Key,
-            Extension: Key.substring(Key.lastIndexOf('.') + 1, Key.length),
+            Extension: Key.substring(Key.lastIndexOf(".") + 1, Key.length),
         };
         return result;
     }
