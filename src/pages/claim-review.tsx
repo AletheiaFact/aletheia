@@ -37,6 +37,11 @@ const ClaimReviewPage: NextPage<{
         type: ActionTypes.SET_LOGIN_STATUS,
         login: isLoggedIn,
     });
+    dispatch({
+        type: ActionTypes.SET_AUTO_SAVE,
+        autoSave: true,
+    });
+
     const review = sentence?.props?.classification;
     const jsonld = {
         "@context": "https://schema.org",

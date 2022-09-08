@@ -55,10 +55,23 @@ const createClaimReviewTask = (params, t, type) => {
         });
 };
 
+const autoSaveDraft = (params, t) => {
+    return request
+        .put(`/${params.sentence_hash}`, { ...params })
+        .then((response) => {
+            message.success(t(`claimReviewTask:SAVE_DRAFT_SUCCESS`));
+            return response.data;
+        })
+        .catch((err) => {
+            throw err;
+        });
+};
+
 const ClaimReviewTaskApi = {
     getMachineBySentenceHash,
     createClaimReviewTask,
     getClaimReviewTasks,
+    autoSaveDraft,
 };
 
 export default ClaimReviewTaskApi;
