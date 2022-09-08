@@ -1,4 +1,5 @@
 {
+  "duplicatedTopicError": "Tópico já existente na sentença, remova: {{duplicatedTopics}}",
   "createTopicsSuccess": "Tópicos salvados com sucesso",
   "createTopicsError": "Erro ao salvar tópico",
   "placeholder": "Adicione tópicos à sentença",
