@@ -9,6 +9,7 @@ import AletheiaButton from "../Button";
 import SearchOverlay from "../Search/SearchOverlay";
 import Logo from "./Logo";
 import SelectLanguage from "./SelectLanguage";
+import UserMenu from "./UserMenu";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const HeaderContent = () => {
                 display: "flex",
                 alignItems: "center",
                 padding: "0 15px",
-                justifyContent: "space-between",
+                justifyContent: "space-evenly",
                 minWidth: "450px",
             }}
         >
@@ -51,7 +52,19 @@ const HeaderContent = () => {
                 <Logo color="white" />
             </a>
             <SearchOverlay />
-            <SelectLanguage dataCy={"LanguageButton"} defaultLanguage="pt" />
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "flex-end",
+                    padding: "0 15px",
+                }}
+            >
+                <UserMenu />
+                <SelectLanguage
+                    dataCy={"LanguageButton"}
+                    defaultLanguage="pt"
+                />
+            </div>
         </div>
     );
 };

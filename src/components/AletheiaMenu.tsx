@@ -1,27 +1,16 @@
-import React, { useEffect, useState } from "react";
 import { Menu } from "antd";
 import { useTranslation } from "next-i18next";
-import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+
 import { useAppSelector } from "../store/store";
-import { CreateLogoutHandler } from "./Login/LogoutAction";
-import { ory } from "../lib/orysdk";
 import { ActionTypes } from "../store/types";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const router = useRouter();
-    const onLogout = () => {
-        if (!isLoading) {
-            setIsLoading(true);
-            CreateLogoutHandler()
-                .then(() => router.push("/"))
-                .then(() => router.reload());
-        }
-    };
-    const [hasSession, setHasSession] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState(false);
 
     const { menuCollapsed } = useAppSelector((state) => {
         return {
@@ -39,15 +28,6 @@ const AletheiaMenu = () => {
         });
         router.push(menuItem.key);
     };
-    useEffect(() => {
-        ory.toSession()
-            .then(() => {
-                setHasSession(true);
-            })
-            .catch(() => {
-                setHasSession(false);
-            });
-    }, []);
 
     return (
         <Menu
@@ -60,16 +40,6 @@ const AletheiaMenu = () => {
             }}
             selectable={false}
         >
-            <Menu.Item
-                key="/profile"
-                data-cy={"testMyAccountItem"}
-                style={{
-                    fontSize: "18px",
-                }}
-                onClick={handleClick}
-            >
-                {t("menu:myAccountItem")}
-            </Menu.Item>
             <Menu.Item
                 key="/about"
                 data-cy={"testAboutItem"}
@@ -100,19 +70,6 @@ const AletheiaMenu = () => {
             >
                 {t("menu:codeOfConductItem")}
             </Menu.Item>
-            {hasSession && (
-                <Menu.Item
-                    data-cy={"testLogout"}
-                    key="/home"
-                    disabled={isLoading}
-                    style={{
-                        fontSize: "18px",
-                    }}
-                    onClick={onLogout}
-                >
-                    {t("menu:logout")}
-                </Menu.Item>
-            )}
         </Menu>
     );
 };
