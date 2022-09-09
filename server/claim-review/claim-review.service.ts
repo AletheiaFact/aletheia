@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
 import { LeanDocument, Model, Types } from "mongoose";
 import {
     ClaimReview,
@@ -11,11 +11,14 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
 import { SentenceService } from "../sentence/sentence.service";
+import { REQUEST } from "@nestjs/core";
+import { BaseRequest } from "../types";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
     private readonly logger = new Logger("ClaimReviewService");
     constructor(
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ClaimReview.name)
         private ClaimReviewModel: Model<ClaimReviewDocument> &
             ISoftDeletedModel<ClaimReviewDocument>,
@@ -46,7 +49,14 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false, isPublished: true } },
+            {
+                $match: {
+                    claim: claimId,
+                    isDeleted: false,
+                    isPublished: true,
+                    isHidden: false,
+                },
+            },
             {
                 $lookup: {
                     from: "reports",
@@ -68,7 +78,14 @@ export class ClaimReviewService {
      */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false, isPublished: true } },
+            {
+                $match: {
+                    claim: claimId,
+                    isDeleted: false,
+                    isPublished: true,
+                    isHidden: false,
+                },
+            },
             {
                 $lookup: {
                     from: "reports",
@@ -91,7 +108,12 @@ export class ClaimReviewService {
 
     async getUserReviewBySentenceHash(sentence_hash) {
         const user = await this.ClaimReviewModel.findOne(
-            { sentence_hash, isDeleted: false, isPublished: true },
+            {
+                sentence_hash,
+                isDeleted: false,
+                isPublished: true,
+                isHidden: false,
+            },
             {
                 usersId: 1,
             }
@@ -226,5 +248,51 @@ export class ClaimReviewService {
                 };
             })
         );
+    }
+
+    async hideOrUnhideReview(sentence_hash, hide, description) {
+        const review = await this.getReviewBySentenceHash(sentence_hash);
+        const newReview = {
+            ...review,
+            ...{
+                report: review?.report?._id,
+                isHidden: hide,
+                description: hide ? description : undefined,
+            },
+        };
+
+        const before = { isHidden: !hide };
+        const after = hide
+            ? { isHidden: hide, description }
+            : { isHidden: hide };
+
+        const history = this.historyService.getHistoryParams(
+            newReview._id,
+            TargetModel.ClaimReview,
+            this.req?.user,
+            hide ? HistoryType.Hide : HistoryType.Unhide,
+            after,
+            before
+        );
+        this.historyService.createHistory(history);
+
+        return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
+    }
+
+    async verifyIfReviewIsHdden(review) {
+        if (review?.isHidden) {
+            const history = await this.historyService.getByTargetIdModelAndType(
+                review._id,
+                TargetModel.ClaimReview,
+                0,
+                1,
+                "desc",
+                HistoryType.Hide
+            );
+
+            return history[0]?.details?.after?.description;
+        }
+
+        return "";
     }
 }
