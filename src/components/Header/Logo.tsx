@@ -14,7 +14,7 @@ const Logo = ({ color = colors.logoWhite }) => {
             data-cy={"logo"}
         >
             <svg
-                height="70px"
+                height="60px"
                 viewBox="0 0 957 517"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"

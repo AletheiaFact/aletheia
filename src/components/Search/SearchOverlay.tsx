@@ -33,9 +33,11 @@ const OverlayCol = styled(Col)`
         height: 70px;
         display: flex;
         align-items: center;
-
+        max-width: 320px;
+        padding-left: 15px;
         @media ${queries.sm} {
             display: none;
+            max-width: 100vw;
         }
     }
 
