@@ -1,4 +1,4 @@
-import { LeftCircleFilled, SearchOutlined } from "@ant-design/icons";
+import { LeftCircleFilled } from "@ant-design/icons";
 import { Col } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
