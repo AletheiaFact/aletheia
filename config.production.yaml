@@ -38,8 +38,8 @@ services:
       recaptcha_secret: RECAPTCHA_SECRET
       recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
       db:
-        connection_uri: mongodb://localhost/Aletheia
         atlas: true
+        connection_uri: MONGODB_URI
         options:
           useUnifiedTopology: true
           useNewUrlParser: true
