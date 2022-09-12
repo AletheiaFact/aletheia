@@ -69,17 +69,28 @@ export class HistoryService {
      * @param order asc or desc.
      * @returns The paginated history of a target.
      */
-    async getByTargetIdAndModel(
+    async getByTargetIdModelAndType(
         targetId,
         targetModel,
         page,
         pageSize,
-        order = "asc"
+        order = "asc",
+        type = ""
     ) {
-        return this.HistoryModel.find({
-            targetId: Types.ObjectId(targetId),
-            targetModel,
-        })
+        let query;
+        if (type) {
+            query = {
+                targetId: Types.ObjectId(targetId),
+                targetModel,
+                type,
+            };
+        } else {
+            query = {
+                targetId: Types.ObjectId(targetId),
+                targetModel,
+            };
+        }
+        return this.HistoryModel.find(query)
             .populate("user", "_id name")
             .skip(page * pageSize)
             .limit(pageSize)

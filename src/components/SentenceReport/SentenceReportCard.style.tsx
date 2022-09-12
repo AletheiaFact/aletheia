@@ -4,7 +4,7 @@ import { queries } from "../../styles/mediaQueries";
 
 const SentenceReportCardStyle = styled.div`
     .main-content {
-        padding-top: 116px;
+        padding-top: 80px;
     }
 
     .personality-name {

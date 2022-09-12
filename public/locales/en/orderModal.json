@@ -1,5 +1,7 @@
 {
-  "title": "Sort personalities by",
-  "radioAsc": "Oldest",
-  "radioDesc": "Newest"
+    "title": "Sort personalities by",
+    "radioAsc": "Oldest",
+    "radioDesc": "Newest",
+    "okButton": "Done",
+    "cancelButton": "Cancel"
 }

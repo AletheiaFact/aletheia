@@ -6,13 +6,22 @@ import ClaimView from "../components/Claim/ClaimView";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
+import { useDispatch } from "react-redux";
+import { ActionTypes } from "../store/types";
+import AffixButton from "../components/AffixButton/AffixButton";
 
-const ClaimPage: NextPage<{ personality; claim; href }> = ({
+const ClaimPage: NextPage<{ personality; claim; href; isLoggedIn }> = ({
     personality,
     claim,
     href,
+    isLoggedIn,
 }) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
+    dispatch({
+        type: ActionTypes.SET_LOGIN_STATUS,
+        login: isLoggedIn,
+    });
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "Claim",
@@ -37,6 +46,7 @@ const ClaimPage: NextPage<{ personality; claim; href }> = ({
             />
             <JsonLd {...jsonld} />
             <ClaimView personality={personality} claim={claim} href={href} />
+            <AffixButton personalitySlug={personality.slug} />
         </>
     );
 };
@@ -51,6 +61,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personality: JSON.parse(JSON.stringify(query.personality)),
             claim: JSON.parse(JSON.stringify(query.claim)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            isLoggedIn: req.user ? true : false,
         },
     };
 }

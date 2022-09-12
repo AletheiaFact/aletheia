@@ -5,7 +5,7 @@ import sentenceApi from "../../api/sentenceApi";
 import AutoComplete from "./Autocomplete";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
-import { EditFilled } from "@ant-design/icons";
+import { EditFilled, PlusOutlined } from "@ant-design/icons";
 import AletheiaButton from "../Button";
 import { useAppSelector } from "../../store/store";
 import TagsList from "./TagsList";
@@ -20,7 +20,10 @@ const TopicInput = ({ sentence_hash, topics }) => {
     const [inputValue, setInputValue] = useState<string[]>([]);
     const [currentInputValue, setCurrentInputValue] = useState<string[]>([]);
     const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
+    const [showTopicErrorMessage, setShowTopicErrorMessage] =
+        useState<boolean>(false);
     const [tags, setTags] = useState<string[]>([]);
+    const [duplicatedErrorMessage, setDuplicatedErrorMessage] = useState("");
 
     const fetchTopicList = async (topic) => {
         const topicSearchResults = await topicApi.getTopics(topic, t);
@@ -35,8 +38,20 @@ const TopicInput = ({ sentence_hash, topics }) => {
         sentenceApi.deleteSentenceTopic(newTopics, sentence_hash);
     };
 
+    const getDuplicated = (array1, array2) => {
+        return array1.filter((object1) => {
+            return array2.some((object2) => {
+                return object1 === object2;
+            });
+        });
+    };
+
+    const duplicated = [...getDuplicated(inputValue, topicsArray)];
+
     const handleEdit = () => {
-        if (inputValue.length) {
+        if (duplicated.length > 0) {
+            setShowTopicErrorMessage(!showTopicErrorMessage);
+        } else if (inputValue.length) {
             setTopicsArray(tags);
             setCurrentInputValue([]);
             topicApi.createTopics({ topics: tags, sentence_hash }, t);
@@ -46,6 +61,9 @@ const TopicInput = ({ sentence_hash, topics }) => {
     };
 
     useEffect(() => {
+        duplicated.length > 0
+            ? setDuplicatedErrorMessage(duplicated.join(", "))
+            : setShowTopicErrorMessage(false);
         const filterValues = inputValue.filter(
             (value) => !topicsArray.includes(value)
         );
@@ -53,7 +71,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
     }, [inputValue, topicsArray]);
 
     return (
-        <Col>
+        <>
             <Col
                 style={{
                     marginBottom: 12,
@@ -81,7 +99,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
                             color: colors.bluePrimary,
                         }}
                     >
-                        <EditFilled />
+                        {tags.length ? <EditFilled /> : <PlusOutlined />}
                     </Button>
                 )}
             </Col>
@@ -130,11 +148,25 @@ const TopicInput = ({ sentence_hash, topics }) => {
                                     {t("topics:inputRule")}
                                 </span>
                             )}
+                            {showTopicErrorMessage && (
+                                <span
+                                    style={{
+                                        width: "100%",
+                                        marginLeft: 20,
+                                        color: "#ff4d4f",
+                                    }}
+                                >
+                                    {t("topics:duplicatedTopicError", {
+                                        duplicatedTopics:
+                                            duplicatedErrorMessage,
+                                    })}
+                                </span>
+                            )}
                         </Col>
                     </>
                 )}
             </Col>
-        </Col>
+        </>
     );
 };
 

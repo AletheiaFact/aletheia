@@ -3,7 +3,7 @@ import React from "react";
 
 const PersonalitySkeleton = () => {
     return (
-        <Row style={{ marginTop: 64, width: "100%" }}>
+        <Row style={{ marginBottom: 64, width: "100%" }}>
             <Col span={20} style={{ paddingLeft: 50 }}>
                 <Skeleton
                     avatar

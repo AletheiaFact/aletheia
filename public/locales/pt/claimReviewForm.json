@@ -32,5 +32,6 @@
     "sourcesLabel": "Forneça ao menos um link de uma fonte confiável",
     "sourcesPlaceholder": "Cole uma URL",
     "addSourceLabel": "Incluir outra fonte",
-    "loginButton": "Faça login para continuar"
+    "loginButton": "Faça login para continuar",
+    "notReviewed": "Não revisado"
 }

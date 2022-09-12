@@ -14,6 +14,16 @@ const locators = {
         SELECT_PERSONALITY: `[data-cy=${personality.name}]`,
     },
 
+    claim: {
+        BTN_OK_TUTORIAL: "[data-cy=testButtonTutorialOk]",
+    },
+
+    floatButton: {
+        FLOAT_BUTTON: "[data-cy=testFloatButton]",
+        ADD_CLAIM: "[data-cy=testFloatButtonAddClaim]",
+        ADD_PERSONALITY: "[data-cy=testFloatButtonAddPersonality]",
+    },
+
     claimReview: {
         BTN_START_CLAIM_REVIEW: "[data-cy=testAddReviewButton]",
         INPUT_USER: "[data-cy=testClaimReviewusersId]",

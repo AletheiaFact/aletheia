@@ -14,6 +14,7 @@ export const Totp = ({ flow, setFlow }) => {
     const { Title } = Typography;
     const [textSource, setTextSource] = useState("");
     const [showForm, setShowForm] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const router = useRouter();
 
@@ -55,25 +56,33 @@ export const Totp = ({ flow, setFlow }) => {
     }, [flow]);
 
     const onSubmitLink = (values: ValuesType) => {
-        orySubmitTotp({ router, flow, setFlow, t, values }).catch(() => {
-            message.error(t("profile:totpIncorectCodeMessage"));
-        });
+        orySubmitTotp({ router, flow, setFlow, t, values })
+            .then(() => setIsLoading(false))
+            .catch(() => {
+                message.error(t("profile:totpIncorectCodeMessage"));
+                setIsLoading(false);
+            });
     };
 
     const onSubmitUnLink = () => {
         initializeCsrf();
+        setIsLoading(true);
         const values = {
             csrf_token: flowValues.csrf_token,
             totp_unlink: true,
             method: "totp",
         };
-        orySubmitTotp({ router, flow, setFlow, t, values }).catch(() => {
-            message.error(t("prifile:totpUnLinkErrorMessage"));
-        });
+        orySubmitTotp({ router, flow, setFlow, t, values })
+            .then(() => setIsLoading(false))
+            .catch(() => {
+                message.error(t("prifile:totpUnLinkErrorMessage"));
+                setIsLoading(false);
+            });
     };
 
     const onFinish = (values) => {
         initializeCsrf();
+        setIsLoading(true);
         flowValues = {
             ...flowValues,
             totp_code: values.totp,
@@ -159,36 +168,43 @@ export const Totp = ({ flow, setFlow }) => {
                     >
                         <InputPassword />
                     </Form.Item>
-                    <AletheiaButton type={ButtonType.blue} htmlType="submit">
+                    <AletheiaButton
+                        type={ButtonType.blue}
+                        htmlType="submit"
+                        loading={isLoading}
+                    >
                         {t("login:submitButton")}
                     </AletheiaButton>
                 </Form>
             )}
             {!showForm && (
-                <AletheiaButton
-                    onClick={onSubmitUnLink}
-                    style={{
-                        width: "100%",
-                        marginTop: "21px",
-                        marginBottom: "21px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        paddingBottom: 0,
-                    }}
-                    type={ButtonType.blue}
-                >
-                    <Title
-                        level={4}
+                <Form onFinish={onSubmitUnLink}>
+                    <AletheiaButton
+                        loading={isLoading}
+                        htmlType="submit"
                         style={{
-                            fontSize: 14,
-                            color: colors.white,
-                            fontWeight: 400,
+                            width: "100%",
+                            marginTop: "21px",
+                            marginBottom: "21px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            paddingBottom: 0,
                         }}
+                        type={ButtonType.blue}
                     >
-                        {t("profile:totpUnLinkSubmit")}
-                    </Title>
-                </AletheiaButton>
+                        <Title
+                            level={4}
+                            style={{
+                                fontSize: 14,
+                                color: colors.white,
+                                fontWeight: 400,
+                            }}
+                        >
+                            {t("profile:totpUnLinkSubmit")}
+                        </Title>
+                    </AletheiaButton>
+                </Form>
             )}
         </>
     );

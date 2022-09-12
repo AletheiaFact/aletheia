@@ -28,16 +28,23 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         getValues,
         reset,
         formState: { errors },
+        watch,
     } = useForm();
     const [service, setService] = useState(null);
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
-    const [recaptchaString, setRecaptchaString] = useState("");
     const { t } = useTranslation();
+    const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
-    const { isLoggedIn } = useAppSelector((state) => ({
+
+    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+    const [isLoadingGoBack, setIsLoadingGoBack] = useState(false);
+    const [isLoadingDraft, setIsLoadingDraft] = useState(false);
+
+    const { isLoggedIn, autoSave } = useAppSelector((state) => ({
         isLoggedIn: state.login,
+        autoSave: state.autoSave,
     }));
 
     const setDefaultValuesOfCurrentForm = (machine, form) => {
@@ -90,6 +97,15 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         }
     };
 
+    const isButtonLoading = (eventName) => {
+        if (eventName === ReviewTaskEvents.goback) {
+            return isLoadingGoBack;
+        }
+        return eventName === ReviewTaskEvents.draft
+            ? isLoadingDraft
+            : isLoadingSubmit;
+    };
+
     useEffect(() => {
         isLoggedIn &&
             reviewTaskApi
@@ -115,6 +131,31 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                     setCurrentFormAndNextEvents(newMachine.value, newMachine);
                 });
     }, []);
+
+    useEffect(() => {
+        let timeout: NodeJS.Timeout;
+        autoSave &&
+            watch((value) => {
+                if (timeout) clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    reviewTaskApi.autoSaveDraft(
+                        {
+                            sentence_hash,
+                            machine: {
+                                context: {
+                                    reviewData: value,
+                                    claimReview: {
+                                        personality,
+                                        claim,
+                                    },
+                                },
+                            },
+                        },
+                        t
+                    );
+                }, 10000);
+            });
+    }, [watch]);
 
     const fetchUserList = async (name) => {
         const userSearchResults = await usersApi.getUsers(name, t);
@@ -182,6 +223,22 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         });
 
     const sendEventToMachine = (formData, eventName) => {
+        if (eventName === ReviewTaskEvents.draft) {
+            setIsLoadingDraft(true);
+        } else if (eventName !== ReviewTaskEvents.goback) {
+            setIsLoadingSubmit(true);
+        }
+
+        const buttonLoading = (eventName) => {
+            if (eventName === ReviewTaskEvents.draft) {
+                return setIsLoadingDraft;
+            }
+            return eventName === ReviewTaskEvents.goback
+                ? setIsLoadingGoBack
+                : setIsLoadingSubmit;
+        };
+
+        const setIsLoading = buttonLoading(eventName);
         service.send(eventName, {
             sentence_hash,
             reviewData: {
@@ -195,6 +252,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
             t,
             recaptchaString,
             setCurrentFormAndNextEvents,
+            setIsLoading,
         });
         setRecaptchaString("");
         recaptchaRef.current?.resetRecaptcha();
@@ -261,6 +319,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                 {nextEvents?.map((event) => {
                     return (
                         <AletheiaButton
+                            loading={isButtonLoading(event)}
                             key={event}
                             type={ButtonType.blue}
                             htmlType={

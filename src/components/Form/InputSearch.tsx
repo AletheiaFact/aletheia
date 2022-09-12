@@ -35,7 +35,7 @@ const InputSearch = (props) => {
             loading = true;
             props.callback(searchText);
             loading = false;
-        }, 300);
+        }, 1000);
     };
 
     return (

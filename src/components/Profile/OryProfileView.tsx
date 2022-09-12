@@ -1,4 +1,3 @@
-import { LoadingOutlined } from "@ant-design/icons";
 import {
     SelfServiceSettingsFlow,
     SubmitSelfServiceSettingsFlowWithPasswordMethodBody as ValuesType,
@@ -7,16 +6,18 @@ import { Alert, Form, FormInstance, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
+
 import { oryGetSettingsFlow, orySubmitSettings } from "../../api/ory";
+import api from "../../api/user";
+import { getUiNode } from "../../lib/orysdk/utils";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
-import api from "../../api/user";
+import Loading from "../Loading";
 import { Totp } from "./Totp";
-import { getUiNode } from "../../lib/orysdk/utils";
 
 const OryProfileView = ({ user }) => {
     const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
-    const [ isFormSubmitted, setIsFormSubmitted ] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { t } = useTranslation();
     const formRef = useRef<FormInstance>();
@@ -32,22 +33,22 @@ const OryProfileView = ({ user }) => {
     };
 
     const initializeCsrf = () => {
-        const csrfNode = getUiNode(flow, "name", "csrf_token")
-            if (csrfNode) {
-                flowValues.csrf_token = csrfNode.value;
-            }
-    }
+        const csrfNode = getUiNode(flow, "name", "csrf_token");
+        if (csrfNode) {
+            flowValues.csrf_token = csrfNode.value;
+        }
+    };
 
     const onSubmit = (values: ValuesType) => {
         orySubmitSettings({ router, flow, setFlow, t, values });
         api.updatePassword({ userId: user._id }, t).then(() => {
-            setIsFormSubmitted(false)
-        })
+            setIsLoading(false);
+        });
     };
 
     const onFinish = (values) => {
-        if(!isFormSubmitted) {
-            setIsFormSubmitted(true)
+        if (!isLoading) {
+            setIsLoading(true);
             initializeCsrf();
             flowValues = {
                 ...flowValues,
@@ -58,7 +59,7 @@ const OryProfileView = ({ user }) => {
     };
 
     if (!flow) {
-        return <LoadingOutlined />;
+        return <Loading />;
     }
 
     return (
@@ -131,18 +132,15 @@ const OryProfileView = ({ user }) => {
                 </Form.Item>
                 <Form.Item>
                     <Button
+                        loading={isLoading}
                         type={ButtonType.blue}
                         htmlType="submit"
-                        disabled={isFormSubmitted}
                     >
                         {t("login:submitButton")}
                     </Button>
                 </Form.Item>
             </Form>
-            <Totp 
-                flow={flow}
-                setFlow={setFlow}
-            />
+            <Totp flow={flow} setFlow={setFlow} />
         </>
     );
 };

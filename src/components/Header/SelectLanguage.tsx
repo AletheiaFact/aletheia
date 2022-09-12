@@ -2,8 +2,18 @@ import { Select } from "antd";
 import { BR, GB } from "country-flag-icons/react/3x2";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import colors from "../../styles/colors";
 
 const { Option } = Select;
+
+const SelectInput = styled(Select)`
+    background-color: none;
+    .ant-select-arrow {
+        color: ${colors.white};
+        font-size: 1rem;
+    }
+`;
 
 const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
     const [language, setLanguage] = useState(props.defaultLanguage);
@@ -22,14 +32,14 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
     };
 
     return (
-        <Select
+        <SelectInput
             style={{
-                paddingTop: 15,
+                paddingTop: 6,
                 display: "flex",
-                width: 50,
+                width: 70,
             }}
             bordered={false}
-            showArrow={false}
+            showArrow={true}
             value={language}
             onSelect={setDefaultLanguage}
             data-cy={props.dataCy}
@@ -40,7 +50,7 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
             <Option value="en" data-cy="testLanguageEn">
                 <GB title="EN" style={{ width: "25px" }} />
             </Option>
-        </Select>
+        </SelectInput>
     );
 };
 

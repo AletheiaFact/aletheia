@@ -1,28 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { Alert, Form, message, Row } from "antd";
-import InputPassword from "../InputPassword";
-import Input from "../AletheiaInput";
-import Button, { ButtonType } from "../Button";
 import {
     SelfServiceLoginFlow,
     SubmitSelfServiceLoginFlowBody,
-    SubmitSelfServiceSettingsFlowWithTotpMethodBody as TotpValuesType,
     SubmitSelfServiceLoginFlowWithPasswordMethodBody as ValuesType,
-    UiNodeInputAttributes,
+    SubmitSelfServiceSettingsFlowWithTotpMethodBody as TotpValuesType,
 } from "@ory/client";
-import { isUiNodeInputAttributes } from "@ory/integrations/ui";
+import { Alert, Form, message, Row } from "antd";
+import { AxiosError } from "axios";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+
 import { oryGetLoginFlow, orySubmitLogin } from "../../api/ory";
-import { LoadingOutlined } from "@ant-design/icons";
-import { getUiNode } from "../../lib/orysdk/utils";
 import { ory } from "../../lib/orysdk";
-import { AxiosError } from "axios";
 import { handleFlowError } from "../../lib/orysdk/errors";
+import { getUiNode } from "../../lib/orysdk/utils";
+import Input from "../AletheiaInput";
+import Button, { ButtonType } from "../Button";
+import InputPassword from "../InputPassword";
+import Loading from "../Loading";
 
 const OryLoginForm = () => {
     const [flow, setFlow] = useState<SelfServiceLoginFlow>();
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const router = useRouter();
 
@@ -32,7 +31,7 @@ const OryLoginForm = () => {
 
     const onSubmit = (values: SubmitSelfServiceLoginFlowBody) => {
         orySubmitLogin({ router, flow, setFlow, t, values }).then(() => {
-            setIsFormSubmitted(false);
+            setIsLoading(false);
         });
     };
 
@@ -60,7 +59,7 @@ const OryLoginForm = () => {
             });
 
     if (!flow) {
-        return <LoadingOutlined />;
+        return <Loading />;
     }
 
     let flowValues: ValuesType = {
@@ -78,16 +77,9 @@ const OryLoginForm = () => {
     };
 
     const initializeCsrf = () => {
-        if (flow?.ui?.nodes) {
-            const { nodes } = flow?.ui;
-            const csrfNode = nodes.find(
-                (node) =>
-                    isUiNodeInputAttributes(node.attributes) &&
-                    node.attributes.name === "csrf_token"
-            ).attributes as UiNodeInputAttributes;
-            if (csrfNode) {
-                flowValues.csrf_token = csrfNode.value;
-            }
+        const csrfNode = getUiNode(flow, "name", "csrf_token");
+        if (csrfNode) {
+            flowValues.csrf_token = csrfNode.value;
         }
     };
 
@@ -99,8 +91,8 @@ const OryLoginForm = () => {
     };
 
     const onFinish = (values) => {
-        if (!isFormSubmitted) {
-            setIsFormSubmitted(true);
+        if (!isLoading) {
+            setIsLoading(true);
             const { password, email } = values;
             initializeCsrf();
             flowValues = {
@@ -183,9 +175,9 @@ const OryLoginForm = () => {
                                 }}
                             >
                                 <Button
+                                    loading={isLoading}
                                     type={ButtonType.blue}
                                     htmlType="submit"
-                                    disabled={isFormSubmitted}
                                     data-cy={"loginButton"}
                                 >
                                     {t("login:submitButton")}
@@ -222,6 +214,7 @@ const OryLoginForm = () => {
                                 }}
                             >
                                 <Button
+                                    loading={isLoading}
                                     type={ButtonType.blue}
                                     htmlType="submit"
                                 >

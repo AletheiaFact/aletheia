@@ -5,6 +5,7 @@ import JsonLd from "../components/JsonLd";
 import { GetLocale } from "../utils/GetLocale";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../store/types";
+import AffixButton from "../components/AffixButton/AffixButton";
 
 const PersonalityPage: NextPage<{
     personality: any;
@@ -32,6 +33,7 @@ const PersonalityPage: NextPage<{
                 href={href}
                 personalities={personalities}
             />
+            <AffixButton personalitySlug={personality.slug} />
         </>
     );
 };
