@@ -120,7 +120,12 @@ yarn build
 - Create your own configurations by clicking on Refine Your Index
 - Disable Dynamic Mapping and click in Add Field button in Fields Mapping
 - Select your field name, disable dynamic mapping and click in Add Data Type button
+- For personality search we select the name field
+- For sentence search we select the content field
+- For claim search we select the title and date field
 - Select your data type and change the configs if you want to
+- For claim title, personality name, and sentence content research, we select autocomplete data type, with 10 max grams and 3 min grams
+- For claim date field, we select Date data type
 - Add another data type if you want to click in the Add another data type icon
 - Save your changes
 - Review your new search index and click in Create Search Index button
