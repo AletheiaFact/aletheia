@@ -1,20 +1,23 @@
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
 import React from "react";
 import { useDispatch } from "react-redux";
+import actions from "../../store/actions";
 
 import { useAppSelector } from "../../store/store";
 import { ActionTypes } from "../../store/types";
 import colors from "../../styles/colors";
 import AletheiaButton from "../Button";
 import SearchOverlay from "../Search/SearchOverlay";
+import HeaderActionsStyle from "./HeaderActions.style";
 import Logo from "./Logo";
 import SelectLanguage from "./SelectLanguage";
 import UserMenu from "./UserMenu";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
-    const { menuCollapsed } = useAppSelector((state) => {
+    const { vw, menuCollapsed } = useAppSelector((state) => {
         return {
+            vw: state.vw,
             menuCollapsed:
                 state?.menuCollapsed !== undefined
                     ? state?.menuCollapsed
@@ -22,14 +25,18 @@ const HeaderContent = () => {
         };
     });
 
+    const handleClickSearchIcon = () => {
+        dispatch(actions.openResultsOverlay());
+    };
+
     return (
         <div
             style={{
                 display: "flex",
                 alignItems: "center",
-                padding: "0 15px",
+                padding: vw?.xs ? "0" : "0 15px",
                 justifyContent: "space-evenly",
-                minWidth: "450px",
+                minWidth: "335px",
             }}
         >
             <AletheiaButton
@@ -52,19 +59,27 @@ const HeaderContent = () => {
                 <Logo color="white" />
             </a>
             <SearchOverlay />
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "flex-end",
-                    padding: "0 15px",
-                }}
-            >
+            <HeaderActionsStyle>
+                {vw?.sm && (
+                    <AletheiaButton
+                        onClick={handleClickSearchIcon}
+                        data-cy={"testSearchPersonality"}
+                    >
+                        <SearchOutlined
+                            style={{
+                                fontSize: "16px",
+                                color: "white",
+                                padding: "8px",
+                            }}
+                        />
+                    </AletheiaButton>
+                )}
                 <UserMenu />
                 <SelectLanguage
                     dataCy={"LanguageButton"}
                     defaultLanguage="pt"
                 />
-            </div>
+            </HeaderActionsStyle>
         </div>
     );
 };

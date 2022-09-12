@@ -32,7 +32,7 @@ const Sidebar = ({ menuCollapsed, onToggleSidebar }) => {
                 }}
             >
                 <Col span={20}>
-                    <Logo color="blue" />
+                    <Logo color={colors.bluePrimary} />
                 </Col>
                 <Col span={4}>
                     <Button

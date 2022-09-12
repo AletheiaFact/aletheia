@@ -7,6 +7,7 @@ import styled from "styled-components";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
+import { queries } from "../../styles/mediaQueries";
 import AletheiaButton from "../Button";
 import OverlaySearchInput from "./OverlaySearchInput";
 
@@ -27,12 +28,25 @@ const OverlayCol = styled(Col)`
         color: ${colors.blackSecondary};
     }
 
+    .input-container {
+        width: 100%;
+        height: 70px;
+        display: flex;
+        align-items: center;
+
+        @media ${queries.sm} {
+            display: none;
+        }
+    }
+
     .overlay {
+        background-color: ${colors.bluePrimary};
         position: fixed;
         z-index: 3;
         width: 100vw;
         left: 0;
         top: 0;
+        display: flex;
         padding-right: 15px;
     }
 `;
@@ -46,64 +60,27 @@ const SearchOverlay = () => {
         };
     });
 
-    const handleClickSearchIcon = () => {
-        dispatch(actions.openResultsOverlay());
-    };
-
     return (
         <OverlayCol sm={1} md={12}>
             <div
-                style={{
-                    display: "flex",
-                    height: "70px",
-                    padding: "0 15px",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "100%",
-                    minWidth: "100px",
-                }}
+                className={`input-container ${
+                    vw?.sm && isOpen ? "overlay" : ""
+                }`}
             >
-                <div
-                    className={vw?.sm && isOpen ? "overlay" : ""}
-                    style={{
-                        backgroundColor: colors.bluePrimary,
-                        width: "100%",
-                        height: "70px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    {vw?.sm && isOpen && (
-                        <AletheiaButton
-                            onClick={() => {
-                                dispatch(actions.closeResultsOverlay());
-                            }}
-                        >
-                            <LeftCircleFilled
-                                style={{
-                                    fontSize: "24px",
-                                    color: "white",
-                                    padding: "8px",
-                                }}
-                            />
-                        </AletheiaButton>
-                    )}
-                    {(isOpen || !vw?.sm) && <OverlaySearchInput />}
-                </div>
-                {vw?.sm && (
+                {vw?.sm && isOpen && (
                     <AletheiaButton
-                        onClick={handleClickSearchIcon}
-                        data-cy={"testSearchPersonality"}
+                        onClick={() => {
+                            dispatch(actions.closeResultsOverlay());
+                        }}
                     >
-                        <SearchOutlined
+                        <LeftCircleFilled
                             style={{
-                                fontSize: "16px",
-                                color: "white",
-                                padding: "8px",
+                                fontSize: "24px",
                             }}
                         />
                     </AletheiaButton>
                 )}
+                {(isOpen || !vw?.sm) && <OverlaySearchInput />}
             </div>
         </OverlayCol>
     );
