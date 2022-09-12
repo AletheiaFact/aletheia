@@ -41,7 +41,7 @@ const UserMenu = () => {
         <Menu>
             <Menu.Item
                 key="/profile"
-                data-cy={"testMyAccountItem"}
+                data-cy={`test${hasSession ? "MyAccount" : "Login"}Item`}
                 style={{
                     fontSize: "18px",
                 }}
@@ -67,7 +67,10 @@ const UserMenu = () => {
 
     return (
         <Dropdown overlay={menu}>
-            <AletheiaButton style={{ paddingBottom: "4px" }}>
+            <AletheiaButton
+                style={{ paddingBottom: "4px" }}
+                data-cy="testUserIcon"
+            >
                 <UserIcon size="25px" />
             </AletheiaButton>
         </Dropdown>

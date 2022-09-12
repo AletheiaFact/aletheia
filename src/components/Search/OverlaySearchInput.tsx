@@ -36,6 +36,7 @@ const OverlaySearchInput = () => {
             placeholder={t("header:search_personality")}
             callback={handleInputSearch}
             suffix={<SearchOutlined />}
+            data-cy={"testInputSearchOverlay"}
         />
     );
 };
