@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch } from "react-redux";
 
-import { useAppSelector } from "../store/store";
-import { ActionTypes } from "../store/types";
+import actions from "../store/actions";
 import colors from "../styles/colors";
 
 const AletheiaMenu = () => {
@@ -13,20 +12,8 @@ const AletheiaMenu = () => {
     const dispatch = useDispatch();
     const router = useRouter();
 
-    const { menuCollapsed } = useAppSelector((state) => {
-        return {
-            menuCollapsed:
-                state?.menuCollapsed !== undefined
-                    ? state?.menuCollapsed
-                    : true,
-        };
-    });
-
     const handleClick = (menuItem) => {
-        dispatch({
-            type: ActionTypes.TOGGLE_MENU,
-            menuCollapsed: !menuCollapsed,
-        });
+        dispatch(actions.openSideMenu());
         router.push(menuItem.key);
     };
 

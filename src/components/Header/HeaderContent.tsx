@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
 import { useAppSelector } from "../../store/store";
-import { ActionTypes } from "../../store/types";
 import colors from "../../styles/colors";
 import AletheiaButton from "../Button";
 import SearchOverlay from "../Search/SearchOverlay";
@@ -41,10 +40,7 @@ const HeaderContent = () => {
             <AletheiaButton
                 data-cy="testOpenSideMenu"
                 onClick={() => {
-                    dispatch({
-                        type: ActionTypes.TOGGLE_MENU,
-                        menuCollapsed: !menuCollapsed,
-                    });
+                    dispatch(actions.openSideMenu());
                 }}
             >
                 <MenuOutlined

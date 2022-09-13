@@ -9,6 +9,14 @@ const actions = {
         type: ActionTypes.RESULTS_OVERLAY_VISIBLE,
         overlayVisible: false,
     }),
+    openSideMenu: () => ({
+        type: ActionTypes.TOGGLE_MENU,
+        menuCollapsed: false,
+    }),
+    closeSideMenu: () => ({
+        type: ActionTypes.TOGGLE_MENU,
+        menuCollapsed: true,
+    }),
 };
 
 export default actions;
