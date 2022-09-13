@@ -14,15 +14,7 @@ import UserMenu from "./UserMenu";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
-    const { vw, menuCollapsed } = useAppSelector((state) => {
-        return {
-            vw: state.vw,
-            menuCollapsed:
-                state?.menuCollapsed !== undefined
-                    ? state?.menuCollapsed
-                    : true,
-        };
-    });
+    const { vw } = useAppSelector((state) => state);
 
     const handleClickSearchIcon = () => {
         dispatch(actions.openResultsOverlay());
