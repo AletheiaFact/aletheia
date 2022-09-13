@@ -4,7 +4,7 @@ import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
 import InfoAlert from "../InfoAlert";
 
-const About = () => {
+const About = ({ enableWarningDocument }) => {
     const { t } = useTranslation();
     const paragraphStyle = {
         margin: "10px 0px",
@@ -22,7 +22,7 @@ const About = () => {
                 padding: "20px",
             }}
         >
-            <InfoAlert />
+            {enableWarningDocument && <InfoAlert />}
             <Row style={{ width: "100%", textAlign: "center" }}>
                 <Typography.Title style={{ width: "100%" }}>
                     {t("about:title")}
