@@ -57,6 +57,16 @@ const reducer = (state, action) => {
                 ...state,
                 login: action.login,
             };
+        case ActionTypes.SET_AUTO_SAVE:
+            return {
+                ...state,
+                autoSave: action.autoSave,
+            };
+        case ActionTypes.SET_USER_ROLE:
+            return {
+                ...state,
+                role: action.role,
+            };
         case ActionTypes.SET_BREAKPOINTS:
             return {
                 ...state,

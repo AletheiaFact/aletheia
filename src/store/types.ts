@@ -8,7 +8,9 @@ export enum ActionTypes {
     SET_CUR_PAGE,
     SET_SEARCH_NAME,
     SET_LOGIN_STATUS,
+    SET_AUTO_SAVE,
     SET_BREAKPOINTS,
+    SET_USER_ROLE,
 }
 
 export interface RootState {
@@ -22,5 +24,7 @@ export interface RootState {
         searchPageSize: number;
     };
     login: boolean;
+    autoSave: boolean;
+    role: string;
     vw: WidthBreakpoints;
 }

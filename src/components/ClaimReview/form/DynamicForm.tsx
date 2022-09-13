@@ -28,19 +28,23 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         getValues,
         reset,
         formState: { errors },
+        watch,
     } = useForm();
     const [service, setService] = useState(null);
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
-    const [recaptchaString, setRecaptchaString] = useState("");
     const { t } = useTranslation();
+    const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
+
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
     const [isLoadingGoBack, setIsLoadingGoBack] = useState(false);
     const [isLoadingDraft, setIsLoadingDraft] = useState(false);
-    const { isLoggedIn } = useAppSelector((state) => ({
+
+    const { isLoggedIn, autoSave } = useAppSelector((state) => ({
         isLoggedIn: state.login,
+        autoSave: state.autoSave,
     }));
 
     const setDefaultValuesOfCurrentForm = (machine, form) => {
@@ -127,6 +131,31 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                     setCurrentFormAndNextEvents(newMachine.value, newMachine);
                 });
     }, []);
+
+    useEffect(() => {
+        let timeout: NodeJS.Timeout;
+        autoSave &&
+            watch((value) => {
+                if (timeout) clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    reviewTaskApi.autoSaveDraft(
+                        {
+                            sentence_hash,
+                            machine: {
+                                context: {
+                                    reviewData: value,
+                                    claimReview: {
+                                        personality,
+                                        claim,
+                                    },
+                                },
+                            },
+                        },
+                        t
+                    );
+                }, 10000);
+            });
+    }, [watch]);
 
     const fetchUserList = async (name) => {
         const userSearchResults = await usersApi.getUsers(name, t);

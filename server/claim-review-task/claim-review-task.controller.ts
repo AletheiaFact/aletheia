@@ -67,20 +67,22 @@ export class ClaimReviewController {
     }
 
     @Put("api/claimreviewtask/:sentence_hash")
-    async update(
+    async autoSaveDraft(
         @Param("sentence_hash") sentence_hash,
-        @Body() newClaimReviewTask: UpdateClaimReviewTaskDTO
+        @Body() claimReviewTaskBody: UpdateClaimReviewTaskDTO
     ) {
-        const validateCaptcha = await this.captchaService.validate(
-            newClaimReviewTask.recaptcha
-        );
-        if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
-        }
-        return this.claimReviewTaskService.update(
-            sentence_hash,
-            newClaimReviewTask
-        );
+        const history = false;
+        return this.claimReviewTaskService
+            .getClaimReviewTaskBySentenceHash(sentence_hash)
+            .then((review) => {
+                if (review) {
+                    return this.claimReviewTaskService.update(
+                        sentence_hash,
+                        claimReviewTaskBody,
+                        history
+                    );
+                }
+            });
     }
 
     @Get("api/claimreviewtask/sentence/:sentence_hash")

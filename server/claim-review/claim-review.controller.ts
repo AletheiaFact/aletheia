@@ -1,44 +1,32 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Post,
-    Req,
-} from "@nestjs/common";
-import { ClaimReviewService } from "./claim-review.service";
-import { CreateClaimReview } from "./dto/create-claim-review.dto";
+import { Body, Controller, Param, Put, Get, UseGuards } from "@nestjs/common";
 import { IsPublic } from "../decorators/is-public.decorator";
+import { CaptchaService } from "../captcha/captcha.service";
+import { ClaimReviewService } from "./claim-review.service";
+import { AbilitiesGuard } from "../ability/abilities.guard";
+import { AdminUserAbility, CheckAbilities } from "../ability/ability.decorator";
 
 @Controller()
 export class ClaimReviewController {
-    constructor(private claimReviewService: ClaimReviewService) {}
+    constructor(
+        private claimReviewService: ClaimReviewService,
+        private captchaService: CaptchaService
+    ) {}
 
-    @Post("api/review/:sentence_hash")
-    async create(
-        @Body() createClaimReview: CreateClaimReview,
-        @Req() req,
-        @Param("sentence_hash") sentence_hash
-    ) {
-        return this.claimReviewService.create(
-            {
-                ...createClaimReview,
-                usersId: req?.user?._id,
-            },
-            sentence_hash
+    @Put("api/review/:sentence_hash")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
+    async update(@Param("sentence_hash") sentence_hash, @Body() body) {
+        const validateCaptcha = await this.captchaService.validate(
+            body.recaptcha
         );
-    }
-
-    @IsPublic()
-    @Get("api/review/:id")
-    get(@Param() params) {
-        return this.claimReviewService.getById(params.id);
-    }
-
-    @Delete("api/review/:id")
-    delete(@Param() params) {
-        return this.claimReviewService.delete(params.id);
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
+        return this.claimReviewService.hideOrUnhideReview(
+            sentence_hash,
+            body.hide,
+            body.description
+        );
     }
 
     @IsPublic()

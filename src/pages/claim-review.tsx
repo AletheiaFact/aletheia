@@ -1,3 +1,4 @@
+import React from "react";
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -8,7 +9,7 @@ import ClaimReviewForm from "../components/ClaimReview/ClaimReviewForm";
 import JsonLd from "../components/JsonLd";
 import SentenceReportView from "../components/SentenceReport/SentenceReportView";
 import Seo from "../components/Seo";
-import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
+import { ClassificationEnum, ReviewTaskStates, Roles } from "../machine/enums";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
@@ -21,6 +22,8 @@ const ClaimReviewPage: NextPage<{
     claimReviewTask: any;
     claimReview: any;
     isLoggedIn: boolean;
+    description: string;
+    userRole: string;
 }> = ({
     personality,
     claim,
@@ -30,14 +33,36 @@ const ClaimReviewPage: NextPage<{
     claimReview,
     isLoggedIn,
     sitekey,
+    description,
+    userRole,
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+
     dispatch({
         type: ActionTypes.SET_LOGIN_STATUS,
         login: isLoggedIn,
     });
+
+    dispatch({
+        type: ActionTypes.SET_USER_ROLE,
+        role: userRole,
+    });
+
+    dispatch({
+        type: ActionTypes.SET_AUTO_SAVE,
+        autoSave: true,
+    });
+
+    const isnotPublished =
+        claimReviewTask?.machine.value !== ReviewTaskStates.published;
+
+    const isHiddenAndUserDontHavePermission =
+        claimReview?.isHidden &&
+        (userRole === Roles.Regular || userRole === null);
+
     const review = sentence?.props?.classification;
+
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -53,10 +78,12 @@ const ClaimReviewPage: NextPage<{
         claimReviewed: sentence.content,
         reviewRating: {
             "@type": "Rating",
-            ratingValue: ClassificationEnum[review],
+            ratingValue: claimReview?.isHidden ? 0 : ClassificationEnum[review],
             bestRating: 8,
             worstRating: 1,
-            alternateName: t(`claimReviewForm:${review}`),
+            alternateName: claimReview?.isHidden
+                ? t("claimReviewForm:notReviewed")
+                : t(`claimReviewForm:${review}`),
         },
         itemReviewed: {
             "@type": "CreativeWork",
@@ -82,7 +109,7 @@ const ClaimReviewPage: NextPage<{
                 })}
             />
 
-            {claimReviewTask?.machine.value !== ReviewTaskStates.published ? (
+            {isnotPublished || isHiddenAndUserDontHavePermission ? (
                 <ClaimReviewForm
                     personality={personality}
                     claim={claim}
@@ -97,7 +124,10 @@ const ClaimReviewPage: NextPage<{
                     claim={claim}
                     sentence={sentence}
                     href={href}
+                    isHidden={claimReview?.isHidden}
                     context={claimReview.report}
+                    sitekey={sitekey}
+                    hideDescription={description}
                 />
             )}
             <AffixButton personalitySlug={personality.slug} />
@@ -118,8 +148,10 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
+            description: query.description,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
+            userRole: req?.user?.role ? req?.user?.role : null,
         },
     };
 }
