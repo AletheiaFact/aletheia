@@ -8,8 +8,9 @@ const AletheiaHeader = () => {
         <Layout.Header
             style={{
                 backgroundColor: colors.bluePrimary,
-                height: "70px",
+                height: "56px",
                 padding: 0,
+                minWidth: "265px",
             }}
         >
             <HeaderContent />

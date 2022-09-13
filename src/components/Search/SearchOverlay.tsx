@@ -12,10 +12,6 @@ import AletheiaButton from "../Button";
 import OverlaySearchInput from "./OverlaySearchInput";
 
 const OverlayCol = styled(Col)`
-    .ant-input-search.ant-input-affix-wrapper-lg {
-        padding: 9px 14px;
-    }
-
     .ant-input-lg {
         font-weight: 600;
     }
@@ -30,14 +26,19 @@ const OverlayCol = styled(Col)`
 
     .input-container {
         width: 100%;
-        height: 70px;
         display: flex;
         align-items: center;
         max-width: 320px;
         padding-left: 15px;
+
+        .ant-input-affix-wrapper {
+            height: 32px;
+        }
+
         @media ${queries.sm} {
             display: none;
             max-width: 100vw;
+            height: 56px;
         }
     }
 

@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 
 import { useAppSelector } from "../store/store";
 import { ActionTypes } from "../store/types";
+import colors from "../styles/colors";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
@@ -34,8 +35,9 @@ const AletheiaMenu = () => {
             mode="inline"
             theme="light"
             style={{
-                background: "#F5F5F5",
-                color: "#111111",
+                backgroundColor: colors.lightGray,
+                color: colors.blackPrimary,
+                fontSize: "16px",
                 padding: "0px 24px",
             }}
             selectable={false}
@@ -43,9 +45,6 @@ const AletheiaMenu = () => {
             <Menu.Item
                 key="/about"
                 data-cy={"testAboutItem"}
-                style={{
-                    fontSize: "18px",
-                }}
                 onClick={handleClick}
             >
                 {t("menu:aboutItem")}
@@ -53,9 +52,6 @@ const AletheiaMenu = () => {
             <Menu.Item
                 key="/privacy-policy"
                 data-cy={"testPrivacyPolicyItem"}
-                style={{
-                    fontSize: "18px",
-                }}
                 onClick={handleClick}
             >
                 {t("menu:privacyPolicyItem")}
@@ -63,9 +59,6 @@ const AletheiaMenu = () => {
             <Menu.Item
                 key="/code-of-conduct"
                 data-cy={"testCodeOfConductItem"}
-                style={{
-                    fontSize: "18px",
-                }}
                 onClick={handleClick}
             >
                 {t("menu:codeOfConductItem")}

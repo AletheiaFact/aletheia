@@ -49,7 +49,7 @@ const OverlaySearchResults = () => {
             className="main-content"
             style={{
                 position: "absolute",
-                top: "70px",
+                top: "56px",
                 height: "100vh",
                 width: "100vw",
                 flexDirection: "column",

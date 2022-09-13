@@ -10,16 +10,22 @@ const Sidebar = ({ menuCollapsed, onToggleSidebar }) => {
         <Drawer
             visible={!menuCollapsed}
             onClose={onToggleSidebar}
-            width="270px"
+            width="17rem"
             placement="left"
             bodyStyle={{ padding: 0 }}
             drawerStyle={{
                 backgroundColor: colors.lightGray,
-                alignItems: "flex-start",
             }}
             closable={false}
         >
-            <Logo color={colors.bluePrimary} />
+            <div
+                style={{
+                    paddingTop: "16px",
+                    paddingLeft: "48px",
+                }}
+            >
+                <Logo color={colors.bluePrimary} height="48px" />
+            </div>
             <AletheiaMenu />
         </Drawer>
     );

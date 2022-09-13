@@ -36,7 +36,6 @@ const HeaderContent = () => {
                 alignItems: "center",
                 padding: vw?.xs ? "0" : "0 15px",
                 justifyContent: "space-evenly",
-                minWidth: "335px",
             }}
         >
             <AletheiaButton
@@ -55,7 +54,14 @@ const HeaderContent = () => {
                     }}
                 />
             </AletheiaButton>
-            <a href="/">
+            <a
+                href="/"
+                style={{
+                    height: "56px",
+                    display: "grid",
+                    placeContent: "center",
+                }}
+            >
                 <Logo color="white" />
             </a>
             <SearchOverlay />
@@ -64,6 +70,7 @@ const HeaderContent = () => {
                     <AletheiaButton
                         onClick={handleClickSearchIcon}
                         data-cy={"testSearchPersonality"}
+                        style={{ height: "34px" }}
                     >
                         <SearchOutlined
                             style={{

@@ -71,7 +71,7 @@ const UserMenu = () => {
                 style={{ paddingBottom: "4px" }}
                 data-cy="testUserIcon"
             >
-                <UserIcon size="25px" />
+                <UserIcon size="20px" />
             </AletheiaButton>
         </Dropdown>
     );
