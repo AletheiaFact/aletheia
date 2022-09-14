@@ -1,25 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
 import { Col, Row } from "antd";
-import { useTranslation } from "next-i18next";
-import { initialContext } from "../../../machine/context";
-import { createNewMachineService } from "../../../machine/reviewTaskMachine";
-import {
-    ClassificationEnum,
-    ReviewTaskEvents,
-    ReviewTaskStates,
-} from "../../../machine/enums";
-import AletheiaButton, { ButtonType } from "../../Button";
-import colors from "../../../styles/colors";
-import DynamicInput from "./DynamicInput";
-import unassignedForm from "./fieldLists/unassignedForm";
-import assignedForm from "./fieldLists/assignedForm";
-import reportedForm from "./fieldLists/reportedForm";
 import Text from "antd/lib/typography/Text";
+import { useTranslation } from "next-i18next";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import usersApi from "../../../api/user";
-import AletheiaCaptcha from "../../AletheiaCaptcha";
+import { ClassificationEnum, ReviewTaskEvents } from "../../../machine/enums";
+import getNextEvents from "../../../machine/getNextEvent";
+import getNextForm from "../../../machine/getNextForm";
 import { useAppSelector } from "../../../store/store";
+import colors from "../../../styles/colors";
+import AletheiaCaptcha from "../../AletheiaCaptcha";
+import AletheiaButton, { ButtonType } from "../../Button";
+import { GlobalStateMachineContext } from "../Context/GlobalStateMachineProvider";
+import DynamicInput from "./DynamicInput";
 
 const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const {
@@ -30,7 +25,9 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         formState: { errors },
         watch,
     } = useForm();
-    const [service, setService] = useState(null);
+    const { machineService } = useContext(GlobalStateMachineContext);
+    const initialMachine = machineService.machine.config;
+
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
     const { t } = useTranslation();
@@ -47,6 +44,12 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         autoSave: state.autoSave,
     }));
 
+    useEffect(() => {
+        if (isLoggedIn) {
+            setCurrentFormAndNextEvents(initialMachine.initial);
+        }
+    }, []);
+
     const setDefaultValuesOfCurrentForm = (machine, form) => {
         if (machine) {
             const machineValues = machine.context.reviewData;
@@ -61,40 +64,11 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         }
     };
 
-    const setCurrentFormAndNextEvents = (param, machine = null) => {
-        if (
-            param === ReviewTaskStates.assigned ||
-            param === ReviewTaskEvents.assignUser
-        ) {
-            setDefaultValuesOfCurrentForm(machine, assignedForm);
-            setCurrentForm(assignedForm);
-            setNextEvents([
-                ReviewTaskEvents.goback,
-                ReviewTaskEvents.draft,
-                ReviewTaskEvents.finishReport,
-            ]);
-        } else if (
-            param === ReviewTaskStates.reported ||
-            param === ReviewTaskEvents.finishReport
-        ) {
-            setDefaultValuesOfCurrentForm(machine, reportedForm);
-            setCurrentForm(reportedForm);
-            setNextEvents([
-                ReviewTaskEvents.goback,
-                ReviewTaskEvents.draft,
-                ReviewTaskEvents.publish,
-            ]);
-        } else if (
-            param === ReviewTaskStates.published ||
-            param === ReviewTaskEvents.publish
-        ) {
-            setCurrentForm([]);
-            setNextEvents([]);
-        } else if (param !== ReviewTaskEvents.draft) {
-            setDefaultValuesOfCurrentForm(machine, unassignedForm);
-            setCurrentForm(unassignedForm);
-            setNextEvents([ReviewTaskEvents.assignUser]);
-        }
+    const setCurrentFormAndNextEvents = (param) => {
+        const nextForm = getNextForm(param);
+        setCurrentForm(nextForm);
+        setDefaultValuesOfCurrentForm(initialMachine, nextForm);
+        setNextEvents(getNextEvents(param));
     };
 
     const isButtonLoading = (eventName) => {
@@ -105,32 +79,6 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
             ? isLoadingDraft
             : isLoadingSubmit;
     };
-
-    useEffect(() => {
-        isLoggedIn &&
-            reviewTaskApi
-                .getMachineBySentenceHash(sentence_hash, t)
-                .then(({ machine }) => {
-                    // The states assigned and reported have compound states
-                    // and when we going to save we get "assigned: undraft" as a value.
-                    // The machine doesn't recognize when we try to persist state the initial value
-                    // 'cause the value it's an object. So for these states, we get only the key value
-                    if (machine) {
-                        machine.value =
-                            machine.value !== ReviewTaskStates.published
-                                ? Object.keys(machine.value)[0]
-                                : machine.value;
-                    }
-
-                    const newMachine = machine || {
-                        context: initialContext,
-                        value: ReviewTaskStates.unassigned,
-                    };
-                    newMachine.context.utils = { t };
-                    setService(createNewMachineService(newMachine));
-                    setCurrentFormAndNextEvents(newMachine.value, newMachine);
-                });
-    }, []);
 
     useEffect(() => {
         let timeout: NodeJS.Timeout;
@@ -239,7 +187,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         };
 
         const setIsLoading = buttonLoading(eventName);
-        service.send(eventName, {
+        machineService.send(eventName, {
             sentence_hash,
             reviewData: {
                 ...formData,

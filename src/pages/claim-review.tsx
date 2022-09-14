@@ -96,7 +96,10 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 })}
             />
 
-            <GlobalStateMachineProvider data_hash={props.sentence.data_hash}>
+            <GlobalStateMachineProvider
+                data_hash={props.sentence.data_hash}
+                baseMachine={props.claimReviewTask?.machine}
+            >
                 <ClaimReviewView {...props} />
             </GlobalStateMachineProvider>
             <AffixButton personalitySlug={personality.slug} />

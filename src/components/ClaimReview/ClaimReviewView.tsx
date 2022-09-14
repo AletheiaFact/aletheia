@@ -1,24 +1,16 @@
-import { useSelector } from "@xstate/react";
-import React, { useContext } from "react";
+import React from "react";
 
 import { ReviewTaskStates, Roles } from "../../machine/enums";
 import { ClaimReviewPageProps } from "../../pages/claim-review";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import ClaimReviewForm from "./ClaimReviewForm";
-import { GlobalStateMachineContext } from "./Context/GlobalStateMachineProvider";
-
-const isPublishedSelector = (state) => {
-    return state.matches(ReviewTaskStates.published);
-};
 
 const ClaimReviewView = (props: ClaimReviewPageProps) => {
     const { claimReview, description } = props;
-    const globalServices = useContext(GlobalStateMachineContext);
-    const isPublished = useSelector(
-        globalServices.machineService,
-        isPublishedSelector
-    );
+
+    const isnotPublished =
+        props.claimReviewTask?.machine.value !== ReviewTaskStates.published;
 
     const { role } = useAppSelector((state) => state);
 
@@ -27,7 +19,7 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
 
     return (
         <div>
-            {!isPublished || isHiddenAndUserDontHavePermission ? (
+            {isnotPublished || isHiddenAndUserDontHavePermission ? (
                 <ClaimReviewForm {...props} />
             ) : (
                 <SentenceReportView
