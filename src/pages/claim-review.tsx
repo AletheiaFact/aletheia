@@ -1,19 +1,19 @@
-import React from "react";
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import React from "react";
 import { useDispatch } from "react-redux";
-import AffixButton from "../components/AffixButton/AffixButton";
 
-import ClaimReviewForm from "../components/ClaimReview/ClaimReviewForm";
+import AffixButton from "../components/AffixButton/AffixButton";
+import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
+import { GlobalStateMachineProvider } from "../components/ClaimReview/Context/GlobalStateMachineProvider";
 import JsonLd from "../components/JsonLd";
-import SentenceReportView from "../components/SentenceReport/SentenceReportView";
 import Seo from "../components/Seo";
-import { ClassificationEnum, ReviewTaskStates, Roles } from "../machine/enums";
+import { ClassificationEnum } from "../machine/enums";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
-const ClaimReviewPage: NextPage<{
+export interface ClaimReviewPageProps {
     personality: any;
     claim: any;
     sentence: any;
@@ -24,20 +24,14 @@ const ClaimReviewPage: NextPage<{
     isLoggedIn: boolean;
     description: string;
     userRole: string;
-}> = ({
-    personality,
-    claim,
-    sentence,
-    href,
-    claimReviewTask,
-    claimReview,
-    isLoggedIn,
-    sitekey,
-    description,
-    userRole,
-}) => {
+}
+
+const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+
+    const { personality, claim, sentence, claimReview, isLoggedIn, userRole } =
+        props;
 
     dispatch({
         type: ActionTypes.SET_LOGIN_STATUS,
@@ -53,13 +47,6 @@ const ClaimReviewPage: NextPage<{
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: true,
     });
-
-    const isnotPublished =
-        claimReviewTask?.machine.value !== ReviewTaskStates.published;
-
-    const isHiddenAndUserDontHavePermission =
-        claimReview?.isHidden &&
-        (userRole === Roles.Regular || userRole === null);
 
     const review = sentence?.props?.classification;
 
@@ -109,27 +96,9 @@ const ClaimReviewPage: NextPage<{
                 })}
             />
 
-            {isnotPublished || isHiddenAndUserDontHavePermission ? (
-                <ClaimReviewForm
-                    personality={personality}
-                    claim={claim}
-                    sentence={sentence}
-                    href={href}
-                    claimReviewTask={claimReviewTask}
-                    sitekey={sitekey}
-                />
-            ) : (
-                <SentenceReportView
-                    personality={personality}
-                    claim={claim}
-                    sentence={sentence}
-                    href={href}
-                    isHidden={claimReview?.isHidden}
-                    context={claimReview.report}
-                    sitekey={sitekey}
-                    hideDescription={description}
-                />
-            )}
+            <GlobalStateMachineProvider data_hash={props.sentence.data_hash}>
+                <ClaimReviewView {...props} />
+            </GlobalStateMachineProvider>
             <AffixButton personalitySlug={personality.slug} />
         </>
     );
