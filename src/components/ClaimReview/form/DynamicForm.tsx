@@ -27,28 +27,19 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     } = useForm();
     const { machineService } = useContext(GlobalStateMachineContext);
     const initialMachine = machineService.machine.config;
+    const { t } = useTranslation();
 
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
-    const { t } = useTranslation();
+    const [isLoading, setIsLoading] = useState({});
     const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
-
-    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
-    const [isLoadingGoBack, setIsLoadingGoBack] = useState(false);
-    const [isLoadingDraft, setIsLoadingDraft] = useState(false);
 
     const { isLoggedIn, autoSave } = useAppSelector((state) => ({
         isLoggedIn: state.login,
         autoSave: state.autoSave,
     }));
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            setCurrentFormAndNextEvents(initialMachine.initial);
-        }
-    }, []);
 
     const setDefaultValuesOfCurrentForm = (form) => {
         const machineValues = initialMachine.context.reviewData;
@@ -61,20 +52,31 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     };
 
     const setCurrentFormAndNextEvents = (param) => {
-        const nextForm = getNextForm(param);
-        setCurrentForm(nextForm);
-        setDefaultValuesOfCurrentForm(nextForm);
-        setNextEvents(getNextEvents(param));
+        if (param !== ReviewTaskEvents.draft) {
+            const nextForm = getNextForm(param);
+            setCurrentForm(nextForm);
+            setDefaultValuesOfCurrentForm(nextForm);
+            setNextEvents(getNextEvents(param));
+        }
     };
 
-    const isButtonLoading = (eventName) => {
-        if (eventName === ReviewTaskEvents.goback) {
-            return isLoadingGoBack;
-        }
-        return eventName === ReviewTaskEvents.draft
-            ? isLoadingDraft
-            : isLoadingSubmit;
+    const resetIsLoading = () => {
+        const isLoading = {};
+        nextEvents?.forEach((eventName) => {
+            isLoading[eventName] = false;
+        });
+        setIsLoading(isLoading);
     };
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            setCurrentFormAndNextEvents(initialMachine.initial);
+        }
+    }, []);
+
+    useEffect(() => {
+        resetIsLoading();
+    }, [nextEvents]);
 
     useEffect(() => {
         let timeout: NodeJS.Timeout;
@@ -109,75 +111,8 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         }));
     };
 
-    const formInputs =
-        currentForm &&
-        currentForm.map((fieldItem, index) => {
-            const {
-                fieldName,
-                rules,
-                label,
-                placeholder,
-                type,
-                addInputLabel,
-                defaultValue,
-            } = fieldItem;
-
-            return (
-                <Row key={index} style={{ marginBottom: 20 }}>
-                    <Col span={24}>
-                        <h4
-                            style={{
-                                color: colors.blackSecondary,
-                                fontWeight: 600,
-                                paddingLeft: 10,
-                                marginBottom: 0,
-                            }}
-                        >
-                            {t(label)}
-                        </h4>
-                    </Col>
-                    <Col span={24} style={{ margin: "10px 0" }}>
-                        <Controller
-                            name={fieldName}
-                            control={control}
-                            rules={rules}
-                            defaultValue={defaultValue}
-                            render={({ field }) => (
-                                <DynamicInput
-                                    fieldName={fieldName}
-                                    type={type}
-                                    placeholder={placeholder}
-                                    onChange={field.onChange}
-                                    value={field.value}
-                                    addInputLabel={addInputLabel}
-                                    defaultValue={defaultValue}
-                                    data-cy={`testClaimReview${fieldName}`}
-                                    dataLoader={fetchUserList}
-                                />
-                            )}
-                        />
-                        {errors[fieldName] && (
-                            <Text type="danger" style={{ marginLeft: 20 }}>
-                                {t(errors[fieldName].message)}
-                            </Text>
-                        )}
-                    </Col>
-                </Row>
-            );
-        });
-
-    const buttonLoading = (eventName) => {
-        if (eventName === ReviewTaskEvents.draft) {
-            return setIsLoadingDraft;
-        }
-        return eventName === ReviewTaskEvents.goback
-            ? setIsLoadingGoBack
-            : setIsLoadingSubmit;
-    };
-
     const sendEventToMachine = (formData, eventName) => {
-        const setIsLoading = buttonLoading(eventName);
-        setIsLoading(true);
+        setIsLoading((current) => ({ ...current, [eventName]: true }));
 
         machineService.send(eventName, {
             sentence_hash,
@@ -192,55 +127,102 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
             t,
             recaptchaString,
             setCurrentFormAndNextEvents,
-            setIsLoading,
+            resetIsLoading,
         });
         setRecaptchaString("");
         recaptchaRef.current?.resetRecaptcha();
     };
 
+    const validateClassification = (data) => {
+        return (
+            !data.classification ||
+            (data.classification &&
+                Object.values(ClassificationEnum).includes(data.classification))
+        );
+    };
+
+    const handleSendEvent = async (event, data = null) => {
+        if (!data) {
+            data = getValues();
+        }
+        //@ts-ignore
+        umami?.trackEvent(`${event}_BUTTON`, "Fact-checking workflow");
+        sendEventToMachine(data, event);
+    };
+
     /**
-     * Verify if classification exists and is a valid type
-     * Send Event and data to state machine
-     * Reset recaptcha
-     * @param data data from form
+     * Send event to machine validating form rules
+     * @param data data from form submit
      * @param e event
      */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        if (
-            data?.classification &&
-            Object.values(ClassificationEnum).includes(data.classification)
-        ) {
-            sendEventToMachine(data, event);
-        } else if (!data?.classification) {
-            sendEventToMachine(data, event);
+        if (validateClassification(data)) {
+            handleSendEvent(event, data);
         }
-    };
-
-    const onClickSaveDraft = () => {
-        const values = getValues();
-        //@ts-ignore
-        umami?.trackEvent(
-            `${ReviewTaskEvents.draft}_BUTTON`,
-            "Fact-checking workflow"
-        );
-        sendEventToMachine(values, ReviewTaskEvents.draft);
-    };
-
-    const onClickGoBack = () => {
-        //@ts-ignore
-        umami?.trackEvent(
-            `${ReviewTaskEvents.goback}_BUTTON`,
-            "Fact-checking workflow"
-        );
-        sendEventToMachine({}, ReviewTaskEvents.goback);
     };
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
-            {formInputs && (
+            {currentForm && (
                 <>
-                    {formInputs}
+                    {currentForm.map((fieldItem, index) => {
+                        const {
+                            fieldName,
+                            rules,
+                            label,
+                            placeholder,
+                            type,
+                            addInputLabel,
+                            defaultValue,
+                        } = fieldItem;
+
+                        return (
+                            <Row key={index} style={{ marginBottom: 20 }}>
+                                <Col span={24}>
+                                    <h4
+                                        style={{
+                                            color: colors.blackSecondary,
+                                            fontWeight: 600,
+                                            paddingLeft: 10,
+                                            marginBottom: 0,
+                                        }}
+                                    >
+                                        {t(label)}
+                                    </h4>
+                                </Col>
+                                <Col span={24} style={{ margin: "10px 0" }}>
+                                    <Controller
+                                        name={fieldName}
+                                        control={control}
+                                        rules={rules}
+                                        defaultValue={defaultValue}
+                                        render={({ field }) => (
+                                            <DynamicInput
+                                                fieldName={fieldName}
+                                                type={type}
+                                                placeholder={placeholder}
+                                                onChange={field.onChange}
+                                                value={field.value}
+                                                addInputLabel={addInputLabel}
+                                                defaultValue={defaultValue}
+                                                data-cy={`testClaimReview${fieldName}`}
+                                                dataLoader={fetchUserList}
+                                            />
+                                        )}
+                                    />
+                                    {errors[fieldName] && (
+                                        <Text
+                                            type="danger"
+                                            style={{ marginLeft: 20 }}
+                                        >
+                                            {t(errors[fieldName].message)}
+                                        </Text>
+                                    )}
+                                </Col>
+                            </Row>
+                        );
+                    })}
                     {currentForm?.length > 0 && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
@@ -259,7 +241,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                 {nextEvents?.map((event) => {
                     return (
                         <AletheiaButton
-                            loading={isButtonLoading(event)}
+                            loading={isLoading[event]}
                             key={event}
                             type={ButtonType.blue}
                             htmlType={
@@ -268,19 +250,13 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                                     ? "button"
                                     : "submit"
                             }
-                            onClick={
-                                event === ReviewTaskEvents.goback
-                                    ? onClickGoBack
-                                    : event === ReviewTaskEvents.draft
-                                    ? onClickSaveDraft
-                                    : () => {
-                                          //@ts-ignore
-                                          umami?.trackEvent(
-                                              `${event}_BUTTON`,
-                                              "Fact-checking workflow"
-                                          );
-                                      }
-                            }
+                            onClick={() => {
+                                if (
+                                    event === ReviewTaskEvents.goback ||
+                                    event === ReviewTaskEvents.draft
+                                )
+                                    handleSendEvent(event);
+                            }}
                             event={event}
                             disabled={
                                 event === ReviewTaskEvents.goback
