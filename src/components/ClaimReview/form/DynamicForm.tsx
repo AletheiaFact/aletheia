@@ -50,16 +50,12 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         }
     }, []);
 
-    const setDefaultValuesOfCurrentForm = (machine, form) => {
-        if (machine) {
-            const machineValues = machine.context.reviewData;
+    const setDefaultValuesOfCurrentForm = (form) => {
+        const machineValues = initialMachine.context.reviewData;
+        if (machineValues) {
             reset(machineValues);
             form.forEach((input) => {
-                Object.keys(machine.context.reviewData).forEach((value) => {
-                    if (input.fieldName === value) {
-                        input.defaultValue = machine.context.reviewData[value];
-                    }
-                });
+                input.defaultValue = machineValues[input.fieldName];
             });
         }
     };
@@ -67,7 +63,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const setCurrentFormAndNextEvents = (param) => {
         const nextForm = getNextForm(param);
         setCurrentForm(nextForm);
-        setDefaultValuesOfCurrentForm(initialMachine, nextForm);
+        setDefaultValuesOfCurrentForm(nextForm);
         setNextEvents(getNextEvents(param));
     };
 
@@ -170,23 +166,19 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
             );
         });
 
-    const sendEventToMachine = (formData, eventName) => {
+    const buttonLoading = (eventName) => {
         if (eventName === ReviewTaskEvents.draft) {
-            setIsLoadingDraft(true);
-        } else if (eventName !== ReviewTaskEvents.goback) {
-            setIsLoadingSubmit(true);
+            return setIsLoadingDraft;
         }
+        return eventName === ReviewTaskEvents.goback
+            ? setIsLoadingGoBack
+            : setIsLoadingSubmit;
+    };
 
-        const buttonLoading = (eventName) => {
-            if (eventName === ReviewTaskEvents.draft) {
-                return setIsLoadingDraft;
-            }
-            return eventName === ReviewTaskEvents.goback
-                ? setIsLoadingGoBack
-                : setIsLoadingSubmit;
-        };
-
+    const sendEventToMachine = (formData, eventName) => {
         const setIsLoading = buttonLoading(eventName);
+        setIsLoading(true);
+
         machineService.send(eventName, {
             sentence_hash,
             reviewData: {
