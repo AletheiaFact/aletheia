@@ -45,6 +45,10 @@ const locators = {
 
     menu: {
         SIDE_MENU: "[data-cy=testOpenSideMenu]",
+        USER_ICON: "[data-cy=testUserIcon]",
+        LOGIN_MENU: "[data-cy=testLoginItem]",
+        MY_ACCOUNT_MENU: "[data-cy=testMyAccountItem]",
+        LOGOUT_MENU: "[data-cy=testLogout]",
     },
 };
 export default locators;

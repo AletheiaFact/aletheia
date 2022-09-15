@@ -1,4 +1,5 @@
 import axios from "axios";
+import actions from "../store/actions";
 import { ActionTypes } from "../store/types";
 
 const request = axios.create({
@@ -16,7 +17,7 @@ const getResults = (dispatch, options = {}) => {
         .get(`/`, { params })
         .then((response) => {
             const { personalities, sentences, claims } = response.data;
-
+            dispatch(actions.openResultsOverlay());
             dispatch({
                 type: ActionTypes.SEARCH_RESULTS,
                 results: { personalities, sentences, claims },

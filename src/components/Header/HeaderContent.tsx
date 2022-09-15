@@ -1,111 +1,81 @@
-import React from "react";
 import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
-import { Col, Row } from "antd";
-import styled from "styled-components";
+import React from "react";
 import { useDispatch } from "react-redux";
-import { useRouter } from "next/router";
-import colors from "../../styles/colors";
-import Logo from "./Logo";
-import { useAppSelector } from "../../store/store";
-import SelectLanguage from "./SelectLanguage";
-import AletheiaButton from "../Button";
-import { ActionTypes } from "../../store/types";
+import actions from "../../store/actions";
 
-const HeaderContent = ({ className }) => {
+import { useAppSelector } from "../../store/store";
+import colors from "../../styles/colors";
+import AletheiaButton from "../Button";
+import SearchOverlay from "../Search/SearchOverlay";
+import HeaderActionsStyle from "./HeaderActions.style";
+import Logo from "./Logo";
+import SelectLanguage from "./SelectLanguage";
+import UserMenu from "./UserMenu";
+
+const HeaderContent = () => {
     const dispatch = useDispatch();
-    const router = useRouter();
-    const { menuCollapsed } = useAppSelector((state) => {
-        return {
-            menuCollapsed:
-                state?.menuCollapsed !== undefined
-                    ? state?.menuCollapsed
-                    : true,
-        };
-    });
+    const { vw } = useAppSelector((state) => state);
+
+    const handleClickSearchIcon = () => {
+        dispatch(actions.openResultsOverlay());
+    };
+
     return (
-        <Row
-            className={className}
+        <div
             style={{
-                backgroundColor: colors.bluePrimary,
-                boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
-                height: "70px",
-                padding: "0 15px",
+                display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                padding: vw?.xs ? "0" : "0 15px",
+                justifyContent: "space-evenly",
             }}
         >
-            <Col span={4}>
-                <AletheiaButton
-                    data-cy="testOpenSideMenu"
-                    onClick={() => {
-                        dispatch({
-                            type: ActionTypes.TOGGLE_MENU,
-                            menuCollapsed: !menuCollapsed,
-                        });
-                    }}
-                >
-                    <MenuOutlined
-                        style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            fontSize: "16px",
-                            color: "white",
-                            paddingLeft: "10px",
-                            gap: "5px",
-                        }}
-                    />
-                </AletheiaButton>
-            </Col>
-            <Col lg={{ span: 16 }} md={{ span: 16 }} xs={{ span: 13 }}>
-                <a href="/">
-                    <Logo color="white" />
-                </a>
-            </Col>
-            <Col
-                lg={{ span: 2 }}
-                md={{ span: 2 }}
-                sm={{ span: 3 }}
-                xs={{ span: 3 }}
-                style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    paddingRight: "10px",
+            <AletheiaButton
+                data-cy="testOpenSideMenu"
+                onClick={() => {
+                    dispatch(actions.openSideMenu());
                 }}
             >
-                <AletheiaButton
-                    onClick={() => {
-                        const pathname = router.pathname;
-                        dispatch({
-                            type: ActionTypes.ENABLE_SEARCH_OVERLAY,
-                            overlay: {
-                                search: true,
-                                results: pathname !== "/personality",
-                            },
-                        });
+                <MenuOutlined
+                    style={{
+                        fontSize: "16px",
+                        color: colors.white,
                     }}
-                    data-cy={"testSearchPersonality"}
-                >
-                    <SearchOutlined
-                        style={{
-                            fontSize: "16px",
-                            color: "white",
-                            padding: "8px",
-                        }}
-                    />
-                </AletheiaButton>
-            </Col>
-            <Col
-                lg={{ span: 2 }}
-                md={{ span: 2 }}
-                sm={{ span: 4 }}
-                xs={{ span: 4 }}
+                />
+            </AletheiaButton>
+            <a
+                href="/"
+                style={{
+                    height: "56px",
+                    display: "grid",
+                    placeContent: "center",
+                }}
             >
+                <Logo color="white" />
+            </a>
+            <SearchOverlay />
+            <HeaderActionsStyle>
+                {vw?.sm && (
+                    <AletheiaButton
+                        onClick={handleClickSearchIcon}
+                        data-cy={"testSearchPersonality"}
+                        style={{ height: "34px" }}
+                    >
+                        <SearchOutlined
+                            style={{
+                                fontSize: "16px",
+                                color: "white",
+                                padding: "8px",
+                            }}
+                        />
+                    </AletheiaButton>
+                )}
+                <UserMenu />
                 <SelectLanguage
                     dataCy={"LanguageButton"}
                     defaultLanguage="pt"
                 />
-            </Col>
-        </Row>
+            </HeaderActionsStyle>
+        </div>
     );
 };
 

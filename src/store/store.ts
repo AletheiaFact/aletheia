@@ -12,12 +12,12 @@ const reducer = (state, action) => {
                 ...state,
                 menuCollapsed: action.menuCollapsed,
             };
-        case ActionTypes.ENABLE_SEARCH_OVERLAY:
+        case ActionTypes.RESULTS_OVERLAY_VISIBLE:
             return {
                 ...state,
                 search: {
                     ...(state?.search || {}),
-                    overlay: action.overlay,
+                    overlayVisible: action.overlayVisible,
                 },
             };
         case ActionTypes.SEARCH_RESULTS:

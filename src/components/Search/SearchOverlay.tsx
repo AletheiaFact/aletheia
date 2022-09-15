@@ -1,27 +1,17 @@
-import { LeftCircleFilled, SearchOutlined } from "@ant-design/icons";
-import { Col, Row } from "antd";
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
+import { LeftCircleFilled } from "@ant-design/icons";
+import { Col } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
-import searchApi from "../../api/searchApi";
+import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
-import { ActionTypes } from "../../store/types";
 import colors from "../../styles/colors";
-import InputSearch from "../Form/InputSearch";
-import SearchCard from "./SearchCard";
+import { queries } from "../../styles/mediaQueries";
+import AletheiaButton from "../Button";
+import OverlaySearchInput from "./OverlaySearchInput";
 
-const OverlayDiv = styled.div`
-    width: 100%;
-    height: 100%;
-    position: absolute;
-
-    .ant-input-search.ant-input-affix-wrapper-lg {
-        padding: 9px 14px;
-    }
-
+const OverlayCol = styled(Col)`
     .ant-input-lg {
         font-weight: 600;
     }
@@ -33,137 +23,69 @@ const OverlayDiv = styled.div`
         line-height: 20px;
         color: ${colors.blackSecondary};
     }
+
+    .input-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        max-width: 320px;
+        padding-left: 15px;
+
+        .ant-input-affix-wrapper {
+            height: 32px;
+        }
+
+        @media ${queries.sm} {
+            display: none;
+            max-width: 100vw;
+            height: 56px;
+        }
+    }
+
+    .overlay {
+        background-color: ${colors.bluePrimary};
+        position: fixed;
+        z-index: 3;
+        width: 100vw;
+        left: 0;
+        top: 0;
+        display: flex;
+        padding-right: 15px;
+    }
 `;
 
-const SearchOverlay = ({ overlay }) => {
-    const { results, page, pageSize, searchName } = useAppSelector((state) => {
+const SearchOverlay = () => {
+    const dispatch = useDispatch();
+    const { vw, isOpen } = useAppSelector((state) => {
         return {
-            results: [
-                state?.search?.searchResults?.personalities || [],
-                state?.search?.searchResults?.claims || [],
-                state?.search?.searchResults?.sentences || [],
-            ],
-            page: state?.search?.searchCurPage || 1,
-            pageSize: state?.search?.searchPageSize || 5,
-            searchName: state?.search?.searchInput || null,
+            vw: state.vw,
+            isOpen: state?.search?.overlayVisible || false,
         };
     });
 
-    const handleSearchClick = ({
-        type,
-        claimSlug = "",
-        personalitySlug = "",
-        data_hash = "",
-    }) => {
-        dispatch({
-            type: ActionTypes.ENABLE_SEARCH_OVERLAY,
-            overlay: false,
-        });
-        switch (type) {
-            case "personality":
-                router.push(`/personality/${personalitySlug}`);
-                break;
-            case "claim":
-                router.push(
-                    `/personality/${personalitySlug}/claim/${claimSlug}`
-                );
-                break;
-            case "sentence":
-                router.push(
-                    `/personality/${personalitySlug}/claim/${claimSlug}/sentence/${data_hash}`
-                );
-                break;
-        }
-    };
-
-    const dispatch = useDispatch();
-    const { t, i18n } = useTranslation();
-    const router = useRouter();
-
-    const handleInputSearch = (name) => {
-        dispatch({
-            type: ActionTypes.SET_SEARCH_NAME,
-            searchName: name,
-        });
-
-        searchApi.getResults(dispatch, {
-            page,
-            pageSize,
-            searchText: name,
-        });
-    };
-
     return (
-        <OverlayDiv>
-            <Row
-                className="aletheia-header"
-                style={{
-                    backgroundColor: colors.bluePrimary,
-                    boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
-                    height: "70px",
-                    padding: "0 15px",
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
+        <OverlayCol sm={1} md={12}>
+            <div
+                className={`input-container ${
+                    vw?.sm && isOpen ? "overlay" : ""
+                }`}
             >
-                <Col
-                    span={3}
-                    style={{
-                        textAlign: "center",
-                    }}
-                >
-                    <a
+                {vw?.sm && isOpen && (
+                    <AletheiaButton
                         onClick={() => {
-                            dispatch({
-                                type: ActionTypes.ENABLE_SEARCH_OVERLAY,
-                                overlay: false,
-                            });
+                            dispatch(actions.closeResultsOverlay());
                         }}
                     >
                         <LeftCircleFilled
                             style={{
                                 fontSize: "24px",
-                                color: "white",
-                                padding: "8px",
                             }}
                         />
-                    </a>
-                </Col>
-                <Col span={20}>
-                    <InputSearch
-                        placeholder={t("header:search_personality")}
-                        callback={handleInputSearch}
-                        suffix={<SearchOutlined />}
-                    />
-                </Col>
-            </Row>
-            {overlay.results && (
-                <Row
-                    className="main-content"
-                    style={{
-                        background: "rgba(255,255,255,0.9)",
-                        height: "100vh",
-                        zIndex: 3,
-                        position: "relative",
-                        flexDirection: "column",
-                    }}
-                >
-                    {results.map((result, i) => {
-                        const type = ["personality", "claim", "sentence"][i];
-                        return (
-                            <SearchCard
-                                title={t(`search:${type}HeaderTitle`)}
-                                content={result}
-                                searchName={searchName}
-                                handleSearchClick={handleSearchClick}
-                                type={type}
-                                avatar={i !== 0 ? false : true}
-                            />
-                        );
-                    })}
-                </Row>
-            )}
-        </OverlayDiv>
+                    </AletheiaButton>
+                )}
+                {(isOpen || !vw?.sm) && <OverlaySearchInput />}
+            </div>
+        </OverlayCol>
     );
 };
 
