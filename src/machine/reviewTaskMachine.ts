@@ -113,13 +113,10 @@ export const transitionHandler = (state) => {
             event
         )
             .then(() => {
-                resetIsLoading();
                 setCurrentFormAndNextEvents(event);
-                if (event === ReviewTaskEvents.publish) {
-                    window.location.reload();
-                }
             })
-            .catch((e) => e);
+            .catch((e) => console.log(e))
+            .finally(() => resetIsLoading());
     }
 };
 

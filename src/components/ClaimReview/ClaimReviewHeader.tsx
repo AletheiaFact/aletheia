@@ -20,6 +20,7 @@ const ClaimReviewHeader = ({
     classification = "",
     sitekey,
     hideDescription,
+    isPublished,
 }) => {
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
@@ -32,7 +33,7 @@ const ClaimReviewHeader = ({
     return (
         <Row>
             <Col offset={3} span={18}>
-                {role === Roles.Admin && classification && (
+                {role === Roles.Admin && isPublished && (
                     <Col
                         style={{
                             marginBottom: 8,
@@ -63,14 +64,14 @@ const ClaimReviewHeader = ({
                 )}
                 <Row>
                     <Col
-                        lg={{ order: 1, span: classification ? 16 : 24 }}
+                        lg={{ order: 1, span: isPublished ? 16 : 24 }}
                         md={{ order: 2, span: 24 }}
                         sm={{ order: 2, span: 24 }}
                         xs={{ order: 2, span: 24 }}
                         className="sentence-report-card"
                         style={{
                             paddingRight: vw?.md ? "0" : " 20px",
-                            background: classification
+                            background: isPublished
                                 ? colors.white
                                 : colors.lightGray,
                         }}
@@ -82,7 +83,7 @@ const ClaimReviewHeader = ({
                             classification={classification}
                         />
                     </Col>
-                    {classification && (
+                    {isPublished && (
                         <Col
                             lg={{ order: 2, span: 8 }}
                             md={{ order: 1, span: 24 }}

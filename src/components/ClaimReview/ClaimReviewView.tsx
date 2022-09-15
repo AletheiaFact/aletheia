@@ -1,17 +1,21 @@
-import React from "react";
+import { useSelector } from "@xstate/react";
+import React, { useContext } from "react";
 
-import { ReviewTaskStates, Roles } from "../../machine/enums";
+import { Roles } from "../../machine/enums";
+import { publishedSelector, reviewDataSelector } from "../../machine/selectors";
 import { ClaimReviewPageProps } from "../../pages/claim-review";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewHeader from "./ClaimReviewHeader";
+import { GlobalStateMachineContext } from "./Context/GlobalStateMachineProvider";
 
 const ClaimReviewView = (props: ClaimReviewPageProps) => {
     const { claimReview, description } = props;
+    const { machineService } = useContext(GlobalStateMachineContext);
 
-    const isnotPublished =
-        props.claimReviewTask?.machine.value !== ReviewTaskStates.published;
+    const reviewData = useSelector(machineService, reviewDataSelector);
+    const isPublished = useSelector(machineService, publishedSelector);
 
     const { role } = useAppSelector((state) => state);
 
@@ -21,15 +25,24 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
     return (
         <div>
             <ClaimReviewHeader
-                classification={claimReview?.report.classification || ""}
+                classification={
+                    claimReview?.report?.classification ||
+                    reviewData?.classification
+                }
                 isHidden={claimReview?.isHidden}
                 hideDescription={description}
+                isPublished={isPublished}
                 {...props}
             />
-            {isnotPublished || isHiddenAndUserDontHavePermission ? (
+            {!isPublished || isHiddenAndUserDontHavePermission ? (
                 <ClaimReviewForm {...props} />
             ) : (
-                <SentenceReportView context={claimReview.report} {...props} />
+                <SentenceReportView
+                    context={claimReview?.report || reviewData}
+                    personality={props.personality}
+                    claim={props.claim}
+                    href={props.href}
+                />
             )}
         </div>
     );

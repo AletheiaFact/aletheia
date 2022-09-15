@@ -1,3 +1,4 @@
+import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
 import Text from "antd/lib/typography/Text";
 import { useTranslation } from "next-i18next";
@@ -9,6 +10,7 @@ import usersApi from "../../../api/user";
 import { ClassificationEnum, ReviewTaskEvents } from "../../../machine/enums";
 import getNextEvents from "../../../machine/getNextEvent";
 import getNextForm from "../../../machine/getNextForm";
+import { reviewDataSelector } from "../../../machine/selectors";
 import { useAppSelector } from "../../../store/store";
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
@@ -27,6 +29,8 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     } = useForm();
     const { machineService } = useContext(GlobalStateMachineContext);
     const initialMachine = machineService.machine.config;
+    const reviewData = useSelector(machineService, reviewDataSelector);
+
     const { t } = useTranslation();
 
     const [currentForm, setCurrentForm] = useState(null);
@@ -42,11 +46,10 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     }));
 
     const setDefaultValuesOfCurrentForm = (form) => {
-        const machineValues = initialMachine.context.reviewData;
-        if (machineValues) {
-            reset(machineValues);
+        if (reviewData) {
+            reset();
             form.forEach((input) => {
-                input.defaultValue = machineValues[input.fieldName];
+                input.defaultValue = reviewData[input.fieldName];
             });
         }
     };
@@ -82,6 +85,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         let timeout: NodeJS.Timeout;
         autoSave &&
             watch((value) => {
+                console.log(value);
                 if (timeout) clearTimeout(timeout);
                 timeout = setTimeout(() => {
                     reviewTaskApi.autoSaveDraft(
@@ -145,6 +149,8 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         if (!data) {
             data = getValues();
         }
+        console.log("data:", data);
+
         //@ts-ignore
         umami?.trackEvent(`${event}_BUTTON`, "Fact-checking workflow");
         sendEventToMachine(data, event);
