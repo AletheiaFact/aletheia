@@ -47,7 +47,7 @@ const InputSearch = (props) => {
             addonBefore={false}
             onChange={(e) => doSearch(e)}
             suffix={props.suffix || <></>}
-            data-cy={"testInputSearchPersonality"}
+            data-cy={props["data-cy"] || "testInputSearchPersonality"}
         />
     );
 };
