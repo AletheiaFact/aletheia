@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import ClaimSentenceCard from "./ClaimSentenceCard";
 import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
@@ -40,22 +39,13 @@ const ClaimReviewForm = ({
                 span={18}
                 style={{
                     background: colors.lightGray,
-                    padding: "0px 15px 20px",
+                    padding: "20px 15px",
                     boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
                 }}
             >
-                <ClaimSentenceCard
-                    personality={personality}
-                    date={claim.date}
-                    sentence={sentence}
-                    summaryClassName="claim-review"
-                    claimType={claim?.type}
-                    cardActions={[
-                        <TopicInput
-                            sentence_hash={sentence.data_hash}
-                            topics={sentence.topics}
-                        />,
-                    ]}
+                <TopicInput
+                    sentence_hash={sentence.data_hash}
+                    topics={sentence.topics}
                 />
                 {formCollapsed && (
                     <Row
