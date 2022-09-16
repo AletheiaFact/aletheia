@@ -5,6 +5,7 @@ import { Model } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import { TargetModel, HistoryType } from "../history/schema/history.schema";
 import { FileManagementService } from "../file-management/file-management.service";
+const md5 = require("md5");
 
 @Injectable()
 export class ImageService {
@@ -16,22 +17,33 @@ export class ImageService {
     ) {}
 
     async create(image, user) {
-        return this.fileManagementService.upload(image);
-        // .then(async (imageUploaded) => {
-        //     const newImage = await new this.ImageModel(
-        //         imageUploaded
-        //     ).save();
-        //     const history = this.historyService.getHistoryParams(
-        //         newImage._id,
-        //         TargetModel.Image,
-        //         user,
-        //         HistoryType.Create,
-        //         newImage
-        //     );
+        return this.fileManagementService
+            .upload(image)
+            .then(async (imageUploaded) => {
+                const imageDataHash = md5(
+                    `${imageUploaded.FileURL}${imageUploaded.Key}${imageUploaded.Extension}`
+                );
 
-        //     this.historyService.createHistory(history);
+                const imageSchema = {
+                    data_hash: imageDataHash,
+                    props: {
+                        key: imageUploaded.Key,
+                        extension: imageUploaded.Extension,
+                    },
+                    content: imageUploaded.FileURL,
+                };
 
-        //     return newImage;
-        // });
+                const newImage = await new this.ImageModel(imageSchema).save();
+
+                const history = this.historyService.getHistoryParams(
+                    newImage._id,
+                    TargetModel.Image,
+                    user,
+                    HistoryType.Create,
+                    newImage
+                );
+                this.historyService.createHistory(history);
+                return newImage;
+            });
     }
 }

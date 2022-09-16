@@ -13,7 +13,6 @@ const Home = ({ personalities, stats, href }) => {
         return (
             <>
                 <HomeCarousel personalities={personalities} stats={stats} />
-                <ImageUpload />
                 <HomeContent
                     personalities={personalities}
                     href={href}
