@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { S3 } from "aws-sdk";
+const md5 = require("md5");
 
 @Injectable()
 export class FileManagementService {
@@ -49,10 +50,13 @@ export class FileManagementService {
             })
             .promise();
 
+        const imageDataHash = md5(file.buffer);
+
         const result = {
             FileURL: Location,
             Key,
             Extension: Key.substring(Key.lastIndexOf(".") + 1, Key.length),
+            DataHash: imageDataHash,
         };
         return result;
     }

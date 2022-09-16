@@ -5,7 +5,6 @@ import { Model } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import { TargetModel, HistoryType } from "../history/schema/history.schema";
 import { FileManagementService } from "../file-management/file-management.service";
-const md5 = require("md5");
 
 @Injectable()
 export class ImageService {
@@ -20,12 +19,8 @@ export class ImageService {
         return this.fileManagementService
             .upload(image)
             .then(async (imageUploaded) => {
-                const imageDataHash = md5(
-                    `${imageUploaded.FileURL}${imageUploaded.Key}${imageUploaded.Extension}`
-                );
-
                 const imageSchema = {
-                    data_hash: imageDataHash,
+                    data_hash: imageUploaded.DataHash,
                     props: {
                         key: imageUploaded.Key,
                         extension: imageUploaded.Extension,
