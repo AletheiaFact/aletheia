@@ -7,7 +7,7 @@ export class FileManagementService {
     private s3;
 
     constructor() {
-        this.bucket = process.env.AWS_BUCKET;
+        this.bucket = process.env.AWS_SDK_BUCKET;
         const s3Config = {
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -27,7 +27,7 @@ export class FileManagementService {
         if (!bucket && !this.bucket) {
             throw Error("S3 bucket is not defined");
         }
-        const name = file.originalname;
+        const name = file.name;
         const fileExtension = name.substring(
             name.lastIndexOf(".") + 1,
             name.length
@@ -44,7 +44,7 @@ export class FileManagementService {
                 ContentType: file?.mimetype,
                 ContentEncoding: file?.encoding,
                 ContentLength: file?.size,
-                Body: file.buffer,
+                Body: file.response.url,
                 ACL: "public-read", // TODO: remove on future to create security
             })
             .promise();

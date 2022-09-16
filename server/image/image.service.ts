@@ -4,28 +4,35 @@ import { HistoryService } from "../history/history.service";
 import { Model } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import { TargetModel, HistoryType } from "../history/schema/history.schema";
+import { FileManagementService } from "../file-management/file-management.service";
 
 @Injectable()
 export class ImageService {
     constructor(
         @InjectModel(Image.name)
         private ImageModel: Model<ImageDocument>,
-        private historyService: HistoryService
+        private historyService: HistoryService,
+        private fileManagementService: FileManagementService
     ) {}
 
     async create(image, user) {
-        const newImage = await new this.ImageModel(image).save();
+        return this.fileManagementService
+            .upload(image)
+            .then(async (imageUploaded) => {
+                const newImage = await new this.ImageModel(
+                    imageUploaded
+                ).save();
+                const history = this.historyService.getHistoryParams(
+                    newImage._id,
+                    TargetModel.Image,
+                    user,
+                    HistoryType.Create,
+                    newImage
+                );
 
-        const history = this.historyService.getHistoryParams(
-            newImage._id,
-            TargetModel.Image,
-            user,
-            HistoryType.Create,
-            newImage
-        );
+                this.historyService.createHistory(history);
 
-        this.historyService.createHistory(history);
-
-        return newImage;
+                return newImage;
+            });
     }
 }
