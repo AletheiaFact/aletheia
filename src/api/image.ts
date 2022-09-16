@@ -6,9 +6,9 @@ const request = axios.create({
     baseURL: `/api/image`,
 });
 
-const uploadImage = (params) => {
+const uploadImage = (files) => {
     return request
-        .post("/", { ...params })
+        .post("/", files)
         .then((response) => {
             // message.success(t("topics:uploadImageSuccess"));
             console.log("response", response.data);

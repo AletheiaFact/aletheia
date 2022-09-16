@@ -1,63 +1,27 @@
-import React, { useState } from "react";
-import { Button, Upload } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import React from "react";
 import ImageApi from "../api/image";
 
-const getBase64 = (file) =>
-    new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-
-        reader.onload = () => resolve(reader.result);
-
-        reader.onerror = (error) => reject(error);
-    });
-
 const ImageUpload = () => {
-    const [fileList, setFileList] = useState<object[]>();
+    const handleChange = async (e) => {
+        const newFileList = e.target.files.length > 0 ? e.target.files : [];
+        const formData = new FormData();
 
-    const handlePreview = async (file) => {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
+        for (const file of newFileList) {
+            await formData.append("files", file);
         }
+
+        ImageApi.uploadImage(formData);
     };
 
-    const handleChange = ({ fileList: newFileList }) => {
-        console.log("newFileList", newFileList);
-        setFileList(newFileList);
-    };
-
-    const uploadButton = (
-        <div>
-            <PlusOutlined />
-            <div
-                style={{
-                    marginTop: 8,
-                }}
-            >
-                Upload
-            </div>
-        </div>
-    );
     return (
-        <>
-            <Upload
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                listType="picture-card"
-                onPreview={handlePreview}
-                onChange={handleChange}
-            >
-                {fileList ? null : uploadButton}
-            </Upload>
-            <Button
-                onClick={() => {
-                    console.log("fileList", fileList);
-                    ImageApi.uploadImage(fileList[0]);
-                }}
-            >
-                Upload image
-            </Button>
-        </>
+        <input
+            type="file"
+            name="myfile"
+            multiple
+            onChange={(e) => {
+                handleChange(e);
+            }}
+        />
     );
 };
 

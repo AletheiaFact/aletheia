@@ -16,23 +16,22 @@ export class ImageService {
     ) {}
 
     async create(image, user) {
-        return this.fileManagementService
-            .upload(image)
-            .then(async (imageUploaded) => {
-                const newImage = await new this.ImageModel(
-                    imageUploaded
-                ).save();
-                const history = this.historyService.getHistoryParams(
-                    newImage._id,
-                    TargetModel.Image,
-                    user,
-                    HistoryType.Create,
-                    newImage
-                );
+        return this.fileManagementService.upload(image);
+        // .then(async (imageUploaded) => {
+        //     const newImage = await new this.ImageModel(
+        //         imageUploaded
+        //     ).save();
+        //     const history = this.historyService.getHistoryParams(
+        //         newImage._id,
+        //         TargetModel.Image,
+        //         user,
+        //         HistoryType.Create,
+        //         newImage
+        //     );
 
-                this.historyService.createHistory(history);
+        //     this.historyService.createHistory(history);
 
-                return newImage;
-            });
+        //     return newImage;
+        // });
     }
 }

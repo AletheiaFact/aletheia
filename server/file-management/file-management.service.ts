@@ -27,7 +27,7 @@ export class FileManagementService {
         if (!bucket && !this.bucket) {
             throw Error("S3 bucket is not defined");
         }
-        const name = file.name;
+        const name = file.originalname;
         const fileExtension = name.substring(
             name.lastIndexOf(".") + 1,
             name.length
@@ -44,7 +44,7 @@ export class FileManagementService {
                 ContentType: file?.mimetype,
                 ContentEncoding: file?.encoding,
                 ContentLength: file?.size,
-                Body: file.response.url,
+                Body: file.buffer,
                 ACL: "public-read", // TODO: remove on future to create security
             })
             .promise();
