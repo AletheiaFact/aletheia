@@ -2,7 +2,7 @@ import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 
 export enum ActionTypes {
     TOGGLE_MENU,
-    ENABLE_SEARCH_OVERLAY,
+    RESULTS_OVERLAY_VISIBLE,
     SEARCH_RESULTS,
     SET_TOTAL_PAGES,
     SET_CUR_PAGE,
@@ -16,7 +16,7 @@ export enum ActionTypes {
 export interface RootState {
     menuCollapsed: boolean;
     search: {
-        overlay: any;
+        overlayVisible: boolean;
         searchResults: any;
         searchTotalPages: any;
         searchCurPage: number;

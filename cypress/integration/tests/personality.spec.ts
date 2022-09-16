@@ -9,14 +9,16 @@ describe("Create personality and claim", () => {
     beforeEach("login", () => cy.login());
 
     it("Should search and create a new Personality", () => {
-        cy.get(locators.personality.BTN_SEE_MORE_PERSONALITY)
-            .should("exist")
+        cy.get(locators.floatButton.FLOAT_BUTTON).should("be.visible").click();
+        cy.get(locators.floatButton.ADD_PERSONALITY)
+            .should("be.visible")
             .click();
-        cy.get(locators.personality.BTN_ADD_PERSONALITY).click();
         cy.get(locators.personality.INPUT_SEARCH_PERSONALITY).type(
             personality.slug
         );
-        cy.get(`${locators.personality.SELECT_PERSONALITY}`).click();
+        cy.get(`${locators.personality.SELECT_PERSONALITY}`, {
+            timeout: 5000,
+        }).click();
     });
 
     it("Should create a Claim", () => {

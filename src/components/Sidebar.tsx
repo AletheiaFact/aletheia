@@ -1,57 +1,47 @@
-import { CloseOutlined } from "@ant-design/icons";
-import { Button, Col, Layout, Row } from "antd";
+import { Drawer } from "antd";
 import React from "react";
+import { useDispatch } from "react-redux";
+import actions from "../store/actions";
+import { useAppSelector } from "../store/store";
 
 import colors from "../styles/colors";
 import AletheiaMenu from "./AletheiaMenu";
 import Logo from "./Header/Logo";
 
-const { Sider } = Layout;
-const Sidebar = ({ menuCollapsed, onToggleSidebar }) => {
+const Sidebar = () => {
+    const dispatch = useDispatch();
+
+    const { menuCollapsed } = useAppSelector((state) => {
+        return {
+            menuCollapsed:
+                state?.menuCollapsed !== undefined
+                    ? state?.menuCollapsed
+                    : true,
+        };
+    });
+
     return (
-        <Sider
-            collapsible
-            defaultCollapsed={menuCollapsed}
-            collapsed={menuCollapsed}
-            collapsedWidth={0}
-            width={270}
-            style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                height: "100vh",
-                overflow: "hidden",
-                zIndex: 4,
-                background: "#F5F5F5",
-                boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.25)",
+        <Drawer
+            visible={!menuCollapsed}
+            onClose={() => dispatch(actions.closeSideMenu())}
+            width="17rem"
+            placement="left"
+            bodyStyle={{ padding: 0 }}
+            drawerStyle={{
+                backgroundColor: colors.lightGray,
             }}
+            closable={false}
         >
-            <Row
+            <div
                 style={{
-                    padding: "15px 20px",
+                    paddingTop: "16px",
+                    paddingLeft: "48px",
                 }}
             >
-                <Col span={20}>
-                    <Logo color="blue" />
-                </Col>
-                <Col span={4}>
-                    <Button
-                        data-cy="testCloseSideMenu"
-                        onClick={() => onToggleSidebar()}
-                        type="text"
-                    >
-                        <CloseOutlined
-                            style={{
-                                fontSize: "22px",
-                                color: colors.bluePrimary,
-                                marginTop: "5px",
-                            }}
-                        />
-                    </Button>
-                </Col>
-            </Row>
+                <Logo color={colors.bluePrimary} height="48px" />
+            </div>
             <AletheiaMenu />
-        </Sider>
+        </Drawer>
     );
 };
 
