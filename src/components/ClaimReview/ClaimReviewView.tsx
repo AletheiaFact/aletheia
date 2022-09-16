@@ -8,7 +8,7 @@ import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewHeader from "./ClaimReviewHeader";
-import { GlobalStateMachineContext } from "./Context/GlobalStateMachineProvider";
+import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
 
 const ClaimReviewView = (props: ClaimReviewPageProps) => {
     const { claimReview, description } = props;

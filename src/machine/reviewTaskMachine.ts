@@ -91,16 +91,20 @@ export const createNewMachine = ({ value, context }) => {
     });
 };
 
+/**
+ * Intercepts the event sent to the machine to save the context on the database
+ */
 export const transitionHandler = (state) => {
-    const sentence_hash = state.event.sentence_hash;
-    const t = state.event.t;
+    const {
+        sentence_hash,
+        t,
+        recaptchaString,
+        setCurrentFormAndNextEvents,
+        resetIsLoading,
+    } = state.event;
     const event = state.event.type;
-    const recaptchaString = state.event.recaptchaString;
-    const setCurrentFormAndNextEvents = state.event.setCurrentFormAndNextEvents;
-    const resetIsLoading = state.event.resetIsLoading;
 
     if (event === ReviewTaskEvents.goback) {
-        resetIsLoading();
         setCurrentFormAndNextEvents(Object.keys(state.value)[0]);
     } else if (event !== ReviewTaskEvents.init) {
         api.createClaimReviewTask(

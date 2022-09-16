@@ -1,9 +1,9 @@
 import { useTranslation } from "next-i18next";
 import { createContext, useEffect, useState } from "react";
 
-import { initialContext } from "../../../machine/context";
-import { ReviewTaskStates } from "../../../machine/enums";
-import { createNewMachineService } from "../../../machine/reviewTaskMachine";
+import { initialContext } from "../machine/context";
+import { ReviewTaskStates } from "../machine/enums";
+import { createNewMachineService } from "../machine/reviewTaskMachine";
 
 interface GlobalContextType {
     machineService: any;

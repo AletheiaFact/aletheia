@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 
 import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { GlobalStateMachineProvider } from "../components/ClaimReview/Context/GlobalStateMachineProvider";
+import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
 import { ClassificationEnum } from "../machine/enums";
@@ -45,7 +45,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
 
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
-        autoSave: true,
+        autoSave: false,
     });
 
     const review = sentence?.props?.classification;

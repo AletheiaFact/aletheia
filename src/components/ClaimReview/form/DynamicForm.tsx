@@ -15,7 +15,7 @@ import { useAppSelector } from "../../../store/store";
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
-import { GlobalStateMachineContext } from "../Context/GlobalStateMachineProvider";
+import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
 import DynamicInput from "./DynamicInput";
 
 const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
@@ -47,7 +47,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
 
     const setDefaultValuesOfCurrentForm = (form) => {
         if (reviewData) {
-            reset();
+            reset(reviewData);
             form.forEach((input) => {
                 input.defaultValue = reviewData[input.fieldName];
             });
@@ -85,7 +85,6 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         let timeout: NodeJS.Timeout;
         autoSave &&
             watch((value) => {
-                console.log(value);
                 if (timeout) clearTimeout(timeout);
                 timeout = setTimeout(() => {
                     reviewTaskApi.autoSaveDraft(
@@ -140,8 +139,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const validateClassification = (data) => {
         return (
             !data.classification ||
-            (data.classification &&
-                Object.values(ClassificationEnum).includes(data.classification))
+            Object.values(ClassificationEnum).includes(data.classification)
         );
     };
 
@@ -149,8 +147,6 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         if (!data) {
             data = getValues();
         }
-        console.log("data:", data);
-
         //@ts-ignore
         umami?.trackEvent(`${event}_BUTTON`, "Fact-checking workflow");
         sendEventToMachine(data, event);
