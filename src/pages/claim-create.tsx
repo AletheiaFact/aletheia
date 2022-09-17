@@ -8,6 +8,10 @@ import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../store/types";
+import { useState } from "react";
+import ClaimUploadImage from "../components/Claim/ClaimUploadImage";
+import ClaimSelectType from "../components/Claim/ClaimSelectType";
+import ClaimSelectPersonality from "../components/Claim/ClaimSelectPersonality";
 
 const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
     sitekey,
@@ -16,6 +20,10 @@ const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const [state, setState] = useState(personality ? "personality" : "type");
+    const [type, setType] = useState("");
+    const [personalityClaim, setPersonalityClaim] = useState();
+
     dispatch({
         type: ActionTypes.SET_LOGIN_STATUS,
         login: isLoggedIn,
@@ -28,7 +36,25 @@ const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
                     name: personality.name,
                 })}
             />
-            <ClaimCreate sitekey={sitekey} personality={personality} />
+
+            {state === "type" ? (
+                <ClaimSelectType setState={setState} setType={setType} />
+            ) : state === "personality" ? (
+                <ClaimSelectPersonality
+                    setState={setState}
+                    setPersonalityClaim={setPersonalityClaim}
+                    isCreatingClaim={true}
+                />
+            ) : state === "image" ? (
+                <ClaimUploadImage
+                    personality={personality || personalityClaim}
+                />
+            ) : (
+                <ClaimCreate
+                    sitekey={sitekey}
+                    personality={personality || personalityClaim}
+                />
+            )}
             <AffixButton />
         </>
     );

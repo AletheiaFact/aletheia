@@ -10,7 +10,12 @@ import Label from "../Label";
 import PersonalitySearchResultSection from "./PersonalitySearchResultSection";
 import { ActionTypes } from "../../store/types";
 
-const PersonalityCreateSearch = ({ withSuggestions }) => {
+const PersonalityCreateSearch = ({
+    withSuggestions,
+    isCreatingClaim,
+    setState,
+    setPersonalityClaim,
+}) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
 
@@ -64,10 +69,16 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
                 </Form.Item>
             </Form>
             <PersonalitySearchResultSection
+                setState={setState}
+                setPersonalityClaim={setPersonalityClaim}
+                isCreatingClaim={isCreatingClaim}
                 personalities={personalitiesCreated}
                 label={t("personalityCTA:created")}
             />
             <PersonalitySearchResultSection
+                setState={setState}
+                setPersonalityClaim={setPersonalityClaim}
+                isCreatingClaim={isCreatingClaim}
                 personalities={personalitiesAvailable}
                 label={t("personalityCTA:available")}
             />

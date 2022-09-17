@@ -135,6 +135,9 @@ const ClaimCreate = ({
                     personality={personality}
                     header={true}
                     mobile={true}
+                    isCreatingClaim={false}
+                    setState={undefined}
+                    setPersonalityClaim={undefined}
                 />
             )}
 

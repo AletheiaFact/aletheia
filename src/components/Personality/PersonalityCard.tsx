@@ -13,17 +13,21 @@ const { Title, Paragraph } = Typography;
 
 interface PersonalityCardProps {
     personality: any;
+    isCreatingClaim: boolean;
     summarized?: boolean;
     enableStats?: boolean;
     header?: boolean;
     hrefBase?: string;
     mobile?: boolean;
+    setState: any;
+    setPersonalityClaim: any;
     onClick?: (personality: any) => {};
     titleLevel?: 1 | 2 | 3 | 4 | 5;
 }
 
 const PersonalityCard = ({
     personality,
+    isCreatingClaim = null,
     summarized = false,
     enableStats = true,
     header = false,
@@ -31,6 +35,8 @@ const PersonalityCard = ({
     mobile = false,
     onClick,
     titleLevel = 1,
+    setState = null,
+    setPersonalityClaim = null,
 }: PersonalityCardProps) => {
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const { t } = useTranslation();
@@ -230,46 +236,100 @@ const PersonalityCard = ({
                                     justifyContent: "flex-end",
                                 }}
                             >
-                                {personality._id ? (
-                                    <Button
-                                        type={ButtonType.blue}
-                                        data-cy={personality.name}
-                                        href={`${hrefBase || "/personality/"}${
-                                            personality.slug
-                                        }`}
-                                        style={{
-                                            fontSize: "12px",
-                                            lineHeight: "20px",
-                                            height: "auto",
-                                            padding: "4px 12px",
-                                        }}
-                                    >
-                                        <span style={{ marginTop: 4 }}>
-                                            {t("personality:profile_button")}
-                                        </span>
-                                    </Button>
+                                {!isCreatingClaim ? (
+                                    <>
+                                        {personality._id ? (
+                                            <Button
+                                                type={ButtonType.blue}
+                                                data-cy={personality.name}
+                                                href={`${
+                                                    hrefBase || "/personality/"
+                                                }${personality.slug}`}
+                                                style={{
+                                                    fontSize: "12px",
+                                                    lineHeight: "20px",
+                                                    height: "auto",
+                                                    padding: "4px 12px",
+                                                }}
+                                            >
+                                                <span style={{ marginTop: 4 }}>
+                                                    {t(
+                                                        "personality:profile_button"
+                                                    )}
+                                                </span>
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type={ButtonType.blue}
+                                                onClick={() => {
+                                                    if (!isFormSubmitted) {
+                                                        setIsFormSubmitted(
+                                                            true
+                                                        );
+                                                        onClick(personality);
+                                                    }
+                                                }}
+                                                disabled={isFormSubmitted}
+                                                data-cy={personality.name}
+                                                style={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    height: 40,
+                                                    paddingBottom: 0,
+                                                }}
+                                            >
+                                                <PlusOutlined />{" "}
+                                                {t("personality:add_button")}
+                                            </Button>
+                                        )}
+                                    </>
                                 ) : (
-                                    <Button
-                                        type={ButtonType.blue}
-                                        onClick={() => {
-                                            if (!isFormSubmitted) {
-                                                setIsFormSubmitted(true);
-                                                onClick(personality);
-                                            }
-                                        }}
-                                        disabled={isFormSubmitted}
-                                        data-cy={personality.name}
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            height: 40,
-                                            paddingBottom: 0,
-                                        }}
-                                    >
-                                        <PlusOutlined />{" "}
-                                        {t("personality:add_button")}
-                                    </Button>
+                                    <>
+                                        {personality._id ? (
+                                            <Button
+                                                type={ButtonType.blue}
+                                                data-cy={personality.name}
+                                                onClick={() => {
+                                                    setState("speech");
+                                                    setPersonalityClaim(
+                                                        personality
+                                                    );
+                                                }}
+                                                style={{
+                                                    fontSize: "12px",
+                                                    lineHeight: "20px",
+                                                    height: "auto",
+                                                    padding: "4px 12px",
+                                                }}
+                                            >
+                                                <span style={{ marginTop: 4 }}>
+                                                    {t(
+                                                        "personality:profile_button"
+                                                    )}
+                                                </span>
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type={ButtonType.blue}
+                                                onClick={() => {
+                                                    onClick(personality);
+                                                }}
+                                                disabled={isFormSubmitted}
+                                                data-cy={personality.name}
+                                                style={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    height: 40,
+                                                    paddingBottom: 0,
+                                                }}
+                                            >
+                                                <PlusOutlined />{" "}
+                                                {t("personality:add_button")}
+                                            </Button>
+                                        )}
+                                    </>
                                 )}
                             </Col>
                         )}
