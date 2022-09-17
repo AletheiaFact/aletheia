@@ -155,8 +155,25 @@ export class ClaimController {
         );
     }
 
-    @Get("personality/:personalitySlug/claim/create/")
+    @Get("claim/create/")
     public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-create",
+            Object.assign(parsedUrl.query, {
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
+    }
+
+    @Get("personality/:personalitySlug/claim/create/")
+    public async personalityClaimCreatePage(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
         const { personalitySlug } = req.params;
         const parsedUrl = parse(req.url, true);
 

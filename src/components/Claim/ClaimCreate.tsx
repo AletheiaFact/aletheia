@@ -130,11 +130,13 @@ const ClaimCreate = ({
 
     return (
         <>
-            <PersonalityCard
-                personality={personality}
-                header={true}
-                mobile={true}
-            />
+            {personality && (
+                <PersonalityCard
+                    personality={personality}
+                    header={true}
+                    mobile={true}
+                />
+            )}
 
             <ClaimForm
                 ref={formRef}

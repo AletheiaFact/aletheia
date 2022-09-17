@@ -42,7 +42,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             sitekey: query.sitekey,
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
-            personality: JSON.parse(JSON.stringify(query.personality)),
+            personality: query?.personality
+                ? JSON.parse(JSON.stringify(query?.personality))
+                : false,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
         },
