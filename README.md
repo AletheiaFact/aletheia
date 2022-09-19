@@ -133,3 +133,17 @@ yarn build
 #### Using Mongo DB Atlas
 - Replace your ``connection_uri`` with your MongoDB atlas connection URI in config.yaml
 - Bellow of ``connection_uri`` add ``atlas`` field with a true boolean
+
+#### Feature Flag in Git Lab
+- Create a GitLab account from the url: https://gitlab.com to be inserted into the project and have permission to access the closed tools
+- Access Aletheia's GitLab account via the url: https://gitlab.com/aletheiafact/aletheia
+- Click on the Deployments option 
+- Then click on the Feature Flag option
+- Click on Configure, which is in front of the New Feature Flag button 
+- Appear the settings needed to be inserted into the .env e config.yaml
+- The settings are the ``api url``, ``instance id`` and ``appName``
+- The ``appName`` that should be inserted is: Local, you must pay attention to the capital letter which makes a difference here 
+- ``API URL``: URL where the client (application) connects to get a list of feature flags.
+- ``Instance ID``: Unique token that authorizes the retrieval of the feature flags.
+- ``Application name``: The name of the environment the application runs in (not the name of the application itself).
+- Follow the example to put the variables in the right places.
