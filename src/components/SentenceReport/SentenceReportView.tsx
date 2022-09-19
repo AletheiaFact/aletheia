@@ -3,10 +3,9 @@ import React from "react";
 
 import { useAppSelector } from "../../store/store";
 import CTARegistration from "../Home/CTARegistration";
-import SocialMediaShare from "../SocialMediaShare";
 import SentenceReportContent from "./SentenceReportContent";
 
-const SentenceReportView = ({ personality, claim, href, context }) => {
+const SentenceReportView = ({ personality, claim, context }) => {
     const { isLoggedIn } = useAppSelector((state) => {
         return {
             isLoggedIn: state?.login,
@@ -25,13 +24,6 @@ const SentenceReportView = ({ personality, claim, href, context }) => {
                         />
                     </Col>
                     {!isLoggedIn && <CTARegistration />}
-                </Col>
-                <Col span={24}>
-                    <SocialMediaShare
-                        quote={personality?.name}
-                        href={href}
-                        claim={claim?.title}
-                    />
                 </Col>
             </Row>
         </div>

@@ -1,27 +1,26 @@
 import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
 
 const getNextEvents = (param: ReviewTaskEvents | ReviewTaskStates) => {
+    const defaultEvents = [ReviewTaskEvents.goback, ReviewTaskEvents.draft];
     const eventsMap = {
+        // When going back from the 'assigned' to the 'unassigned' state
+        // the param received by the function is 0
         0: [ReviewTaskEvents.assignUser],
         [ReviewTaskStates.unassigned]: [ReviewTaskEvents.assignUser],
         [ReviewTaskEvents.assignUser]: [
-            ReviewTaskEvents.goback,
-            ReviewTaskEvents.draft,
+            ...defaultEvents,
             ReviewTaskEvents.finishReport,
         ],
         [ReviewTaskStates.assigned]: [
-            ReviewTaskEvents.goback,
-            ReviewTaskEvents.draft,
+            ...defaultEvents,
             ReviewTaskEvents.finishReport,
         ],
         [ReviewTaskEvents.finishReport]: [
-            ReviewTaskEvents.goback,
-            ReviewTaskEvents.draft,
+            ...defaultEvents,
             ReviewTaskEvents.publish,
         ],
         [ReviewTaskStates.reported]: [
-            ReviewTaskEvents.goback,
-            ReviewTaskEvents.draft,
+            ...defaultEvents,
             ReviewTaskEvents.publish,
         ],
         [ReviewTaskStates.published]: [],

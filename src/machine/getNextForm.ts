@@ -5,6 +5,8 @@ import unassignedForm from "../components/ClaimReview/form/fieldLists/unassigned
 
 const getNextForm = (param: ReviewTaskEvents | ReviewTaskStates) => {
     const formMap = {
+        // When going back from the 'assigned' to the 'unassigned' state
+        // the param received by the function is 0
         0: unassignedForm,
         [ReviewTaskStates.unassigned]: unassignedForm,
         [ReviewTaskEvents.assignUser]: assignedForm,

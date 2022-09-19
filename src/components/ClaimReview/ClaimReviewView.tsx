@@ -9,6 +9,7 @@ import SentenceReportView from "../SentenceReport/SentenceReportView";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewHeader from "./ClaimReviewHeader";
 import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import SocialMediaShare from "../SocialMediaShare";
 
 const ClaimReviewView = (props: ClaimReviewPageProps) => {
     const { claimReview, description } = props;
@@ -41,9 +42,14 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
                     context={claimReview?.report || reviewData}
                     personality={props.personality}
                     claim={props.claim}
-                    href={props.href}
                 />
             )}
+
+            <SocialMediaShare
+                quote={props.personality?.name}
+                href={props.href}
+                claim={props.claim?.title}
+            />
         </div>
     );
 };
