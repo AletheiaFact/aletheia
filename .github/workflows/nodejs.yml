@@ -50,7 +50,7 @@ jobs:
             wait-on: 'http://localhost:3000'
         env:
             CI: true
-        uses: actions/upload-artifact@latest
+    -   uses: actions/upload-artifact@latest
         if: failure()
         with:
             name: cypress-snapshots
