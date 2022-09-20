@@ -1,4 +1,4 @@
-import { Controller, Get, Res, Req } from "@nestjs/common";
+import { Controller, Get, Res, Req, Optional } from "@nestjs/common";
 import { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "./view.service";
@@ -10,7 +10,7 @@ import { ConfigService } from "@nestjs/config";
 export class ViewController {
     constructor(
         private viewService: ViewService,
-        private readonly unleash: UnleashService,
+        @Optional() private readonly unleash: UnleashService,
         private configService: ConfigService
     ) {}
 

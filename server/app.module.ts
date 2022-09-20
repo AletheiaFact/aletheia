@@ -93,8 +93,6 @@ export class AppModule implements NestModule {
             SearchModule,
         ];
         if (options.config.feature_flag) {
-            // FIXME: the feature flag module should be optional
-            // We need to find a way of having a fallback in case the module isn't loaded.
             imports.push(
                 UnleashModule.forRoot({
                     url: options.config.feature_flag.url,
