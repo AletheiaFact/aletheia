@@ -13,13 +13,13 @@ const { Title, Paragraph } = Typography;
 const SentenceReportCard = ({
     claim,
     personality,
-    context,
+    classification,
     sentence,
 }: {
     personality: any;
     claim: any;
     sentence: any;
-    context: any;
+    classification?: any;
 }) => {
     const { t } = useTranslation();
     const speechTypeTranslation =
@@ -60,15 +60,17 @@ const SentenceReportCard = ({
                     </Row>
                 </Col>
                 <Col md={18} sm={24} className="sentence-card">
-                    <Title className="classification" level={1}>
-                        {
-                            // TODO: Create a more meaningful h1 for this page
-                            t("claimReview:claimReview")
-                        }
-                        <ClassificationText
-                            classification={context.classification}
-                        />
-                    </Title>
+                    {classification && (
+                        <Title className="classification" level={1}>
+                            {
+                                // TODO: Create a more meaningful h1 for this page
+                                t("claimReview:claimReview")
+                            }
+                            <ClassificationText
+                                classification={classification}
+                            />
+                        </Title>
+                    )}
                     <SentenceReportSummary>
                         <Paragraph
                             ellipsis={{

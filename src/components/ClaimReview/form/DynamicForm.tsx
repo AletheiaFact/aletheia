@@ -1,25 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
-import { useTranslation } from "next-i18next";
-import { initialContext } from "../../../machine/context";
-import { createNewMachineService } from "../../../machine/reviewTaskMachine";
-import {
-    ClassificationEnum,
-    ReviewTaskEvents,
-    ReviewTaskStates,
-} from "../../../machine/enums";
-import AletheiaButton, { ButtonType } from "../../Button";
-import colors from "../../../styles/colors";
-import DynamicInput from "./DynamicInput";
-import unassignedForm from "./fieldLists/unassignedForm";
-import assignedForm from "./fieldLists/assignedForm";
-import reportedForm from "./fieldLists/reportedForm";
 import Text from "antd/lib/typography/Text";
+import { useTranslation } from "next-i18next";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import usersApi from "../../../api/user";
-import AletheiaCaptcha from "../../AletheiaCaptcha";
+import { ClassificationEnum, ReviewTaskEvents } from "../../../machine/enums";
+import getNextEvents from "../../../machine/getNextEvent";
+import getNextForm from "../../../machine/getNextForm";
+import { reviewDataSelector } from "../../../machine/selectors";
 import { useAppSelector } from "../../../store/store";
+import colors from "../../../styles/colors";
+import AletheiaCaptcha from "../../AletheiaCaptcha";
+import AletheiaButton, { ButtonType } from "../../Button";
+import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
+import DynamicInput from "./DynamicInput";
 
 const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const {
@@ -30,107 +27,59 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         formState: { errors },
         watch,
     } = useForm();
-    const [service, setService] = useState(null);
+    const { machineService } = useContext(GlobalStateMachineContext);
+    const initialMachine = machineService.machine.config;
+    const reviewData = useSelector(machineService, reviewDataSelector);
+
+    const { t } = useTranslation();
+
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
-    const { t } = useTranslation();
+    const [isLoading, setIsLoading] = useState({});
     const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
-
-    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
-    const [isLoadingGoBack, setIsLoadingGoBack] = useState(false);
-    const [isLoadingDraft, setIsLoadingDraft] = useState(false);
 
     const { isLoggedIn, autoSave } = useAppSelector((state) => ({
         isLoggedIn: state.login,
         autoSave: state.autoSave,
     }));
 
-    const setDefaultValuesOfCurrentForm = (machine, form) => {
-        if (machine) {
-            const machineValues = machine.context.reviewData;
-            reset(machineValues);
+    const setDefaultValuesOfCurrentForm = (form) => {
+        if (reviewData) {
+            reset(reviewData);
             form.forEach((input) => {
-                Object.keys(machine.context.reviewData).forEach((value) => {
-                    if (input.fieldName === value) {
-                        input.defaultValue = machine.context.reviewData[value];
-                    }
-                });
+                input.defaultValue = reviewData[input.fieldName];
             });
         }
     };
 
-    const setCurrentFormAndNextEvents = (param, machine = null) => {
-        if (
-            param === ReviewTaskStates.assigned ||
-            param === ReviewTaskEvents.assignUser
-        ) {
-            setDefaultValuesOfCurrentForm(machine, assignedForm);
-            setCurrentForm(assignedForm);
-            setNextEvents([
-                ReviewTaskEvents.goback,
-                ReviewTaskEvents.draft,
-                ReviewTaskEvents.finishReport,
-            ]);
-        } else if (
-            param === ReviewTaskStates.reported ||
-            param === ReviewTaskEvents.finishReport
-        ) {
-            setDefaultValuesOfCurrentForm(machine, reportedForm);
-            setCurrentForm(reportedForm);
-            setNextEvents([
-                ReviewTaskEvents.goback,
-                ReviewTaskEvents.draft,
-                ReviewTaskEvents.publish,
-            ]);
-        } else if (
-            param === ReviewTaskStates.published ||
-            param === ReviewTaskEvents.publish
-        ) {
-            setCurrentForm([]);
-            setNextEvents([]);
-        } else if (param !== ReviewTaskEvents.draft) {
-            setDefaultValuesOfCurrentForm(machine, unassignedForm);
-            setCurrentForm(unassignedForm);
-            setNextEvents([ReviewTaskEvents.assignUser]);
+    const setCurrentFormAndNextEvents = (param) => {
+        if (param !== ReviewTaskEvents.draft) {
+            const nextForm = getNextForm(param);
+            setCurrentForm(nextForm);
+            setDefaultValuesOfCurrentForm(nextForm);
+            setNextEvents(getNextEvents(param));
         }
     };
 
-    const isButtonLoading = (eventName) => {
-        if (eventName === ReviewTaskEvents.goback) {
-            return isLoadingGoBack;
-        }
-        return eventName === ReviewTaskEvents.draft
-            ? isLoadingDraft
-            : isLoadingSubmit;
+    const resetIsLoading = () => {
+        const isLoading = {};
+        nextEvents?.forEach((eventName) => {
+            isLoading[eventName] = false;
+        });
+        setIsLoading(isLoading);
     };
 
     useEffect(() => {
-        isLoggedIn &&
-            reviewTaskApi
-                .getMachineBySentenceHash(sentence_hash, t)
-                .then(({ machine }) => {
-                    // The states assigned and reported have compound states
-                    // and when we going to save we get "assigned: undraft" as a value.
-                    // The machine doesn't recognize when we try to persist state the initial value
-                    // 'cause the value it's an object. So for these states, we get only the key value
-                    if (machine) {
-                        machine.value =
-                            machine.value !== ReviewTaskStates.published
-                                ? Object.keys(machine.value)[0]
-                                : machine.value;
-                    }
-
-                    const newMachine = machine || {
-                        context: initialContext,
-                        value: ReviewTaskStates.unassigned,
-                    };
-                    newMachine.context.utils = { t };
-                    setService(createNewMachineService(newMachine));
-                    setCurrentFormAndNextEvents(newMachine.value, newMachine);
-                });
+        if (isLoggedIn) {
+            setCurrentFormAndNextEvents(initialMachine.initial);
+        }
     }, []);
+
+    useEffect(() => {
+        resetIsLoading();
+    }, [nextEvents]);
 
     useEffect(() => {
         let timeout: NodeJS.Timeout;
@@ -165,81 +114,10 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         }));
     };
 
-    const formInputs =
-        currentForm &&
-        currentForm.map((fieldItem, index) => {
-            const {
-                fieldName,
-                rules,
-                label,
-                placeholder,
-                type,
-                addInputLabel,
-                defaultValue,
-            } = fieldItem;
-
-            return (
-                <Row key={index} style={{ marginBottom: 20 }}>
-                    <Col span={24}>
-                        <h4
-                            style={{
-                                color: colors.blackSecondary,
-                                fontWeight: 600,
-                                paddingLeft: 10,
-                                marginBottom: 0,
-                            }}
-                        >
-                            {t(label)}
-                        </h4>
-                    </Col>
-                    <Col span={24} style={{ margin: "10px 0" }}>
-                        <Controller
-                            name={fieldName}
-                            control={control}
-                            rules={rules}
-                            defaultValue={defaultValue}
-                            render={({ field }) => (
-                                <DynamicInput
-                                    fieldName={fieldName}
-                                    type={type}
-                                    placeholder={placeholder}
-                                    onChange={field.onChange}
-                                    value={field.value}
-                                    addInputLabel={addInputLabel}
-                                    defaultValue={defaultValue}
-                                    data-cy={`testClaimReview${fieldName}`}
-                                    dataLoader={fetchUserList}
-                                />
-                            )}
-                        />
-                        {errors[fieldName] && (
-                            <Text type="danger" style={{ marginLeft: 20 }}>
-                                {t(errors[fieldName].message)}
-                            </Text>
-                        )}
-                    </Col>
-                </Row>
-            );
-        });
-
     const sendEventToMachine = (formData, eventName) => {
-        if (eventName === ReviewTaskEvents.draft) {
-            setIsLoadingDraft(true);
-        } else if (eventName !== ReviewTaskEvents.goback) {
-            setIsLoadingSubmit(true);
-        }
+        setIsLoading((current) => ({ ...current, [eventName]: true }));
 
-        const buttonLoading = (eventName) => {
-            if (eventName === ReviewTaskEvents.draft) {
-                return setIsLoadingDraft;
-            }
-            return eventName === ReviewTaskEvents.goback
-                ? setIsLoadingGoBack
-                : setIsLoadingSubmit;
-        };
-
-        const setIsLoading = buttonLoading(eventName);
-        service.send(eventName, {
+        machineService.send(eventName, {
             sentence_hash,
             reviewData: {
                 ...formData,
@@ -252,55 +130,106 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
             t,
             recaptchaString,
             setCurrentFormAndNextEvents,
-            setIsLoading,
+            resetIsLoading,
         });
         setRecaptchaString("");
         recaptchaRef.current?.resetRecaptcha();
     };
 
+    const validateClassification = (data) => {
+        return (
+            !data.classification ||
+            Object.values(ClassificationEnum).includes(data.classification)
+        );
+    };
+
+    const handleSendEvent = async (event, data = null) => {
+        if (!data) {
+            data = getValues();
+        }
+
+        //@ts-ignore
+        window.umami &&
+            window.umami?.trackEvent(
+                `${event}_BUTTON`,
+                "Fact-checking workflow"
+            );
+        sendEventToMachine(data, event);
+    };
+
     /**
-     * Verify if classification exists and is a valid type
-     * Send Event and data to state machine
-     * Reset recaptcha
-     * @param data data from form
+     * Send event to machine validating form rules
+     * @param data data from form submit
      * @param e event
      */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        if (
-            data?.classification &&
-            Object.values(ClassificationEnum).includes(data.classification)
-        ) {
-            sendEventToMachine(data, event);
-        } else if (!data?.classification) {
-            sendEventToMachine(data, event);
+        if (validateClassification(data)) {
+            handleSendEvent(event, data);
         }
-    };
-
-    const onClickSaveDraft = () => {
-        const values = getValues();
-        //@ts-ignore
-        umami?.trackEvent(
-            `${ReviewTaskEvents.draft}_BUTTON`,
-            "Fact-checking workflow"
-        );
-        sendEventToMachine(values, ReviewTaskEvents.draft);
-    };
-
-    const onClickGoBack = () => {
-        //@ts-ignore
-        umami?.trackEvent(
-            `${ReviewTaskEvents.goback}_BUTTON`,
-            "Fact-checking workflow"
-        );
-        sendEventToMachine({}, ReviewTaskEvents.goback);
     };
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
-            {formInputs && (
+            {currentForm && (
                 <>
-                    {formInputs}
+                    {currentForm.map((fieldItem, index) => {
+                        const {
+                            fieldName,
+                            rules,
+                            label,
+                            placeholder,
+                            type,
+                            addInputLabel,
+                            defaultValue,
+                        } = fieldItem;
+
+                        return (
+                            <Row key={index} style={{ marginBottom: 20 }}>
+                                <Col span={24}>
+                                    <h4
+                                        style={{
+                                            color: colors.blackSecondary,
+                                            fontWeight: 600,
+                                            paddingLeft: 10,
+                                            marginBottom: 0,
+                                        }}
+                                    >
+                                        {t(label)}
+                                    </h4>
+                                </Col>
+                                <Col span={24} style={{ margin: "10px 0" }}>
+                                    <Controller
+                                        name={fieldName}
+                                        control={control}
+                                        rules={rules}
+                                        defaultValue={defaultValue}
+                                        render={({ field }) => (
+                                            <DynamicInput
+                                                fieldName={fieldName}
+                                                type={type}
+                                                placeholder={placeholder}
+                                                onChange={field.onChange}
+                                                value={field.value}
+                                                addInputLabel={addInputLabel}
+                                                defaultValue={defaultValue}
+                                                data-cy={`testClaimReview${fieldName}`}
+                                                dataLoader={fetchUserList}
+                                            />
+                                        )}
+                                    />
+                                    {errors[fieldName] && (
+                                        <Text
+                                            type="danger"
+                                            style={{ marginLeft: 20 }}
+                                        >
+                                            {t(errors[fieldName].message)}
+                                        </Text>
+                                    )}
+                                </Col>
+                            </Row>
+                        );
+                    })}
                     {currentForm?.length > 0 && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
@@ -319,7 +248,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                 {nextEvents?.map((event) => {
                     return (
                         <AletheiaButton
-                            loading={isButtonLoading(event)}
+                            loading={isLoading[event]}
                             key={event}
                             type={ButtonType.blue}
                             htmlType={
@@ -328,19 +257,13 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                                     ? "button"
                                     : "submit"
                             }
-                            onClick={
-                                event === ReviewTaskEvents.goback
-                                    ? onClickGoBack
-                                    : event === ReviewTaskEvents.draft
-                                    ? onClickSaveDraft
-                                    : () => {
-                                          //@ts-ignore
-                                          umami?.trackEvent(
-                                              `${event}_BUTTON`,
-                                              "Fact-checking workflow"
-                                          );
-                                      }
-                            }
+                            onClick={() => {
+                                if (
+                                    event === ReviewTaskEvents.goback ||
+                                    event === ReviewTaskEvents.draft
+                                )
+                                    handleSendEvent(event);
+                            }}
                             event={event}
                             disabled={
                                 event === ReviewTaskEvents.goback

@@ -91,35 +91,36 @@ export const createNewMachine = ({ value, context }) => {
     });
 };
 
+/**
+ * Intercepts the event sent to the machine to save the context on the database
+ */
 export const transitionHandler = (state) => {
-    const sentence_hash = state.event.sentence_hash;
-    const t = state.event.t;
+    const {
+        sentence_hash,
+        t,
+        recaptchaString,
+        setCurrentFormAndNextEvents,
+        resetIsLoading,
+    } = state.event;
     const event = state.event.type;
-    const recaptcha = state.event.recaptchaString;
-    const setCurrentFormAndNextEvents = state.event.setCurrentFormAndNextEvents;
-    const setIsLoading = state.event.setIsLoading;
 
-    if (event !== ReviewTaskEvents.init && event !== ReviewTaskEvents.goback) {
+    if (event === ReviewTaskEvents.goback) {
+        setCurrentFormAndNextEvents(Object.keys(state.value)[0]);
+    } else if (event !== ReviewTaskEvents.init) {
         api.createClaimReviewTask(
             {
                 sentence_hash,
                 machine: { context: state.context, value: state.value },
-                recaptcha,
+                recaptcha: recaptchaString,
             },
             t,
             event
         )
             .then(() => {
-                setIsLoading(false);
                 setCurrentFormAndNextEvents(event);
-                if (event === ReviewTaskEvents.publish) {
-                    window.location.reload();
-                }
             })
-            .catch((e) => e);
-    } else if (event === ReviewTaskEvents.goback) {
-        setIsLoading(false);
-        setCurrentFormAndNextEvents(Object.keys(state.value)[0], state);
+            .catch((e) => console.log(e))
+            .finally(() => resetIsLoading());
     }
 };
 

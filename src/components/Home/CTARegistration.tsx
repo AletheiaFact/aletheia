@@ -55,10 +55,11 @@ function CTARegistration() {
             </p>
             <Button
                 onClick={() => {
-                    umami?.trackEvent(
-                        "cta-registration-button",
-                        "registration"
-                    );
+                    window.umami &&
+                        window.umami?.trackEvent(
+                            "cta-registration-button",
+                            "registration"
+                        );
                 }}
                 type={ButtonType.white}
                 target="_blank"
