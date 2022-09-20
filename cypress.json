@@ -1,6 +1,6 @@
 {
     "chromeWebSecurity": false,
     "video": false,
-    "screenshotOnRunFailure": false,
+    "screenshotOnRunFailure": true,
     "pageLoadTimeout": 480000
 }
