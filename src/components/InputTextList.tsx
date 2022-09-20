@@ -78,10 +78,11 @@ export default function InputTextList({
                                     onClick={() => {
                                         remove(index);
                                         //@ts-ignore
-                                        umami?.trackEvent(
-                                            `Remove ${fieldName} input`,
-                                            "Fact-checking workflow"
-                                        );
+                                        window.umami &&
+                                            window.umami?.trackEvent(
+                                                `Remove ${fieldName} input`,
+                                                "Fact-checking workflow"
+                                            );
                                     }}
                                     data-cy={`${dataCy}Remove${index}`}
                                 >
@@ -109,10 +110,11 @@ export default function InputTextList({
                             content: "",
                         });
                         //@ts-ignore
-                        umami?.trackEvent(
-                            `Add ${fieldName} input`,
-                            "Fact-checking workflow"
-                        );
+                        window.umami &&
+                            window.umami?.trackEvent(
+                                `Add ${fieldName} input`,
+                                "Fact-checking workflow"
+                            );
                     }}
                     data-cy={`${dataCy}Add`}
                 >

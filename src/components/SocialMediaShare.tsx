@@ -83,10 +83,11 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             hashtag={trimPersonality}
                             beforeOnClick={() => {
                                 //@ts-ignore
-                                umami?.trackEvent(
-                                    "Facebook-share-button",
-                                    "Sharing"
-                                );
+                                window.umami &&
+                                    window.umami?.trackEvent(
+                                        "Facebook-share-button",
+                                        "Sharing"
+                                    );
                             }}
                         >
                             <FacebookIcon
@@ -111,10 +112,11 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             ]}
                             beforeOnClick={() => {
                                 //@ts-ignore
-                                umami?.trackEvent(
-                                    "Twitter-share-button",
-                                    "Sharing"
-                                );
+                                window.umami &&
+                                    window.umami?.trackEvent(
+                                        "Twitter-share-button",
+                                        "Sharing"
+                                    );
                             }}
                         >
                             <TwitterIcon
@@ -130,10 +132,11 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             beforeOnClick={() => {
                                 //@ts-ignore
-                                umami?.trackEvent(
-                                    "Whatsapp-share-button",
-                                    "Sharing"
-                                );
+                                window.umami &&
+                                    window.umami?.trackEvent(
+                                        "Whatsapp-share-button",
+                                        "Sharing"
+                                    );
                             }}
                         >
                             <WhatsappIcon
@@ -149,10 +152,11 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             beforeOnClick={() => {
                                 //@ts-ignore
-                                umami?.trackEvent(
-                                    "Telegram-share-button",
-                                    "Sharing"
-                                );
+                                window.umami &&
+                                    window.umami?.trackEvent(
+                                        "Telegram-share-button",
+                                        "Sharing"
+                                    );
                             }}
                         >
                             <TelegramIcon

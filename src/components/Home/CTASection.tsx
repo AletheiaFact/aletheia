@@ -38,10 +38,11 @@ const CTASection = () => {
                     <Col className="CTA-button-container">
                         <Button
                             onClick={() => {
-                                umami?.trackEvent(
-                                    "carousel-cta-registration-button",
-                                    "registration"
-                                );
+                                window.umami &&
+                                    window.umami?.trackEvent(
+                                        "carousel-cta-registration-button",
+                                        "registration"
+                                    );
                             }}
                             href={t("common:registrationLink")}
                             target="_blank"

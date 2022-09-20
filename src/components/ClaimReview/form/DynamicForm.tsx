@@ -147,8 +147,13 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         if (!data) {
             data = getValues();
         }
+
         //@ts-ignore
-        umami?.trackEvent(`${event}_BUTTON`, "Fact-checking workflow");
+        window.umami &&
+            window.umami?.trackEvent(
+                `${event}_BUTTON`,
+                "Fact-checking workflow"
+            );
         sendEventToMachine(data, event);
     };
 
