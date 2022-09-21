@@ -14,6 +14,8 @@ export type ReviewTaskMachineContext = {
         sources?: string[];
         classification?: ClassificationEnum;
         sentence_hash: string;
+        revisorId?: string;
+        rejectionComment?: string;
     };
     claimReview: {
         usersId?: User[];

@@ -17,10 +17,20 @@ const getNextEvents = (param: ReviewTaskEvents | ReviewTaskStates) => {
         ],
         [ReviewTaskEvents.finishReport]: [
             ...defaultEvents,
-            ReviewTaskEvents.publish,
+            ReviewTaskEvents.submit,
         ],
         [ReviewTaskStates.reported]: [
             ...defaultEvents,
+            ReviewTaskEvents.submit,
+        ],
+        [ReviewTaskStates.submitted]: [
+            ReviewTaskEvents.goback, //remove after tests
+            ReviewTaskEvents.reject,
+            ReviewTaskEvents.publish,
+        ],
+        [ReviewTaskEvents.submit]: [
+            ReviewTaskEvents.goback, //remove after tests
+            ReviewTaskEvents.reject,
             ReviewTaskEvents.publish,
         ],
         [ReviewTaskStates.published]: [],

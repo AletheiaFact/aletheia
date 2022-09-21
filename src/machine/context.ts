@@ -19,6 +19,8 @@ const buildState = ({
             verification: "",
             sources: [],
             classification: "",
+            rejectionComment: "",
+            revisorId: "",
         },
         claimReview: {
             personality: "",

@@ -78,6 +78,21 @@ export const createNewMachine = ({ value, context }) => {
                         target: ReviewTaskStates.assigned,
                     },
 
+                    SUBMIT: {
+                        target: ReviewTaskStates.submitted,
+                        actions: [saveContext],
+                    },
+                },
+            },
+            submitted: {
+                on: {
+                    GO_BACK: {
+                        target: ReviewTaskStates.reported,
+                    },
+                    REJECT: {
+                        target: ReviewTaskStates.assigned,
+                        actions: [saveContext],
+                    },
                     PUBLISH: {
                         target: ReviewTaskStates.published,
                         actions: [saveContext],

@@ -25,7 +25,7 @@ export const GlobalStateMachineProvider = (props) => {
         const machine = props.baseMachine;
         if (machine) {
             machine.value =
-                machine.value !== ReviewTaskStates.published
+                typeof machine.value !== "string"
                     ? Object.keys(machine.value)[0]
                     : machine.value;
             machine.context.utils = { t };
