@@ -2,7 +2,11 @@ import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
 import { Roles } from "../../machine/enums";
-import { publishedSelector, reviewDataSelector } from "../../machine/selectors";
+import {
+    crossCheckingSelector,
+    publishedSelector,
+    reviewDataSelector,
+} from "../../machine/selectors";
 import { ClaimReviewPageProps } from "../../pages/claim-review";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
@@ -17,6 +21,7 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
 
     const { role } = useAppSelector((state) => state);
 
@@ -35,16 +40,16 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
                 isPublished={isPublished}
                 {...props}
             />
-            {!isPublished || isHiddenAndUserDontHavePermission ? (
-                <ClaimReviewForm {...props} />
-            ) : (
+            {(isPublished || isCrossChecking) && (
                 <SentenceReportView
                     context={claimReview?.report || reviewData}
                     personality={props.personality}
                     claim={props.claim}
                 />
             )}
-
+            {(!isPublished || isHiddenAndUserDontHavePermission) && (
+                <ClaimReviewForm {...props} />
+            )}
             <SocialMediaShare
                 quote={props.personality?.name}
                 href={props.href}
