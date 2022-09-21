@@ -1,12 +1,14 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Col, Select } from "antd";
-import { useState } from "react";
+import { ActionTypes } from "../../store/types";
 import colors from "../../styles/colors";
 import AletheiaButton from "../Button";
 import { SelectInput } from "../Form/ClaimReviewSelect";
+import { useDispatch } from "react-redux";
 
 const { Option } = Select;
-const ClaimSelectType = ({ setState, setType }) => {
+const ClaimSelectType = ({ setState }) => {
+    const dispatch = useDispatch();
     const handleClick = () => setState("personality");
 
     return (
@@ -36,14 +38,19 @@ const ClaimSelectType = ({ setState, setType }) => {
             </Col>
             <SelectInput
                 placeholder={"Choose an option"}
-                onChange={(e) => setType(e)}
+                onChange={(type) => {
+                    dispatch({
+                        type: ActionTypes.SET_CLAIM_CREATE_TYPE,
+                        claimType: type,
+                    });
+                }}
             >
                 <Option value="speech">Speech</Option>
                 <Option value="image">image</Option>
             </SelectInput>
             <Col
                 style={{
-                    marginTop: "24px",
+                    margin: "24px 0",
                     display: "flex",
                     justifyContent: "right",
                 }}

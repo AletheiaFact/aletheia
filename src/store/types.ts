@@ -9,6 +9,8 @@ export enum ActionTypes {
     SET_SEARCH_NAME,
     SET_LOGIN_STATUS,
     SET_BREAKPOINTS,
+    SET_CLAIM_CREATE_TYPE,
+    SET_CLAIM_CREATE_PERSONALITY,
 }
 
 export interface RootState {
@@ -22,5 +24,7 @@ export interface RootState {
         searchPageSize: number;
     };
     login: boolean;
+    claimType: string;
+    claimPersonality: any;
     vw: WidthBreakpoints;
 }

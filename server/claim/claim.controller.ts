@@ -80,13 +80,18 @@ export class ClaimController {
     }
 
     @Post("api/claim")
-    async create(@Body() createClaimDTO: CreateClaimDTO) {
+    async createClaimSpeech(@Body() createClaimDTO: CreateClaimDTO) {
         const validateCaptcha = await this.captchaService.validate(
             createClaimDTO.recaptcha
         );
         if (!validateCaptcha) {
             throw new Error("Error validating captcha");
         }
+        return this.claimService.create(createClaimDTO);
+    }
+
+    @Post("api/claim/image")
+    async createClaimImage(@Body() createClaimDTO) {
         return this.claimService.create(createClaimDTO);
     }
 

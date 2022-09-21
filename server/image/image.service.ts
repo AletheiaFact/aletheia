@@ -4,41 +4,35 @@ import { HistoryService } from "../history/history.service";
 import { Model } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import { TargetModel, HistoryType } from "../history/schema/history.schema";
-import { FileManagementService } from "../file-management/file-management.service";
 
 @Injectable()
 export class ImageService {
     constructor(
         @InjectModel(Image.name)
         private ImageModel: Model<ImageDocument>,
-        private historyService: HistoryService,
-        private fileManagementService: FileManagementService
+        private historyService: HistoryService
     ) {}
 
-    async create(image, user) {
-        return this.fileManagementService
-            .upload(image)
-            .then(async (imageUploaded) => {
-                const imageSchema = {
-                    data_hash: imageUploaded.DataHash,
-                    props: {
-                        key: imageUploaded.Key,
-                        extension: imageUploaded.Extension,
-                    },
-                    content: imageUploaded.FileURL,
-                };
+    async create(image, user = null) {
+        const imageSchema = {
+            data_hash: image.DataHash,
+            props: {
+                key: image.Key,
+                extension: image.Extension,
+            },
+            content: image.FileURL,
+        };
 
-                const newImage = await new this.ImageModel(imageSchema).save();
+        const newImage = await new this.ImageModel(imageSchema).save();
 
-                const history = this.historyService.getHistoryParams(
-                    newImage._id,
-                    TargetModel.Image,
-                    user,
-                    HistoryType.Create,
-                    newImage
-                );
-                this.historyService.createHistory(history);
-                return newImage;
-            });
+        const history = this.historyService.getHistoryParams(
+            newImage._id,
+            TargetModel.Image,
+            user,
+            HistoryType.Create,
+            newImage
+        );
+        this.historyService.createHistory(history);
+        return newImage;
     }
 }

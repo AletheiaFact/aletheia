@@ -9,12 +9,9 @@ const ClaimUploadImage = ({ personality }) => {
                     personality={personality}
                     header={true}
                     mobile={true}
-                    isCreatingClaim={false}
-                    setState={undefined}
-                    setPersonalityClaim={undefined}
                 />
             )}
-            <ImageUpload />
+            <ImageUpload personality={personality} />
         </>
     );
 };

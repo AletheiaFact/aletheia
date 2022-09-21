@@ -21,8 +21,23 @@ const uploadImage = (files) => {
         });
 };
 
+const createClaimTypeImage = (file) => {
+    return request
+        .post("/create", file)
+        .then((response) => {
+            message.success("upload success");
+            return response.data;
+        })
+        .catch((err) => {
+            message.error("upload failed");
+            console.log("response error", err);
+            throw err;
+        });
+};
+
 const ImageApi = {
     uploadImage,
+    createClaimTypeImage,
 };
 
 export default ImageApi;

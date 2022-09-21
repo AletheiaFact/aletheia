@@ -2,6 +2,9 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Col, Divider, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from "../../store/store";
+import { ActionTypes } from "../../store/types";
 
 import colors from "../../styles/colors";
 import AletheiaAvatar from "../AletheiaAvatar";
@@ -13,14 +16,13 @@ const { Title, Paragraph } = Typography;
 
 interface PersonalityCardProps {
     personality: any;
-    isCreatingClaim: boolean;
+    isCreatingClaim?: boolean;
     summarized?: boolean;
     enableStats?: boolean;
     header?: boolean;
     hrefBase?: string;
     mobile?: boolean;
-    setState: any;
-    setPersonalityClaim: any;
+    setState?: any;
     onClick?: (personality: any) => {};
     titleLevel?: 1 | 2 | 3 | 4 | 5;
 }
@@ -36,8 +38,13 @@ const PersonalityCard = ({
     onClick,
     titleLevel = 1,
     setState = null,
-    setPersonalityClaim = null,
 }: PersonalityCardProps) => {
+    const dispatch = useDispatch();
+
+    const { claimType } = useAppSelector((state) => ({
+        claimType: state.claimType,
+    }));
+
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const { t } = useTranslation();
     const style = {
@@ -291,10 +298,12 @@ const PersonalityCard = ({
                                                 type={ButtonType.blue}
                                                 data-cy={personality.name}
                                                 onClick={() => {
-                                                    setState("speech");
-                                                    setPersonalityClaim(
-                                                        personality
-                                                    );
+                                                    setState(claimType);
+                                                    dispatch({
+                                                        type: ActionTypes.SET_CLAIM_CREATE_PERSONALITY,
+                                                        claimPersonality:
+                                                            personality,
+                                                    });
                                                 }}
                                                 style={{
                                                     fontSize: "12px",
@@ -304,9 +313,7 @@ const PersonalityCard = ({
                                                 }}
                                             >
                                                 <span style={{ marginTop: 4 }}>
-                                                    {t(
-                                                        "personality:profile_button"
-                                                    )}
+                                                    Inserir existente
                                                 </span>
                                             </Button>
                                         ) : (
@@ -318,15 +325,13 @@ const PersonalityCard = ({
                                                 disabled={isFormSubmitted}
                                                 data-cy={personality.name}
                                                 style={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    height: 40,
-                                                    paddingBottom: 0,
+                                                    fontSize: "12px",
+                                                    lineHeight: "20px",
+                                                    height: "auto",
+                                                    padding: "4px 12px",
                                                 }}
                                             >
-                                                <PlusOutlined />{" "}
-                                                {t("personality:add_button")}
+                                                <PlusOutlined /> Inserir nova
                                             </Button>
                                         )}
                                     </>

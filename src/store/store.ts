@@ -62,6 +62,16 @@ const reducer = (state, action) => {
                 ...state,
                 vw: action.vw,
             };
+        case ActionTypes.SET_CLAIM_CREATE_TYPE:
+            return {
+                ...state,
+                claimType: action.claimType,
+            };
+        case ActionTypes.SET_CLAIM_CREATE_PERSONALITY:
+            return {
+                ...state,
+                claimPersonality: action.claimPersonality,
+            };
         default:
             return state;
     }

@@ -117,6 +117,26 @@ const save = (t, claim = {}) => {
         });
 };
 
+const saveImage = (t, claimImage = {}) => {
+    return request
+        .post("/image", claimImage)
+        .then((response) => {
+            const { title } = response.data;
+            message.success(
+                `"${title}" ${t("claimForm:successCreateMessage")}`
+            );
+            return response.data;
+        })
+        .catch((err) => {
+            const response = err && err.response;
+            message.error(
+                response?.data && response?.data.message
+                    ? response?.data.message
+                    : t("claimForm:errorCreateMessage")
+            );
+        });
+};
+
 const update = (id, t, params = {}) => {
     return request
         .put(`${id}`, params)
@@ -149,5 +169,6 @@ export default {
     getClaimSentence,
     getClaimSentenceReviews,
     save,
+    saveImage,
     update,
 };

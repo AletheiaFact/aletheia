@@ -14,7 +14,6 @@ const PersonalityCreateSearch = ({
     withSuggestions,
     isCreatingClaim,
     setState,
-    setPersonalityClaim,
 }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
@@ -70,14 +69,12 @@ const PersonalityCreateSearch = ({
             </Form>
             <PersonalitySearchResultSection
                 setState={setState}
-                setPersonalityClaim={setPersonalityClaim}
                 isCreatingClaim={isCreatingClaim}
                 personalities={personalitiesCreated}
                 label={t("personalityCTA:created")}
             />
             <PersonalitySearchResultSection
                 setState={setState}
-                setPersonalityClaim={setPersonalityClaim}
                 isCreatingClaim={isCreatingClaim}
                 personalities={personalitiesAvailable}
                 label={t("personalityCTA:available")}

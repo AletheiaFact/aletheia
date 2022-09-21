@@ -44,6 +44,8 @@ export class ClaimService {
         if (query.personality) {
             query.personality = Types.ObjectId(query.personality);
         }
+        // está fazendo o populate na claim do tipo imagem como se fosse
+        // do tipo speech
         const claims = await this.ClaimModel.find(query)
             .populate({
                 path: "latestRevision",
@@ -83,7 +85,9 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim) {
-        claim.personality = Types.ObjectId(claim.personality);
+        claim.personality = claim.personality
+            ? Types.ObjectId(claim.personality)
+            : null;
         const newClaim = new this.ClaimModel(claim);
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,

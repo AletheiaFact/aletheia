@@ -38,6 +38,8 @@ export class FileManagementService {
             name.indexOf(".")
         )}-${new Date().toISOString()}.${fileExtension}`;
 
+        const imageDataHash = md5(file.buffer);
+
         const { Location, Key } = await this.s3
             .upload({
                 Bucket: bucket || this.bucket,
@@ -49,8 +51,6 @@ export class FileManagementService {
                 ACL: "public-read", // TODO: remove on future to create security
             })
             .promise();
-
-        const imageDataHash = md5(file.buffer);
 
         const result = {
             FileURL: Location,
