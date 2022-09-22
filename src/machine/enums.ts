@@ -7,6 +7,7 @@ enum ReviewTaskEvents {
     publish = "PUBLISH",
     draft = "SAVE_DRAFT",
     goback = "GO_BACK",
+    addRejectionComment = "ADD_REJECTION_COMMENT",
 }
 
 enum ReviewTaskStates {
@@ -14,6 +15,7 @@ enum ReviewTaskStates {
     assigned = "assigned",
     reported = "reported",
     submitted = "submitted",
+    rejected = "rejected",
     published = "published",
 }
 

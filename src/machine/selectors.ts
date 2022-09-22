@@ -5,7 +5,10 @@ const publishedSelector = (state) => {
 };
 
 const crossCheckingSelector = (state) => {
-    return state.matches(ReviewTaskStates.submitted);
+    return (
+        state.matches(ReviewTaskStates.submitted) ||
+        state.matches(ReviewTaskStates.rejected)
+    );
 };
 
 const reviewDataSelector = (state) => {

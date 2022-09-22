@@ -17,6 +17,7 @@ import HideReviewModal from "../Modal/HideReviewModal";
 import UnhideReviewModal from "../Modal/UnhideReviewModal";
 import Banner from "../SentenceReport/Banner";
 import SentenceReportCard from "../SentenceReport/SentenceReportCard";
+import TopicInput from "./TopicInput";
 
 const ClaimReviewHeader = ({
     personality,
@@ -35,7 +36,7 @@ const ClaimReviewHeader = ({
     const [showAlert, setShowAlert] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
-    const { vw, role } = useAppSelector((state) => state);
+    const { vw, role, login } = useAppSelector((state) => state);
 
     const { machineService } = useContext(GlobalStateMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
@@ -44,7 +45,9 @@ const ClaimReviewHeader = ({
     useEffect(() => {
         if (!isPublished) {
             setDescription(isCrossChecking ? "" : reviewData.rejectionComment);
-            setShowAlert(!!reviewData.rejectionComment || isCrossChecking);
+            setShowAlert(
+                login && (!!reviewData.rejectionComment || isCrossChecking)
+            );
         } else {
             setDescription(hideDescription);
             setShowAlert(isHidden);
@@ -124,6 +127,17 @@ const ClaimReviewHeader = ({
                             sentence={sentence}
                             classification={classification}
                         />
+                        <div
+                            style={{
+                                margin: "16px",
+                                width: "calc(100% - 16px)",
+                            }}
+                        >
+                            <TopicInput
+                                sentence_hash={sentence.data_hash}
+                                topics={sentence.topics}
+                            />
+                        </div>
                     </Col>
                     {isPublished && (
                         <Col

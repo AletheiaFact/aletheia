@@ -45,20 +45,11 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         autoSave: state.autoSave,
     }));
 
-    const setDefaultValuesOfCurrentForm = (form) => {
-        if (reviewData) {
-            reset(reviewData);
-            form.forEach((input) => {
-                input.defaultValue = reviewData[input.fieldName];
-            });
-        }
-    };
-
     const setCurrentFormAndNextEvents = (param) => {
         if (param !== ReviewTaskEvents.draft) {
+            console.log("param", param);
             const nextForm = getNextForm(param);
             setCurrentForm(nextForm);
-            setDefaultValuesOfCurrentForm(nextForm);
             setNextEvents(getNextEvents(param));
         }
     };
@@ -150,6 +141,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
 
         //@ts-ignore
         window.umami &&
+            //@ts-ignore
             window.umami?.trackEvent(
                 `${event}_BUTTON`,
                 "Fact-checking workflow"
@@ -181,8 +173,9 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                             placeholder,
                             type,
                             addInputLabel,
-                            defaultValue,
                         } = fieldItem;
+
+                        const defaultValue = reviewData[fieldName];
 
                         return (
                             <Row key={index} style={{ marginBottom: 20 }}>
@@ -230,7 +223,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                             </Row>
                         );
                     })}
-                    {currentForm?.length > 0 && (
+                    {nextEvents?.length > 0 && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
                             sitekey={sitekey}

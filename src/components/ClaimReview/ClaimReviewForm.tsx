@@ -40,10 +40,6 @@ const ClaimReviewForm = ({
                 boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
             }}
         >
-            <TopicInput
-                sentence_hash={sentence.data_hash}
-                topics={sentence.topics}
-            />
             {formCollapsed && (
                 <Row
                     style={{

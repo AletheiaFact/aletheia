@@ -1,6 +1,6 @@
 import { createFormField, FormField } from "./FormField";
 
-const submittedForm: FormField[] = [
+const rejectedForm: FormField[] = [
     createFormField({
         fieldName: "rejectionComment",
         type: "textArea",
@@ -8,4 +8,4 @@ const submittedForm: FormField[] = [
     }),
 ];
 
-export default submittedForm;
+export default rejectedForm;
