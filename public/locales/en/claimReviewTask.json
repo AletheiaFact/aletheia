@@ -7,6 +7,8 @@
     "PUBLISH_ERROR": "Error in saving classification",
     "SAVE_DRAFT_SUCCESS": "Draft saved succesfully",
     "SAVE_DRAFT_ERROR": "Error in saving draft",
+    "SUBMIT_SUCCESS": "Submitted successfully",
+    "SUBMIT_ERROR": "Error in sent to cross-checking",
     "REJECT_SUCCESS": "Rejection saved succesfully",
     "REJECT_ERROR": "Error in saving rejection",
     "ASSIGN_USER": "Assign",
@@ -21,5 +23,7 @@
     "reported": "Report finished",
     "submitted": "Cross-checking",
     "published": "Published",
-    "draft": "Draft"
+    "draft": "Draft",
+    "crossCheckingAlertTitle": "This report is beeing cross-checked",
+    "rejectionAlertTitle": "This review was rejected with the following comment"
 }

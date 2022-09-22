@@ -7,6 +7,8 @@
     "PUBLISH_ERROR": "Erro ao salvar classificação",
     "SAVE_DRAFT_SUCCESS": "Rascunho salvo com sucesso",
     "SAVE_DRAFT_ERROR": "Erro ao salvar rascunho",
+    "SUBMIT_SUCCESS": "Enviado com sucesso",
+    "SUBMIT_ERROR": "Erro ao enviar para revisão",
     "REJECT_SUCCESS": "Rejeição salva com sucesso",
     "REJECT_ERROR": "Erro ao salvar rejeição",
     "ASSIGN_USER": "Atribuir",
@@ -21,5 +23,7 @@
     "reported": "Relatório finalizado",
     "submitted": "Em revisão",
     "published": "Publicado",
-    "draft": "Rascunho"
+    "draft": "Rascunho",
+    "crossCheckingAlertTitle": "Este relatório está em processo de cross-checking",
+    "rejectionAlertTitle": "A revisão foi rejeitada com o seguinte comentário"
 }

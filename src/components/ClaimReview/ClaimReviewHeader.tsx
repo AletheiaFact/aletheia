@@ -1,8 +1,14 @@
 import { Row, Col } from "antd";
 import { useTranslation } from "next-i18next";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useSelector } from "@xstate/react";
 import ClaimReviewApi from "../../api/claimReviewApi";
+import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
 import { Roles } from "../../machine/enums";
+import {
+    crossCheckingSelector,
+    reviewDataSelector,
+} from "../../machine/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaAlert from "../AletheiaAlert";
@@ -26,9 +32,42 @@ const ClaimReviewHeader = ({
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
     const [description, setDescription] = useState(hideDescription);
     const [hide, setHide] = useState(isHidden);
+    const [showAlert, setShowAlert] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const { vw, role } = useAppSelector((state) => state);
+
+    const { machineService } = useContext(GlobalStateMachineContext);
+    const reviewData = useSelector(machineService, reviewDataSelector);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+
+    useEffect(() => {
+        if (!isPublished) {
+            setDescription(isCrossChecking ? "" : reviewData.rejectionComment);
+            setShowAlert(!!reviewData.rejectionComment || isCrossChecking);
+        } else {
+            setDescription(hideDescription);
+            setShowAlert(isHidden);
+        }
+    }, [
+        isHidden,
+        isCrossChecking,
+        reviewData.rejectionComment,
+        hideDescription,
+        isPublished,
+    ]);
+
+    const getAlertTitle = (): string => {
+        if (isHidden) {
+            return "claimReview:warningAlertTitle";
+        }
+        if (isCrossChecking) {
+            return "claimReviewTask:crossCheckingAlertTitle";
+        }
+        if (!!reviewData.rejectionComment) {
+            return "claimReviewTask:rejectionAlertTitle";
+        }
+    };
 
     return (
         <Row>
@@ -62,7 +101,13 @@ const ClaimReviewHeader = ({
                         />
                     </Col>
                 )}
-                <Row>
+                <Row
+                    style={{
+                        background: isPublished
+                            ? colors.white
+                            : colors.lightGray,
+                    }}
+                >
                     <Col
                         lg={{ order: 1, span: isPublished ? 16 : 24 }}
                         md={{ order: 2, span: 24 }}
@@ -71,9 +116,6 @@ const ClaimReviewHeader = ({
                         className="sentence-report-card"
                         style={{
                             paddingRight: vw?.md ? "0" : " 20px",
-                            background: isPublished
-                                ? colors.white
-                                : colors.lightGray,
                         }}
                     >
                         <SentenceReportCard
@@ -91,11 +133,14 @@ const ClaimReviewHeader = ({
                             <Banner />
                         </Col>
                     )}
-                    {hide && (
-                        <Col style={{ marginTop: 16, width: "100%" }} order={3}>
+                    {showAlert && (
+                        <Col
+                            style={{ margin: "16px", width: "100%" }}
+                            order={3}
+                        >
                             <AletheiaAlert
                                 type="warning"
-                                message={t("claimReview:warningAlertTitle")}
+                                message={t(getAlertTitle())}
                                 description={description}
                                 showIcon={true}
                             />
