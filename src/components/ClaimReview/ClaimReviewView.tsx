@@ -25,8 +25,14 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
 
     const { role } = useAppSelector((state) => state);
 
-    const isHiddenAndUserDontHavePermission =
-        claimReview?.isHidden && (role === Roles.Regular || role === null);
+    const userIsNotRegular = !(role === Roles.Regular || role === null);
+    const userIsRevisor = reviewData.revisorId?.[0] === props.userId;
+
+    const showReport =
+        (isPublished && (!claimReview?.isHidden || userIsNotRegular)) ||
+        (isCrossChecking && userIsRevisor);
+
+    const showForm = !isPublished && (!isCrossChecking || userIsRevisor);
 
     return (
         <div>
@@ -40,16 +46,14 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
                 isPublished={isPublished}
                 {...props}
             />
-            {(isPublished || isCrossChecking) && (
+            {showReport && (
                 <SentenceReportView
                     context={claimReview?.report || reviewData}
                     personality={props.personality}
                     claim={props.claim}
                 />
             )}
-            {(!isPublished || isHiddenAndUserDontHavePermission) && (
-                <ClaimReviewForm {...props} />
-            )}
+            {showForm && <ClaimReviewForm {...props} />}
             <SocialMediaShare
                 quote={props.personality?.name}
                 href={props.href}

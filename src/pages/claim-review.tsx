@@ -9,7 +9,7 @@ import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
-import { ClassificationEnum } from "../machine/enums";
+import { ClassificationEnum, Roles } from "../machine/enums";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
@@ -24,6 +24,7 @@ export interface ClaimReviewPageProps {
     isLoggedIn: boolean;
     description: string;
     userRole: string;
+    userId?: string;
 }
 
 const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
@@ -40,7 +41,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
 
     dispatch({
         type: ActionTypes.SET_USER_ROLE,
-        role: userRole,
+        role: userRole || Roles.Regular,
     });
 
     dispatch({
@@ -124,6 +125,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
             userRole: req?.user?.role ? req?.user?.role : null,
+            userId: req?.user?._id,
         },
     };
 }

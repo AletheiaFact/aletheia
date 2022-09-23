@@ -86,9 +86,6 @@ export const createNewMachine = ({ value, context }) => {
             },
             submitted: {
                 on: {
-                    GO_BACK: {
-                        target: ReviewTaskStates.reported,
-                    },
                     REJECT: {
                         target: ReviewTaskStates.rejected,
                     },
