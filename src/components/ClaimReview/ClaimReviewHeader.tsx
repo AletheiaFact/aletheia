@@ -26,14 +26,15 @@ const ClaimReviewHeader = ({
     isHidden,
     classification = "",
     sitekey,
-    hideDescription,
+    alertDescription,
     isPublished,
+    userHasPermission,
+    showAlert,
 }) => {
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
-    const [description, setDescription] = useState(hideDescription);
+    const [description, setDescription] = useState(alertDescription);
     const [hide, setHide] = useState(isHidden);
-    const [showAlert, setShowAlert] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const { vw, role, login } = useAppSelector((state) => state);
@@ -41,24 +42,6 @@ const ClaimReviewHeader = ({
     const { machineService } = useContext(GlobalStateMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
-
-    useEffect(() => {
-        if (!isPublished) {
-            setDescription(isCrossChecking ? "" : reviewData.rejectionComment);
-            setShowAlert(
-                login && (!!reviewData.rejectionComment || isCrossChecking)
-            );
-        } else {
-            setDescription(hideDescription);
-            setShowAlert(isHidden);
-        }
-    }, [
-        isHidden,
-        isCrossChecking,
-        reviewData.rejectionComment,
-        hideDescription,
-        isPublished,
-    ]);
 
     const getAlertTitle = (): string => {
         if (isHidden) {
@@ -125,7 +108,12 @@ const ClaimReviewHeader = ({
                             personality={personality}
                             claim={claim}
                             sentence={sentence}
-                            classification={classification}
+                            classification={
+                                isPublished ||
+                                (isCrossChecking && userHasPermission)
+                                    ? classification
+                                    : ""
+                            }
                         />
                         <div
                             style={{
@@ -147,7 +135,7 @@ const ClaimReviewHeader = ({
                             <Banner />
                         </Col>
                     )}
-                    {showAlert && (
+                    {login && showAlert && (
                         <Col
                             style={{ margin: "16px", width: "100%" }}
                             order={3}

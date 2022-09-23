@@ -27,14 +27,27 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
 
     const userIsNotRegular = !(role === Roles.Regular || role === null);
     const userIsRevisor = reviewData.revisorId?.[0] === props.userId;
-    const userIsAssigned = reviewData.usersId.includes(props.userId);
+    const userIsAssignee = reviewData.usersId.includes(props.userId);
 
     const showReport =
         (isPublished && (!claimReview?.isHidden || userIsNotRegular)) ||
         (isCrossChecking && userIsRevisor);
 
     const showForm =
-        !isPublished && ((userIsAssigned && !isCrossChecking) || userIsRevisor);
+        !isPublished &&
+        ((userIsAssignee && !isCrossChecking) ||
+            (isCrossChecking && userIsRevisor));
+
+    const showAlert =
+        (userIsRevisor && isCrossChecking) ||
+        (userIsAssignee &&
+            (isCrossChecking || !!reviewData.rejectionComment)) ||
+        (isPublished && claimReview?.isHidden);
+
+    let alertDescription = description;
+    if (userIsAssignee && !isCrossChecking) {
+        alertDescription = reviewData.rejectionComment;
+    }
 
     return (
         <div>
@@ -44,8 +57,10 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
                     reviewData?.classification
                 }
                 isHidden={claimReview?.isHidden}
-                hideDescription={description}
+                alertDescription={alertDescription}
                 isPublished={isPublished}
+                showAlert={showAlert}
+                userHasPermission={userIsAssignee || userIsRevisor}
                 {...props}
             />
             {showReport && (
