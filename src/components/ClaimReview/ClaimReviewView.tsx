@@ -27,12 +27,14 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
 
     const userIsNotRegular = !(role === Roles.Regular || role === null);
     const userIsRevisor = reviewData.revisorId?.[0] === props.userId;
+    const userIsAssigned = reviewData.usersId.includes(props.userId);
 
     const showReport =
         (isPublished && (!claimReview?.isHidden || userIsNotRegular)) ||
         (isCrossChecking && userIsRevisor);
 
-    const showForm = !isPublished && (!isCrossChecking || userIsRevisor);
+    const showForm =
+        !isPublished && ((userIsAssigned && !isCrossChecking) || userIsRevisor);
 
     return (
         <div>

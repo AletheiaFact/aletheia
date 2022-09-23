@@ -125,7 +125,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
             userRole: req?.user?.role ? req?.user?.role : null,
-            userId: req?.user?._id,
+            userId: req?.user?._id || "",
         },
     };
 }
