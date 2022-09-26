@@ -135,9 +135,12 @@ const ClaimReviewHeader = ({
                             <Banner />
                         </Col>
                     )}
-                    {login && showAlert && (
+                    {login && (showAlert || hide) && (
                         <Col
-                            style={{ margin: "16px", width: "100%" }}
+                            style={{
+                                margin: isPublished ? "16px 0" : "16px",
+                                width: "100%",
+                            }}
                             order={3}
                         >
                             <AletheiaAlert

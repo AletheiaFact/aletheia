@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Roles } from "../../ability/ability.factory";
 import { Document } from "mongoose";
 
 export interface UserDocument extends User, Document {
@@ -18,6 +19,9 @@ export class User {
 
     @Prop({ required: true, default: false })
     firstPasswordChanged: boolean;
+
+    @Prop({ required: true, default: Roles.Regular })
+    role: Roles;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -6,8 +6,11 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
-import usersApi from "../../../api/user";
-import { ClassificationEnum, ReviewTaskEvents } from "../../../machine/enums";
+import {
+    ClassificationEnum,
+    ReviewTaskEvents,
+    Roles,
+} from "../../../machine/enums";
 import getNextEvents from "../../../machine/getNextEvent";
 import getNextForm from "../../../machine/getNextForm";
 import { reviewDataSelector } from "../../../machine/selectors";
@@ -17,6 +20,7 @@ import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
 import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
 import DynamicInput from "./DynamicInput";
+import usersApi from "../../../api/userApi";
 
 const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const {
@@ -98,7 +102,10 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     }, [watch]);
 
     const fetchUserList = async (name) => {
-        const userSearchResults = await usersApi.getUsers(name, t);
+        const userSearchResults = await usersApi.getUsers(
+            { searchName: name, filterOutRoles: [Roles.Regular] },
+            t
+        );
         return userSearchResults.map((user) => ({
             label: user.name,
             value: user._id,
