@@ -1,6 +1,16 @@
 import React from "react";
 import SelectOptions from "./form/SelectOptions";
 
+interface AutocompleteProps {
+    placeholder: string;
+    onChange: any;
+    dataCy: string;
+    dataLoader: any;
+    mode?: string;
+    style?: {};
+    value?: string | string[];
+}
+
 const Autocomplete = ({
     placeholder,
     onChange,
@@ -9,7 +19,7 @@ const Autocomplete = ({
     mode = "multiple",
     style = {},
     value = [],
-}) => {
+}: AutocompleteProps) => {
     return (
         <SelectOptions
             fetchOptions={dataLoader}

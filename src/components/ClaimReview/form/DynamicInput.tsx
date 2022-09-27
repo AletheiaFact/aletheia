@@ -14,7 +14,7 @@ interface DynamicInputProps {
     addInputLabel: string;
     defaultValue: string | [];
     "data-cy": string;
-    dataLoader: any;
+    extraProps: any;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -37,8 +37,9 @@ const DynamicInput = (props: DynamicInputProps) => {
                     placeholder={t(props.placeholder)}
                     onChange={props.onChange}
                     dataCy={props["data-cy"]}
-                    dataLoader={props.dataLoader}
-                    value={Array.isArray(props.value) ? props.value : []}
+                    dataLoader={props.extraProps.dataLoader}
+                    value={props.value}
+                    mode={props.extraProps.mode}
                 />
             );
         case "textList":

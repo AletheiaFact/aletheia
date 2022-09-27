@@ -26,7 +26,7 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
     const { role } = useAppSelector((state) => state);
 
     const userIsNotRegular = !(role === Roles.Regular || role === null);
-    const userIsRevisor = reviewData.revisorId?.[0] === props.userId;
+    const userIsRevisor = reviewData.revisorId === props.userId;
     const userIsAssignee = reviewData.usersId.includes(props.userId);
 
     const showReport =

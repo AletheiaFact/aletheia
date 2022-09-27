@@ -73,12 +73,13 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     }, []);
 
     useEffect(() => {
+        reset(reviewData);
         resetIsLoading();
     }, [nextEvents]);
 
     useEffect(() => {
-        let timeout: NodeJS.Timeout;
-        autoSave &&
+        if (autoSave) {
+            let timeout: NodeJS.Timeout;
             watch((value) => {
                 if (timeout) clearTimeout(timeout);
                 timeout = setTimeout(() => {
@@ -99,18 +100,8 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                     );
                 }, 10000);
             });
+        }
     }, [watch]);
-
-    const fetchUserList = async (name) => {
-        const userSearchResults = await usersApi.getUsers(
-            { searchName: name, filterOutRoles: [Roles.Regular] },
-            t
-        );
-        return userSearchResults.map((user) => ({
-            label: user.name,
-            value: user._id,
-        }));
-    };
 
     const sendEventToMachine = (formData, eventName) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
@@ -134,11 +125,8 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         recaptchaRef.current?.resetRecaptcha();
     };
 
-    const validateClassification = (data) => {
-        return (
-            !data.classification ||
-            Object.values(ClassificationEnum).includes(data.classification)
-        );
+    const ValidateSelectedReviewer = (data) => {
+        return !data.revisorId || !reviewData.usersId.includes(data.revisorId);
     };
 
     const handleSendEvent = async (event, data = null) => {
@@ -163,7 +151,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
      */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        if (validateClassification(data)) {
+        if (ValidateSelectedReviewer(data)) {
             handleSendEvent(event, data);
         }
     };
@@ -180,6 +168,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                             placeholder,
                             type,
                             addInputLabel,
+                            extraProps,
                         } = fieldItem;
 
                         const defaultValue = reviewData[fieldName];
@@ -214,7 +203,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                                                 addInputLabel={addInputLabel}
                                                 defaultValue={defaultValue}
                                                 data-cy={`testClaimReview${fieldName}`}
-                                                dataLoader={fetchUserList}
+                                                extraProps={extraProps}
                                             />
                                         )}
                                     />
