@@ -126,7 +126,9 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     };
 
     const ValidateSelectedReviewer = (data) => {
-        return !data.revisorId || !reviewData.usersId.includes(data.revisorId);
+        return (
+            !data.reviewerId || !reviewData.usersId.includes(data.reviewerId)
+        );
     };
 
     const handleSendEvent = async (event, data = null) => {

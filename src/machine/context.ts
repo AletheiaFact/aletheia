@@ -20,7 +20,7 @@ const buildState = ({
             sources: [],
             classification: "",
             rejectionComment: "",
-            revisorId: "",
+            reviewerId: "",
         },
         claimReview: {
             personality: "",

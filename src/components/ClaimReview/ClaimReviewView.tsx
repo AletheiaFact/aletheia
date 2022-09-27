@@ -26,20 +26,20 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
     const { role } = useAppSelector((state) => state);
 
     const userIsNotRegular = !(role === Roles.Regular || role === null);
-    const userIsRevisor = reviewData.revisorId === props.userId;
+    const userIsReviewer = reviewData.reviewerId === props.userId;
     const userIsAssignee = reviewData.usersId.includes(props.userId);
 
     const showReport =
         (isPublished && (!claimReview?.isHidden || userIsNotRegular)) ||
-        (isCrossChecking && userIsRevisor);
+        (isCrossChecking && userIsReviewer);
 
     const showForm =
         !isPublished &&
         ((userIsAssignee && !isCrossChecking) ||
-            (isCrossChecking && userIsRevisor));
+            (isCrossChecking && userIsReviewer));
 
     const showAlert =
-        (userIsRevisor && isCrossChecking) ||
+        (userIsReviewer && isCrossChecking) ||
         (userIsAssignee &&
             (isCrossChecking || !!reviewData.rejectionComment)) ||
         (isPublished && claimReview?.isHidden);
@@ -60,7 +60,7 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
                 alertDescription={alertDescription}
                 isPublished={isPublished}
                 showAlert={showAlert}
-                userHasPermission={userIsAssignee || userIsRevisor}
+                userHasPermission={userIsAssignee || userIsReviewer}
                 {...props}
             />
             {showReport && (

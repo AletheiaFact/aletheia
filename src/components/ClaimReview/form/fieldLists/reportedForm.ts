@@ -16,9 +16,9 @@ const reportedForm: FormField[] = [
         },
     }),
     createFormField({
-        fieldName: "revisorId",
+        fieldName: "reviewerId",
         type: "inputSearch",
-        i18nKey: "revisor",
+        i18nKey: "reviewer",
         defaultValue: "",
         extraProps: { dataLoader: fetchUserList, mode: "" },
     }),

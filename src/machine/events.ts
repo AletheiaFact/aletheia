@@ -7,7 +7,7 @@ export type ReviewData = {
     sources: string[];
     classification: string;
     rejectionComment: string;
-    revisorId: string;
+    reviewerId: string;
 };
 
 export type ClaimReview = {
