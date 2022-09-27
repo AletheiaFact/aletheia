@@ -183,10 +183,12 @@ export class ClaimReviewTaskService {
                 }
             );
 
-        claimReviewTaskBody.machine.context.reviewData.reviewerId =
-            Types.ObjectId(
-                claimReviewTaskBody.machine.context.reviewData.reviewerId
-            ) || "";
+        if (claimReviewTaskBody.machine.context.reviewData.reviewerId) {
+            claimReviewTaskBody.machine.context.reviewData.reviewerId =
+                Types.ObjectId(
+                    claimReviewTaskBody.machine.context.reviewData.reviewerId
+                ) || "";
+        }
 
         if (claimReviewTask) {
             return this.update(

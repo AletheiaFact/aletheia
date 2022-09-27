@@ -6,11 +6,8 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
-import {
-    ClassificationEnum,
-    ReviewTaskEvents,
-    Roles,
-} from "../../../machine/enums";
+import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
+import { ReviewTaskEvents } from "../../../machine/enums";
 import getNextEvents from "../../../machine/getNextEvent";
 import getNextForm from "../../../machine/getNextForm";
 import { reviewDataSelector } from "../../../machine/selectors";
@@ -18,9 +15,7 @@ import { useAppSelector } from "../../../store/store";
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
-import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
 import DynamicInput from "./DynamicInput";
-import usersApi from "../../../api/userApi";
 
 const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const {
@@ -40,6 +35,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
     const [isLoading, setIsLoading] = useState({});
+    const [reviewerError, setReviewerError] = useState(false);
     const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
@@ -51,7 +47,6 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
 
     const setCurrentFormAndNextEvents = (param) => {
         if (param !== ReviewTaskEvents.draft) {
-            console.log("param", param);
             const nextForm = getNextForm(param);
             setCurrentForm(nextForm);
             setNextEvents(getNextEvents(param));
@@ -126,15 +121,17 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     };
 
     const ValidateSelectedReviewer = (data) => {
-        return (
-            !data.reviewerId || !reviewData.usersId.includes(data.reviewerId)
-        );
+        const isValidReviewer =
+            !data.reviewerId || !reviewData.usersId.includes(data.reviewerId);
+        setReviewerError(!isValidReviewer);
+        return isValidReviewer;
     };
 
     const handleSendEvent = async (event, data = null) => {
         if (!data) {
             data = getValues();
         }
+        console.log("send data", data);
 
         //@ts-ignore
         window.umami &&
@@ -176,7 +173,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                         const defaultValue = reviewData[fieldName];
 
                         return (
-                            <Row key={index} style={{ marginBottom: 20 }}>
+                            <Row key={index}>
                                 <Col span={24}>
                                     <h4
                                         style={{
@@ -221,6 +218,17 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                             </Row>
                         );
                     })}
+                    <div
+                        style={{
+                            paddingBottom: 20,
+                            marginLeft: 20,
+                        }}
+                    >
+                        <Text type="danger">
+                            {reviewerError &&
+                                t("claimReviewTask:invalidReviewerMessage")}
+                        </Text>
+                    </div>
                     {nextEvents?.length > 0 && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
