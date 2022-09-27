@@ -183,6 +183,11 @@ export class ClaimReviewTaskService {
                 }
             );
 
+        claimReviewTaskBody.machine.context.reviewData.reviewerId =
+            Types.ObjectId(
+                claimReviewTaskBody.machine.context.reviewData.reviewerId
+            ) || "";
+
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.sentence_hash,

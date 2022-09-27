@@ -1,6 +1,6 @@
 import { Row, Col } from "antd";
 import { useTranslation } from "next-i18next";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useSelector } from "@xstate/react";
 import ClaimReviewApi from "../../api/claimReviewApi";
 import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";

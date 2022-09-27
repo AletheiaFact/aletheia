@@ -6,7 +6,6 @@ import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import DynamicForm from "./form/DynamicForm";
 import { useAppSelector } from "../../store/store";
-import TopicInput from "./TopicInput";
 
 const ClaimReviewForm = ({
     personality,
