@@ -9,7 +9,13 @@ export type FormField = {
     inputType?: string;
     addInputLabel?: string;
     defaultValue: string | [];
-    extraProps?: any;
+    extraProps?: FormFieldExtraProps;
+};
+
+// Use to add properties specific to one type of field
+type FormFieldExtraProps = {
+    dataLoader?: (value: string, t: any) => Promise<any>;
+    mode?: string;
 };
 
 interface CreateFormFieldProps extends Partial<FormField> {

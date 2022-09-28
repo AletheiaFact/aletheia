@@ -19,6 +19,7 @@ import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { GetTasksDTO } from "./dto/get-tasks.dto";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
+import { BaseRequest } from "types";
 
 @Controller()
 export class ClaimReviewController {
@@ -56,18 +57,25 @@ export class ClaimReviewController {
     }
 
     @Post("api/claimreviewtask")
-    async create(@Body() createClaimReviewTask: CreateClaimReviewTaskDTO) {
+    async create(
+        @Req() req: BaseRequest,
+        @Body() createClaimReviewTask: CreateClaimReviewTaskDTO
+    ) {
         const validateCaptcha = await this.captchaService.validate(
             createClaimReviewTask.recaptcha
         );
         if (!validateCaptcha) {
             throw new Error("Error validating captcha");
         }
-        return this.claimReviewTaskService.create(createClaimReviewTask);
+        return this.claimReviewTaskService.create(
+            createClaimReviewTask,
+            req.user._id
+        );
     }
 
     @Put("api/claimreviewtask/:sentence_hash")
     async autoSaveDraft(
+        @Req() req: BaseRequest,
         @Param("sentence_hash") sentence_hash,
         @Body() claimReviewTaskBody: UpdateClaimReviewTaskDTO
     ) {
@@ -79,6 +87,7 @@ export class ClaimReviewController {
                     return this.claimReviewTaskService.update(
                         sentence_hash,
                         claimReviewTaskBody,
+                        req.user._id,
                         history
                     );
                 }

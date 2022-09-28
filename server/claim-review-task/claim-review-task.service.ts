@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, Scope } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import {
     ClaimReviewTask,
@@ -171,7 +171,10 @@ export class ClaimReviewTaskService {
         );
     }
 
-    async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
+    async create(
+        claimReviewTaskBody: CreateClaimReviewTaskDTO,
+        userId: string
+    ) {
         const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
             claimReviewTaskBody.sentence_hash
         );
@@ -183,17 +186,11 @@ export class ClaimReviewTaskService {
                 }
             );
 
-        if (claimReviewTaskBody.machine.context.reviewData.reviewerId) {
-            claimReviewTaskBody.machine.context.reviewData.reviewerId =
-                Types.ObjectId(
-                    claimReviewTaskBody.machine.context.reviewData.reviewerId
-                ) || "";
-        }
-
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.sentence_hash,
-                claimReviewTaskBody
+                claimReviewTaskBody,
+                userId
             );
         } else {
             const newClaimReviewTask = new this.ClaimReviewTaskModel(
@@ -209,6 +206,7 @@ export class ClaimReviewTaskService {
     async update(
         sentence_hash: string,
         { machine }: UpdateClaimReviewTaskDTO,
+        userId: string,
         history: boolean = true
     ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
@@ -228,6 +226,11 @@ export class ClaimReviewTaskService {
             };
 
             if (newClaimReviewTaskMachine.value === "published") {
+                if (userId !== machine.context.reviewData.reviewerId) {
+                    throw new ForbiddenException(
+                        "This user does not have permission to publish the report"
+                    );
+                }
                 this._createReportAndClaimReview(
                     sentence_hash,
                     newClaimReviewTask.machine
@@ -247,7 +250,7 @@ export class ClaimReviewTaskService {
                 newClaimReviewTask
             );
         } catch (e) {
-            throw new Error(e);
+            throw e;
         }
     }
 

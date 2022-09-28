@@ -12,7 +12,7 @@ const buildState = ({
 }): ReviewTaskMachineContext => {
     return {
         reviewData: reviewData || {
-            usersId: "",
+            usersId: [],
             summary: "",
             questions: [],
             report: "",
