@@ -186,6 +186,13 @@ export class ClaimReviewTaskService {
                 }
             );
 
+        if (claimReviewTaskBody.machine.context.reviewData.reviewerId) {
+            claimReviewTaskBody.machine.context.reviewData.reviewerId =
+                Types.ObjectId(
+                    claimReviewTaskBody.machine.context.reviewData.reviewerId
+                ) || "";
+        }
+
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.sentence_hash,
@@ -255,7 +262,57 @@ export class ClaimReviewTaskService {
     }
 
     getClaimReviewTaskBySentenceHash(sentence_hash: string) {
-        return this.ClaimReviewTaskModel.findOne({ sentence_hash });
+        return this.ClaimReviewTaskModel.findOne({
+            sentence_hash,
+        });
+    }
+
+    async getClaimReviewTaskBySentenceHashWithUsernames(sentence_hash: string) {
+        // This may cause a false positive in sonarCloud
+        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
+            sentence_hash
+        )
+            .populate({
+                path: "machine.context.reviewData.usersId",
+                model: "User",
+                select: "name",
+            })
+            .populate({
+                path: "machine.context.reviewData.reviewerId",
+                model: "User",
+                select: "name",
+            });
+
+        const preloadedAsignees = [];
+        const usersId = [];
+        claimReviewTask.machine.context.reviewData.usersId.forEach(
+            (assignee) => {
+                preloadedAsignees.push({
+                    value: assignee._id,
+                    label: assignee.name,
+                });
+                usersId.push(assignee._id);
+            }
+        );
+        claimReviewTask.machine.context.reviewData.usersId = usersId;
+        claimReviewTask.machine.context.preloadedOptions = {
+            usersId: preloadedAsignees,
+        };
+
+        if (claimReviewTask.machine.context.reviewData.reviewerId) {
+            const reviewerUser =
+                claimReviewTask.machine.context.reviewData.reviewerId;
+            claimReviewTask.machine.context.preloadedOptions.reviewerId = [
+                {
+                    value: reviewerUser._id,
+                    label: reviewerUser.name,
+                },
+            ];
+            claimReviewTask.machine.context.reviewData.reviewerId =
+                reviewerUser._id;
+        }
+
+        return claimReviewTask;
     }
 
     count(query: any = {}) {

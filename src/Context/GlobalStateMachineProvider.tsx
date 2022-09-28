@@ -28,7 +28,6 @@ export const GlobalStateMachineProvider = (props) => {
                 typeof machine.value !== "string"
                     ? Object.keys(machine.value)[0]
                     : machine.value;
-            machine.context.utils = { t };
         }
         const newMachine = machine || {
             context: initialContext,

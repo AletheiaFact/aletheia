@@ -16,6 +16,7 @@ export type FormField = {
 type FormFieldExtraProps = {
     dataLoader?: (value: string, t: any) => Promise<any>;
     mode?: string;
+    preloadedOptions?: string[];
 };
 
 interface CreateFormFieldProps extends Partial<FormField> {

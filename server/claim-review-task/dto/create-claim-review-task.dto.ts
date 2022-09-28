@@ -24,6 +24,10 @@ export type ReviewTaskMachineContext = {
         personality: Personality;
         claim: Claim;
     };
+    preloadedOptions: {
+        usersId?: any[];
+        reviewerId?: any[];
+    };
 };
 
 export type Machine = {

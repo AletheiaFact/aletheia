@@ -10,7 +10,10 @@ import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachinePr
 import { ReviewTaskEvents } from "../../../machine/enums";
 import getNextEvents from "../../../machine/getNextEvent";
 import getNextForm from "../../../machine/getNextForm";
-import { reviewDataSelector } from "../../../machine/selectors";
+import {
+    preloadedOptionsSelector,
+    reviewDataSelector,
+} from "../../../machine/selectors";
 import { useAppSelector } from "../../../store/store";
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
@@ -29,6 +32,10 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const { machineService } = useContext(GlobalStateMachineContext);
     const initialMachine = machineService.machine.config;
     const reviewData = useSelector(machineService, reviewDataSelector);
+    const preloadedOptions = useSelector(
+        machineService,
+        preloadedOptionsSelector
+    );
 
     const { t } = useTranslation();
 
@@ -47,10 +54,27 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
 
     const setCurrentFormAndNextEvents = (param) => {
         if (param !== ReviewTaskEvents.draft) {
-            const nextForm = getNextForm(param);
+            let nextForm = getNextForm(param);
+            nextForm = setUserPreloads(nextForm);
             setCurrentForm(nextForm);
             setNextEvents(getNextEvents(param));
         }
+    };
+
+    const setUserPreloads = (form) => {
+        if (preloadedOptions) {
+            form.forEach((item) => {
+                if (
+                    item.type === "inputSearch" &&
+                    preloadedOptions[item.fieldName]
+                ) {
+                    item.extraProps.preloadedOptions =
+                        preloadedOptions[item.fieldName];
+                }
+            });
+        }
+
+        return form;
     };
 
     const resetIsLoading = () => {

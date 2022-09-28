@@ -20,7 +20,8 @@ const buildState = ({
             sources: [],
             classification: "",
             rejectionComment: "",
-            reviewerId: "",
+            // initial value must be null to be able to use populate before selecting reviewer
+            reviewerId: null,
         },
         claimReview: {
             personality: "",

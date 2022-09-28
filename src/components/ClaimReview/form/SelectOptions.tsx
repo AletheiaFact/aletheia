@@ -15,9 +15,16 @@ const StyledSelect = styled(Select)`
     }
 `;
 
-function SelectOptions({ fetchOptions, mode, style, value, ...props }) {
+function SelectOptions({
+    fetchOptions,
+    mode,
+    style,
+    value,
+    preloadedOptions = [],
+    ...props
+}) {
     const [fetching, setFetching] = useState(false);
-    const [options, setOptions] = useState([]);
+    const [options, setOptions] = useState(preloadedOptions);
 
     const { t } = useTranslation();
 

@@ -40,6 +40,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     dataLoader={props.extraProps.dataLoader}
                     value={props.value}
                     mode={props.extraProps.mode}
+                    preloadedOptions={props.extraProps.preloadedOptions}
                 />
             );
         case "textList":

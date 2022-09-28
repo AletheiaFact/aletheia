@@ -139,7 +139,13 @@ export const transitionHandler = (state) => {
         api.createClaimReviewTask(
             {
                 sentence_hash,
-                machine: { context: state.context, value: state.value },
+                machine: {
+                    context: {
+                        reviewData: state.context.reviewData,
+                        claimReview: state.context.claimReview,
+                    },
+                    value: state.value,
+                },
                 recaptcha: recaptchaString,
             },
             t,

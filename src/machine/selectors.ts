@@ -19,9 +19,14 @@ const reviewDataSelector = (state) => {
     return state.context.reviewData;
 };
 
+const preloadedOptionsSelector = (state) => {
+    return state.context.preloadedOptions;
+};
+
 export {
     publishedSelector,
     crossCheckingSelector,
     reviewStartedSelector,
     reviewDataSelector,
+    preloadedOptionsSelector,
 };
