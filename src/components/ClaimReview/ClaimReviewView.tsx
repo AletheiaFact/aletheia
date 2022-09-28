@@ -2,11 +2,7 @@ import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
 import { Roles } from "../../machine/enums";
-import {
-    crossCheckingSelector,
-    publishedSelector,
-    reviewDataSelector,
-} from "../../machine/selectors";
+import { publishedSelector, reviewDataSelector } from "../../machine/selectors";
 import { ClaimReviewPageProps } from "../../pages/claim-review";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
@@ -21,33 +17,12 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);
-    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
 
     const { role } = useAppSelector((state) => state);
 
     const userIsNotRegular = !(role === Roles.Regular || role === null);
     const userIsReviewer = reviewData.reviewerId === props.userId;
     const userIsAssignee = reviewData.usersId.includes(props.userId);
-
-    const showReport =
-        (isPublished && (!claimReview?.isHidden || userIsNotRegular)) ||
-        (isCrossChecking && userIsReviewer);
-
-    const showForm =
-        !isPublished &&
-        ((userIsAssignee && !isCrossChecking) ||
-            (isCrossChecking && userIsReviewer));
-
-    const showAlert =
-        (userIsReviewer && isCrossChecking) ||
-        (userIsAssignee &&
-            (isCrossChecking || !!reviewData.rejectionComment)) ||
-        (isPublished && claimReview?.isHidden);
-
-    let alertDescription = description;
-    if (userIsAssignee && !isCrossChecking) {
-        alertDescription = reviewData.rejectionComment;
-    }
 
     return (
         <div>
@@ -57,20 +32,28 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
                     reviewData?.classification
                 }
                 isHidden={claimReview?.isHidden}
-                alertDescription={alertDescription}
+                hideDescription={description}
                 isPublished={isPublished}
-                showAlert={showAlert}
-                userHasPermission={userIsAssignee || userIsReviewer}
+                userIsReviewer={userIsReviewer}
+                userIsAssignee={userIsAssignee}
                 {...props}
             />
-            {showReport && (
-                <SentenceReportView
-                    context={claimReview?.report || reviewData}
-                    personality={props.personality}
-                    claim={props.claim}
-                />
-            )}
-            {showForm && <ClaimReviewForm {...props} />}
+            <SentenceReportView
+                context={claimReview?.report || reviewData}
+                personality={props.personality}
+                claim={props.claim}
+                userIsNotRegular={userIsNotRegular}
+                userIsReviewer={userIsReviewer}
+                isHidden={claimReview?.isHidden}
+            />
+            <ClaimReviewForm
+                claimId={props.claim._id}
+                personalityId={props.personality._id}
+                sentenceHash={props.sentence.data_hash}
+                sitekey={props.sitekey}
+                userIsReviewer={userIsReviewer}
+                userIsAssignee={userIsAssignee}
+            />
             <SocialMediaShare
                 quote={props.personality?.name}
                 href={props.href}

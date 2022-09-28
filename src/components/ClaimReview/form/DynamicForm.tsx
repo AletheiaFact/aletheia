@@ -131,7 +131,6 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         if (!data) {
             data = getValues();
         }
-        console.log("send data", data);
 
         //@ts-ignore
         window.umami &&

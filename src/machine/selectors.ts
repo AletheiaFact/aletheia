@@ -11,8 +11,17 @@ const crossCheckingSelector = (state) => {
     );
 };
 
+const reviewStartedSelector = (state) => {
+    return state.matches(ReviewTaskStates.unassigned);
+};
+
 const reviewDataSelector = (state) => {
     return state.context.reviewData;
 };
 
-export { publishedSelector, crossCheckingSelector, reviewDataSelector };
+export {
+    publishedSelector,
+    crossCheckingSelector,
+    reviewStartedSelector,
+    reviewDataSelector,
+};
