@@ -39,7 +39,9 @@ const locators = {
         BTN_REMOVE_SOURCE: "[data-cy=testClaimReviewsourcesRemove1]",
         BTN_FINISH_REPORT: "[data-cy=testClaimReviewFINISH_REPORT]",
         INPUT_CLASSIFICATION: "[data-cy=testClassificationText]",
+        INPUT_REVIEWER: "[data-cy=testClaimReviewreviewerId]",
         BTN_SAVE_DRAFT: "[data-cy=testClaimReviewSAVE_DRAFT]",
+        BTN_SUBMIT: "[data-cy=testClaimReviewSUBMIT]",
         BTN_PUBLISH: "[data-cy=testClaimReviewPUBLISH]",
     },
 

@@ -171,10 +171,7 @@ export class ClaimReviewTaskService {
         );
     }
 
-    async create(
-        claimReviewTaskBody: CreateClaimReviewTaskDTO,
-        userId: string
-    ) {
+    async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
         const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
             claimReviewTaskBody.sentence_hash
         );
@@ -196,8 +193,7 @@ export class ClaimReviewTaskService {
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.sentence_hash,
-                claimReviewTaskBody,
-                userId
+                claimReviewTaskBody
             );
         } else {
             const newClaimReviewTask = new this.ClaimReviewTaskModel(
@@ -213,7 +209,6 @@ export class ClaimReviewTaskService {
     async update(
         sentence_hash: string,
         { machine }: UpdateClaimReviewTaskDTO,
-        userId: string,
         history: boolean = true
     ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
@@ -232,8 +227,12 @@ export class ClaimReviewTaskService {
                 machine: newClaimReviewTaskMachine,
             };
 
+            const loggedInUser = this.req.user;
+
             if (newClaimReviewTaskMachine.value === "published") {
-                if (userId !== machine.context.reviewData.reviewerId) {
+                if (
+                    loggedInUser._id !== machine.context.reviewData.reviewerId
+                ) {
                     throw new ForbiddenException(
                         "This user does not have permission to publish the report"
                     );
@@ -283,33 +282,35 @@ export class ClaimReviewTaskService {
                 select: "name",
             });
 
-        const preloadedAsignees = [];
-        const usersId = [];
-        claimReviewTask.machine.context.reviewData.usersId.forEach(
-            (assignee) => {
-                preloadedAsignees.push({
-                    value: assignee._id,
-                    label: assignee.name,
-                });
-                usersId.push(assignee._id);
-            }
-        );
-        claimReviewTask.machine.context.reviewData.usersId = usersId;
-        claimReviewTask.machine.context.preloadedOptions = {
-            usersId: preloadedAsignees,
-        };
+        if (claimReviewTask) {
+            const preloadedAsignees = [];
+            const usersId = [];
+            claimReviewTask.machine.context.reviewData.usersId.forEach(
+                (assignee) => {
+                    preloadedAsignees.push({
+                        value: assignee._id,
+                        label: assignee.name,
+                    });
+                    usersId.push(assignee._id);
+                }
+            );
+            claimReviewTask.machine.context.reviewData.usersId = usersId;
+            claimReviewTask.machine.context.preloadedOptions = {
+                usersId: preloadedAsignees,
+            };
 
-        if (claimReviewTask.machine.context.reviewData.reviewerId) {
-            const reviewerUser =
-                claimReviewTask.machine.context.reviewData.reviewerId;
-            claimReviewTask.machine.context.preloadedOptions.reviewerId = [
-                {
-                    value: reviewerUser._id,
-                    label: reviewerUser.name,
-                },
-            ];
-            claimReviewTask.machine.context.reviewData.reviewerId =
-                reviewerUser._id;
+            if (claimReviewTask.machine.context.reviewData.reviewerId) {
+                const reviewerUser =
+                    claimReviewTask.machine.context.reviewData.reviewerId;
+                claimReviewTask.machine.context.preloadedOptions.reviewerId = [
+                    {
+                        value: reviewerUser._id,
+                        label: reviewerUser.name,
+                    },
+                ];
+                claimReviewTask.machine.context.reviewData.reviewerId =
+                    reviewerUser._id;
+            }
         }
 
         return claimReviewTask;
