@@ -12,6 +12,7 @@ import {
     publishedSelector,
     crossCheckingSelector,
     reviewStartedSelector,
+    reviewDataSelector,
 } from "../../machine/selectors";
 
 const ClaimReviewForm = ({
@@ -20,7 +21,7 @@ const ClaimReviewForm = ({
     sentenceHash,
     sitekey,
     userIsReviewer,
-    userIsAssignee,
+    userId,
 }) => {
     const { t } = useTranslation();
     const { isLoggedIn } = useAppSelector((state) => ({
@@ -29,9 +30,11 @@ const ClaimReviewForm = ({
 
     const { machineService } = useContext(GlobalStateMachineContext);
 
+    const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isStarted = useSelector(machineService, reviewStartedSelector);
+    const userIsAssignee = reviewData.usersId.includes(userId);
 
     const [formCollapsed, setFormCollapsed] = useState(isStarted);
 

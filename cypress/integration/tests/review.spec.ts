@@ -59,6 +59,7 @@ describe("Test claim review", () => {
             .should("be.enabled")
             .click();
     });
+    cy.get(locators.claimReview.INPUT_SUMMARY).should("exist");
 
     it("should only allow to submit report without any blank fields", () => {
         cy.login();

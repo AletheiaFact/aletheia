@@ -30,7 +30,6 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         watch,
     } = useForm();
     const { machineService } = useContext(GlobalStateMachineContext);
-    const initialMachine = machineService.machine.config;
     const reviewData = useSelector(machineService, reviewDataSelector);
     const preloadedOptions = useSelector(
         machineService,
@@ -87,7 +86,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            setCurrentFormAndNextEvents(initialMachine.initial);
+            setCurrentFormAndNextEvents(machineService.machine.config.initial);
         }
     }, []);
 

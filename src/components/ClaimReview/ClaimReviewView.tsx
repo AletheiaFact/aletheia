@@ -52,7 +52,7 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
                 sentenceHash={props.sentence.data_hash}
                 sitekey={props.sitekey}
                 userIsReviewer={userIsReviewer}
-                userIsAssignee={userIsAssignee}
+                userId={props.userId}
             />
             <SocialMediaShare
                 quote={props.personality?.name}
