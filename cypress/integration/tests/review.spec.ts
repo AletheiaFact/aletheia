@@ -58,8 +58,8 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.BTN_ASSIGN_USER)
             .should("be.enabled")
             .click();
+        cy.get(locators.claimReview.INPUT_SUMMARY).should("exist");
     });
-    cy.get(locators.claimReview.INPUT_SUMMARY).should("exist");
 
     it("should only allow to submit report without any blank fields", () => {
         cy.login();

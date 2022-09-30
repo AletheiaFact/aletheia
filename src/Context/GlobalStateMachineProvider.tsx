@@ -14,7 +14,6 @@ export const GlobalStateMachineContext = createContext<GlobalContextType>({
 });
 
 export const GlobalStateMachineProvider = (props) => {
-    const { t } = useTranslation();
     const [globalMachineService, setGlobalMachineService] = useState(null);
 
     useEffect(() => {

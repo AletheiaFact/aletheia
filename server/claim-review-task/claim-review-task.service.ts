@@ -212,52 +212,43 @@ export class ClaimReviewTaskService {
         history: boolean = true
     ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        try {
-            const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
-                sentence_hash
-            );
+        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
+            sentence_hash
+        );
 
-            const newClaimReviewTaskMachine = {
-                ...claimReviewTask.machine,
-                ...machine,
-            };
+        const newClaimReviewTaskMachine = {
+            ...claimReviewTask.machine,
+            ...machine,
+        };
 
-            const newClaimReviewTask = {
-                ...claimReviewTask.toObject(),
-                machine: newClaimReviewTaskMachine,
-            };
+        const newClaimReviewTask = {
+            ...claimReviewTask.toObject(),
+            machine: newClaimReviewTaskMachine,
+        };
 
-            const loggedInUser = this.req.user;
+        const loggedInUser = this.req.user;
 
-            if (newClaimReviewTaskMachine.value === "published") {
-                if (
-                    loggedInUser._id !== machine.context.reviewData.reviewerId
-                ) {
-                    throw new ForbiddenException(
-                        "This user does not have permission to publish the report"
-                    );
-                }
-                this._createReportAndClaimReview(
-                    sentence_hash,
-                    newClaimReviewTask.machine
+        if (newClaimReviewTaskMachine.value === "published") {
+            if (loggedInUser._id !== machine.context.reviewData.reviewerId) {
+                throw new ForbiddenException(
+                    "This user does not have permission to publish the report"
                 );
             }
-
-            if (history) {
-                this._createReviewTaskHistory(
-                    newClaimReviewTask,
-                    claimReviewTask
-                );
-                this._createStateEvent(newClaimReviewTask);
-            }
-
-            return this.ClaimReviewTaskModel.updateOne(
-                { _id: newClaimReviewTask._id },
-                newClaimReviewTask
+            this._createReportAndClaimReview(
+                sentence_hash,
+                newClaimReviewTask.machine
             );
-        } catch (e) {
-            throw e;
         }
+
+        if (history) {
+            this._createReviewTaskHistory(newClaimReviewTask, claimReviewTask);
+            this._createStateEvent(newClaimReviewTask);
+        }
+
+        return this.ClaimReviewTaskModel.updateOne(
+            { _id: newClaimReviewTask._id },
+            newClaimReviewTask
+        );
     }
 
     getClaimReviewTaskBySentenceHash(sentence_hash: string) {
