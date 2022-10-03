@@ -2,8 +2,8 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 
 import Loading from "../Loading";
-import HomeCarousel from "./HomeCarousel";
 import HomeContent from "./HomeContent";
+import HomeHeader from "./HomeHeader";
 
 const Home = ({ personalities, stats, href }) => {
     const { t } = useTranslation();
@@ -11,7 +11,7 @@ const Home = ({ personalities, stats, href }) => {
     if (stats) {
         return (
             <>
-                <HomeCarousel personalities={personalities} stats={stats} />
+                <HomeHeader />
                 <HomeContent
                     personalities={personalities}
                     href={href}
