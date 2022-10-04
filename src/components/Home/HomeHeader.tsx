@@ -24,6 +24,7 @@ const HomeHeader = () => {
                     style={{
                         display: "flex",
                         flexDirection: "column",
+                        paddingLeft: "20px",
                     }}
                 >
                     <h1
@@ -62,15 +63,6 @@ const HomeHeader = () => {
                     </div>
                 </Col>
             </Row>
-            <div
-                style={{
-                    backgroundColor: colors.bluePrimary,
-                    color: colors.white,
-                    height: "87px",
-                }}
-            >
-                stats
-            </div>
         </HomeHeaderStyle>
     );
 };

@@ -1,88 +1,38 @@
 import React from "react";
-import { Row, Col } from "antd";
+import { Row } from "antd";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
+import { useAppSelector } from "../../store/store";
+import { Stats } from "./Stats";
 
 const HomeStats = ({ stats }) => {
     const { t } = useTranslation();
+    const { vw } = useAppSelector((state) => state);
+    const statsHeight = vw?.sm ? 66 : 86;
 
     return (
-        <Row
-            className="stats-container"
+        <div
             style={{
+                backgroundColor: colors.bluePrimary,
                 color: colors.white,
-                width: "100%",
+                width: vw?.sm ? "100%" : "88%",
                 justifyContent: "space-between",
+                padding: "0 18px",
+                marginLeft: "auto",
+                position: "relative",
+                height: statsHeight,
+                top: statsHeight / -2,
+                display: "flex",
+                gap: "2vw",
             }}
         >
-            <Col
-                span={7}
-                className="stats-child-container"
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                }}
-            >
-                <h3
-                    className="number-stats"
-                    style={{
-                        color: colors.lightBlueSecondary,
-                        marginRight: "20px",
-                        marginBottom: 0,
-                    }}
-                >
-                    {stats.personalities}
-                </h3>{" "}
-                <p className="title-stats" style={{ marginBottom: 0 }}>
-                    {t("home:statsPersonalities")}
-                </p>
-            </Col>
-            <Col
-                span={7}
-                className="stats-child-container"
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                }}
-            >
-                <h3
-                    className="number-stats"
-                    style={{
-                        color: colors.lightBlueSecondary,
-                        marginRight: "20px",
-                        marginBottom: 0,
-                    }}
-                >
-                    {stats.claims}
-                </h3>{" "}
-                <p className="title-stats" style={{ marginBottom: 0 }}>
-                    {t("home:statsClaims")}
-                </p>
-            </Col>
-            <Col
-                span={7}
-                className="stats-child-container"
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                }}
-            >
-                <h3
-                    className="number-stats"
-                    style={{
-                        color: colors.lightBlueSecondary,
-                        marginBottom: 0,
-                        lineHeight: "55px",
-                        marginRight: "20px",
-                    }}
-                >
-                    {stats.reviews}
-                </h3>{" "}
-                <p className="title-stats" style={{ marginBottom: 0 }}>
-                    {t("home:statsClaimReviews")}
-                </p>
-            </Col>
-        </Row>
+            <Stats
+                info={stats.personalities}
+                title={t("home:statsPersonalities")}
+            />
+            <Stats info={stats.claims} title={t("home:statsClaims")} />
+            <Stats info={stats.reviews} title={t("home:statsClaimReviews")} />
+        </div>
     );
 };
 

@@ -4,6 +4,7 @@ import React from "react";
 import Loading from "../Loading";
 import HomeContent from "./HomeContent";
 import HomeHeader from "./HomeHeader";
+import HomeStats from "./HomeStats";
 
 const Home = ({ personalities, stats, href }) => {
     const { t } = useTranslation();
@@ -12,6 +13,7 @@ const Home = ({ personalities, stats, href }) => {
         return (
             <>
                 <HomeHeader />
+                <HomeStats stats={stats} />
                 <HomeContent
                     personalities={personalities}
                     href={href}
