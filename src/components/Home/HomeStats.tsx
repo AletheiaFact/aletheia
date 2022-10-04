@@ -1,8 +1,8 @@
-import React from "react";
-import { Row } from "antd";
 import { useTranslation } from "next-i18next";
-import colors from "../../styles/colors";
+import React from "react";
+
 import { useAppSelector } from "../../store/store";
+import colors from "../../styles/colors";
 import { Stats } from "./Stats";
 
 const HomeStats = ({ stats }) => {

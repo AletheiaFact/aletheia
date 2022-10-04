@@ -1,10 +1,11 @@
-import React from "react";
-import { Row, Col } from "antd";
-import Button, { ButtonType } from "../Button";
+import { Col } from "antd";
 import { useTranslation } from "next-i18next";
-import colors from "../../styles/colors";
-import { useAppSelector } from "../../store/store";
+import React from "react";
+
 import { trackUmamiEvent } from "../../lib/umami";
+import { useAppSelector } from "../../store/store";
+import colors from "../../styles/colors";
+import Button, { ButtonType } from "../Button";
 import CtaSectionStyle from "./CTASection.style";
 
 const CTASection = () => {

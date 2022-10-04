@@ -1,6 +1,6 @@
 import React from "react";
-import colors from "../../styles/colors";
 import { useAppSelector } from "../../store/store";
+import colors from "../../styles/colors";
 
 export const Stats = ({ info, title }) => {
     const { vw } = useAppSelector((state) => state);
