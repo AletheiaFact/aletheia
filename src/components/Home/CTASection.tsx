@@ -33,7 +33,7 @@ const CTASection = () => {
                     <Button
                         onClick={() => {
                             trackUmamiEvent(
-                                "carousel-cta-registration-button",
+                                "home-header-cta-registration-button",
                                 "registration"
                             );
                         }}

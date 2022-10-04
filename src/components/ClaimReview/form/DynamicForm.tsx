@@ -17,6 +17,7 @@ import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
 import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
 import DynamicInput from "./DynamicInput";
+import { trackUmamiEvent } from "../../../lib/umami";
 
 const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
     const {
@@ -148,12 +149,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
             data = getValues();
         }
 
-        //@ts-ignore
-        window.umami &&
-            window.umami?.trackEvent(
-                `${event}_BUTTON`,
-                "Fact-checking workflow"
-            );
+        trackUmamiEvent(`${event}_BUTTON`, "Fact-checking workflow");
         sendEventToMachine(data, event);
     };
 

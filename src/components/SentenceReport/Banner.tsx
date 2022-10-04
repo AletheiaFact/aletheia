@@ -1,6 +1,7 @@
 import { Col } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
+import { trackUmamiEvent } from "../../lib/umami";
 
 import Button, { ButtonType } from "../Button";
 import BannerStyle from "./Banner.style";
@@ -14,11 +15,10 @@ function Banner() {
             <Col xs={0} sm={0} md={0} lg={20}>
                 <Button
                     onClick={() => {
-                        window &&
-                            window.umami?.trackEvent(
-                                "cta-registration-button",
-                                "registration"
-                            );
+                        trackUmamiEvent(
+                            "banner-cta-registration-button",
+                            "registration"
+                        );
                     }}
                     type={ButtonType.blue}
                     target="_blank"
