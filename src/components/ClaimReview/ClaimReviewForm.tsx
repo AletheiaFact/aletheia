@@ -13,7 +13,7 @@ import {
     crossCheckingSelector,
     reviewStartedSelector,
     reviewDataSelector,
-} from "../../reviewTaskMachine/selectors";
+} from "../../machines/reviewTask/selectors";
 
 const ClaimReviewForm = ({
     claimId,

@@ -1,8 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 
-import { initialContext } from "../reviewTaskMachine/context";
-import { ReviewTaskStates } from "../reviewTaskMachine/enums";
-import { createNewMachineService } from "../reviewTaskMachine/reviewTaskMachine";
+import { initialContext } from "../machines/reviewTask/context";
+import { ReviewTaskStates } from "../machines/reviewTask/enums";
+import { createNewMachineService } from "../machines/reviewTask/reviewTaskMachine";
 
 interface ContextType {
     machineService: any;

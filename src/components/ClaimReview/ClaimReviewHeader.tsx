@@ -8,7 +8,7 @@ import { Roles } from "../../types/enums";
 import {
     crossCheckingSelector,
     reviewDataSelector,
-} from "../../reviewTaskMachine/selectors";
+} from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaAlert from "../AletheiaAlert";

@@ -5,7 +5,7 @@ import { Roles } from "../../types/enums";
 import {
     publishedSelector,
     reviewDataSelector,
-} from "../../reviewTaskMachine/selectors";
+} from "../../machines/reviewTask/selectors";
 import { ClaimReviewPageProps } from "../../pages/claim-review";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";

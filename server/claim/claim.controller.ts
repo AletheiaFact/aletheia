@@ -27,6 +27,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { SentenceService } from "../sentence/sentence.service";
+import { BaseRequest } from "../types";
 
 @Controller()
 export class ClaimController {
@@ -181,7 +182,7 @@ export class ClaimController {
 
     @Get("personality/:personalitySlug/claim/create/")
     public async personalityClaimCreatePage(
-        @Req() req: Request,
+        @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const { personalitySlug } = req.params;
@@ -190,7 +191,6 @@ export class ClaimController {
         const personality =
             await this.personalityService.getClaimsPersonalityBySlug(
                 personalitySlug,
-                // @ts-ignore
                 req.language
             );
 

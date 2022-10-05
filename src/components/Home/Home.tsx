@@ -1,7 +1,6 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-import ImageUpload from "../ImageUpload";
 import Loading from "../Loading";
 import HomeCarousel from "./HomeCarousel";
 import HomeContent from "./HomeContent";
