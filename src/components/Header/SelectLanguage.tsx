@@ -11,7 +11,7 @@ const SelectInput = styled(Select)`
     background-color: none;
     .ant-select-arrow {
         color: ${colors.white};
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
 `;
 
@@ -35,8 +35,6 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
         <SelectInput
             style={{
                 paddingTop: 6,
-                display: "flex",
-                width: 70,
             }}
             bordered={false}
             showArrow={true}
@@ -45,10 +43,10 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
             data-cy={props.dataCy}
         >
             <Option default value="pt" data-cy="testLanguagePt">
-                <BR style={{ width: "25px" }} />
+                <BR style={{ width: "20px" }} />
             </Option>
             <Option value="en" data-cy="testLanguageEn">
-                <GB title="EN" style={{ width: "25px" }} />
+                <GB title="EN" style={{ width: "20px" }} />
             </Option>
         </SelectInput>
     );

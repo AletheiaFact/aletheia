@@ -136,7 +136,7 @@ export class ClaimController {
         );
 
         const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
+            await this.claimReviewTaskService.getClaimReviewTaskBySentenceHashWithUsernames(
                 sentence_hash
             );
 
@@ -144,6 +144,10 @@ export class ClaimController {
             await this.claimReviewService.getReviewBySentenceHash(
                 sentence_hash
             );
+
+        const description = await this.claimReviewService.verifyIfReviewIsHdden(
+            claimReview
+        );
 
         await this.viewService.getNextServer().render(
             req,
@@ -156,6 +160,7 @@ export class ClaimController {
                 claimReviewTask,
                 claimReview,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                description,
             })
         );
     }

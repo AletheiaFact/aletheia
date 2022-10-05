@@ -1,18 +1,19 @@
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import React from "react";
 import { useDispatch } from "react-redux";
-import AffixButton from "../components/AffixButton/AffixButton";
 
-import ClaimReviewForm from "../components/ClaimReview/ClaimReviewForm";
+import AffixButton from "../components/AffixButton/AffixButton";
+import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
+import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
 import JsonLd from "../components/JsonLd";
-import SentenceReportView from "../components/SentenceReport/SentenceReportView";
 import Seo from "../components/Seo";
-import { ClassificationEnum, ReviewTaskStates } from "../machine/enums";
+import { ClassificationEnum, Roles } from "../machine/enums";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
-const ClaimReviewPage: NextPage<{
+export interface ClaimReviewPageProps {
     personality: any;
     claim: any;
     sentence: any;
@@ -21,23 +22,35 @@ const ClaimReviewPage: NextPage<{
     claimReviewTask: any;
     claimReview: any;
     isLoggedIn: boolean;
-}> = ({
-    personality,
-    claim,
-    sentence,
-    href,
-    claimReviewTask,
-    claimReview,
-    isLoggedIn,
-    sitekey,
-}) => {
+    description: string;
+    userRole: string;
+    userId?: string;
+}
+
+const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+
+    const { personality, claim, sentence, claimReview, isLoggedIn, userRole } =
+        props;
+
     dispatch({
         type: ActionTypes.SET_LOGIN_STATUS,
         login: isLoggedIn,
     });
+
+    dispatch({
+        type: ActionTypes.SET_USER_ROLE,
+        role: userRole || Roles.Regular,
+    });
+
+    dispatch({
+        type: ActionTypes.SET_AUTO_SAVE,
+        autoSave: false,
+    });
+
     const review = sentence?.props?.classification;
+
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "ClaimReview",
@@ -53,10 +66,12 @@ const ClaimReviewPage: NextPage<{
         claimReviewed: sentence.content,
         reviewRating: {
             "@type": "Rating",
-            ratingValue: ClassificationEnum[review],
+            ratingValue: claimReview?.isHidden ? 0 : ClassificationEnum[review],
             bestRating: 8,
             worstRating: 1,
-            alternateName: t(`claimReviewForm:${review}`),
+            alternateName: claimReview?.isHidden
+                ? t("claimReviewForm:notReviewed")
+                : t(`claimReviewForm:${review}`),
         },
         itemReviewed: {
             "@type": "CreativeWork",
@@ -82,24 +97,12 @@ const ClaimReviewPage: NextPage<{
                 })}
             />
 
-            {claimReviewTask?.machine.value !== ReviewTaskStates.published ? (
-                <ClaimReviewForm
-                    personality={personality}
-                    claim={claim}
-                    sentence={sentence}
-                    href={href}
-                    claimReviewTask={claimReviewTask}
-                    sitekey={sitekey}
-                />
-            ) : (
-                <SentenceReportView
-                    personality={personality}
-                    claim={claim}
-                    sentence={sentence}
-                    href={href}
-                    context={claimReview.report}
-                />
-            )}
+            <GlobalStateMachineProvider
+                data_hash={props.sentence.data_hash}
+                baseMachine={props.claimReviewTask?.machine}
+            >
+                <ClaimReviewView {...props} />
+            </GlobalStateMachineProvider>
             <AffixButton personalitySlug={personality.slug} />
         </>
     );
@@ -118,8 +121,11 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
+            description: query.description,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
+            userRole: req?.user?.role ? req?.user?.role : null,
+            userId: req?.user?._id || "",
         },
     };
 }

@@ -12,12 +12,12 @@ const reducer = (state, action) => {
                 ...state,
                 menuCollapsed: action.menuCollapsed,
             };
-        case ActionTypes.ENABLE_SEARCH_OVERLAY:
+        case ActionTypes.RESULTS_OVERLAY_VISIBLE:
             return {
                 ...state,
                 search: {
                     ...(state?.search || {}),
-                    overlay: action.overlay,
+                    overlayVisible: action.overlayVisible,
                 },
             };
         case ActionTypes.SEARCH_RESULTS:
@@ -56,6 +56,16 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 login: action.login,
+            };
+        case ActionTypes.SET_AUTO_SAVE:
+            return {
+                ...state,
+                autoSave: action.autoSave,
+            };
+        case ActionTypes.SET_USER_ROLE:
+            return {
+                ...state,
+                role: action.role,
             };
         case ActionTypes.SET_BREAKPOINTS:
             return {

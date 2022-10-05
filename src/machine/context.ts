@@ -12,13 +12,16 @@ const buildState = ({
 }): ReviewTaskMachineContext => {
     return {
         reviewData: reviewData || {
-            usersId: "",
+            usersId: [],
             summary: "",
             questions: [],
             report: "",
             verification: "",
             sources: [],
             classification: "",
+            rejectionComment: "",
+            // initial value must be null to be able to use populate before selecting reviewer
+            reviewerId: null,
         },
         claimReview: {
             personality: "",

@@ -1,27 +1,19 @@
 import { Layout } from "antd";
 import React from "react";
-import { useDispatch } from "react-redux";
 
 import { useMediaQueryBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { useAppSelector } from "../store/store";
-import { ActionTypes } from "../store/types";
 import colors from "../styles/colors";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
-import SearchOverlay from "./Search/SearchOverlay";
+import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Sidebar";
 
 const MainApp = ({ children }) => {
-    const dispatch = useDispatch();
-
-    const { enableOverlay, menuCollapsed } = useAppSelector((state) => {
+    const { enableOverlay } = useAppSelector((state) => {
         return {
-            enableOverlay: state?.search?.overlay,
-            menuCollapsed:
-                state?.menuCollapsed !== undefined
-                    ? state?.menuCollapsed
-                    : true,
+            enableOverlay: state?.search?.overlayVisible,
         };
     });
 
@@ -30,21 +22,12 @@ const MainApp = ({ children }) => {
 
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Sidebar
-                menuCollapsed={menuCollapsed}
-                onToggleSidebar={() => {
-                    dispatch({
-                        type: ActionTypes.TOGGLE_MENU,
-                        menuCollapsed: !menuCollapsed,
-                    });
-                }}
-            />
+            <Sidebar />
             <Layout style={{ background: colors.white }}>
                 <Header />
                 <ContentWrapper>{children}</ContentWrapper>
                 <Footer />
-
-                {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
+                {enableOverlay && <OverlaySearchResults />}
             </Layout>
         </Layout>
     );

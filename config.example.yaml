@@ -22,6 +22,7 @@ services:
       port: 3000
       cors: '*'
       debug: true
+      #override_public_routes: true
       recaptcha_secret: RECAPTCHA_SECRET
       recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
       db:
@@ -37,3 +38,7 @@ services:
         url: ORY_SDK_URL
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
+      feature_flag:
+        url: GITLAB_FEATURE_FLAG_URL
+        appName: ENV
+        instanceId: GITLAB_FEATURE_FLAG_INSTANCE_ID

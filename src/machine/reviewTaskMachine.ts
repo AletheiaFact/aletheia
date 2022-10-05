@@ -78,9 +78,31 @@ export const createNewMachine = ({ value, context }) => {
                         target: ReviewTaskStates.assigned,
                     },
 
+                    SUBMIT: {
+                        target: ReviewTaskStates.submitted,
+                        actions: [saveContext],
+                    },
+                },
+            },
+            submitted: {
+                on: {
+                    REJECT: {
+                        target: ReviewTaskStates.rejected,
+                    },
                     PUBLISH: {
                         target: ReviewTaskStates.published,
                         actions: [saveContext],
+                    },
+                },
+            },
+            rejected: {
+                on: {
+                    ADD_REJECTION_COMMENT: {
+                        target: ReviewTaskStates.assigned,
+                        actions: [saveContext],
+                    },
+                    GO_BACK: {
+                        target: ReviewTaskStates.submitted,
                     },
                 },
             },
@@ -91,35 +113,49 @@ export const createNewMachine = ({ value, context }) => {
     });
 };
 
+/**
+ * Intercepts the event sent to the machine to save the context on the database
+ */
 export const transitionHandler = (state) => {
-    const sentence_hash = state.event.sentence_hash;
-    const t = state.event.t;
+    const {
+        sentence_hash,
+        t,
+        recaptchaString,
+        setCurrentFormAndNextEvents,
+        resetIsLoading,
+    } = state.event;
     const event = state.event.type;
-    const recaptcha = state.event.recaptchaString;
-    const setCurrentFormAndNextEvents = state.event.setCurrentFormAndNextEvents;
-    const setIsLoading = state.event.setIsLoading;
 
-    if (event !== ReviewTaskEvents.init && event !== ReviewTaskEvents.goback) {
+    if (
+        event === ReviewTaskEvents.goback ||
+        event === ReviewTaskEvents.reject
+    ) {
+        const nextState =
+            typeof state.value !== "string"
+                ? Object.keys(state.value)[0]
+                : state.value;
+        setCurrentFormAndNextEvents(nextState);
+    } else if (event !== ReviewTaskEvents.init) {
         api.createClaimReviewTask(
             {
                 sentence_hash,
-                machine: { context: state.context, value: state.value },
-                recaptcha,
+                machine: {
+                    context: {
+                        reviewData: state.context.reviewData,
+                        claimReview: state.context.claimReview,
+                    },
+                    value: state.value,
+                },
+                recaptcha: recaptchaString,
             },
             t,
             event
         )
             .then(() => {
-                setIsLoading(false);
                 setCurrentFormAndNextEvents(event);
-                if (event === ReviewTaskEvents.publish) {
-                    window.location.reload();
-                }
             })
-            .catch((e) => e);
-    } else if (event === ReviewTaskEvents.goback) {
-        setIsLoading(false);
-        setCurrentFormAndNextEvents(Object.keys(state.value)[0], state);
+            .catch((e) => console.log(e))
+            .finally(() => resetIsLoading());
     }
 };
 

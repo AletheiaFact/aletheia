@@ -62,7 +62,7 @@ const PersonalityCreateSearch = ({
                     }}
                 >
                     <InputSearch
-                        placeholder={t("header:search_personality")}
+                        placeholder={t("header:search_placeholder")}
                         callback={handleInputSearch}
                     />
                 </Form.Item>

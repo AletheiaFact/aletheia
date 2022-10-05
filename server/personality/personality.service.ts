@@ -208,6 +208,7 @@ export class PersonalityService {
             personality: personality._id,
             isDeleted: false,
             isPublished: true,
+            isHidden: false,
         });
         this.logger.log(`Got stats ${reviews}`);
         return this.util.formatStats(reviews);

@@ -14,10 +14,11 @@ function Banner() {
             <Col xs={0} sm={0} md={0} lg={20}>
                 <Button
                     onClick={() => {
-                        umami?.trackEvent(
-                            "cta-registration-button",
-                            "registration"
-                        );
+                        window &&
+                            window.umami?.trackEvent(
+                                "cta-registration-button",
+                                "registration"
+                            );
                     }}
                     type={ButtonType.blue}
                     target="_blank"

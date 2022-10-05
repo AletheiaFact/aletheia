@@ -5,9 +5,12 @@ import { ReviewTaskStates } from "../../machine/enums";
 import KanbanCol from "./KanbanCol";
 
 const KanbanView = () => {
-    // Don't show unassigned column because we don't save tasks in this state
+    // Don't show unassigned and rejected column
+    // because we don't save tasks in these states
     const states = Object.keys(ReviewTaskStates).filter(
-        (state) => state !== ReviewTaskStates.unassigned
+        (state) =>
+            state !== ReviewTaskStates.unassigned &&
+            state !== ReviewTaskStates.rejected
     );
 
     return (

@@ -40,7 +40,8 @@ import { StateEventModule } from "./state-event/state-event.module";
 import { TopicModule } from "./topic/topic.module";
 import { ImageModule } from "./image/image.module";
 import { SearchModule } from "./search/search.module";
-import { FileManagementModule } from './file-management/file-management.module';
+import { FileManagementModule } from "./file-management/file-management.module";
+import { UnleashModule } from "nestjs-unleash";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -54,47 +55,58 @@ export class AppModule implements NestModule {
 
     static register(options): DynamicModule {
         // TODO: interface app with service-runner metrics interface
+
+        const imports = [
+            MongooseModule.forRoot(
+                options.config.db.connection_uri,
+                options.config.db.options
+            ),
+            ConfigModule.forRoot({
+                load: [() => options.config || {}],
+            }),
+            ThrottlerModule.forRoot({
+                ttl: options.config.throttle.ttl,
+                limit: options.config.throttle.limit,
+            }),
+            UsersModule,
+            WikidataModule,
+            PersonalityModule,
+            ClaimModule,
+            ClaimReviewModule,
+            ClaimReviewTaskModule,
+            ClaimRevisionModule,
+            HistoryModule,
+            StateEventModule,
+            SourceModule,
+            SpeechModule,
+            ParagraphModule,
+            SentenceModule,
+            StatsModule,
+            ViewModule,
+            HomeModule,
+            EmailModule,
+            SitemapModule,
+            OryModule,
+            ReportModule,
+            CaptchaModule,
+            TopicModule,
+            ImageModule,
+            SearchModule,
+            FileManagementModule,
+        ];
+        if (options.config.feature_flag) {
+            imports.push(
+                UnleashModule.forRoot({
+                    url: options.config.feature_flag.url,
+                    appName: options.config.feature_flag.appName,
+                    instanceId: options.config.feature_flag.instanceId,
+                })
+            );
+        }
         return {
             module: AppModule,
             global: true,
-            imports: [
-                MongooseModule.forRoot(
-                    options.config.db.connection_uri,
-                    options.config.db.options
-                ),
-                ConfigModule.forRoot({
-                    load: [() => options.config || {}],
-                }),
-                ThrottlerModule.forRoot({
-                    ttl: options.config.throttle.ttl,
-                    limit: options.config.throttle.limit,
-                }),
-                UsersModule,
-                WikidataModule,
-                PersonalityModule,
-                ClaimModule,
-                ClaimReviewModule,
-                ClaimReviewTaskModule,
-                ClaimRevisionModule,
-                HistoryModule,
-                StateEventModule,
-                SourceModule,
-                SpeechModule,
-                ParagraphModule,
-                SentenceModule,
-                StatsModule,
-                ViewModule,
-                HomeModule,
-                EmailModule,
-                SitemapModule,
-                OryModule,
-                ReportModule,
-                CaptchaModule,
-                TopicModule,
-                ImageModule,
-                SearchModule,
-                FileManagementModule,
-            ],
+            imports,
             controllers: [RootController],
             providers: [
                 {

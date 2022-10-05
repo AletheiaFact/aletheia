@@ -1,5 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
+import { Roles } from "../machine/enums";
 
 const request = axios.create({
     withCredentials: true,
@@ -48,25 +49,32 @@ const updatePassword = (params, t) => {
         });
 };
 
-const getUsers = (searchName, t) => {
-    const params = {
-        searchName,
-    }
+const getUsers = (
+    params: {
+        searchName: string;
+        filterOutRoles?: Roles[];
+    },
+    t
+) => {
     return request
         .get(`/`, { params })
         .then((response) => {
             return response?.data;
         })
         .catch((e) => {
-            return e?.response?.data || {
-                message: t("login:getUsersFailed"),
-            };
-        })
-}
+            return (
+                e?.response?.data || {
+                    message: t("login:getUsersFailed"),
+                }
+            );
+        });
+};
 
-export default {
+const usersApi = {
     login,
     updatePassword,
     getById,
-    getUsers
+    getUsers,
 };
+
+export default usersApi;

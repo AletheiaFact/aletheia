@@ -1,67 +1,64 @@
-import React from "react";
+import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
-import SocialMediaShare from "../SocialMediaShare";
-import SentenceReportCard from "./SentenceReportCard";
-import Banner from "./Banner";
-import CTARegistration from "../Home/CTARegistration";
-import SentenceReportViewStyle from "./SentenceReportView.style";
-import SentenceReportContent from "./SentenceReportContent";
+import React, { useContext } from "react";
+import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import {
+    crossCheckingSelector,
+    publishedSelector,
+} from "../../machine/selectors";
+
 import { useAppSelector } from "../../store/store";
+import colors from "../../styles/colors";
+import CTARegistration from "../Home/CTARegistration";
+import SentenceReportContent from "./SentenceReportContent";
 
 const SentenceReportView = ({
     personality,
     claim,
-    sentence,
-    href,
     context,
+    userIsNotRegular,
+    userIsReviewer,
+    isHidden,
 }) => {
-    const { isLoggedIn } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-    }));
+    const { isLoggedIn } = useAppSelector((state) => {
+        return {
+            isLoggedIn: state?.login,
+        };
+    });
+    const { machineService } = useContext(GlobalStateMachineContext);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isPublished = useSelector(machineService, publishedSelector);
+
+    const showReport =
+        (isPublished && (!isHidden || userIsNotRegular)) ||
+        (isCrossChecking && userIsReviewer);
+
     return (
-        <SentenceReportViewStyle>
-            <Row>
-                <Col offset={3} span={18}>
-                    <Row>
-                        <Col
-                            lg={{ order: 1, span: 16 }}
-                            md={{ order: 2, span: 24 }}
-                            sm={{ order: 2, span: 24 }}
-                            xs={{ order: 2, span: 24 }}
-                            className="sentence-report-card"
-                        >
-                            <SentenceReportCard
-                                personality={personality}
-                                claim={claim}
-                                sentence={sentence}
-                                context={context}
-                            />
-                        </Col>
-                        <Col
-                            lg={{ order: 2, span: 8 }}
-                            md={{ order: 1, span: 24 }}
-                        >
-                            <Banner />
-                        </Col>
-                        <Col order={3}>
+        showReport && (
+            <div>
+                <Row>
+                    <Col
+                        offset={3}
+                        span={18}
+                        style={
+                            isCrossChecking && {
+                                backgroundColor: colors.lightGray,
+                                padding: "15px",
+                            }
+                        }
+                    >
+                        <Col>
                             <SentenceReportContent
                                 context={context}
                                 personality={personality}
                                 claim={claim}
                             />
                         </Col>
-                    </Row>
-                    {!isLoggedIn && <CTARegistration />}
-                </Col>
-                <Col span={24}>
-                    <SocialMediaShare
-                        quote={personality?.name}
-                        href={href}
-                        claim={claim?.title}
-                    />
-                </Col>
-            </Row>
-        </SentenceReportViewStyle>
+                        {!isLoggedIn && <CTARegistration />}
+                    </Col>
+                </Row>
+            </div>
+        )
     );
 };
 

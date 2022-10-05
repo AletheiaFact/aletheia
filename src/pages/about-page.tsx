@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+import { InferGetServerSidePropsType, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
@@ -7,12 +7,14 @@ import About from "../components/About/About";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 
-const AboutPage: NextPage<{ data: string }> = () => {
+const AboutPage: NextPage<{ data: string }> = ({
+    enableWarningDocument,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const { t } = useTranslation();
     return (
         <>
             <Seo title={t("about:title")} description={t("about:intro")} />
-            <About />
+            <About enableWarningDocument={enableWarningDocument} />
         </>
     );
 };
@@ -23,6 +25,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            enableWarningDocument: query.enableWarningDocument,
         },
     };
 }
