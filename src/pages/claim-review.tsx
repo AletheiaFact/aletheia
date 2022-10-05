@@ -6,10 +6,10 @@ import { useDispatch } from "react-redux";
 
 import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineProvider } from "../Context/ReviewTaskMachineProvider";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
-import { ClassificationEnum, Roles } from "../machine/enums";
+import { ClassificationEnum, Roles } from "../types/enums";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
@@ -97,12 +97,12 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 })}
             />
 
-            <GlobalStateMachineProvider
+            <ReviewTaskMachineProvider
                 data_hash={props.sentence.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
             >
                 <ClaimReviewView {...props} />
-            </GlobalStateMachineProvider>
+            </ReviewTaskMachineProvider>
             <AffixButton personalitySlug={personality.slug} />
         </>
     );

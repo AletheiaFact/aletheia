@@ -1,19 +1,18 @@
-import { useTranslation } from "next-i18next";
 import { createContext, useEffect, useState } from "react";
 
-import { initialContext } from "../machine/context";
-import { ReviewTaskStates } from "../machine/enums";
-import { createNewMachineService } from "../machine/reviewTaskMachine";
+import { initialContext } from "../reviewTaskMachine/context";
+import { ReviewTaskStates } from "../reviewTaskMachine/enums";
+import { createNewMachineService } from "../reviewTaskMachine/reviewTaskMachine";
 
-interface GlobalContextType {
+interface ContextType {
     machineService: any;
 }
 
-export const GlobalStateMachineContext = createContext<GlobalContextType>({
+export const ReviewTaskMachineContext = createContext<ContextType>({
     machineService: null,
 });
 
-export const GlobalStateMachineProvider = (props) => {
+export const ReviewTaskMachineProvider = (props) => {
     const [globalMachineService, setGlobalMachineService] = useState(null);
 
     useEffect(() => {
@@ -36,10 +35,10 @@ export const GlobalStateMachineProvider = (props) => {
     }, []);
 
     return (
-        <GlobalStateMachineContext.Provider
+        <ReviewTaskMachineContext.Provider
             value={{ machineService: globalMachineService }}
         >
             {globalMachineService && props.children}
-        </GlobalStateMachineContext.Provider>
+        </ReviewTaskMachineContext.Provider>
     );
 };

@@ -1,19 +1,22 @@
 import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
-import { Roles } from "../../machine/enums";
-import { publishedSelector, reviewDataSelector } from "../../machine/selectors";
+import { Roles } from "../../types/enums";
+import {
+    publishedSelector,
+    reviewDataSelector,
+} from "../../reviewTaskMachine/selectors";
 import { ClaimReviewPageProps } from "../../pages/claim-review";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewHeader from "./ClaimReviewHeader";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
 import SocialMediaShare from "../SocialMediaShare";
 
 const ClaimReviewView = (props: ClaimReviewPageProps) => {
     const { claimReview, description } = props;
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService } = useContext(ReviewTaskMachineContext);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);

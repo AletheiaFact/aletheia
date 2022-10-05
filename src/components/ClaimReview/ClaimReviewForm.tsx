@@ -7,13 +7,13 @@ import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import DynamicForm from "./form/DynamicForm";
 import { useAppSelector } from "../../store/store";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
 import {
     publishedSelector,
     crossCheckingSelector,
     reviewStartedSelector,
     reviewDataSelector,
-} from "../../machine/selectors";
+} from "../../reviewTaskMachine/selectors";
 
 const ClaimReviewForm = ({
     claimId,
@@ -28,7 +28,7 @@ const ClaimReviewForm = ({
         isLoggedIn: state.login,
     }));
 
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService } = useContext(ReviewTaskMachineContext);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);

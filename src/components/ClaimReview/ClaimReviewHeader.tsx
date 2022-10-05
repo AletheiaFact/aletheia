@@ -3,12 +3,12 @@ import { useTranslation } from "next-i18next";
 import React, { useContext, useEffect, useState } from "react";
 import { useSelector } from "@xstate/react";
 import ClaimReviewApi from "../../api/claimReviewApi";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
-import { Roles } from "../../machine/enums";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
+import { Roles } from "../../types/enums";
 import {
     crossCheckingSelector,
     reviewDataSelector,
-} from "../../machine/selectors";
+} from "../../reviewTaskMachine/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaAlert from "../AletheiaAlert";
@@ -38,7 +38,7 @@ const ClaimReviewHeader = ({
     const { t } = useTranslation();
     const { vw, role, login } = useAppSelector((state) => state);
 
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const userHasPermission = userIsReviewer || userIsAssignee;

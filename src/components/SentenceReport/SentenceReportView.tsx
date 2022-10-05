@@ -1,11 +1,11 @@
 import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
 import React, { useContext } from "react";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
 import {
     crossCheckingSelector,
     publishedSelector,
-} from "../../machine/selectors";
+} from "../../reviewTaskMachine/selectors";
 
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -25,7 +25,7 @@ const SentenceReportView = ({
             isLoggedIn: state?.login,
         };
     });
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService } = useContext(ReviewTaskMachineContext);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isPublished = useSelector(machineService, publishedSelector);
 

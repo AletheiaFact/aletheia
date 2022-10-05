@@ -6,14 +6,14 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
-import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
-import { ReviewTaskEvents } from "../../../machine/enums";
-import getNextEvents from "../../../machine/getNextEvent";
-import getNextForm from "../../../machine/getNextForm";
+import { ReviewTaskMachineContext } from "../../../Context/ReviewTaskMachineProvider";
+import { ReviewTaskEvents } from "../../../reviewTaskMachine/enums";
+import getNextEvents from "../../../reviewTaskMachine/getNextEvent";
+import getNextForm from "../../../reviewTaskMachine/getNextForm";
 import {
     preloadedOptionsSelector,
     reviewDataSelector,
-} from "../../../machine/selectors";
+} from "../../../reviewTaskMachine/selectors";
 import { useAppSelector } from "../../../store/store";
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
@@ -29,7 +29,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         formState: { errors },
         watch,
     } = useForm();
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const preloadedOptions = useSelector(
         machineService,

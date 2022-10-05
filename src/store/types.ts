@@ -1,4 +1,5 @@
 import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
+import { Roles } from "../types/enums";
 
 export enum ActionTypes {
     TOGGLE_MENU,
@@ -27,7 +28,7 @@ export interface RootState {
     };
     login: boolean;
     autoSave: boolean;
-    role: string;
+    role: Roles;
     claimType: string;
     claimPersonality: any;
     vw: WidthBreakpoints;

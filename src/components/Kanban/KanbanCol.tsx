@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
-import { ReviewTaskStates } from "../../machine/enums";
+import { ReviewTaskStates } from "../../reviewTaskMachine/enums";
 import KanbanSkeleton from "../Skeleton/KanbanSkeleton";
 import colors from "../../styles/colors";
 import BaseList from "../List/BaseList";

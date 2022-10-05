@@ -1,5 +1,5 @@
 import usersApi from "../../../../api/userApi";
-import { Roles } from "../../../../machine/enums";
+import { Roles } from "../../../../types/enums";
 import { createFormField, FormField } from "./FormField";
 
 export const fetchUserList = async (name, t) => {

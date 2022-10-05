@@ -1,4 +1,4 @@
-import { ClassificationEnum } from "../../../../machine/enums";
+import { ClassificationEnum } from "../../../../types/enums";
 import { createFormField, fieldValidation, FormField } from "./FormField";
 import { fetchUserList } from "./unassignedForm";
 
