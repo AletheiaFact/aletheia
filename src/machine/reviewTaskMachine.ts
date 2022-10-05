@@ -78,9 +78,31 @@ export const createNewMachine = ({ value, context }) => {
                         target: ReviewTaskStates.assigned,
                     },
 
+                    SUBMIT: {
+                        target: ReviewTaskStates.submitted,
+                        actions: [saveContext],
+                    },
+                },
+            },
+            submitted: {
+                on: {
+                    REJECT: {
+                        target: ReviewTaskStates.rejected,
+                    },
                     PUBLISH: {
                         target: ReviewTaskStates.published,
                         actions: [saveContext],
+                    },
+                },
+            },
+            rejected: {
+                on: {
+                    ADD_REJECTION_COMMENT: {
+                        target: ReviewTaskStates.assigned,
+                        actions: [saveContext],
+                    },
+                    GO_BACK: {
+                        target: ReviewTaskStates.submitted,
                     },
                 },
             },
@@ -104,13 +126,26 @@ export const transitionHandler = (state) => {
     } = state.event;
     const event = state.event.type;
 
-    if (event === ReviewTaskEvents.goback) {
-        setCurrentFormAndNextEvents(Object.keys(state.value)[0]);
+    if (
+        event === ReviewTaskEvents.goback ||
+        event === ReviewTaskEvents.reject
+    ) {
+        const nextState =
+            typeof state.value !== "string"
+                ? Object.keys(state.value)[0]
+                : state.value;
+        setCurrentFormAndNextEvents(nextState);
     } else if (event !== ReviewTaskEvents.init) {
         api.createClaimReviewTask(
             {
                 sentence_hash,
-                machine: { context: state.context, value: state.value },
+                machine: {
+                    context: {
+                        reviewData: state.context.reviewData,
+                        claimReview: state.context.claimReview,
+                    },
+                    value: state.value,
+                },
                 recaptcha: recaptchaString,
             },
             t,

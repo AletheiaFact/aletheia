@@ -20,8 +20,9 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
 
     const { role } = useAppSelector((state) => state);
 
-    const isHiddenAndUserDontHavePermission =
-        claimReview?.isHidden && (role === Roles.Regular || role === null);
+    const userIsNotRegular = !(role === Roles.Regular || role === null);
+    const userIsReviewer = reviewData.reviewerId === props.userId;
+    const userIsAssignee = reviewData.usersId.includes(props.userId);
 
     return (
         <div>
@@ -33,18 +34,26 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
                 isHidden={claimReview?.isHidden}
                 hideDescription={description}
                 isPublished={isPublished}
+                userIsReviewer={userIsReviewer}
+                userIsAssignee={userIsAssignee}
                 {...props}
             />
-            {!isPublished || isHiddenAndUserDontHavePermission ? (
-                <ClaimReviewForm {...props} />
-            ) : (
-                <SentenceReportView
-                    context={claimReview?.report || reviewData}
-                    personality={props.personality}
-                    claim={props.claim}
-                />
-            )}
-
+            <SentenceReportView
+                context={claimReview?.report || reviewData}
+                personality={props.personality}
+                claim={props.claim}
+                userIsNotRegular={userIsNotRegular}
+                userIsReviewer={userIsReviewer}
+                isHidden={claimReview?.isHidden}
+            />
+            <ClaimReviewForm
+                claimId={props.claim._id}
+                personalityId={props.personality._id}
+                sentenceHash={props.sentence.data_hash}
+                sitekey={props.sitekey}
+                userIsReviewer={userIsReviewer}
+                userId={props.userId}
+            />
             <SocialMediaShare
                 quote={props.personality?.name}
                 href={props.href}

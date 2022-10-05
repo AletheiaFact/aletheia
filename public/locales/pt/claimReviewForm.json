@@ -32,6 +32,10 @@
     "sourcesLabel": "Forneça ao menos um link de uma fonte confiável",
     "sourcesPlaceholder": "Cole uma URL",
     "addSourceLabel": "Incluir outra fonte",
+    "reviewerLabel": "Selecione um revisor para o cross-ckecking",
+    "reviewerPlaceholder": "Selecione um usuário",
+    "rejectionCommentLabel": "Comentário de rejeição",
+    "rejectionCommentPlaceholder": "Descreva o que precisa ser alterado",
     "loginButton": "Faça login para continuar",
     "notReviewed": "Não revisado"
 }

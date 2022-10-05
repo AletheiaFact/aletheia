@@ -13,10 +13,15 @@ export class UsersService {
         private oryService: OryService
     ) {}
 
-    async findAll(getUsers): Promise<User[]> {
-        const { searchName } = getUsers;
+    async findAll(userQuery): Promise<User[]> {
+        const { searchName, filterOutRoles } = userQuery;
         return this.UserModel.aggregate([
-            { $match: { name: { $regex: searchName, $options: "i" } } },
+            {
+                $match: {
+                    name: { $regex: searchName, $options: "i" },
+                    role: { $nin: [...(filterOutRoles || []), null] },
+                },
+            },
             { $project: { _id: 1, name: 1 } },
         ]);
     }
@@ -33,7 +38,7 @@ export class UsersService {
             );
             newUser.oryId = oryUser.id;
         } else {
-            this.logger.log("User id provided, updating a new ory identity");
+            this.logger.log("User id provided, updating a ory identity");
             await this.oryService.updateIdentity(
                 newUser,
                 user.password,

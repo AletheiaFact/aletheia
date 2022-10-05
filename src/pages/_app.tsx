@@ -77,6 +77,7 @@ function MyApp({ Component, pageProps }) {
                             borderRadius: "30px",
                             borderColor: colors.white,
                             padding: "10px 15px",
+                            marginRight: "100px",
                         }}
                         expires={150}
                     >
