@@ -16,4 +16,10 @@ enum Roles {
     Admin = "admin",
 }
 
-export { ClassificationEnum, Roles };
+enum ContentModelEnum {
+    Speech = "Speech",
+    Twitter = "Twitter",
+    Image = "Image",
+}
+
+export { ClassificationEnum, Roles, ContentModelEnum };
