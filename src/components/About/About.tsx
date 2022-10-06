@@ -5,7 +5,7 @@ import { Trans, useTranslation } from "next-i18next";
 import AletheiaAlert from "../AletheiaAlert";
 import { FilePdfOutlined } from "@ant-design/icons";
 
-const About = () => {
+const About = ({ enableWarningDocument }) => {
     const { t } = useTranslation();
     const paragraphStyle = {
         margin: "10px 0px",
@@ -23,40 +23,42 @@ const About = () => {
                 padding: "20px",
             }}
         >
-            <AletheiaAlert
-                type="info"
-                message={
-                    <>
-                        {t("about:alertInfo")}{" "}
-                        <a
-                            style={{ whiteSpace: "pre-wrap" }}
-                            href="https://github.com/AletheiaFact/aletheia"
+            {enableWarningDocument && (
+                <AletheiaAlert
+                    type="info"
+                    message={
+                        <>
+                            {t("about:alertInfo")}{" "}
+                            <a
+                                style={{ whiteSpace: "pre-wrap" }}
+                                href="https://github.com/AletheiaFact/aletheia"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                https://github.com/AletheiaFact/aletheia
+                            </a>
+                        </>
+                    }
+                    action={
+                        <Button
+                            type="primary"
+                            size="small"
+                            shape="round"
+                            icon={<FilePdfOutlined />}
+                            href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/AletheiaFact/miscellaneous/290b19847f0da521963f74e7947d7863bf5d5624/documents/org_legal_register.pdf"
                             target="_blank"
                             rel="noreferrer"
+                            style={{
+                                position: "absolute",
+                                bottom: "15px",
+                                right: "15px",
+                            }}
                         >
-                            https://github.com/AletheiaFact/aletheia
-                        </a>
-                    </>
-                }
-                action={
-                    <Button
-                        type="primary"
-                        size="small"
-                        shape="round"
-                        icon={<FilePdfOutlined />}
-                        href="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/AletheiaFact/miscellaneous/290b19847f0da521963f74e7947d7863bf5d5624/documents/org_legal_register.pdf"
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{
-                            position: "absolute",
-                            bottom: "15px",
-                            right: "15px",
-                        }}
-                    >
-                        {t("about:labelButton")}
-                    </Button>
-                }
-            />
+                            {t("about:labelButton")}
+                        </Button>
+                    }
+                />
+            )}
             <Row style={{ width: "100%", textAlign: "center" }}>
                 <Typography.Title style={{ width: "100%" }}>
                     {t("about:title")}

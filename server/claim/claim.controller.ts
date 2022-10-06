@@ -131,7 +131,7 @@ export class ClaimController {
         );
 
         const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
+            await this.claimReviewTaskService.getClaimReviewTaskBySentenceHashWithUsernames(
                 sentence_hash
             );
 

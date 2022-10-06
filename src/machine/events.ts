@@ -1,11 +1,13 @@
 export type ReviewData = {
-    usersId: string;
+    usersId: string[];
     summary: string;
     questions: string[];
     report: string;
     verification: string;
     sources: string[];
     classification: string;
+    rejectionComment: string;
+    reviewerId: string;
 };
 
 export type ClaimReview = {

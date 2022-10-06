@@ -1,62 +1,63 @@
-import React, { useState } from "react";
-import ClaimSentenceCard from "./ClaimSentenceCard";
+import { useSelector } from "@xstate/react";
+import React, { useContext, useState } from "react";
 import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
-import SocialMediaShare from "../SocialMediaShare";
 import DynamicForm from "./form/DynamicForm";
 import { useAppSelector } from "../../store/store";
-import TopicInput from "./TopicInput";
+import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import {
+    publishedSelector,
+    crossCheckingSelector,
+    reviewStartedSelector,
+    reviewDataSelector,
+} from "../../machine/selectors";
 
 const ClaimReviewForm = ({
-    personality,
-    claim,
-    sentence,
-    href,
-    claimReviewTask,
+    claimId,
+    personalityId,
+    sentenceHash,
     sitekey,
+    userIsReviewer,
+    userId,
 }) => {
     const { t } = useTranslation();
     const { isLoggedIn } = useAppSelector((state) => ({
         isLoggedIn: state.login,
     }));
-    const claimId = claim._id;
-    const personalityId = personality._id;
-    const sentenceHash = sentence.data_hash;
-    const [formCollapsed, setFormCollapsed] = useState(
-        claimReviewTask ? false : true
-    );
+
+    const { machineService } = useContext(GlobalStateMachineContext);
+
+    const reviewData = useSelector(machineService, reviewDataSelector);
+    const isPublished = useSelector(machineService, publishedSelector);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isStarted = useSelector(machineService, reviewStartedSelector);
+    const userIsAssignee = reviewData.usersId.includes(userId);
+
+    const [formCollapsed, setFormCollapsed] = useState(isStarted);
+
+    const showForm =
+        isStarted ||
+        (userIsAssignee && !isCrossChecking) ||
+        (isCrossChecking && userIsReviewer);
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
     };
 
     return (
-        <>
+        !isPublished && (
             <Col
                 offset={3}
                 span={18}
                 style={{
                     background: colors.lightGray,
-                    padding: "0px 15px 20px",
+                    padding: "20px 15px",
                     boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
                 }}
             >
-                <ClaimSentenceCard
-                    personality={personality}
-                    date={claim.date}
-                    sentence={sentence}
-                    summaryClassName="claim-review"
-                    claimType={claim?.type}
-                    cardActions={[
-                        <TopicInput
-                            sentence_hash={sentence.data_hash}
-                            topics={sentence.topics}
-                        />,
-                    ]}
-                />
                 {formCollapsed && (
                     <Row
                         style={{
@@ -92,7 +93,7 @@ const ClaimReviewForm = ({
                         </Button>
                     )}
                 </Col>
-                {!formCollapsed && (
+                {!formCollapsed && showForm && (
                     <DynamicForm
                         sentence_hash={sentenceHash}
                         personality={personalityId}
@@ -101,12 +102,7 @@ const ClaimReviewForm = ({
                     />
                 )}
             </Col>
-            <SocialMediaShare
-                quote={personality?.name}
-                href={href}
-                claim={claim?.title}
-            />
-        </>
+        )
     );
 };
 

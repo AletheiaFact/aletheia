@@ -38,3 +38,7 @@ services:
         url: ORY_SDK_URL
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
+      feature_flag:
+        url: GITLAB_FEATURE_FLAG_URL
+        appName: ENV
+        instanceId: GITLAB_FEATURE_FLAG_INSTANCE_ID
