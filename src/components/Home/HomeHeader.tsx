@@ -7,7 +7,6 @@ import HomeHeaderStyle from "./HomeHeader.style";
 
 const HomeHeader = () => {
     const { t } = useTranslation();
-    const videoId = process.env.NEXT_PUBLIC_HOMEPAGE_VIDEO_ID;
 
     return (
         <HomeHeaderStyle>
@@ -58,7 +57,7 @@ const HomeHeader = () => {
                             frameBorder="0"
                             allowFullScreen
                             title="video"
-                            src={`https://www.youtube.com/embed/${videoId}`}
+                            src={`https://www.youtube.com/embed/cWDqrdv-O6k`}
                         />
                     </div>
                 </Col>
