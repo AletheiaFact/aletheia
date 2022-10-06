@@ -14,6 +14,7 @@ import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
 import SocialMediaShareStyle from "./SocialMediaShare.style";
 import { useAppSelector } from "../store/store";
+import { trackUmamiEvent } from "../lib/umami";
 
 const { Title } = Typography;
 
@@ -83,12 +84,10 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             quote={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             hashtag={trimPersonality}
                             beforeOnClick={() => {
-                                //@ts-ignore
-                                window.umami &&
-                                    window.umami?.trackEvent(
-                                        "Facebook-share-button",
-                                        "Sharing"
-                                    );
+                                trackUmamiEvent(
+                                    "Facebook-share-button",
+                                    "Sharing"
+                                );
                             }}
                         >
                             <FacebookIcon
@@ -112,12 +111,10 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                                 }\n`,
                             ]}
                             beforeOnClick={() => {
-                                //@ts-ignore
-                                window.umami &&
-                                    window.umami?.trackEvent(
-                                        "Twitter-share-button",
-                                        "Sharing"
-                                    );
+                                trackUmamiEvent(
+                                    "Twitter-share-button",
+                                    "Sharing"
+                                );
                             }}
                         >
                             <TwitterIcon
@@ -132,12 +129,10 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             url={href}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             beforeOnClick={() => {
-                                //@ts-ignore
-                                window.umami &&
-                                    window.umami?.trackEvent(
-                                        "Whatsapp-share-button",
-                                        "Sharing"
-                                    );
+                                trackUmamiEvent(
+                                    "Whatsapp-share-button",
+                                    "Sharing"
+                                );
                             }}
                         >
                             <WhatsappIcon
@@ -152,12 +147,10 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             url={href}
                             title={`Veja o discurso de ${quote} na AletheiaFact.org`}
                             beforeOnClick={() => {
-                                //@ts-ignore
-                                window.umami &&
-                                    window.umami?.trackEvent(
-                                        "Telegram-share-button",
-                                        "Sharing"
-                                    );
+                                trackUmamiEvent(
+                                    "Telegram-share-button",
+                                    "Sharing"
+                                );
                             }}
                         >
                             <TelegramIcon
