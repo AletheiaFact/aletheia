@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 
 import { oryGetSettingsFlow, orySubmitSettings } from "../../api/ory";
-import api from "../../api/user";
+import api from "../../api/userApi";
 import { getUiNode } from "../../lib/orysdk/utils";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";

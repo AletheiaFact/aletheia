@@ -14,7 +14,6 @@ export const GlobalStateMachineContext = createContext<GlobalContextType>({
 });
 
 export const GlobalStateMachineProvider = (props) => {
-    const { t } = useTranslation();
     const [globalMachineService, setGlobalMachineService] = useState(null);
 
     useEffect(() => {
@@ -25,10 +24,9 @@ export const GlobalStateMachineProvider = (props) => {
         const machine = props.baseMachine;
         if (machine) {
             machine.value =
-                machine.value !== ReviewTaskStates.published
+                typeof machine.value !== "string"
                     ? Object.keys(machine.value)[0]
                     : machine.value;
-            machine.context.utils = { t };
         }
         const newMachine = machine || {
             context: initialContext,

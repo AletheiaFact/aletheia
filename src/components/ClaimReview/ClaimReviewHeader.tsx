@@ -1,8 +1,14 @@
 import { Row, Col } from "antd";
 import { useTranslation } from "next-i18next";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useSelector } from "@xstate/react";
 import ClaimReviewApi from "../../api/claimReviewApi";
+import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
 import { Roles } from "../../machine/enums";
+import {
+    crossCheckingSelector,
+    reviewDataSelector,
+} from "../../machine/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaAlert from "../AletheiaAlert";
@@ -11,24 +17,79 @@ import HideReviewModal from "../Modal/HideReviewModal";
 import UnhideReviewModal from "../Modal/UnhideReviewModal";
 import Banner from "../SentenceReport/Banner";
 import SentenceReportCard from "../SentenceReport/SentenceReportCard";
+import TopicInput from "./TopicInput";
 
 const ClaimReviewHeader = ({
     personality,
     claim,
     sentence,
+    sitekey,
     isHidden,
     classification = "",
-    sitekey,
     hideDescription,
     isPublished,
+    userIsReviewer,
+    userIsAssignee,
 }) => {
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
-    const [description, setDescription] = useState(hideDescription);
     const [hide, setHide] = useState(isHidden);
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
-    const { vw, role } = useAppSelector((state) => state);
+    const { vw, role, login } = useAppSelector((state) => state);
+
+    const { machineService } = useContext(GlobalStateMachineContext);
+    const reviewData = useSelector(machineService, reviewDataSelector);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const userHasPermission = userIsReviewer || userIsAssignee;
+
+    const alertTypes = {
+        hiddenReport: {
+            show: true,
+            description: hideDescription,
+            title: "claimReview:warningAlertTitle",
+        },
+        crosChecking: {
+            show: true,
+            description: "",
+            title: "claimReviewTask:crossCheckingAlertTitle",
+        },
+        rejected: {
+            show: true,
+            description: reviewData.rejectionComment,
+            title: "claimReviewTask:rejectionAlertTitle",
+        },
+        noAlert: {
+            show: false,
+            description: "",
+            title: "",
+        },
+    };
+
+    const [alert, setAlert] = useState(alertTypes.noAlert);
+
+    const getAlert = () => {
+        if (!login) {
+            return alertTypes.noAlert;
+        }
+        if (isHidden || hide) {
+            return alertTypes.hiddenReport;
+        }
+        if (!isPublished) {
+            if (isCrossChecking && userHasPermission) {
+                return alertTypes.crosChecking;
+            }
+            if (userIsAssignee && reviewData.rejectionComment) {
+                return alertTypes.rejected;
+            }
+        }
+        return alertTypes.noAlert;
+    };
+
+    useEffect(() => {
+        const newAlert = getAlert();
+        setAlert(newAlert);
+    }, [isCrossChecking, isHidden, login, reviewData.rejectionComment]);
 
     return (
         <Row>
@@ -62,7 +123,13 @@ const ClaimReviewHeader = ({
                         />
                     </Col>
                 )}
-                <Row>
+                <Row
+                    style={{
+                        background: isPublished
+                            ? colors.white
+                            : colors.lightGray,
+                    }}
+                >
                     <Col
                         lg={{ order: 1, span: isPublished ? 16 : 24 }}
                         md={{ order: 2, span: 24 }}
@@ -71,17 +138,30 @@ const ClaimReviewHeader = ({
                         className="sentence-report-card"
                         style={{
                             paddingRight: vw?.md ? "0" : " 20px",
-                            background: isPublished
-                                ? colors.white
-                                : colors.lightGray,
                         }}
                     >
                         <SentenceReportCard
                             personality={personality}
                             claim={claim}
                             sentence={sentence}
-                            classification={classification}
+                            classification={
+                                isPublished ||
+                                (isCrossChecking && userHasPermission)
+                                    ? classification
+                                    : ""
+                            }
                         />
+                        <div
+                            style={{
+                                margin: "16px",
+                                width: "calc(100% - 16px)",
+                            }}
+                        >
+                            <TopicInput
+                                sentence_hash={sentence.data_hash}
+                                topics={sentence.topics}
+                            />
+                        </div>
                     </Col>
                     {isPublished && (
                         <Col
@@ -91,12 +171,18 @@ const ClaimReviewHeader = ({
                             <Banner />
                         </Col>
                     )}
-                    {hide && (
-                        <Col style={{ marginTop: 16, width: "100%" }} order={3}>
+                    {alert.show && (
+                        <Col
+                            style={{
+                                margin: isPublished ? "16px 0" : "16px",
+                                width: "100%",
+                            }}
+                            order={3}
+                        >
                             <AletheiaAlert
                                 type="warning"
-                                message={t("claimReview:warningAlertTitle")}
-                                description={description}
+                                message={t(alert.title)}
+                                description={alert.description}
                                 showIcon={true}
                             />
                         </Col>
@@ -117,7 +203,7 @@ const ClaimReviewHeader = ({
                     ).then(() => {
                         setHide(!hide);
                         setIsHideModalVisible(!isHideModalVisible);
-                        setDescription(description);
+                        setAlert({ ...alertTypes.hiddenReport, description });
                         setIsLoading(false);
                     });
                 }}

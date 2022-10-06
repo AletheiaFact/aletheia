@@ -6,16 +6,18 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
-import usersApi from "../../../api/user";
-import { ClassificationEnum, ReviewTaskEvents } from "../../../machine/enums";
+import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
+import { ReviewTaskEvents } from "../../../machine/enums";
 import getNextEvents from "../../../machine/getNextEvent";
 import getNextForm from "../../../machine/getNextForm";
-import { reviewDataSelector } from "../../../machine/selectors";
+import {
+    preloadedOptionsSelector,
+    reviewDataSelector,
+} from "../../../machine/selectors";
 import { useAppSelector } from "../../../store/store";
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
-import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
 import DynamicInput from "./DynamicInput";
 import { trackUmamiEvent } from "../../../lib/umami";
 
@@ -29,14 +31,18 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         watch,
     } = useForm();
     const { machineService } = useContext(GlobalStateMachineContext);
-    const initialMachine = machineService.machine.config;
     const reviewData = useSelector(machineService, reviewDataSelector);
+    const preloadedOptions = useSelector(
+        machineService,
+        preloadedOptionsSelector
+    );
 
     const { t } = useTranslation();
 
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
     const [isLoading, setIsLoading] = useState({});
+    const [reviewerError, setReviewerError] = useState(false);
     const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
@@ -46,22 +52,29 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         autoSave: state.autoSave,
     }));
 
-    const setDefaultValuesOfCurrentForm = (form) => {
-        if (reviewData) {
-            reset(reviewData);
-            form.forEach((input) => {
-                input.defaultValue = reviewData[input.fieldName];
-            });
+    const setCurrentFormAndNextEvents = (param) => {
+        if (param !== ReviewTaskEvents.draft) {
+            let nextForm = getNextForm(param);
+            nextForm = setUserPreloads(nextForm);
+            setCurrentForm(nextForm);
+            setNextEvents(getNextEvents(param));
         }
     };
 
-    const setCurrentFormAndNextEvents = (param) => {
-        if (param !== ReviewTaskEvents.draft) {
-            const nextForm = getNextForm(param);
-            setCurrentForm(nextForm);
-            setDefaultValuesOfCurrentForm(nextForm);
-            setNextEvents(getNextEvents(param));
+    const setUserPreloads = (form) => {
+        if (preloadedOptions) {
+            form.forEach((item) => {
+                if (
+                    item.type === "inputSearch" &&
+                    preloadedOptions[item.fieldName]
+                ) {
+                    item.extraProps.preloadedOptions =
+                        preloadedOptions[item.fieldName];
+                }
+            });
         }
+
+        return form;
     };
 
     const resetIsLoading = () => {
@@ -74,17 +87,18 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            setCurrentFormAndNextEvents(initialMachine.initial);
+            setCurrentFormAndNextEvents(machineService.machine.config.initial);
         }
     }, []);
 
     useEffect(() => {
+        reset(reviewData);
         resetIsLoading();
     }, [nextEvents]);
 
     useEffect(() => {
-        let timeout: NodeJS.Timeout;
-        autoSave &&
+        if (autoSave) {
+            let timeout: NodeJS.Timeout;
             watch((value) => {
                 if (timeout) clearTimeout(timeout);
                 timeout = setTimeout(() => {
@@ -105,15 +119,8 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                     );
                 }, 10000);
             });
+        }
     }, [watch]);
-
-    const fetchUserList = async (name) => {
-        const userSearchResults = await usersApi.getUsers(name, t);
-        return userSearchResults.map((user) => ({
-            label: user.name,
-            value: user._id,
-        }));
-    };
 
     const sendEventToMachine = (formData, eventName) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
@@ -137,11 +144,11 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
         recaptchaRef.current?.resetRecaptcha();
     };
 
-    const validateClassification = (data) => {
-        return (
-            !data.classification ||
-            Object.values(ClassificationEnum).includes(data.classification)
-        );
+    const ValidateSelectedReviewer = (data) => {
+        const isValidReviewer =
+            !data.reviewerId || !reviewData.usersId.includes(data.reviewerId);
+        setReviewerError(!isValidReviewer);
+        return isValidReviewer;
     };
 
     const handleSendEvent = async (event, data = null) => {
@@ -160,7 +167,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
      */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        if (validateClassification(data)) {
+        if (ValidateSelectedReviewer(data)) {
             handleSendEvent(event, data);
         }
     };
@@ -177,11 +184,13 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                             placeholder,
                             type,
                             addInputLabel,
-                            defaultValue,
+                            extraProps,
                         } = fieldItem;
 
+                        const defaultValue = reviewData[fieldName];
+
                         return (
-                            <Row key={index} style={{ marginBottom: 20 }}>
+                            <Row key={index}>
                                 <Col span={24}>
                                     <h4
                                         style={{
@@ -210,7 +219,7 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                                                 addInputLabel={addInputLabel}
                                                 defaultValue={defaultValue}
                                                 data-cy={`testClaimReview${fieldName}`}
-                                                dataLoader={fetchUserList}
+                                                extraProps={extraProps}
                                             />
                                         )}
                                     />
@@ -226,7 +235,18 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                             </Row>
                         );
                     })}
-                    {currentForm?.length > 0 && (
+                    <div
+                        style={{
+                            paddingBottom: 20,
+                            marginLeft: 20,
+                        }}
+                    >
+                        <Text type="danger">
+                            {reviewerError &&
+                                t("claimReviewTask:invalidReviewerMessage")}
+                        </Text>
+                    </div>
+                    {nextEvents?.length > 0 && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
                             sitekey={sitekey}

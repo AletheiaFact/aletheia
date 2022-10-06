@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, Scope } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import {
     ClaimReviewTask,
@@ -183,6 +183,13 @@ export class ClaimReviewTaskService {
                 }
             );
 
+        if (claimReviewTaskBody.machine.context.reviewData.reviewerId) {
+            claimReviewTaskBody.machine.context.reviewData.reviewerId =
+                Types.ObjectId(
+                    claimReviewTaskBody.machine.context.reviewData.reviewerId
+                ) || "";
+        }
+
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.sentence_hash,
@@ -205,47 +212,99 @@ export class ClaimReviewTaskService {
         history: boolean = true
     ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        try {
-            const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
-                sentence_hash
-            );
+        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
+            sentence_hash
+        );
 
-            const newClaimReviewTaskMachine = {
-                ...claimReviewTask.machine,
-                ...machine,
-            };
+        const newClaimReviewTaskMachine = {
+            ...claimReviewTask.machine,
+            ...machine,
+        };
 
-            const newClaimReviewTask = {
-                ...claimReviewTask.toObject(),
-                machine: newClaimReviewTaskMachine,
-            };
+        const newClaimReviewTask = {
+            ...claimReviewTask.toObject(),
+            machine: newClaimReviewTaskMachine,
+        };
 
-            if (newClaimReviewTaskMachine.value === "published") {
-                this._createReportAndClaimReview(
-                    sentence_hash,
-                    newClaimReviewTask.machine
+        const loggedInUser = this.req.user;
+
+        if (newClaimReviewTaskMachine.value === "published") {
+            if (loggedInUser._id !== machine.context.reviewData.reviewerId) {
+                throw new ForbiddenException(
+                    "This user does not have permission to publish the report"
                 );
             }
-
-            if (history) {
-                this._createReviewTaskHistory(
-                    newClaimReviewTask,
-                    claimReviewTask
-                );
-                this._createStateEvent(newClaimReviewTask);
-            }
-
-            return this.ClaimReviewTaskModel.updateOne(
-                { _id: newClaimReviewTask._id },
-                newClaimReviewTask
+            this._createReportAndClaimReview(
+                sentence_hash,
+                newClaimReviewTask.machine
             );
-        } catch (e) {
-            throw new Error(e);
         }
+
+        if (history) {
+            this._createReviewTaskHistory(newClaimReviewTask, claimReviewTask);
+            this._createStateEvent(newClaimReviewTask);
+        }
+
+        return this.ClaimReviewTaskModel.updateOne(
+            { _id: newClaimReviewTask._id },
+            newClaimReviewTask
+        );
     }
 
     getClaimReviewTaskBySentenceHash(sentence_hash: string) {
-        return this.ClaimReviewTaskModel.findOne({ sentence_hash });
+        return this.ClaimReviewTaskModel.findOne({
+            sentence_hash,
+        });
+    }
+
+    async getClaimReviewTaskBySentenceHashWithUsernames(sentence_hash: string) {
+        // This may cause a false positive in sonarCloud
+        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
+            sentence_hash
+        )
+            .populate({
+                path: "machine.context.reviewData.usersId",
+                model: "User",
+                select: "name",
+            })
+            .populate({
+                path: "machine.context.reviewData.reviewerId",
+                model: "User",
+                select: "name",
+            });
+
+        if (claimReviewTask) {
+            const preloadedAsignees = [];
+            const usersId = [];
+            claimReviewTask.machine.context.reviewData.usersId.forEach(
+                (assignee) => {
+                    preloadedAsignees.push({
+                        value: assignee._id,
+                        label: assignee.name,
+                    });
+                    usersId.push(assignee._id);
+                }
+            );
+            claimReviewTask.machine.context.reviewData.usersId = usersId;
+            claimReviewTask.machine.context.preloadedOptions = {
+                usersId: preloadedAsignees,
+            };
+
+            if (claimReviewTask.machine.context.reviewData.reviewerId) {
+                const reviewerUser =
+                    claimReviewTask.machine.context.reviewData.reviewerId;
+                claimReviewTask.machine.context.preloadedOptions.reviewerId = [
+                    {
+                        value: reviewerUser._id,
+                        label: reviewerUser.name,
+                    },
+                ];
+                claimReviewTask.machine.context.reviewData.reviewerId =
+                    reviewerUser._id;
+            }
+        }
+
+        return claimReviewTask;
     }
 
     count(query: any = {}) {

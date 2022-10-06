@@ -107,14 +107,14 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
     });
 
-    it("should only allow to submit review after choosing classification", () => {
+    it("should only allow to submit review after choosing classification and reviewer", () => {
         cy.login();
         goToClaimReviewPage();
         cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
 
-        cy.get(locators.claimReview.BTN_PUBLISH).should("be.disabled");
+        cy.get(locators.claimReview.BTN_SUBMIT).should("be.disabled");
         cy.checkRecaptcha();
-        cy.get(locators.claimReview.BTN_PUBLISH).should("be.enabled").click();
+        cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
 
         cy.get(locators.claimReview.INPUT_CLASSIFICATION)
             .should("exist")
@@ -124,7 +124,7 @@ describe("Test claim review", () => {
             .click();
 
         cy.checkRecaptcha();
-        cy.get(locators.claimReview.BTN_PUBLISH).should("be.enabled").click();
-        cy.get(locators.claimReview.BTN_PUBLISH).should("not.exist");
+        cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
+        cy.get(locators.claimReview.INPUT_REVIEWER).should("exist");
     });
 });

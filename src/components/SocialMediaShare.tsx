@@ -48,6 +48,7 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                 padding: "20px 8px",
                 justifyContent: "center",
                 alignItems: "center",
+                marginTop: "20px",
             }}
         >
             <Title

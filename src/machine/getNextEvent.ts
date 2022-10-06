@@ -3,9 +3,6 @@ import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
 const getNextEvents = (param: ReviewTaskEvents | ReviewTaskStates) => {
     const defaultEvents = [ReviewTaskEvents.goback, ReviewTaskEvents.draft];
     const eventsMap = {
-        // When going back from the 'assigned' to the 'unassigned' state
-        // the param received by the function is 0
-        0: [ReviewTaskEvents.assignUser],
         [ReviewTaskStates.unassigned]: [ReviewTaskEvents.assignUser],
         [ReviewTaskEvents.assignUser]: [
             ...defaultEvents,
@@ -17,11 +14,27 @@ const getNextEvents = (param: ReviewTaskEvents | ReviewTaskStates) => {
         ],
         [ReviewTaskEvents.finishReport]: [
             ...defaultEvents,
-            ReviewTaskEvents.publish,
+            ReviewTaskEvents.submit,
         ],
         [ReviewTaskStates.reported]: [
             ...defaultEvents,
+            ReviewTaskEvents.submit,
+        ],
+        [ReviewTaskStates.submitted]: [
+            ReviewTaskEvents.reject,
             ReviewTaskEvents.publish,
+        ],
+        [ReviewTaskEvents.submit]: [
+            ReviewTaskEvents.reject,
+            ReviewTaskEvents.publish,
+        ],
+        [ReviewTaskStates.rejected]: [
+            ReviewTaskEvents.goback,
+            ReviewTaskEvents.addRejectionComment,
+        ],
+        [ReviewTaskEvents.addRejectionComment]: [
+            ...defaultEvents,
+            ReviewTaskEvents.finishReport,
         ],
         [ReviewTaskStates.published]: [],
         [ReviewTaskEvents.publish]: [],
