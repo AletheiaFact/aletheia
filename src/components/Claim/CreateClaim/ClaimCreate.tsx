@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "draft-js/dist/Draft.css";
 import { DatePicker, Form, Row, Checkbox, FormInstance } from "antd";
-import claimApi from "../../api/claim";
+import claimApi from "../../../api/claim";
 import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import PersonalityCard from "../Personality/PersonalityCard";
-import SourceInput from "../Source/SourceInput";
-import Button, { ButtonType } from "../Button";
-import Input from "../AletheiaInput";
-import TextArea from "../TextArea";
-import AletheiaCaptcha from "../AletheiaCaptcha";
+import PersonalityCard from "../../Personality/PersonalityCard";
+import SourceInput from "../../Source/SourceInput";
+import Button, { ButtonType } from "../../Button";
+import Input from "../../AletheiaInput";
+import TextArea from "../../TextArea";
+import AletheiaCaptcha from "../../AletheiaCaptcha";
 import moment from "moment";
-import colors from "../../styles/colors";
+import colors from "../../../styles/colors";
 
 const formRef = React.createRef<FormInstance>();
 

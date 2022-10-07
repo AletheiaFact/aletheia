@@ -1,14 +1,14 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Col, Select } from "antd";
-import { ActionTypes } from "../../store/types";
-import colors from "../../styles/colors";
-import AletheiaButton from "../Button";
-import { SelectInput } from "../Form/ClaimReviewSelect";
+import { ActionTypes } from "../../../store/types";
+import colors from "../../../styles/colors";
+import AletheiaButton from "../../Button";
+import { SelectInput } from "../../Form/ClaimReviewSelect";
 import { useDispatch } from "react-redux";
 import { useContext } from "react";
-import { CreateClaimMachineContext } from "../../Context/CreateClaimMachineProvider";
+import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
 import { useSelector } from "@xstate/react";
-import { claimDataSelector } from "../../machines/createClaim/selectors";
+import { claimDataSelector } from "../../../machines/createClaim/selectors";
 
 const { Option } = Select;
 const ClaimSelectType = ({ setState }) => {

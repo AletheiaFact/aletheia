@@ -1,5 +1,9 @@
 import { ClassificationEnum } from "../../../../types/enums";
-import { createFormField, fieldValidation, FormField } from "./FormField";
+import {
+    createFormField,
+    fieldValidation,
+    FormField,
+} from "../../../Form/FormField";
 import { fetchUserList } from "./unassignedForm";
 
 const reportedForm: FormField[] = [

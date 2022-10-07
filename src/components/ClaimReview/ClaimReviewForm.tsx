@@ -5,7 +5,7 @@ import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
-import DynamicForm from "./form/DynamicForm";
+import DynamicReviewTaskForm from "./form/DynamicReviewTaskForm";
 import { useAppSelector } from "../../store/store";
 import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
 import {
@@ -94,7 +94,7 @@ const ClaimReviewForm = ({
                     )}
                 </Col>
                 {!formCollapsed && showForm && (
-                    <DynamicForm
+                    <DynamicReviewTaskForm
                         sentence_hash={sentenceHash}
                         personality={personalityId}
                         claim={claimId}

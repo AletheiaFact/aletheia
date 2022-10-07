@@ -1,13 +1,13 @@
 import { Col } from "antd";
 import { useDispatch } from "react-redux";
-import { useAppSelector } from "../../store/store";
-import { ActionTypes } from "../../store/types";
-import AletheiaButton from "../Button";
-import PersonalityCreateSearch from "../Personality/PersonalityCreateSearch";
+import { useAppSelector } from "../../../store/store";
+import { ActionTypes } from "../../../store/types";
+import AletheiaButton from "../../Button";
+import PersonalityCreateSearch from "../../Personality/PersonalityCreateSearch";
 import { useContext } from "react";
-import { CreateClaimMachineContext } from "../../Context/CreateClaimMachineProvider";
+import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
 import { useSelector } from "@xstate/react";
-import { claimDataSelector } from "../../machines/createClaim/selectors";
+import { claimDataSelector } from "../../../machines/createClaim/selectors";
 
 const ClaimSelectPersonality = ({
     isCreatingClaim = false,

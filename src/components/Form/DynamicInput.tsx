@@ -1,9 +1,9 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
-import ClaimReviewSelect from "../../Form/ClaimReviewSelect";
-import TextArea from "../../TextArea";
-import AutoComplete from "../Autocomplete";
-import InputTextList from "../../InputTextList";
+import ClaimReviewSelect from "./ClaimReviewSelect";
+import TextArea from "../TextArea";
+import AutoComplete from "./Autocomplete";
+import InputTextList from "../InputTextList";
 
 interface DynamicInputProps {
     fieldName: string;

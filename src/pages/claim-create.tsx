@@ -3,13 +3,13 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import AffixButton from "../components/AffixButton/AffixButton";
 
-import ClaimCreate from "../components/Claim/ClaimCreate";
+import ClaimCreate from "../components/Claim/CreateClaim/ClaimCreate";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 import { useState } from "react";
 import ClaimUploadImage from "../components/Claim/ClaimUploadImage";
-import ClaimSelectType from "../components/Claim/ClaimSelectType";
-import ClaimSelectPersonality from "../components/Claim/ClaimSelectPersonality";
+import ClaimSelectType from "../components/Claim/CreateClaim/ClaimSelectType";
+import ClaimSelectPersonality from "../components/Claim/CreateClaim/ClaimSelectPersonality";
 import { useAppSelector } from "../store/store";
 import { CreateClaimMachineProvider } from "../Context/CreateClaimMachineProvider";
 

@@ -1,4 +1,8 @@
-import { createFormField, FormField, fieldValidation } from "./FormField";
+import {
+    createFormField,
+    FormField,
+    fieldValidation,
+} from "../../../Form/FormField";
 
 const assignedForm: FormField[] = [
     createFormField({
