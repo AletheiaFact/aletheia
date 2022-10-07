@@ -244,7 +244,7 @@ export class ClaimService {
                     })
                     .lean();
             } else {
-                const findedClaim = await this.ClaimModel.findOne(
+                const foundClaim = await this.ClaimModel.findOne(
                     match,
                     "_id personality latestRevision"
                 )
@@ -256,8 +256,8 @@ export class ClaimService {
                     })
                     .lean();
                 claim = {
-                    ...findedClaim.latestRevision,
-                    ...findedClaim,
+                    ...foundClaim.latestRevision,
+                    ...foundClaim,
                     latestRevision: undefined,
                 };
             }

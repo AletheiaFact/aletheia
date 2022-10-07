@@ -11,6 +11,7 @@ import ClaimUploadImage from "../components/Claim/ClaimUploadImage";
 import ClaimSelectType from "../components/Claim/ClaimSelectType";
 import ClaimSelectPersonality from "../components/Claim/ClaimSelectPersonality";
 import { useAppSelector } from "../store/store";
+import { CreateClaimMachineProvider } from "../Context/CreateClaimMachineProvider";
 
 const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
     sitekey,
@@ -23,6 +24,7 @@ const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
     const { claimPersonality } = useAppSelector((state) => ({
         claimPersonality: state.claimPersonality,
     }));
+
     return (
         <>
             <Seo
@@ -31,25 +33,28 @@ const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
                     name: personality.name,
                 })}
             />
-
-            {state === "type" ? (
-                <ClaimSelectType setState={setState} />
-            ) : state === "personality" ? (
-                <ClaimSelectPersonality
-                    setState={setState}
-                    isCreatingClaim={true}
-                />
-            ) : state === "image" ? (
-                <ClaimUploadImage
-                    personality={personality || claimPersonality}
-                />
-            ) : (
-                <ClaimCreate
-                    sitekey={sitekey}
-                    personality={personality || claimPersonality}
-                />
-            )}
-            <AffixButton />
+            <CreateClaimMachineProvider
+                context={{ claimData: { personality: personality } }}
+            >
+                {state === "type" ? (
+                    <ClaimSelectType setState={setState} />
+                ) : state === "personality" ? (
+                    <ClaimSelectPersonality
+                        setState={setState}
+                        isCreatingClaim={true}
+                    />
+                ) : state === "image" ? (
+                    <ClaimUploadImage
+                        personality={personality || claimPersonality}
+                    />
+                ) : (
+                    <ClaimCreate
+                        sitekey={sitekey}
+                        personality={personality || claimPersonality}
+                    />
+                )}
+                <AffixButton />
+            </CreateClaimMachineProvider>
         </>
     );
 };

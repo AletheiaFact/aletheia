@@ -4,11 +4,19 @@ import { useAppSelector } from "../../store/store";
 import { ActionTypes } from "../../store/types";
 import AletheiaButton from "../Button";
 import PersonalityCreateSearch from "../Personality/PersonalityCreateSearch";
+import { useContext } from "react";
+import { CreateClaimMachineContext } from "../../Context/CreateClaimMachineProvider";
+import { useSelector } from "@xstate/react";
+import { claimDataSelector } from "../../machines/createClaim/selectors";
 
 const ClaimSelectPersonality = ({
     isCreatingClaim = false,
     setState = undefined,
 }) => {
+    const { machineService } = useContext(CreateClaimMachineContext);
+    const claimData = useSelector(machineService, claimDataSelector);
+
+    console.log("claimData", claimData);
     const dispatch = useDispatch();
 
     const { claimType } = useAppSelector((state) => ({

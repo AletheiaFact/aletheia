@@ -5,10 +5,20 @@ import colors from "../../styles/colors";
 import AletheiaButton from "../Button";
 import { SelectInput } from "../Form/ClaimReviewSelect";
 import { useDispatch } from "react-redux";
+import { useContext } from "react";
+import { CreateClaimMachineContext } from "../../Context/CreateClaimMachineProvider";
+import { useSelector } from "@xstate/react";
+import { claimDataSelector } from "../../machines/createClaim/selectors";
 
 const { Option } = Select;
 const ClaimSelectType = ({ setState }) => {
+    const { machineService } = useContext(CreateClaimMachineContext);
+    const claimData = useSelector(machineService, claimDataSelector);
+
+    console.log("claimData", claimData);
+
     const dispatch = useDispatch();
+
     const handleClick = () => setState("personality");
 
     return (

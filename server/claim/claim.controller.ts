@@ -8,6 +8,7 @@ import {
     Post,
     Put,
     Query,
+    Redirect,
     Req,
     Res,
 } from "@nestjs/common";
@@ -166,33 +167,20 @@ export class ClaimController {
         );
     }
 
-    @Get("claim/create/")
-    public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
-        const parsedUrl = parse(req.url, true);
-
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-create",
-            Object.assign(parsedUrl.query, {
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-            })
-        );
-    }
-
-    @Get("personality/:personalitySlug/claim/create/")
-    public async personalityClaimCreatePage(
+    @Get("claim/create")
+    public async claimCreatePage(
+        @Query() query: { personality?: string },
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
-        const { personalitySlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
-        const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
-                personalitySlug,
-                req.language
-            );
+        const personality = query.personality
+            ? await this.personalityService.getClaimsByPersonalitySlug(
+                  query.personality,
+                  req.language
+              )
+            : null;
 
         await this.viewService.getNextServer().render(
             req,
@@ -205,6 +193,17 @@ export class ClaimController {
         );
     }
 
+    @Redirect("/claim/create")
+    @Get("personality/:personalitySlug/claim/create/")
+    public async personalityClaimCreatePage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const { personalitySlug } = req.params;
+
+        return res.redirect(`/claim/create?personality=${personalitySlug}`);
+    }
+
     @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug")
     public async personalityClaimPage(
@@ -215,7 +214,7 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 personalitySlug,
                 // @ts-ignore
                 req.language
@@ -245,7 +244,7 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 personalitySlug,
                 // @ts-ignore
                 req.language
@@ -335,7 +334,7 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 personalitySlug
             );
 
