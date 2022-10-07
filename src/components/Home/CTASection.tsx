@@ -1,9 +1,12 @@
-import React from "react";
-import { Row, Col } from "antd";
-import Button, { ButtonType } from "../Button";
+import { Col } from "antd";
 import { useTranslation } from "next-i18next";
-import colors from "../../styles/colors";
+import React from "react";
+
+import { trackUmamiEvent } from "../../lib/umami";
 import { useAppSelector } from "../../store/store";
+import colors from "../../styles/colors";
+import Button, { ButtonType } from "../Button";
+import CtaSectionStyle from "./CTASection.style";
 
 const CTASection = () => {
     const { t } = useTranslation();
@@ -12,8 +15,8 @@ const CTASection = () => {
     }));
 
     return (
-        <Row className="CTA-container">
-            <Col span={14}>
+        <CtaSectionStyle>
+            <Col sm={12} md={24} className="footer-text">
                 <p
                     className="CTA-title"
                     style={{
@@ -26,45 +29,35 @@ const CTASection = () => {
                 </p>
             </Col>
             {!isLoggedIn && (
-                <Row
-                    style={{
-                        height: "15%",
-                        color: colors.white,
-                        justifyContent: "space-between",
-                        marginBottom: "32px",
-                    }}
-                    gutter={3}
-                >
-                    <Col className="CTA-button-container">
-                        <Button
-                            onClick={() => {
-                                window.umami &&
-                                    window.umami?.trackEvent(
-                                        "carousel-cta-registration-button",
-                                        "registration"
-                                    );
-                            }}
-                            href={t("common:registrationLink")}
-                            target="_blank"
-                            rel="noreferrer"
-                            type={ButtonType.white}
-                            rounded="true"
-                            style={{
-                                height: "40px",
-                                display: "flex",
-                                padding: "0 20px",
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                        >
-                            <span style={{ fontWeight: 700 }}>
-                                {t("home:createAccountButton")}
-                            </span>
-                        </Button>
-                    </Col>
-                </Row>
+                <Col sm={6} md={24} className="CTA-button-container">
+                    <Button
+                        onClick={() => {
+                            trackUmamiEvent(
+                                "home-header-cta-registration-button",
+                                "registration"
+                            );
+                        }}
+                        href={t("common:registrationLink")}
+                        target="_blank"
+                        rel="noreferrer"
+                        type={ButtonType.white}
+                        rounded="true"
+                        style={{
+                            height: "40px",
+                            display: "flex",
+                            padding: "0 20px",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            width: "fit-content",
+                        }}
+                    >
+                        <span style={{ fontWeight: 700 }}>
+                            {t("home:createAccountButton")}
+                        </span>
+                    </Button>
+                </Col>
             )}
-        </Row>
+        </CtaSectionStyle>
     );
 };
 
