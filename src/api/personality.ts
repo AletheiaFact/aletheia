@@ -3,14 +3,25 @@ import { message } from "antd";
 import { ActionTypes } from "../store/types";
 
 const baseUrl = `/api/personality`;
-const getPersonalities = (options = {}, dispatch) => {
+
+interface FetchOptions {
+    searchName: string;
+    page?: number;
+    order?: "asc" | "desc";
+    pageSize?: number;
+    withSuggestions?: boolean;
+    fetchOnly?: boolean;
+    i18n?: { languages?: any };
+}
+
+const getPersonalities = (options: FetchOptions, dispatch) => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
         name: options.searchName,
         pageSize: options.pageSize ? options.pageSize : 5,
         withSuggestions: options.withSuggestions,
-        language: options?.i18n?.languages[0],
+        language: options?.i18n?.languages[0] || "pt",
     };
 
     return axios
@@ -81,8 +92,9 @@ const createPersonality = (personality, t) => {
         });
 };
 
-export default {
+const personalitiesApi = {
     getPersonalities,
     getPersonality,
     createPersonality,
 };
+export default personalitiesApi;

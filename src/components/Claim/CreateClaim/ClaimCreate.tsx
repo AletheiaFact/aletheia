@@ -14,6 +14,11 @@ import AletheiaCaptcha from "../../AletheiaCaptcha";
 import moment from "moment";
 import colors from "../../../styles/colors";
 
+import { useContext } from "react";
+import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
+import { useSelector } from "@xstate/react";
+import { claimDataSelector } from "../../../machines/createClaim/selectors";
+
 const formRef = React.createRef<FormInstance>();
 
 const ClaimForm = styled(Form)`
@@ -51,12 +56,7 @@ const DatePickerInput = styled(DatePicker)`
     }
 `;
 
-const ClaimCreate = ({
-    personality,
-    claim = { _id: "" },
-    sitekey,
-    edit = false,
-}) => {
+const ClaimCreate = ({ claim = { _id: "" }, sitekey, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();
     const [title, setTitle] = useState("");
@@ -66,6 +66,10 @@ const ClaimCreate = ({
     const [sources, setSources] = useState([""]);
     const [recaptcha, setRecaptcha] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+
+    const { machineService } = useContext(CreateClaimMachineContext);
+    const claimData = useSelector(machineService, claimDataSelector);
+    const { personality } = claimData;
 
     useEffect(() => {
         const setTitleAndContent = async () => {

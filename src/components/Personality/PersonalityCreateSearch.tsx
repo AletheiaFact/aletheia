@@ -32,7 +32,7 @@ const PersonalityCreateSearch = ({
             searchName: trimmedName,
         });
         api.getPersonalities(
-            { withSuggestions, personalities, searchName: trimmedName, i18n },
+            { withSuggestions, searchName: trimmedName, i18n },
             dispatch
         );
     };

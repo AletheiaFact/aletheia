@@ -11,7 +11,7 @@ import { useSelector } from "@xstate/react";
 import { claimDataSelector } from "../../../machines/createClaim/selectors";
 
 const { Option } = Select;
-const ClaimSelectType = ({ setState }) => {
+const ClaimSelectType = () => {
     const { machineService } = useContext(CreateClaimMachineContext);
     const claimData = useSelector(machineService, claimDataSelector);
 
@@ -19,7 +19,7 @@ const ClaimSelectType = ({ setState }) => {
 
     const dispatch = useDispatch();
 
-    const handleClick = () => setState("personality");
+    const handleClick = () => console.log("personality");
 
     return (
         <>

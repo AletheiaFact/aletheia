@@ -1,6 +1,6 @@
 import { Col, Row } from "antd";
 import Text from "antd/lib/typography/Text";
-import { t } from "i18next";
+import { useTranslation } from "next-i18next";
 import React from "react";
 import { Controller } from "react-hook-form";
 
@@ -8,6 +8,7 @@ import colors from "../../styles/colors";
 import DynamicInput from "./DynamicInput";
 
 const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
+    const { t } = useTranslation();
     return (
         <div>
             {currentForm.map((fieldItem, index) => {
@@ -57,11 +58,9 @@ const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
                                     />
                                 )}
                             />
-                            {errors[fieldName] && (
-                                <Text type="danger" style={{ marginLeft: 20 }}>
-                                    {t(errors[fieldName].message)}
-                                </Text>
-                            )}
+                            <Text type="danger" style={{ marginLeft: 20 }}>
+                                {t(errors[fieldName]?.message)}
+                            </Text>
                         </Col>
                     </Row>
                 );
