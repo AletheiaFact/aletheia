@@ -5,7 +5,7 @@ import {
 } from "./types";
 import { CreateClaimMachineEvents } from "./events";
 import { CreateClaimMachineStates } from "./states";
-import { saveClaimContext } from "./actions";
+import { saveClaimContext, startImage, startSpeech } from "./actions";
 import { CreateClaimContext } from "./context";
 
 export const createNewMachine = ({ value, context }) => {
@@ -21,31 +21,37 @@ export const createNewMachine = ({ value, context }) => {
                 on: {
                     [Events.startSpeech]: {
                         target: States.setupSpeech,
-                        actions: [saveClaimContext],
+                        actions: [startSpeech],
                     },
                     [Events.startImage]: {
                         target: States.setupImage,
-                        actions: [saveClaimContext],
+                        actions: [startImage],
                     },
                 },
             },
             [States.setupSpeech]: {
                 on: {
                     [Events.addPersonality]: {
-                        target: States.personalityAdded,
+                        target: States.setupSpeech,
                         actions: [saveClaimContext],
+                    },
+                    [Events.savePersonality]: {
+                        target: States.personalityAdded,
                     },
                 },
             },
             [States.setupImage]: {
                 on: {
                     [Events.addPersonality]: {
-                        target: States.personalityAdded,
+                        target: States.setupImage,
                         actions: [saveClaimContext],
                     },
                     [Events.noPersonality]: {
                         target: States.personalityAdded,
                         actions: [saveClaimContext],
+                    },
+                    [Events.savePersonality]: {
+                        target: States.personalityAdded,
                     },
                 },
             },

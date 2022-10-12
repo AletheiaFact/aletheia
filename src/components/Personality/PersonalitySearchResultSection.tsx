@@ -1,27 +1,21 @@
-import React from "react";
 import { Row } from "antd";
-import api from "../../api/personality";
-import PersonalityCard from "./PersonalityCard";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import React from "react";
+
+import api from "../../api/personality";
 import Label from "../Label";
-import { useDispatch } from "react-redux";
-import { useAppSelector } from "../../store/store";
-import { ActionTypes } from "../../store/types";
+import PersonalityCard from "./PersonalityCard";
 
 const PersonalitySearchResultSection = ({
     personalities,
     label,
-    isCreatingClaim,
-    setState,
+    selectPersonality,
 }) => {
     const { t } = useTranslation();
     const router = useRouter();
-    const dispatch = useDispatch();
 
-    const { claimType } = useAppSelector((state) => ({
-        claimType: state.claimType,
-    }));
+    const isCreatingClaim = selectPersonality !== null;
 
     const createPersonality = async (personality) => {
         const personalityCreated = await api.createPersonality(personality, t);
@@ -30,13 +24,8 @@ const PersonalitySearchResultSection = ({
             ...personality,
             ...personalityCreated,
         };
-
         const createClaim = () => {
-            setState(claimType);
-            dispatch({
-                type: ActionTypes.SET_CLAIM_CREATE_PERSONALITY,
-                claimPersonality: newPersonality,
-            });
+            selectPersonality(newPersonality);
         };
 
         // Redirect to personality list in case _id is not present
@@ -58,7 +47,7 @@ const PersonalitySearchResultSection = ({
                 (p, i) =>
                     p && (
                         <PersonalityCard
-                            setState={setState}
+                            selectPersonality={selectPersonality}
                             isCreatingClaim={isCreatingClaim}
                             personality={p}
                             summarized={true}

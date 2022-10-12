@@ -2,9 +2,6 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Col, Divider, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useAppSelector } from "../../store/store";
-import { ActionTypes } from "../../store/types";
 
 import colors from "../../styles/colors";
 import AletheiaAvatar from "../AletheiaAvatar";
@@ -22,14 +19,13 @@ interface PersonalityCardProps {
     header?: boolean;
     hrefBase?: string;
     mobile?: boolean;
-    setState?: any;
+    selectPersonality?: any;
     onClick?: (personality: any) => {};
     titleLevel?: 1 | 2 | 3 | 4 | 5;
 }
 
 const PersonalityCard = ({
     personality,
-    isCreatingClaim = null,
     summarized = false,
     enableStats = true,
     header = false,
@@ -37,15 +33,21 @@ const PersonalityCard = ({
     mobile = false,
     onClick,
     titleLevel = 1,
-    setState = null,
+    selectPersonality = null,
 }: PersonalityCardProps) => {
-    const dispatch = useDispatch();
-
-    const { claimType } = useAppSelector((state) => ({
-        claimType: state.claimType,
-    }));
+    const isCreatingClaim = selectPersonality !== null;
 
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const personalityFoundProps = isCreatingClaim
+        ? {
+              onClick: () => {
+                  if (selectPersonality) {
+                      selectPersonality(personality);
+                  }
+              },
+          }
+        : { href: `${hrefBase || "/personality/"}${personality.slug}` };
+
     const { t } = useTranslation();
     const style = {
         titleSpan: 14,
@@ -243,98 +245,52 @@ const PersonalityCard = ({
                                     justifyContent: "flex-end",
                                 }}
                             >
-                                {!isCreatingClaim ? (
-                                    <>
-                                        {personality._id ? (
-                                            <Button
-                                                type={ButtonType.blue}
-                                                data-cy={personality.name}
-                                                href={`${
-                                                    hrefBase || "/personality/"
-                                                }${personality.slug}`}
-                                                style={{
-                                                    fontSize: "12px",
-                                                    lineHeight: "20px",
-                                                    height: "auto",
-                                                    padding: "4px 12px",
-                                                }}
-                                            >
-                                                <span style={{ marginTop: 4 }}>
-                                                    {t(
-                                                        "personality:profile_button"
-                                                    )}
-                                                </span>
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                type={ButtonType.blue}
-                                                onClick={() => {
-                                                    if (!isFormSubmitted) {
-                                                        setIsFormSubmitted(
-                                                            true
-                                                        );
-                                                        onClick(personality);
-                                                    }
-                                                }}
-                                                disabled={isFormSubmitted}
-                                                data-cy={personality.name}
-                                                style={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    height: 40,
-                                                    paddingBottom: 0,
-                                                }}
-                                            >
-                                                <PlusOutlined />{" "}
-                                                {t("personality:add_button")}
-                                            </Button>
-                                        )}
-                                    </>
+                                {personality._id ? (
+                                    <Button
+                                        type={ButtonType.blue}
+                                        data-cy={personality.name}
+                                        {...personalityFoundProps}
+                                        style={{
+                                            fontSize: "12px",
+                                            lineHeight: "20px",
+                                            height: "auto",
+                                            padding: "4px 12px",
+                                        }}
+                                    >
+                                        <span style={{ marginTop: 4 }}>
+                                            {isCreatingClaim
+                                                ? t(
+                                                      "claimForm:personalityFound"
+                                                  )
+                                                : t(
+                                                      "personality:profile_button"
+                                                  )}
+                                        </span>
+                                    </Button>
                                 ) : (
-                                    <>
-                                        {personality._id ? (
-                                            <Button
-                                                type={ButtonType.blue}
-                                                data-cy={personality.name}
-                                                onClick={() => {
-                                                    setState(claimType);
-                                                    dispatch({
-                                                        type: ActionTypes.SET_CLAIM_CREATE_PERSONALITY,
-                                                        claimPersonality:
-                                                            personality,
-                                                    });
-                                                }}
-                                                style={{
-                                                    fontSize: "12px",
-                                                    lineHeight: "20px",
-                                                    height: "auto",
-                                                    padding: "4px 12px",
-                                                }}
-                                            >
-                                                <span style={{ marginTop: 4 }}>
-                                                    Inserir existente
-                                                </span>
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                type={ButtonType.blue}
-                                                onClick={() => {
-                                                    onClick(personality);
-                                                }}
-                                                disabled={isFormSubmitted}
-                                                data-cy={personality.name}
-                                                style={{
-                                                    fontSize: "12px",
-                                                    lineHeight: "20px",
-                                                    height: "auto",
-                                                    padding: "4px 12px",
-                                                }}
-                                            >
-                                                <PlusOutlined /> Inserir nova
-                                            </Button>
-                                        )}
-                                    </>
+                                    <Button
+                                        type={ButtonType.blue}
+                                        onClick={() => {
+                                            if (!isFormSubmitted) {
+                                                setIsFormSubmitted(true);
+                                                onClick(personality);
+                                            }
+                                        }}
+                                        disabled={isFormSubmitted}
+                                        data-cy={personality.name}
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            height: 40,
+                                            paddingBottom: 0,
+                                        }}
+                                    >
+                                        <PlusOutlined />{" "}
+                                        {isCreatingClaim
+                                            ? t("claimForm:personalityNotFound")
+                                            : t("personality:add_button")}
+                                    </Button>
                                 )}
                             </Col>
                         )}

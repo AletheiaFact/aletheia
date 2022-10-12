@@ -9,22 +9,27 @@
     "contentField": "Content",
     "contentFieldPlaceholder": "Insert content here",
     "contentFieldError": "Please insert the content",
-    "contentFieldHelp":
-    "Please do not edit or change any aspect of the original text and choose to add full speeches instead of out of context claims (Twitter and general social media posts are OK).",
+    "contentFieldHelp": "Please do not edit or change any aspect of the original text and choose to add full speeches instead of out of context claims (Twitter and general social media posts are OK).",
     "reportField": "Report",
     "reportFieldPlaceholder": "Insert report content here",
     "reportFieldError": "Please insert the report content",
     "dateField": "Date",
     "dateFieldPlaceholder": "Select date",
     "dateFieldError": "Please, insert a date",
-    "dateFieldHelp":
-    "When was this speech released or told? Not the date you are adding it to Aletheia.",
-    "disclaimer":
-    "* The Add speech tool is only available for manually adding real speeches and claims made by said personality. Any attempt to dissiminate fake news through this platform is utterly forbidden and will result on user ban and possible lawsuit.",
+    "dateFieldHelp": "When was this speech released or told? Not the date you are adding it to Aletheia.",
+    "disclaimer": "* The Add speech tool is only available for manually adding real speeches and claims made by said personality. Any attempt to dissiminate fake news through this platform is utterly forbidden and will result on user ban and possible lawsuit.",
     "errorAcceptTerms": "You need to accept the terms to submit the form",
-    "checkboxAcceptTerms":
-    "I personally atest that all information added is truthful.",
+    "checkboxAcceptTerms": "I personally atest that all information added is truthful.",
     "cancelButton": "Cancel",
     "updateButton": "Update speech",
-    "saveButton": "Add speech"
+    "contentModelTitle": "Format",
+    "selectContentModel": "What claim format do you want to add?",
+    "image": "Image",
+    "speech": "Speech",
+    "selectPersonalityTitle": "Personality",
+    "selectPersonalityText": "Select the personality who made this claim",
+    "selectPersonalityButton": "Continue",
+    "noPersonalityButton": "Continue without a personality",
+    "personalityFound": "Select",
+    "personalityNotFound": "Add and Select"
 }

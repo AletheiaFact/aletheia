@@ -1,30 +1,29 @@
-import { PlusOutlined } from "@ant-design/icons";
-import { Col, Select } from "antd";
-import { ActionTypes } from "../../../store/types";
+import { FileOutlined, PictureOutlined } from "@ant-design/icons";
+import { Col } from "antd";
+import { useTranslation } from "next-i18next";
+import { useContext } from "react";
+
+import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
+import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import AletheiaButton from "../../Button";
-import { SelectInput } from "../../Form/ClaimReviewSelect";
-import { useDispatch } from "react-redux";
-import { useContext } from "react";
-import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
-import { useSelector } from "@xstate/react";
-import { claimDataSelector } from "../../../machines/createClaim/selectors";
 
-const { Option } = Select;
 const ClaimSelectType = () => {
     const { machineService } = useContext(CreateClaimMachineContext);
-    const claimData = useSelector(machineService, claimDataSelector);
+    const { t } = useTranslation();
 
-    console.log("claimData", claimData);
+    const handleClickSpeech = () => {
+        machineService.send(CreateClaimEvents.startSpeech);
+    };
 
-    const dispatch = useDispatch();
-
-    const handleClick = () => console.log("personality");
+    const handleClickImage = () => {
+        machineService.send(CreateClaimEvents.startImage);
+    };
 
     return (
         <>
-            <Col style={{ marginTop: "24px" }}>
-                <p
+            <div style={{ marginTop: "24px" }}>
+                <h3
                     style={{
                         fontSize: "18px",
                         lineHeight: "24px",
@@ -32,8 +31,8 @@ const ClaimSelectType = () => {
                         marginBottom: "8px",
                     }}
                 >
-                    Context
-                </p>
+                    {t("claimForm:contentModelTitle")}
+                </h3>
                 <p
                     style={{
                         fontSize: "14px",
@@ -42,32 +41,30 @@ const ClaimSelectType = () => {
                         marginBottom: "8px",
                     }}
                 >
-                    In what context did this speech happen? Ex. Was it on social
-                    media or an official government speech?
+                    {t("claimForm:selectContentModel")}
                 </p>
-            </Col>
-            <SelectInput
-                placeholder={"Choose an option"}
-                onChange={(type) => {
-                    dispatch({
-                        type: ActionTypes.SET_CLAIM_CREATE_TYPE,
-                        claimType: type,
-                    });
-                }}
-            >
-                <Option value="speech">Speech</Option>
-                <Option value="image">image</Option>
-            </SelectInput>
+            </div>
+
             <Col
                 style={{
                     margin: "24px 0",
                     display: "flex",
-                    justifyContent: "right",
+                    justifyContent: "space-evenly",
                 }}
             >
-                <AletheiaButton onClick={handleClick}>
-                    <span>Add Type</span>
-                    <PlusOutlined />
+                <AletheiaButton
+                    onClick={handleClickImage}
+                    style={{ textTransform: "uppercase" }}
+                >
+                    <PictureOutlined />
+                    {t("claimForm:image")}
+                </AletheiaButton>
+                <AletheiaButton
+                    onClick={handleClickSpeech}
+                    style={{ textTransform: "uppercase" }}
+                >
+                    <FileOutlined />
+                    {t("claimForm:speech")}
                 </AletheiaButton>
             </Col>
         </>

@@ -12,8 +12,7 @@ import { ActionTypes } from "../../store/types";
 
 const PersonalityCreateSearch = ({
     withSuggestions,
-    isCreatingClaim,
-    setState,
+    selectPersonality = null,
 }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
@@ -68,14 +67,12 @@ const PersonalityCreateSearch = ({
                 </Form.Item>
             </Form>
             <PersonalitySearchResultSection
-                setState={setState}
-                isCreatingClaim={isCreatingClaim}
+                selectPersonality={selectPersonality}
                 personalities={personalitiesCreated}
                 label={t("personalityCTA:created")}
             />
             <PersonalitySearchResultSection
-                setState={setState}
-                isCreatingClaim={isCreatingClaim}
+                selectPersonality={selectPersonality}
                 personalities={personalitiesAvailable}
                 label={t("personalityCTA:available")}
             />

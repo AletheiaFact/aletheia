@@ -12,7 +12,7 @@ import {
     addSpeechSelector,
 } from "../../../machines/createClaim/selectors";
 import PersonalityCard from "../../Personality/PersonalityCard";
-import ClaimUploadImage from "../ClaimUploadImage";
+import ClaimUploadImage from "./ClaimUploadImage";
 import ClaimCreate from "./ClaimCreate";
 import ClaimSelectPersonality from "./ClaimSelectPersonality";
 import ClaimSelectType from "./ClaimSelectType";
@@ -37,9 +37,7 @@ const CreateClaimView = ({ sitekey }) => {
                     />
                 )}
                 {notStarted && <ClaimSelectType />}
-                {(setupSpeech || setupImage) && (
-                    <ClaimSelectPersonality isCreatingClaim={true} />
-                )}
+                {(setupSpeech || setupImage) && <ClaimSelectPersonality />}
                 {addImage && <ClaimUploadImage />}
                 {addSpeech && <ClaimCreate sitekey={sitekey} />}
             </Col>

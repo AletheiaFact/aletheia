@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
 import "draft-js/dist/Draft.css";
-import { DatePicker, Form, Row, Checkbox, FormInstance } from "antd";
-import claimApi from "../../../api/claim";
-import { useTranslation } from "next-i18next";
-import styled from "styled-components";
-import { useRouter } from "next/router";
-import PersonalityCard from "../../Personality/PersonalityCard";
-import SourceInput from "../../Source/SourceInput";
-import Button, { ButtonType } from "../../Button";
-import Input from "../../AletheiaInput";
-import TextArea from "../../TextArea";
-import AletheiaCaptcha from "../../AletheiaCaptcha";
-import moment from "moment";
-import colors from "../../../styles/colors";
 
-import { useContext } from "react";
-import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
 import { useSelector } from "@xstate/react";
+import { Checkbox, DatePicker, Form, FormInstance, Row } from "antd";
+import moment from "moment";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useContext } from "react";
+import styled from "styled-components";
+
+import claimApi from "../../../api/claim";
+import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
 import { claimDataSelector } from "../../../machines/createClaim/selectors";
+import colors from "../../../styles/colors";
+import AletheiaCaptcha from "../../AletheiaCaptcha";
+import Input from "../../AletheiaInput";
+import Button, { ButtonType } from "../../Button";
+import SourceInput from "../../Source/SourceInput";
+import TextArea from "../../TextArea";
 
 const formRef = React.createRef<FormInstance>();
 
@@ -93,13 +93,12 @@ const ClaimCreate = ({ claim = { _id: "" }, sitekey, edit = false }) => {
                 content,
                 title,
                 personality: personality._id,
-                // TODO: add a new input when twitter is supported
-                contentModel: "Speech",
+                contentModel: claimData.contentModel,
                 date,
                 sources,
                 recaptcha,
             });
-            // Redirect to personality profile in case slug is not present
+            // Redirect to personality profile in case claim slug is not present
             const path = slug
                 ? `/personality/${personality.slug}/claim/${slug}`
                 : `/personality/${personality.slug}`;
@@ -134,14 +133,6 @@ const ClaimCreate = ({ claim = { _id: "" }, sitekey, edit = false }) => {
 
     return (
         <>
-            {personality && (
-                <PersonalityCard
-                    personality={personality}
-                    header={true}
-                    mobile={true}
-                />
-            )}
-
             <ClaimForm
                 ref={formRef}
                 layout="vertical"

@@ -2,6 +2,7 @@ enum CreateClaimEvents {
     startSpeech = "START_SPEECH",
     startImage = "START_IMAGE",
     addPersonality = "ADD_PERSONALITY",
+    savePersonality = "SAVE_PERSONALITY",
     noPersonality = "NO_PERSONALITY",
     publish = "PUBLISH",
 }
