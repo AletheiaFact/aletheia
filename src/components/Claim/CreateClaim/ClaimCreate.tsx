@@ -1,12 +1,9 @@
-import "draft-js/dist/Draft.css";
-
 import { useSelector } from "@xstate/react";
 import { Checkbox, DatePicker, Form, FormInstance, Row } from "antd";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 
 import claimApi from "../../../api/claim";

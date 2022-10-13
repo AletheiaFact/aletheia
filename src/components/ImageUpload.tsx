@@ -1,123 +1,105 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import { Col, Form } from "antd";
-import React, { useState } from "react";
-import ImageApi from "../api/image";
-import ClaimApi from "../api/claim";
-import AletheiaInput from "./AletheiaInput";
-import AletheiaButton from "./Button";
+/* eslint-disable @next/next/no-img-element */
+import { UploadOutlined } from "@ant-design/icons";
+import { Col, message, Upload } from "antd";
+import { RcFile, UploadChangeParam, UploadProps } from "antd/lib/upload";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
-const ImageUpload = ({ personality }) => {
+import AletheiaButton from "./Button";
+import { AletheiaModal } from "./Modal/AletheiaModal.style";
+
+import type { UploadFile } from "antd/lib/upload/interface";
+const ImageUpload = ({ onChange }) => {
     const { t } = useTranslation();
-    const router = useRouter();
-    const formData = new FormData();
+    const ONE_MB = 1048576;
+    const UPLOAD_LIMIT = 1; // TODO: Confirm limit of images
 
-    const [imagePreview, setImagePreview] = useState(false);
-    const [isLoading, setIsloading] = useState(false);
-    const [imageUploadedUrl, setImageUploadedUrl] = useState(null);
-    const [image, setImage] = useState([{}]); // add type
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState("");
+    const [previewTitle, setPreviewTitle] = useState("");
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
 
-    const handleChange = async (e) => {
-        const newFileList = e.target.files.length > 0 ? e.target.files : [];
-        for (const file of newFileList) {
-            await formData.append("files", file);
+    const getBase64 = (file: RcFile): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    const handleCancel = () => setPreviewOpen(false);
+
+    const handlePreview = async (file: UploadFile) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj as RcFile);
         }
-        setImagePreview(true);
-        setIsloading(true);
 
-        ImageApi.uploadImage(formData).then((imageUploaded) => {
-            setImage(imageUploaded);
-            setIsloading(false);
-            setImageUploadedUrl(
-                imageUploaded[0]?.FileURL ? imageUploaded[0].FileURL : null
-            );
-        });
+        setPreviewImage(file.url || (file.preview as string));
+        setPreviewOpen(true);
+        setPreviewTitle(
+            file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+        );
     };
 
-    const handleSubmit = ({ title }) => {
-        const imageBody = {
-            title,
-            ...image[0],
-            contentModel: "Image",
-            personality: personality._id || undefined,
-        };
-
-        return ClaimApi.saveImage(t, imageBody).then((claim) => {
-            const path = claim?.personality
-                ? `/personality/${personality.slug}/claim/${claim.slug}`
-                : `/claim/${claim.slug}`;
-            router.push(path);
-        });
+    const validateBeforeUpload = (file: RcFile) => {
+        const isJpgOrPng =
+            file.type === "image/jpeg" || file.type === "image/png";
+        if (!isJpgOrPng) {
+            message.error(t("claimForm:fileTypeError"));
+        }
+        const isLt2M = file.size < ONE_MB * 2;
+        if (!isLt2M) {
+            message.error(t("claimForm:fileSizeError"));
+        }
+        return isJpgOrPng && isLt2M;
     };
+
+    const handleChange: UploadProps["onChange"] = async ({
+        file,
+        fileList,
+    }: UploadChangeParam<UploadFile>) => {
+        if (file.originFileObj && validateBeforeUpload(file.originFileObj)) {
+            setFileList(fileList);
+        }
+    };
+
+    useEffect(() => {
+        onChange(fileList);
+    }, [onChange, fileList]);
+
+    const uploadButton = (
+        <AletheiaButton icon={<UploadOutlined />}>
+            {t("claimForm:fileInputButton")}
+        </AletheiaButton>
+    );
 
     return (
-        <Form onFinish={handleSubmit}>
-            <Col style={{ marginTop: "24px" }}>
-                <input
-                    type="file"
-                    name="myfile"
-                    multiple
-                    onChange={(e) => {
-                        handleChange(e);
-                    }}
+        <Col span={24}>
+            <Upload
+                listType="picture"
+                fileList={fileList}
+                onPreview={handlePreview}
+                onChange={handleChange}
+                beforeUpload={validateBeforeUpload}
+            >
+                {fileList.length >= UPLOAD_LIMIT ? null : uploadButton}
+            </Upload>
+            <AletheiaModal
+                visible={previewOpen}
+                title={previewTitle}
+                footer={null}
+                onCancel={handleCancel}
+                width={"fit-content"}
+            >
+                <img
+                    alt={`preview uploaded file ${previewTitle}`}
+                    width="auto"
+                    style={{ maxWidth: "100%", maxHeight: "400px" }}
+                    src={previewImage}
                 />
-
-                {imagePreview && (
-                    <>
-                        {isLoading && (
-                            <Col
-                                style={{
-                                    width: "100%",
-                                    height: "150px",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    marginTop: "12px",
-                                }}
-                            >
-                                <LoadingOutlined
-                                    style={{ fontSize: 32 }}
-                                    spin
-                                />
-                            </Col>
-                        )}
-                        {!isLoading && (
-                            <Col style={{ marginTop: "12px" }}>
-                                <img src={imageUploadedUrl} width="100%" />
-                            </Col>
-                        )}
-                    </>
-                )}
-            </Col>
-
-            <Form.Item
-                name="title"
-                label={"titulo da imagem"}
-                rules={[
-                    {
-                        required: true,
-                        whitespace: true,
-                        message: "obrigatório",
-                    },
-                ]}
-                wrapperCol={{ sm: 24 }}
-                style={{ marginTop: "24px" }}
-            >
-                <AletheiaInput style={{ width: "100%" }} />
-            </Form.Item>
-
-            <Col
-                span={24}
-                style={{
-                    margin: "24px 0",
-                    display: "flex",
-                    justifyContent: "right",
-                }}
-            >
-                <AletheiaButton htmlType="submit">Upload Image</AletheiaButton>
-            </Col>
-        </Form>
+            </AletheiaModal>
+        </Col>
     );
 };
 

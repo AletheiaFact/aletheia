@@ -163,7 +163,7 @@ const update = (id, t, params = {}) => {
         });
 };
 
-export default {
+const claimApi = {
     get,
     getById,
     getClaimSentence,
@@ -172,3 +172,4 @@ export default {
     saveImage,
     update,
 };
+export default claimApi;

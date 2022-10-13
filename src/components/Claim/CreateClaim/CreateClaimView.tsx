@@ -1,4 +1,4 @@
-import { useActor, useSelector } from "@xstate/react";
+import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
 import React, { useContext } from "react";
 

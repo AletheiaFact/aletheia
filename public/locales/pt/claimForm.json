@@ -32,5 +32,10 @@
     "selectPersonalityButton": "Continuar",
     "noPersonalityButton": "Continuar sem uma personalidade",
     "personalityFound": "Selecionar",
-    "personalityNotFound": "Criar e selecionar"
+    "personalityNotFound": "Criar e selecionar",
+    "uploadImageText": "Escolha uma imagem para enviar",
+    "uploadImageButton": "Enviar imagem",
+    "fileInputButton": "Escolha o arquivo",
+    "fileTypeError": "Voce só pode enviar arquivos JPG/PNG",
+    "fileSizeError": "O arquivo deve ter menos de 2MB"
 }

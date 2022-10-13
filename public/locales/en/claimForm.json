@@ -31,5 +31,10 @@
     "selectPersonalityButton": "Continue",
     "noPersonalityButton": "Continue without a personality",
     "personalityFound": "Select",
-    "personalityNotFound": "Add and Select"
+    "personalityNotFound": "Add and Select",
+    "uploadImageText": "Select an image to upload",
+    "uploadImageButton": "Upload image",
+    "fileInputButton": "Choose file",
+    "fileTypeError": "You can only upload JPG/PNG files",
+    "fileSizeError": "File must smaller than 2MB"
 }
