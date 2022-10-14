@@ -1,3 +1,4 @@
+import { NextRouter } from "next/router";
 import { Claim } from "../../types/Claim";
 
 export type SaveContextEvent = {
@@ -5,4 +6,11 @@ export type SaveContextEvent = {
     claimData: Partial<Claim>;
 };
 
-export type CreateClaimMachineEvents = SaveContextEvent;
+export type PersistClaimEvent = {
+    type: string;
+    claimData: Partial<Claim>;
+    t: any;
+    router: NextRouter;
+};
+
+export type CreateClaimMachineEvents = SaveContextEvent | PersistClaimEvent;

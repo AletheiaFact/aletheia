@@ -4,7 +4,7 @@ enum CreateClaimEvents {
     addPersonality = "ADD_PERSONALITY",
     savePersonality = "SAVE_PERSONALITY",
     noPersonality = "NO_PERSONALITY",
-    publish = "PUBLISH",
+    persist = "PERSIST",
 }
 
 enum CreateClaimStates {
@@ -12,7 +12,7 @@ enum CreateClaimStates {
     setupSpeech = "setup_speech",
     setupImage = "setup_image",
     personalityAdded = "personality_added",
-    published = "published",
+    persisted = "persisted",
 }
 
 export { CreateClaimEvents, CreateClaimStates };

@@ -8,6 +8,7 @@ import { SourceTargetModel } from "../source/schemas/source.schema";
 import {
     ClaimRevision,
     ClaimRevisionDocument,
+    ContentModelEnum,
 } from "./schema/claim-revision.schema";
 import { ImageService } from "../image/image.service";
 
@@ -52,11 +53,11 @@ export class ClaimRevisionService {
             strict: true, // strip special characters except replacement, defaults to `false`
         });
 
-        if (claim.contentModel === "Speech") {
+        if (claim.contentModel === ContentModelEnum.Speech) {
             const newSpeech = await this.parserService.parse(claim.content);
             claim.contentId = newSpeech._id;
         } else {
-            const newImage = await this.imageService.create(claim);
+            const newImage = await this.imageService.create(claim.content);
             claim.contentId = newImage._id;
             claim.date = new Date();
         }

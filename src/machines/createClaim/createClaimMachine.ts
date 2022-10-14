@@ -5,7 +5,12 @@ import {
 } from "./types";
 import { CreateClaimMachineEvents } from "./events";
 import { CreateClaimMachineStates } from "./states";
-import { saveClaimContext, startImage, startSpeech } from "./actions";
+import {
+    persistClaim,
+    saveClaimContext,
+    startImage,
+    startSpeech,
+} from "./actions";
 import { CreateClaimContext } from "./context";
 
 export const createNewMachine = ({ value, context }) => {
@@ -57,13 +62,13 @@ export const createNewMachine = ({ value, context }) => {
             },
             [States.personalityAdded]: {
                 on: {
-                    [Events.publish]: {
-                        target: States.published,
-                        actions: [saveClaimContext],
+                    [Events.persist]: {
+                        target: States.persisted,
+                        actions: [persistClaim],
                     },
                 },
             },
-            [States.published]: {
+            [States.persisted]: {
                 type: "final",
             },
         },

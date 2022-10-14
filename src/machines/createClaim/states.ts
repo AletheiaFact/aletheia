@@ -5,4 +5,4 @@ export type CreateClaimMachineStates =
     | { value: CreateClaimStates.notStarted; context: CreateClaimContext }
     | { value: CreateClaimStates.setupSpeech; context: CreateClaimContext }
     | { value: CreateClaimStates.personalityAdded; context: CreateClaimContext }
-    | { value: CreateClaimStates.published; context: CreateClaimContext };
+    | { value: CreateClaimStates.persisted; context: CreateClaimContext };

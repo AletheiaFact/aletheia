@@ -9,6 +9,7 @@ import styled from "styled-components";
 import claimApi from "../../../api/claim";
 import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
 import { claimDataSelector } from "../../../machines/createClaim/selectors";
+import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import Input from "../../AletheiaInput";
@@ -83,23 +84,22 @@ const ClaimCreate = ({ claim = { _id: "" }, sitekey, edit = false }) => {
         return current && current > moment().endOf("day");
     };
 
-    const saveClaim = async () => {
+    const saveClaim = () => {
         if (!isLoading) {
             setIsLoading(true);
-            const { slug } = await claimApi.save(t, {
+
+            const claim = {
                 content,
                 title,
-                personality: personality._id,
-                contentModel: claimData.contentModel,
                 date,
                 sources,
                 recaptcha,
+            };
+            machineService.send(CreateClaimEvents.persist, {
+                claimData: claim,
+                t,
+                router,
             });
-            // Redirect to personality profile in case claim slug is not present
-            const path = slug
-                ? `/personality/${personality.slug}/claim/${slug}`
-                : `/personality/${personality.slug}`;
-            router.push(path);
         }
     };
 

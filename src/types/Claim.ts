@@ -1,13 +1,13 @@
 import { ContentModelEnum } from "./enums";
 import { Image } from "./Image";
 import { Personality } from "./Personality";
-import { Speech } from "./Speech";
 
 export type Claim = {
     title: string;
-    content: Image | Speech;
-    date: string;
+    content: Image | string;
+    date?: string;
     contentModel: ContentModelEnum;
-    sources: string[];
+    sources?: string[];
     personality?: Personality;
+    recaptcha?: string;
 };

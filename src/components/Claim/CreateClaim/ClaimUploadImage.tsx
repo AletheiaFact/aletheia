@@ -1,4 +1,3 @@
-import { useSelector } from "@xstate/react";
 import { Col, Form, Row } from "antd";
 import Text from "antd/lib/typography/Text";
 import { UploadFile } from "antd/lib/upload/interface";
@@ -6,10 +5,9 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 
-import ClaimApi from "../../../api/claim";
 import ImageApi from "../../../api/image";
 import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
-import { claimDataSelector } from "../../../machines/createClaim/selectors";
+import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import AletheiaInput from "../../AletheiaInput";
 import AletheiaButton from "../../Button";
@@ -27,8 +25,6 @@ const ClaimUploadImage = () => {
     //TODO: Add recaptcha validation
 
     const { machineService } = useContext(CreateClaimMachineContext);
-    const claimData = useSelector(machineService, claimDataSelector);
-    const { personality } = claimData;
 
     const handleSubmit = ({ title }) => {
         if (fileList.length > 0) {
@@ -38,24 +34,24 @@ const ClaimUploadImage = () => {
                 formData.append("files", file.originFileObj);
             });
 
-            ImageApi.uploadImage(formData).then((imagesUploaded) => {
-                setImageError(false);
+            ImageApi.uploadImage(formData)
+                .then((imagesUploaded) => {
+                    setImageError(false);
 
-                const imageBody = {
-                    title,
-                    ...imagesUploaded[0], // TODO: Confirm limit of images
-                    contentModel: claimData.contentModel,
-                    personality: personality?._id || undefined,
-                };
-                setIsloading(false);
+                    const claimData = {
+                        title,
+                        content: imagesUploaded[0], // TODO: Confirm limit of images
+                    };
 
-                ClaimApi.saveImage(t, imageBody).then((claim) => {
-                    const path = claim?.personality
-                        ? `/personality/${personality.slug}/claim/${claim.slug}`
-                        : "/claim/create"; //`/claim/${claim.slug}`;
-                    router.push(path);
+                    machineService.send(CreateClaimEvents.persist, {
+                        claimData,
+                        t,
+                        router,
+                    });
+                })
+                .catch(() => {
+                    setIsloading(false);
                 });
-            });
         } else {
             setImageError(true);
         }
@@ -89,6 +85,7 @@ const ClaimUploadImage = () => {
                 </p>
             </div>
             <Form onFinish={handleSubmit}>
+                <Label required>{t("claimForm:titleField")}</Label>
                 <Form.Item
                     name="title"
                     rules={[
@@ -101,7 +98,6 @@ const ClaimUploadImage = () => {
                     wrapperCol={{ sm: 24 }}
                     style={{ marginTop: "24px" }}
                 >
-                    <Label required>{t("claimForm:titleField")}</Label>
                     <AletheiaInput
                         style={{ width: "100%" }}
                         placeholder={t("claimForm:titleFieldPlaceholder")}

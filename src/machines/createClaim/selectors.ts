@@ -6,10 +6,6 @@ const claimDataSelector = (state): Claim => {
     return state.context.claimData;
 };
 
-const publishedSelector = (state) => {
-    return state.matches(CreateClaimStates.published);
-};
-
 const notStartedSelector = (state) => {
     return state.matches(CreateClaimStates.notStarted);
 };
@@ -34,7 +30,6 @@ const addSpeechSelector = (state) => {
 };
 
 export {
-    publishedSelector,
     notStartedSelector,
     setupSpeechSelector,
     setupImageSelector,

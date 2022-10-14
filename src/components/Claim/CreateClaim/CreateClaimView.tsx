@@ -16,6 +16,7 @@ import ClaimUploadImage from "./ClaimUploadImage";
 import ClaimCreate from "./ClaimCreate";
 import ClaimSelectPersonality from "./ClaimSelectPersonality";
 import ClaimSelectType from "./ClaimSelectType";
+import Loading from "../../Loading";
 
 const CreateClaimView = ({ sitekey }) => {
     const { machineService } = useContext(CreateClaimMachineContext);
@@ -25,6 +26,13 @@ const CreateClaimView = ({ sitekey }) => {
     const addImage = useSelector(machineService, addImageSelector);
     const addSpeech = useSelector(machineService, addSpeechSelector);
     const claimData = useSelector(machineService, claimDataSelector);
+    const isLoading = !(
+        notStarted ||
+        setupSpeech ||
+        setupImage ||
+        addImage ||
+        addSpeech
+    );
 
     return (
         <Row justify="center">
@@ -40,6 +48,7 @@ const CreateClaimView = ({ sitekey }) => {
                 {(setupSpeech || setupImage) && <ClaimSelectPersonality />}
                 {addImage && <ClaimUploadImage />}
                 {addSpeech && <ClaimCreate sitekey={sitekey} />}
+                {isLoading && <Loading />}
             </Col>
         </Row>
     );
