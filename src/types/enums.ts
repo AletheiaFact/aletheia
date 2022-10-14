@@ -18,7 +18,6 @@ enum Roles {
 
 enum ContentModelEnum {
     Speech = "Speech",
-    Twitter = "Twitter",
     Image = "Image",
 }
 

@@ -1,19 +1,22 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { HistoryService } from "../history/history.service";
 import { Model } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import { TargetModel, HistoryType } from "../history/schema/history.schema";
+import { REQUEST } from "@nestjs/core";
+import { BaseRequest } from "types";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class ImageService {
     constructor(
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Image.name)
         private ImageModel: Model<ImageDocument>,
         private historyService: HistoryService
     ) {}
 
-    async create(image, user = null) {
+    async create(image) {
         const imageSchema = {
             data_hash: image.DataHash,
             props: {
@@ -28,7 +31,7 @@ export class ImageService {
         const history = this.historyService.getHistoryParams(
             newImage._id,
             TargetModel.Image,
-            user,
+            this.req.user,
             HistoryType.Create,
             newImage
         );

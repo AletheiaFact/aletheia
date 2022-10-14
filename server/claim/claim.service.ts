@@ -230,18 +230,7 @@ export class ClaimService {
                 claim = await this.ClaimModel.findOne(match)
                     .populate("personality", "_id name")
                     .populate("sources", "_id link")
-                    .populate({
-                        path: "latestRevision",
-                        populate: {
-                            path: "content",
-                            populate: {
-                                path: "content",
-                                populate: {
-                                    path: "content",
-                                },
-                            },
-                        },
-                    })
+                    .populate("latestRevision")
                     .lean();
             } else {
                 const foundClaim = await this.ClaimModel.findOne(

@@ -7,7 +7,6 @@ export type ClaimRevisionDocument = ClaimRevision & mongoose.Document;
 
 export enum ContentModelEnum {
     Speech = "Speech",
-    Twitter = "Twitter",
     Image = "Image",
 }
 
@@ -22,7 +21,7 @@ export class ClaimRevision {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: "Speech",
+        refPath: "onModel",
     })
     contentId: mongoose.Types.ObjectId;
 
@@ -32,7 +31,6 @@ export class ClaimRevision {
             validator: (v) => {
                 return (
                     v === ContentModelEnum.Speech ||
-                    v === ContentModelEnum.Twitter ||
                     v === ContentModelEnum.Image
                 );
             },
@@ -65,6 +63,9 @@ export class ClaimRevision {
 }
 
 const ClaimRevisionSchemaRaw = SchemaFactory.createForClass(ClaimRevision);
+ClaimRevisionSchemaRaw.pre("find", function () {
+    this.populate("content");
+});
 
 ClaimRevisionSchemaRaw.virtual("reviews", {
     ref: "ClaimReview",
@@ -73,7 +74,7 @@ ClaimRevisionSchemaRaw.virtual("reviews", {
 });
 
 ClaimRevisionSchemaRaw.virtual("content", {
-    ref: "Speech",
+    ref: () => Object.values(ContentModelEnum),
     localField: "contentId",
     foreignField: "_id",
 });
