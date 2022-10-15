@@ -5,7 +5,7 @@ import { Model } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import { TargetModel, HistoryType } from "../history/schema/history.schema";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "types";
+import { BaseRequest } from "../types";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ImageService {
