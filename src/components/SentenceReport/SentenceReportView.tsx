@@ -13,8 +13,6 @@ import CTARegistration from "../Home/CTARegistration";
 import SentenceReportContent from "./SentenceReportContent";
 
 const SentenceReportView = ({
-    personality,
-    claim,
     context,
     userIsNotRegular,
     userIsReviewer,
@@ -48,11 +46,7 @@ const SentenceReportView = ({
                         }
                     >
                         <Col>
-                            <SentenceReportContent
-                                context={context}
-                                personality={personality}
-                                claim={claim}
-                            />
+                            <SentenceReportContent context={context} />
                         </Col>
                         {!isLoggedIn && <CTARegistration />}
                     </Col>

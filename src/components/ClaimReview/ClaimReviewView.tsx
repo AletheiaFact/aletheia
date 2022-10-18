@@ -43,8 +43,6 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
             />
             <SentenceReportView
                 context={claimReview?.report || reviewData}
-                personality={props.personality}
-                claim={props.claim}
                 userIsNotRegular={userIsNotRegular}
                 userIsReviewer={userIsReviewer}
                 isHidden={claimReview?.isHidden}

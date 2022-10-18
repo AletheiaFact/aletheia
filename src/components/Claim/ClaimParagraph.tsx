@@ -5,7 +5,7 @@ const ClaimParagraph = ({ paragraph, showHighlights, generateHref }) => {
     const sentences = paragraph.content;
     return (
         <p id={paragraph.props.id}>
-            {sentences.map(sentence => (
+            {sentences.map((sentence) => (
                 <ClaimSentence
                     key={sentence.props.id}
                     content={sentence.content}
@@ -17,6 +17,6 @@ const ClaimParagraph = ({ paragraph, showHighlights, generateHref }) => {
             ))}
         </p>
     );
-}
+};
 
 export default ClaimParagraph;

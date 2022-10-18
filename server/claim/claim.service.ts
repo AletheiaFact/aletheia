@@ -17,6 +17,7 @@ import { TypeModel } from "../state-event/schema/state-event.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
+import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
 
 type ClaimMatchParameters = (
     | { _id: string }
@@ -298,15 +299,21 @@ export class ClaimService {
     private calculateOverallStats(claim) {
         let totalClaims = 0;
         let totalClaimsReviewed = 0;
+
         if (claim?.content) {
-            claim.content.forEach((p) => {
-                totalClaims += p.content.length;
-                p.content.forEach((sentence) => {
-                    if (sentence.props.classification) {
-                        totalClaimsReviewed++;
-                    }
-                });
-            }, 0);
+            if (claim?.contentModel === ContentModelEnum.Image) {
+                totalClaims += 1;
+                //TODO: count reviews when possible
+            } else {
+                claim.content.forEach((p) => {
+                    totalClaims += p.content.length;
+                    p.content.forEach((sentence) => {
+                        if (sentence.props.classification) {
+                            totalClaimsReviewed++;
+                        }
+                    });
+                }, 0);
+            }
         }
         return {
             totalClaims,

@@ -13,7 +13,6 @@ const ImageUpload = ({ onChange }) => {
     const { t } = useTranslation();
     const ONE_MB = 1048576;
     const UPLOAD_LIMIT = 1; // TODO: Confirm limit of images
-
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
@@ -43,16 +42,18 @@ const ImageUpload = ({ onChange }) => {
     };
 
     const validateBeforeUpload = (file: RcFile) => {
-        const isJpgOrPng =
-            file.type === "image/jpeg" || file.type === "image/png";
-        if (!isJpgOrPng) {
+        const alowedFormats = ["png", "jpg", "webp"];
+
+        const isAllowedFormat = alowedFormats.includes(file.type.split("/")[1]);
+
+        if (!isAllowedFormat) {
             message.error(t("claimForm:fileTypeError"));
         }
-        const isLt2M = file.size < ONE_MB * 2;
-        if (!isLt2M) {
+        const isAllowedSize = file.size < ONE_MB * 3;
+        if (!isAllowedSize) {
             message.error(t("claimForm:fileSizeError"));
         }
-        return isJpgOrPng && isLt2M;
+        return isAllowedFormat && isAllowedSize;
     };
 
     const handleChange: UploadProps["onChange"] = async ({
