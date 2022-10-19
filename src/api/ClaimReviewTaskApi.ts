@@ -35,7 +35,7 @@ const getMachineBySentenceHash = (params, t) => {
     return request
         .get(`/sentence/${params}`)
         .then((response) => {
-            return response.data;
+            return response.data.machine;
         })
         .catch(() => {
             message.error(t("claimReviewTask:errorWhileFetching"));
