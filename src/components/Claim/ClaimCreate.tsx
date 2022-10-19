@@ -265,6 +265,18 @@ const ClaimCreate = ({
                         sitekey={sitekey}
                         onChange={onChangeCaptcha}
                     />
+
+                    {disableSubmit && (
+                        <h1
+                            style={{
+                                color: "red",
+                                fontSize: "14px",
+                                fontFamily: "sans-serif",
+                            }}
+                        >
+                            {t("common:requiredFieldError")}
+                        </h1>
+                    )}
                 </Form.Item>
                 <Row
                     style={{
