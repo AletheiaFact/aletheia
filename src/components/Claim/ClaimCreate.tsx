@@ -266,7 +266,7 @@ const ClaimCreate = ({
                         onChange={onChangeCaptcha}
                     />
 
-                    {disableSubmit && (
+                    {!recaptcha && (
                         <h1
                             style={{
                                 color: "red",
