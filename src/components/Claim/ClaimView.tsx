@@ -15,25 +15,52 @@ import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import ToggleSection from "../ToggleSection";
 import ClaimParagraph from "./ClaimParagraph";
+import ClaimReviewDrawer from "../ClaimReview/ClaimReviewDrawer";
+import { useAppSelector } from "../../store/store";
 
 const { Title, Paragraph } = Typography;
 
-const ClaimView = ({ personality, claim, href }) => {
+const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
     const { t, i18n } = useTranslation();
     moment.locale(i18n.language);
     const { title, stats } = claim;
+    const [selectedSentence, setSelectedSentence] = useState({
+        topics: [],
+        data_hash: "e93c69179454cbb829be40e10ce34b47",
+        content: "Quisque dapibus justo odio, vitae pretium nibh tempor non.",
+    });
+
+    const { selectedDataHash } = useAppSelector((state) => {
+        return {
+            selectedDataHash: state?.selectedDataHash || "",
+        };
+    });
 
     let date = claim.date;
     const paragraphs = Array.isArray(claim.content)
         ? claim.content
         : [claim.content];
 
+    let contents = paragraphs.reduce(
+        (sentences, paragraph) =>
+            (sentences = [...sentences, ...paragraph.content]),
+        []
+    );
     date = moment(new Date(date));
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
         message.info(t("claim:initialInfo"));
     }, [t]);
+
+    useEffect(() => {
+        if (selectedDataHash) {
+            const sentence = contents.find(
+                (sentence) => sentence.data_hash === selectedDataHash
+            );
+            setSelectedSentence({ topics: [], ...sentence });
+        }
+    }, [selectedDataHash]);
 
     const generateHref = (data) =>
         `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.data_hash}`;
@@ -240,6 +267,15 @@ const ClaimView = ({ personality, claim, href }) => {
                     quote={personality?.name}
                     href={href}
                     claim={claim?.title}
+                />
+                <ClaimReviewDrawer
+                    personality={personality}
+                    claim={claim}
+                    href={href}
+                    description={""}
+                    sitekey={sitekey}
+                    sentence={selectedSentence}
+                    userId={userId}
                 />
             </>
         );

@@ -2,6 +2,8 @@ import React from "react";
 import highlightColors from "../../constants/highlightColors";
 import styled from "styled-components";
 import colors from "../../styles/colors";
+import actions from "../../store/actions";
+import { useDispatch } from "react-redux";
 
 const ClaimSentence = styled.a`
     color: ${colors.bluePrimary};
@@ -29,10 +31,16 @@ const Sentence = ({
         };
     }
     const href = generateHref({ data_hash });
+    const dispatch = useDispatch();
+
+    const handleClick = () => {
+        dispatch(actions.setSelectDataHash(data_hash));
+        dispatch(actions.openReviewDrawer());
+    };
     return (
         <>
             <ClaimSentence
-                href={href}
+                onClick={handleClick}
                 id={data_hash}
                 data-hash={data_hash}
                 style={style}

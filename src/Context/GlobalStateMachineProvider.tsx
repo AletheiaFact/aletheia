@@ -1,4 +1,3 @@
-import { useTranslation } from "next-i18next";
 import { createContext, useEffect, useState } from "react";
 
 import { initialContext } from "../machine/context";

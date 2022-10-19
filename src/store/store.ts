@@ -12,6 +12,11 @@ const reducer = (state, action) => {
                 ...state,
                 menuCollapsed: action.menuCollapsed,
             };
+        case ActionTypes.TOGGLE_REVIEW_DRAWER:
+            return {
+                ...state,
+                reviewDrawerCollapsed: action.reviewDrawerCollapsed,
+            };
         case ActionTypes.RESULTS_OVERLAY_VISIBLE:
             return {
                 ...state,
@@ -71,6 +76,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 vw: action.vw,
+            };
+        case ActionTypes.SET_SELECTED_DATA_HASH:
+            return {
+                ...state,
+                selectedDataHash: action.selectedDataHash,
             };
         default:
             return state;

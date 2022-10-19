@@ -9,19 +9,31 @@ import { GetLocale } from "../utils/GetLocale";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
+import { Roles } from "../machine/enums";
 
-const ClaimPage: NextPage<{ personality; claim; href; isLoggedIn }> = ({
-    personality,
-    claim,
-    href,
-    isLoggedIn,
-}) => {
+export interface ClaimPageProps {
+    personality: any;
+    claim: any;
+    sitekey: string;
+    href: string;
+    isLoggedIn: boolean;
+    userRole: string;
+    userId: string;
+}
+
+const ClaimPage: NextPage<ClaimPageProps> = (props) => {
+    const { personality, claim, isLoggedIn, userRole } = props;
     const { t } = useTranslation();
     const dispatch = useDispatch();
     dispatch({
         type: ActionTypes.SET_LOGIN_STATUS,
         login: isLoggedIn,
     });
+    dispatch({
+        type: ActionTypes.SET_USER_ROLE,
+        role: userRole || Roles.Regular,
+    });
+
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "Claim",
@@ -45,7 +57,7 @@ const ClaimPage: NextPage<{ personality; claim; href; isLoggedIn }> = ({
                 })}
             />
             <JsonLd {...jsonld} />
-            <ClaimView personality={personality} claim={claim} href={href} />
+            <ClaimView {...props} />
             <AffixButton personalitySlug={personality.slug} />
         </>
     );
@@ -62,6 +74,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claim: JSON.parse(JSON.stringify(query.claim)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
+            sitekey: query.sitekey,
+            userRole: req?.user?.role ? req?.user?.role : null,
+            userId: req?.user?._id || "",
         },
     };
 }
