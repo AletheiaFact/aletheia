@@ -55,3 +55,4 @@ cypress/screenshots/**/*
 
 # Clinic.js
 .clinic
+data/localstack/startup_info.json

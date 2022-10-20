@@ -13,7 +13,6 @@ import SocialMediaShare from "../SocialMediaShare";
 export interface ClaimReviewViewProps {
     claimReview?: any;
     personality: any;
-    href: string;
     claim: any;
     sentence: { data_hash: string; content: string; topics: string[] };
     sitekey: string;
@@ -84,11 +83,6 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 sitekey={props.sitekey}
                 userIsReviewer={userIsReviewer}
                 userId={props.userId}
-            />
-            <SocialMediaShare
-                quote={props.personality?.name}
-                href={props.href}
-                claim={props.claim?.title}
             />
         </div>
     );

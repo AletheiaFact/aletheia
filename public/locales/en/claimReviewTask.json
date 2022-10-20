@@ -27,5 +27,6 @@
     "draft": "Draft",
     "crossCheckingAlertTitle": "This report is beeing cross-checked",
     "rejectionAlertTitle": "This review was rejected with the following comment",
-    "invalidReviewerMessage": "The reviewer must not be any user assigned to this task"
+    "invalidReviewerMessage": "The reviewer must not be any user assigned to this task",
+    "seeFullPage": "See full page"
 }

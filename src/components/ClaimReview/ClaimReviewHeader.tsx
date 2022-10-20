@@ -125,9 +125,7 @@ const ClaimReviewHeader = ({
                 )}
                 <Row
                     style={{
-                        background: isPublished
-                            ? colors.white
-                            : colors.lightGray,
+                        background: isPublished ? "none" : colors.lightGray,
                     }}
                 >
                     <Col
