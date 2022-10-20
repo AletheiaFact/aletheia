@@ -24,11 +24,7 @@ const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
     const { t, i18n } = useTranslation();
     moment.locale(i18n.language);
     const { title, stats } = claim;
-    const [selectedSentence, setSelectedSentence] = useState({
-        topics: [],
-        data_hash: "e93c69179454cbb829be40e10ce34b47",
-        content: "Quisque dapibus justo odio, vitae pretium nibh tempor non.",
-    });
+    const [selectedSentence, setSelectedSentence] = useState(null);
 
     const { selectedDataHash } = useAppSelector((state) => {
         return {
@@ -42,8 +38,7 @@ const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
         : [claim.content];
 
     let contents = paragraphs.reduce(
-        (sentences, paragraph) =>
-            (sentences = [...sentences, ...paragraph.content]),
+        (sentences, paragraph) => [...sentences, ...paragraph.content],
         []
     );
     date = moment(new Date(date));
@@ -61,9 +56,6 @@ const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
             setSelectedSentence(sentence);
         }
     }, [selectedDataHash]);
-
-    const generateHref = (data) =>
-        `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.data_hash}`;
 
     if (paragraphs && personality) {
         return (
@@ -128,7 +120,6 @@ const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
                                                 key={paragraph.props.id}
                                                 paragraph={paragraph}
                                                 showHighlights={showHighlights}
-                                                generateHref={generateHref}
                                             />
                                         ))}
                                     </cite>

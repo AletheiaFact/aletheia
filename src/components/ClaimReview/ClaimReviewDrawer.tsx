@@ -1,4 +1,4 @@
-import { BackwardFilled } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Col, Drawer, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
@@ -24,8 +24,7 @@ const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
         };
     });
 
-    const generateHref = () =>
-        `/personality/${props.personality.slug}/claim/${props.claim.slug}/sentence/${props.sentence.data_hash}`;
+    const href = `/personality/${props.personality.slug}/claim/${props.claim.slug}/sentence/${props.sentence?.data_hash}`;
 
     return (
         <Drawer
@@ -40,28 +39,32 @@ const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
             }}
             closable={false}
         >
-            <GlobalStateMachineProvider data_hash={props.sentence.data_hash}>
+            <GlobalStateMachineProvider data_hash={props.sentence?.data_hash}>
                 <Row
                     justify="space-between"
-                    style={{ width: "55%", padding: "1rem" }}
+                    style={{ width: vw?.sm ? "100%" : "55%", padding: "1rem" }}
                 >
                     <Col>
                         <AletheiaButton
-                            icon={<BackwardFilled />}
+                            icon={<ArrowLeftOutlined />}
                             onClick={() =>
                                 dispatch(actions.closeReviewDrawer())
                             }
                             type={ButtonType.gray}
-                        />
+                            data-cy="testCloseReviewDrawer"
+                        >
+                            {t("common:back_button")}
+                        </AletheiaButton>
                     </Col>
                     <Col>
                         <AletheiaButton
-                            href={generateHref()}
+                            href={href}
                             type={ButtonType.gray}
                             style={{
                                 textDecoration: "underline",
                                 fontWeight: "bold",
                             }}
+                            data-cy="testSeeFullReview"
                         >
                             {t("claimReviewTask:seeFullPage")}
                         </AletheiaButton>

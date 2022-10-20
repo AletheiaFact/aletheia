@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
@@ -35,7 +35,6 @@ const ClaimReviewForm = ({
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isStarted = useSelector(machineService, reviewStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
-
     const [formCollapsed, setFormCollapsed] = useState(isStarted);
 
     const showForm =
@@ -46,6 +45,10 @@ const ClaimReviewForm = ({
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
     };
+
+    useEffect(() => {
+        setFormCollapsed(isStarted);
+    }, [isStarted]);
 
     return (
         !isPublished && (

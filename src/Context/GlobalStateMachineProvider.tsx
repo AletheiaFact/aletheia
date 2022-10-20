@@ -23,9 +23,7 @@ export const GlobalStateMachineProvider = (props) => {
     useEffect(() => {
         const fetchReviewTask = (data_hash) => {
             return props.baseMachine
-                ? new Promise<void>((resolve, reject) => {
-                      resolve(props.baseMachine);
-                  })
+                ? Promise.resolve(props.baseMachine)
                 : ClaimReviewTaskApi.getMachineBySentenceHash(data_hash, t);
         };
         setLoading(true);
@@ -35,11 +33,6 @@ export const GlobalStateMachineProvider = (props) => {
             // The machine doesn't recognize when we try to persist state the initial value
             // 'cause the value it's an object. So for these states, we get only the key value
             if (machine) {
-                console.log(
-                    "provider fetchReviewTask",
-                    props.data_hash,
-                    machine
-                );
                 machine.value =
                     typeof machine.value !== "string"
                         ? Object.keys(machine.value)[0]
