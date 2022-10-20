@@ -14,12 +14,13 @@ import ClaimReviewView, { ClaimReviewViewProps } from "./ClaimReviewView";
 const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const { reviewDrawerCollapsed } = useAppSelector((state) => {
+    const { reviewDrawerCollapsed, vw } = useAppSelector((state) => {
         return {
             reviewDrawerCollapsed:
                 state?.reviewDrawerCollapsed !== undefined
                     ? state?.reviewDrawerCollapsed
                     : true,
+            vw: state?.vw,
         };
     });
 
@@ -30,8 +31,9 @@ const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
         <Drawer
             visible={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
-            width="47vw"
-            placement="right"
+            width={vw?.sm ? "100%" : "60%"}
+            height={vw?.sm ? "85%" : "100%"}
+            placement={vw?.sm ? "bottom" : "right"}
             bodyStyle={{ padding: 0 }}
             drawerStyle={{
                 backgroundColor: colors.lightGray,
