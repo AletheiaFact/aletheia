@@ -3,15 +3,23 @@ import React, { useContext } from "react";
 
 import { Roles } from "../../machine/enums";
 import { publishedSelector, reviewDataSelector } from "../../machine/selectors";
-import { ClaimReviewPageProps } from "../../pages/claim-review";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewHeader from "./ClaimReviewHeader";
 import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
-import SocialMediaShare from "../SocialMediaShare";
 
-const ClaimReviewView = (props: ClaimReviewPageProps) => {
+export interface ClaimReviewViewProps {
+    claimReview?: any;
+    personality: any;
+    claim: any;
+    sentence: { data_hash: string; content: string; topics: string[] };
+    sitekey: string;
+    description: string;
+    userId?: string;
+}
+
+const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const { claimReview, description } = props;
     const { machineService } = useContext(GlobalStateMachineContext);
 
@@ -53,11 +61,6 @@ const ClaimReviewView = (props: ClaimReviewPageProps) => {
                 sitekey={props.sitekey}
                 userIsReviewer={userIsReviewer}
                 userId={props.userId}
-            />
-            <SocialMediaShare
-                quote={props.personality?.name}
-                href={props.href}
-                claim={props.claim?.title}
             />
         </div>
     );

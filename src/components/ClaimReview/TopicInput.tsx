@@ -67,7 +67,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
         const filterValues = inputValue.filter(
             (value) => !topicsArray.includes(value)
         );
-        setTags(topicsArray.concat(filterValues));
+        setTags(topicsArray?.concat(filterValues) || []);
     }, [inputValue, topicsArray]);
 
     return (

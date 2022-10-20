@@ -15,19 +15,32 @@ import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import ToggleSection from "../ToggleSection";
 import ClaimParagraph from "./ClaimParagraph";
+import ClaimReviewDrawer from "../ClaimReview/ClaimReviewDrawer";
+import { useAppSelector } from "../../store/store";
 
 const { Title, Paragraph } = Typography;
 
-const ClaimView = ({ personality, claim, href }) => {
+const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
     const { t, i18n } = useTranslation();
     moment.locale(i18n.language);
     const { title, stats } = claim;
+    const [selectedSentence, setSelectedSentence] = useState(null);
+
+    const { selectedDataHash } = useAppSelector((state) => {
+        return {
+            selectedDataHash: state?.selectedDataHash || "",
+        };
+    });
 
     let date = claim.date;
     const paragraphs = Array.isArray(claim.content)
         ? claim.content
         : [claim.content];
 
+    let contents = paragraphs.reduce(
+        (sentences, paragraph) => [...sentences, ...paragraph.content],
+        []
+    );
     date = moment(new Date(date));
     const [showHighlights, setShowHighlights] = useState(true);
 
@@ -35,8 +48,14 @@ const ClaimView = ({ personality, claim, href }) => {
         message.info(t("claim:initialInfo"));
     }, [t]);
 
-    const generateHref = (data) =>
-        `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.data_hash}`;
+    useEffect(() => {
+        if (selectedDataHash) {
+            const sentence = contents.find(
+                (sentence) => sentence.data_hash === selectedDataHash
+            );
+            setSelectedSentence(sentence);
+        }
+    }, [selectedDataHash]);
 
     if (paragraphs && personality) {
         return (
@@ -101,7 +120,6 @@ const ClaimView = ({ personality, claim, href }) => {
                                                 key={paragraph.props.id}
                                                 paragraph={paragraph}
                                                 showHighlights={showHighlights}
-                                                generateHref={generateHref}
                                             />
                                         ))}
                                     </cite>
@@ -240,6 +258,14 @@ const ClaimView = ({ personality, claim, href }) => {
                     quote={personality?.name}
                     href={href}
                     claim={claim?.title}
+                />
+                <ClaimReviewDrawer
+                    personality={personality}
+                    claim={claim}
+                    description={""}
+                    sitekey={sitekey}
+                    sentence={selectedSentence}
+                    userId={userId}
                 />
             </>
         );

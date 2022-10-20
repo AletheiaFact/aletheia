@@ -12,6 +12,7 @@ import Seo from "../components/Seo";
 import { ClassificationEnum, Roles } from "../machine/enums";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
+import SocialMediaShare from "../components/SocialMediaShare";
 
 export interface ClaimReviewPageProps {
     personality: any;
@@ -103,6 +104,11 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             >
                 <ClaimReviewView {...props} />
             </GlobalStateMachineProvider>
+            <SocialMediaShare
+                quote={personality?.name}
+                href={props.href}
+                claim={claim?.title}
+            />
             <AffixButton personalitySlug={personality.slug} />
         </>
     );

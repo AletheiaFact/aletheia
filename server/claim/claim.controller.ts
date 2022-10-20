@@ -204,14 +204,16 @@ export class ClaimController {
             claimSlug
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/claim-page",
-                Object.assign(parsedUrl.query, { personality, claim })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-page",
+            Object.assign(parsedUrl.query, {
+                personality,
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 
     @Get("personality/:personalitySlug/claim/:claimSlug/revision/:revisionId")
