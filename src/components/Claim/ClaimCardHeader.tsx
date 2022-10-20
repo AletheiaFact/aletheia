@@ -56,7 +56,7 @@ const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
                     }}
                 >
                     {t("claim:cardHeader1")}&nbsp;
-                    <LocalizedDate date={date} />
+                    <LocalizedDate date={date || new Date()} />
                     &nbsp;
                     {t("claim:cardHeader2")}&nbsp;
                     <span style={{ fontWeight: 700 }}>

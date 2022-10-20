@@ -332,6 +332,24 @@ export class ClaimController {
         );
     }
 
+    @IsPublic()
+    @Get("claim-collection-editor")
+    public async ClaimCollectionEditor(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/claim-collection-editor",
+                Object.assign(parsedUrl.query, {})
+            );
+    }
+
     @Get(
         "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash/history"
     )
