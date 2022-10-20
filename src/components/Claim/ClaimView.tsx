@@ -58,7 +58,7 @@ const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
             const sentence = contents.find(
                 (sentence) => sentence.data_hash === selectedDataHash
             );
-            setSelectedSentence({ topics: [], ...sentence });
+            setSelectedSentence(sentence);
         }
     }, [selectedDataHash]);
 
@@ -271,7 +271,6 @@ const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
                 <ClaimReviewDrawer
                     personality={personality}
                     claim={claim}
-                    href={href}
                     description={""}
                     sitekey={sitekey}
                     sentence={selectedSentence}

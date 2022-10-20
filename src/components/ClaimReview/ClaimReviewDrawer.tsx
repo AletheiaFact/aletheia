@@ -23,7 +23,7 @@ const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
         };
     });
 
-    const generateHref = (data) =>
+    const generateHref = () =>
         `/personality/${props.personality.slug}/claim/${props.claim.slug}/sentence/${props.sentence.data_hash}`;
 
     return (
@@ -54,7 +54,7 @@ const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
                     </Col>
                     <Col>
                         <AletheiaButton
-                            href={generateHref(props.sentence)}
+                            href={generateHref()}
                             type={ButtonType.gray}
                             style={{
                                 textDecoration: "underline",
