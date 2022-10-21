@@ -16,7 +16,7 @@ import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import ToggleSection from "../ToggleSection";
-import ClaimParagraph from "./ClaimParagraph";
+import ClaimSpeechBody from "./ClaimSpeechBody";
 
 const { Title, Paragraph } = Typography;
 
@@ -115,13 +115,10 @@ const ClaimView = ({ personality, claim, href, userId }) => {
                             <Row>
                                 <Col offset={2} span={18}>
                                     <cite style={{ fontStyle: "normal" }}>
-                                        {paragraphs.map((paragraph) => (
-                                            <ClaimParagraph
-                                                key={paragraph.props.id}
-                                                paragraph={paragraph}
-                                                showHighlights={showHighlights}
-                                            />
-                                        ))}
+                                        <ClaimSpeechBody
+                                            paragraphs={paragraphs}
+                                            showHighlights={showHighlights}
+                                        />
                                     </cite>
                                 </Col>
                             </Row>

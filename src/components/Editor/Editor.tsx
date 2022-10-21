@@ -8,23 +8,34 @@ import {
 } from "@remirror/react";
 import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
 import { getEditorClaimCardContentHtml } from "./EditorClaimCard/EditorClaimCard";
+import claimCollectionApi from "../../api/claimCollection";
+import { useTranslation } from "next-i18next";
+import { EditorAutoSaveTimer } from "./EditorAutoSaveTimer";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
 ];
 
-const Editor: React.FC = () => {
+export interface IEditorProps {
+    claimCollection: any;
+}
+
+const Editor: React.FC = ({ claimCollection }: IEditorProps) => {
+    const { personalities } = claimCollection;
+    const { t } = useTranslation();
     const { manager, state } = useRemirror({
         extensions,
+        content: claimCollection?.editorContentObject || {},
         stringHandler: "html",
     });
 
     function SaveButton() {
         const { getJSON } = useHelpers();
-        const handleClick = useCallback(
-            () => alert(JSON.stringify(getJSON())),
-            [getJSON]
-        );
+        const handleClick = useCallback(() => {
+            claimCollectionApi.update(claimCollection._id, t, {
+                editorContentObject: getJSON(),
+            });
+        }, [getJSON]);
 
         return (
             <button
@@ -36,18 +47,17 @@ const Editor: React.FC = () => {
         );
     }
 
-    function LoadButton() {
+    const LoadButton = ({ personalityId }) => {
         const commands = useCommands();
         const handleClick = useCallback(() => {
             commands.focus();
             commands.insertHtml(
                 getEditorClaimCardContentHtml({
-                    personalityId: "634deecb367075aca9692b69",
-                    claimId: "634df050afc18abbd5eff438",
+                    personalityId,
                 }),
                 { selection: "end" }
             );
-        }, [commands]);
+        }, [commands, personalityId]);
 
         return (
             <button
@@ -57,14 +67,23 @@ const Editor: React.FC = () => {
                 Load
             </button>
         );
-    }
+    };
 
     return (
         <div style={{ padding: 16 }}>
             <Remirror manager={manager} initialContent={state} autoFocus={true}>
+                {Array.isArray(personalities) &&
+                    personalities.map((personality) => {
+                        return (
+                            <LoadButton
+                                key={personality._id}
+                                personalityId={personality._id}
+                            />
+                        );
+                    })}
                 <EditorComponent />
                 <SaveButton />
-                <LoadButton />
+                <EditorAutoSaveTimer claimCollectionId={claimCollection._id} />
             </Remirror>
         </div>
     );

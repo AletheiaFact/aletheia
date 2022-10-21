@@ -1,26 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import personalityApi from "../../../api/personality";
 import claimApi from "../../../api/claim";
-import ClaimCard from "../../Claim/ClaimCard";
 import ClaimCardHeader from "../../Claim/ClaimCardHeader";
-import { useHelpers, useRemirror } from "@remirror/react";
 import { useTranslation } from "next-i18next";
 import Button, { ButtonType } from "../../Button";
-
-const createClaimFromEditor = async (t, { personality, content }): any => {
-    const date = new Date();
-    const res = await claimApi.save(t, {
-        content,
-        title: "Debate Test " + date.toString(), // TODO: define a global title for all claims
-        personality: personality._id,
-        // TODO: add a new input when twitter is supported
-        contentModel: "Speech",
-        date,
-        sources: ["https://test.org"], // TODO: define a global source for the debate
-        recaptcha: "lalala",
-    });
-    console.log(res);
-};
+import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
+import { uniqueId } from "remirror";
 
 export const EditorClaimCard = ({
     personalityId,
@@ -28,58 +13,120 @@ export const EditorClaimCard = ({
     forwardRef,
     node,
 }) => {
-    const [claim, setClaim] = useState(null);
+    const [claim, setClaim] = useState(undefined);
     const { t } = useTranslation();
-    const [personality, setPersonality] = useState(null);
+    const [personality, setPersonality] = useState(undefined);
     const [isLoading, setIsLoading] = useState(false);
-    const localRef = useRef<any>();
 
-    const { getJSON } = useHelpers();
+    const createClaimFromEditor = async (
+        t,
+        { personality, content },
+        setClaim
+    ): Promise<void> => {
+        const date = new Date();
+        setIsLoading(true);
+        const res = await claimApi.save(t, {
+            content,
+            title: "Debate Test " + date.toString(), // TODO: define a global title for all claims
+            personality: personality._id,
+            contentModel: "Speech",
+            date,
+            sources: ["https://test.org"], // TODO: define a global source for the debate
+            recaptcha: "lalala", // TODO: bypass recaptcha for this action
+        });
+        setIsLoading(false);
+        setClaim(res);
+    };
+
+    /**
+     * Initial component load.
+     * * Lookup for personality and claim data
+     */
     useEffect(() => {
-        personalityApi
-            .getPersonality(personalityId, { language: "pt" }, () => {})
-            .then(setPersonality);
-        claimApi.getById(claimId, () => {}).then(setClaim);
+        if (personalityId) {
+            personalityApi
+                .getPersonality(personalityId, { language: "pt" }, t)
+                .then(setPersonality);
+        }
+        if (claimId) {
+            claimApi.getById(claimId, t).then(setClaim);
+        }
     }, [personalityApi, claimApi]);
 
-    console.log(node?.textContent);
+    /**
+     * If claim changes from undefined/null to an existing object
+     * we need to retrieve the full claim content from the API
+     * and define the claimId in the node attribute
+     */
+    useEffect(() => {
+        if (claim?.claimId) {
+            console.log(claim?.claimId);
+            node.attrs.claimId = claim?.claimId;
+            claimApi.getById(claim?.claimId, t).then(setClaim);
+        }
+    }, [!claim]);
 
-    return (
-        claim &&
-        personality && (
-            <div>
-                <div contentEditable={false}>
-                    <ClaimCardHeader
-                        personality={personality}
-                        date={claim?.date}
-                        claimType={claim?.type}
-                    />
-                </div>
-                <p ref={forwardRef} />
-                {/* TODO: Button to create a Claim*/}
-                <Button
-                    loading={isLoading}
-                    type={ButtonType.blue}
-                    onClick={() =>
-                        createClaimFromEditor(t, {
-                            personality,
-                            content: node?.textContent,
-                        })
-                    }
-                    disabled={isLoading}
-                    data-cy={"testSaveButton"}
-                >
-                    {t("claimForm:saveButton")}
-                </Button>
+    return personality ? (
+        <div>
+            <div contentEditable={false}>
+                <ClaimCardHeader
+                    personality={personality}
+                    date={claim?.date || new Date()}
+                />
             </div>
-        )
+            {!claim ? (
+                <>
+                    <p ref={forwardRef} />
+                    <Button
+                        loading={isLoading}
+                        type={ButtonType.blue}
+                        onClick={() =>
+                            createClaimFromEditor(
+                                t,
+                                {
+                                    personality,
+                                    content: node?.textContent,
+                                },
+                                setClaim
+                            )
+                        }
+                        disabled={isLoading}
+                        data-cy={"testSaveButton"}
+                    >
+                        {t("claimForm:saveButton")}
+                    </Button>
+                </>
+            ) : (
+                claim && (
+                    <ClaimSpeechBody
+                        paragraphs={
+                            Array.isArray(claim.content)
+                                ? claim.content
+                                : [claim.content]
+                        }
+                        showHighlights={true}
+                    />
+                )
+            )}
+        </div>
+    ) : (
+        <></>
     );
 };
 
-export const getEditorClaimCardContentHtml = ({ personalityId, claimId }) => `
+interface IClaimCardContentHtml {
+    personalityId: string;
+    claimId?: string;
+}
+
+export const getEditorClaimCardContentHtml = ({
+    personalityId,
+    claimId,
+}: IClaimCardContentHtml) => `
     <div
+        card-id="${uniqueId()}"
         data-personality-id="${personalityId}"
-        data-claim-id="${claimId}"
+        ${() => claimId && `data-claim-id="${claimId}"`}
     >
-        <p>This is editable content...</p>
+        <p>...</p>
     </div>`;

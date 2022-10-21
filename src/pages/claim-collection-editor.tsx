@@ -1,26 +1,30 @@
 import { InferGetServerSidePropsType, NextPage } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 import { GetLocale } from "../utils/GetLocale";
 import dynamic from "next/dynamic";
+import { IEditorProps } from "../components/Editor/Editor";
 
-const Editor = dynamic<React.FC>(() => import("../components/Editor/Editor"), {
-    ssr: false,
-});
+const Editor = dynamic<IEditorProps>(
+    () => import("../components/Editor/Editor"),
+    {
+        ssr: false,
+    }
+);
 
 const ClaimCollectionEditor: NextPage<{ data: string }> = ({
-    enableWarningDocument,
+    claimCollection,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    const { t } = useTranslation();
-    return <Editor />;
+    return <Editor claimCollection={claimCollection} />;
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
+    console.log(query?.claimCollection);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
+            claimCollection: JSON.parse(JSON.stringify(query?.claimCollection)),
         },
     };
 }

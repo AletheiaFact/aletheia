@@ -7,6 +7,7 @@ import {
 import React, { ComponentType } from "react";
 import { NodeViewComponentProps } from "@remirror/react";
 import { EditorClaimCard } from "./EditorClaimCard";
+import { uniqueId } from "remirror";
 
 class EditorClaimCardExtension extends NodeExtension {
     get name() {
@@ -18,7 +19,6 @@ class EditorClaimCardExtension extends NodeExtension {
         forwardRef,
     }) => {
         const { personalityId, claimId } = node.attrs;
-        console.log(node);
 
         return (
             <EditorClaimCard
@@ -36,41 +36,40 @@ class EditorClaimCardExtension extends NodeExtension {
     createNodeSpec(): NodeExtensionSpec {
         return {
             draggable: true,
-            selectable: false,
-            atom: true,
-            isolating: true,
+            selectable: true,
             attrs: {
-                personalityId: { default: null },
+                personalityId: { default: "" },
                 claimId: { default: "" },
+                cardId: { default: "" },
             },
             content: "block*",
             toDOM: (node) => {
                 const attrs: DOMCompatibleAttributes = {
                     "data-personality-id": node.attrs.personalityId,
                     "data-claim-id": node.attrs.claimId,
-                    // 'contenteditable': 'false',
-                    // 'draggable': 'true'
+                    "card-id": node.attrs.cardId,
                 };
                 return ["div", attrs, 0];
             },
             parseDOM: [
                 {
                     attrs: {
-                        id: { default: null },
-                        name: { default: "" },
-                        imageSrc: { default: "" },
+                        personalityId: { default: "" },
+                        claimId: { default: "" },
+                        cardId: { default: "" },
                     },
-                    tag: "div[data-personality-id]",
+                    tag: `div[card-id]`,
                     getAttrs: (dom) => {
                         const node = dom as HTMLAnchorElement;
-                        const personalityId = node.getAttribute(
-                            "data-personality-id"
-                        );
+                        const personalityId =
+                            node.getAttribute(`data-personality-id`);
                         const claimId = node.getAttribute("data-claim-id");
+                        const cardId = node.getAttribute("card-id");
 
                         return {
                             personalityId,
                             claimId,
+                            cardId,
                         };
                     },
                 },

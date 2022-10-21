@@ -93,6 +93,7 @@ export class ClaimController {
     @IsPublic()
     @Get("api/claim/:id")
     getById(@Param("id") claimId) {
+        // FIXME: this is returning a _id which is actually a revisionId
         return this.claimService.getById(claimId);
     }
 
