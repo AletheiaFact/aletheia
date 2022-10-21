@@ -1,22 +1,36 @@
 import { useTranslation } from "next-i18next";
 import { createContext, useEffect, useState } from "react";
+
+import ClaimReviewApi from "../api/claimReviewApi";
 import ClaimReviewTaskApi from "../api/ClaimReviewTaskApi";
 import Loading from "../components/Loading";
-
 import { initialContext } from "../machine/context";
 import { ReviewTaskStates } from "../machine/enums";
 import { createNewMachineService } from "../machine/reviewTaskMachine";
 
 interface GlobalContextType {
     machineService: any;
+    publishedReview?: { review: any; descriptionForHide?: string };
 }
 
 export const GlobalStateMachineContext = createContext<GlobalContextType>({
     machineService: null,
 });
 
-export const GlobalStateMachineProvider = (props) => {
+interface GlobalStateMachineProviderProps {
+    data_hash: string;
+    children: React.ReactNode;
+    baseMachine?: any;
+    publishedReview?: { review: any; descriptionForHide?: string };
+}
+
+export const GlobalStateMachineProvider = (
+    props: GlobalStateMachineProviderProps
+) => {
     const [globalMachineService, setGlobalMachineService] = useState(null);
+    const [publishedClaimReview, setPublishedClaimReview] = useState(
+        props.publishedReview
+    );
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
 
@@ -42,14 +56,25 @@ export const GlobalStateMachineProvider = (props) => {
                 context: initialContext,
                 value: ReviewTaskStates.unassigned,
             };
+
             setGlobalMachineService(createNewMachineService(newMachine));
             setLoading(false);
         });
-    }, [props.baseMachine, props.data_hash, t]);
+        if (!props.publishedReview) {
+            ClaimReviewApi.getClaimReviewByHash(props.data_hash).then(
+                (claimReview) => {
+                    setPublishedClaimReview(claimReview);
+                }
+            );
+        } else setPublishedClaimReview(props.publishedReview);
+    }, [props.baseMachine, props.data_hash, props.publishedReview, t]);
 
     return (
         <GlobalStateMachineContext.Provider
-            value={{ machineService: globalMachineService }}
+            value={{
+                machineService: globalMachineService,
+                publishedReview: publishedClaimReview,
+            }}
         >
             {loading && <Loading />}
             {!loading && globalMachineService && props.children}
