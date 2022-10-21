@@ -23,7 +23,6 @@ const ClaimReviewHeader = ({
     personality,
     claim,
     sentence,
-    sitekey,
     isHidden,
     classification = "",
     hideDescription,
@@ -206,7 +205,6 @@ const ClaimReviewHeader = ({
                     });
                 }}
                 handleCancel={() => setIsHideModalVisible(false)}
-                sitekey={sitekey}
             />
 
             <UnhideReviewModal
@@ -228,7 +226,6 @@ const ClaimReviewHeader = ({
                 handleCancel={() =>
                     setIsUnhideModalVisible(!isUnhideModalVisible)
                 }
-                sitekey={sitekey}
             />
         </Row>
     );

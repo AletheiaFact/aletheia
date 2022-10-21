@@ -7,13 +7,7 @@ import TextArea from "../TextArea";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../Button";
 
-const HideReviewModal = ({
-    visible,
-    isLoading,
-    handleOk,
-    handleCancel,
-    sitekey,
-}) => {
+const HideReviewModal = ({ visible, isLoading, handleOk, handleCancel }) => {
     const { t } = useTranslation();
     //Fix me: Recaptcha doesn't reset on the second time
     const [recaptcha, setRecaptcha] = useState("");
@@ -74,7 +68,6 @@ const HideReviewModal = ({
                 <Form.Item name="recaptcha">
                     <AletheiaCaptcha
                         onChange={setRecaptcha}
-                        sitekey={sitekey}
                         ref={recaptchaRef}
                     />
                     {!recaptcha && (

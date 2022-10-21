@@ -20,7 +20,7 @@ import { useAppSelector } from "../../store/store";
 
 const { Title, Paragraph } = Typography;
 
-const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
+const ClaimView = ({ personality, claim, href, userId }) => {
     const { t, i18n } = useTranslation();
     moment.locale(i18n.language);
     const { title, stats } = claim;
@@ -263,7 +263,6 @@ const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
                     personality={personality}
                     claim={claim}
                     description={""}
-                    sitekey={sitekey}
                     sentence={selectedSentence}
                     userId={userId}
                 />

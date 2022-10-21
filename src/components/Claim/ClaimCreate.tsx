@@ -51,12 +51,7 @@ const DatePickerInput = styled(DatePicker)`
     }
 `;
 
-const ClaimCreate = ({
-    personality,
-    claim = { _id: "" },
-    sitekey,
-    edit = false,
-}) => {
+const ClaimCreate = ({ personality, claim = { _id: "" }, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();
     const [title, setTitle] = useState("");
@@ -261,10 +256,7 @@ const ClaimCreate = ({
                 </Form.Item>
 
                 <Form.Item>
-                    <AletheiaCaptcha
-                        sitekey={sitekey}
-                        onChange={onChangeCaptcha}
-                    />
+                    <AletheiaCaptcha onChange={onChangeCaptcha} />
 
                     {!recaptcha && (
                         <h1

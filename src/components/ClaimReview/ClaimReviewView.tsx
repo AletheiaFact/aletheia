@@ -14,7 +14,6 @@ export interface ClaimReviewViewProps {
     personality: any;
     claim: any;
     sentence: { data_hash: string; content: string; topics: string[] };
-    sitekey: string;
     description: string;
     userId?: string;
 }
@@ -58,7 +57,6 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 claimId={props.claim._id}
                 personalityId={props.personality._id}
                 sentenceHash={props.sentence.data_hash}
-                sitekey={props.sitekey}
                 userIsReviewer={userIsReviewer}
                 userId={props.userId}
             />
