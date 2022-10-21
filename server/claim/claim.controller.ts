@@ -140,7 +140,7 @@ export class ClaimController {
                 sentence_hash
             );
 
-        const description = await this.claimReviewService.verifyIfReviewIsHdden(
+        const description = await this.claimReviewService.getDescriptionForHide(
             claimReview
         );
 
