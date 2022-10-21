@@ -76,6 +76,10 @@ jobs:
             sed -i "s/ORY_ACCESS_TOKEN/$ORY_ACCESS_TOKEN/g" config.$ENVIRONMENT.yaml
             sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.$ENVIRONMENT.yaml
 
+      - name: Set migrate-mongo-config.js
+        run: |
+            sed -i "s%MONGODB_URI%$MONGODB_URI%g" migrate-mongo-config.js
+
       # Setting user seed config
       - name: Set config.seed.example.yaml
         env:
