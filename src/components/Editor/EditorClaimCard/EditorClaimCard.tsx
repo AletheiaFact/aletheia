@@ -6,6 +6,25 @@ import { useTranslation } from "next-i18next";
 import Button, { ButtonType } from "../../Button";
 import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
 import { uniqueId } from "remirror";
+import colors from "../../../styles/colors";
+import ClaimSkeleton from "../../Skeleton/ClaimSkeleton";
+
+const EditorClaimCardContent = ({ children }) => {
+    return (
+        <div
+            style={{
+                backgroundColor: colors.grayTertiary,
+                width: "100%",
+                maxWidth: "400px",
+                height: "auto",
+                padding: "10px",
+                margin: "10px",
+            }}
+        >
+            {children}
+        </div>
+    );
+};
 
 export const EditorClaimCard = ({
     personalityId,
@@ -67,50 +86,81 @@ export const EditorClaimCard = ({
     }, [!claim]);
 
     return personality ? (
-        <div>
+        <div
+            style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+                padding: "10px 0px",
+            }}
+        >
             <div contentEditable={false}>
                 <ClaimCardHeader
                     personality={personality}
                     date={claim?.date || new Date()}
                 />
             </div>
-            {!claim ? (
-                <>
-                    <p ref={forwardRef} />
-                    <Button
-                        loading={isLoading}
-                        type={ButtonType.blue}
-                        onClick={() =>
-                            createClaimFromEditor(
-                                t,
-                                {
-                                    personality,
-                                    content: node?.textContent,
-                                },
-                                setClaim
-                            )
-                        }
-                        disabled={isLoading}
-                        data-cy={"testSaveButton"}
-                    >
-                        {t("claimForm:saveButton")}
-                    </Button>
-                </>
-            ) : (
-                claim && (
-                    <ClaimSpeechBody
-                        paragraphs={
-                            Array.isArray(claim.content)
-                                ? claim.content
-                                : [claim.content]
-                        }
-                        showHighlights={true}
-                    />
-                )
-            )}
+            <div
+                style={{
+                    width: "100%",
+                    alignItems: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                }}
+            >
+                {!claim ? (
+                    <>
+                        <EditorClaimCardContent>
+                            <p ref={forwardRef} />
+                        </EditorClaimCardContent>
+                        <Button
+                            loading={isLoading}
+                            type={ButtonType.blue}
+                            onClick={() =>
+                                createClaimFromEditor(
+                                    t,
+                                    {
+                                        personality,
+                                        content: node?.textContent,
+                                    },
+                                    setClaim
+                                )
+                            }
+                            disabled={isLoading}
+                            data-cy={"testSaveButton"}
+                        >
+                            {t("claimForm:saveButton")}
+                        </Button>
+                    </>
+                ) : (
+                    <EditorClaimCardContent>
+                        {claim && (
+                            <ClaimSpeechBody
+                                paragraphs={
+                                    Array.isArray(claim.content)
+                                        ? claim.content
+                                        : [claim.content]
+                                }
+                                showHighlights={true}
+                            />
+                        )}
+                    </EditorClaimCardContent>
+                )}
+            </div>
         </div>
     ) : (
-        <></>
+        <div
+            style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-around",
+                padding: "10px 0px",
+            }}
+        >
+            <p style={{ display: "none" }} ref={forwardRef} />
+            <ClaimSkeleton />
+        </div>
     );
 };
 

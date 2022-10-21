@@ -11,6 +11,9 @@ import { getEditorClaimCardContentHtml } from "./EditorClaimCard/EditorClaimCard
 import claimCollectionApi from "../../api/claimCollection";
 import { useTranslation } from "next-i18next";
 import { EditorAutoSaveTimer } from "./EditorAutoSaveTimer";
+import { ThemeProvider } from "@remirror/react";
+import { AllStyledComponent } from "@remirror/styles/emotion";
+import { Row } from "antd";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
@@ -55,7 +58,9 @@ const Editor: React.FC = ({ claimCollection }: IEditorProps) => {
                 getEditorClaimCardContentHtml({
                     personalityId,
                 }),
-                { selection: "end" }
+                {
+                    selection: 0,
+                }
             );
         }, [commands, personalityId]);
 
@@ -70,22 +75,43 @@ const Editor: React.FC = ({ claimCollection }: IEditorProps) => {
     };
 
     return (
-        <div style={{ padding: 16 }}>
-            <Remirror manager={manager} initialContent={state} autoFocus={true}>
-                {Array.isArray(personalities) &&
-                    personalities.map((personality) => {
-                        return (
-                            <LoadButton
-                                key={personality._id}
-                                personalityId={personality._id}
-                            />
-                        );
-                    })}
-                <EditorComponent />
-                <SaveButton />
-                <EditorAutoSaveTimer claimCollectionId={claimCollection._id} />
-            </Remirror>
-        </div>
+        <Row
+            style={{
+                width: "100%",
+                paddingTop: "32px",
+                justifyContent: "center",
+            }}
+        >
+            <AllStyledComponent
+                style={{
+                    padding: "10px",
+                    width: "90%",
+                }}
+            >
+                <ThemeProvider>
+                    <Remirror
+                        manager={manager}
+                        initialContent={state}
+                        autoFocus={true}
+                    >
+                        {Array.isArray(personalities) &&
+                            personalities.map((personality) => {
+                                return (
+                                    <LoadButton
+                                        key={personality._id}
+                                        personalityId={personality._id}
+                                    />
+                                );
+                            })}
+                        <EditorComponent />
+                        <SaveButton />
+                        <EditorAutoSaveTimer
+                            claimCollectionId={claimCollection._id}
+                        />
+                    </Remirror>
+                </ThemeProvider>
+            </AllStyledComponent>
+        </Row>
     );
 };
 
