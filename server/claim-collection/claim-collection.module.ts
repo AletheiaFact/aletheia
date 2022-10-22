@@ -9,6 +9,7 @@ import {
     ClaimCollection,
     ClaimCollectionSchema,
 } from "./schemas/claim-collection.schema";
+import { PersonalityModule } from "../personality/personality.module";
 
 export const ClaimCollectionModel = MongooseModule.forFeature([
     {
@@ -18,7 +19,13 @@ export const ClaimCollectionModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [ClaimCollectionModel, HistoryModule, CaptchaModule, ViewModule],
+    imports: [
+        ClaimCollectionModel,
+        HistoryModule,
+        CaptchaModule,
+        ViewModule,
+        PersonalityModule,
+    ],
     providers: [ClaimCollectionService],
     exports: [ClaimCollectionService],
     controllers: [ClaimCollectionController],

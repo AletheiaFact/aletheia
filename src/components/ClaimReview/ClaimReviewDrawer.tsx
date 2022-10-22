@@ -14,23 +14,30 @@ import ClaimReviewView, { ClaimReviewViewProps } from "./ClaimReviewView";
 const ClaimReviewDrawer = (props: Partial<ClaimReviewViewProps>) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const { reviewDrawerCollapsed, vw, personality, claim } =
-        useAppSelector((state) => {
-            return {
-                reviewDrawerCollapsed:
-                    state?.reviewDrawerCollapsed !== undefined
-                        ? state?.reviewDrawerCollapsed
-                        : true,
-                vw: state?.vw,
-                personality: state?.selectedPersonality,
-                claim: state?.selectedClaim,
-                sentence: state?.selectedSentence,
-            };
-        });
+    const {
+        reviewDrawerCollapsed,
+        vw,
+        personality,
+        claim,
+        sentence,
+        data_hash,
+    } = useAppSelector((state) => {
+        return {
+            reviewDrawerCollapsed:
+                state?.reviewDrawerCollapsed !== undefined
+                    ? state?.reviewDrawerCollapsed
+                    : true,
+            vw: state?.vw,
+            personality: state?.selectedPersonality,
+            claim: state?.selectedClaim,
+            sentence: state?.selectedSentence,
+            data_hash: state?.selectedDataHash,
+        };
+    });
 
-    const href = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${props.sentence?.data_hash}`;
+    const href = `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
 
-    return (
+    return personality && claim && sentence && data_hash ? (
         <Drawer
             visible={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
@@ -43,7 +50,7 @@ const ClaimReviewDrawer = (props: Partial<ClaimReviewViewProps>) => {
             }}
             closable={false}
         >
-            <GlobalStateMachineProvider data_hash={props.sentence?.data_hash}>
+            <GlobalStateMachineProvider data_hash={data_hash}>
                 <Row
                     justify="space-between"
                     style={{ width: vw?.sm ? "100%" : "55%", padding: "1rem" }}
@@ -74,10 +81,15 @@ const ClaimReviewDrawer = (props: Partial<ClaimReviewViewProps>) => {
                         </AletheiaButton>
                     </Col>
                 </Row>
-                <ClaimReviewView personality={personality} claim={claim} sentence={props.sentence} {...props} />
+                <ClaimReviewView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                    {...props}
+                />
             </GlobalStateMachineProvider>
         </Drawer>
-    );
+    ) : null;
 };
 
 export default ClaimReviewDrawer;

@@ -17,45 +17,33 @@ import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import ToggleSection from "../ToggleSection";
 import ClaimSpeechBody from "./ClaimSpeechBody";
+import actions from "../../store/actions";
+import { useDispatch } from "react-redux";
 
 const { Title, Paragraph } = Typography;
 
 const ClaimView = ({ personality, claim, href, userId }) => {
     const { t, i18n } = useTranslation();
+    const dispatch = useDispatch();
     moment.locale(i18n.language);
     const { title, stats } = claim;
-    const [selectedSentence, setSelectedSentence] = useState(null);
-
-    const { selectedDataHash } = useAppSelector((state) => {
-        return {
-            selectedDataHash: state?.selectedDataHash || "",
-        };
-    });
 
     let date = claim.date;
     const paragraphs = Array.isArray(claim.content)
         ? claim.content
         : [claim.content];
 
-    let contents = paragraphs.reduce(
-        (sentences, paragraph) => [...sentences, ...paragraph.content],
-        []
-    );
+    const dispatchPersonalityAndClaim = () => {
+        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectPersonality(personality));
+    };
+
     date = moment(new Date(date));
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
         message.info(t("claim:initialInfo"));
     }, [t]);
-
-    useEffect(() => {
-        if (selectedDataHash) {
-            const sentence = contents.find(
-                (sentence) => sentence.data_hash === selectedDataHash
-            );
-            setSelectedSentence(sentence);
-        }
-    }, [selectedDataHash]);
 
     if (paragraphs && personality) {
         return (
@@ -116,6 +104,9 @@ const ClaimView = ({ personality, claim, href, userId }) => {
                                 <Col offset={2} span={18}>
                                     <cite style={{ fontStyle: "normal" }}>
                                         <ClaimSpeechBody
+                                            handleSentenceClick={
+                                                dispatchPersonalityAndClaim
+                                            }
                                             paragraphs={paragraphs}
                                             showHighlights={showHighlights}
                                         />
@@ -256,10 +247,7 @@ const ClaimView = ({ personality, claim, href, userId }) => {
                     href={href}
                     claim={claim?.title}
                 />
-                <ClaimReviewDrawer
-                    sentence={selectedSentence}
-                    userId={userId}
-                />
+                <ClaimReviewDrawer userId={userId} />
             </>
         );
     } else {

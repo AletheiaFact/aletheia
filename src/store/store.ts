@@ -82,6 +82,21 @@ const reducer = (state, action) => {
                 ...state,
                 selectedDataHash: action.selectedDataHash,
             };
+        case ActionTypes.SET_SELECTED_PERSONALITY:
+            return {
+                ...state,
+                selectedPersonality: action.selectedPersonality,
+            };
+        case ActionTypes.SET_SELECTED_CLAIM:
+            return {
+                ...state,
+                selectedClaim: action.selectedClaim,
+            };
+        case ActionTypes.SET_SELECTED_SENTENCE:
+            return {
+                ...state,
+                selectedSentence: action.selectedSentence,
+            };
         default:
             return state;
     }

@@ -20,7 +20,6 @@ const ClaimCollectionEditor: NextPage<{ data: string }> = ({
 
 export async function getServerSideProps({ query, locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
-    console.log(query?.claimCollection);
     return {
         props: {
             ...(await serverSideTranslations(locale)),

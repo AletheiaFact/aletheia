@@ -17,11 +17,14 @@ import { IsPublic } from "../decorators/is-public.decorator";
 import { parse } from "url";
 import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
+import { PersonalityService } from "../personality/personality.service";
+import { BaseRequest } from "../types";
 
 @Controller()
 export class ClaimCollectionController {
     constructor(
         private claimCollectionService: ClaimCollectionService,
+        private personalityService: PersonalityService,
         private captchaService: CaptchaService,
         private viewService: ViewService
     ) {}
@@ -85,7 +88,7 @@ export class ClaimCollectionController {
     @Get("claim-collection/:id")
     public async claimCollection(
         @Param("id") claimCollectionId,
-        @Req() req: Request,
+        @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
@@ -93,6 +96,16 @@ export class ClaimCollectionController {
         const claimCollection = (
             await this.claimCollectionService.getById(claimCollectionId)
         ).toObject();
+
+        claimCollection.personalities = await Promise.all(
+            claimCollection.personalities.map(async (p) => {
+                console.log(p);
+                return await this.personalityService.postProcess(
+                    p,
+                    req.language
+                );
+            })
+        );
 
         await this.viewService
             .getNextServer()
@@ -107,12 +120,12 @@ export class ClaimCollectionController {
     @Get("claim-collection/:id/edit")
     public async claimCollectionEdit(
         @Param("id") claimCollectionId,
-        @Req() req: Request,
+        @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
 
-        const claimCollection = (
+        const claimCollection: any = (
             await this.claimCollectionService.getById(claimCollectionId)
         ).toObject();
 

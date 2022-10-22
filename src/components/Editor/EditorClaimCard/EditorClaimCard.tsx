@@ -79,7 +79,6 @@ export const EditorClaimCard = ({
      */
     useEffect(() => {
         if (claim?.claimId) {
-            console.log(claim?.claimId);
             node.attrs.claimId = claim?.claimId;
             claimApi.getById(claim?.claimId, t).then(setClaim);
         }

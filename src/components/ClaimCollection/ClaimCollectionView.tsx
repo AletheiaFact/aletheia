@@ -1,99 +1,56 @@
-import { Timeline } from "antd";
-import { EditorClaimCardNodeType } from "../Editor/EditorClaimCard/EditorClaimCardExtension";
-import React, {
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
-import personalityApi from "../../api/personality";
-import claimApi from "../../api/claim";
+import React, { useCallback } from "react";
 import { useTranslation } from "next-i18next";
-import ClaimCard from "../Claim/ClaimCard";
-import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import claimCollectionApi from "../../api/claimCollection";
-import {
-    CallbackTimerProvider,
-    GlobalStateContext,
-} from "../Editor/CallbackTimerProvider";
-import { useActor } from "@xstate/react";
+import { CallbackTimerProvider } from "../Editor/CallbackTimerProvider";
+import ClaimCollectionTimelineWrapper from "./ClaimCollectionTimelineWrapper";
+import ClaimCollectionHeader from "./ClaimCollectionHeader";
+import { Col, Row } from "antd";
+import CTARegistration from "../Home/CTARegistration";
+import { useAppSelector } from "../../store/store";
 
-const ClaimCardWrapper = ({ personalityId, claimId }) => {
-    const [personality, setPersonality] = useState();
-    const [claim, setClaim] = useState();
+const ClaimCollectionView = ({ claimCollection, userId }) => {
     const { t } = useTranslation();
-    useEffect(() => {
-        if (personalityId) {
-            personalityApi
-                .getPersonality(personalityId, { language: "pt" }, t)
-                .then(setPersonality);
-        }
-        if (claimId) {
-            claimApi.getById(claimId, t).then(setClaim);
-        }
-    }, [personalityId, claimId]);
+    const collections = claimCollection?.editorContentObject?.content;
 
-    return claim && personality ? (
-        <ClaimCard personality={personality} claim={claim} collapsed={false} />
-    ) : (
-        <ClaimSkeleton />
-    );
-};
+    const updateTimeline = useCallback(() => {
+        return claimCollectionApi.getById(claimCollection?._id, t);
+    }, [claimCollection]);
 
-const TimelineWrapper = ({ collections }) => {
-    const [timelineData, setTimelineData] = useState(collections);
-    const { timerService } = useContext<any>(GlobalStateContext);
-    const [state]: any = useActor<any>(timerService);
-    const { t } = useTranslation();
-
-    useEffect(() => {
-        const claimCollection = state?.context?.callbackResult;
-        if (claimCollection?.editorContentObject?.content) {
-            console.log(state?.context?.callbackResult);
-            setTimelineData(claimCollection?.editorContentObject?.content);
-        }
-    }, [state?.context?.callbackResult]);
-    return (
-        <Timeline
-            style={{
-                padding: "10px",
-            }}
-            pending={t("debates:liveLabel")}
-            reverse={true}
-        >
-            {Array.isArray(timelineData) &&
-                timelineData.reverse().map((timelineItem) => {
-                    if (timelineItem.type === EditorClaimCardNodeType) {
-                        const { personalityId, claimId, cardId } =
-                            timelineItem.attrs;
-                        return (
-                            personalityId &&
-                            claimId && (
-                                <Timeline.Item key={cardId}>
-                                    <ClaimCardWrapper
-                                        personalityId={personalityId}
-                                        claimId={claimId}
-                                    />
-                                </Timeline.Item>
-                            )
-                        );
-                    }
-                })}
-        </Timeline>
-    );
-};
-
-const ClaimCollectionView = ({ collections, claimCollectionId }) => {
-    const { t } = useTranslation();
-    const autoSaveCallback = useCallback(() => {
-        return claimCollectionApi.getById(claimCollectionId, t);
-    }, [claimCollectionId]);
+    const { isLoggedIn } = useAppSelector((state) => ({
+        isLoggedIn: state?.login,
+    }));
 
     return (
-        <CallbackTimerProvider callback={autoSaveCallback}>
-            <TimelineWrapper collections={collections} />
-        </CallbackTimerProvider>
+        <>
+            <Row
+                style={{
+                    width: "100%",
+                    justifyContent: "center",
+                }}
+            >
+                <ClaimCollectionHeader
+                    title={claimCollection?.title}
+                    personalities={claimCollection?.personalities}
+                />
+                <Row
+                    style={{
+                        padding: "30px 10%",
+                    }}
+                >
+                    <CallbackTimerProvider callback={updateTimeline}>
+                        <ClaimCollectionTimelineWrapper
+                            collections={collections}
+                            userId={userId}
+                        />
+                    </CallbackTimerProvider>
+                </Row>
+                {true && (
+                    <Col xs={24} lg={18} order={3}>
+                        <CTARegistration />
+                    </Col>
+                )}
+            </Row>
+        </>
     );
 };
 

@@ -35,11 +35,11 @@ const actions = {
     }),
     setSelectClaim: (claim) => ({
         type: ActionTypes.SET_SELECTED_CLAIM,
-        selectedDataHash: claim,
+        selectedClaim: claim,
     }),
     setSelectSentence: (sentence) => ({
         type: ActionTypes.SET_SELECTED_SENTENCE,
-        selectedDataHash: sentence,
+        selectedSentence: sentence,
     }),
 };
 
