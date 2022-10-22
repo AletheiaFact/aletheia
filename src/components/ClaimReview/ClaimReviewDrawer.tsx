@@ -11,20 +11,24 @@ import AletheiaButton, { ButtonType } from "../Button";
 
 import ClaimReviewView, { ClaimReviewViewProps } from "./ClaimReviewView";
 
-const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
+const ClaimReviewDrawer = (props: Partial<ClaimReviewViewProps>) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const { reviewDrawerCollapsed, vw } = useAppSelector((state) => {
-        return {
-            reviewDrawerCollapsed:
-                state?.reviewDrawerCollapsed !== undefined
-                    ? state?.reviewDrawerCollapsed
-                    : true,
-            vw: state?.vw,
-        };
-    });
+    const { reviewDrawerCollapsed, vw, personality, claim } =
+        useAppSelector((state) => {
+            return {
+                reviewDrawerCollapsed:
+                    state?.reviewDrawerCollapsed !== undefined
+                        ? state?.reviewDrawerCollapsed
+                        : true,
+                vw: state?.vw,
+                personality: state?.selectedPersonality,
+                claim: state?.selectedClaim,
+                sentence: state?.selectedSentence,
+            };
+        });
 
-    const href = `/personality/${props.personality.slug}/claim/${props.claim.slug}/sentence/${props.sentence?.data_hash}`;
+    const href = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${props.sentence?.data_hash}`;
 
     return (
         <Drawer
@@ -70,7 +74,7 @@ const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
                         </AletheiaButton>
                     </Col>
                 </Row>
-                <ClaimReviewView {...props} />
+                <ClaimReviewView personality={personality} claim={claim} sentence={props.sentence} {...props} />
             </GlobalStateMachineProvider>
         </Drawer>
     );

@@ -7,7 +7,8 @@ import {
 import React, { ComponentType } from "react";
 import { NodeViewComponentProps } from "@remirror/react";
 import { EditorClaimCard } from "./EditorClaimCard";
-import { uniqueId } from "remirror";
+
+export const EditorClaimCardNodeType = "editor-claim-card";
 
 class EditorClaimCardExtension extends NodeExtension {
     get name() {

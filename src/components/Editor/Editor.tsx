@@ -10,7 +10,10 @@ import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension
 import { getEditorClaimCardContentHtml } from "./EditorClaimCard/EditorClaimCard";
 import claimCollectionApi from "../../api/claimCollection";
 import { useTranslation } from "next-i18next";
-import { EditorAutoSaveTimer } from "./EditorAutoSaveTimer";
+import {
+    CallbackTimerProvider,
+    CallbackTimerMachine,
+} from "./CallbackTimerProvider";
 import { ThemeProvider } from "@remirror/react";
 import { AllStyledComponent } from "@remirror/styles/emotion";
 import { Row } from "antd";
@@ -18,6 +21,21 @@ import { Row } from "antd";
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
 ];
+
+const EditorAutoSaveTimerProvider = ({ claimCollectionId, children }) => {
+    const { getJSON } = useHelpers();
+    const { t } = useTranslation();
+    const autoSaveCallback = useCallback(() => {
+        return claimCollectionApi.update(claimCollectionId, t, {
+            editorContentObject: getJSON(),
+        });
+    }, [getJSON]);
+    return (
+        <CallbackTimerProvider callback={autoSaveCallback}>
+            {children}
+        </CallbackTimerProvider>
+    );
+};
 
 export interface IEditorProps {
     claimCollection: any;
@@ -94,20 +112,21 @@ const Editor: React.FC = ({ claimCollection }: IEditorProps) => {
                         initialContent={state}
                         autoFocus={true}
                     >
-                        {Array.isArray(personalities) &&
-                            personalities.map((personality) => {
-                                return (
-                                    <LoadButton
-                                        key={personality._id}
-                                        personalityId={personality._id}
-                                    />
-                                );
-                            })}
-                        <EditorComponent />
-                        <SaveButton />
-                        <EditorAutoSaveTimer
+                        <EditorAutoSaveTimerProvider
                             claimCollectionId={claimCollection._id}
-                        />
+                        >
+                            {Array.isArray(personalities) &&
+                                personalities.map((personality) => {
+                                    return (
+                                        <LoadButton
+                                            key={personality._id}
+                                            personalityId={personality._id}
+                                        />
+                                    );
+                                })}
+                            <EditorComponent />
+                            <SaveButton />
+                        </EditorAutoSaveTimerProvider>
                     </Remirror>
                 </ThemeProvider>
             </AllStyledComponent>

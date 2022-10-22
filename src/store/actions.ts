@@ -29,6 +29,18 @@ const actions = {
         type: ActionTypes.SET_SELECTED_DATA_HASH,
         selectedDataHash: hash,
     }),
+    setSelectPersonality: (personality) => ({
+        type: ActionTypes.SET_SELECTED_PERSONALITY,
+        selectedPersonality: personality,
+    }),
+    setSelectClaim: (claim) => ({
+        type: ActionTypes.SET_SELECTED_CLAIM,
+        selectedDataHash: claim,
+    }),
+    setSelectSentence: (sentence) => ({
+        type: ActionTypes.SET_SELECTED_SENTENCE,
+        selectedDataHash: sentence,
+    }),
 };
 
 export default actions;

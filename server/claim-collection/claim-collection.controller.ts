@@ -99,6 +99,28 @@ export class ClaimCollectionController {
             .render(
                 req,
                 res,
+                "/claim-collection-view",
+                Object.assign(parsedUrl.query, { claimCollection })
+            );
+    }
+
+    @Get("claim-collection/:id/edit")
+    public async claimCollectionEdit(
+        @Param("id") claimCollectionId,
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+
+        const claimCollection = (
+            await this.claimCollectionService.getById(claimCollectionId)
+        ).toObject();
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
                 "/claim-collection-editor",
                 Object.assign(parsedUrl.query, { claimCollection })
             );

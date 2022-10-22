@@ -6,49 +6,22 @@ const request = axios.create({
     baseURL: `/api/claim-collection`,
 });
 
-// const get = (options = {}) => {
-//     const params = {
-//         page: options.page ? options.page - 1 : 0,
-//         order: options.order || "asc",
-//         name: options.searchName,
-//         pageSize: options.pageSize ? options.pageSize : 5,
-//         personality: options.personality,
-//         language: options?.i18n?.languages[0],
-//     };
-//
-//     return request
-//         .get("/", { params })
-//         .then((response) => {
-//             const { claims, totalPages, totalClaims } = response.data;
-//             if (options.fetchOnly) {
-//                 return {
-//                     data: claims,
-//                     total: totalClaims,
-//                     totalPages,
-//                 };
-//             }
-//         })
-//         .catch((e) => {
-//             throw e;
-//         });
-// };
-//
-// const getById = (id, t, params = {}) => {
-//     return request
-//         .get(
-//             `${id}`,
-//             {
-//                 params,
-//             },
-//             { withCredentials: true }
-//         )
-//         .then((response) => {
-//             return response.data;
-//         })
-//         .catch(() => {
-//             message.error(t("claim:errorWhileFetching"));
-//         });
-// };
+const getById = (id, t, params = {}) => {
+    return request
+        .get(
+            `${id}`,
+            {
+                params,
+            },
+            { withCredentials: true }
+        )
+        .then((response) => {
+            return response.data;
+        })
+        .catch(() => {
+            // TODO: sentry
+        });
+};
 
 // const save = (t, claim = {}) => {
 //     return request
@@ -103,5 +76,6 @@ const update = (id, t, params = {}) => {
 };
 
 export default {
+    getById,
     update,
 };

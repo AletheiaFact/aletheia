@@ -13,6 +13,9 @@ export enum ActionTypes {
     SET_BREAKPOINTS,
     SET_USER_ROLE,
     SET_SELECTED_DATA_HASH,
+    SET_SELECTED_PERSONALITY,
+    SET_SELECTED_CLAIM,
+    SET_SELECTED_SENTENCE,
 }
 
 export interface RootState {
@@ -31,4 +34,7 @@ export interface RootState {
     role: string;
     vw: WidthBreakpoints;
     selectedDataHash: string;
+    selectedPersonality: any;
+    selectedClaim: any;
+    selectedSentence: any;
 }

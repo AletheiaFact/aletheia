@@ -257,8 +257,6 @@ const ClaimView = ({ personality, claim, href, userId }) => {
                     claim={claim?.title}
                 />
                 <ClaimReviewDrawer
-                    personality={personality}
-                    claim={claim}
                     sentence={selectedSentence}
                     userId={userId}
                 />
