@@ -19,7 +19,6 @@ const ClaimReviewForm = ({
     claimId,
     personalityId,
     sentenceHash,
-    sitekey,
     userIsReviewer,
     userId,
 }) => {
@@ -100,7 +99,6 @@ const ClaimReviewForm = ({
                         sentence_hash={sentenceHash}
                         personality={personalityId}
                         claim={claimId}
-                        sitekey={sitekey}
                     />
                 )}
             </Col>

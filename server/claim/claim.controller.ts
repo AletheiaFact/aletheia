@@ -140,7 +140,7 @@ export class ClaimController {
                 sentence_hash
             );
 
-        const description = await this.claimReviewService.verifyIfReviewIsHdden(
+        const description = await this.claimReviewService.getDescriptionForHide(
             claimReview
         );
 
@@ -154,7 +154,6 @@ export class ClaimController {
                 sentence,
                 claimReviewTask,
                 claimReview,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 description,
             })
         );
@@ -178,7 +177,6 @@ export class ClaimController {
             "/claim-create",
             Object.assign(parsedUrl.query, {
                 personality,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
             })
         );
     }
@@ -211,7 +209,6 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 personality,
                 claim,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
             })
         );
     }

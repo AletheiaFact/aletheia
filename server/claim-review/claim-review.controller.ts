@@ -34,4 +34,15 @@ export class ClaimReviewController {
     getLatestReviews() {
         return this.claimReviewService.getLatestReviews();
     }
+
+    @IsPublic()
+    @Get("api/review/:sentence_hash")
+    async getReviewBySentenceHash(@Param("sentence_hash") sentence_hash) {
+        const review = await this.claimReviewService.getReviewBySentenceHash(
+            sentence_hash
+        );
+        const descriptionForHide =
+            await this.claimReviewService.getDescriptionForHide(review);
+        return { review, descriptionForHide };
+    }
 }

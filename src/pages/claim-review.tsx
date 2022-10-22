@@ -6,19 +6,18 @@ import { useDispatch } from "react-redux";
 
 import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
+import SocialMediaShare from "../components/SocialMediaShare";
+import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
 import { ClassificationEnum, Roles } from "../machine/enums";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
-import SocialMediaShare from "../components/SocialMediaShare";
 
 export interface ClaimReviewPageProps {
     personality: any;
     claim: any;
     sentence: any;
-    sitekey: string;
     href: string;
     claimReviewTask: any;
     claimReview: any;
@@ -101,6 +100,10 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             <GlobalStateMachineProvider
                 data_hash={props.sentence.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
+                publishedReview={{
+                    review: props.claimReview,
+                    descriptionForHide: props.description,
+                }}
             >
                 <ClaimReviewView {...props} />
             </GlobalStateMachineProvider>
@@ -126,7 +129,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             sentence: JSON.parse(JSON.stringify(query.sentence)),
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
-            sitekey: query.sitekey,
             description: query.description,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,

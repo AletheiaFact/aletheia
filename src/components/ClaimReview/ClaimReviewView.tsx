@@ -1,30 +1,28 @@
 import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
+import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
 import { Roles } from "../../machine/enums";
-import { publishedSelector, reviewDataSelector } from "../../machine/selectors";
+import { reviewDataSelector } from "../../machine/selectors";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewHeader from "./ClaimReviewHeader";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
 
 export interface ClaimReviewViewProps {
-    claimReview?: any;
     personality: any;
     claim: any;
     sentence: { data_hash: string; content: string; topics: string[] };
-    sitekey: string;
-    description: string;
     userId?: string;
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
-    const { claimReview, description } = props;
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService, publishedReview } = useContext(
+        GlobalStateMachineContext
+    );
+    const { review, descriptionForHide } = publishedReview || {};
 
     const reviewData = useSelector(machineService, reviewDataSelector);
-    const isPublished = useSelector(machineService, publishedSelector);
 
     const { role } = useAppSelector((state) => state);
 
@@ -36,29 +34,26 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
         <div>
             <ClaimReviewHeader
                 classification={
-                    claimReview?.report?.classification ||
-                    reviewData?.classification
+                    review?.report?.classification || reviewData?.classification
                 }
-                isHidden={claimReview?.isHidden}
-                hideDescription={description}
-                isPublished={isPublished}
+                hideDescription={descriptionForHide}
                 userIsReviewer={userIsReviewer}
+                userIsNotRegular={userIsNotRegular}
                 userIsAssignee={userIsAssignee}
                 {...props}
             />
             <SentenceReportView
-                context={claimReview?.report || reviewData}
+                context={review?.report || reviewData}
                 personality={props.personality}
                 claim={props.claim}
                 userIsNotRegular={userIsNotRegular}
                 userIsReviewer={userIsReviewer}
-                isHidden={claimReview?.isHidden}
+                isHidden={review?.isHidden}
             />
             <ClaimReviewForm
                 claimId={props.claim._id}
                 personalityId={props.personality._id}
                 sentenceHash={props.sentence.data_hash}
-                sitekey={props.sitekey}
                 userIsReviewer={userIsReviewer}
                 userId={props.userId}
             />

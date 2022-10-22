@@ -7,20 +7,20 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
+import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
+import ClaimReviewDrawer from "../ClaimReview/ClaimReviewDrawer";
 import Loading from "../Loading";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import ToggleSection from "../ToggleSection";
 import ClaimParagraph from "./ClaimParagraph";
-import ClaimReviewDrawer from "../ClaimReview/ClaimReviewDrawer";
-import { useAppSelector } from "../../store/store";
 
 const { Title, Paragraph } = Typography;
 
-const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
+const ClaimView = ({ personality, claim, href, userId }) => {
     const { t, i18n } = useTranslation();
     moment.locale(i18n.language);
     const { title, stats } = claim;
@@ -262,8 +262,6 @@ const ClaimView = ({ personality, claim, href, userId, sitekey }) => {
                 <ClaimReviewDrawer
                     personality={personality}
                     claim={claim}
-                    description={""}
-                    sitekey={sitekey}
                     sentence={selectedSentence}
                     userId={userId}
                 />
