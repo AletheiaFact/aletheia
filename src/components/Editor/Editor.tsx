@@ -10,10 +10,7 @@ import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension
 import { getEditorClaimCardContentHtml } from "./EditorClaimCard/EditorClaimCard";
 import claimCollectionApi from "../../api/claimCollection";
 import { useTranslation } from "next-i18next";
-import {
-    CallbackTimerProvider,
-    CallbackTimerMachine,
-} from "./CallbackTimerProvider";
+import { CallbackTimerProvider } from "./CallbackTimerProvider";
 import { ThemeProvider } from "@remirror/react";
 import { AllStyledComponent } from "@remirror/styles/emotion";
 import { Row } from "antd";
@@ -30,6 +27,7 @@ const EditorAutoSaveTimerProvider = ({ claimCollectionId, children }) => {
             editorContentObject: getJSON(),
         });
     }, [getJSON]);
+
     return (
         <CallbackTimerProvider callback={autoSaveCallback}>
             {children}
@@ -41,12 +39,12 @@ export interface IEditorProps {
     claimCollection: any;
 }
 
-const Editor: React.FC = ({ claimCollection }: IEditorProps) => {
+const Editor = ({ claimCollection }: IEditorProps) => {
     const { personalities } = claimCollection;
     const { t } = useTranslation();
     const { manager, state } = useRemirror({
         extensions,
-        content: claimCollection?.editorContentObject || {},
+        content: claimCollection?.editorContentObject,
         stringHandler: "html",
     });
 

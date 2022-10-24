@@ -15,6 +15,7 @@ const Editor = dynamic<IEditorProps>(
 const ClaimCollectionEditor: NextPage<{ data: string }> = ({
     claimCollection,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+    // @ts-ignore
     return <Editor claimCollection={claimCollection} />;
 };
 

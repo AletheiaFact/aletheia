@@ -1,10 +1,4 @@
-import {
-    IsArray,
-    IsDate,
-    IsNotEmpty,
-    IsObject,
-    IsString,
-} from "class-validator";
+import { IsArray, IsDate, IsNotEmpty, IsString } from "class-validator";
 
 import { Personality } from "../../personality/schemas/personality.schema";
 
@@ -17,10 +11,6 @@ export class CreateClaimCollectionDto {
     @IsString()
     @IsNotEmpty()
     title: string;
-
-    @IsObject()
-    @IsNotEmpty()
-    editorContentObject: any; // TODO: define a type for the editor content object
 
     @IsArray()
     @IsNotEmpty()

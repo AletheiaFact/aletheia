@@ -15,7 +15,7 @@ import { UpdateClaimCollectionDto } from "./dto/update-claim-collection.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { parse } from "url";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { ViewService } from "../view/view.service";
 import { PersonalityService } from "../personality/personality.service";
 import { BaseRequest } from "../types";
