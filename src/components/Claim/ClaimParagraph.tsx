@@ -12,7 +12,9 @@ const ClaimParagraph = ({ paragraph, showHighlights, handleSentenceClick }) => {
                 <ClaimSentence
                     handleSentenceClick={() => {
                         dispatch(actions.setSelectSentence(sentence));
-                        handleSentenceClick();
+                        if (handleSentenceClick) {
+                            handleSentenceClick();
+                        }
                     }}
                     key={sentence.props.id}
                     content={sentence.content}

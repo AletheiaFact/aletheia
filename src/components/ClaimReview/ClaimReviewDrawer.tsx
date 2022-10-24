@@ -9,9 +9,9 @@ import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
 
-import ClaimReviewView, { ClaimReviewViewProps } from "./ClaimReviewView";
+import ClaimReviewView from "./ClaimReviewView";
 
-const ClaimReviewDrawer = (props: Partial<ClaimReviewViewProps>) => {
+const ClaimReviewDrawer = () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const {
@@ -85,7 +85,6 @@ const ClaimReviewDrawer = (props: Partial<ClaimReviewViewProps>) => {
                     personality={personality}
                     claim={claim}
                     sentence={sentence}
-                    {...props}
                 />
             </GlobalStateMachineProvider>
         </Drawer>

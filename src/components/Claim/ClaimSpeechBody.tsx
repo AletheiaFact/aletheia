@@ -4,7 +4,7 @@ import React from "react";
 const ClaimSpeechBody = (props: {
     paragraphs: any;
     showHighlights: boolean;
-    handleSentenceClick: any;
+    handleSentenceClick?: any;
 }) => {
     return (
         <>

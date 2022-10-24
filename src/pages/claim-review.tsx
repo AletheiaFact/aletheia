@@ -10,7 +10,7 @@ import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
 import SocialMediaShare from "../components/SocialMediaShare";
 import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
-import { ClassificationEnum, Roles } from "../machine/enums";
+import { ClassificationEnum } from "../machine/enums";
 import actions from "../store/actions";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";

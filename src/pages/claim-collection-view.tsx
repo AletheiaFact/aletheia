@@ -3,34 +3,23 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 import { GetLocale } from "../utils/GetLocale";
 import ClaimCollectionView from "../components/ClaimCollection/ClaimCollectionView";
-import { ActionTypes } from "../store/types";
-import { Roles } from "../machine/enums";
-import { useDispatch } from "react-redux";
 
-const ClaimCollectionEditor: NextPage<any> = ({
+import { useDispatch } from "react-redux";
+import actions from "../store/actions";
+
+const ClaimCollectionViewPage: NextPage<any> = ({
     claimCollection,
     userId,
     isLoggedIn,
     userRole,
-}): any => {
+}: InferGetServerSidePropsType<typeof getServerSideProps>): any => {
     const dispatch = useDispatch();
 
-    dispatch({
-        type: ActionTypes.SET_LOGIN_STATUS,
-        login: !!isLoggedIn,
-    });
+    dispatch(actions.setLoginStatus(isLoggedIn));
+    dispatch(actions.setUserId(userId));
+    dispatch(actions.setUserRole(userRole));
 
-    dispatch({
-        type: ActionTypes.SET_USER_ROLE,
-        role: userRole || Roles.Regular,
-    });
-
-    return (
-        <ClaimCollectionView
-            claimCollection={claimCollection}
-            userId={userId}
-        />
-    );
+    return <ClaimCollectionView claimCollection={claimCollection} />;
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
@@ -46,4 +35,4 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     };
 }
 
-export default ClaimCollectionEditor;
+export default ClaimCollectionViewPage;

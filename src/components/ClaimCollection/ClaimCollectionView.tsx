@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "next-i18next";
-import claimCollectionApi from "../../api/claimCollection";
+import claimCollectionApi from "../../api/claimCollectionApi";
 import { CallbackTimerProvider } from "../Editor/CallbackTimerProvider";
 import ClaimCollectionTimelineWrapper from "./ClaimCollectionTimelineWrapper";
 import ClaimCollectionHeader from "./ClaimCollectionHeader";

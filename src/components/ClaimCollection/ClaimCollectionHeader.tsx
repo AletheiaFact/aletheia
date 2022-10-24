@@ -1,9 +1,9 @@
-import PersonalityCard from "../Personality/PersonalityCard";
-import { Col, Row } from "antd";
+import { Col, Row, Typography } from "antd";
 import React from "react";
-import colors from "../../styles/colors";
+
 import { useAppSelector } from "../../store/store";
-import { Typography } from "antd";
+import colors from "../../styles/colors";
+import PersonalityCard from "../Personality/PersonalityCard";
 
 const { Title } = Typography;
 const ClaimCollectionHeader = ({ title, personalities }) => {

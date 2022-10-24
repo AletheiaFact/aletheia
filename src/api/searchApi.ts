@@ -25,7 +25,6 @@ const getResults = (dispatch, options = {}) => {
         })
         .catch((e) => {
             // TODO: sentry
-            // console.log("e", e);
         });
 };
 

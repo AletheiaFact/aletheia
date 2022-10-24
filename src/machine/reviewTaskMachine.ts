@@ -156,7 +156,6 @@ export const transitionHandler = (state) => {
             })
             .catch((e) => {
                 // TODO: sentry
-                // console.log(e)
             })
             .finally(() => resetIsLoading());
     }

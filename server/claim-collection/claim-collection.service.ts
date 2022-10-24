@@ -28,22 +28,22 @@ export class ClaimCollectionService {
             .sort({ _id: order });
     }
 
-    getById(claimReviewTaskId: string) {
-        return this.ClaimCollectionModel.findById(claimReviewTaskId).populate(
+    getById(claimCollectionId: string) {
+        return this.ClaimCollectionModel.findById(claimCollectionId).populate(
             "personalities"
         );
     }
 
-    async create(claimReviewTaskBody: CreateClaimCollectionDto) {
-        const slug = slugify(claimReviewTaskBody.title, {
+    async create(claimCollectionBody: CreateClaimCollectionDto) {
+        const slug = slugify(claimCollectionBody.title, {
             lower: true, // convert to lower case, defaults to `false`
             strict: true, // strip special characters except replacement, defaults to `false`
         });
-        const newClaimReviewTask = new this.ClaimCollectionModel({
-            ...claimReviewTaskBody,
+        const newClaimCollection = new this.ClaimCollectionModel({
+            ...claimCollectionBody,
             slug,
         });
-        return newClaimReviewTask.save();
+        return newClaimCollection.save();
     }
 
     async update(

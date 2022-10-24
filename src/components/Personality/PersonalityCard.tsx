@@ -21,7 +21,7 @@ interface PersonalityCardProps {
     mobile?: boolean;
     fullWidth?: boolean;
     hoistAvatar?: boolean;
-    style?: CSSProperties | undefined;
+    style?: CSSProperties;
     onClick?: (personality: any) => {};
     titleLevel?: 1 | 2 | 3 | 4 | 5;
 }
