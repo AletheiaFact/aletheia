@@ -1,15 +1,14 @@
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useDispatch } from "react-redux";
 
+import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimView from "../components/Claim/ClaimView";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
+import actions from "../store/actions";
 import { GetLocale } from "../utils/GetLocale";
-import { useDispatch } from "react-redux";
-import { ActionTypes } from "../store/types";
-import AffixButton from "../components/AffixButton/AffixButton";
-import { Roles } from "../machine/enums";
 
 export interface ClaimPageProps {
     personality: any;
@@ -21,17 +20,13 @@ export interface ClaimPageProps {
 }
 
 const ClaimPage: NextPage<ClaimPageProps> = (props) => {
-    const { personality, claim, isLoggedIn, userRole } = props;
+    const { personality, claim, isLoggedIn, userRole, userId } = props;
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    dispatch({
-        type: ActionTypes.SET_LOGIN_STATUS,
-        login: isLoggedIn,
-    });
-    dispatch({
-        type: ActionTypes.SET_USER_ROLE,
-        role: userRole || Roles.Regular,
-    });
+
+    dispatch(actions.setLoginStatus(isLoggedIn));
+    dispatch(actions.setUserId(userId));
+    dispatch(actions.setUserRole(userRole));
 
     const jsonld = {
         "@context": "https://schema.org",

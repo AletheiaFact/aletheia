@@ -4,6 +4,7 @@ import React from "react";
 import { useMediaQueryBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { useAppSelector } from "../store/store";
 import colors from "../styles/colors";
+import ClaimReviewDrawer from "./ClaimReview/ClaimReviewDrawer";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
@@ -29,6 +30,7 @@ const MainApp = ({ children }) => {
                 <Footer />
                 {enableOverlay && <OverlaySearchResults />}
             </Layout>
+            <ClaimReviewDrawer />
         </Layout>
     );
 };

@@ -97,6 +97,11 @@ const reducer = (state, action) => {
                 ...state,
                 selectedSentence: action.selectedSentence,
             };
+        case ActionTypes.SET_USER_ID:
+            return {
+                ...state,
+                userId: action.userId,
+            };
         default:
             return state;
     }

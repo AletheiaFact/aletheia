@@ -4,11 +4,10 @@ import { useActor } from "@xstate/react";
 import { useTranslation } from "next-i18next";
 import { Timeline } from "antd";
 import { EditorClaimCardNodeType } from "../Editor/EditorClaimCard/EditorClaimCardExtension";
-import ClaimReviewDrawer from "../ClaimReview/ClaimReviewDrawer";
 import ClaimCollectionClaimCardWrapper from "./ClaimCollectionClaimCardWrapper";
 
-const ClaimCollectionTimelineWrapper = ({ collections, userId }) => {
-    const [timelineData, setTimelineData] = useState(collections);
+const ClaimCollectionTimelineWrapper = ({ collections }) => {
+    const [timelineData, setTimelineData] = useState(collections.reverse());
     const { timerService } = useContext<any>(GlobalStateContext);
     const [state]: any = useActor<any>(timerService);
     const { t } = useTranslation();
@@ -16,7 +15,9 @@ const ClaimCollectionTimelineWrapper = ({ collections, userId }) => {
     useEffect(() => {
         const claimCollection = state?.context?.callbackResult;
         if (claimCollection?.editorContentObject?.content) {
-            setTimelineData(claimCollection?.editorContentObject?.content);
+            setTimelineData(
+                claimCollection?.editorContentObject?.content.reverse()
+            );
         }
     }, [state?.context?.callbackResult]);
     return (
@@ -29,7 +30,7 @@ const ClaimCollectionTimelineWrapper = ({ collections, userId }) => {
                 reverse={true}
             >
                 {Array.isArray(timelineData) &&
-                    timelineData.reverse().map((timelineItem) => {
+                    timelineData.map((timelineItem) => {
                         if (timelineItem.type === EditorClaimCardNodeType) {
                             const { personalityId, claimId, cardId } =
                                 timelineItem.attrs;
@@ -47,7 +48,6 @@ const ClaimCollectionTimelineWrapper = ({ collections, userId }) => {
                         }
                     })}
             </Timeline>
-            <ClaimReviewDrawer userId={userId} />
         </>
     );
 };

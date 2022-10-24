@@ -13,7 +13,6 @@ export interface ClaimReviewViewProps {
     personality: any;
     claim: any;
     sentence: { data_hash: string; content: string; topics: string[] };
-    userId?: string;
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
@@ -24,11 +23,11 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
 
     const reviewData = useSelector(machineService, reviewDataSelector);
 
-    const { role } = useAppSelector((state) => state);
+    const { role, userId } = useAppSelector((state) => state);
 
     const userIsNotRegular = !(role === Roles.Regular || role === null);
-    const userIsReviewer = reviewData.reviewerId === props.userId;
-    const userIsAssignee = reviewData.usersId.includes(props.userId);
+    const userIsReviewer = reviewData.reviewerId === userId;
+    const userIsAssignee = reviewData.usersId.includes(userId);
 
     return (
         <div>
@@ -55,7 +54,6 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 personalityId={props.personality._id}
                 sentenceHash={props.sentence.data_hash}
                 userIsReviewer={userIsReviewer}
-                userId={props.userId}
             />
         </div>
     );

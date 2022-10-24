@@ -8,7 +8,7 @@ import { Col, Row } from "antd";
 import CTARegistration from "../Home/CTARegistration";
 import { useAppSelector } from "../../store/store";
 
-const ClaimCollectionView = ({ claimCollection, userId }) => {
+const ClaimCollectionView = ({ claimCollection }) => {
     const { t } = useTranslation();
     const collections = claimCollection?.editorContentObject?.content;
 
@@ -40,11 +40,10 @@ const ClaimCollectionView = ({ claimCollection, userId }) => {
                     <CallbackTimerProvider callback={updateTimeline}>
                         <ClaimCollectionTimelineWrapper
                             collections={collections}
-                            userId={userId}
                         />
                     </CallbackTimerProvider>
                 </Row>
-                {true && (
+                {!isLoggedIn && (
                     <Col xs={24} lg={18} order={3}>
                         <CTARegistration />
                     </Col>

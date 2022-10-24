@@ -6,23 +6,21 @@ import moment from "moment";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
-import { useAppSelector } from "../../store/store";
+import actions from "../../store/actions";
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
-import ClaimReviewDrawer from "../ClaimReview/ClaimReviewDrawer";
 import Loading from "../Loading";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import ToggleSection from "../ToggleSection";
 import ClaimSpeechBody from "./ClaimSpeechBody";
-import actions from "../../store/actions";
-import { useDispatch } from "react-redux";
 
 const { Title, Paragraph } = Typography;
 
-const ClaimView = ({ personality, claim, href, userId }) => {
+const ClaimView = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     moment.locale(i18n.language);
@@ -247,7 +245,6 @@ const ClaimView = ({ personality, claim, href, userId }) => {
                     href={href}
                     claim={claim?.title}
                 />
-                <ClaimReviewDrawer userId={userId} />
             </>
         );
     } else {

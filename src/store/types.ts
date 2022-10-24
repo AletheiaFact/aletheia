@@ -16,6 +16,7 @@ export enum ActionTypes {
     SET_SELECTED_PERSONALITY,
     SET_SELECTED_CLAIM,
     SET_SELECTED_SENTENCE,
+    SET_USER_ID,
 }
 
 export interface RootState {
@@ -37,4 +38,5 @@ export interface RootState {
     selectedPersonality: any;
     selectedClaim: any;
     selectedSentence: any;
+    userId: string;
 }

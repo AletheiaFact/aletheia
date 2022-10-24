@@ -1,3 +1,4 @@
+import { Roles } from "../machine/enums";
 import { ActionTypes } from "./types";
 
 const actions = {
@@ -40,6 +41,18 @@ const actions = {
     setSelectSentence: (sentence) => ({
         type: ActionTypes.SET_SELECTED_SENTENCE,
         selectedSentence: sentence,
+    }),
+    setLoginStatus: (isLoggedIn) => ({
+        type: ActionTypes.SET_LOGIN_STATUS,
+        login: isLoggedIn,
+    }),
+    setUserId: (userId) => ({
+        type: ActionTypes.SET_USER_ID,
+        userId,
+    }),
+    setUserRole: (role) => ({
+        type: ActionTypes.SET_USER_ROLE,
+        role: role || Roles.Regular,
     }),
 };
 
