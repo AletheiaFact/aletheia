@@ -2,6 +2,7 @@ import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
+import AletheiaVideo from "../AletheiaVideo";
 import CTASection from "./CTASection";
 import HomeHeaderStyle from "./HomeHeader.style";
 
@@ -51,14 +52,7 @@ const HomeHeader = () => {
 
                 <Col sm={18} md={10}>
                     <div className="video-container">
-                        <iframe
-                            width="100%"
-                            height="100%"
-                            frameBorder="0"
-                            allowFullScreen
-                            title="video"
-                            src={`https://www.youtube.com/embed/cWDqrdv-O6k`}
-                        />
+                        <AletheiaVideo />
                     </div>
                 </Col>
             </Row>

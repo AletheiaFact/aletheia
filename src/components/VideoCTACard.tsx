@@ -1,5 +1,6 @@
 import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
+import AletheiaVideo from "./AletheiaVideo";
 
 const VideoCTACard = () => {
     const { t } = useTranslation();
@@ -27,17 +28,12 @@ const VideoCTACard = () => {
             </p>
             <div
                 style={{
+                    display: "flex",
                     padding: "16px 30px 27px 30px",
+                    aspectRatio: "16 / 9",
                 }}
             >
-                <iframe
-                    width="100%"
-                    height="129px"
-                    frameBorder="0"
-                    allowFullScreen
-                    title="video"
-                    src={`https://www.youtube.com/embed/cWDqrdv-O6k`}
-                />
+                <AletheiaVideo />
             </div>
         </div>
     );
