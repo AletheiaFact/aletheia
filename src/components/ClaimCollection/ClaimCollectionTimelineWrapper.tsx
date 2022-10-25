@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { GlobalStateContext } from "../Editor/CallbackTimerProvider";
 import { useActor } from "@xstate/react";
 import { useTranslation } from "next-i18next";
@@ -7,19 +7,18 @@ import { EditorClaimCardNodeType } from "../Editor/EditorClaimCard/EditorClaimCa
 import ClaimCollectionClaimCardWrapper from "./ClaimCollectionClaimCardWrapper";
 
 const ClaimCollectionTimelineWrapper = ({ collections }) => {
-    const [timelineData, setTimelineData] = useState(collections.reverse());
+    const [timelineData, setTimelineData] = useState(collections);
     const { timerService } = useContext<any>(GlobalStateContext);
     const [state]: any = useActor<any>(timerService);
     const { t } = useTranslation();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const claimCollection = state?.context?.callbackResult;
-        if (claimCollection?.editorContentObject?.content) {
-            setTimelineData(
-                claimCollection?.editorContentObject?.content.reverse()
-            );
+        if (claimCollection?.collections) {
+            setTimelineData(claimCollection?.collections);
         }
     }, [state?.context?.callbackResult]);
+
     return (
         <>
             <Timeline

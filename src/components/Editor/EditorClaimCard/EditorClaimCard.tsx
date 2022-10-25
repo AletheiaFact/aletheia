@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import personalityApi from "../../../api/personality";
 import claimApi from "../../../api/claim";
 import ClaimCardHeader from "../../Claim/ClaimCardHeader";
@@ -8,6 +8,7 @@ import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
 import { uniqueId } from "remirror";
 import colors from "../../../styles/colors";
 import ClaimSkeleton from "../../Skeleton/ClaimSkeleton";
+import { ClaimCollectionContext } from "../Editor";
 
 const EditorClaimCardContent = ({ children }) => {
     return (
@@ -36,7 +37,7 @@ export const EditorClaimCard = ({
     const { t } = useTranslation();
     const [personality, setPersonality] = useState(undefined);
     const [isLoading, setIsLoading] = useState(false);
-
+    const { sources, title } = useContext<any>(ClaimCollectionContext);
     const createClaimFromEditor = async (
         t,
         { personality, content },
@@ -46,12 +47,12 @@ export const EditorClaimCard = ({
         setIsLoading(true);
         const res = await claimApi.save(t, {
             content,
-            title: "Debate Test " + date.toString(), // TODO: define a global title for all claims
+            title: `${title} ${date.toISOString().slice(11, 19)}`,
             personality: personality._id,
             contentModel: "Speech",
             date,
-            sources: ["https://test.org"], // TODO: define a global source for the debate
-            recaptcha: "lalala", // TODO: bypass recaptcha for this action
+            sources,
+            recaptcha: "dummy", // the server will get the referer and bypass recaptcha
         });
         setIsLoading(false);
         setClaim(res);
@@ -133,18 +134,27 @@ export const EditorClaimCard = ({
                         </Button>
                     </>
                 ) : (
-                    <EditorClaimCardContent>
-                        {claim && (
-                            <ClaimSpeechBody
-                                paragraphs={
-                                    Array.isArray(claim.content)
-                                        ? claim.content
-                                        : [claim.content]
-                                }
-                                showHighlights={true}
-                            />
-                        )}
-                    </EditorClaimCardContent>
+                    <div
+                        style={{
+                            width: "100%",
+                            justifyContent: "center",
+                            display: "flex",
+                        }}
+                        contentEditable={false}
+                    >
+                        <EditorClaimCardContent>
+                            {claim && (
+                                <ClaimSpeechBody
+                                    paragraphs={
+                                        Array.isArray(claim.content)
+                                            ? claim.content
+                                            : [claim.content]
+                                    }
+                                    showHighlights={true}
+                                />
+                            )}
+                        </EditorClaimCardContent>
+                    </div>
                 )}
             </div>
         </div>

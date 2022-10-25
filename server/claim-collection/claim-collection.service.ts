@@ -11,6 +11,8 @@ import {
 } from "./schemas/claim-collection.schema";
 import slugify from "slugify";
 
+const EditorClaimCardNodeType = "editor-claim-card";
+
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimCollectionService {
     constructor(
@@ -28,10 +30,42 @@ export class ClaimCollectionService {
             .sort({ _id: order });
     }
 
-    getById(claimCollectionId: string) {
-        return this.ClaimCollectionModel.findById(claimCollectionId).populate(
-            "personalities"
-        );
+    async getById(
+        newClaimCollectionId: string,
+        filterItems = false,
+        reverse = false,
+        lastCollectionItem = null
+    ) {
+        const claimCollection: any = (
+            await this.ClaimCollectionModel.findById(newClaimCollectionId)
+                .populate("personalities")
+                .populate("sources")
+        ).toObject();
+
+        if (filterItems) {
+            // Filter collections for view
+            claimCollection.collections =
+                claimCollection?.editorContentObject?.content || [];
+            claimCollection.collections = claimCollection.collections.filter(
+                (c) => {
+                    return (
+                        c.type === EditorClaimCardNodeType &&
+                        c.attrs.claimId !== null
+                    );
+                }
+            );
+            console.log(filterItems, reverse);
+            claimCollection.collections = reverse
+                ? claimCollection.collections.reverse()
+                : claimCollection.collections;
+            delete claimCollection.editorContentObject;
+        }
+
+        if (lastCollectionItem) {
+            // TODO: define a logic to only return data if the user doesn't have it.
+        }
+
+        return claimCollection;
     }
 
     async create(claimCollectionBody: CreateClaimCollectionDto) {

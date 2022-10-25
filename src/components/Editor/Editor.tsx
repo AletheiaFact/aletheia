@@ -1,19 +1,19 @@
-import React, { useCallback } from "react";
+import React, { createContext, useCallback } from "react";
 import {
     EditorComponent,
     Remirror,
-    useCommands,
     useHelpers,
     useRemirror,
     ThemeProvider,
 } from "@remirror/react";
 import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
-import { getEditorClaimCardContentHtml } from "./EditorClaimCard/EditorClaimCard";
 import claimCollectionApi from "../../api/claimCollectionApi";
 import { useTranslation } from "next-i18next";
 import { AllStyledComponent } from "@remirror/styles/emotion";
-import { Row } from "antd";
+import { Affix, Row } from "antd";
 import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
+import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
+import colors from "../../styles/colors";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
@@ -22,6 +22,8 @@ const extensions = () => [
 export interface IEditorProps {
     claimCollection: any;
 }
+
+export const ClaimCollectionContext = createContext({});
 
 const Editor = ({ claimCollection }: IEditorProps) => {
     const { personalities } = claimCollection;
@@ -50,30 +52,6 @@ const Editor = ({ claimCollection }: IEditorProps) => {
         );
     }
 
-    const LoadButton = ({ personalityId, personalityName }) => {
-        const commands = useCommands();
-        const handleClick = useCallback(() => {
-            commands.focus();
-            commands.insertHtml(
-                getEditorClaimCardContentHtml({
-                    personalityId,
-                }),
-                {
-                    selection: 0,
-                }
-            );
-        }, [commands, personalityId]);
-
-        return (
-            <button
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={handleClick}
-            >
-                Load {personalityName}
-            </button>
-        );
-    };
-
     return (
         <Row
             style={{
@@ -82,37 +60,59 @@ const Editor = ({ claimCollection }: IEditorProps) => {
                 justifyContent: "center",
             }}
         >
-            <AllStyledComponent
-                style={{
-                    padding: "10px",
-                    width: "90%",
+            <ClaimCollectionContext.Provider
+                value={{
+                    sources: claimCollection?.sources,
+                    title: claimCollection,
                 }}
             >
-                <ThemeProvider>
-                    <Remirror
-                        manager={manager}
-                        initialContent={state}
-                        autoFocus={true}
-                    >
-                        <EditorAutoSaveTimerProvider
-                            claimCollectionId={claimCollection._id}
+                <AllStyledComponent
+                    style={{
+                        padding: "10px",
+                        width: "90%",
+                    }}
+                >
+                    <ThemeProvider>
+                        <Remirror
+                            manager={manager}
+                            initialContent={state}
+                            autoFocus={true}
                         >
-                            {Array.isArray(personalities) &&
-                                personalities.map((personality) => {
-                                    return (
-                                        <LoadButton
-                                            key={personality._id}
-                                            personalityId={personality._id}
-                                            personalityName={personality.name}
-                                        />
-                                    );
-                                })}
-                            <EditorComponent />
-                            <SaveButton />
-                        </EditorAutoSaveTimerProvider>
-                    </Remirror>
-                </ThemeProvider>
-            </AllStyledComponent>
+                            <EditorAutoSaveTimerProvider
+                                claimCollectionId={claimCollection._id}
+                            >
+                                <Affix>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-evenly",
+                                            backgroundColor: colors.grayPrimary,
+                                            padding: "10px",
+                                        }}
+                                    >
+                                        {Array.isArray(personalities) &&
+                                            personalities.map((personality) => {
+                                                return (
+                                                    <AddPersonalityEditorButton
+                                                        key={personality._id}
+                                                        personalityId={
+                                                            personality._id
+                                                        }
+                                                        personalityName={
+                                                            personality.name
+                                                        }
+                                                    />
+                                                );
+                                            })}
+                                    </div>
+                                </Affix>
+                                <EditorComponent />
+                                <SaveButton />
+                            </EditorAutoSaveTimerProvider>
+                        </Remirror>
+                    </ThemeProvider>
+                </AllStyledComponent>
+            </ClaimCollectionContext.Provider>
         </Row>
     );
 };

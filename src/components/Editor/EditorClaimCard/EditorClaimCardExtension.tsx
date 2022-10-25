@@ -38,6 +38,8 @@ class EditorClaimCardExtension extends NodeExtension {
         return {
             draggable: true,
             selectable: true,
+            atom: true,
+            isolating: true,
             attrs: {
                 personalityId: { default: "" },
                 claimId: { default: "" },

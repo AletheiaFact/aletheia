@@ -10,11 +10,32 @@ import { useAppSelector } from "../../store/store";
 
 const ClaimCollectionView = ({ claimCollection }) => {
     const { t } = useTranslation();
-    const collections = claimCollection?.editorContentObject?.content;
-
-    const updateTimeline = useCallback(() => {
-        return claimCollectionApi.getById(claimCollection?._id, t);
-    }, [claimCollection]);
+    const collections = claimCollection?.collections;
+    const lastCollectionItem = collections
+        ? collections[collections.length - 1]
+        : [];
+    const updateTimeline = useCallback(
+        (context: any) => {
+            // TODO: send the last collection item id to load only the necessary data
+            return claimCollectionApi
+                .getById(claimCollection?._id, t, {
+                    reverse: true,
+                    lastCollectionItem:
+                        context.lastCollectionItemId ||
+                        lastCollectionItem?.attrs?.cardId,
+                })
+                .then((claimCollection) => {
+                    const collections = claimCollection?.collections;
+                    const lastCollectionItem = collections
+                        ? collections[collections.length - 1]
+                        : [];
+                    context.lastCollectionItemId =
+                        lastCollectionItem?.attrs?.cardId;
+                    return claimCollection;
+                });
+        },
+        [claimCollection?._id, lastCollectionItem]
+    );
 
     const { isLoggedIn } = useAppSelector((state) => ({
         isLoggedIn: state?.login,

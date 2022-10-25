@@ -26,7 +26,7 @@ export const CallbackTimerMachine = {
                 src: (context) => {
                     return new Promise((resolve) => {
                         setTimeout(() => {
-                            context.autoSaveCallback().then(resolve);
+                            context.autoSaveCallback(context).then(resolve);
                         }, 1000 * context.interval);
                     });
                 },

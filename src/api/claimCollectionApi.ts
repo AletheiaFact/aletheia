@@ -23,7 +23,6 @@ const update = (id, t, params = {}) => {
         .put(`${id}`, params)
         .then((response) => {
             const { _id } = response.data;
-            message.success(t("claimForm:successUpdateMessage"));
             return _id;
         })
         .catch((err) => {
@@ -32,6 +31,7 @@ const update = (id, t, params = {}) => {
                 // TODO: Track unknow errors
                 // TODO: use Sentry instead
                 // console.log(err);
+                return;
             }
             const { data } = response;
             message.error(

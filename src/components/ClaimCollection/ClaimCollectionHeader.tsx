@@ -55,6 +55,7 @@ const ClaimCollectionHeader = ({ title, personalities }) => {
                                   padding: "30px 0px",
                                   width: "40%",
                               }}
+                              key={p._id}
                           >
                               <PersonalityCard
                                   personality={p}

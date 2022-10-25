@@ -5,9 +5,10 @@ import { User } from "../../users/schemas/user.schema";
 export type SourceDocument = Source & mongoose.Document;
 
 export enum SourceTargetModel {
-    Claim = 'Claim',
-    ClaimReview = 'ClaimReview'
-} 
+    Claim = "Claim",
+    ClaimReview = "ClaimReview",
+    ClaimCollection = "ClaimCollection",
+}
 @Schema()
 export class Source {
     @Prop({ required: true })
@@ -34,16 +35,15 @@ export class Source {
      * Use Dynamic ref https://mongoosejs.com/docs/populate.html#dynamic-ref
      */
     @Prop({
-        type: mongoose.Types.ObjectId,
-        required: true,
-        refPath: "onModel",
+        type: [
+            {
+                type: mongoose.Types.ObjectId,
+                required: true,
+                refPath: "onModel",
+            },
+        ],
     })
-    targetId: mongoose.Types.ObjectId;
-
-    @Prop({
-        required: true,
-    })
-    targetModel: SourceTargetModel;
+    targetId: mongoose.Types.ObjectId[];
 
     @Prop({
         type: mongoose.Types.ObjectId,

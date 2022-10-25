@@ -70,8 +70,6 @@ const PersonalityCard = ({
         };
     }
 
-    console.log(hoistAvatar && (!vw?.sm || !vw?.xs));
-
     if (personality) {
         return (
             <Row

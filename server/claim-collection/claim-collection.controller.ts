@@ -56,9 +56,16 @@ export class ClaimCollectionController {
         });
     }
 
+    @IsPublic()
     @Get("api/claim-collection/:id")
-    async getById(@Param("id") id: string) {
-        return this.claimCollectionService.getById(id);
+    async getById(@Param("id") id: string, @Query() query) {
+        const { reverse, lastCollectionItem } = query;
+        return this.claimCollectionService.getById(
+            id,
+            true,
+            reverse,
+            lastCollectionItem
+        );
     }
 
     @Post("api/claim-collection")
@@ -93,13 +100,14 @@ export class ClaimCollectionController {
     ) {
         const parsedUrl = parse(req.url, true);
 
-        const claimCollection = (
-            await this.claimCollectionService.getById(claimCollectionId)
-        ).toObject();
+        const claimCollection: any = await this.claimCollectionService.getById(
+            claimCollectionId,
+            true,
+            true
+        );
 
         claimCollection.personalities = await Promise.all(
             claimCollection.personalities.map(async (p) => {
-                console.log(p);
                 return await this.personalityService.postProcess(
                     p,
                     req.language
@@ -125,9 +133,9 @@ export class ClaimCollectionController {
     ) {
         const parsedUrl = parse(req.url, true);
 
-        const claimCollection: any = (
-            await this.claimCollectionService.getById(claimCollectionId)
-        ).toObject();
+        const claimCollection: any = await this.claimCollectionService.getById(
+            claimCollectionId
+        );
 
         await this.viewService
             .getNextServer()
