@@ -25,6 +25,9 @@ env:
   ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
   ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
   RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
+  # Needed env variables for first build on next
+  NEXT_PUBLIC_UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
+  NEXT_PUBLIC_RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
 
 jobs:
   setup-build-publish-deploy:
@@ -41,6 +44,7 @@ jobs:
           sed -i '11{s/test.//}' config.seed.example.yaml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
           echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
           echo "MONGODB_URI=${{ secrets.PRODUCTION_MONGODB_URI }}" >> $GITHUB_ENV
           echo "ORY_SDK_URL=${{ secrets.PRODUCTION_ORY_SDK_URL }}" >> $GITHUB_ENV
           echo "ORY_ACCESS_TOKEN=${{ secrets.PRODUCTION_ORY_ACCESS_TOKEN }}" >> $GITHUB_ENV
