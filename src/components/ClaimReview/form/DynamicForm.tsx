@@ -243,10 +243,11 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
                             marginLeft: 20,
                         }}
                     >
-                        <Text type="danger">
-                            {reviewerError &&
-                                t("claimReviewTask:invalidReviewerMessage")}
-                        </Text>
+                        {reviewerError && (
+                            <Text type="danger" data-cy="testReviewerError">
+                                {t("claimReviewTask:invalidReviewerMessage")}
+                            </Text>
+                        )}
                     </div>
                     {nextEvents?.length > 0 && (
                         <AletheiaCaptcha

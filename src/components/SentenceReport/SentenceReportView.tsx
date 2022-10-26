@@ -1,7 +1,5 @@
 import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
-import Text from "antd/lib/typography/Text";
-import { useTranslation } from "next-i18next";
 import React, { useContext } from "react";
 
 import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
@@ -24,7 +22,6 @@ const SentenceReportView = ({
     userIsReviewer,
     isHidden,
 }) => {
-    const { t } = useTranslation();
     const { isLoggedIn } = useAppSelector((state) => {
         return {
             isLoggedIn: state?.login,
