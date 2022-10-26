@@ -10,6 +10,7 @@ import {
     crossCheckingSelector,
     publishedSelector,
     reviewDataSelector,
+    reviewNotStartedSelector,
 } from "../../machine/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -44,6 +45,10 @@ const ClaimReviewHeader = ({
     const [hide, setHide] = useState(isHidden);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
+    const reviewNotStarted = useSelector(
+        machineService,
+        reviewNotStartedSelector
+    );
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const userHasPermission = userIsReviewer || userIsAssignee;
     const isPublished =
@@ -57,7 +62,7 @@ const ClaimReviewHeader = ({
             description: hideDescription,
             title: "claimReview:warningAlertTitle",
         },
-        crosChecking: {
+        crossChecking: {
             show: true,
             description: "",
             title: "claimReviewTask:crossCheckingAlertTitle",
@@ -66,6 +71,11 @@ const ClaimReviewHeader = ({
             show: true,
             description: reviewData.rejectionComment,
             title: "claimReviewTask:rejectionAlertTitle",
+        },
+        hasStarted: {
+            show: true,
+            description: "",
+            title: "claimReviewTask:hasStartedAlertTitle",
         },
         noAlert: {
             show: false,
@@ -84,10 +94,13 @@ const ClaimReviewHeader = ({
         }
         if (!isPublished) {
             if (isCrossChecking && userHasPermission) {
-                return alertTypes.crosChecking;
+                return alertTypes.crossChecking;
             }
             if (userIsAssignee && reviewData.rejectionComment) {
                 return alertTypes.rejected;
+            }
+            if (!userHasPermission && !reviewNotStarted) {
+                return alertTypes.hasStarted;
             }
         }
         return alertTypes.noAlert;

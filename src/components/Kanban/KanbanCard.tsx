@@ -3,13 +3,38 @@ import React from "react";
 
 import CardBase from "../CardBase";
 import UserTag from "./UserTag";
+import claimApi from "../../api/claim";
+import personalityApy from "../../api/personality";
+import { useTranslation } from "next-i18next";
+import actions from "../../store/actions";
+import { useDispatch } from "react-redux";
 
 const { Text, Paragraph } = Typography;
 
 const KanbanCard = ({ reviewTask }) => {
+    const { t } = useTranslation();
+    const dispatch = useDispatch();
+    const goToClaimReview = () => {
+        dispatch(actions.openReviewDrawer());
+        dispatch(actions.setSelectClaim(null));
+        dispatch(actions.setSelectPersonality(null));
+        dispatch(actions.setSelectSentence(null));
+        dispatch(actions.setSelectDataHash(null));
+        Promise.all([
+            claimApi.getById(reviewTask.claimId, t, {}),
+            personalityApy.getPersonality(reviewTask.personalityId, {}, t),
+        ]).then(([claim, personality]) => {
+            dispatch(actions.setSelectClaim(claim));
+            dispatch(actions.setSelectPersonality(personality));
+            dispatch(actions.setSelectSentence(reviewTask?.sentence));
+            dispatch(
+                actions.setSelectDataHash(reviewTask?.sentence?.data_hash)
+            );
+        });
+    };
     return (
         <a
-            href={reviewTask.reviewHref}
+            onClick={goToClaimReview}
             style={{ width: "100%", minWidth: "330px" }}
         >
             <CardBase
@@ -34,7 +59,7 @@ const KanbanCard = ({ reviewTask }) => {
                                 fontWeight: "bold",
                             }}
                         >
-                            {reviewTask.sentenceContent}
+                            {reviewTask?.sentence?.content}
                         </Paragraph>
                         <Text>{reviewTask.personalityName}</Text>
                     </Col>

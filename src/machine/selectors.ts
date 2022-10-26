@@ -11,7 +11,7 @@ const crossCheckingSelector = (state) => {
     );
 };
 
-const reviewStartedSelector = (state) => {
+const reviewNotStartedSelector = (state) => {
     return state.matches(ReviewTaskStates.unassigned);
 };
 
@@ -26,7 +26,7 @@ const preloadedOptionsSelector = (state) => {
 export {
     publishedSelector,
     crossCheckingSelector,
-    reviewStartedSelector,
+    reviewNotStartedSelector,
     reviewDataSelector,
     preloadedOptionsSelector,
 };
