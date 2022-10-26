@@ -1,15 +1,19 @@
 import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
+import Text from "antd/lib/typography/Text";
+import { useTranslation } from "next-i18next";
 import React, { useContext } from "react";
 
 import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
 import {
     crossCheckingSelector,
+    isPartialReviewSelector,
     publishedSelector,
 } from "../../machine/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
+import PartialReviewWarning from "../PartialReviewWarning";
 import SentenceReportContent from "./SentenceReportContent";
 
 const SentenceReportView = ({
@@ -20,6 +24,7 @@ const SentenceReportView = ({
     userIsReviewer,
     isHidden,
 }) => {
+    const { t } = useTranslation();
     const { isLoggedIn } = useAppSelector((state) => {
         return {
             isLoggedIn: state?.login,
@@ -32,6 +37,10 @@ const SentenceReportView = ({
     const isPublished =
         useSelector(machineService, publishedSelector) ||
         publishedReview?.review;
+    const isPartialReview = useSelector(
+        machineService,
+        isPartialReviewSelector
+    );
 
     const showReport =
         (isPublished && (!isHidden || userIsNotRegular)) ||
@@ -41,6 +50,7 @@ const SentenceReportView = ({
         showReport && (
             <div>
                 <Row>
+                    {isPublished && isPartialReview && <PartialReviewWarning />}
                     <Col
                         offset={3}
                         span={18}
@@ -51,13 +61,11 @@ const SentenceReportView = ({
                             }
                         }
                     >
-                        <Col>
-                            <SentenceReportContent
-                                context={context}
-                                personality={personality}
-                                claim={claim}
-                            />
-                        </Col>
+                        <SentenceReportContent
+                            context={context}
+                            personality={personality}
+                            claim={claim}
+                        />
                         {!isLoggedIn && <CTARegistration />}
                     </Col>
                 </Row>

@@ -23,6 +23,7 @@ export type ReviewTaskMachineContext = {
         sentence_hash: string;
         personality: Personality;
         claim: Claim;
+        isPartialReview: boolean;
     };
     preloadedOptions: {
         usersId?: any[];

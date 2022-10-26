@@ -49,6 +49,9 @@ export class ClaimReview {
 
     @Prop({ type: Boolean, default: false, required: true })
     isHidden: boolean;
+
+    @Prop({ type: Boolean, default: false, required: true })
+    isPartialReview: boolean;
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);

@@ -3,7 +3,11 @@ import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
-import { saveContext } from "./actions";
+import {
+    saveContext,
+    saveFullReviewContext,
+    savePartialReviewContext,
+} from "./actions";
 import {
     CompoundStates,
     ReviewTaskEvents as Events,
@@ -57,11 +61,11 @@ export const createNewMachine = ({ value, context }) => {
                     },
                     [Events.partialReview]: {
                         target: States.reported,
-                        actions: [saveContext],
+                        actions: [savePartialReviewContext],
                     },
                     [Events.fullReview]: {
                         target: States.summarized,
-                        actions: [saveContext],
+                        actions: [saveFullReviewContext],
                     },
                 },
             },

@@ -27,6 +27,7 @@ const buildState = ({
             personality: "",
             claim: "",
             usersId: "",
+            isPartialReview: false,
         },
     };
 };

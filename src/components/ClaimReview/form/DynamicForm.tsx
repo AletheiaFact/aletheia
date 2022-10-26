@@ -94,6 +94,7 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
     useEffect(() => {
         reset(reviewData);
         resetIsLoading();
+        setReviewerError(false);
     }, [nextEvents]);
 
     useEffect(() => {
@@ -111,6 +112,7 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
                                     claimReview: {
                                         personality,
                                         claim,
+                                        isPartialReview: true,
                                     },
                                 },
                             },

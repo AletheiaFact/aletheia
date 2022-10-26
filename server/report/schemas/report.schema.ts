@@ -20,13 +20,13 @@ export class Report {
     @Prop({ required: true })
     summary: string;
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     questions: string[];
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     report: string;
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     verification: string;
 
     @Prop({ required: true })

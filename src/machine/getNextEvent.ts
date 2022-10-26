@@ -28,7 +28,11 @@ const getNextEvents = (param: Events | States) => {
         [Events.submit]: [Events.reject, Events.publish],
 
         [States.rejected]: [Events.goback, Events.addRejectionComment],
-        [Events.addRejectionComment]: [...defaultEvents, Events.finishReport],
+        [Events.addRejectionComment]: [
+            ...defaultEvents,
+            Events.partialReview,
+            Events.fullReview,
+        ],
 
         [States.published]: [],
         [Events.publish]: [],
