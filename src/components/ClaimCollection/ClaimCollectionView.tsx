@@ -7,6 +7,8 @@ import ClaimCollectionHeader from "./ClaimCollectionHeader";
 import { Col, Row } from "antd";
 import CTARegistration from "../Home/CTARegistration";
 import { useAppSelector } from "../../store/store";
+import VideoCTACard from "../VideoCTACard";
+import DonationCard from "../DonationCard";
 
 const ClaimCollectionView = ({ claimCollection }) => {
     const { t } = useTranslation();
@@ -56,18 +58,41 @@ const ClaimCollectionView = ({ claimCollection }) => {
                 <Row
                     style={{
                         padding: "30px 10%",
+                        width: "100%",
                     }}
                 >
                     <CallbackTimerProvider callback={updateTimeline}>
                         <ClaimCollectionTimelineWrapper
                             collections={collections}
+                            isLive={claimCollection.isLive}
                         />
                     </CallbackTimerProvider>
                 </Row>
-                {!isLoggedIn && (
-                    <Col xs={24} lg={18} order={3}>
-                        <CTARegistration />
+                <Row
+                    style={{
+                        padding: "30px 10%",
+                        width: "100%",
+                        justifyContent: "space-evenly",
+                    }}
+                >
+                    <Col>
+                        <VideoCTACard />
                     </Col>
+                    <Col>
+                        <DonationCard />
+                    </Col>
+                </Row>
+                {!isLoggedIn && (
+                    <Row
+                        style={{
+                            padding: "30px 10%",
+                            width: "100%",
+                        }}
+                    >
+                        <Col xs={24} lg={18} order={3}>
+                            <CTARegistration />
+                        </Col>
+                    </Row>
                 )}
             </Row>
         </>

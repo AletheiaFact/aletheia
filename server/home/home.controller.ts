@@ -6,35 +6,45 @@ import { PersonalityService } from "../personality/personality.service";
 import { StatsService } from "../stats/stats.service";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { BaseRequest } from "../types";
+import { ClaimCollectionService } from "../claim-collection/claim-collection.service";
 
 @Controller("/")
 export class HomeController {
     constructor(
         private viewService: ViewService,
         private personalityService: PersonalityService,
-        private statsService: StatsService
-    ) { }
+        private statsService: StatsService,
+        private claimCollectionService: ClaimCollectionService
+    ) {}
 
-    @Get('/home')
+    @Get("/home")
     /**
      * Redirect /home to / for backwards compatibility
      * @param res
      */
     redirect(@Res() res) {
-        return res.redirect('/');
+        return res.redirect("/");
     }
 
     @IsPublic()
     @Get()
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const { personalities } = await this.personalityService.combinedListAll(
+            {
+                language: req.language,
+                order: "random",
+                pageSize: 6,
+                fetchOnly: true,
+            }
+        );
 
-        const { personalities } = await this.personalityService.combinedListAll({
-            language: req.language,
-            order: 'random',
-            pageSize: 6,
-            fetchOnly: true
-        });
+        const claimCollections = await this.claimCollectionService.listAll(
+            0,
+            6,
+            "asc",
+            {}
+        );
 
         const stats = await this.statsService.getHomeStats();
         await this.viewService
@@ -43,7 +53,11 @@ export class HomeController {
                 req,
                 res,
                 "/home-page",
-                Object.assign(parsedUrl.query, { personalities, stats })
+                Object.assign(parsedUrl.query, {
+                    personalities,
+                    stats,
+                    claimCollections,
+                })
             );
     }
 }

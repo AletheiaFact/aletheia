@@ -27,7 +27,8 @@ export class ClaimCollectionService {
         })
             .skip(page * pageSize)
             .limit(pageSize)
-            .sort({ _id: order });
+            .sort({ _id: order })
+            .populate("personalities");
     }
 
     async getById(
@@ -55,7 +56,6 @@ export class ClaimCollectionService {
                     );
                 }
             );
-            console.log(filterItems, reverse);
             claimCollection.collections = reverse
                 ? claimCollection.collections.reverse()
                 : claimCollection.collections;

@@ -16,7 +16,7 @@ export const CallbackTimerMachine = {
     initial: "running",
     context: {
         stopped: false,
-        interval: 5, // TODO: move to a configurable parameter
+        interval: 5, // default
         callbackResult: null,
         autoSaveCallback: () => {},
     },
@@ -56,8 +56,16 @@ export const CallbackTimerMachine = {
 
 export const GlobalStateContext = createContext({});
 
-export const CallbackTimerProvider = ({ callback, children }) => {
-    CallbackTimerMachine.context.autoSaveCallback = callback;
+export const CallbackTimerProvider = ({
+    callback,
+    interval = null,
+    children,
+}) => {
+    CallbackTimerMachine.context = {
+        ...CallbackTimerMachine.context,
+        autoSaveCallback: callback,
+        interval: interval || CallbackTimerMachine.context.interval,
+    };
     const timerService = useInterpret(
         createMachine<CallbackTimerContext, CallbackTimerEvent>(
             CallbackTimerMachine

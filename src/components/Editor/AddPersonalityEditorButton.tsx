@@ -8,7 +8,7 @@ const AddPersonalityEditorButton = ({ personalityId, personalityName }) => {
     const commands = useCommands();
     const { t } = useTranslation();
     const handleClick = useCallback(() => {
-        commands.focus("end");
+        commands.focus();
         commands.insertHtml(
             getEditorClaimCardContentHtml({
                 personalityId,
