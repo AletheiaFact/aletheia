@@ -80,7 +80,7 @@ jobs:
 
       - name: Set migrate-mongo-config.js
         run: |
-            sed -i "s%MONGODB_URI%$MONGODB_URI%g" migrate-mongo-config.js
+            sed -i "s%MONGODB_URI%$MONGODB_URI%g" migrate-mongo-config-example.js
 
       # Setting user seed config
       - name: Set config.seed.example.yaml
