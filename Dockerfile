@@ -9,6 +9,7 @@ COPY ./.babelrc /app/.babelrc
 COPY config.$ENVIRONMENT.yaml /app/config.yaml
 COPY config.seed.example.yaml /app/config.seed.yaml
 COPY migrate-mongo-config-example.js /app/migrate-mongo-config.js
+COPY ./migrations /app/migrations
 COPY ./.eslintignore /app/.eslintignore
 COPY ./.eslintrc.yml /app/.eslintrc.yml
 COPY server/jest.config.json /app/jest.config.json

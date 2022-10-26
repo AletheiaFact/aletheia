@@ -2,7 +2,7 @@
 
 const config = {
     mongodb: {
-        url: MONGODB_URI, // eslint-disable-line
+        url: "MONGODB_URI",
 
         options: {
             useNewUrlParser: true, // removes a deprecation warning when connecting
