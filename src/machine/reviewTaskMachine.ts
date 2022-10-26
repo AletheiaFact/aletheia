@@ -82,7 +82,6 @@ export const createNewMachine = ({ value, context }) => {
                 },
             },
             [States.reported]: {
-                ...draftSubStates,
                 on: {
                     [Events.goback]: {
                         target: States.assigned,

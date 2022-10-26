@@ -20,9 +20,9 @@ const getNextEvents = (param: Events | States) => {
         [Events.fullReview]: [...defaultEvents, Events.finishReport],
         [States.summarized]: [...defaultEvents, Events.finishReport],
 
-        [Events.finishReport]: [...defaultEvents, Events.submit],
-        [Events.partialReview]: [...defaultEvents, Events.submit],
-        [States.reported]: [...defaultEvents, Events.submit],
+        [Events.finishReport]: [Events.goback, Events.submit],
+        [Events.partialReview]: [Events.goback, Events.submit],
+        [States.reported]: [Events.goback, Events.submit],
 
         [States.submitted]: [Events.reject, Events.publish],
         [Events.submit]: [Events.reject, Events.publish],
