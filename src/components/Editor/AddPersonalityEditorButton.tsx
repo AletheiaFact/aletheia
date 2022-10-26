@@ -14,7 +14,7 @@ const AddPersonalityEditorButton = ({ personalityId, personalityName }) => {
                 personalityId,
             }),
             {
-                selection: "end",
+                selection: 0,
             }
         );
     }, [commands, personalityId]);
