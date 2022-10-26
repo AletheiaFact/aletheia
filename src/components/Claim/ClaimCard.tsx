@@ -8,6 +8,10 @@ import Button, { ButtonType } from "../Button";
 import ClaimCardHeader from "./ClaimCardHeader";
 import colors from "../../styles/colors";
 import styled from "styled-components";
+import ClaimSummaryContent from "./ClaimSummaryContent";
+import ClaimSpeechBody from "./ClaimSpeechBody";
+import actions from "../../store/actions";
+import { useDispatch } from "react-redux";
 
 const { Paragraph } = Typography;
 
@@ -17,14 +21,21 @@ const CommentStyled = styled(Comment)`
     }
 `;
 
-const ClaimCard = ({ personality, claim }) => {
+const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
     const review = claim?.stats?.reviews[0];
+    const paragraphs = claim.content;
     const [claimContent, setClaimContent] = useState("");
+
+    const dispatchPersonalityAndClaim = () => {
+        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectPersonality(personality));
+    };
 
     const CreateFirstParagraph = () => {
         let textContent = "";
-        claim.content.forEach((paragraph) => {
+        paragraphs.forEach((paragraph) => {
             paragraph.content.forEach((sentence) => {
                 return (textContent += `${sentence.content} `);
             });
@@ -57,42 +68,22 @@ const ClaimCard = ({ personality, claim }) => {
                                 width: "100%",
                             }}
                         >
-                            <Col>
-                                <Paragraph
-                                    style={{ marginBottom: 0 }}
-                                    ellipsis={{
-                                        rows: 4,
-                                        expandable: false,
-                                    }}
-                                >
-                                    <cite style={{ fontStyle: "normal" }}>
-                                        <p
-                                            style={{
-                                                fontSize: 16,
-                                                color: colors.blackPrimary,
-                                                fontWeight: 400,
-                                                margin: 0,
-                                                lineHeight: 1.6,
-                                                height: "6.4em",
-                                            }}
-                                        >
-                                            {claimContent || claim?.title}
-                                        </p>
-                                    </cite>
-                                </Paragraph>
-                                <a
-                                    href={`/personality/${personality.slug}/claim/${claim.slug}`}
-                                    style={{
-                                        fontSize: 14,
-                                        color: colors.bluePrimary,
-                                        fontWeight: "bold",
-                                        textDecoration: "underline",
-                                    }}
-                                    data-cy={"testSeeFullSpeech"}
-                                >
-                                    {t("claim:cardLinkToFullText")}
-                                </a>
-                            </Col>
+                            {collapsed ? (
+                                <ClaimSummaryContent
+                                    claimTitle={claim?.title}
+                                    claimSlug={claim?.slug}
+                                    claimContent={claimContent}
+                                    personality={personality}
+                                />
+                            ) : (
+                                <ClaimSpeechBody
+                                    handleSentenceClick={
+                                        dispatchPersonalityAndClaim
+                                    }
+                                    paragraphs={paragraphs}
+                                    showHighlights={true}
+                                />
+                            )}
                         </ClaimSummary>
                     }
                 />

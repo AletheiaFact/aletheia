@@ -16,6 +16,8 @@ const locators = {
 
     claim: {
         BTN_OK_TUTORIAL: "[data-cy=testButtonTutorialOk]",
+        BTN_CLOSE_DRAWER: "[data-cy=testCloseReviewDrawer]",
+        BTN_SEE_FULL_REVIEW: "[data-cy=testSeeFullReview]",
     },
 
     floatButton: {

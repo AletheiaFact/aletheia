@@ -9,8 +9,7 @@ import { GetLocale } from "../utils/GetLocale";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../store/types";
 
-const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
-    sitekey,
+const ClaimCreatePage: NextPage<{ personality; isLoggedIn }> = ({
     personality,
     isLoggedIn,
 }) => {
@@ -28,7 +27,7 @@ const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
                     name: personality.name,
                 })}
             />
-            <ClaimCreate sitekey={sitekey} personality={personality} />
+            <ClaimCreate personality={personality} />
             <AffixButton />
         </>
     );
@@ -39,7 +38,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            sitekey: query.sitekey,
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: JSON.parse(JSON.stringify(query.personality)),

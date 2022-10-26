@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
@@ -19,13 +19,12 @@ const ClaimReviewForm = ({
     claimId,
     personalityId,
     sentenceHash,
-    sitekey,
     userIsReviewer,
-    userId,
 }) => {
     const { t } = useTranslation();
-    const { isLoggedIn } = useAppSelector((state) => ({
+    const { isLoggedIn, userId } = useAppSelector((state) => ({
         isLoggedIn: state.login,
+        userId: state.userId,
     }));
 
     const { machineService } = useContext(GlobalStateMachineContext);
@@ -35,7 +34,6 @@ const ClaimReviewForm = ({
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isStarted = useSelector(machineService, reviewStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
-
     const [formCollapsed, setFormCollapsed] = useState(isStarted);
 
     const showForm =
@@ -47,6 +45,10 @@ const ClaimReviewForm = ({
         setFormCollapsed(!formCollapsed);
     };
 
+    useEffect(() => {
+        setFormCollapsed(isStarted);
+    }, [isStarted]);
+
     return (
         !isPublished && (
             <Col
@@ -55,7 +57,6 @@ const ClaimReviewForm = ({
                 style={{
                     background: colors.lightGray,
                     padding: "20px 15px",
-                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
                 }}
             >
                 {formCollapsed && (
@@ -98,7 +99,6 @@ const ClaimReviewForm = ({
                         sentence_hash={sentenceHash}
                         personality={personalityId}
                         claim={claimId}
-                        sitekey={sitekey}
                     />
                 )}
             </Col>

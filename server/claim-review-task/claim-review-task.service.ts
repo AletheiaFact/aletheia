@@ -229,7 +229,10 @@ export class ClaimReviewTaskService {
         const loggedInUser = this.req.user;
 
         if (newClaimReviewTaskMachine.value === "published") {
-            if (loggedInUser._id !== machine.context.reviewData.reviewerId) {
+            if (
+                loggedInUser._id !==
+                machine.context.reviewData.reviewerId.toString()
+            ) {
                 throw new ForbiddenException(
                     "This user does not have permission to publish the report"
                 );

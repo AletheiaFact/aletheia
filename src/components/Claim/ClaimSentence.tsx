@@ -2,8 +2,10 @@ import React from "react";
 import highlightColors from "../../constants/highlightColors";
 import styled from "styled-components";
 import colors from "../../styles/colors";
+import actions from "../../store/actions";
+import { useDispatch } from "react-redux";
 
-const ClaimSentence = styled.a`
+const Sentence = styled.a`
     color: ${colors.bluePrimary};
     font-size: 18px;
     line-height: 27px;
@@ -14,12 +16,12 @@ const ClaimSentence = styled.a`
     }
 `;
 
-const Sentence = ({
+const ClaimSentence = ({
     showHighlights,
     properties,
     data_hash,
     content,
-    generateHref,
+    handleSentenceClick,
 }) => {
     let style = {};
     if (properties.classification && showHighlights) {
@@ -28,11 +30,17 @@ const Sentence = ({
             backgroundColor: highlightColors[properties.classification],
         };
     }
-    const href = generateHref({ data_hash });
+    const dispatch = useDispatch();
+
+    const handleClick = () => {
+        handleSentenceClick();
+        dispatch(actions.setSelectDataHash(data_hash));
+        dispatch(actions.openReviewDrawer());
+    };
     return (
         <>
-            <ClaimSentence
-                href={href}
+            <Sentence
+                onClick={handleClick}
                 id={data_hash}
                 data-hash={data_hash}
                 style={style}
@@ -40,7 +48,7 @@ const Sentence = ({
                 data-cy={`frase${properties.id}`}
             >
                 {content}{" "}
-            </ClaimSentence>
+            </Sentence>
             {properties.classification && showHighlights && (
                 <sup
                     style={{
@@ -58,4 +66,4 @@ const Sentence = ({
     );
 };
 
-export default Sentence;
+export default ClaimSentence;

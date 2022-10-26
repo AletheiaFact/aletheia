@@ -6,10 +6,12 @@ import { useDispatch } from "react-redux";
 
 import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
-import { ClassificationEnum, Roles } from "../machine/enums";
+import SocialMediaShare from "../components/SocialMediaShare";
+import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
+import { ClassificationEnum } from "../machine/enums";
+import actions from "../store/actions";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
@@ -17,7 +19,6 @@ export interface ClaimReviewPageProps {
     personality: any;
     claim: any;
     sentence: any;
-    sitekey: string;
     href: string;
     claimReviewTask: any;
     claimReview: any;
@@ -31,19 +32,19 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
-    const { personality, claim, sentence, claimReview, isLoggedIn, userRole } =
-        props;
+    const {
+        personality,
+        claim,
+        sentence,
+        claimReview,
+        isLoggedIn,
+        userRole,
+        userId,
+    } = props;
 
-    dispatch({
-        type: ActionTypes.SET_LOGIN_STATUS,
-        login: isLoggedIn,
-    });
-
-    dispatch({
-        type: ActionTypes.SET_USER_ROLE,
-        role: userRole || Roles.Regular,
-    });
-
+    dispatch(actions.setLoginStatus(isLoggedIn));
+    dispatch(actions.setUserId(userId));
+    dispatch(actions.setUserRole(userRole));
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: false,
@@ -100,9 +101,22 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             <GlobalStateMachineProvider
                 data_hash={props.sentence.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
+                publishedReview={{
+                    review: props.claimReview,
+                    descriptionForHide: props.description,
+                }}
             >
-                <ClaimReviewView {...props} />
+                <ClaimReviewView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                />
             </GlobalStateMachineProvider>
+            <SocialMediaShare
+                quote={personality?.name}
+                href={props.href}
+                claim={claim?.title}
+            />
             <AffixButton personalitySlug={personality.slug} />
         </>
     );
@@ -120,7 +134,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             sentence: JSON.parse(JSON.stringify(query.sentence)),
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
-            sitekey: query.sitekey,
             description: query.description,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,

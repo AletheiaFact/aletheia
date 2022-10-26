@@ -5,14 +5,14 @@ import React, {
     useImperativeHandle,
 } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
+import { SITEKEY } from "../lib/recaptcha";
 const recaptchaRef = React.createRef<ReCAPTCHA>();
 
 interface CaptchaProps {
-    sitekey: string;
     onChange: (captchaString: string) => void;
 }
 
-const AletheiaCaptcha = forwardRef(({ sitekey, onChange }: CaptchaProps, ref) => {
+const AletheiaCaptcha = forwardRef(({ onChange }: CaptchaProps, ref) => {
     // Allows the parent component to call function inside this block by using a ref
     useImperativeHandle(ref, () => ({
         resetRecaptcha: () => {
@@ -33,7 +33,6 @@ const AletheiaCaptcha = forwardRef(({ sitekey, onChange }: CaptchaProps, ref) =>
         setCaptchaString("");
     };
 
-
     useEffect(() => {
         onChange(captchaString);
     }, [captchaString]);
@@ -41,12 +40,11 @@ const AletheiaCaptcha = forwardRef(({ sitekey, onChange }: CaptchaProps, ref) =>
     return (
         <ReCAPTCHA
             ref={recaptchaRef}
-            sitekey={sitekey}
+            sitekey={SITEKEY}
             onChange={handleChangeCaptcha}
             onExpired={onExpiredCaptcha}
         />
     );
-}
-);
+});
 
 export default AletheiaCaptcha;

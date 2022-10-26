@@ -23,10 +23,7 @@ const goToClaimReviewPage = () => {
         `http://localhost:3000/personality/${personality.slug}/claim/${claim.slug}`
     );
     cy.get("[data-cy=frase1]").click();
-    cy.url().should(
-        "contains",
-        `http://localhost:3000/personality/${personality.slug}/claim/${claim.slug}/sentence`
-    );
+    cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
 };
 
 describe("Test claim review", () => {
@@ -35,10 +32,7 @@ describe("Test claim review", () => {
             `http://localhost:3000/personality/${personality.slug}/claim/${claim.slug}`
         );
         cy.get("[data-cy=frase1]").click();
-        cy.url().should(
-            "contains",
-            `http://localhost:3000/personality/${personality.slug}/claim/${claim.slug}/sentence`
-        );
+        cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
         cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("not.exist");
     });
 
@@ -110,7 +104,6 @@ describe("Test claim review", () => {
     it("should only allow to submit review after choosing classification and reviewer", () => {
         cy.login();
         goToClaimReviewPage();
-        cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
 
         cy.get(locators.claimReview.BTN_SUBMIT).should("be.disabled");
         cy.checkRecaptcha();

@@ -106,21 +106,6 @@ export class ClaimReviewService {
         ]).option({ serializeFunctions: true });
     }
 
-    async getUserReviewBySentenceHash(sentence_hash) {
-        const user = await this.ClaimReviewModel.findOne(
-            {
-                sentence_hash,
-                isDeleted: false,
-                isPublished: true,
-                isHidden: false,
-            },
-            {
-                usersId: 1,
-            }
-        );
-        return user?.usersId;
-    }
-
     /**
      * This function creates a new claim review.
      * Also creates a History Module that tracks creation of claim reviews.
@@ -279,7 +264,7 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
     }
 
-    async verifyIfReviewIsHdden(review) {
+    async getDescriptionForHide(review) {
         if (review?.isHidden) {
             const history = await this.historyService.getByTargetIdModelAndType(
                 review._id,

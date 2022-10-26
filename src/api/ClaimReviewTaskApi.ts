@@ -1,5 +1,5 @@
-import axios from "axios";
 import { message } from "antd";
+import axios from "axios";
 
 const request = axios.create({
     withCredentials: true,
@@ -35,10 +35,10 @@ const getMachineBySentenceHash = (params, t) => {
     return request
         .get(`/sentence/${params}`)
         .then((response) => {
-            return response.data;
+            return response.data.machine;
         })
         .catch(() => {
-            message.error(t("claimReviewTask:errorWhileFetching"));
+            // TODO: Track with sentry
         });
 };
 

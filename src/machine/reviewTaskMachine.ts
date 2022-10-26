@@ -154,7 +154,9 @@ export const transitionHandler = (state) => {
             .then(() => {
                 setCurrentFormAndNextEvents(event);
             })
-            .catch((e) => console.log(e))
+            .catch((e) => {
+                // TODO: sentry
+            })
             .finally(() => resetIsLoading());
     }
 };

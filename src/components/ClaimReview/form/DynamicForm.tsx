@@ -21,7 +21,7 @@ import AletheiaButton, { ButtonType } from "../../Button";
 import DynamicInput from "./DynamicInput";
 import { trackUmamiEvent } from "../../../lib/umami";
 
-const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
+const DynamicForm = ({ sentence_hash, personality, claim }) => {
     const {
         handleSubmit,
         control,
@@ -249,9 +249,19 @@ const DynamicForm = ({ sentence_hash, personality, claim, sitekey }) => {
                     {nextEvents?.length > 0 && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
-                            sitekey={sitekey}
                             ref={recaptchaRef}
                         />
+                    )}
+                    {!recaptchaString && (
+                        <h1
+                            style={{
+                                color: "red",
+                                fontSize: "14px",
+                                fontFamily: "sans-serif",
+                            }}
+                        >
+                            {t("common:requiredFieldError")}
+                        </h1>
                     )}
                 </>
             )}
