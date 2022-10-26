@@ -72,13 +72,7 @@ const SentenceReportCard = ({
                         </Title>
                     )}
                     <SentenceReportSummary>
-                        <Paragraph
-                            ellipsis={{
-                                rows: 3,
-                                expandable: false,
-                            }}
-                            className="sentence-content"
-                        >
+                        <Paragraph className="sentence-content">
                             <cite>"(...) {sentence?.content}"</cite>
                             <a
                                 href={`/personality/${personality.slug}/claim/${claim.slug}`}
