@@ -52,8 +52,11 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
                                         color: colors.grayPrimary,
                                     }}
                                 >
-                                    {cc.title}
-                                    {cc.isLive}
+                                    {cc.title} (
+                                    {cc.isLive
+                                        ? t("debates:liveLabel")
+                                        : t("debates:isEnded")}
+                                    )
                                 </Title>
                             </Row>
                             <Row

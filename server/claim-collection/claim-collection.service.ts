@@ -28,7 +28,8 @@ export class ClaimCollectionService {
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
-            .populate("personalities");
+            .populate("personalities")
+            .lean();
     }
 
     async getById(

@@ -39,25 +39,37 @@ export class HomeController {
             }
         );
 
-        const claimCollections = await this.claimCollectionService.listAll(
+        const rawClaimCollections = await this.claimCollectionService.listAll(
             0,
             6,
             "asc",
             {}
         );
 
+        const claimCollections = await Promise.all(
+            rawClaimCollections.map(async (claimCollection) => {
+                claimCollection.personalities = await Promise.all(
+                    claimCollection.personalities.map(async (p) => {
+                        return await this.personalityService.postProcess(
+                            p,
+                            req.language
+                        );
+                    })
+                );
+                return claimCollection;
+            })
+        );
+
         const stats = await this.statsService.getHomeStats();
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/home-page",
-                Object.assign(parsedUrl.query, {
-                    personalities,
-                    stats,
-                    claimCollections,
-                })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/home-page",
+            Object.assign(parsedUrl.query, {
+                personalities,
+                stats,
+                claimCollections,
+            })
+        );
     }
 }
