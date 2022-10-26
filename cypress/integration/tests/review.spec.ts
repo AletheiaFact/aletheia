@@ -90,7 +90,7 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.BTN_FINISH_REPORT)
             .should("be.enabled")
             .click();
-        cy.get(locators.claimReview.BTN_FINISH_REPORT).should("not.exist");
+        cy.get(locators.claimReview.INPUT_REVIEWER).should("exist");
     });
 
     it("should not be able submit after choosing assigned user as reviewer", () => {
