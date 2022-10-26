@@ -16,7 +16,7 @@ export const CallbackTimerMachine = {
     initial: "running",
     context: {
         stopped: false,
-        interval: 5,
+        interval: 5, // TODO: move to a configurable parameter
         callbackResult: null,
         autoSaveCallback: () => {},
     },

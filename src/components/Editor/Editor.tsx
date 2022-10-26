@@ -14,6 +14,7 @@ import { Affix, Row } from "antd";
 import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
 import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
 import colors from "../../styles/colors";
+import AletheiaButton from "../Button";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
@@ -43,12 +44,12 @@ const Editor = ({ claimCollection }: IEditorProps) => {
         }, [getJSON]);
 
         return (
-            <button
+            <AletheiaButton
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={handleClick}
             >
-                Save
-            </button>
+                {t("debates:saveButtonLabel")}
+            </AletheiaButton>
         );
     }
 

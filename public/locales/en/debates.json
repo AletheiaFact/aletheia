@@ -1,4 +1,5 @@
 {
     "liveLabel": "Live",
-    "addClaimEditorButton": "Add claim from"
+    "addClaimEditorButton": "Add claim from",
+    "saveButtonLabel": "Save"
 }
