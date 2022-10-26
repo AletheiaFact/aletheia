@@ -9,24 +9,35 @@ import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
 
-import ClaimReviewView, { ClaimReviewViewProps } from "./ClaimReviewView";
+import ClaimReviewView from "./ClaimReviewView";
 
-const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
+const ClaimReviewDrawer = () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const { reviewDrawerCollapsed, vw } = useAppSelector((state) => {
+    const {
+        reviewDrawerCollapsed,
+        vw,
+        personality,
+        claim,
+        sentence,
+        data_hash,
+    } = useAppSelector((state) => {
         return {
             reviewDrawerCollapsed:
                 state?.reviewDrawerCollapsed !== undefined
                     ? state?.reviewDrawerCollapsed
                     : true,
             vw: state?.vw,
+            personality: state?.selectedPersonality,
+            claim: state?.selectedClaim,
+            sentence: state?.selectedSentence,
+            data_hash: state?.selectedDataHash,
         };
     });
 
-    const href = `/personality/${props.personality.slug}/claim/${props.claim.slug}/sentence/${props.sentence?.data_hash}`;
+    const href = `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
 
-    return (
+    return personality && claim && sentence && data_hash ? (
         <Drawer
             visible={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
@@ -39,7 +50,7 @@ const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
             }}
             closable={false}
         >
-            <GlobalStateMachineProvider data_hash={props.sentence?.data_hash}>
+            <GlobalStateMachineProvider data_hash={data_hash}>
                 <Row
                     justify="space-between"
                     style={{ width: vw?.sm ? "100%" : "55%", padding: "1rem" }}
@@ -70,10 +81,14 @@ const ClaimReviewDrawer = (props: ClaimReviewViewProps) => {
                         </AletheiaButton>
                     </Col>
                 </Row>
-                <ClaimReviewView {...props} />
+                <ClaimReviewView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                />
             </GlobalStateMachineProvider>
         </Drawer>
-    );
+    ) : null;
 };
 
 export default ClaimReviewDrawer;

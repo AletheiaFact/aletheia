@@ -10,7 +10,8 @@ import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
 import SocialMediaShare from "../components/SocialMediaShare";
 import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
-import { ClassificationEnum, Roles } from "../machine/enums";
+import { ClassificationEnum } from "../machine/enums";
+import actions from "../store/actions";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
@@ -31,19 +32,19 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
-    const { personality, claim, sentence, claimReview, isLoggedIn, userRole } =
-        props;
+    const {
+        personality,
+        claim,
+        sentence,
+        claimReview,
+        isLoggedIn,
+        userRole,
+        userId,
+    } = props;
 
-    dispatch({
-        type: ActionTypes.SET_LOGIN_STATUS,
-        login: isLoggedIn,
-    });
-
-    dispatch({
-        type: ActionTypes.SET_USER_ROLE,
-        role: userRole || Roles.Regular,
-    });
-
+    dispatch(actions.setLoginStatus(isLoggedIn));
+    dispatch(actions.setUserId(userId));
+    dispatch(actions.setUserRole(userRole));
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: false,
@@ -105,7 +106,11 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                     descriptionForHide: props.description,
                 }}
             >
-                <ClaimReviewView {...props} />
+                <ClaimReviewView
+                    personality={personality}
+                    claim={claim}
+                    sentence={sentence}
+                />
             </GlobalStateMachineProvider>
             <SocialMediaShare
                 quote={personality?.name}

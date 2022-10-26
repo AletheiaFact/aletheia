@@ -49,6 +49,9 @@ const BaseList = ({
         order: sortByOrder,
         ...filter,
     });
+
+    // TODO: use TimerCallback to refresh the list
+
     useEffect(() => {
         apiCall(query).then((newItems) => {
             setInitLoading(false);

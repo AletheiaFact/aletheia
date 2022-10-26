@@ -20,11 +20,11 @@ const ClaimReviewForm = ({
     personalityId,
     sentenceHash,
     userIsReviewer,
-    userId,
 }) => {
     const { t } = useTranslation();
-    const { isLoggedIn } = useAppSelector((state) => ({
+    const { isLoggedIn, userId } = useAppSelector((state) => ({
         isLoggedIn: state.login,
+        userId: state.userId,
     }));
 
     const { machineService } = useContext(GlobalStateMachineContext);

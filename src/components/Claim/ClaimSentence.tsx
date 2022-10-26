@@ -16,7 +16,13 @@ const Sentence = styled.a`
     }
 `;
 
-const ClaimSentence = ({ showHighlights, properties, data_hash, content }) => {
+const ClaimSentence = ({
+    showHighlights,
+    properties,
+    data_hash,
+    content,
+    handleSentenceClick,
+}) => {
     let style = {};
     if (properties.classification && showHighlights) {
         style = {
@@ -27,6 +33,7 @@ const ClaimSentence = ({ showHighlights, properties, data_hash, content }) => {
     const dispatch = useDispatch();
 
     const handleClick = () => {
+        handleSentenceClick();
         dispatch(actions.setSelectDataHash(data_hash));
         dispatch(actions.openReviewDrawer());
     };

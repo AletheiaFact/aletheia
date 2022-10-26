@@ -6,56 +6,42 @@ import moment from "moment";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
-import { useAppSelector } from "../../store/store";
+import actions from "../../store/actions";
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
-import ClaimReviewDrawer from "../ClaimReview/ClaimReviewDrawer";
 import Loading from "../Loading";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import ToggleSection from "../ToggleSection";
-import ClaimParagraph from "./ClaimParagraph";
+import ClaimSpeechBody from "./ClaimSpeechBody";
 
 const { Title, Paragraph } = Typography;
 
-const ClaimView = ({ personality, claim, href, userId }) => {
+const ClaimView = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
+    const dispatch = useDispatch();
     moment.locale(i18n.language);
     const { title, stats } = claim;
-    const [selectedSentence, setSelectedSentence] = useState(null);
-
-    const { selectedDataHash } = useAppSelector((state) => {
-        return {
-            selectedDataHash: state?.selectedDataHash || "",
-        };
-    });
 
     let date = claim.date;
     const paragraphs = Array.isArray(claim.content)
         ? claim.content
         : [claim.content];
 
-    let contents = paragraphs.reduce(
-        (sentences, paragraph) => [...sentences, ...paragraph.content],
-        []
-    );
+    const dispatchPersonalityAndClaim = () => {
+        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectPersonality(personality));
+    };
+
     date = moment(new Date(date));
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
         message.info(t("claim:initialInfo"));
     }, [t]);
-
-    useEffect(() => {
-        if (selectedDataHash) {
-            const sentence = contents.find(
-                (sentence) => sentence.data_hash === selectedDataHash
-            );
-            setSelectedSentence(sentence);
-        }
-    }, [selectedDataHash]);
 
     if (paragraphs && personality) {
         return (
@@ -115,13 +101,13 @@ const ClaimView = ({ personality, claim, href, userId }) => {
                             <Row>
                                 <Col offset={2} span={18}>
                                     <cite style={{ fontStyle: "normal" }}>
-                                        {paragraphs.map((paragraph) => (
-                                            <ClaimParagraph
-                                                key={paragraph.props.id}
-                                                paragraph={paragraph}
-                                                showHighlights={showHighlights}
-                                            />
-                                        ))}
+                                        <ClaimSpeechBody
+                                            handleSentenceClick={
+                                                dispatchPersonalityAndClaim
+                                            }
+                                            paragraphs={paragraphs}
+                                            showHighlights={showHighlights}
+                                        />
                                     </cite>
                                 </Col>
                             </Row>
@@ -258,12 +244,6 @@ const ClaimView = ({ personality, claim, href, userId }) => {
                     quote={personality?.name}
                     href={href}
                     claim={claim?.title}
-                />
-                <ClaimReviewDrawer
-                    personality={personality}
-                    claim={claim}
-                    sentence={selectedSentence}
-                    userId={userId}
                 />
             </>
         );

@@ -58,13 +58,18 @@ export class ClaimRevisionService {
         const newClaimRevision = new this.ClaimRevisionModel(claim);
 
         if (claim.sources && Array.isArray(claim.sources)) {
+            // TODO: check if source already exists
             try {
                 for (let source of claim.sources) {
-                    await this.sourceService.create({
-                        link: source,
-                        targetId: claimId,
-                        targetModel: SourceTargetModel.Claim,
-                    });
+                    if (typeof source === "string") {
+                        await this.sourceService.create({
+                            link: source,
+                            targetId: claimId,
+                            targetModel: SourceTargetModel.Claim,
+                        });
+                    } else {
+                        await this.sourceService.update(source._id, claimId);
+                    }
                 }
             } catch (e) {
                 this.logger.error(e);

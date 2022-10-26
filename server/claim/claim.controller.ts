@@ -10,6 +10,7 @@ import {
     Query,
     Req,
     Res,
+    Headers,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
@@ -80,19 +81,24 @@ export class ClaimController {
     }
 
     @Post("api/claim")
-    async create(@Body() createClaimDTO: CreateClaimDTO) {
-        const validateCaptcha = await this.captchaService.validate(
-            createClaimDTO.recaptcha
-        );
-        if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
+    async create(@Body() createClaimDTO: CreateClaimDTO, @Headers() headers) {
+        const { referer } = headers;
+        // If referer is claim-collection editor endpoints, skip captcha validation
+        if (!/claim-collection\/.*\/edit/.test(referer)) {
+            const validateCaptcha = await this.captchaService.validate(
+                createClaimDTO.recaptcha
+            );
+            if (!validateCaptcha) {
+                throw new Error("Error validating captcha");
+            }
         }
         return this.claimService.create(createClaimDTO);
     }
 
     @IsPublic()
     @Get("api/claim/:id")
-    getById(@Param("id") claimId) {
+    getById(@Param("id") claimId, @Headers() headers) {
+        // FIXME: this is returning a _id which is actually a revisionId
         return this.claimService.getById(claimId);
     }
 
