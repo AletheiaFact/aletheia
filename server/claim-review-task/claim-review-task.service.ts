@@ -28,7 +28,7 @@ export class ClaimReviewTaskService {
         private reportService: ReportService,
         private historyService: HistoryService,
         private stateEventService: StateEventService,
-        private senteceService: SentenceService
+        private sentenceService: SentenceService
     ) {}
 
     async listAll(page, pageSize, order, value) {
@@ -47,7 +47,7 @@ export class ClaimReviewTaskService {
             .populate({
                 path: "machine.context.claimReview.personality",
                 model: "Personality",
-                select: "slug name",
+                select: "slug name _id",
             })
             .populate({
                 path: "machine.context.claimReview.claim",
@@ -56,12 +56,12 @@ export class ClaimReviewTaskService {
                     path: "latestRevision",
                     select: "title",
                 },
-                select: "slug",
+                select: "slug _id",
             });
 
         return Promise.all(
             reviewTasks.map(async ({ sentence_hash, machine }) => {
-                const { personality, claim } = machine.context.claimReview;
+                const { personality, claim }: any = machine.context.claimReview;
                 const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
                 const usersName = machine.context.reviewData.usersId.map(
                     (user) => {
@@ -69,16 +69,17 @@ export class ClaimReviewTaskService {
                     }
                 );
 
-                const sentenceContent = await this.senteceService.getByDataHash(
+                const sentence = await this.sentenceService.getByDataHash(
                     sentence_hash
                 );
                 return {
-                    sentence_hash,
-                    sentenceContent: sentenceContent.content,
+                    sentence,
                     usersName,
                     value: machine.value,
                     personalityName: personality.name,
                     claimTitle: claim.latestRevision.title,
+                    claimId: claim._id,
+                    personalityId: personality._id,
                     reviewHref,
                 };
             })

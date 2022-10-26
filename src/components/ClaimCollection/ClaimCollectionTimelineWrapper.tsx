@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { GlobalStateContext } from "../Editor/CallbackTimerProvider";
 import { useActor } from "@xstate/react";
 import { useTranslation } from "next-i18next";
@@ -6,7 +6,7 @@ import { Timeline } from "antd";
 import { EditorClaimCardNodeType } from "../Editor/EditorClaimCard/EditorClaimCardExtension";
 import ClaimCollectionClaimCardWrapper from "./ClaimCollectionClaimCardWrapper";
 
-const ClaimCollectionTimelineWrapper = ({ collections }) => {
+const ClaimCollectionTimelineWrapper = ({ collections, isLive = false }) => {
     const [timelineData, setTimelineData] = useState(collections);
     const { timerService } = useContext<any>(GlobalStateContext);
     const [state]: any = useActor<any>(timerService);
@@ -24,8 +24,9 @@ const ClaimCollectionTimelineWrapper = ({ collections }) => {
             <Timeline
                 style={{
                     padding: "10px",
+                    width: "100%",
                 }}
-                pending={t("debates:liveLabel")}
+                pending={isLive && t("debates:liveLabel")}
                 reverse={true}
             >
                 {Array.isArray(timelineData) &&
@@ -46,6 +47,11 @@ const ClaimCollectionTimelineWrapper = ({ collections }) => {
                             );
                         }
                     })}
+                {!isLive && (
+                    <Timeline.Item color="red">
+                        {t("debates:isEnded")}
+                    </Timeline.Item>
+                )}
             </Timeline>
         </>
     );

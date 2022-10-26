@@ -19,6 +19,7 @@ export class SourceService {
     }
 
     async update(sourceId, newTargetId) {
+        // false positive in sonar cloud
         const source = await this.SourceModel.findById(sourceId);
         source.targetId = [...source.targetId, newTargetId];
         source.save();

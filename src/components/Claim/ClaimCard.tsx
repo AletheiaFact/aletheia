@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 const { Paragraph } = Typography;
 
 const CommentStyled = styled(Comment)`
+    width: 100%;
     .ant-comment-inner {
         padding: 0;
     }
@@ -52,7 +53,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
     }
     return (
         <CardBase style={{ padding: "16px 12px" }}>
-            <Row>
+            <Row style={{ width: "100%" }}>
                 <CommentStyled
                     author={
                         <ClaimCardHeader

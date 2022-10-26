@@ -10,6 +10,8 @@ import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
 
 import ClaimReviewView from "./ClaimReviewView";
+import Loading from "../Loading";
+import SocialMediaShare from "../SocialMediaShare";
 
 const ClaimReviewDrawer = () => {
     const dispatch = useDispatch();
@@ -37,7 +39,7 @@ const ClaimReviewDrawer = () => {
 
     const href = `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
 
-    return personality && claim && sentence && data_hash ? (
+    return (
         <Drawer
             visible={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
@@ -50,45 +52,57 @@ const ClaimReviewDrawer = () => {
             }}
             closable={false}
         >
-            <GlobalStateMachineProvider data_hash={data_hash}>
-                <Row
-                    justify="space-between"
-                    style={{ width: vw?.sm ? "100%" : "55%", padding: "1rem" }}
-                >
-                    <Col>
-                        <AletheiaButton
-                            icon={<ArrowLeftOutlined />}
-                            onClick={() =>
-                                dispatch(actions.closeReviewDrawer())
-                            }
-                            type={ButtonType.gray}
-                            data-cy="testCloseReviewDrawer"
-                        >
-                            {t("common:back_button")}
-                        </AletheiaButton>
-                    </Col>
-                    <Col>
-                        <AletheiaButton
-                            href={href}
-                            type={ButtonType.gray}
-                            style={{
-                                textDecoration: "underline",
-                                fontWeight: "bold",
-                            }}
-                            data-cy="testSeeFullReview"
-                        >
-                            {t("claimReviewTask:seeFullPage")}
-                        </AletheiaButton>
-                    </Col>
-                </Row>
-                <ClaimReviewView
-                    personality={personality}
-                    claim={claim}
-                    sentence={sentence}
-                />
-            </GlobalStateMachineProvider>
+            {personality && claim && sentence && data_hash ? (
+                <GlobalStateMachineProvider data_hash={data_hash}>
+                    <Row
+                        justify="space-between"
+                        style={{
+                            width: vw?.sm ? "100%" : "55%",
+                            padding: "1rem",
+                        }}
+                    >
+                        <Col>
+                            <AletheiaButton
+                                icon={<ArrowLeftOutlined />}
+                                onClick={() =>
+                                    dispatch(actions.closeReviewDrawer())
+                                }
+                                type={ButtonType.gray}
+                                data-cy="testCloseReviewDrawer"
+                            >
+                                {t("common:back_button")}
+                            </AletheiaButton>
+                        </Col>
+                        <Col>
+                            <AletheiaButton
+                                href={href}
+                                type={ButtonType.gray}
+                                style={{
+                                    textDecoration: "underline",
+                                    fontWeight: "bold",
+                                }}
+                                data-cy="testSeeFullReview"
+                            >
+                                {t("claimReviewTask:seeFullPage")}
+                            </AletheiaButton>
+                        </Col>
+                    </Row>
+                    <ClaimReviewView
+                        personality={personality}
+                        claim={claim}
+                        sentence={sentence}
+                    />
+                    {/*<SocialMediaShare*/}
+                    {/*    quote={personality?.name}*/}
+                    {/*    href={href}*/}
+                    {/*    claim={claim?.title}*/}
+                    {/*/>*/}
+                </GlobalStateMachineProvider>
+            ) : (
+                <Loading />
+            )}
         </Drawer>
-    ) : null;
+    );
 };
 
 export default ClaimReviewDrawer;

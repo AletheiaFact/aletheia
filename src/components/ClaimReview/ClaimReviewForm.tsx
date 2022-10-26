@@ -11,7 +11,7 @@ import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvi
 import {
     publishedSelector,
     crossCheckingSelector,
-    reviewStartedSelector,
+    reviewNotStartedSelector,
     reviewDataSelector,
 } from "../../machine/selectors";
 
@@ -32,7 +32,7 @@ const ClaimReviewForm = ({
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
-    const isStarted = useSelector(machineService, reviewStartedSelector);
+    const isStarted = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
     const [formCollapsed, setFormCollapsed] = useState(isStarted);
 
