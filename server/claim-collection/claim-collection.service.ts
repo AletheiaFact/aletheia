@@ -36,6 +36,7 @@ export class ClaimCollectionService {
         reverse = false,
         lastCollectionItem = null
     ) {
+        // false positive in sonar cloud
         const claimCollection: any = (
             await this.ClaimCollectionModel.findById(newClaimCollectionId)
                 .populate("personalities")

@@ -7,11 +7,15 @@ import { GetLocale } from "../utils/GetLocale";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
-const KanbanPage: NextPage<{ isLoggedIn }> = (props) => {
+import actions from "../store/actions";
+const KanbanPage: NextPage<{ isLoggedIn; userId; userRole }> = (props) => {
     const dispatch = useDispatch();
+    dispatch(actions.setLoginStatus(props.isLoggedIn));
+    dispatch(actions.setUserId(props.userId));
+    dispatch(actions.setUserRole(props.userRole));
     dispatch({
-        type: ActionTypes.SET_LOGIN_STATUS,
-        login: props.isLoggedIn,
+        type: ActionTypes.SET_AUTO_SAVE,
+        autoSave: false,
     });
     return (
         <>
@@ -28,6 +32,8 @@ export async function getServerSideProps({ locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             isLoggedIn: req.user ? true : false,
+            userRole: req?.user?.role ? req?.user?.role : null,
+            userId: req?.user?._id || "",
         },
     };
 }

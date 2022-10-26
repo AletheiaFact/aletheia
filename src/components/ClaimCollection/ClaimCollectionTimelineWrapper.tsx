@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { GlobalStateContext } from "../Editor/CallbackTimerProvider";
 import { useActor } from "@xstate/react";
 import { useTranslation } from "next-i18next";
