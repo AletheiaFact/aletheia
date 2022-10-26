@@ -4,6 +4,7 @@ import colors from "../../styles/colors";
 import { Trans, useTranslation } from "next-i18next";
 import AletheiaAlert from "../AletheiaAlert";
 import { FilePdfOutlined } from "@ant-design/icons";
+import AletheiaVideo from "../AletheiaVideo";
 
 const About = ({ enableWarningDocument }) => {
     const { t } = useTranslation();
@@ -23,6 +24,14 @@ const About = ({ enableWarningDocument }) => {
                 padding: "20px",
             }}
         >
+            <div
+                style={{
+                    padding: "20px 0",
+                    width: "100%",
+                }}
+            >
+                <AletheiaVideo />
+            </div>
             {enableWarningDocument && (
                 <AletheiaAlert
                     type="info"
