@@ -34,7 +34,8 @@ export class ClaimCollection {
     @Prop({ required: true })
     date: Date;
 
-    // TODO: isLive
+    @Prop({ type: Boolean, default: false, required: true })
+    isLive: boolean;
 
     @Prop({ type: Boolean, default: false, required: true })
     isHidden: boolean;

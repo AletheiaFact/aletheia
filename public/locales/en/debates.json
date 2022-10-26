@@ -1,5 +1,7 @@
 {
     "liveLabel": "Live",
     "addClaimEditorButton": "Add claim from",
-    "saveButtonLabel": "Save"
+    "saveButtonLabel": "Save",
+    "isEnded": "Debate ended",
+    "seeDebate": "Acompanhe as checagens do debate"
 }
