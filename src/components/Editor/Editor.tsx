@@ -64,7 +64,7 @@ const Editor = ({ claimCollection }: IEditorProps) => {
             <ClaimCollectionContext.Provider
                 value={{
                     sources: claimCollection?.sources,
-                    title: claimCollection,
+                    title: claimCollection?.title,
                 }}
             >
                 <AllStyledComponent
