@@ -182,12 +182,10 @@ export const getEditorClaimCardContentHtml = ({
     personalityId,
     claimId,
 }: IClaimCardContentHtml) => `
-    <br>
     <div
         card-id="${uniqueId()}"
         data-personality-id="${personalityId}"
         ${() => claimId && `data-claim-id="${claimId}"`}
     >
         <p></p>
-    </div>
-    <br>`;
+    </div>`;

@@ -7,7 +7,6 @@ import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
 import ReviewsCarousel from "../ClaimReview/ReviewsCarousel";
 import { useTranslation } from "next-i18next";
-import PersonalityCard from "../Personality/PersonalityCard";
 import ClaimCollectionGrid from "../ClaimCollection/ClaimCollectionGrid";
 const HomeContent = ({ personalities, href, title, claimCollections }) => {
     const { isLoggedIn, vw } = useAppSelector((state) => ({
@@ -26,13 +25,18 @@ const HomeContent = ({ personalities, href, title, claimCollections }) => {
                     justifyContent: "center",
                 }}
             >
-                <Col
-                    xs={{ span: 20, order: 1 }}
-                    sm={{ span: 20, order: 1 }}
-                    md={{ span: 18, order: 1 }}
-                >
-                    <ClaimCollectionGrid claimCollections={claimCollections} />
-                </Col>
+                {Array.isArray(claimCollections) &&
+                    claimCollections.length > 0 && (
+                        <Col
+                            xs={{ span: 20, order: 1 }}
+                            sm={{ span: 20, order: 1 }}
+                            md={{ span: 18, order: 1 }}
+                        >
+                            <ClaimCollectionGrid
+                                claimCollections={claimCollections}
+                            />
+                        </Col>
+                    )}
                 <Col
                     xs={{ span: 22, order: 2 }}
                     sm={{ span: 22, order: 2 }}
