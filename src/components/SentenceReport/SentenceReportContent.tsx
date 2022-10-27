@@ -22,33 +22,39 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                 <Paragraph className="paragraph">{summary}</Paragraph>
                 <Divider />
             </Col>
-            <Col span={24}>
-                <Paragraph className="title">
-                    {t("claimReview:questionsSectionTitle")}
-                </Paragraph>
-                {questions.map((item) => {
-                    return (
-                        <li key={item} className="paragraph">
-                            {item}
-                        </li>
-                    );
-                })}
-                <Divider />
-            </Col>
-            <Col span={24}>
-                <Paragraph className="title">
-                    {t("claimReview:verificationSectionTitle")}
-                </Paragraph>
-                <Paragraph className="paragraph">{report}</Paragraph>
-                <Divider />
-            </Col>
-            <Col span={24}>
-                <Paragraph className="title">
-                    {t("claimReview:howSectionTitle")}
-                </Paragraph>
-                <Paragraph className="paragraph">{verification}</Paragraph>
-                <Divider />
-            </Col>
+            {questions.length > 0 && (
+                <Col span={24}>
+                    <Paragraph className="title">
+                        {t("claimReview:questionsSectionTitle")}
+                    </Paragraph>
+                    {questions.map((item) => {
+                        return (
+                            <li key={item} className="paragraph">
+                                {item}
+                            </li>
+                        );
+                    })}
+                    <Divider />
+                </Col>
+            )}
+            {report && (
+                <Col span={24}>
+                    <Paragraph className="title">
+                        {t("claimReview:verificationSectionTitle")}
+                    </Paragraph>
+                    <Paragraph className="paragraph">{report}</Paragraph>
+                    <Divider />
+                </Col>
+            )}
+            {verification && (
+                <Col span={24}>
+                    <Paragraph className="title">
+                        {t("claimReview:howSectionTitle")}
+                    </Paragraph>
+                    <Paragraph className="paragraph">{verification}</Paragraph>
+                    <Divider />
+                </Col>
+            )}
             <Col span={24}>
                 <Paragraph className="title">
                     {t("claim:sourceSectionTitle")}

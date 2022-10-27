@@ -14,6 +14,7 @@ export type ClaimReview = {
     personality: string;
     claim: string;
     usersId: string;
+    isPartialReview: boolean;
 };
 
 export type SaveEvent = {

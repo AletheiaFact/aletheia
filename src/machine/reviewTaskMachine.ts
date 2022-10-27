@@ -3,8 +3,38 @@ import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
-import { saveContext } from "./actions";
-import { CompoundStates, ReviewTaskEvents, ReviewTaskStates } from "./enums";
+import {
+    saveContext,
+    saveFullReviewContext,
+    savePartialReviewContext,
+} from "./actions";
+import {
+    CompoundStates,
+    ReviewTaskEvents as Events,
+    ReviewTaskStates as States,
+} from "./enums";
+
+const draftSubStates = {
+    initial: CompoundStates.undraft,
+    states: {
+        undraft: {
+            on: {
+                SAVE_DRAFT: {
+                    target: CompoundStates.draft,
+                    actions: [saveContext],
+                },
+            },
+        },
+        draft: {
+            on: {
+                SAVE_DRAFT: {
+                    target: CompoundStates.draft,
+                    actions: [saveContext],
+                },
+            },
+        },
+    },
+};
 
 export const createNewMachine = ({ value, context }) => {
     return createMachine<
@@ -15,98 +45,77 @@ export const createNewMachine = ({ value, context }) => {
         initial: value,
         context,
         states: {
-            unassigned: {
+            [States.unassigned]: {
                 on: {
-                    ASSIGN_USER: {
-                        target: ReviewTaskStates.assigned,
+                    [Events.assignUser]: {
+                        target: States.assigned,
                         actions: [saveContext],
                     },
                 },
             },
-            assigned: {
-                initial: CompoundStates.undraft,
-                states: {
-                    undraft: {
-                        on: {
-                            SAVE_DRAFT: {
-                                target: CompoundStates.draft,
-                                actions: [saveContext],
-                            },
-                        },
+            [States.assigned]: {
+                ...draftSubStates,
+                on: {
+                    [Events.goback]: {
+                        target: States.unassigned,
                     },
-                    draft: {
-                        on: {
-                            SAVE_DRAFT: {
-                                target: CompoundStates.draft,
-                                actions: [saveContext],
-                            },
-                        },
+                    [Events.partialReview]: {
+                        target: States.reported,
+                        actions: [savePartialReviewContext],
+                    },
+                    [Events.fullReview]: {
+                        target: States.summarized,
+                        actions: [saveFullReviewContext],
                     },
                 },
+            },
+            [States.summarized]: {
+                ...draftSubStates,
                 on: {
-                    GO_BACK: {
-                        target: ReviewTaskStates.unassigned,
+                    [Events.goback]: {
+                        target: States.assigned,
                     },
-                    FINISH_REPORT: {
-                        target: ReviewTaskStates.reported,
+                    [Events.finishReport]: {
+                        target: States.reported,
                         actions: [saveContext],
                     },
                 },
             },
-            reported: {
-                initial: CompoundStates.undraft,
-                states: {
-                    undraft: {
-                        on: {
-                            SAVE_DRAFT: {
-                                target: CompoundStates.draft,
-                                actions: [saveContext],
-                            },
-                        },
-                    },
-                    draft: {
-                        on: {
-                            SAVE_DRAFT: {
-                                target: CompoundStates.draft,
-                                actions: [saveContext],
-                            },
-                        },
-                    },
-                },
+            [States.reported]: {
                 on: {
-                    GO_BACK: {
-                        target: ReviewTaskStates.assigned,
+                    [Events.goback]: {
+                        target: States.assigned,
                     },
 
-                    SUBMIT: {
-                        target: ReviewTaskStates.submitted,
+                    [Events.submit]: {
+                        target: States.submitted,
                         actions: [saveContext],
                     },
                 },
             },
-            submitted: {
+            [States.submitted]: {
                 on: {
-                    REJECT: {
-                        target: ReviewTaskStates.rejected,
+                    [Events.reject]: {
+                        target: States.rejected,
                     },
-                    PUBLISH: {
-                        target: ReviewTaskStates.published,
+                    [Events.publish]: {
+                        target: States.published,
                         actions: [saveContext],
                     },
                 },
             },
-            rejected: {
+            [States.rejected]: {
                 on: {
-                    ADD_REJECTION_COMMENT: {
-                        target: ReviewTaskStates.assigned,
+                    [Events.addRejectionComment]: {
+                        target: States.assigned,
                         actions: [saveContext],
                     },
-                    GO_BACK: {
-                        target: ReviewTaskStates.submitted,
+                    [Events.goback]: {
+                        target: States.submitted,
                     },
                 },
             },
-            published: {
+            [States.published]: {
                 type: "final",
             },
         },
@@ -126,16 +135,13 @@ export const transitionHandler = (state) => {
     } = state.event;
     const event = state.event.type;
 
-    if (
-        event === ReviewTaskEvents.goback ||
-        event === ReviewTaskEvents.reject
-    ) {
+    if (event === Events.goback || event === Events.reject) {
         const nextState =
             typeof state.value !== "string"
                 ? Object.keys(state.value)[0]
                 : state.value;
         setCurrentFormAndNextEvents(nextState);
-    } else if (event !== ReviewTaskEvents.init) {
+    } else if (event !== Events.init) {
         api.createClaimReviewTask(
             {
                 sentence_hash,

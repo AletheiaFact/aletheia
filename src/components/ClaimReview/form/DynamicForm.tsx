@@ -94,6 +94,7 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
     useEffect(() => {
         reset(reviewData);
         resetIsLoading();
+        setReviewerError(false);
     }, [nextEvents]);
 
     useEffect(() => {
@@ -111,6 +112,7 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
                                     claimReview: {
                                         personality,
                                         claim,
+                                        isPartialReview: true,
                                     },
                                 },
                             },
@@ -241,10 +243,11 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
                             marginLeft: 20,
                         }}
                     >
-                        <Text type="danger">
-                            {reviewerError &&
-                                t("claimReviewTask:invalidReviewerMessage")}
-                        </Text>
+                        {reviewerError && (
+                            <Text type="danger" data-cy="testReviewerError">
+                                {t("claimReviewTask:invalidReviewerMessage")}
+                            </Text>
+                        )}
                     </div>
                     {nextEvents?.length > 0 && (
                         <AletheiaCaptcha

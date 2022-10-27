@@ -1,43 +1,41 @@
-import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
+import {
+    ReviewTaskEvents as Events,
+    ReviewTaskStates as States,
+} from "./enums";
 
-const getNextEvents = (param: ReviewTaskEvents | ReviewTaskStates) => {
-    const defaultEvents = [ReviewTaskEvents.goback, ReviewTaskEvents.draft];
+const getNextEvents = (param: Events | States) => {
+    const defaultEvents = [Events.goback, Events.draft];
     const eventsMap = {
-        [ReviewTaskStates.unassigned]: [ReviewTaskEvents.assignUser],
-        [ReviewTaskEvents.assignUser]: [
+        [States.unassigned]: [Events.assignUser],
+        [Events.assignUser]: [
             ...defaultEvents,
-            ReviewTaskEvents.finishReport,
+            Events.partialReview,
+            Events.fullReview,
         ],
-        [ReviewTaskStates.assigned]: [
+        [States.assigned]: [
             ...defaultEvents,
-            ReviewTaskEvents.finishReport,
+            Events.partialReview,
+            Events.fullReview,
         ],
-        [ReviewTaskEvents.finishReport]: [
+        [Events.fullReview]: [...defaultEvents, Events.finishReport],
+        [States.summarized]: [...defaultEvents, Events.finishReport],
+
+        [Events.finishReport]: [Events.goback, Events.submit],
+        [Events.partialReview]: [Events.goback, Events.submit],
+        [States.reported]: [Events.goback, Events.submit],
+
+        [States.submitted]: [Events.reject, Events.publish],
+        [Events.submit]: [Events.reject, Events.publish],
+
+        [States.rejected]: [Events.goback, Events.addRejectionComment],
+        [Events.addRejectionComment]: [
             ...defaultEvents,
-            ReviewTaskEvents.submit,
+            Events.partialReview,
+            Events.fullReview,
         ],
-        [ReviewTaskStates.reported]: [
-            ...defaultEvents,
-            ReviewTaskEvents.submit,
-        ],
-        [ReviewTaskStates.submitted]: [
-            ReviewTaskEvents.reject,
-            ReviewTaskEvents.publish,
-        ],
-        [ReviewTaskEvents.submit]: [
-            ReviewTaskEvents.reject,
-            ReviewTaskEvents.publish,
-        ],
-        [ReviewTaskStates.rejected]: [
-            ReviewTaskEvents.goback,
-            ReviewTaskEvents.addRejectionComment,
-        ],
-        [ReviewTaskEvents.addRejectionComment]: [
-            ...defaultEvents,
-            ReviewTaskEvents.finishReport,
-        ],
-        [ReviewTaskStates.published]: [],
-        [ReviewTaskEvents.publish]: [],
+
+        [States.published]: [],
+        [Events.publish]: [],
     };
 
     return eventsMap[param];

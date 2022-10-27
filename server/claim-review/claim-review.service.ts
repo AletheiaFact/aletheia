@@ -133,6 +133,7 @@ export class ClaimReviewService {
             claimReview.date = new Date();
             const newClaimReview = new this.ClaimReviewModel(claimReview);
             newClaimReview.isPublished = true;
+            newClaimReview.isPartialReview = claimReview.isPartialReview;
 
             const history = this.historyService.getHistoryParams(
                 newClaimReview._id,

@@ -1,24 +1,21 @@
+import { ClassificationEnum } from "../../../../machine/enums";
 import { createFormField, FormField, fieldValidation } from "./FormField";
 
 const assignedForm: FormField[] = [
     createFormField({
+        fieldName: "classification",
+        type: "select",
+        defaultValue: "",
+        rules: {
+            validate: {
+                validClassification: (value) =>
+                    fieldValidation(value, isValidClassification) ||
+                    "common:requiredFieldError",
+            },
+        },
+    }),
+    createFormField({
         fieldName: "summary",
-        type: "textArea",
-        defaultValue: "",
-    }),
-    createFormField({
-        fieldName: "questions",
-        type: "textList",
-        addInputLabel: "claimReviewForm:addQuestionLabel",
-        defaultValue: [],
-    }),
-    createFormField({
-        fieldName: "report",
-        type: "textArea",
-        defaultValue: "",
-    }),
-    createFormField({
-        fieldName: "verification",
         type: "textArea",
         defaultValue: "",
     }),
@@ -47,6 +44,10 @@ function isValidHttpUrl(string) {
         return false;
     }
     return url.protocol === "http:" || url.protocol === "https:";
+}
+
+function isValidClassification(string) {
+    return Object.values(ClassificationEnum).includes(string);
 }
 
 export default assignedForm;

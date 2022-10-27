@@ -56,6 +56,8 @@ const ClaimReviewHeader = ({
         publishedReview?.review;
     const isPublishedOrCanSeeHidden =
         isPublished && (!isHidden || userIsNotRegular);
+    const userIsAdmin = role === Roles.Admin;
+
     const alertTypes = {
         hiddenReport: {
             show: true,
@@ -93,13 +95,16 @@ const ClaimReviewHeader = ({
             return alertTypes.hiddenReport;
         }
         if (!isPublished) {
-            if (isCrossChecking && userHasPermission) {
+            if (isCrossChecking && (userIsAdmin || userHasPermission)) {
                 return alertTypes.crossChecking;
             }
-            if (userIsAssignee && reviewData.rejectionComment) {
+            if (
+                (userIsAdmin || userIsAssignee) &&
+                reviewData.rejectionComment
+            ) {
                 return alertTypes.rejected;
             }
-            if (!userHasPermission && !reviewNotStarted) {
+            if (!userHasPermission && !userIsAdmin && !reviewNotStarted) {
                 return alertTypes.hasStarted;
             }
         }
