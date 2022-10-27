@@ -14,6 +14,7 @@ import {
     reviewNotStartedSelector,
     reviewDataSelector,
 } from "../../machine/selectors";
+import { Roles } from "../../machine/enums";
 
 const ClaimReviewForm = ({
     claimId,
@@ -22,22 +23,25 @@ const ClaimReviewForm = ({
     userIsReviewer,
 }) => {
     const { t } = useTranslation();
-    const { isLoggedIn, userId } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-        userId: state.userId,
-    }));
+    const {
+        login: isLoggedIn,
+        userId,
+        role,
+    } = useAppSelector((state) => state);
 
     const { machineService } = useContext(GlobalStateMachineContext);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
-    const isStarted = useSelector(machineService, reviewNotStartedSelector);
+    const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
-    const [formCollapsed, setFormCollapsed] = useState(isStarted);
+    const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
+    const userIsAdmin = role === Roles.Admin;
 
     const showForm =
-        isStarted ||
+        isUnassigned ||
+        userIsAdmin ||
         (userIsAssignee && !isCrossChecking) ||
         (isCrossChecking && userIsReviewer);
 
@@ -46,8 +50,8 @@ const ClaimReviewForm = ({
     };
 
     useEffect(() => {
-        setFormCollapsed(isStarted);
-    }, [isStarted]);
+        setFormCollapsed(isUnassigned);
+    }, [isUnassigned]);
 
     return (
         !isPublished && (

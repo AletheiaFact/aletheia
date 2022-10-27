@@ -22,7 +22,7 @@ const SentenceReportContent = ({ context, personality, claim }) => {
                 <Paragraph className="paragraph">{summary}</Paragraph>
                 <Divider />
             </Col>
-            {questions.lenght > 0 && (
+            {questions.length > 0 && (
                 <Col span={24}>
                     <Paragraph className="title">
                         {t("claimReview:questionsSectionTitle")}
