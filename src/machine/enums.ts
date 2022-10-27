@@ -1,6 +1,8 @@
 enum ReviewTaskEvents {
     init = "xstate.init",
     assignUser = "ASSIGN_USER",
+    partialReview = "PARTIAL_REVIEW",
+    fullReview = "FULL_REVIEW",
     finishReport = "FINISH_REPORT",
     submit = "SUBMIT",
     reject = "REJECT",
@@ -13,6 +15,7 @@ enum ReviewTaskEvents {
 enum ReviewTaskStates {
     unassigned = "unassigned",
     assigned = "assigned",
+    summarized = "summarized",
     reported = "reported",
     submitted = "submitted",
     rejected = "rejected",

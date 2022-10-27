@@ -40,11 +40,13 @@ const locators = {
         BTN_ADD_SOURCE: "[data-cy=testClaimReviewsourcesAdd]",
         BTN_REMOVE_SOURCE: "[data-cy=testClaimReviewsourcesRemove1]",
         BTN_FINISH_REPORT: "[data-cy=testClaimReviewFINISH_REPORT]",
+        BTN_FULL_REVIEW: "[data-cy=testClaimReviewFULL_REVIEW]",
         INPUT_CLASSIFICATION: "[data-cy=testClassificationText]",
         INPUT_REVIEWER: "[data-cy=testClaimReviewreviewerId]",
         BTN_SAVE_DRAFT: "[data-cy=testClaimReviewSAVE_DRAFT]",
         BTN_SUBMIT: "[data-cy=testClaimReviewSUBMIT]",
         BTN_PUBLISH: "[data-cy=testClaimReviewPUBLISH]",
+        TEXT_REVIEWER_ERROR: "[data-cy=testReviewerError]",
     },
 
     menu: {
