@@ -8,7 +8,6 @@ import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
-import SocialMediaShare from "../components/SocialMediaShare";
 import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
 import { ClassificationEnum } from "../machine/enums";
 import actions from "../store/actions";
@@ -19,7 +18,6 @@ export interface ClaimReviewPageProps {
     personality: any;
     claim: any;
     sentence: any;
-    href: string;
     claimReviewTask: any;
     claimReview: any;
     isLoggedIn: boolean;
@@ -99,10 +97,10 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             />
 
             <GlobalStateMachineProvider
-                data_hash={props.sentence.data_hash}
+                data_hash={sentence.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
                 publishedReview={{
-                    review: props.claimReview,
+                    review: claimReview,
                     descriptionForHide: props.description,
                 }}
             >
@@ -112,11 +110,6 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                     sentence={sentence}
                 />
             </GlobalStateMachineProvider>
-            <SocialMediaShare
-                quote={personality?.name}
-                href={props.href}
-                claim={claim?.title}
-            />
             <AffixButton personalitySlug={personality.slug} />
         </>
     );
@@ -135,7 +128,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             description: query.description,
-            href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
             userRole: req?.user?.role ? req?.user?.role : null,
             userId: req?.user?._id || "",
