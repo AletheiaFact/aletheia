@@ -39,13 +39,11 @@ const initApp = async (options) => {
     // app.use(helmet());
     app.use(cookieParser());
     app.useStaticAssets(join(__dirname, "..", "public"), {
-        setHeaders: (res: any, path: string) => {
-            if (path.includes("fonts")) {
-                res.setHeader(
-                    "Cache-Control",
-                    "public, max-age=31536000, immutable"
-                );
-            }
+        setHeaders: (res: any) => {
+            res.setHeader(
+                "Cache-Control",
+                "public, max-age=31536000, immutable"
+            );
         },
     });
     // app.setGlobalPrefix("api");
