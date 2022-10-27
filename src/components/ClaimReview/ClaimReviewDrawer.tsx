@@ -11,7 +11,6 @@ import AletheiaButton, { ButtonType } from "../Button";
 
 import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";
-import SocialMediaShare from "../SocialMediaShare";
 
 const ClaimReviewDrawer = () => {
     const dispatch = useDispatch();
@@ -92,11 +91,6 @@ const ClaimReviewDrawer = () => {
                         claim={claim}
                         sentence={sentence}
                     />
-                    {/*<SocialMediaShare*/}
-                    {/*    quote={personality?.name}*/}
-                    {/*    href={href}*/}
-                    {/*    claim={claim?.title}*/}
-                    {/*/>*/}
                 </GlobalStateMachineProvider>
             ) : (
                 <Loading />
