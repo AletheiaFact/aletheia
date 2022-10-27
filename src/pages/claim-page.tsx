@@ -13,6 +13,7 @@ import { GetLocale } from "../utils/GetLocale";
 export interface ClaimPageProps {
     personality: any;
     claim: any;
+    sitekey: string;
     href: string;
     isLoggedIn: boolean;
     userRole: string;
@@ -20,13 +21,14 @@ export interface ClaimPageProps {
 }
 
 const ClaimPage: NextPage<ClaimPageProps> = (props) => {
-    const { personality, claim, isLoggedIn, userRole, userId } = props;
+    const { personality, claim, isLoggedIn, userRole, userId, sitekey } = props;
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
     dispatch(actions.setLoginStatus(isLoggedIn));
     dispatch(actions.setUserId(userId));
     dispatch(actions.setUserRole(userRole));
+    dispatch(actions.setSitekey(sitekey));
 
     const jsonld = {
         "@context": "https://schema.org",
@@ -68,6 +70,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claim: JSON.parse(JSON.stringify(query.claim)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
+            sitekey: query.sitekey,
             userRole: req?.user?.role ? req?.user?.role : null,
             userId: req?.user?._id || "",
         },

@@ -17,6 +17,7 @@ import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
 import { SentenceService } from "../sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
+import { Roles } from "../ability/ability.factory";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -231,8 +232,9 @@ export class ClaimReviewTaskService {
 
         if (newClaimReviewTaskMachine.value === "published") {
             if (
+                loggedInUser.role !== Roles.Admin &&
                 loggedInUser._id !==
-                machine.context.reviewData.reviewerId.toString()
+                    machine.context.reviewData.reviewerId.toString()
             ) {
                 throw new ForbiddenException(
                     "This user does not have permission to publish the report"

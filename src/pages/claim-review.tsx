@@ -18,6 +18,7 @@ export interface ClaimReviewPageProps {
     personality: any;
     claim: any;
     sentence: any;
+    sitekey: string;
     claimReviewTask: any;
     claimReview: any;
     isLoggedIn: boolean;
@@ -38,11 +39,13 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         isLoggedIn,
         userRole,
         userId,
+        sitekey,
     } = props;
 
     dispatch(actions.setLoginStatus(isLoggedIn));
     dispatch(actions.setUserId(userId));
     dispatch(actions.setUserRole(userRole));
+    dispatch(actions.setSitekey(sitekey));
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: false,
@@ -127,6 +130,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             sentence: JSON.parse(JSON.stringify(query.sentence)),
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
+            sitekey: query.sitekey,
             description: query.description,
             isLoggedIn: req.user ? true : false,
             userRole: req?.user?.role ? req?.user?.role : null,

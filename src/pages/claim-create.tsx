@@ -7,18 +7,18 @@ import ClaimCreate from "../components/Claim/ClaimCreate";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 import { useDispatch } from "react-redux";
-import { ActionTypes } from "../store/types";
 
-const ClaimCreatePage: NextPage<{ personality; isLoggedIn }> = ({
+import actions from "../store/actions";
+
+const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
+    sitekey,
     personality,
     isLoggedIn,
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    dispatch({
-        type: ActionTypes.SET_LOGIN_STATUS,
-        login: isLoggedIn,
-    });
+    dispatch(actions.setLoginStatus(isLoggedIn));
+    dispatch(actions.setSitekey(sitekey));
     return (
         <>
             <Seo
@@ -38,6 +38,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
+            sitekey: query.sitekey,
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: JSON.parse(JSON.stringify(query.personality)),
