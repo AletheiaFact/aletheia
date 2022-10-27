@@ -27,7 +27,9 @@ WORKDIR /app
 
 RUN apk add --no-cache git python3 make g++
 RUN yarn install
-RUN yarn build
+RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
+    NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
+    yarn build
 
 FROM node:14.19.0-alpine
 
