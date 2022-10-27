@@ -17,6 +17,7 @@ export enum ActionTypes {
     SET_SELECTED_CLAIM,
     SET_SELECTED_SENTENCE,
     SET_USER_ID,
+    SET_SITEKEY,
 }
 
 export interface RootState {
@@ -39,4 +40,5 @@ export interface RootState {
     selectedClaim: any;
     selectedSentence: any;
     userId: string;
+    sitekey: string;
 }

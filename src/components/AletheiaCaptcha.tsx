@@ -5,7 +5,7 @@ import React, {
     useImperativeHandle,
 } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { SITEKEY } from "../lib/recaptcha";
+import { useAppSelector } from "../store/store";
 const recaptchaRef = React.createRef<ReCAPTCHA>();
 
 interface CaptchaProps {
@@ -22,6 +22,7 @@ const AletheiaCaptcha = forwardRef(({ onChange }: CaptchaProps, ref) => {
         },
     }));
 
+    const { sitekey } = useAppSelector((state) => state);
     const [captchaString, setCaptchaString] = useState("");
 
     const handleChangeCaptcha = async () => {
@@ -40,7 +41,7 @@ const AletheiaCaptcha = forwardRef(({ onChange }: CaptchaProps, ref) => {
     return (
         <ReCAPTCHA
             ref={recaptchaRef}
-            sitekey={SITEKEY}
+            sitekey={sitekey}
             onChange={handleChangeCaptcha}
             onExpired={onExpiredCaptcha}
         />

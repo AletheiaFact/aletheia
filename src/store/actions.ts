@@ -54,6 +54,10 @@ const actions = {
         type: ActionTypes.SET_USER_ROLE,
         role: role || Roles.Regular,
     }),
+    setSitekey: (sitekey) => ({
+        type: ActionTypes.SET_SITEKEY,
+        sitekey,
+    }),
 };
 
 export default actions;
