@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res } from "@nestjs/common";
+import { Controller, Get, Header, Req, Res } from "@nestjs/common";
 import { ViewService } from "../view/view.service";
 import { Response } from "express";
 import { parse } from "url";
@@ -13,28 +13,31 @@ export class HomeController {
         private viewService: ViewService,
         private personalityService: PersonalityService,
         private statsService: StatsService
-    ) { }
+    ) {}
 
-    @Get('/home')
+    @Get("/home")
     /**
      * Redirect /home to / for backwards compatibility
      * @param res
      */
     redirect(@Res() res) {
-        return res.redirect('/');
+        return res.redirect("/");
     }
 
     @IsPublic()
     @Get()
+    @Header("Cache-Control", "max-age=3600")
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
-        const { personalities } = await this.personalityService.combinedListAll({
-            language: req.language,
-            order: 'random',
-            pageSize: 6,
-            fetchOnly: true
-        });
+        const { personalities } = await this.personalityService.combinedListAll(
+            {
+                language: req.language,
+                order: "random",
+                pageSize: 6,
+                fetchOnly: true,
+            }
+        );
 
         const stats = await this.statsService.getHomeStats();
         await this.viewService
