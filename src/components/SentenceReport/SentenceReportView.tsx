@@ -3,6 +3,7 @@ import { Col, Row } from "antd";
 import React, { useContext } from "react";
 
 import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import { Roles } from "../../machine/enums";
 import {
     crossCheckingSelector,
     isPartialReviewSelector,
@@ -22,11 +23,7 @@ const SentenceReportView = ({
     userIsReviewer,
     isHidden,
 }) => {
-    const { isLoggedIn } = useAppSelector((state) => {
-        return {
-            isLoggedIn: state?.login,
-        };
-    });
+    const { login: isLoggedIn, role } = useAppSelector((state) => state);
     const { machineService, publishedReview } = useContext(
         GlobalStateMachineContext
     );
@@ -38,10 +35,11 @@ const SentenceReportView = ({
         machineService,
         isPartialReviewSelector
     );
+    const userIsAdmin = role === Roles.Admin;
 
     const showReport =
         (isPublished && (!isHidden || userIsNotRegular)) ||
-        (isCrossChecking && userIsReviewer);
+        (isCrossChecking && (userIsAdmin || userIsReviewer));
 
     return (
         showReport && (
