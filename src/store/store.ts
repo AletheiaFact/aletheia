@@ -102,6 +102,12 @@ const reducer = (state, action) => {
                 ...state,
                 userId: action.userId,
             };
+        case ActionTypes.SET_SITEKEY:
+            return {
+                ...state,
+                sitekey: action.sitekey,
+            };
+
         default:
             return state;
     }
