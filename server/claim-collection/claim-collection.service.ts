@@ -77,6 +77,7 @@ export class ClaimCollectionService {
         });
         const newClaimCollection = new this.ClaimCollectionModel({
             ...claimCollectionBody,
+            editorContentObject: {},
             slug,
         });
         return newClaimCollection.save();
