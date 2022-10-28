@@ -45,56 +45,56 @@ const ClaimCollectionView = ({ claimCollection }) => {
 
     return (
         <>
-            <Row
-                style={{
-                    width: "100%",
-                    justifyContent: "center",
-                }}
-            >
-                <ClaimCollectionHeader
-                    title={claimCollection?.title}
-                    personalities={claimCollection?.personalities}
-                />
+            <CallbackTimerProvider callback={updateTimeline}>
                 <Row
                     style={{
-                        padding: "30px 10%",
                         width: "100%",
+                        justifyContent: "center",
                     }}
                 >
-                    <CallbackTimerProvider callback={updateTimeline}>
-                        <ClaimCollectionTimelineWrapper
-                            collections={collections}
-                            isLive={claimCollection.isLive}
-                        />
-                    </CallbackTimerProvider>
-                </Row>
-                <Row
-                    style={{
-                        padding: "30px 10%",
-                        width: "100%",
-                        justifyContent: "space-evenly",
-                    }}
-                >
-                    <Col>
-                        <VideoCTACard />
-                    </Col>
-                    <Col>
-                        <DonationCard />
-                    </Col>
-                </Row>
-                {!isLoggedIn && (
+                    <ClaimCollectionHeader
+                        title={claimCollection?.title}
+                        personalities={claimCollection?.personalities}
+                    />
                     <Row
                         style={{
                             padding: "30px 10%",
                             width: "100%",
                         }}
                     >
-                        <Col xs={24} lg={18} order={3}>
-                            <CTARegistration />
+                        <ClaimCollectionTimelineWrapper
+                            collections={collections}
+                            isLive={claimCollection.isLive}
+                        />
+                    </Row>
+                    <Row
+                        style={{
+                            padding: "30px 10%",
+                            width: "100%",
+                            justifyContent: "space-evenly",
+                        }}
+                    >
+                        <Col>
+                            <VideoCTACard />
+                        </Col>
+                        <Col>
+                            <DonationCard />
                         </Col>
                     </Row>
-                )}
-            </Row>
+                    {!isLoggedIn && (
+                        <Row
+                            style={{
+                                padding: "30px 10%",
+                                width: "100%",
+                            }}
+                        >
+                            <Col xs={24} lg={18} order={3}>
+                                <CTARegistration />
+                            </Col>
+                        </Row>
+                    )}
+                </Row>
+            </CallbackTimerProvider>
         </>
     );
 };
