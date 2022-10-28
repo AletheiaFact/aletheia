@@ -45,7 +45,7 @@ services:
           useNewUrlParser: true
       throttle:
         ttl: 60
-        limit: 1000
+        limit: 100
       authentication_type: ory
       ory:
         url: ORY_SDK_URL
