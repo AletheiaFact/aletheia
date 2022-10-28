@@ -17,7 +17,7 @@ export class SearchController {
 
     @IsPublic()
     @Get("api/search")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60")
     async listAll(@Query() query, @Req() req) {
         const { pageSize, searchText } = query;
 

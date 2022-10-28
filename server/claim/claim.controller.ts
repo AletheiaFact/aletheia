@@ -56,7 +56,7 @@ export class ClaimController {
 
     @IsPublic()
     @Get("api/claim")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60")
     listAll(@Query() getClaimsDTO: GetClaimsDTO) {
         const { page = 0, pageSize = 10, order = "asc" } = getClaimsDTO;
         const queryInputs = this._verifyInputsQuery(getClaimsDTO);
@@ -99,7 +99,7 @@ export class ClaimController {
 
     @IsPublic()
     @Get("api/claim/:id")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60")
     getById(@Param("id") claimId, @Headers() headers) {
         // FIXME: this is returning a _id which is actually a revisionId
         return this.claimService.getById(claimId);
@@ -119,7 +119,7 @@ export class ClaimController {
     @Get(
         "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash"
     )
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60")
     public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
         const { sentence_hash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
@@ -195,7 +195,7 @@ export class ClaimController {
 
     @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60")
     public async personalityClaimPage(
         @Req() req: Request,
         @Res() res: Response
@@ -260,7 +260,7 @@ export class ClaimController {
 
     @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug/sources")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60")
     public async sourcesClaimPage(@Req() req: Request, @Res() res: Response) {
         const { personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
@@ -290,7 +290,7 @@ export class ClaimController {
     @Get(
         "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash/sources"
     )
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60")
     public async sourcesReportPage(@Req() req: Request, @Res() res: Response) {
         const { sentence_hash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);

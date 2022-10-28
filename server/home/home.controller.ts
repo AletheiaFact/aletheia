@@ -28,7 +28,7 @@ export class HomeController {
 
     @IsPublic()
     @Get()
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60")
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const { personalities } = await this.personalityService.combinedListAll(

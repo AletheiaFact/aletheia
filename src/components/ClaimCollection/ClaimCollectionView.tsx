@@ -61,7 +61,10 @@ const ClaimCollectionView = ({ claimCollection }) => {
                         width: "100%",
                     }}
                 >
-                    <CallbackTimerProvider callback={updateTimeline}>
+                    <CallbackTimerProvider
+                        callback={updateTimeline}
+                        interval={30}
+                    >
                         <ClaimCollectionTimelineWrapper
                             collections={collections}
                             isLive={claimCollection.isLive}
