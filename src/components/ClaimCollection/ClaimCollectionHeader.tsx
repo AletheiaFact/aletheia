@@ -1,12 +1,33 @@
 import { Col, Row, Typography } from "antd";
-import React from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import PersonalityCard from "../Personality/PersonalityCard";
+import { GlobalStateContext } from "../Editor/CallbackTimerProvider";
+import { useActor } from "@xstate/react";
+import personalityApi from "../../api/personality";
+import { useTranslation } from "next-i18next";
 
 const { Title } = Typography;
 const ClaimCollectionHeader = ({ title, personalities }) => {
+    const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
+    const { t } = useTranslation();
+    const { timerService } = useContext<any>(GlobalStateContext);
+    const [state]: any = useActor<any>(timerService);
+
+    useLayoutEffect(() => {
+        if (personalitiesArray) {
+            Promise.all(
+                personalitiesArray.map(async (p) => {
+                    return personalityApi.getPersonality(p._id, {}, t);
+                })
+            ).then((newPersonalitiesArray) => {
+                setPersonalitiesArray(newPersonalitiesArray);
+            });
+        }
+    }, [state]);
+
     const { vw } = useAppSelector((state) => state);
     return (
         <Row
@@ -46,8 +67,8 @@ const ClaimCollectionHeader = ({ title, personalities }) => {
                     justifyContent: "space-evenly",
                 }}
             >
-                {personalities
-                    ? personalities.map((p) => (
+                {personalitiesArray
+                    ? personalitiesArray.map((p) => (
                           <Col
                               style={{
                                   display: "flex",
