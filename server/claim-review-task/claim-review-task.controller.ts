@@ -8,6 +8,7 @@ import {
     Query,
     Req,
     Res,
+    Header,
 } from "@nestjs/common";
 import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
@@ -30,6 +31,7 @@ export class ClaimReviewController {
 
     @IsPublic()
     @Get("api/claimreviewtask")
+    @Header("Cache-Control", "max-age=3600")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
         const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
         return Promise.all([
