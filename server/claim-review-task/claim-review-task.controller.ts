@@ -31,9 +31,8 @@ export class ClaimReviewController {
         private configService: ConfigService
     ) {}
 
-    @IsPublic()
     @Get("api/claimreviewtask")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @Header("Cache-Control", "no-cache")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
         const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
         return Promise.all([
@@ -55,11 +54,13 @@ export class ClaimReviewController {
     }
 
     @Get("api/claimreviewtask/:id")
+    @Header("Cache-Control", "no-cache")
     async getById(@Param("id") id: string) {
         return this.claimReviewTaskService.getById(id);
     }
 
     @Post("api/claimreviewtask")
+    @Header("Cache-Control", "no-cache")
     async create(@Body() createClaimReviewTask: CreateClaimReviewTaskDTO) {
         const validateCaptcha = await this.captchaService.validate(
             createClaimReviewTask.recaptcha
@@ -71,6 +72,7 @@ export class ClaimReviewController {
     }
 
     @Put("api/claimreviewtask/:sentence_hash")
+    @Header("Cache-Control", "no-cache")
     async autoSaveDraft(
         @Param("sentence_hash") sentence_hash,
         @Body() claimReviewTaskBody: UpdateClaimReviewTaskDTO
@@ -90,6 +92,7 @@ export class ClaimReviewController {
     }
 
     @Get("api/claimreviewtask/sentence/:sentence_hash")
+    @Header("Cache-Control", "no-cache")
     async getBySentenceHash(@Param("sentence_hash") sentence_hash: string) {
         return this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
             sentence_hash
@@ -97,6 +100,7 @@ export class ClaimReviewController {
     }
 
     @Get("kanban")
+    @Header("Cache-Control", "no-cache")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
