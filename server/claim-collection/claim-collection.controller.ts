@@ -20,6 +20,7 @@ import { Response } from "express";
 import { ViewService } from "../view/view.service";
 import { PersonalityService } from "../personality/personality.service";
 import { BaseRequest } from "../types";
+import { ConfigService } from "@nestjs/config";
 
 @Controller()
 export class ClaimCollectionController {
@@ -27,7 +28,8 @@ export class ClaimCollectionController {
         private claimCollectionService: ClaimCollectionService,
         private personalityService: PersonalityService,
         private captchaService: CaptchaService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private configService: ConfigService
     ) {}
 
     @IsPublic()
@@ -118,14 +120,15 @@ export class ClaimCollectionController {
             })
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/claim-collection-view",
-                Object.assign(parsedUrl.query, { claimCollection })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-collection-view",
+            Object.assign(parsedUrl.query, {
+                claimCollection,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 
     @Get("claim-collection/:id/edit")
@@ -140,13 +143,14 @@ export class ClaimCollectionController {
             claimCollectionId
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/claim-collection-editor",
-                Object.assign(parsedUrl.query, { claimCollection })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-collection-editor",
+            Object.assign(parsedUrl.query, {
+                claimCollection,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 }

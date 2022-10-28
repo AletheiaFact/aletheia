@@ -4,7 +4,6 @@ import { join } from "path";
 import Logger from "./logger";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
-import helmet from "helmet";
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 
@@ -36,7 +35,8 @@ const initApp = async (options) => {
         })
     );
 
-    app.use(helmet());
+    // FIXME: not working but we need to enable in the future
+    // app.use(helmet());
     app.use(cookieParser());
     app.useStaticAssets(join(__dirname, "..", "public"), {
         setHeaders: (res: any, path: string) => {

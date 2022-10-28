@@ -8,11 +8,15 @@ import { useDispatch } from "react-redux";
 import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import actions from "../store/actions";
-const KanbanPage: NextPage<{ isLoggedIn; userId; userRole }> = (props) => {
+const KanbanPage: NextPage<{ isLoggedIn; userId; userRole; sitekey }> = (
+    props
+) => {
     const dispatch = useDispatch();
     dispatch(actions.setLoginStatus(props.isLoggedIn));
     dispatch(actions.setUserId(props.userId));
     dispatch(actions.setUserRole(props.userRole));
+    dispatch(actions.setSitekey(props.sitekey));
+
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: false,
@@ -25,7 +29,7 @@ const KanbanPage: NextPage<{ isLoggedIn; userId; userRole }> = (props) => {
     );
 };
 
-export async function getServerSideProps({ locale, locales, req }) {
+export async function getServerSideProps({ locale, locales, req, query }) {
     locale = GetLocale(req, locale, locales);
 
     return {
@@ -34,6 +38,7 @@ export async function getServerSideProps({ locale, locales, req }) {
             isLoggedIn: req.user ? true : false,
             userRole: req?.user?.role ? req?.user?.role : null,
             userId: req?.user?._id || "",
+            sitekey: query.sitekey,
         },
     };
 }
