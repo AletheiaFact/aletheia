@@ -45,7 +45,7 @@ metadata:
   name: aletheia
   namespace: ENVIRONMENT
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: aletheia

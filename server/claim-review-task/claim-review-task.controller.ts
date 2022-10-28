@@ -20,13 +20,15 @@ import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { GetTasksDTO } from "./dto/get-tasks.dto";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
+import { ConfigService } from "@nestjs/config";
 
 @Controller()
 export class ClaimReviewController {
     constructor(
         private claimReviewTaskService: ClaimReviewTaskService,
         private captchaService: CaptchaService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private configService: ConfigService
     ) {}
 
     @IsPublic()
@@ -98,13 +100,13 @@ export class ClaimReviewController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/kanban-page",
-                Object.assign(parsedUrl.query, {})
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/kanban-page",
+            Object.assign(parsedUrl.query, {
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 }
