@@ -37,7 +37,7 @@ export class ClaimCollectionController {
 
     @IsPublic()
     @Get("api/claim-collection")
-    @Header("Cache-Control", "max-age=60")
+    @Header("Cache-Control", "max-age=30, must-revalidate")
     public async getClaimCollectionList(
         @Query() getClaimCollectionListDTO: any
     ) {
@@ -65,7 +65,7 @@ export class ClaimCollectionController {
 
     @IsPublic()
     @Get("api/claim-collection/:id")
-    @Header("Cache-Control", "max-age=60")
+    @Header("Cache-Control", "max-age=30, must-revalidate")
     async getById(@Param("id") id: string, @Query() query) {
         const { reverse, lastCollectionItem } = query;
         return this.claimCollectionService.getById(

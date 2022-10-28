@@ -67,7 +67,7 @@ export class UsersController {
 
     @IsPublic()
     @Get("api/user")
-    @Header("Cache-Control", "max-age=60")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getAll(@Query() getUsers) {
         return this.usersService.findAll(getUsers);
     }
