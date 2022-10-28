@@ -9,6 +9,7 @@ import {
     Req,
     Res,
     Header,
+    UseGuards,
 } from "@nestjs/common";
 import { ClaimCollectionService } from "./claim-collection.service";
 import { CreateClaimCollectionDto } from "./dto/create-claim-collection.dto";
@@ -21,6 +22,8 @@ import { ViewService } from "../view/view.service";
 import { PersonalityService } from "../personality/personality.service";
 import { BaseRequest } from "../types";
 import { ConfigService } from "@nestjs/config";
+import { AbilitiesGuard } from "../ability/abilities.guard";
+import { AdminUserAbility, CheckAbilities } from "../ability/ability.decorator";
 
 @Controller()
 export class ClaimCollectionController {
@@ -34,7 +37,7 @@ export class ClaimCollectionController {
 
     @IsPublic()
     @Get("api/claim-collection")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=30, must-revalidate")
     public async getClaimCollectionList(
         @Query() getClaimCollectionListDTO: any
     ) {
@@ -62,7 +65,7 @@ export class ClaimCollectionController {
 
     @IsPublic()
     @Get("api/claim-collection/:id")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=30, must-revalidate")
     async getById(@Param("id") id: string, @Query() query) {
         const { reverse, lastCollectionItem } = query;
         return this.claimCollectionService.getById(
@@ -74,6 +77,8 @@ export class ClaimCollectionController {
     }
 
     @Post("api/claim-collection")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     async create(@Body() createClaimCollection: CreateClaimCollectionDto) {
         // const validateCaptcha = await this.captchaService.validate(
         //     createClaimCollection.recaptcha
@@ -85,6 +90,8 @@ export class ClaimCollectionController {
     }
 
     @Put("api/claim-collection/:id")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     async autoSaveDraft(
         @Param("id") claimCollectionId,
         @Body() claimCollectionBody: UpdateClaimCollectionDto
@@ -132,6 +139,8 @@ export class ClaimCollectionController {
     }
 
     @Get("claim-collection/:id/edit")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     public async claimCollectionEdit(
         @Param("id") claimCollectionId,
         @Req() req: BaseRequest,
