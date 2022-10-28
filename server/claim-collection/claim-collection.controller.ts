@@ -104,7 +104,9 @@ export class ClaimCollectionController {
         );
     }
 
+    @IsPublic()
     @Get("claim-collection/:id")
+    @Header("Cache-Control", "max-age=30, must-revalidate")
     public async claimCollection(
         @Param("id") claimCollectionId,
         @Req() req: BaseRequest,
