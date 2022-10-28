@@ -20,11 +20,17 @@ const ClaimCollectionHeader = ({ title, personalities }) => {
         if (personalitiesArray) {
             Promise.all(
                 personalitiesArray.map(async (p) => {
-                    return personalityApi.getPersonality(p._id, {}, t);
+                    if (p && p._id) {
+                        return personalityApi.getPersonality(p?._id, {}, t);
+                    } else {
+                        throw Error;
+                    }
                 })
-            ).then((newPersonalitiesArray) => {
-                setPersonalitiesArray(newPersonalitiesArray);
-            });
+            )
+                .then((newPersonalitiesArray) => {
+                    setPersonalitiesArray(newPersonalitiesArray);
+                })
+                .catch(() => {});
         }
     }, [state]);
 
@@ -68,7 +74,7 @@ const ClaimCollectionHeader = ({ title, personalities }) => {
                 }}
             >
                 {personalitiesArray
-                    ? personalitiesArray.map((p) => (
+                    ? personalitiesArray.map((p, index) => (
                           <Col
                               style={{
                                   display: "flex",
@@ -76,7 +82,7 @@ const ClaimCollectionHeader = ({ title, personalities }) => {
                                   padding: "30px 0px",
                                   width: "40%",
                               }}
-                              key={p._id}
+                              key={p?._id || index}
                           >
                               <PersonalityCard
                                   personality={p}
