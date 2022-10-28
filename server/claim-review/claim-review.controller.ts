@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Put, Get, UseGuards } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Param,
+    Put,
+    Get,
+    UseGuards,
+    Header,
+} from "@nestjs/common";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewService } from "./claim-review.service";
@@ -31,12 +39,14 @@ export class ClaimReviewController {
 
     @IsPublic()
     @Get("api/latest-reviews")
+    @Header("Cache-Control", "max-age=3600")
     getLatestReviews() {
         return this.claimReviewService.getLatestReviews();
     }
 
     @IsPublic()
     @Get("api/review/:sentence_hash")
+    @Header("Cache-Control", "max-age=3600")
     async getReviewBySentenceHash(@Param("sentence_hash") sentence_hash) {
         const review = await this.claimReviewService.getReviewBySentenceHash(
             sentence_hash

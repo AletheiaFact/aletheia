@@ -8,6 +8,7 @@ import {
     Query,
     Req,
     Res,
+    Header,
 } from "@nestjs/common";
 import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
@@ -19,17 +20,20 @@ import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { GetTasksDTO } from "./dto/get-tasks.dto";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
+import { ConfigService } from "@nestjs/config";
 
 @Controller()
 export class ClaimReviewController {
     constructor(
         private claimReviewTaskService: ClaimReviewTaskService,
         private captchaService: CaptchaService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private configService: ConfigService
     ) {}
 
     @IsPublic()
     @Get("api/claimreviewtask")
+    @Header("Cache-Control", "max-age=3600")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
         const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
         return Promise.all([
@@ -96,13 +100,13 @@ export class ClaimReviewController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/kanban-page",
-                Object.assign(parsedUrl.query, {})
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/kanban-page",
+            Object.assign(parsedUrl.query, {
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 }

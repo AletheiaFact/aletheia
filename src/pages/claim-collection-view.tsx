@@ -12,12 +12,14 @@ const ClaimCollectionViewPage: NextPage<any> = ({
     userId,
     isLoggedIn,
     userRole,
+    sitekey,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): any => {
     const dispatch = useDispatch();
 
     dispatch(actions.setLoginStatus(isLoggedIn));
     dispatch(actions.setUserId(userId));
     dispatch(actions.setUserRole(userRole));
+    dispatch(actions.setSitekey(sitekey));
 
     return <ClaimCollectionView claimCollection={claimCollection} />;
 };
@@ -31,6 +33,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             userId: req?.user?._id || "",
             isLoggedIn: req.user ? true : false,
             userRole: req?.user?.role ? req?.user?.role : null,
+            sitekey: query.sitekey,
         },
     };
 }

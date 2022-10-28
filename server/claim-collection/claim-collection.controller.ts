@@ -8,6 +8,7 @@ import {
     Query,
     Req,
     Res,
+    Header,
 } from "@nestjs/common";
 import { ClaimCollectionService } from "./claim-collection.service";
 import { CreateClaimCollectionDto } from "./dto/create-claim-collection.dto";
@@ -19,6 +20,7 @@ import { Response } from "express";
 import { ViewService } from "../view/view.service";
 import { PersonalityService } from "../personality/personality.service";
 import { BaseRequest } from "../types";
+import { ConfigService } from "@nestjs/config";
 
 @Controller()
 export class ClaimCollectionController {
@@ -26,11 +28,13 @@ export class ClaimCollectionController {
         private claimCollectionService: ClaimCollectionService,
         private personalityService: PersonalityService,
         private captchaService: CaptchaService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private configService: ConfigService
     ) {}
 
     @IsPublic()
     @Get("api/claim-collection")
+    @Header("Cache-Control", "max-age=3600")
     public async getClaimCollectionList(
         @Query() getClaimCollectionListDTO: any
     ) {
@@ -58,6 +62,7 @@ export class ClaimCollectionController {
 
     @IsPublic()
     @Get("api/claim-collection/:id")
+    @Header("Cache-Control", "max-age=3600")
     async getById(@Param("id") id: string, @Query() query) {
         const { reverse, lastCollectionItem } = query;
         return this.claimCollectionService.getById(
@@ -115,14 +120,15 @@ export class ClaimCollectionController {
             })
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/claim-collection-view",
-                Object.assign(parsedUrl.query, { claimCollection })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-collection-view",
+            Object.assign(parsedUrl.query, {
+                claimCollection,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 
     @Get("claim-collection/:id/edit")
@@ -137,13 +143,14 @@ export class ClaimCollectionController {
             claimCollectionId
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/claim-collection-editor",
-                Object.assign(parsedUrl.query, { claimCollection })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-collection-editor",
+            Object.assign(parsedUrl.query, {
+                claimCollection,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 }

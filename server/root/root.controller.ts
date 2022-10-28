@@ -1,10 +1,11 @@
-import { Controller, Get, Req, Res } from "@nestjs/common";
+import { Controller, Get, Header, Req, Res } from "@nestjs/common";
 import { IsPublic } from "../decorators/is-public.decorator";
 
 @Controller("")
 export class RootController {
     @IsPublic()
     @Get("robots.txt")
+    @Header("Cache-Control", "max-age=3600")
     robots(@Res() res, @Req() req) {
         const host = req.protocol + "://" + req.get("host");
         res.type("text/plain").end(

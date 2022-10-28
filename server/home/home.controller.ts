@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res } from "@nestjs/common";
+import { Controller, Get, Header, Req, Res } from "@nestjs/common";
 import { ViewService } from "../view/view.service";
 import { Response } from "express";
 import { parse } from "url";
@@ -28,6 +28,7 @@ export class HomeController {
 
     @IsPublic()
     @Get()
+    @Header("Cache-Control", "max-age=3600")
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const { personalities } = await this.personalityService.combinedListAll(
