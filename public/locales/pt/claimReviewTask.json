@@ -34,7 +34,7 @@
     "submitted": "Em revisão",
     "published": "Publicado",
     "draft": "Rascunho",
-    "crossCheckingAlertTitle": "Este relatório está em processo de cross-checking",
+    "crossCheckingAlertTitle": "Este relatório está em processo de revisão",
     "rejectionAlertTitle": "A revisão foi rejeitada com o seguinte comentário",
     "hasStartedAlertTitle": "Essa revisão foi iniciada",
     "invalidReviewerMessage": "O revisor não pode ser um usuário atribuído a essa checagem.",
