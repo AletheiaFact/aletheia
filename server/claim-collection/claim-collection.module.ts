@@ -11,6 +11,7 @@ import {
 } from "./schemas/claim-collection.schema";
 import { PersonalityModule } from "../personality/personality.module";
 import { ConfigModule } from "@nestjs/config";
+import { AbilityModule } from "../ability/ability.module";
 
 export const ClaimCollectionModel = MongooseModule.forFeature([
     {
@@ -27,6 +28,7 @@ export const ClaimCollectionModel = MongooseModule.forFeature([
         ViewModule,
         PersonalityModule,
         ConfigModule,
+        AbilityModule,
     ],
     providers: [ClaimCollectionService],
     exports: [ClaimCollectionService],

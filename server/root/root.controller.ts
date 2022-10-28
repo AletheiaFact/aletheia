@@ -5,7 +5,7 @@ import { IsPublic } from "../decorators/is-public.decorator";
 export class RootController {
     @IsPublic()
     @Get("robots.txt")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     robots(@Res() res, @Req() req) {
         const host = req.protocol + "://" + req.get("host");
         res.type("text/plain").end(

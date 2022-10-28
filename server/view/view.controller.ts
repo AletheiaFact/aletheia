@@ -24,7 +24,7 @@ export class ViewController {
 
     @IsPublic()
     @Get("about")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
@@ -46,7 +46,7 @@ export class ViewController {
 
     @IsPublic()
     @Get("privacy-policy")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     public async showPrivacyPolicyPage(
         @Req() req: Request,
         @Res() res: Response
@@ -65,7 +65,7 @@ export class ViewController {
 
     @IsPublic()
     @Get("code-of-conduct")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     public async codeOfConductPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
@@ -81,7 +81,7 @@ export class ViewController {
 
     @IsPublic()
     @Get("_next*")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
@@ -96,7 +96,7 @@ export class ViewController {
      */
     @IsPublic()
     @Get("404")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     public async show404(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 

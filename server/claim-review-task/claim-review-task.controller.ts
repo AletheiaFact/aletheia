@@ -33,7 +33,7 @@ export class ClaimReviewController {
 
     @IsPublic()
     @Get("api/claimreviewtask")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
         const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
         return Promise.all([

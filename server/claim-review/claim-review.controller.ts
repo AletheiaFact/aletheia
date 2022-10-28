@@ -39,14 +39,14 @@ export class ClaimReviewController {
 
     @IsPublic()
     @Get("api/latest-reviews")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     getLatestReviews() {
         return this.claimReviewService.getLatestReviews();
     }
 
     @IsPublic()
     @Get("api/review/:sentence_hash")
-    @Header("Cache-Control", "max-age=3600")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     async getReviewBySentenceHash(@Param("sentence_hash") sentence_hash) {
         const review = await this.claimReviewService.getReviewBySentenceHash(
             sentence_hash
