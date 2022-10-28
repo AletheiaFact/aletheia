@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Query, Req, Res } from "@nestjs/common";
+import { Controller, Get, Header, Put, Query, Req, Res } from "@nestjs/common";
 import { Request, Response } from "express";
 import { UsersService } from "./users.service";
 import { parse } from "url";
@@ -67,6 +67,7 @@ export class UsersController {
 
     @IsPublic()
     @Get("api/user")
+    @Header("Cache-Control", "max-age=3600")
     public async getAll(@Query() getUsers) {
         return this.usersService.findAll(getUsers);
     }

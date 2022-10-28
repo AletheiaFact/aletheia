@@ -3,6 +3,7 @@ import {
     Controller,
     Delete,
     Get,
+    Header,
     Logger,
     Param,
     Post,
@@ -31,6 +32,7 @@ export class PersonalityController {
 
     @IsPublic()
     @Get("api/personality")
+    @Header("Cache-Control", "max-age=3600")
     async listAll(@Query() getPersonalities: GetPersonalities) {
         return this.personalityService.combinedListAll(getPersonalities);
     }
@@ -53,6 +55,7 @@ export class PersonalityController {
 
     @IsPublic()
     @Get("api/personality/:id")
+    @Header("Cache-Control", "max-age=3600")
     async get(@Param("id") personalityId, @Query() query) {
         return this.personalityService
             .getById(personalityId, query.language) // TODO: get language from request object in the future
@@ -78,6 +81,7 @@ export class PersonalityController {
 
     @IsPublic()
     @Get("api/personality/:id/reviews")
+    @Header("Cache-Control", "max-age=3600")
     getReviewStats(@Param("id") personalityId) {
         return this.personalityService
             .getReviewStats(personalityId)
@@ -106,6 +110,7 @@ export class PersonalityController {
 
     @IsPublic()
     @Get("personality/:slug")
+    @Header("Cache-Control", "max-age=3600")
     public async personalityPage(
         @Req() req: BaseRequest,
         @Res() res: Response
@@ -139,6 +144,7 @@ export class PersonalityController {
 
     @IsPublic()
     @Get("personality")
+    @Header("Cache-Control", "max-age=3600")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 

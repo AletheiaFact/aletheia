@@ -8,6 +8,7 @@ import {
     Query,
     Req,
     Res,
+    Header,
 } from "@nestjs/common";
 import { ClaimCollectionService } from "./claim-collection.service";
 import { CreateClaimCollectionDto } from "./dto/create-claim-collection.dto";
@@ -31,6 +32,7 @@ export class ClaimCollectionController {
 
     @IsPublic()
     @Get("api/claim-collection")
+    @Header("Cache-Control", "max-age=3600")
     public async getClaimCollectionList(
         @Query() getClaimCollectionListDTO: any
     ) {
@@ -58,6 +60,7 @@ export class ClaimCollectionController {
 
     @IsPublic()
     @Get("api/claim-collection/:id")
+    @Header("Cache-Control", "max-age=3600")
     async getById(@Param("id") id: string, @Query() query) {
         const { reverse, lastCollectionItem } = query;
         return this.claimCollectionService.getById(
