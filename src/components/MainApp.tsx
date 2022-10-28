@@ -1,46 +1,36 @@
 import { Layout } from "antd";
 import React from "react";
-import { useDispatch } from "react-redux";
 
+import { useMediaQueryBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { useAppSelector } from "../store/store";
 import colors from "../styles/colors";
+import ClaimReviewDrawer from "./ClaimReview/ClaimReviewDrawer";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
-import SearchOverlay from "./SearchOverlay";
+import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Sidebar";
 
 const MainApp = ({ children }) => {
-    const dispatch = useDispatch();
-
-    const { enableOverlay, menuCollapsed } = useAppSelector((state) => {
+    const { enableOverlay } = useAppSelector((state) => {
         return {
-            isLoggedIn: state?.login || false,
-            enableOverlay: state?.search?.overlay,
-            menuCollapsed:
-                state?.menuCollapsed !== undefined
-                    ? state?.menuCollapsed
-                    : true,
+            enableOverlay: state?.search?.overlayVisible,
         };
     });
+
+    // Setup to provide breakpoints object on redux
+    useMediaQueryBreakpoints();
+
     return (
         <Layout style={{ minHeight: "100vh" }}>
-            <Sidebar
-                menuCollapsed={menuCollapsed}
-                onToggleSidebar={() => {
-                    dispatch({
-                        type: "TOGGLE_MENU",
-                        menuCollapsed: !menuCollapsed,
-                    });
-                }}
-            />
+            <Sidebar />
             <Layout style={{ background: colors.white }}>
                 <Header />
                 <ContentWrapper>{children}</ContentWrapper>
                 <Footer />
-
-                {enableOverlay && <SearchOverlay overlay={enableOverlay} />}
+                {enableOverlay && <OverlaySearchResults />}
             </Layout>
+            <ClaimReviewDrawer />
         </Layout>
     );
 };

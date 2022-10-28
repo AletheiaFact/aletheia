@@ -6,5 +6,13 @@
     "summarySectionTitle": "Summary of conclusion",
     "questionsSectionTitle": "What questions should the verification answer?",
     "verificationSectionTitle": "Verification report",
-    "howSectionTitle": "How do we check?"
+    "howSectionTitle": "How do we check?",
+    "reviewHidded": "Hidden review",
+    "reviewUnhidded": "Unhidden review",
+    "warningAlertTitle": "This report is hidden",
+    "unhideModalTitle": "Are you sure you want to unhide this report",
+    "hideModalTitle": "Are you sure you want to hide this report",
+    "descriptionInputPlaceholder": "Insert the description",
+    "descriptionInputError": "Insert the description",
+    "partialReviewWarning": "Note: the reviews published in real time are partially checked by registered fact-checkers. The complete and in-depth reviews, with the Aletheia standard of fact-checking, may be accessed later on the site."
 }

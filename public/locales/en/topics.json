@@ -1,0 +1,10 @@
+{
+  "duplicatedTopicError": "Topic already existing in the sentence, remove: {{duplicatedTopics}}",
+  "createTopicsSuccess": "Topics saved succesfully",
+  "createTopicsError": "Error in saving topics",
+  "placeholder": "Add sentence topics",
+  "getTopicsFailed": "Error while fetching topics",
+  "addTopicsButton": "Add topics",
+  "inputRule": "Required field",
+  "noTopics": "No topics added"
+}

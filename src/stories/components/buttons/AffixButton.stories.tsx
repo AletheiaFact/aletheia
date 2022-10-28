@@ -1,5 +1,5 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import AffixButton from "../../../components/Form/AffixButton";
+import AffixButton from "../../../components/AffixButton/AffixButton";
 
 export default {
     title: "Components/Buttons/AffixButton",
@@ -7,7 +7,7 @@ export default {
     onClick: { action: "clicked" },
     decorators: [
         (Story) => (
-            <div style={{ width: '500px' }}>
+            <div style={{ width: "500px" }}>
                 <Story />
             </div>
         ),
@@ -21,5 +21,5 @@ const Template: ComponentStory<typeof AffixButton> = (args) => (
 export const Default = Template.bind({});
 Default.args = {
     tooltipTitle: "Click me",
-    href: "http://localhost:6006/?path=/story/components-buttons-affixbutton--default"
+    href: "http://localhost:6006/?path=/story/components-buttons-affixbutton--default",
 };

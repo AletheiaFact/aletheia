@@ -1,13 +1,15 @@
 FROM node:14.19.0-alpine AS package
 
-ARG API_URL
-ARG RECAPTCHA_SITEKEY
+ARG NEXT_PUBLIC_UMAMI_SITE_ID
+ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
 ARG ENVIRONMENT
 ENV PARCEL_WORKERS=1
 
 COPY ./.babelrc /app/.babelrc
 COPY config.$ENVIRONMENT.yaml /app/config.yaml
 COPY config.seed.example.yaml /app/config.seed.yaml
+COPY migrate-mongo-config-example.js /app/migrate-mongo-config.js
+COPY ./migrations /app/migrations
 COPY ./.eslintignore /app/.eslintignore
 COPY ./.eslintrc.yml /app/.eslintrc.yml
 COPY server/jest.config.json /app/jest.config.json
@@ -25,7 +27,9 @@ WORKDIR /app
 
 RUN apk add --no-cache git python3 make g++
 RUN yarn install
-RUN yarn build
+RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
+    NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
+    yarn build
 
 FROM node:14.19.0-alpine
 

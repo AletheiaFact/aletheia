@@ -14,6 +14,18 @@ const locators = {
         SELECT_PERSONALITY: `[data-cy=${personality.name}]`,
     },
 
+    claim: {
+        BTN_OK_TUTORIAL: "[data-cy=testButtonTutorialOk]",
+        BTN_CLOSE_DRAWER: "[data-cy=testCloseReviewDrawer]",
+        BTN_SEE_FULL_REVIEW: "[data-cy=testSeeFullReview]",
+    },
+
+    floatButton: {
+        FLOAT_BUTTON: "[data-cy=testFloatButton]",
+        ADD_CLAIM: "[data-cy=testFloatButtonAddClaim]",
+        ADD_PERSONALITY: "[data-cy=testFloatButtonAddPersonality]",
+    },
+
     claimReview: {
         BTN_START_CLAIM_REVIEW: "[data-cy=testAddReviewButton]",
         INPUT_USER: "[data-cy=testClaimReviewusersId]",
@@ -28,13 +40,21 @@ const locators = {
         BTN_ADD_SOURCE: "[data-cy=testClaimReviewsourcesAdd]",
         BTN_REMOVE_SOURCE: "[data-cy=testClaimReviewsourcesRemove1]",
         BTN_FINISH_REPORT: "[data-cy=testClaimReviewFINISH_REPORT]",
+        BTN_FULL_REVIEW: "[data-cy=testClaimReviewFULL_REVIEW]",
         INPUT_CLASSIFICATION: "[data-cy=testClassificationText]",
+        INPUT_REVIEWER: "[data-cy=testClaimReviewreviewerId]",
         BTN_SAVE_DRAFT: "[data-cy=testClaimReviewSAVE_DRAFT]",
+        BTN_SUBMIT: "[data-cy=testClaimReviewSUBMIT]",
         BTN_PUBLISH: "[data-cy=testClaimReviewPUBLISH]",
+        TEXT_REVIEWER_ERROR: "[data-cy=testReviewerError]",
     },
 
     menu: {
         SIDE_MENU: "[data-cy=testOpenSideMenu]",
+        USER_ICON: "[data-cy=testUserIcon]",
+        LOGIN_MENU: "[data-cy=testLoginItem]",
+        MY_ACCOUNT_MENU: "[data-cy=testMyAccountItem]",
+        LOGOUT_MENU: "[data-cy=testLogout]",
     },
 };
 export default locators;

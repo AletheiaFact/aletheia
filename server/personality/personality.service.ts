@@ -189,8 +189,8 @@ export class PersonalityService {
             if (wikidataExtract.isAllowedProp === false) {
                 return;
             }
-
-            return Object.assign(wikidataExtract, personality, {
+            //The order of wikidataExtract should be after personality
+            return Object.assign(personality, wikidataExtract, {
                 stats:
                     personality._id &&
                     (await this.getReviewStats(personality._id)),
@@ -208,6 +208,7 @@ export class PersonalityService {
             personality: personality._id,
             isDeleted: false,
             isPublished: true,
+            isHidden: false,
         });
         this.logger.log(`Got stats ${reviews}`);
         return this.util.formatStats(reviews);
@@ -332,5 +333,26 @@ export class PersonalityService {
                 };
             })
             .catch((error) => this.logger.error(error));
+    }
+
+    async findAll(searchText, pageSize, language) {
+        const personalities = await this.PersonalityModel.aggregate([
+            {
+                $search: {
+                    index: "personality_fields",
+                    autocomplete: {
+                        query: searchText,
+                        path: "name",
+                    },
+                },
+            },
+            { $limit: parseInt(pageSize, 10) },
+        ]);
+
+        return Promise.all(
+            personalities.map(async (personality) => {
+                return await this.postProcess(personality, language);
+            })
+        );
     }
 }

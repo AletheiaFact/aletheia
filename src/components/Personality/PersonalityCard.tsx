@@ -1,12 +1,14 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Col, Divider, Row, Spin, Typography } from "antd";
+import { Col, Divider, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import React, { useState } from "react";
+import React, { CSSProperties, useState } from "react";
 
 import colors from "../../styles/colors";
 import AletheiaAvatar from "../AletheiaAvatar";
 import Button, { ButtonType } from "../Button";
 import ReviewStats from "../Metrics/ReviewStats";
+import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
+import { useAppSelector } from "../../store/store";
 
 const { Title, Paragraph } = Typography;
 
@@ -17,6 +19,9 @@ interface PersonalityCardProps {
     header?: boolean;
     hrefBase?: string;
     mobile?: boolean;
+    fullWidth?: boolean;
+    hoistAvatar?: boolean;
+    style?: CSSProperties;
     onClick?: (personality: any) => {};
     titleLevel?: 1 | 2 | 3 | 4 | 5;
 }
@@ -28,25 +33,29 @@ const PersonalityCard = ({
     header = false,
     hrefBase = "",
     mobile = false,
+    fullWidth = false,
+    hoistAvatar = false,
+    style,
     onClick,
     titleLevel = 1,
 }: PersonalityCardProps) => {
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const { vw } = useAppSelector((state) => state);
     const { t } = useTranslation();
-    const style = {
-        titleSpan: 14,
-        avatarSpan: 8,
-        buttonSpan: 5,
+    const componentStyle = {
+        titleSpan: !fullWidth ? 14 : 24,
+        avatarSpan: !fullWidth ? 8 : 24,
+        buttonSpan: !fullWidth ? 5 : 24,
         avatarSize: 90,
     };
     if (summarized) {
-        style.titleSpan = 10;
-        style.avatarSpan = 5;
-        style.buttonSpan = 9;
-        style.avatarSize = 43;
+        componentStyle.titleSpan = 10;
+        componentStyle.avatarSpan = 5;
+        componentStyle.buttonSpan = 9;
+        componentStyle.avatarSize = 43;
     }
     if (header) {
-        style.avatarSize = 144;
+        componentStyle.avatarSize = 144;
     }
 
     let cardStyle;
@@ -67,13 +76,25 @@ const PersonalityCard = ({
                 style={{
                     width: "100%",
                     ...cardStyle,
+                    ...style,
                 }}
             >
-                {" "}
+                {hoistAvatar && (
+                    <AletheiaAvatar
+                        size={componentStyle.avatarSize}
+                        src={personality.avatar}
+                        alt={t("seo:personalityImageAlt", {
+                            name: personality.name,
+                        })}
+                    />
+                )}
                 <Col
                     md={24}
-                    lg={header && !mobile ? 12 : 24}
-                    style={{ width: "100%" }}
+                    lg={header && !mobile && !fullWidth ? 12 : 24}
+                    style={{
+                        width: "100%",
+                        textAlign: hoistAvatar ? "center" : "inherit",
+                    }}
                 >
                     <Row
                         gutter={summarized ? 0 : 20}
@@ -84,146 +105,154 @@ const PersonalityCard = ({
                             paddingBottom: 0,
                         }}
                     >
-                        <Col
-                            span={style.avatarSpan}
-                            style={{
-                                minWidth: style.avatarSize,
-                            }}
-                        >
-                            <AletheiaAvatar
-                                size={style.avatarSize}
-                                src={personality.avatar}
-                                alt={t("seo:personalityImageAlt", {
-                                    name: personality.name,
-                                })}
-                            />
-                        </Col>
-                        <Col
-                            span={style.titleSpan}
-                            className="personality-card-content"
-                        >
-                            {summarized && (
-                                <Paragraph
-                                    style={{
-                                        fontSize: "14px",
-                                        lineHeight: "20px",
-                                        fontWeight: 600,
-                                        marginBottom: 4,
-                                    }}
-                                >
-                                    {personality.name}
-                                </Paragraph>
-                            )}
-                            {!summarized && (
-                                <Title
-                                    level={titleLevel}
-                                    style={{
-                                        fontSize: "24px",
-                                        lineHeight: "32px",
-                                        fontWeight: 400,
-                                        marginBottom: 4,
-                                    }}
-                                >
-                                    {personality.name}
-                                </Title>
-                            )}
-                            <Paragraph
+                        {!hoistAvatar && (
+                            <Col
+                                span={componentStyle.avatarSpan}
                                 style={{
-                                    fontSize: summarized ? "10px" : "14px",
-                                    color: colors.blackSecondary,
-                                    marginBottom: 4,
+                                    minWidth: componentStyle.avatarSize,
                                 }}
                             >
-                                {personality.description}
-                            </Paragraph>
-                            {summarized &&
-                                enableStats &&
-                                personality.stats?.total !== undefined && (
+                                <AletheiaAvatar
+                                    size={componentStyle.avatarSize}
+                                    src={personality.avatar}
+                                    alt={t("seo:personalityImageAlt", {
+                                        name: personality.name,
+                                    })}
+                                />
+                            </Col>
+                        )}
+                        {((hoistAvatar && (!vw?.sm || !vw?.xs)) ||
+                            !hoistAvatar) && (
+                            <Col
+                                span={componentStyle.titleSpan}
+                                className="personality-card-content"
+                                style={{
+                                    width: "100%",
+                                }}
+                            >
+                                {summarized && (
                                     <Paragraph
                                         style={{
-                                            fontSize: "10px",
+                                            fontSize: "14px",
+                                            lineHeight: "20px",
                                             fontWeight: 600,
-                                            lineHeight: "15px",
-                                            color: colors.blackSecondary,
+                                            marginBottom: 4,
                                         }}
                                     >
-                                        <b>
-                                            {t(
-                                                "personality:headerReviewsTotal",
-                                                {
-                                                    totalReviews:
-                                                        personality.stats
-                                                            ?.total,
-                                                }
-                                            )}
-                                        </b>
+                                        {personality.name}
                                     </Paragraph>
                                 )}
-                            {!summarized && personality.wikipedia && (
-                                <a
+                                {!summarized && (
+                                    <Title
+                                        level={titleLevel}
+                                        style={{
+                                            fontSize: "24px",
+                                            lineHeight: "32px",
+                                            fontWeight: 400,
+                                            marginBottom: 4,
+                                        }}
+                                    >
+                                        {personality.name}
+                                    </Title>
+                                )}
+                                <Paragraph
                                     style={{
-                                        fontWeight: "bold",
-                                        fontSize: "12px",
-                                        lineHeight: "16px",
-                                        color: colors.bluePrimary,
-                                        textDecoration: "underline",
+                                        fontSize: summarized ? "10px" : "14px",
+                                        color: colors.blackSecondary,
+                                        marginBottom: 4,
                                     }}
-                                    target="_blank"
-                                    href={personality.wikipedia}
-                                    rel="noreferrer"
                                 >
-                                    {t("personality:wikipediaPage")}
-                                </a>
-                            )}
-                            {!summarized && (
-                                <Divider style={{ margin: "16px 0" }} />
-                            )}
-                            {enableStats && (
-                                <Row>
-                                    {!summarized && (
-                                        <Row
+                                    {personality.description}
+                                </Paragraph>
+                                {summarized &&
+                                    enableStats &&
+                                    personality.stats?.total !== undefined && (
+                                        <Paragraph
                                             style={{
-                                                flexDirection: "column",
-                                                color: colors.blackPrimary,
-                                                fontSize: "16px",
+                                                fontSize: "10px",
+                                                fontWeight: 600,
+                                                lineHeight: "15px",
+                                                color: colors.blackSecondary,
                                             }}
                                         >
-                                            {personality?.claims?.length !==
-                                                undefined && (
-                                                <span>
-                                                    {t(
-                                                        "personality:headerClaimsTotal",
-                                                        {
-                                                            totalClaims:
-                                                                personality
-                                                                    .claims
-                                                                    .length,
-                                                        }
-                                                    )}
-                                                </span>
-                                            )}
-                                            {personality.stats?.total !==
-                                                undefined && (
-                                                <span>
-                                                    {t(
-                                                        "personality:headerReviewsTotal",
-                                                        {
-                                                            totalReviews:
-                                                                personality
-                                                                    .stats
-                                                                    ?.total,
-                                                        }
-                                                    )}
-                                                </span>
-                                            )}
-                                        </Row>
+                                            <b>
+                                                {t(
+                                                    "personality:headerReviewsTotal",
+                                                    {
+                                                        totalReviews:
+                                                            personality.stats
+                                                                ?.total,
+                                                    }
+                                                )}
+                                            </b>
+                                        </Paragraph>
                                     )}
-                                </Row>
-                            )}
-                        </Col>
+                                {!summarized && personality.wikipedia && (
+                                    <a
+                                        style={{
+                                            fontWeight: "bold",
+                                            fontSize: "12px",
+                                            lineHeight: "16px",
+                                            color: colors.bluePrimary,
+                                            textDecoration: "underline",
+                                        }}
+                                        target="_blank"
+                                        href={personality.wikipedia}
+                                        rel="noreferrer"
+                                    >
+                                        {t("personality:wikipediaPage")}
+                                    </a>
+                                )}
+                                {!summarized && (
+                                    <Divider style={{ margin: "16px 0" }} />
+                                )}
+                                {enableStats && (
+                                    <Row>
+                                        {!summarized && (
+                                            <Row
+                                                style={{
+                                                    flexDirection: "column",
+                                                    color: colors.blackPrimary,
+                                                    fontSize: "16px",
+                                                }}
+                                            >
+                                                {personality?.claims?.length !==
+                                                    undefined && (
+                                                    <span>
+                                                        {t(
+                                                            "personality:headerClaimsTotal",
+                                                            {
+                                                                totalClaims:
+                                                                    personality
+                                                                        .claims
+                                                                        .length,
+                                                            }
+                                                        )}
+                                                    </span>
+                                                )}
+                                                {personality.stats?.total !==
+                                                    undefined && (
+                                                    <span>
+                                                        {t(
+                                                            "personality:headerReviewsTotal",
+                                                            {
+                                                                totalReviews:
+                                                                    personality
+                                                                        .stats
+                                                                        ?.total,
+                                                            }
+                                                        )}
+                                                    </span>
+                                                )}
+                                            </Row>
+                                        )}
+                                    </Row>
+                                )}
+                            </Col>
+                        )}
                         {summarized && (
                             <Col
-                                span={style.buttonSpan}
+                                span={componentStyle.buttonSpan}
                                 style={{
                                     display: "flex",
                                     justifyContent: "flex-end",
@@ -306,17 +335,7 @@ const PersonalityCard = ({
             </Row>
         );
     } else {
-        return (
-            <Spin
-                tip={t("common:loading")}
-                style={{
-                    textAlign: "center",
-                    position: "absolute",
-                    top: "50%",
-                    left: "calc(50% - 40px)",
-                }}
-            ></Spin>
-        );
+        return <PersonalitySkeleton />;
     }
 };
 

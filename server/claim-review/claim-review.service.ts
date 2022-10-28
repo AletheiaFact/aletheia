@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
 import { LeanDocument, Model, Types } from "mongoose";
 import {
     ClaimReview,
@@ -10,16 +10,21 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
+import { SentenceService } from "../sentence/sentence.service";
+import { REQUEST } from "@nestjs/core";
+import { BaseRequest } from "../types";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
     private readonly logger = new Logger("ClaimReviewService");
     constructor(
+        @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ClaimReview.name)
         private ClaimReviewModel: Model<ClaimReviewDocument> &
             ISoftDeletedModel<ClaimReviewDocument>,
         private historyService: HistoryService,
-        private util: UtilService
+        private util: UtilService,
+        private senteceService: SentenceService
     ) {}
 
     agreggateClassification(match: any) {
@@ -44,7 +49,14 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false, isPublished: true } },
+            {
+                $match: {
+                    claim: claimId,
+                    isDeleted: false,
+                    isPublished: true,
+                    isHidden: false,
+                },
+            },
             {
                 $lookup: {
                     from: "reports",
@@ -66,7 +78,14 @@ export class ClaimReviewService {
      */
     getReviewsByClaimId(claimId) {
         return this.ClaimReviewModel.aggregate([
-            { $match: { claim: claimId, isDeleted: false, isPublished: true } },
+            {
+                $match: {
+                    claim: claimId,
+                    isDeleted: false,
+                    isPublished: true,
+                    isHidden: false,
+                },
+            },
             {
                 $lookup: {
                     from: "reports",
@@ -85,16 +104,6 @@ export class ClaimReviewService {
                 },
             },
         ]).option({ serializeFunctions: true });
-    }
-
-    async getUserReviewBySentenceHash(sentence_hash) {
-        const user = await this.ClaimReviewModel.findOne(
-            { sentence_hash, isDeleted: false, isPublished: true },
-            {
-                usersId: 1,
-            }
-        );
-        return user?.usersId;
     }
 
     /**
@@ -124,6 +133,7 @@ export class ClaimReviewService {
             claimReview.date = new Date();
             const newClaimReview = new this.ClaimReviewModel(claimReview);
             newClaimReview.isPublished = true;
+            newClaimReview.isPartialReview = claimReview.isPartialReview;
 
             const history = this.historyService.getHistoryParams(
                 newClaimReview._id,
@@ -180,5 +190,95 @@ export class ClaimReviewService {
         );
         this.historyService.createHistory(history);
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
+    }
+
+    async getLatestReviews() {
+        const claimReviews = await this.ClaimReviewModel.find({
+            isDeleted: false,
+        })
+            .sort({ date: -1 })
+            .limit(5)
+            .populate({
+                path: "personality",
+                model: "Personality",
+                select: "name description slug avatar",
+            })
+            .populate({
+                path: "claim",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    select: "date contentModel",
+                },
+                select: "slug",
+            });
+
+        return Promise.all(
+            claimReviews.map(async (review) => {
+                const { personality, sentence_hash } = review;
+                const sentenceContent = await this.senteceService.getByDataHash(
+                    sentence_hash
+                );
+                const claim = {
+                    contentModel: review.claim.latestRevision.contentModel,
+                    date: review.claim.latestRevision.date,
+                };
+                const reviewHref = `/personality/${personality.slug}/claim/${review.claim.slug}/sentence/${sentence_hash}`;
+
+                return {
+                    sentenceContent,
+                    sentence_hash,
+                    personality,
+                    reviewHref,
+                    claim,
+                };
+            })
+        );
+    }
+
+    async hideOrUnhideReview(sentence_hash, hide, description) {
+        const review = await this.getReviewBySentenceHash(sentence_hash);
+        const newReview = {
+            ...review,
+            ...{
+                report: review?.report?._id,
+                isHidden: hide,
+                description: hide ? description : undefined,
+            },
+        };
+
+        const before = { isHidden: !hide };
+        const after = hide
+            ? { isHidden: hide, description }
+            : { isHidden: hide };
+
+        const history = this.historyService.getHistoryParams(
+            newReview._id,
+            TargetModel.ClaimReview,
+            this.req?.user,
+            hide ? HistoryType.Hide : HistoryType.Unhide,
+            after,
+            before
+        );
+        this.historyService.createHistory(history);
+
+        return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
+    }
+
+    async getDescriptionForHide(review) {
+        if (review?.isHidden) {
+            const history = await this.historyService.getByTargetIdModelAndType(
+                review._id,
+                TargetModel.ClaimReview,
+                0,
+                1,
+                "desc",
+                HistoryType.Hide
+            );
+
+            return history[0]?.details?.after?.description;
+        }
+
+        return "";
     }
 }

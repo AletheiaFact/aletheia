@@ -1,17 +1,24 @@
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import AffixButton from "../components/AffixButton/AffixButton";
 
 import ClaimCreate from "../components/Claim/ClaimCreate";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
+import { useDispatch } from "react-redux";
 
-const ClaimCreatePage: NextPage<{ sitekey; personality }> = ({
+import actions from "../store/actions";
+
+const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
     sitekey,
     personality,
+    isLoggedIn,
 }) => {
     const { t } = useTranslation();
-
+    const dispatch = useDispatch();
+    dispatch(actions.setLoginStatus(isLoggedIn));
+    dispatch(actions.setSitekey(sitekey));
     return (
         <>
             <Seo
@@ -20,8 +27,8 @@ const ClaimCreatePage: NextPage<{ sitekey; personality }> = ({
                     name: personality.name,
                 })}
             />
-
-            <ClaimCreate sitekey={sitekey} personality={personality} />
+            <ClaimCreate personality={personality} />
+            <AffixButton />
         </>
     );
 };
@@ -36,6 +43,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: JSON.parse(JSON.stringify(query.personality)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            isLoggedIn: req.user ? true : false,
         },
     };
 }

@@ -3,8 +3,38 @@ import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
-import { saveContext } from "./actions";
-import { CompoundStates, ReviewTaskEvents, ReviewTaskStates } from "./enums";
+import {
+    saveContext,
+    saveFullReviewContext,
+    savePartialReviewContext,
+} from "./actions";
+import {
+    CompoundStates,
+    ReviewTaskEvents as Events,
+    ReviewTaskStates as States,
+} from "./enums";
+
+const draftSubStates = {
+    initial: CompoundStates.undraft,
+    states: {
+        undraft: {
+            on: {
+                SAVE_DRAFT: {
+                    target: CompoundStates.draft,
+                    actions: [saveContext],
+                },
+            },
+        },
+        draft: {
+            on: {
+                SAVE_DRAFT: {
+                    target: CompoundStates.draft,
+                    actions: [saveContext],
+                },
+            },
+        },
+    },
+};
 
 export const createNewMachine = ({ value, context }) => {
     return createMachine<
@@ -15,108 +45,125 @@ export const createNewMachine = ({ value, context }) => {
         initial: value,
         context,
         states: {
-            unassigned: {
+            [States.unassigned]: {
                 on: {
-                    ASSIGN_USER: {
-                        target: ReviewTaskStates.assigned,
+                    [Events.assignUser]: {
+                        target: States.assigned,
                         actions: [saveContext],
                     },
                 },
             },
-            assigned: {
-                initial: CompoundStates.undraft,
-                states: {
-                    undraft: {
-                        on: {
-                            SAVE_DRAFT: {
-                                target: CompoundStates.draft,
-                                actions: [saveContext],
-                            },
-                        },
+            [States.assigned]: {
+                ...draftSubStates,
+                on: {
+                    [Events.goback]: {
+                        target: States.unassigned,
                     },
-                    draft: {
-                        on: {
-                            SAVE_DRAFT: {
-                                target: CompoundStates.draft,
-                                actions: [saveContext],
-                            },
-                        },
+                    [Events.partialReview]: {
+                        target: States.reported,
+                        actions: [savePartialReviewContext],
+                    },
+                    [Events.fullReview]: {
+                        target: States.summarized,
+                        actions: [saveFullReviewContext],
                     },
                 },
+            },
+            [States.summarized]: {
+                ...draftSubStates,
                 on: {
-                    GO_BACK: {
-                        target: ReviewTaskStates.unassigned,
+                    [Events.goback]: {
+                        target: States.assigned,
                     },
-                    FINISH_REPORT: {
-                        target: ReviewTaskStates.reported,
+                    [Events.finishReport]: {
+                        target: States.reported,
                         actions: [saveContext],
                     },
                 },
             },
-            reported: {
-                initial: CompoundStates.undraft,
-                states: {
-                    undraft: {
-                        on: {
-                            SAVE_DRAFT: {
-                                target: CompoundStates.draft,
-                                actions: [saveContext],
-                            },
-                        },
-                    },
-                    draft: {
-                        on: {
-                            SAVE_DRAFT: {
-                                target: CompoundStates.draft,
-                                actions: [saveContext],
-                            },
-                        },
-                    },
-                },
+            [States.reported]: {
                 on: {
-                    GO_BACK: {
-                        target: ReviewTaskStates.assigned,
+                    [Events.goback]: {
+                        target: States.assigned,
                     },
 
-                    PUBLISH: {
-                        target: ReviewTaskStates.published,
+                    [Events.submit]: {
+                        target: States.submitted,
                         actions: [saveContext],
                     },
                 },
             },
-            published: {
+            [States.submitted]: {
+                on: {
+                    [Events.reject]: {
+                        target: States.rejected,
+                    },
+                    [Events.publish]: {
+                        target: States.published,
+                        actions: [saveContext],
+                    },
+                },
+            },
+            [States.rejected]: {
+                on: {
+                    [Events.addRejectionComment]: {
+                        target: States.assigned,
+                        actions: [saveContext],
+                    },
+                    [Events.goback]: {
+                        target: States.submitted,
+                    },
+                },
+            },
+            [States.published]: {
                 type: "final",
             },
         },
     });
 };
 
+/**
+ * Intercepts the event sent to the machine to save the context on the database
+ */
 export const transitionHandler = (state) => {
-    const sentence_hash = state.event.sentence_hash;
-    const t = state.event.t;
+    const {
+        sentence_hash,
+        t,
+        recaptchaString,
+        setCurrentFormAndNextEvents,
+        resetIsLoading,
+    } = state.event;
     const event = state.event.type;
-    const recaptcha = state.event.recaptchaString;
-    const setCurrentFormAndNextEvents = state.event.setCurrentFormAndNextEvents;
 
-    if (event !== ReviewTaskEvents.init && event !== ReviewTaskEvents.goback) {
+    if (event === Events.goback || event === Events.reject) {
+        const nextState =
+            typeof state.value !== "string"
+                ? Object.keys(state.value)[0]
+                : state.value;
+        setCurrentFormAndNextEvents(nextState);
+    } else if (event !== Events.init) {
         api.createClaimReviewTask(
             {
                 sentence_hash,
-                machine: { context: state.context, value: state.value },
-                recaptcha,
+                machine: {
+                    context: {
+                        reviewData: state.context.reviewData,
+                        claimReview: state.context.claimReview,
+                    },
+                    value: state.value,
+                },
+                recaptcha: recaptchaString,
             },
             t,
             event
         )
             .then(() => {
                 setCurrentFormAndNextEvents(event);
-                if (event === ReviewTaskEvents.publish) {
-                    window.location.reload();
-                }
             })
-            .catch((e) => e);
-    } else if (event === ReviewTaskEvents.goback) {
-        setCurrentFormAndNextEvents(Object.keys(state.value)[0], state);
+            .catch((e) => {
+                // TODO: sentry
+            })
+            .finally(() => resetIsLoading());
     }
 };
 

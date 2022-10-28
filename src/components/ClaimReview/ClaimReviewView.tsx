@@ -1,104 +1,77 @@
-import React, { useState } from "react";
-import ClaimSentenceCard from "./ClaimSentenceCard";
-import { Col, Row } from "antd";
-import { useTranslation } from "next-i18next";
-import colors from "../../styles/colors";
-import Button, { ButtonType } from "../Button";
-import { PlusOutlined } from "@ant-design/icons";
+import { useSelector } from "@xstate/react";
+import React, { useContext } from "react";
+
+import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import { Roles } from "../../machine/enums";
+import { reviewDataSelector } from "../../machine/selectors";
+import { useAppSelector } from "../../store/store";
+import SentenceReportView from "../SentenceReport/SentenceReportView";
 import SocialMediaShare from "../SocialMediaShare";
-import DynamicForm from "./form/DynamicForm";
+import ClaimReviewForm from "./ClaimReviewForm";
+import ClaimReviewHeader from "./ClaimReviewHeader";
 
-const ClaimReviewView = ({
-    personality,
-    claim,
-    sentence,
-    href,
-    claimReviewTask,
-    isLoggedIn,
-    sitekey,
-}) => {
-    const { t } = useTranslation();
-    const claimId = claim._id;
-    const personalityId = personality._id;
-    const sentenceHash = sentence.data_hash;
-    const [formCollapsed, setFormCollapsed] = useState(
-        claimReviewTask ? false : true
+export interface ClaimReviewViewProps {
+    personality: any;
+    claim: any;
+    sentence: { data_hash: string; content: string; topics: string[] };
+}
+
+const ClaimReviewView = (props: ClaimReviewViewProps) => {
+    const { machineService, publishedReview } = useContext(
+        GlobalStateMachineContext
     );
+    const { review, descriptionForHide } = publishedReview || {};
 
-    const toggleFormCollapse = () => {
-        setFormCollapsed(!formCollapsed);
-    };
+    const reviewData = useSelector(machineService, reviewDataSelector);
+
+    const { role, userId } = useAppSelector((state) => state);
+
+    const userIsNotRegular = !(role === Roles.Regular || role === null);
+    const userIsReviewer = reviewData.reviewerId === userId;
+    const userIsAssignee = reviewData.usersId.includes(userId);
+
+    const { personality, claim, sentence } = props;
+
+    const origin =
+        typeof window !== "undefined" && window.location.origin
+            ? window.location.origin
+            : "";
+
+    const sentencePath = `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${sentence.data_hash}`;
+    const shareHref = `${origin}${sentencePath}`;
 
     return (
-        <>
-            <Col
-                offset={3}
-                span={18}
-                style={{
-                    background: colors.lightGray,
-                    padding: "0px 15px 20px",
-                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
-                }}
-            >
-                <ClaimSentenceCard
-                    personality={personality}
-                    date={claim.date}
-                    content={sentence?.content}
-                    summaryClassName="claim-review"
-                    claimType={claim?.type}
-                />
-                {formCollapsed && (
-                    <Row
-                        style={{
-                            width: "100%",
-                            padding: "0px 0px 15px 0px",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <>
-                            {isLoggedIn && (
-                                <Button
-                                    type={ButtonType.blue}
-                                    onClick={toggleFormCollapse}
-                                    icon={<PlusOutlined />}
-                                    data-cy={"testAddReviewButton"}
-                                >
-                                    {t("claimReviewForm:addReviewButton")}
-                                </Button>
-                            )}
-                        </>
-                    </Row>
-                )}
-                <Col
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        padding: "0px 0px 15px 0px",
-                    }}
-                >
-                    {!isLoggedIn && (
-                        <Button href="/login">
-                            {t("claimReviewForm:loginButton")}
-                        </Button>
-                    )}
-                </Col>
-                {!formCollapsed && (
-                    <DynamicForm
-                        sentence_hash={sentenceHash}
-                        personality={personalityId}
-                        claim={claimId}
-                        isLoggedIn={isLoggedIn}
-                        sitekey={sitekey}
-                    />
-                )}
-            </Col>
+        <div>
+            <ClaimReviewHeader
+                classification={
+                    review?.report?.classification || reviewData?.classification
+                }
+                hideDescription={descriptionForHide}
+                userIsReviewer={userIsReviewer}
+                userIsNotRegular={userIsNotRegular}
+                userIsAssignee={userIsAssignee}
+                {...props}
+            />
+            <SentenceReportView
+                context={review?.report || reviewData}
+                personality={personality}
+                claim={claim}
+                userIsNotRegular={userIsNotRegular}
+                userIsReviewer={userIsReviewer}
+                isHidden={review?.isHidden}
+            />
+            <ClaimReviewForm
+                claimId={claim._id}
+                personalityId={personality._id}
+                sentenceHash={sentence.data_hash}
+                userIsReviewer={userIsReviewer}
+            />
             <SocialMediaShare
-                isLoggedIn={isLoggedIn}
                 quote={personality?.name}
-                href={href}
+                href={shareHref}
                 claim={claim?.title}
             />
-        </>
+        </div>
     );
 };
 

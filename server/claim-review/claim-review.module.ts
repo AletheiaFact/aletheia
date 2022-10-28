@@ -7,6 +7,9 @@ import { UtilService } from "../util";
 import { SourceModule } from "../source/source.module";
 import { ConfigModule } from "@nestjs/config";
 import { HistoryModule } from "../history/history.module";
+import { SentenceModule } from "../sentence/sentence.module";
+import { CaptchaModule } from "../captcha/captcha.module";
+import { AbilityModule } from "../ability/ability.module";
 
 export const ClaimReviewModel = MongooseModule.forFeature([
     {
@@ -21,9 +24,12 @@ export const ClaimReviewModel = MongooseModule.forFeature([
         HistoryModule,
         SourceModule,
         ConfigModule,
+        SentenceModule,
+        CaptchaModule,
+        AbilityModule,
     ],
     providers: [UtilService, ClaimReviewService],
     exports: [ClaimReviewService],
     controllers: [ClaimReviewController],
 })
-export class ClaimReviewModule { }
+export class ClaimReviewModule {}

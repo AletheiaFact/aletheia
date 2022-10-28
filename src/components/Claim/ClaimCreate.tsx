@@ -51,12 +51,7 @@ const DatePickerInput = styled(DatePicker)`
     }
 `;
 
-const ClaimCreate = ({
-    personality,
-    claim = { _id: "" },
-    sitekey,
-    edit = false,
-}) => {
+const ClaimCreate = ({ personality, claim = { _id: "" }, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();
     const [title, setTitle] = useState("");
@@ -65,7 +60,7 @@ const ClaimCreate = ({
     const [disableSubmit, setDisableSubmit] = useState(true);
     const [sources, setSources] = useState([""]);
     const [recaptcha, setRecaptcha] = useState("");
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const setTitleAndContent = async () => {
@@ -83,8 +78,8 @@ const ClaimCreate = ({
     };
 
     const saveClaim = async () => {
-        if (!isFormSubmitted) {
-            setIsFormSubmitted(true);
+        if (!isLoading) {
+            setIsLoading(true);
             const { slug } = await claimApi.save(t, {
                 content,
                 title,
@@ -104,8 +99,8 @@ const ClaimCreate = ({
     };
 
     const updateClaim = async () => {
-        if (!isFormSubmitted) {
-            setIsFormSubmitted(true);
+        if (!isLoading) {
+            setIsLoading(true);
             await claimApi.update(claim._id, t, {
                 title,
                 content,
@@ -261,10 +256,19 @@ const ClaimCreate = ({
                 </Form.Item>
 
                 <Form.Item>
-                    <AletheiaCaptcha
-                        sitekey={sitekey}
-                        onChange={onChangeCaptcha}
-                    />
+                    <AletheiaCaptcha onChange={onChangeCaptcha} />
+
+                    {!recaptcha && (
+                        <h1
+                            style={{
+                                color: "red",
+                                fontSize: "14px",
+                                fontFamily: "sans-serif",
+                            }}
+                        >
+                            {t("common:requiredFieldError")}
+                        </h1>
+                    )}
                 </Form.Item>
                 <Row
                     style={{
@@ -280,17 +284,19 @@ const ClaimCreate = ({
                     </Button>
                     {edit ? (
                         <Button
+                            loading={isLoading}
                             type={ButtonType.blue}
                             htmlType="submit"
-                            disabled={disableSubmit || isFormSubmitted}
+                            disabled={disableSubmit || isLoading}
                         >
                             {t("claimForm:updateButton")}
                         </Button>
                     ) : (
                         <Button
+                            loading={isLoading}
                             type={ButtonType.blue}
                             htmlType="submit"
-                            disabled={disableSubmit || isFormSubmitted}
+                            disabled={disableSubmit || isLoading}
                             data-cy={"testSaveButton"}
                         >
                             {t("claimForm:saveButton")}

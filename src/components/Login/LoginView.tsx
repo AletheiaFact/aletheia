@@ -1,28 +1,19 @@
-import React, { useState } from "react";
-import { Row, Col, Card } from "antd";
-import colors from "../../styles/colors";
+import { Col, Row } from "antd";
+import React from "react";
+
 import OryLoginForm from "./OryLoginForm";
 
 const LoginView = () => {
-    const [formType] = useState("login");
     return (
-        <>
-            <Row justify="center">
-                <Col span={24}>
-                    <Card
-                        style={{
-                            marginTop: 45,
-                            ...(formType === "signup" && {
-                                backgroundColor: colors.bluePrimary
-                            })
-                        }}
-                    >
-                        <OryLoginForm />
-                    </Card>
-                </Col>
-            </Row>
-        </>
+        <Row
+            justify="center"
+            style={{ marginTop: 45, height: "100%", padding: "24px" }}
+        >
+            <Col span={24}>
+                <OryLoginForm />
+            </Col>
+        </Row>
     );
-}
+};
 
 export default LoginView;

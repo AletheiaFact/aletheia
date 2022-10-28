@@ -1,41 +1,30 @@
+import { useTranslation } from "next-i18next";
 import React from "react";
-import { Spin } from "antd";
-import { useTranslation } from 'next-i18next';
-import HomeContent from "./HomeContent";
-import HomeCarousel from "./HomeCarousel";
 
-const Home = ({ personalities, stats, href, isLoggedIn }) => {
+import Loading from "../Loading";
+import HomeContent from "./HomeContent";
+import HomeHeader from "./HomeHeader";
+import HomeStats from "./HomeStats";
+
+const Home = ({ personalities, stats, href, claimCollections }) => {
     const { t } = useTranslation();
 
     if (stats) {
         return (
             <>
-                <HomeCarousel
-                    personalities={personalities}
-                    isLoggedIn={isLoggedIn}
-                    stats={stats}
-                />
+                <HomeHeader />
+                <HomeStats stats={stats} />
                 <HomeContent
                     personalities={personalities}
+                    claimCollections={claimCollections}
                     href={href}
-                    isLoggedIn={isLoggedIn}
                     title={t("home:sectionTitle1")}
                 />
             </>
         );
     } else {
-        return (
-            <Spin
-                tip={t("common:loading")}
-                style={{
-                    textAlign: "center",
-                    position: "absolute",
-                    top: "50%",
-                    left: "calc(50% - 40px)"
-                }}
-            ></Spin>
-        );
+        return <Loading />;
     }
-}
+};
 
 export default Home;

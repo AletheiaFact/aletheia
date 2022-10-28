@@ -1,22 +1,28 @@
-import React, { useState, useEffect } from "react";
-import ClaimParagraph from "./ClaimParagraph";
-import { Row, Col, Typography, message, Spin, Affix } from "antd";
-import PersonalityCard from "../Personality/PersonalityCard";
-import { useTranslation } from "next-i18next";
-import MetricsOverview from "../Metrics/MetricsOverview";
-import ToggleSection from "../ToggleSection";
-import moment from "moment";
 import "moment/locale/pt";
-import SocialMediaShare from "../SocialMediaShare";
+
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
-import colors from "../../styles/colors";
+import { Affix, Col, message, Row, Typography } from "antd";
+import moment from "moment";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+
+import actions from "../../store/actions";
+import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
+import Loading from "../Loading";
+import MetricsOverview from "../Metrics/MetricsOverview";
+import PersonalityCard from "../Personality/PersonalityCard";
+import SocialMediaShare from "../SocialMediaShare";
+import ToggleSection from "../ToggleSection";
+import ClaimSpeechBody from "./ClaimSpeechBody";
 
 const { Title, Paragraph } = Typography;
 
-const Claim = ({ personality, claim, href }) => {
+const ClaimView = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
+    const dispatch = useDispatch();
     moment.locale(i18n.language);
     const { title, stats } = claim;
 
@@ -25,15 +31,17 @@ const Claim = ({ personality, claim, href }) => {
         ? claim.content
         : [claim.content];
 
+    const dispatchPersonalityAndClaim = () => {
+        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectPersonality(personality));
+    };
+
     date = moment(new Date(date));
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
         message.info(t("claim:initialInfo"));
-    });
-
-    const generateHref = (data) =>
-        `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.data_hash}`;
+    }, [t]);
 
     if (paragraphs && personality) {
         return (
@@ -93,14 +101,13 @@ const Claim = ({ personality, claim, href }) => {
                             <Row>
                                 <Col offset={2} span={18}>
                                     <cite style={{ fontStyle: "normal" }}>
-                                        {paragraphs.map((paragraph) => (
-                                            <ClaimParagraph
-                                                key={paragraph.props.id}
-                                                paragraph={paragraph}
-                                                showHighlights={showHighlights}
-                                                generateHref={generateHref}
-                                            />
-                                        ))}
+                                        <ClaimSpeechBody
+                                            handleSentenceClick={
+                                                dispatchPersonalityAndClaim
+                                            }
+                                            paragraphs={paragraphs}
+                                            showHighlights={showHighlights}
+                                        />
                                     </cite>
                                 </Col>
                             </Row>
@@ -234,7 +241,6 @@ const Claim = ({ personality, claim, href }) => {
                     {stats.total !== 0 && <MetricsOverview stats={stats} />}
                 </article>
                 <SocialMediaShare
-                    isLoggedIn={"isLoggedIn"}
                     quote={personality?.name}
                     href={href}
                     claim={claim?.title}
@@ -242,18 +248,8 @@ const Claim = ({ personality, claim, href }) => {
             </>
         );
     } else {
-        return (
-            <Spin
-                tip={t("global:loading")}
-                style={{
-                    textAlign: "center",
-                    position: "absolute",
-                    top: "50%",
-                    left: "calc(50% - 40px)",
-                }}
-            ></Spin>
-        );
+        return <Loading />;
     }
 };
 
-export default Claim;
+export default ClaimView;

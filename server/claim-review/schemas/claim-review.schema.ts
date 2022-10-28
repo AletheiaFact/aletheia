@@ -42,10 +42,16 @@ export class ClaimReview {
     report: ReportDocument;
 
     @Prop({ required: true })
-    isPublished: boolean;
+    date: Date;
 
     @Prop({ required: true })
-    date: Date;
+    isPublished: boolean;
+
+    @Prop({ type: Boolean, default: false, required: true })
+    isHidden: boolean;
+
+    @Prop({ type: Boolean, default: false, required: true })
+    isPartialReview: boolean;
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);

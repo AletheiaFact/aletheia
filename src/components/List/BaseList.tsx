@@ -1,8 +1,9 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { Button, Col, List, Row, Spin } from "antd";
+import { Button, Col, List, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import colors from "../../styles/colors";
+import Loading from "../Loading";
 import SkeletonList from "../Skeleton/SkeletonList";
 
 import SortByButton from "./SortByButton";
@@ -48,6 +49,9 @@ const BaseList = ({
         order: sortByOrder,
         ...filter,
     });
+
+    // TODO: use TimerCallback to refresh the list
+
     useEffect(() => {
         apiCall(query).then((newItems) => {
             setInitLoading(false);
@@ -169,20 +173,7 @@ const BaseList = ({
                     {skeleton ? (
                         <SkeletonList listItem={skeleton} repeat={4} />
                     ) : (
-                        <Spin
-                            tip={
-                                <span style={{ color: colors.bluePrimary }}>
-                                    {t("global:loading")}
-                                </span>
-                            }
-                            style={{
-                                textAlign: "center",
-                                position: "absolute",
-                                top: "20%",
-                                left: "calc(50% - 40px)",
-                            }}
-                            indicator={loadingIcon}
-                        />
+                        <Loading />
                     )}
                 </>
             );

@@ -4,12 +4,16 @@ import locators from "./locators";
 Cypress.Commands.add("login", () => {
     cy.visit("http://localhost:3000");
     cy.title().should("contain", "AletheiaFact.org");
-    cy.visit("http://localhost:3000/login");
+    cy.get(locators.menu.USER_ICON).click();
+    cy.get(locators.menu.LOGIN_MENU).click();
+    cy.url().should("contains", "login");
     cy.get(locators.login.USER).type(user.email);
     cy.get(locators.login.PASSWORD).type(user.password);
     cy.get(locators.login.BTN_LOGIN).click();
     cy.intercept("/api/.ory/sessions/whoami").as("confirmLogin");
     cy.wait("@confirmLogin", { timeout: 10000 });
+    // The tutorial modal will show up in the home page after the login
+    cy.get(`${locators.claim.BTN_OK_TUTORIAL}`).should("be.visible").click();
 });
 
 Cypress.Commands.add("checkRecaptcha", () => {

@@ -6,7 +6,7 @@ import { appWithTranslation, Trans, useTranslation } from "next-i18next";
 import { Provider } from "react-redux";
 import { useStore } from "../store/store";
 import MainApp from "../components/MainApp";
-import * as umami from "../lib/umami";
+import * as umamiConfig from "../lib/umami";
 import CookieConsent from "react-cookie-consent";
 import colors from "../styles/colors";
 import { DefaultSeo } from "next-seo";
@@ -30,11 +30,11 @@ function MyApp({ Component, pageProps }) {
                     name="google-site-verification"
                     content="hM4P5Iyoy9bojyEm1AhZF5O5ZSCtScgyXwFDHdrcnFI"
                 />
-                {umami.UMAMI_SITE_ID && (
+                {umamiConfig?.UMAMI_SITE_ID && (
                     <script
                         async
                         defer
-                        data-website-id={umami.UMAMI_SITE_ID}
+                        data-website-id={umamiConfig?.UMAMI_SITE_ID}
                         src="https://analytics.aletheiafact.org/umami.js"
                     ></script>
                 )}
@@ -68,7 +68,7 @@ function MyApp({ Component, pageProps }) {
                         location="bottom"
                         buttonText={t("cookieConsent:button")}
                         cookieName="termsAgreementCookie"
-                        style={{ background: colors.bluePrimary }}
+                        style={{ background: colors.grayPrimary }}
                         buttonStyle={{
                             background: colors.white,
                             color: colors.bluePrimary,
@@ -77,6 +77,7 @@ function MyApp({ Component, pageProps }) {
                             borderRadius: "30px",
                             borderColor: colors.white,
                             padding: "10px 15px",
+                            marginRight: "100px",
                         }}
                         expires={150}
                     >

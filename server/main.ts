@@ -35,6 +35,8 @@ const initApp = async (options) => {
         })
     );
 
+    // FIXME: not working but we need to enable in the future
+    // app.use(helmet());
     app.use(cookieParser());
     app.useStaticAssets(join(__dirname, "..", "public"), {
         setHeaders: (res: any) => {

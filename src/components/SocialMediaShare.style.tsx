@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import { queries } from "../styles/mediaQueries";
 
 const SocialMediaShareStyle = styled.div`
     margin-bottom: 32px;
@@ -11,35 +11,35 @@ const SocialMediaShareStyle = styled.div`
         height: 39px;
     }
 
-    ${({ isLoggedIn } : { isLoggedIn: boolean }) => isLoggedIn && `
-        align-items: center;
+    .social-media-list {
         justify-content: center;
+    }
+
+    &.logged-out {
+        display: grid;
+        border-radius: 10px;
+        grid-template-columns: 1fr;
 
         .social-media-container {
-            height: 39px;
+            width: 276px;
+            margin: 0 auto;
+            margin-top: 16px;
         }
-    `}
 
-    ${({ isLoggedIn } : { isLoggedIn: boolean }) => !isLoggedIn && `
-        @media (min-width: 1024px) {
-            display: grid;
-            border-radius: 10px;
-            grid-template-columns: 1fr;
+        @media ${queries.md} {
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
             .social-media-container {
-                width: 276px;
-                height: 39px;
-                margin: 0 auto;
-                margin-top: 16px;
-            }
-
-            .social-media-list {
-                justify-content: center;
+                width: auto;
+                margin: 0;
+                margin-left: 32px;
             }
         }
-    `}
+    }
 
-    @media (max-width: 548px) {
+    @media ${queries.xs} {
         margin-bottom: 16px;
         border-radius: 0;
         display: grid;
@@ -49,10 +49,6 @@ const SocialMediaShareStyle = styled.div`
             margin: 0 auto;
             margin-top: 16px;
         }
-
-        .social-media-list {
-            justify-content: center;
-        }
     }
-`
-export default SocialMediaShareStyle
+`;
+export default SocialMediaShareStyle;

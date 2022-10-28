@@ -1,54 +1,9 @@
-import React from "react"
-import { Button, Modal } from "antd";
-import styled from "styled-components";
-import OrderRadio from "../Radio/OrderRadio";
-import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
+import React from "react";
 
-const AletheiaModal = styled(Modal)`
-    background: none;
-    box-shadow: none;
-    padding: 0;
-
-    .ant-modal-content {
-        width: 300px;
-        margin: 0 auto;
-        border-radius: 30px;
-        background-color: ${colors.lightGray};
-        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
-        padding: 19px 34px 24px 34px;
-    }
-
-    .ant-modal-body {
-        padding: 0;
-    }
-
-    svg[data-icon="close"] {
-        margin-top: 24px;
-        width: 20px;
-        height: 20px;
-        color: ${colors.blackPrimary};
-        margin-right: 20px;
-    }
-`
-
-const ModalCancelButton = styled(Button)`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    width: 120px;
-`
-
-const ModalOkButton = styled(Button)`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: ${colors.blueSecondary};
-    width: 120px;
-    height: 40px;
-`
-
+import AletheiaButton, { ButtonType } from "../Button";
+import OrderRadio from "../Radio/OrderRadio";
+import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 
 const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
     const { t } = useTranslation();
@@ -59,66 +14,33 @@ const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
             visible={visible}
             footer={false}
             onCancel={handleCancel}
+            title={t("orderModal:title")}
         >
-            <span
-                style={{
-                    display: 'block',
-                    color: colors.blackPrimary,
-                    marginLeft: 10,
-                    fontWeight: 700,
-                    fontSize: '18px',
-                    textAlign: 'center',
-                }}
-            >
-                {t("orderModal:title")}
-            </span>
-
-            <OrderRadio
-                value={value}
-                setValue={setValue}
-            />
+            <OrderRadio value={value} setValue={setValue} />
 
             <div
                 style={{
                     marginTop: 30,
                     display: "flex",
+                    justifyContent: "space-between",
                 }}
             >
-                <ModalCancelButton
-                    type="text"
-                    onClick={handleCancel}
-                >
+                <ModalCancelButton type="text" onClick={handleCancel}>
                     <span
                         style={{
-                            color: colors.blueSecondary,
-                            textDecorationLine: 'underline',
-                            textAlign: 'center',
-                            fontWeight: 700,
-                            fontSize: 14,
+                            textDecorationLine: "underline",
                         }}
                     >
-                        Cancel
+                        {t("orderModal:cancelButton")}
                     </span>
                 </ModalCancelButton>
 
-                <ModalOkButton
-                    onClick={handleOk}
-                    shape='round'
-                >
-                    <span
-                        style={{
-                            color: colors.white,
-                            textAlign: 'center',
-                            fontWeight: 700,
-                            fontSize: 14,
-                        }}
-                    >
-                        Done
-                    </span>
-                </ModalOkButton>
+                <AletheiaButton type={ButtonType.blue} onClick={handleOk}>
+                    {t("orderModal:okButton")}
+                </AletheiaButton>
             </div>
         </AletheiaModal>
-    )
+    );
 };
 
-export default OrderModal
+export default OrderModal;

@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, Scope } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import {
     ClaimReviewTask,
@@ -15,6 +15,9 @@ import { StateEventService } from "../state-event/state-event.service";
 import { TypeModel } from "../state-event/schema/state-event.schema";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
+import { SentenceService } from "../sentence/sentence.service";
+import { getQueryMatchForMachineValue } from "./mongo-utils";
+import { Roles } from "../ability/ability.factory";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -25,14 +28,12 @@ export class ClaimReviewTaskService {
         private claimReviewService: ClaimReviewService,
         private reportService: ReportService,
         private historyService: HistoryService,
-        private stateEventService: StateEventService
+        private stateEventService: StateEventService,
+        private sentenceService: SentenceService
     ) {}
 
     async listAll(page, pageSize, order, value) {
-        const query =
-            value === "published"
-                ? { "machine.value": value }
-                : { [`machine.value.${value}`]: { $exists: true } };
+        const query = getQueryMatchForMachineValue(value);
         const reviewTasks = await this.ClaimReviewTaskModel.find({
             ...query,
         })
@@ -47,7 +48,7 @@ export class ClaimReviewTaskService {
             .populate({
                 path: "machine.context.claimReview.personality",
                 model: "Personality",
-                select: "slug name",
+                select: "slug name _id",
             })
             .populate({
                 path: "machine.context.claimReview.claim",
@@ -56,25 +57,34 @@ export class ClaimReviewTaskService {
                     path: "latestRevision",
                     select: "title",
                 },
-                select: "slug",
+                select: "slug _id",
             });
 
-        return reviewTasks.map(({ sentence_hash, machine }) => {
-            const { personality, claim } = machine.context.claimReview;
-            const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
-            const usersName = machine.context.reviewData.usersId.map((user) => {
-                return user.name;
-            });
+        return Promise.all(
+            reviewTasks.map(async ({ sentence_hash, machine }) => {
+                const { personality, claim }: any = machine.context.claimReview;
+                const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
+                const usersName = machine.context.reviewData.usersId.map(
+                    (user) => {
+                        return user.name;
+                    }
+                );
 
-            return {
-                sentence_hash,
-                usersName,
-                value: machine.value,
-                personalityName: personality.name,
-                claimTitle: claim.latestRevision.title,
-                reviewHref,
-            };
-        });
+                const sentence = await this.sentenceService.getByDataHash(
+                    sentence_hash
+                );
+                return {
+                    sentence,
+                    usersName,
+                    value: machine.value,
+                    personalityName: personality.name,
+                    claimTitle: claim.latestRevision.title,
+                    claimId: claim._id,
+                    personalityId: personality._id,
+                    reviewHref,
+                };
+            })
+        );
     }
 
     getById(claimReviewTaskId: string) {
@@ -175,6 +185,13 @@ export class ClaimReviewTaskService {
                 }
             );
 
+        if (claimReviewTaskBody.machine.context.reviewData.reviewerId) {
+            claimReviewTaskBody.machine.context.reviewData.reviewerId =
+                Types.ObjectId(
+                    claimReviewTaskBody.machine.context.reviewData.reviewerId
+                ) || "";
+        }
+
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.sentence_hash,
@@ -191,44 +208,109 @@ export class ClaimReviewTaskService {
         }
     }
 
-    async update(sentence_hash: string, { machine }: UpdateClaimReviewTaskDTO) {
+    async update(
+        sentence_hash: string,
+        { machine }: UpdateClaimReviewTaskDTO,
+        history: boolean = true
+    ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        try {
-            const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
-                sentence_hash
-            );
+        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
+            sentence_hash
+        );
 
-            const newClaimReviewTaskMachine = {
-                ...claimReviewTask.machine,
-                ...machine,
-            };
+        const newClaimReviewTaskMachine = {
+            ...claimReviewTask.machine,
+            ...machine,
+        };
 
-            const newClaimReviewTask = {
-                ...claimReviewTask.toObject(),
-                machine: newClaimReviewTaskMachine,
-            };
+        const newClaimReviewTask = {
+            ...claimReviewTask.toObject(),
+            machine: newClaimReviewTaskMachine,
+        };
 
-            if (newClaimReviewTaskMachine.value === "published") {
-                this._createReportAndClaimReview(
-                    sentence_hash,
-                    newClaimReviewTask.machine
+        const loggedInUser = this.req.user;
+
+        if (newClaimReviewTaskMachine.value === "published") {
+            if (
+                loggedInUser.role !== Roles.Admin &&
+                loggedInUser._id !==
+                    machine.context.reviewData.reviewerId.toString()
+            ) {
+                throw new ForbiddenException(
+                    "This user does not have permission to publish the report"
                 );
             }
+            this._createReportAndClaimReview(
+                sentence_hash,
+                newClaimReviewTask.machine
+            );
+        }
 
+        if (history) {
             this._createReviewTaskHistory(newClaimReviewTask, claimReviewTask);
             this._createStateEvent(newClaimReviewTask);
-
-            return this.ClaimReviewTaskModel.updateOne(
-                { _id: newClaimReviewTask._id },
-                newClaimReviewTask
-            );
-        } catch (e) {
-            throw new Error(e);
         }
+
+        return this.ClaimReviewTaskModel.updateOne(
+            { _id: newClaimReviewTask._id },
+            newClaimReviewTask
+        );
     }
 
     getClaimReviewTaskBySentenceHash(sentence_hash: string) {
-        return this.ClaimReviewTaskModel.findOne({ sentence_hash });
+        return this.ClaimReviewTaskModel.findOne({
+            sentence_hash,
+        });
+    }
+
+    async getClaimReviewTaskBySentenceHashWithUsernames(sentence_hash: string) {
+        // This may cause a false positive in sonarCloud
+        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
+            sentence_hash
+        )
+            .populate({
+                path: "machine.context.reviewData.usersId",
+                model: "User",
+                select: "name",
+            })
+            .populate({
+                path: "machine.context.reviewData.reviewerId",
+                model: "User",
+                select: "name",
+            });
+
+        if (claimReviewTask) {
+            const preloadedAsignees = [];
+            const usersId = [];
+            claimReviewTask.machine.context.reviewData.usersId.forEach(
+                (assignee) => {
+                    preloadedAsignees.push({
+                        value: assignee._id,
+                        label: assignee.name,
+                    });
+                    usersId.push(assignee._id);
+                }
+            );
+            claimReviewTask.machine.context.reviewData.usersId = usersId;
+            claimReviewTask.machine.context.preloadedOptions = {
+                usersId: preloadedAsignees,
+            };
+
+            if (claimReviewTask.machine.context.reviewData.reviewerId) {
+                const reviewerUser =
+                    claimReviewTask.machine.context.reviewData.reviewerId;
+                claimReviewTask.machine.context.preloadedOptions.reviewerId = [
+                    {
+                        value: reviewerUser._id,
+                        label: reviewerUser.name,
+                    },
+                ];
+                claimReviewTask.machine.context.reviewData.reviewerId =
+                    reviewerUser._id;
+            }
+        }
+
+        return claimReviewTask;
     }
 
     count(query: any = {}) {

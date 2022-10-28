@@ -3,6 +3,7 @@ import React from "react";
 import Button, { ButtonType } from "../Button";
 import CTARegistrationStyle from "./CTARegistration.style";
 import colors from "../../styles/colors";
+import { trackUmamiEvent } from "../../lib/umami";
 
 function CTARegistration() {
     const { t } = useTranslation();
@@ -55,10 +56,7 @@ function CTARegistration() {
             </p>
             <Button
                 onClick={() => {
-                    umami?.trackEvent(
-                        "cta-registration-button",
-                        "registration"
-                    );
+                    trackUmamiEvent("cta-registration-button", "registration");
                 }}
                 type={ButtonType.white}
                 target="_blank"

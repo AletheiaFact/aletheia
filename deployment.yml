@@ -45,7 +45,7 @@ metadata:
   name: aletheia
   namespace: ENVIRONMENT
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: aletheia
@@ -84,6 +84,8 @@ spec:
                   name: aletheia-config
             - name: NEXT_PUBLIC_UMAMI_SITE_ID
               value: UMAMI_SITE_ID_STUB
+            - name: NEXT_PUBLIC_RECAPTCHA_SITEKEY
+              value: RECAPTCHA_SITEKEY_STUB
             - name: ORY_SDK_URL
               value: ORY_SDK_URL_STUB
             - name: ORY_ACCESS_TOKEN

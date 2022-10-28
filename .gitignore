@@ -28,6 +28,7 @@ dist
 config.yaml
 config.nest.yaml
 config.seed.yaml
+migrate-mongo-config.js
 
 .idea/**/*
 
@@ -55,3 +56,4 @@ cypress/screenshots/**/*
 
 # Clinic.js
 .clinic
+data/localstack/startup_info.json

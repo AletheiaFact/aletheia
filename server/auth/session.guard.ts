@@ -37,7 +37,10 @@ export class SessionGuard implements CanActivate {
                     undefined,
                     request.header("Cookie")
                 );
-                request.user = { _id: session?.identity?.traits?.user_id };
+                request.user = {
+                    _id: session?.identity?.traits?.user_id,
+                    role: session?.identity?.traits?.role,
+                };
                 return true;
             }
 
@@ -49,9 +52,12 @@ export class SessionGuard implements CanActivate {
     }
 
     next(request, response, isPublic) {
-        const isAllowedPublicUrl = ["/login", "/_next", "/api/.ory"].some(
-            (route) => request.url.startsWith(route)
-        );
+        const isAllowedPublicUrl = [
+            "/login",
+            "/_next",
+            "/api/.ory",
+            "/api/health",
+        ].some((route) => request.url.startsWith(route));
         const overridePublicRoutes =
             !isAllowedPublicUrl &&
             this.configService.get<string>("override_public_routes");

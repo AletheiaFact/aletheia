@@ -9,17 +9,26 @@ export enum TargetModel {
     Personality = "Personality",
     ClaimReview = "ClaimReview",
     ClaimReviewTask = "ClaimReviewTask",
+    Image = "Image",
 }
 
 export enum HistoryType {
     Create = "create",
     Update = "update",
     Delete = "delete",
+    Hide = "hide",
+    Unhide = "unhide",
     Draft = "draft",
     Reported = "reported",
     Assigned = "assigned",
     Published = "published",
 }
+
+export type Details = {
+    after: any;
+    before: any;
+};
+
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class History {
     @Prop({
@@ -50,7 +59,7 @@ export class History {
         type: Object,
         required: true,
     })
-    details: object;
+    details: Details;
 
     @Prop({
         type: Date,

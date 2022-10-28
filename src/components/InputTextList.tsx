@@ -4,6 +4,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import Button from "./Button";
 import { Col, Row } from "antd";
 import AletheiaInput from "./AletheiaInput";
+import { trackUmamiEvent } from "../lib/umami";
 
 type FormValues = {
     fieldArray: { content: string }[];
@@ -77,8 +78,7 @@ export default function InputTextList({
                                     style={{ height: "40px", margin: "0 auto" }}
                                     onClick={() => {
                                         remove(index);
-                                        //@ts-ignore
-                                        umami?.trackEvent(
+                                        trackUmamiEvent(
                                             `Remove ${fieldName} input`,
                                             "Fact-checking workflow"
                                         );
@@ -108,8 +108,7 @@ export default function InputTextList({
                         append({
                             content: "",
                         });
-                        //@ts-ignore
-                        umami?.trackEvent(
+                        trackUmamiEvent(
                             `Add ${fieldName} input`,
                             "Fact-checking workflow"
                         );

@@ -1,77 +1,124 @@
-import { useMemo } from 'react';
-import { TypedUseSelectorHook, useSelector } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import { useMemo } from "react";
+import { TypedUseSelectorHook, useSelector } from "react-redux";
+import { createStore, applyMiddleware } from "redux";
+import { RootState, ActionTypes } from "./types";
 
 let store;
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case "TOGGLE_MENU":
+        case ActionTypes.TOGGLE_MENU:
             return {
                 ...state,
-                menuCollapsed: action.menuCollapsed
+                menuCollapsed: action.menuCollapsed,
             };
-        case "ENABLE_SEARCH_OVERLAY":
+        case ActionTypes.TOGGLE_REVIEW_DRAWER:
             return {
                 ...state,
-                search: {
-                    ...(state?.search || {}),
-                    overlay: action.overlay
-                }
+                reviewDrawerCollapsed: action.reviewDrawerCollapsed,
             };
-        case "SEARCH_RESULTS":
+        case ActionTypes.RESULTS_OVERLAY_VISIBLE:
             return {
                 ...state,
                 search: {
                     ...(state?.search || {}),
-                    searchResults: action.results
-                }
+                    overlayVisible: action.overlayVisible,
+                },
             };
-        case "SET_TOTAL_PAGES":
+        case ActionTypes.SEARCH_RESULTS:
             return {
                 ...state,
                 search: {
                     ...(state?.search || {}),
-                    searchTotalPages: action.totalPages
-                }
+                    searchResults: action.results,
+                },
             };
-        case "SET_CUR_PAGE":
+        case ActionTypes.SET_TOTAL_PAGES:
             return {
                 ...state,
                 search: {
                     ...(state?.search || {}),
-                    searchCurPage: action.page
-                }
+                    searchTotalPages: action.totalPages,
+                },
             };
-        case "SET_SEARCH_NAME":
+        case ActionTypes.SET_CUR_PAGE:
             return {
                 ...state,
                 search: {
                     ...(state?.search || {}),
-                    searchInput: action.searchName
-                }
+                    searchCurPage: action.page,
+                },
             };
-        case "SET_LOGIN_VALIDATION":
+        case ActionTypes.SET_SEARCH_NAME:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchInput: action.searchName,
+                },
+            };
+        case ActionTypes.SET_LOGIN_STATUS:
             return {
                 ...state,
                 login: action.login,
-                user: action.user
             };
+        case ActionTypes.SET_AUTO_SAVE:
+            return {
+                ...state,
+                autoSave: action.autoSave,
+            };
+        case ActionTypes.SET_USER_ROLE:
+            return {
+                ...state,
+                role: action.role,
+            };
+        case ActionTypes.SET_BREAKPOINTS:
+            return {
+                ...state,
+                vw: action.vw,
+            };
+        case ActionTypes.SET_SELECTED_DATA_HASH:
+            return {
+                ...state,
+                selectedDataHash: action.selectedDataHash,
+            };
+        case ActionTypes.SET_SELECTED_PERSONALITY:
+            return {
+                ...state,
+                selectedPersonality: action.selectedPersonality,
+            };
+        case ActionTypes.SET_SELECTED_CLAIM:
+            return {
+                ...state,
+                selectedClaim: action.selectedClaim,
+            };
+        case ActionTypes.SET_SELECTED_SENTENCE:
+            return {
+                ...state,
+                selectedSentence: action.selectedSentence,
+            };
+        case ActionTypes.SET_USER_ID:
+            return {
+                ...state,
+                userId: action.userId,
+            };
+        case ActionTypes.SET_SITEKEY:
+            return {
+                ...state,
+                sitekey: action.sitekey,
+            };
+
         default:
             return state;
     }
-}
+};
 
-function initStore(preloadedState = {}) {
-    return createStore(
-        reducer,
-        preloadedState,
-        applyMiddleware()
-    )
+function initStore(preloadedState) {
+    return createStore(reducer, preloadedState, applyMiddleware());
 }
 
 export const initializeStore = (preloadedState) => {
-    let _store = store ?? initStore(preloadedState)
+    let _store = store ?? initStore(preloadedState);
 
     // After navigating to a page with an initial Redux state, merge that state
     // with the current state in the store, and create a new store
@@ -79,36 +126,21 @@ export const initializeStore = (preloadedState) => {
         _store = initStore({
             ...store.getState(),
             ...preloadedState,
-        })
+        });
         // Reset the current store
-        store = undefined
+        store = undefined;
     }
 
     // For SSG and SSR always create a new store
-    if (typeof window === 'undefined') return _store
+    if (typeof window === "undefined") return _store;
     // Create the store once in the client
-    if (!store) store = _store
+    if (!store) store = _store;
 
-    return _store
-}
+    return _store;
+};
 
 export function useStore() {
-    return useMemo(() => initializeStore({}), [])
+    return useMemo(() => initializeStore({}), []);
 }
 
-export interface RootState {
-    menuCollapsed: boolean;
-    search: {
-        overlay: any;
-        searchResults: any;
-        searchTotalPages: any;
-        searchCurPage: number;
-        searchInput: string;
-        searchPageSize: number
-    }
-    login: boolean
-    user: any
-
-
-}
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
