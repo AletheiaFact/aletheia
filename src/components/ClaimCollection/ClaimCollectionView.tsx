@@ -45,7 +45,7 @@ const ClaimCollectionView = ({ claimCollection }) => {
 
     return (
         <>
-            <CallbackTimerProvider callback={updateTimeline}>
+            <CallbackTimerProvider interval={30} callback={updateTimeline}>
                 <Row
                     style={{
                         width: "100%",
