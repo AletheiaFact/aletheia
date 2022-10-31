@@ -26,7 +26,7 @@ const ClaimView = ({ personality, claim, href }) => {
     moment.locale(i18n.language);
     const { title, stats } = claim;
 
-    let date = claim.date;
+    let date = moment(new Date(claim.date));
     const paragraphs = Array.isArray(claim.content)
         ? claim.content
         : [claim.content];
@@ -36,7 +36,6 @@ const ClaimView = ({ personality, claim, href }) => {
         dispatch(actions.setSelectPersonality(personality));
     };
 
-    date = moment(new Date(date));
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {

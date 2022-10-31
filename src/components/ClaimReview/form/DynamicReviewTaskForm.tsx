@@ -18,10 +18,11 @@ import { useAppSelector } from "../../../store/store";
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
-import DynamicInput from "./DynamicInput";
+import DynamicInput from "../../Form/DynamicInput";
 import { trackUmamiEvent } from "../../../lib/umami";
+import DynamicForm from "../../Form/DynamicForm";
 
-const DynamicForm = ({ sentence_hash, personality, claim }) => {
+const DynamicReviewTaskForm = ({ sentence_hash, personality, claim }) => {
     const {
         handleSubmit,
         control,
@@ -178,65 +179,12 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {currentForm && (
                 <>
-                    {currentForm.map((fieldItem, index) => {
-                        const {
-                            fieldName,
-                            rules,
-                            label,
-                            placeholder,
-                            type,
-                            addInputLabel,
-                            extraProps,
-                        } = fieldItem;
-
-                        const defaultValue = reviewData[fieldName];
-
-                        return (
-                            <Row key={index}>
-                                <Col span={24}>
-                                    <h4
-                                        style={{
-                                            color: colors.blackSecondary,
-                                            fontWeight: 600,
-                                            paddingLeft: 10,
-                                            marginBottom: 0,
-                                        }}
-                                    >
-                                        {t(label)}
-                                    </h4>
-                                </Col>
-                                <Col span={24} style={{ margin: "10px 0" }}>
-                                    <Controller
-                                        name={fieldName}
-                                        control={control}
-                                        rules={rules}
-                                        defaultValue={defaultValue}
-                                        render={({ field }) => (
-                                            <DynamicInput
-                                                fieldName={fieldName}
-                                                type={type}
-                                                placeholder={placeholder}
-                                                onChange={field.onChange}
-                                                value={field.value}
-                                                addInputLabel={addInputLabel}
-                                                defaultValue={defaultValue}
-                                                data-cy={`testClaimReview${fieldName}`}
-                                                extraProps={extraProps}
-                                            />
-                                        )}
-                                    />
-                                    {errors[fieldName] && (
-                                        <Text
-                                            type="danger"
-                                            style={{ marginLeft: 20 }}
-                                        >
-                                            {t(errors[fieldName].message)}
-                                        </Text>
-                                    )}
-                                </Col>
-                            </Row>
-                        );
-                    })}
+                    <DynamicForm
+                        currentForm={currentForm}
+                        machineValues={reviewData}
+                        control={control}
+                        errors={errors}
+                    />
                     <div
                         style={{
                             paddingBottom: 20,
@@ -310,4 +258,4 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
     );
 };
 
-export default DynamicForm;
+export default DynamicReviewTaskForm;
