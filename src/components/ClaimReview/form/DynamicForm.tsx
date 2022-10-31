@@ -7,13 +7,13 @@ import { Controller, useForm } from "react-hook-form";
 
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import { ReviewTaskMachineContext } from "../../../Context/ReviewTaskMachineProvider";
-import { ReviewTaskEvents } from "../../../machine/enums";
-import getNextEvents from "../../../machine/getNextEvent";
-import getNextForm from "../../../machine/getNextForm";
+import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
+import getNextEvents from "../../../machines/reviewTask/getNextEvent";
+import getNextForm from "../../../machines/reviewTask/getNextForm";
 import {
     preloadedOptionsSelector,
     reviewDataSelector,
-} from "../../../machine/selectors";
+} from "../../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../../store/store";
 import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";

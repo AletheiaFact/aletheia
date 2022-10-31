@@ -4,9 +4,9 @@ import { createContext, useEffect, useState } from "react";
 import ClaimReviewApi from "../api/claimReviewApi";
 import ClaimReviewTaskApi from "../api/ClaimReviewTaskApi";
 import Loading from "../components/Loading";
-import { initialContext } from "../machine/context";
-import { ReviewTaskStates } from "../machine/enums";
-import { createNewMachineService } from "../machine/reviewTaskMachine";
+import { initialContext } from "../machines/reviewTask/context";
+import { ReviewTaskStates } from "../machines/reviewTask/enums";
+import { createNewMachineService } from "../machines/reviewTask/reviewTaskMachine";
 
 interface ContextType {
     machineService: any;

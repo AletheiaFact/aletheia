@@ -13,8 +13,8 @@ import {
     crossCheckingSelector,
     reviewNotStartedSelector,
     reviewDataSelector,
-} from "../../machine/selectors";
-import { Roles } from "../../machine/enums";
+} from "../../machines/reviewTask/selectors";
+import { Roles } from "../../machines/reviewTask/enums";
 
 const ClaimReviewForm = ({
     claimId,

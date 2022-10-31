@@ -2,8 +2,8 @@ import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
-import { Roles } from "../../machine/enums";
-import { reviewDataSelector } from "../../machine/selectors";
+import { Roles } from "../../machines/reviewTask/enums";
+import { reviewDataSelector } from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import SocialMediaShare from "../SocialMediaShare";

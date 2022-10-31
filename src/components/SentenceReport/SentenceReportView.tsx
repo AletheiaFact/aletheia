@@ -3,12 +3,12 @@ import { Col, Row } from "antd";
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
-import { Roles } from "../../machine/enums";
+import { Roles } from "../../machines/reviewTask/enums";
 import {
     crossCheckingSelector,
     isPartialReviewSelector,
     publishedSelector,
-} from "../../machine/selectors";
+} from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
