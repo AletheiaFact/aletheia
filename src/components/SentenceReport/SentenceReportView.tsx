@@ -3,7 +3,7 @@ import { Col, Row } from "antd";
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
-import { Roles } from "../../machines/reviewTask/enums";
+import { Roles } from "../../types/enums";
 import {
     crossCheckingSelector,
     isPartialReviewSelector,

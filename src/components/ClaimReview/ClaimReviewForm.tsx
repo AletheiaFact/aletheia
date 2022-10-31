@@ -14,7 +14,7 @@ import {
     reviewNotStartedSelector,
     reviewDataSelector,
 } from "../../machines/reviewTask/selectors";
-import { Roles } from "../../machines/reviewTask/enums";
+import { Roles } from "../../types/enums";
 
 const ClaimReviewForm = ({
     claimId,

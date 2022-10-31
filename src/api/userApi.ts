@@ -1,6 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
-import { Roles } from "../machines/reviewTask/enums";
+import { Roles } from "../types/enums";
 
 const request = axios.create({
     withCredentials: true,

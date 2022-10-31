@@ -1,4 +1,4 @@
-import { ClassificationEnum } from "../../../../machines/reviewTask/enums";
+import { ClassificationEnum } from "../../../../types/enums";
 import { createFormField, FormField, fieldValidation } from "./FormField";
 
 const assignedForm: FormField[] = [

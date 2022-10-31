@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import ClaimReviewApi from "../../api/claimReviewApi";
 import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
-import { Roles } from "../../machines/reviewTask/enums";
+import { Roles } from "../../types/enums";
 import {
     crossCheckingSelector,
     publishedSelector,

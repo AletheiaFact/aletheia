@@ -9,7 +9,7 @@ import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
 import { ReviewTaskMachineProvider } from "../Context/ReviewTaskMachineProvider";
-import { ClassificationEnum } from "../machines/reviewTask/enums";
+import { ClassificationEnum } from "../types/enums";
 import actions from "../store/actions";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
