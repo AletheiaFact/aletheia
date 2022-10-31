@@ -20,15 +20,21 @@ export class Paragraph {
     props: object;
 
     @Prop({
-        type: [{
-            type: mongoose.Types.ObjectId,
-            required: true,
-            ref: "Sentence"
-        }]
+        type: [
+            {
+                type: mongoose.Types.ObjectId,
+                required: true,
+                ref: "Sentence",
+            },
+        ],
     })
     content: Sentence[];
 }
 
 const ParagraphSchemaRaw = SchemaFactory.createForClass(Paragraph);
+
+ParagraphSchemaRaw.pre("find", function () {
+    this.populate("content");
+});
 
 export const ParagraphSchema = ParagraphSchemaRaw;

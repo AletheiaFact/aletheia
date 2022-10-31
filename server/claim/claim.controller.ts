@@ -100,8 +100,7 @@ export class ClaimController {
     @IsPublic()
     @Get("api/claim/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    getById(@Param("id") claimId, @Headers() headers) {
-        // FIXME: this is returning a _id which is actually a revisionId
+    getById(@Param("id") claimId) {
         return this.claimService.getById(claimId);
     }
 
