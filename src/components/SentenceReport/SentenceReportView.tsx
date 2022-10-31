@@ -2,7 +2,7 @@ import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
 import React, { useContext } from "react";
 
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
 import { Roles } from "../../machine/enums";
 import {
     crossCheckingSelector,
@@ -25,7 +25,7 @@ const SentenceReportView = ({
 }) => {
     const { login: isLoggedIn, role } = useAppSelector((state) => state);
     const { machineService, publishedReview } = useContext(
-        GlobalStateMachineContext
+        ReviewTaskMachineContext
     );
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isPublished =

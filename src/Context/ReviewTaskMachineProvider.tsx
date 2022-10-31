@@ -8,24 +8,24 @@ import { initialContext } from "../machine/context";
 import { ReviewTaskStates } from "../machine/enums";
 import { createNewMachineService } from "../machine/reviewTaskMachine";
 
-interface GlobalContextType {
+interface ContextType {
     machineService: any;
     publishedReview?: { review: any; descriptionForHide?: string };
 }
 
-export const GlobalStateMachineContext = createContext<GlobalContextType>({
+export const ReviewTaskMachineContext = createContext<ContextType>({
     machineService: null,
 });
 
-interface GlobalStateMachineProviderProps {
+interface ReviewTaskMachineProviderProps {
     data_hash: string;
     children: React.ReactNode;
     baseMachine?: any;
     publishedReview?: { review: any; descriptionForHide?: string };
 }
 
-export const GlobalStateMachineProvider = (
-    props: GlobalStateMachineProviderProps
+export const ReviewTaskMachineProvider = (
+    props: ReviewTaskMachineProviderProps
 ) => {
     const [globalMachineService, setGlobalMachineService] = useState(null);
     const [publishedClaimReview, setPublishedClaimReview] = useState(
@@ -70,7 +70,7 @@ export const GlobalStateMachineProvider = (
     }, [props.baseMachine, props.data_hash, props.publishedReview, t]);
 
     return (
-        <GlobalStateMachineContext.Provider
+        <ReviewTaskMachineContext.Provider
             value={{
                 machineService: globalMachineService,
                 publishedReview: publishedClaimReview,
@@ -78,6 +78,6 @@ export const GlobalStateMachineProvider = (
         >
             {loading && <Loading />}
             {!loading && globalMachineService && props.children}
-        </GlobalStateMachineContext.Provider>
+        </ReviewTaskMachineContext.Provider>
     );
 };

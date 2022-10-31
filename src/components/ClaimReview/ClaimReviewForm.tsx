@@ -7,7 +7,7 @@ import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
 import DynamicForm from "./form/DynamicForm";
 import { useAppSelector } from "../../store/store";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
 import {
     publishedSelector,
     crossCheckingSelector,
@@ -29,7 +29,7 @@ const ClaimReviewForm = ({
         role,
     } = useAppSelector((state) => state);
 
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService } = useContext(ReviewTaskMachineContext);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);

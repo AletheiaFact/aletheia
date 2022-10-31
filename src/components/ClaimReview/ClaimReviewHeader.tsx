@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import React, { useContext, useEffect, useState } from "react";
 
 import ClaimReviewApi from "../../api/claimReviewApi";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
 import { Roles } from "../../machine/enums";
 import {
     crossCheckingSelector,
@@ -39,7 +39,7 @@ const ClaimReviewHeader = ({
     const { vw, role, login } = useAppSelector((state) => state);
 
     const { machineService, publishedReview } = useContext(
-        GlobalStateMachineContext
+        ReviewTaskMachineContext
     );
     const isHidden = publishedReview?.review?.isHidden;
     const [hide, setHide] = useState(isHidden);

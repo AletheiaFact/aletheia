@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
-import { GlobalStateMachineContext } from "../../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineContext } from "../../../Context/ReviewTaskMachineProvider";
 import { ReviewTaskEvents } from "../../../machine/enums";
 import getNextEvents from "../../../machine/getNextEvent";
 import getNextForm from "../../../machine/getNextForm";
@@ -30,7 +30,7 @@ const DynamicForm = ({ sentence_hash, personality, claim }) => {
         formState: { errors },
         watch,
     } = useForm();
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const preloadedOptions = useSelector(
         machineService,
