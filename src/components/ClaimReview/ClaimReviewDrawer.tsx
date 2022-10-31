@@ -3,7 +3,7 @@ import { Col, Drawer, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { GlobalStateMachineProvider } from "../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineProvider } from "../../Context/ReviewTaskMachineProvider";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -52,7 +52,7 @@ const ClaimReviewDrawer = () => {
             closable={false}
         >
             {personality && claim && sentence && data_hash ? (
-                <GlobalStateMachineProvider data_hash={data_hash}>
+                <ReviewTaskMachineProvider data_hash={data_hash}>
                     <Row
                         justify="space-between"
                         style={{
@@ -91,7 +91,7 @@ const ClaimReviewDrawer = () => {
                         claim={claim}
                         sentence={sentence}
                     />
-                </GlobalStateMachineProvider>
+                </ReviewTaskMachineProvider>
             ) : (
                 <Loading />
             )}

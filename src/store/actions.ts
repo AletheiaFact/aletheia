@@ -1,4 +1,4 @@
-import { Roles } from "../machine/enums";
+import { Roles } from "../types/enums";
 import { ActionTypes } from "./types";
 
 const actions = {

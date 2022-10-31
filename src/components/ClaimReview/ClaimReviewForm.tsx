@@ -5,16 +5,16 @@ import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
-import DynamicForm from "./form/DynamicForm";
+import DynamicReviewTaskForm from "./form/DynamicReviewTaskForm";
 import { useAppSelector } from "../../store/store";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
 import {
     publishedSelector,
     crossCheckingSelector,
     reviewNotStartedSelector,
     reviewDataSelector,
-} from "../../machine/selectors";
-import { Roles } from "../../machine/enums";
+} from "../../machines/reviewTask/selectors";
+import { Roles } from "../../types/enums";
 
 const ClaimReviewForm = ({
     claimId,
@@ -29,7 +29,7 @@ const ClaimReviewForm = ({
         role,
     } = useAppSelector((state) => state);
 
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService } = useContext(ReviewTaskMachineContext);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);
@@ -99,7 +99,7 @@ const ClaimReviewForm = ({
                     )}
                 </Col>
                 {!formCollapsed && showForm && (
-                    <DynamicForm
+                    <DynamicReviewTaskForm
                         sentence_hash={sentenceHash}
                         personality={personalityId}
                         claim={claimId}

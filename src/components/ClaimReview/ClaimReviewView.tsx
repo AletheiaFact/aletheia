@@ -1,9 +1,9 @@
 import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
-import { Roles } from "../../machine/enums";
-import { reviewDataSelector } from "../../machine/selectors";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
+import { Roles } from "../../types/enums";
+import { reviewDataSelector } from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import SocialMediaShare from "../SocialMediaShare";
@@ -18,7 +18,7 @@ export interface ClaimReviewViewProps {
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const { machineService, publishedReview } = useContext(
-        GlobalStateMachineContext
+        ReviewTaskMachineContext
     );
     const { review, descriptionForHide } = publishedReview || {};
 

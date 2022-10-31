@@ -8,8 +8,8 @@ import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
-import { GlobalStateMachineProvider } from "../Context/GlobalStateMachineProvider";
-import { ClassificationEnum } from "../machine/enums";
+import { ReviewTaskMachineProvider } from "../Context/ReviewTaskMachineProvider";
+import { ClassificationEnum } from "../types/enums";
 import actions from "../store/actions";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
@@ -99,7 +99,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 })}
             />
 
-            <GlobalStateMachineProvider
+            <ReviewTaskMachineProvider
                 data_hash={sentence.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
                 publishedReview={{
@@ -112,7 +112,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                     claim={claim}
                     sentence={sentence}
                 />
-            </GlobalStateMachineProvider>
+            </ReviewTaskMachineProvider>
             <AffixButton personalitySlug={personality.slug} />
         </>
     );

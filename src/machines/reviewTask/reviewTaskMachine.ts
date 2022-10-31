@@ -1,4 +1,4 @@
-import api from "../api/ClaimReviewTaskApi";
+import api from "../../api/ClaimReviewTaskApi";
 import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";

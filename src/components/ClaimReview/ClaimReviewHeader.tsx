@@ -4,14 +4,14 @@ import { useTranslation } from "next-i18next";
 import React, { useContext, useEffect, useState } from "react";
 
 import ClaimReviewApi from "../../api/claimReviewApi";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
-import { Roles } from "../../machine/enums";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
+import { Roles } from "../../types/enums";
 import {
     crossCheckingSelector,
     publishedSelector,
     reviewDataSelector,
     reviewNotStartedSelector,
-} from "../../machine/selectors";
+} from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaAlert from "../AletheiaAlert";
@@ -39,7 +39,7 @@ const ClaimReviewHeader = ({
     const { vw, role, login } = useAppSelector((state) => state);
 
     const { machineService, publishedReview } = useContext(
-        GlobalStateMachineContext
+        ReviewTaskMachineContext
     );
     const isHidden = publishedReview?.review?.isHidden;
     const [hide, setHide] = useState(isHidden);

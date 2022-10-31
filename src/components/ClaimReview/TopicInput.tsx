@@ -2,7 +2,7 @@ import { Button, Col } from "antd";
 import React, { useState, useEffect } from "react";
 import topicApi from "../../api/topicsApi";
 import sentenceApi from "../../api/sentenceApi";
-import AutoComplete from "./Autocomplete";
+import AutoComplete from "../Form/Autocomplete";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import { EditFilled, PlusOutlined } from "@ant-design/icons";

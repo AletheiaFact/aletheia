@@ -1,5 +1,5 @@
 import React from "react";
-import SelectOptions from "./form/SelectOptions";
+import SelectOptions from "./SelectOptions";
 
 interface AutocompleteProps {
     placeholder: string;

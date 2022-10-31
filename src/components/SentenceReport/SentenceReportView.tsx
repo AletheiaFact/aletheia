@@ -2,13 +2,13 @@ import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
 import React, { useContext } from "react";
 
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
-import { Roles } from "../../machine/enums";
+import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
+import { Roles } from "../../types/enums";
 import {
     crossCheckingSelector,
     isPartialReviewSelector,
     publishedSelector,
-} from "../../machine/selectors";
+} from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
@@ -25,7 +25,7 @@ const SentenceReportView = ({
 }) => {
     const { login: isLoggedIn, role } = useAppSelector((state) => state);
     const { machineService, publishedReview } = useContext(
-        GlobalStateMachineContext
+        ReviewTaskMachineContext
     );
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isPublished =

@@ -1,7 +1,7 @@
 import { Col, Row } from "antd";
 import React from "react";
 
-import { ReviewTaskStates } from "../../machine/enums";
+import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import KanbanCol from "./KanbanCol";
 
 const KanbanView = () => {
