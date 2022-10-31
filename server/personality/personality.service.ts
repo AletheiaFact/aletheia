@@ -162,7 +162,6 @@ export class PersonalityService {
                 },
                 select: "_id",
             });
-            // TODO: Do the latest revision population in the populate above
             personality.claims = await Promise.all(
                 personality.claims.map((claim) => {
                     return {

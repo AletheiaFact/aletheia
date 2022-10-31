@@ -1,16 +1,15 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Claim } from "../../claim/schemas/claim.schema";
-import { Personality } from "../../personality/schemas/personality.schema"
+import { Personality } from "../../personality/schemas/personality.schema";
 
 export type ClaimRevisionDocument = ClaimRevision & mongoose.Document;
 
 export enum ContentModelEnum {
     Speech = "Speech",
-    Twitter = "Twitter",
 }
 
-@Schema({ toObject: {virtuals: true}, toJSON: {virtuals: true} })
+@Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class ClaimRevision {
     @Prop({ required: true })
     title: string;
@@ -21,7 +20,7 @@ export class ClaimRevision {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: "Speech",
+        ref: "onModel",
     })
     contentId: mongoose.Types.ObjectId;
 
@@ -29,7 +28,7 @@ export class ClaimRevision {
         required: true,
         validate: {
             validator: (v) => {
-                return v === ContentModelEnum.Speech || v === ContentModelEnum.Twitter;
+                return Object.values(ContentModelEnum).includes(v);
             },
         },
         message: (tag) => `${tag} is not a valid claim type.`,
@@ -52,25 +51,24 @@ export class ClaimRevision {
         ref: "Personality",
     })
     personality: Personality;
-
-    // TODO: Let's not use the auto-increment yet
-    // mongodb will create a default _id field and we can use it for the first version
-    // @Prop({ required: true })
-    // revisionId: number;
 }
 
 const ClaimRevisionSchemaRaw = SchemaFactory.createForClass(ClaimRevision);
 
-ClaimRevisionSchemaRaw.virtual('reviews', {
-    ref: 'ClaimReview',
-    localField: '_id',
-    foreignField: 'claim'
+ClaimRevisionSchemaRaw.virtual("reviews", {
+    ref: "ClaimReview",
+    localField: "_id",
+    foreignField: "claim",
 });
 
-ClaimRevisionSchemaRaw.virtual('content', {
-    ref: 'Speech',
-    localField: 'contentId',
-    foreignField: '_id'
-})
+ClaimRevisionSchemaRaw.virtual("content", {
+    ref: () => Object.values(ContentModelEnum),
+    localField: "contentId",
+    foreignField: "_id",
+});
+
+ClaimRevisionSchemaRaw.pre("find", function () {
+    this.populate("content");
+});
 
 export const ClaimRevisionSchema = ClaimRevisionSchemaRaw;
