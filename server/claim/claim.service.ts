@@ -1,10 +1,4 @@
-import {
-    Injectable,
-    Inject,
-    Logger,
-    Scope,
-    NotFoundException,
-} from "@nestjs/common";
+import { Injectable, Inject, Scope, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
@@ -27,9 +21,6 @@ type ClaimMatchParameters = (
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimService {
-    private optionsToUpdate: { new: boolean; upsert: boolean };
-    private readonly logger = new Logger("ClaimService");
-
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Claim.name)
@@ -48,18 +39,7 @@ export class ClaimService {
         // está fazendo o populate na claim do tipo imagem como se fosse
         // do tipo speech
         const claims = await this.ClaimModel.find(query)
-            .populate({
-                path: "latestRevision",
-                populate: {
-                    path: "content",
-                    populate: {
-                        path: "content",
-                        populate: {
-                            path: "content",
-                        },
-                    },
-                },
-            })
+            .populate("latestRevision")
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order })
@@ -182,7 +162,6 @@ export class ClaimService {
         return this.ClaimModel.softDelete({ _id: claimId });
     }
 
-    // TODO: add optional revisionId that will fetch a specifc revision that matches
     async getById(claimId) {
         return this._getClaim({ _id: claimId });
     }
@@ -261,27 +240,26 @@ export class ClaimService {
     }
 
     /**
-     * This function return all personality claims
-     * @param claim all personality claims
-     * @returns return all claims
+     * This function merges claim, latestRevision and reviewStats data
+     * @param claim claim from query
+     * @returns return the claim with available revision and reviewStats data
      */
     private async postProcess(claim) {
-        // TODO: we should not transform the object in this function
-        claim = {
+        let processedClaim = {
             ...(claim?.latestRevision || claim?.revision),
             ...claim,
             latestRevision: undefined,
         };
-        const reviews = await this.claimReviewService.getReviewsByClaimId(
-            claim._id
-        );
-
-        claim.content = claim.content[0].content;
-
         if (claim) {
-            if (claim?.content) {
-                claim.content = this.transformContentObject(
-                    claim.content,
+            const reviews = await this.claimReviewService.getReviewsByClaimId(
+                claim._id
+            );
+
+            processedClaim.content = processedClaim.content[0].content;
+
+            if (processedClaim?.content) {
+                processedClaim.content = this.transformContentObject(
+                    processedClaim.content,
                     reviews
                 );
             }
@@ -289,11 +267,11 @@ export class ClaimService {
                 await this.claimReviewService.getReviewStatsByClaimId(
                     claim._id
                 );
-            const overallStats = this.calculateOverallStats(claim);
+            const overallStats = this.calculateOverallStats(processedClaim);
             const stats = { ...reviewStats, ...overallStats };
-            claim = Object.assign(claim, { stats });
+            processedClaim = Object.assign(processedClaim, { stats });
         }
-        return claim;
+        return processedClaim;
     }
 
     private calculateOverallStats(claim) {

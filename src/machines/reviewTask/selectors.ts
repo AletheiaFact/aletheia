@@ -11,12 +11,16 @@ const crossCheckingSelector = (state) => {
     );
 };
 
-const reviewStartedSelector = (state) => {
+const reviewNotStartedSelector = (state) => {
     return state.matches(ReviewTaskStates.unassigned);
 };
 
 const reviewDataSelector = (state) => {
     return state.context.reviewData;
+};
+
+const isPartialReviewSelector = (state) => {
+    return state.context.claimReview.isPartialReview || false;
 };
 
 const preloadedOptionsSelector = (state) => {
@@ -26,7 +30,8 @@ const preloadedOptionsSelector = (state) => {
 export {
     publishedSelector,
     crossCheckingSelector,
-    reviewStartedSelector,
+    reviewNotStartedSelector,
     reviewDataSelector,
     preloadedOptionsSelector,
+    isPartialReviewSelector,
 };

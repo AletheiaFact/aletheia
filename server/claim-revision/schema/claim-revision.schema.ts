@@ -29,10 +29,7 @@ export class ClaimRevision {
         required: true,
         validate: {
             validator: (v) => {
-                return (
-                    v === ContentModelEnum.Speech ||
-                    v === ContentModelEnum.Image
-                );
+                return Object.values(ContentModelEnum).includes(v);
             },
         },
         message: (tag) => `${tag} is not a valid claim type.`,
@@ -55,11 +52,6 @@ export class ClaimRevision {
         ref: "Personality",
     })
     personality: Personality;
-
-    // TODO: Let's not use the auto-increment yet
-    // mongodb will create a default _id field and we can use it for the first version
-    // @Prop({ required: true })
-    // revisionId: number;
 }
 
 const ClaimRevisionSchemaRaw = SchemaFactory.createForClass(ClaimRevision);
@@ -74,7 +66,7 @@ ClaimRevisionSchemaRaw.virtual("reviews", {
 });
 
 ClaimRevisionSchemaRaw.virtual("content", {
-    ref: () => Object.values(ContentModelEnum),
+    ref: "Speech",
     localField: "contentId",
     foreignField: "_id",
 });

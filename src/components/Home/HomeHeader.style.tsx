@@ -31,7 +31,7 @@ const HomeHeaderStyle = styled.div`
 
         .video-container {
             height: auto;
-            width: clamp(320px, 76vw, 600vw);
+            width: clamp(320px, 76vw, 600px);
         }
     }
 `;

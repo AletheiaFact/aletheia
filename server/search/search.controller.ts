@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Query, Req } from "@nestjs/common";
+import { Controller, Get, Header, Logger, Query, Req } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 import { IsPublic } from "../decorators/is-public.decorator";
@@ -17,6 +17,7 @@ export class SearchController {
 
     @IsPublic()
     @Get("api/search")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     async listAll(@Query() query, @Req() req) {
         const { pageSize, searchText } = query;
 

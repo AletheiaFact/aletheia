@@ -13,6 +13,7 @@ import { ViewModule } from "../view/view.module";
 import { HistoryModule } from "../history/history.module";
 import { StateEventModule } from "../state-event/state-event.module";
 import { SentenceModule } from "../sentence/sentence.module";
+import { ConfigModule } from "@nestjs/config";
 
 export const ClaimReviewTaskModel = MongooseModule.forFeature([
     {
@@ -31,6 +32,7 @@ export const ClaimReviewTaskModel = MongooseModule.forFeature([
         CaptchaModule,
         ViewModule,
         SentenceModule,
+        ConfigModule,
     ],
     providers: [ClaimReviewTaskService],
     exports: [ClaimReviewTaskService],

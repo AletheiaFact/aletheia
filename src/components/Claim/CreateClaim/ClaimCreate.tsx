@@ -54,7 +54,7 @@ const DatePickerInput = styled(DatePicker)`
     }
 `;
 
-const ClaimCreate = ({ claim = { _id: "" }, sitekey, edit = false }) => {
+const ClaimCreate = ({ claim = { _id: "" }, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();
     const [title, setTitle] = useState("");
@@ -255,10 +255,19 @@ const ClaimCreate = ({ claim = { _id: "" }, sitekey, edit = false }) => {
                 </Form.Item>
 
                 <Form.Item>
-                    <AletheiaCaptcha
-                        sitekey={sitekey}
-                        onChange={onChangeCaptcha}
-                    />
+                    <AletheiaCaptcha onChange={onChangeCaptcha} />
+
+                    {!recaptcha && (
+                        <h1
+                            style={{
+                                color: "red",
+                                fontSize: "14px",
+                                fontFamily: "sans-serif",
+                            }}
+                        >
+                            {t("common:requiredFieldError")}
+                        </h1>
+                    )}
                 </Form.Item>
                 <Row
                     style={{

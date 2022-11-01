@@ -58,9 +58,11 @@ const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
                                     />
                                 )}
                             />
-                            <Text type="danger" style={{ marginLeft: 20 }}>
-                                {t(errors[fieldName]?.message)}
-                            </Text>
+                            {errors[fieldName] && (
+                                <Text type="danger" style={{ marginLeft: 20 }}>
+                                    {t(errors[fieldName].message)}
+                                </Text>
+                            )}
                         </Col>
                     </Row>
                 );

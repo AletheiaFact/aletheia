@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
@@ -11,41 +11,47 @@ import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvide
 import {
     publishedSelector,
     crossCheckingSelector,
-    reviewStartedSelector,
+    reviewNotStartedSelector,
     reviewDataSelector,
 } from "../../machines/reviewTask/selectors";
+import { Roles } from "../../types/enums";
 
 const ClaimReviewForm = ({
     claimId,
     personalityId,
     sentenceHash,
-    sitekey,
     userIsReviewer,
-    userId,
 }) => {
     const { t } = useTranslation();
-    const { isLoggedIn } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-    }));
+    const {
+        login: isLoggedIn,
+        userId,
+        role,
+    } = useAppSelector((state) => state);
 
     const { machineService } = useContext(ReviewTaskMachineContext);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
-    const isStarted = useSelector(machineService, reviewStartedSelector);
+    const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
-
-    const [formCollapsed, setFormCollapsed] = useState(isStarted);
+    const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
+    const userIsAdmin = role === Roles.Admin;
 
     const showForm =
-        isStarted ||
+        isUnassigned ||
+        userIsAdmin ||
         (userIsAssignee && !isCrossChecking) ||
         (isCrossChecking && userIsReviewer);
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);
     };
+
+    useEffect(() => {
+        setFormCollapsed(isUnassigned);
+    }, [isUnassigned]);
 
     return (
         !isPublished && (
@@ -55,7 +61,6 @@ const ClaimReviewForm = ({
                 style={{
                     background: colors.lightGray,
                     padding: "20px 15px",
-                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.15)",
                 }}
             >
                 {formCollapsed && (
@@ -98,7 +103,6 @@ const ClaimReviewForm = ({
                         sentence_hash={sentenceHash}
                         personality={personalityId}
                         claim={claimId}
-                        sitekey={sitekey}
                     />
                 )}
             </Col>

@@ -42,6 +42,7 @@ import { ImageModule } from "./image/image.module";
 import { SearchModule } from "./search/search.module";
 import { FileManagementModule } from "./file-management/file-management.module";
 import { UnleashModule } from "nestjs-unleash";
+import { ClaimCollectionModule } from "./claim-collection/claim-collection.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -93,6 +94,7 @@ export class AppModule implements NestModule {
             ImageModule,
             SearchModule,
             FileManagementModule,
+            ClaimCollectionModule,
         ];
         if (options.config.feature_flag) {
             imports.push(

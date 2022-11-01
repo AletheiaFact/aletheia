@@ -16,7 +16,7 @@ export type FormField = {
 type FormFieldExtraProps = {
     dataLoader?: (value: string, t: any) => Promise<any>;
     mode?: string;
-    preloadedOptions?: { value: any; label: string }[];
+    preloadedOptions?: string[];
 };
 
 interface CreateFormFieldProps extends Partial<FormField> {
@@ -24,6 +24,7 @@ interface CreateFormFieldProps extends Partial<FormField> {
     type: string;
     i18nKey?: string;
     i18nNamespace?: string;
+    required?: boolean;
 }
 
 const createFormField = (props: CreateFormFieldProps): FormField => {
@@ -34,6 +35,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         i18nNamespace = "claimReviewForm",
         defaultValue,
         rules,
+        required = true,
     } = props;
     return {
         fieldName,
@@ -43,7 +45,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         defaultValue,
         ...props,
         rules: {
-            required: "common:requiredFieldError",
+            required: required && "common:requiredFieldError",
             ...rules,
             validate: {
                 notBlank: (v) =>

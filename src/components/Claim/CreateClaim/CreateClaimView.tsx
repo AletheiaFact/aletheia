@@ -18,7 +18,7 @@ import ClaimSelectPersonality from "./ClaimSelectPersonality";
 import ClaimSelectType from "./ClaimSelectType";
 import Loading from "../../Loading";
 
-const CreateClaimView = ({ sitekey }) => {
+const CreateClaimView = () => {
     const { machineService } = useContext(CreateClaimMachineContext);
     const notStarted = useSelector(machineService, notStartedSelector);
     const setupSpeech = useSelector(machineService, setupSpeechSelector);
@@ -47,7 +47,7 @@ const CreateClaimView = ({ sitekey }) => {
                 {notStarted && <ClaimSelectType />}
                 {(setupSpeech || setupImage) && <ClaimSelectPersonality />}
                 {addImage && <ClaimUploadImage />}
-                {addSpeech && <ClaimCreate sitekey={sitekey} />}
+                {addSpeech && <ClaimCreate />}
                 {isLoading && <Loading />}
             </Col>
         </Row>

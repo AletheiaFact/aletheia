@@ -4,6 +4,7 @@ import { Personality } from "../types/Personality";
 
 export enum ActionTypes {
     TOGGLE_MENU,
+    TOGGLE_REVIEW_DRAWER,
     RESULTS_OVERLAY_VISIBLE,
     SEARCH_RESULTS,
     SET_TOTAL_PAGES,
@@ -15,10 +16,17 @@ export enum ActionTypes {
     SET_USER_ROLE,
     SET_CLAIM_CREATE_TYPE,
     SET_CLAIM_CREATE_PERSONALITY,
+    SET_SELECTED_DATA_HASH,
+    SET_SELECTED_PERSONALITY,
+    SET_SELECTED_CLAIM,
+    SET_SELECTED_SENTENCE,
+    SET_USER_ID,
+    SET_SITEKEY,
 }
 
 export interface RootState {
     menuCollapsed: boolean;
+    reviewDrawerCollapsed: boolean;
     search: {
         overlayVisible: boolean;
         searchResults: any;
@@ -33,4 +41,10 @@ export interface RootState {
     claimType: string;
     claimPersonality: Personality;
     vw: WidthBreakpoints;
+    selectedDataHash: string;
+    selectedPersonality: any;
+    selectedClaim: any;
+    selectedSentence: any;
+    userId: string;
+    sitekey: string;
 }

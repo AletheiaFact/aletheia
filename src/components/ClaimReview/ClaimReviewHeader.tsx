@@ -1,13 +1,16 @@
-import { Row, Col } from "antd";
+import { useSelector } from "@xstate/react";
+import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useContext, useEffect, useState } from "react";
-import { useSelector } from "@xstate/react";
+
 import ClaimReviewApi from "../../api/claimReviewApi";
 import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
 import { Roles } from "../../types/enums";
 import {
     crossCheckingSelector,
+    publishedSelector,
     reviewDataSelector,
+    reviewNotStartedSelector,
 } from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -23,25 +26,37 @@ const ClaimReviewHeader = ({
     personality,
     claim,
     sentence,
-    sitekey,
-    isHidden,
     classification = "",
     hideDescription,
-    isPublished,
     userIsReviewer,
     userIsAssignee,
+    userIsNotRegular,
 }) => {
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
-    const [hide, setHide] = useState(isHidden);
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const { vw, role, login } = useAppSelector((state) => state);
 
-    const { machineService } = useContext(ReviewTaskMachineContext);
+    const { machineService, publishedReview } = useContext(
+        ReviewTaskMachineContext
+    );
+    const isHidden = publishedReview?.review?.isHidden;
+    const [hide, setHide] = useState(isHidden);
+
     const reviewData = useSelector(machineService, reviewDataSelector);
+    const reviewNotStarted = useSelector(
+        machineService,
+        reviewNotStartedSelector
+    );
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const userHasPermission = userIsReviewer || userIsAssignee;
+    const isPublished =
+        useSelector(machineService, publishedSelector) ||
+        publishedReview?.review;
+    const isPublishedOrCanSeeHidden =
+        isPublished && (!isHidden || userIsNotRegular);
+    const userIsAdmin = role === Roles.Admin;
 
     const alertTypes = {
         hiddenReport: {
@@ -49,7 +64,7 @@ const ClaimReviewHeader = ({
             description: hideDescription,
             title: "claimReview:warningAlertTitle",
         },
-        crosChecking: {
+        crossChecking: {
             show: true,
             description: "",
             title: "claimReviewTask:crossCheckingAlertTitle",
@@ -59,6 +74,11 @@ const ClaimReviewHeader = ({
             description: reviewData.rejectionComment,
             title: "claimReviewTask:rejectionAlertTitle",
         },
+        hasStarted: {
+            show: true,
+            description: "",
+            title: "claimReviewTask:hasStartedAlertTitle",
+        },
         noAlert: {
             show: false,
             description: "",
@@ -67,29 +87,41 @@ const ClaimReviewHeader = ({
     };
 
     const [alert, setAlert] = useState(alertTypes.noAlert);
-
     const getAlert = () => {
         if (!login) {
             return alertTypes.noAlert;
         }
-        if (isHidden || hide) {
+        if (hide) {
             return alertTypes.hiddenReport;
         }
         if (!isPublished) {
-            if (isCrossChecking && userHasPermission) {
-                return alertTypes.crosChecking;
+            if (isCrossChecking && (userIsAdmin || userHasPermission)) {
+                return alertTypes.crossChecking;
             }
-            if (userIsAssignee && reviewData.rejectionComment) {
+            if (
+                (userIsAdmin || userIsAssignee) &&
+                reviewData.rejectionComment
+            ) {
                 return alertTypes.rejected;
+            }
+            if (!userHasPermission && !userIsAdmin && !reviewNotStarted) {
+                return alertTypes.hasStarted;
             }
         }
         return alertTypes.noAlert;
     };
 
+    const showClassification =
+        isPublishedOrCanSeeHidden || (isCrossChecking && userHasPermission);
+
     useEffect(() => {
         const newAlert = getAlert();
         setAlert(newAlert);
-    }, [isCrossChecking, isHidden, login, reviewData.rejectionComment]);
+    }, [isCrossChecking, hide, login, reviewData.rejectionComment]);
+
+    useEffect(() => {
+        setHide(isHidden);
+    }, [isHidden]);
 
     return (
         <Row>
@@ -125,13 +157,14 @@ const ClaimReviewHeader = ({
                 )}
                 <Row
                     style={{
-                        background: isPublished
-                            ? colors.white
-                            : colors.lightGray,
+                        background: isPublished ? "none" : colors.lightGray,
                     }}
                 >
                     <Col
-                        lg={{ order: 1, span: isPublished ? 16 : 24 }}
+                        lg={{
+                            order: 1,
+                            span: isPublishedOrCanSeeHidden ? 16 : 24,
+                        }}
                         md={{ order: 2, span: 24 }}
                         sm={{ order: 2, span: 24 }}
                         xs={{ order: 2, span: 24 }}
@@ -145,10 +178,7 @@ const ClaimReviewHeader = ({
                             claim={claim}
                             sentence={sentence}
                             classification={
-                                isPublished ||
-                                (isCrossChecking && userHasPermission)
-                                    ? classification
-                                    : ""
+                                showClassification ? classification : ""
                             }
                         />
                         <div
@@ -163,7 +193,7 @@ const ClaimReviewHeader = ({
                             />
                         </div>
                     </Col>
-                    {isPublished && (
+                    {isPublishedOrCanSeeHidden && (
                         <Col
                             lg={{ order: 2, span: 8 }}
                             md={{ order: 1, span: 24 }}
@@ -208,7 +238,6 @@ const ClaimReviewHeader = ({
                     });
                 }}
                 handleCancel={() => setIsHideModalVisible(false)}
-                sitekey={sitekey}
             />
 
             <UnhideReviewModal
@@ -230,7 +259,6 @@ const ClaimReviewHeader = ({
                 handleCancel={() =>
                     setIsUnhideModalVisible(!isUnhideModalVisible)
                 }
-                sitekey={sitekey}
             />
         </Row>
     );

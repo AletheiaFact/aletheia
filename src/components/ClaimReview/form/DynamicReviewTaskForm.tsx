@@ -1,13 +1,12 @@
 import { useSelector } from "@xstate/react";
-import { Row } from "antd";
+import { Col, Row } from "antd";
 import Text from "antd/lib/typography/Text";
 import { useTranslation } from "next-i18next";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import { ReviewTaskMachineContext } from "../../../Context/ReviewTaskMachineProvider";
-import { trackUmamiEvent } from "../../../lib/umami";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import getNextEvents from "../../../machines/reviewTask/getNextEvent";
 import getNextForm from "../../../machines/reviewTask/getNextForm";
@@ -16,16 +15,14 @@ import {
     reviewDataSelector,
 } from "../../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../../store/store";
+import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
+import DynamicInput from "../../Form/DynamicInput";
+import { trackUmamiEvent } from "../../../lib/umami";
 import DynamicForm from "../../Form/DynamicForm";
 
-const DynamicReviewTaskForm = ({
-    sentence_hash,
-    personality,
-    claim,
-    sitekey,
-}) => {
+const DynamicReviewTaskForm = ({ sentence_hash, personality, claim }) => {
     const {
         handleSubmit,
         control,
@@ -98,6 +95,7 @@ const DynamicReviewTaskForm = ({
     useEffect(() => {
         reset(reviewData);
         resetIsLoading();
+        setReviewerError(false);
     }, [nextEvents]);
 
     useEffect(() => {
@@ -115,6 +113,7 @@ const DynamicReviewTaskForm = ({
                                     claimReview: {
                                         personality,
                                         claim,
+                                        isPartialReview: true,
                                     },
                                 },
                             },
@@ -192,17 +191,28 @@ const DynamicReviewTaskForm = ({
                             marginLeft: 20,
                         }}
                     >
-                        <Text type="danger">
-                            {reviewerError &&
-                                t("claimReviewTask:invalidReviewerMessage")}
-                        </Text>
+                        {reviewerError && (
+                            <Text type="danger" data-cy="testReviewerError">
+                                {t("claimReviewTask:invalidReviewerMessage")}
+                            </Text>
+                        )}
                     </div>
                     {nextEvents?.length > 0 && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
-                            sitekey={sitekey}
                             ref={recaptchaRef}
                         />
+                    )}
+                    {!recaptchaString && (
+                        <h1
+                            style={{
+                                color: "red",
+                                fontSize: "14px",
+                                fontFamily: "sans-serif",
+                            }}
+                        >
+                            {t("common:requiredFieldError")}
+                        </h1>
                     )}
                 </>
             )}

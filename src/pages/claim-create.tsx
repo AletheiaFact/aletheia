@@ -7,6 +7,9 @@ import CreateClaimView from "../components/Claim/CreateClaim/CreateClaimView";
 import Seo from "../components/Seo";
 import { CreateClaimMachineProvider } from "../Context/CreateClaimMachineProvider";
 import { GetLocale } from "../utils/GetLocale";
+import { useDispatch } from "react-redux";
+
+import actions from "../store/actions";
 
 const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
     sitekey,
@@ -14,7 +17,9 @@ const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
     isLoggedIn,
 }) => {
     const { t } = useTranslation();
-
+    const dispatch = useDispatch();
+    dispatch(actions.setLoginStatus(isLoggedIn));
+    dispatch(actions.setSitekey(sitekey));
     return (
         <>
             <Seo
@@ -26,7 +31,7 @@ const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
             <CreateClaimMachineProvider
                 context={{ claimData: { personality: personality } }}
             >
-                <CreateClaimView sitekey={sitekey} />
+                <CreateClaimView />
                 <AffixButton />
             </CreateClaimMachineProvider>
         </>

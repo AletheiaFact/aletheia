@@ -33,6 +33,7 @@ const ContentWrapper = ({ children }) => {
         "personality-page",
         "claim-create",
         "claim",
+        "claim-collection",
     ];
 
     const layout = desktopReadyPages.some((page) =>

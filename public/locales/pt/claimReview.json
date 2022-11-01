@@ -13,6 +13,6 @@
     "unhideModalTitle": "Você tem certeza que deseja mostrar este relatório",
     "hideModalTitle": "Você tem certeza que deseja esconder este relatório",
     "descriptionInputPlaceholder": "Preencha a descrição",
-    "descriptionInputError": "Preencha a descrição"
-    
+    "descriptionInputError": "Preencha a descrição",
+    "partialReviewWarning": "Nota: as checagens publicadas em tempo real passam por uma checagem parcial pelos checadores cadastrados. As checagens completas e aprofundadas, com o padrão Aletheia de checagem, poderão ser conferidas posteriormente no site."
 }

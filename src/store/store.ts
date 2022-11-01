@@ -12,6 +12,11 @@ const reducer = (state, action) => {
                 ...state,
                 menuCollapsed: action.menuCollapsed,
             };
+        case ActionTypes.TOGGLE_REVIEW_DRAWER:
+            return {
+                ...state,
+                reviewDrawerCollapsed: action.reviewDrawerCollapsed,
+            };
         case ActionTypes.RESULTS_OVERLAY_VISIBLE:
             return {
                 ...state,
@@ -82,6 +87,37 @@ const reducer = (state, action) => {
                 ...state,
                 claimPersonality: action.claimPersonality,
             };
+        case ActionTypes.SET_SELECTED_DATA_HASH:
+            return {
+                ...state,
+                selectedDataHash: action.selectedDataHash,
+            };
+        case ActionTypes.SET_SELECTED_PERSONALITY:
+            return {
+                ...state,
+                selectedPersonality: action.selectedPersonality,
+            };
+        case ActionTypes.SET_SELECTED_CLAIM:
+            return {
+                ...state,
+                selectedClaim: action.selectedClaim,
+            };
+        case ActionTypes.SET_SELECTED_SENTENCE:
+            return {
+                ...state,
+                selectedSentence: action.selectedSentence,
+            };
+        case ActionTypes.SET_USER_ID:
+            return {
+                ...state,
+                userId: action.userId,
+            };
+        case ActionTypes.SET_SITEKEY:
+            return {
+                ...state,
+                sitekey: action.sitekey,
+            };
+
         default:
             return state;
     }

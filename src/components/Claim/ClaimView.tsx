@@ -5,7 +5,9 @@ import { Affix, Col, message, Row, Typography } from "antd";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
+import actions from "../../store/actions";
 import colors from "../../styles/colors";
 import { ContentModelEnum } from "../../types/enums";
 import Loading from "../Loading";
@@ -15,26 +17,33 @@ import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
 import SourcesList from "../SourcesList";
 import ToggleSection from "../ToggleSection";
-import ClaimParagraph from "./ClaimParagraph";
+import ClaimSpeechBody from "./ClaimSpeechBody";
 
 const { Title, Paragraph } = Typography;
 
 const ClaimView = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
+    const dispatch = useDispatch();
     moment.locale(i18n.language);
     const { title, stats, content } = claim;
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     let date = moment(new Date(claim.date));
     const sources = claim?.sources?.map((source) => source.link);
 
+    const paragraphs = Array.isArray(claim.content)
+        ? claim.content
+        : [claim.content];
+
+    const dispatchPersonalityAndClaim = () => {
+        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectPersonality(personality));
+    };
+
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
         message.info(t("claim:initialInfo"));
     }, [t]);
-
-    const generateHref = (data) =>
-        `/personality/${personality.slug}/claim/${claim.slug}/sentence/${data.data_hash}`;
 
     if (content) {
         return (
@@ -119,18 +128,15 @@ const ClaimView = ({ personality, claim, href }) => {
                                                     fontStyle: "normal",
                                                 }}
                                             >
-                                                {content.map((paragraph) => (
-                                                    <ClaimParagraph
-                                                        key={paragraph.props.id}
-                                                        paragraph={paragraph}
-                                                        showHighlights={
-                                                            showHighlights
-                                                        }
-                                                        generateHref={
-                                                            generateHref
-                                                        }
-                                                    />
-                                                ))}
+                                                <ClaimSpeechBody
+                                                    handleSentenceClick={
+                                                        dispatchPersonalityAndClaim
+                                                    }
+                                                    paragraphs={paragraphs}
+                                                    showHighlights={
+                                                        showHighlights
+                                                    }
+                                                />
                                             </cite>
                                         )}
                                     </Col>

@@ -36,4 +36,8 @@ ParagraphSchemaRaw.pre("find", function () {
     this.populate("content");
 });
 
+ParagraphSchemaRaw.pre("find", function () {
+    this.populate("content");
+});
+
 export const ParagraphSchema = ParagraphSchemaRaw;
