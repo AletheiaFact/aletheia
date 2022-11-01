@@ -17,5 +17,6 @@
     "cardHeader2": "in",
     "typeSpeech": "Oficial speech",
     "typeTwitter": "Twitter post",
-    "errorWhileFetching": "Error while fetching Claim"
+    "errorWhileFetching": "Error while fetching Claim",
+    "cardLinkToImage": "see full image"
 }

@@ -12,6 +12,7 @@ import ClaimSummaryContent from "./ClaimSummaryContent";
 import ClaimSpeechBody from "./ClaimSpeechBody";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
+import { ContentModelEnum } from "../../types/enums";
 
 const { Paragraph } = Typography;
 
@@ -28,25 +29,29 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const review = claim?.stats?.reviews[0];
     const paragraphs = claim.content;
     const [claimContent, setClaimContent] = useState("");
+    const isImage = claim?.contentModel === ContentModelEnum.Image;
 
     const dispatchPersonalityAndClaim = () => {
         dispatch(actions.setSelectClaim(claim));
         dispatch(actions.setSelectPersonality(personality));
     };
 
-    const CreateFirstParagraph = () => {
-        let textContent = "";
-        paragraphs.forEach((paragraph) => {
-            paragraph.content.forEach((sentence) => {
-                return (textContent += `${sentence.content} `);
-            });
-        });
-        setClaimContent(textContent.trim());
-    };
-
     useEffect(() => {
-        CreateFirstParagraph();
-    }, []);
+        const CreateFirstParagraph = () => {
+            let textContent = "";
+            paragraphs.forEach((paragraph) => {
+                paragraph.content.forEach((sentence) => {
+                    return (textContent += `${sentence.content} `);
+                });
+            });
+            setClaimContent(textContent.trim());
+        };
+        if (!isImage) {
+            CreateFirstParagraph();
+        } else {
+            setClaimContent(claim.content);
+        }
+    }, [claim.content, isImage, paragraphs]);
 
     if (!claim) {
         return <div></div>;
@@ -75,6 +80,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                                     claimSlug={claim?.slug}
                                     claimContent={claimContent}
                                     personality={personality}
+                                    isImage={isImage}
                                 />
                             ) : (
                                 <ClaimSpeechBody

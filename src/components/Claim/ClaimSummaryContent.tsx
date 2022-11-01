@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import colors from "../../styles/colors";
 import { Col, Typography } from "antd";
 import React from "react";
@@ -9,8 +10,21 @@ const ClaimSummaryContent = ({
     claimContent,
     claimTitle,
     claimSlug,
+    isImage = false,
 }) => {
     const { t } = useTranslation();
+    const title = isImage ? claimTitle : claimContent;
+    const linkText = isImage
+        ? "claim:cardLinkToImage"
+        : "claim:cardLinkToFullText";
+
+    const elipsizedTitleProps: React.CSSProperties = isImage
+        ? {
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+          }
+        : {};
     return (
         <Col>
             <Paragraph
@@ -28,11 +42,22 @@ const ClaimSummaryContent = ({
                             fontWeight: 400,
                             margin: 0,
                             lineHeight: 1.6,
-                            height: "6.4em",
+                            height: isImage ? "1.6em" : "6.4em",
+                            ...elipsizedTitleProps,
                         }}
                     >
-                        {claimContent || claimTitle}
+                        {title}
                     </p>
+                    {isImage && (
+                        <img
+                            src={claimContent}
+                            alt={`${title} claim`}
+                            style={{
+                                maxWidth: "100%",
+                                maxHeight: "5.5em",
+                            }}
+                        />
+                    )}
                 </cite>
             </Paragraph>
             <a
@@ -45,7 +70,7 @@ const ClaimSummaryContent = ({
                 }}
                 data-cy={"testSeeFullSpeech"}
             >
-                {t("claim:cardLinkToFullText")}
+                {t(linkText)}
             </a>
         </Col>
     );

@@ -17,5 +17,6 @@
     "cardHeader2": "em um",
     "typeSpeech": "Discurso oficial",
     "typeTwitter": "post no Twitter",
-    "errorWhileFetching": "Erro ao buscar o Discurso"
+    "errorWhileFetching": "Erro ao buscar o Discurso",
+    "cardLinkToImage": "veja a imagem completa"
 }
