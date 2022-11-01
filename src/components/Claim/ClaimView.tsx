@@ -112,7 +112,12 @@ const ClaimView = ({ personality, claim, href }) => {
                                             {title}
                                         </Title>
                                     </Col>
-                                    <Col xs={20} sm={18} md={16}>
+                                    <Col
+                                        xs={20}
+                                        sm={18}
+                                        md={16}
+                                        style={{ paddingBottom: "20px" }}
+                                    >
                                         {isImage ? (
                                             <img
                                                 src={content}

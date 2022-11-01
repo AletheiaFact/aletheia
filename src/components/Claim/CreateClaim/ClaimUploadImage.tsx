@@ -40,7 +40,7 @@ const ClaimUploadImage = () => {
 
                     const claimData = {
                         title,
-                        content: imagesUploaded[0], // TODO: Confirm limit of images
+                        content: imagesUploaded[0],
                     };
 
                     machineService.send(CreateClaimEvents.persist, {

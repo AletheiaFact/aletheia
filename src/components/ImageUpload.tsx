@@ -11,8 +11,12 @@ import { AletheiaModal } from "./Modal/AletheiaModal.style";
 import type { UploadFile } from "antd/lib/upload/interface";
 const ImageUpload = ({ onChange }) => {
     const { t } = useTranslation();
+    const UPLOAD_LIMIT = 1;
     const ONE_MB = 1048576;
-    const UPLOAD_LIMIT = 1; // TODO: Confirm limit of images
+    const ALLOWED_MB = 10;
+    const MAX_SIZE = ALLOWED_MB * ONE_MB;
+    const ALLOWED_FORMATS = ["png", "jpg", "webp"];
+
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
@@ -30,28 +34,31 @@ const ImageUpload = ({ onChange }) => {
     const handleCancel = () => setPreviewOpen(false);
 
     const handlePreview = async (file: UploadFile) => {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj as RcFile);
+        if (!file.preview) {
+            file.preview = await getBase64(file.originFileObj);
         }
-
-        setPreviewImage(file.url || (file.preview as string));
+        setPreviewImage(file.preview);
         setPreviewOpen(true);
-        setPreviewTitle(
-            file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
-        );
+        setPreviewTitle(file.name);
     };
 
     const validateBeforeUpload = (file: RcFile) => {
-        const alowedFormats = ["png", "jpg", "webp"];
-
-        const isAllowedFormat = alowedFormats.includes(file.type.split("/")[1]);
+        const isAllowedFormat = ALLOWED_FORMATS.includes(
+            file.type.split("/")[1]
+        );
 
         if (!isAllowedFormat) {
-            message.error(t("claimForm:fileTypeError"));
+            message.error(
+                t("claimForm:fileTypeError", {
+                    types: ALLOWED_FORMATS.join("/"),
+                })
+            );
         }
-        const isAllowedSize = file.size < ONE_MB * 3;
+        const isAllowedSize = file.size < MAX_SIZE;
         if (!isAllowedSize) {
-            message.error(t("claimForm:fileSizeError"));
+            message.error(
+                t("claimForm:fileSizeError", { size: `${ALLOWED_MB}MB` })
+            );
         }
         return isAllowedFormat && isAllowedSize;
     };

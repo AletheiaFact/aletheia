@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import colors from "../../styles/colors";
 
 const SentenceReportContentStyle = styled.div`
     margin: 10px 0;

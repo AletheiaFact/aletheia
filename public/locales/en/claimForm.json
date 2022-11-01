@@ -35,6 +35,6 @@
     "uploadImageText": "Select an image to upload",
     "uploadImageButton": "Upload image",
     "fileInputButton": "Choose file",
-    "fileTypeError": "You can only upload JPG/PNG files",
-    "fileSizeError": "File must smaller than 2MB"
+    "fileTypeError": "You can only upload {{types}} files",
+    "fileSizeError": "File must smaller than {{size}}"
 }

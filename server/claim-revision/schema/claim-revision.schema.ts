@@ -66,7 +66,7 @@ ClaimRevisionSchemaRaw.virtual("reviews", {
 });
 
 ClaimRevisionSchemaRaw.virtual("content", {
-    ref: "Speech",
+    ref: () => Object.values(ContentModelEnum),
     localField: "contentId",
     foreignField: "_id",
 });
