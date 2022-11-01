@@ -42,8 +42,10 @@ const ClaimView = ({ personality, claim, href }) => {
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
-        message.info(t("claim:initialInfo"));
-    }, [t]);
+        if (!isImage) {
+            message.info(t("claim:initialInfo"));
+        }
+    }, [isImage, t]);
 
     if (content) {
         return (

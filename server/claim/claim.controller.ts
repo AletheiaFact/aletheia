@@ -31,6 +31,7 @@ import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.s
 import { TargetModel } from "../history/schema/history.schema";
 import { SentenceService } from "../sentence/sentence.service";
 import { BaseRequest } from "../types";
+import slugify from "slugify";
 
 @Controller()
 export class ClaimController {
@@ -126,12 +127,14 @@ export class ClaimController {
         "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash"
     )
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
+    public async getClaimReviewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
         const { sentence_hash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
         const personality = await this.personalityService.getPersonalityBySlug(
             personalitySlug,
-            // @ts-ignore
             req.language
         );
 
@@ -202,22 +205,59 @@ export class ClaimController {
         );
     }
 
-    @Redirect("/claim/create")
-    @Get("personality/:personalitySlug/claim/create/")
-    public async personalityClaimCreatePage(
+    @IsPublic()
+    @Get("no-personality/claim")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async claimsWithoutPersonalityPage(
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
-        const { personalitySlug } = req.params;
+        const parsedUrl = parse(req.url, true);
 
-        return res.redirect(`/claim/create?personality=${personalitySlug}`);
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/image-claims-page",
+                Object.assign(parsedUrl.query, {})
+            );
+    }
+
+    @IsPublic()
+    @Redirect()
+    @Get("claim/:claimId")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async imageClaimPage(@Req() req: BaseRequest, @Res() res: Response) {
+        const { claimId } = req.params;
+        const parsedUrl = parse(req.url, true);
+        const claim = await this.claimService.getById(claimId);
+        console.log("claim", claim);
+        if (claim.personality) {
+            const personalitySlug = slugify(claim.personality.name, {
+                lower: true,
+                strict: true,
+            });
+            return res.redirect(
+                `/personality/${personalitySlug}/claim/${claim.slug}`
+            );
+        }
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-page",
+            Object.assign(parsedUrl.query, {
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 
     @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async personalityClaimPage(
-        @Req() req: Request,
+        @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const { personalitySlug, claimSlug } = req.params;
@@ -226,7 +266,6 @@ export class ClaimController {
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
                 personalitySlug,
-                // @ts-ignore
                 req.language
             );
 
@@ -249,16 +288,14 @@ export class ClaimController {
 
     @Get("personality/:personalitySlug/claim/:claimSlug/revision/:revisionId")
     public async personalityClaimPageWithRevision(
-        @Req() req: Request,
+        @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const { personalitySlug, claimSlug, revisionId } = req.params;
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
                 personalitySlug,
-                // @ts-ignore
                 req.language
             );
 

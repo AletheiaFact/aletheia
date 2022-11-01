@@ -33,7 +33,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
     const jsonld = {
         "@context": "https://schema.org",
         "@type": "Claim",
-        author: {
+        author: personality && {
             "@type": "Person",
             name: personality.name,
             jobTitle: personality.description,
@@ -49,12 +49,12 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
                 title={claim.title}
                 description={t("seo:claimDescription", {
                     title: claim.title,
-                    name: personality.name,
+                    name: personality?.name || "",
                 })}
             />
             <JsonLd {...jsonld} />
             <ClaimView {...props} />
-            <AffixButton personalitySlug={personality.slug} />
+            <AffixButton personalitySlug={personality?.slug} />
         </>
     );
 };
@@ -66,7 +66,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             ...(await serverSideTranslations(locale)),
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
-            personality: JSON.parse(JSON.stringify(query.personality)),
+            personality: query.personality
+                ? JSON.parse(JSON.stringify(query.personality))
+                : null,
             claim: JSON.parse(JSON.stringify(query.claim)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,

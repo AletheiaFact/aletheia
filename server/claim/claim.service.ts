@@ -33,11 +33,10 @@ export class ClaimService {
     ) {}
 
     async listAll(page, pageSize, order, query) {
-        if (query.personality) {
-            query.personality = Types.ObjectId(query.personality);
-        }
-        // está fazendo o populate na claim do tipo imagem como se fosse
-        // do tipo speech
+        query.personality = query.personality
+            ? Types.ObjectId(query.personality)
+            : null;
+
         const claims = await this.ClaimModel.find(query)
             .populate("latestRevision")
             .skip(page * pageSize)

@@ -5,13 +5,23 @@ import React from "react";
 import { useTranslation } from "next-i18next";
 const { Paragraph } = Typography;
 
+interface ClaimSummaryContentProps {
+    personality?: { slug: string };
+    claimContent: any;
+    claimTitle: string;
+    claimSlug: string;
+    claimId?: string;
+    isImage?: boolean;
+}
+
 const ClaimSummaryContent = ({
     personality,
     claimContent,
     claimTitle,
     claimSlug,
+    claimId = "",
     isImage = false,
-}) => {
+}: ClaimSummaryContentProps) => {
     const { t } = useTranslation();
     const title = isImage ? claimTitle : claimContent;
     const linkText = isImage
@@ -25,6 +35,11 @@ const ClaimSummaryContent = ({
               textOverflow: "ellipsis",
           }
         : {};
+
+    const href = personality
+        ? `/personality/${personality.slug}/claim/${claimSlug}`
+        : `/claim/image/${claimId}`;
+
     return (
         <Col>
             <Paragraph
@@ -61,7 +76,7 @@ const ClaimSummaryContent = ({
                 </cite>
             </Paragraph>
             <a
-                href={`/personality/${personality.slug}/claim/${claimSlug}`}
+                href={href}
                 style={{
                     fontSize: 14,
                     color: colors.bluePrimary,

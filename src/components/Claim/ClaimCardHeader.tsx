@@ -20,31 +20,34 @@ const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
                 width: "100%",
             }}
         >
-            <Paragraph
-                style={{
-                    fontSize: "14px",
-                    lineHeight: "20px",
-                    fontWeight: 600,
-                    marginBottom: 0,
-                    color: colors.blackPrimary,
-                }}
-            >
-                {personality.name}
-            </Paragraph>
+            {personality && (
+                <>
+                    <Paragraph
+                        style={{
+                            fontSize: "14px",
+                            lineHeight: "20px",
+                            fontWeight: 600,
+                            marginBottom: 0,
+                            color: colors.blackPrimary,
+                        }}
+                    >
+                        {personality.name}
+                    </Paragraph>
 
-            <Row>
-                <Paragraph
-                    style={{
-                        fontSize: 10,
-                        fontWeight: 400,
-                        lineHeight: "18px",
-                        marginBottom: 0,
-                    }}
-                >
-                    {personality.description}
-                </Paragraph>
-            </Row>
-
+                    <Row>
+                        <Paragraph
+                            style={{
+                                fontSize: 10,
+                                fontWeight: 400,
+                                lineHeight: "18px",
+                                marginBottom: 0,
+                            }}
+                        >
+                            {personality.description}
+                        </Paragraph>
+                    </Row>
+                </>
+            )}
             <Row>
                 <Paragraph
                     style={{
