@@ -11,15 +11,18 @@ import { useDispatch } from "react-redux";
 
 import actions from "../store/actions";
 
-const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
+const ClaimCreatePage: NextPage<any> = ({
     sitekey,
     personality,
     isLoggedIn,
+    enableImageClaim,
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     dispatch(actions.setLoginStatus(isLoggedIn));
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setFeatureFlags({ enableImageClaim }));
+
     return (
         <>
             <Seo
@@ -51,6 +54,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
                 : "",
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
+            enableImageClaim: JSON.parse(
+                JSON.stringify(query?.enableImageClaim)
+            ),
         },
     };
 }

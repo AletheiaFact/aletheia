@@ -117,7 +117,12 @@ const reducer = (state, action) => {
                 ...state,
                 sitekey: action.sitekey,
             };
-
+        case ActionTypes.SET_FEATURE_FLAGS: {
+            return {
+                ...state,
+                featureFlags: action.featureFlags,
+            };
+        }
         default:
             return state;
     }

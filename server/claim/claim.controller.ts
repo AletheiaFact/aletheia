@@ -13,6 +13,7 @@ import {
     Res,
     Headers,
     Header,
+    Optional,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
@@ -32,6 +33,7 @@ import { TargetModel } from "../history/schema/history.schema";
 import { SentenceService } from "../sentence/sentence.service";
 import { BaseRequest } from "../types";
 import slugify from "slugify";
+import { UnleashService } from "nestjs-unleash";
 
 @Controller()
 export class ClaimController {
@@ -44,7 +46,8 @@ export class ClaimController {
         private sentenceService: SentenceService,
         private configService: ConfigService,
         private viewService: ViewService,
-        private captchaService: CaptchaService
+        private captchaService: CaptchaService,
+        @Optional() private readonly unleash: UnleashService
     ) {}
 
     _verifyInputsQuery(query) {
@@ -187,6 +190,12 @@ export class ClaimController {
     ) {
         const parsedUrl = parse(req.url, true);
 
+        const config = this.configService.get<string>("feature_flag");
+
+        const enableImageClaim = config
+            ? this.unleash.isEnabled("enable_image_claim")
+            : true;
+
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
                   query.personality,
@@ -201,6 +210,7 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 personality,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                enableImageClaim,
             })
         );
     }
