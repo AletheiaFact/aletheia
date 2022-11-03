@@ -50,7 +50,7 @@ const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
             claimApi.saveImage(t, sendData).then((claim) => {
                 const path = claim?.personality
                     ? `/personality/${claimData.personality.slug}/claim/${claim.slug}`
-                    : "/claim/create"; // Change to `/claim/${claim.slug}` when the endpoint is ready
+                    : `/claim/${claim._id}`;
                 router.push(path);
             });
         } else if (claimData.contentModel === ContentModelEnum.Speech) {

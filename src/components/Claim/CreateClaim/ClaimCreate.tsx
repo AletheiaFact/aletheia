@@ -1,19 +1,19 @@
 import { useSelector } from "@xstate/react";
-import { Checkbox, DatePicker, Form, FormInstance, Row } from "antd";
+import { Checkbox, Form, FormInstance, Row } from "antd";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 
 import claimApi from "../../../api/claim";
 import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
 import { claimDataSelector } from "../../../machines/createClaim/selectors";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
-import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import Input from "../../AletheiaInput";
 import Button, { ButtonType } from "../../Button";
+import DatePickerInput from "../../Form/DatePickerInput";
 import SourceInput from "../../Source/SourceInput";
 import TextArea from "../../TextArea";
 
@@ -26,31 +26,6 @@ const ClaimForm = styled(Form)`
 
     #createClaim .ant-form-item-extra {
         margin-bottom: 10px;
-    }
-`;
-
-const DatePickerInput = styled(DatePicker)`
-    background: ${(props) => (props.white ? colors.white : colors.lightGray)};
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    border-radius: 4px;
-    border: none;
-    height: 40px;
-
-    input::placeholder {
-        color: #515151;
-    }
-
-    :focus {
-        border: none;
-        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    }
-
-    :active {
-        border: none;
-    }
-
-    :hover {
-        border: none;
     }
 `;
 
@@ -200,9 +175,6 @@ const ClaimCreate = ({ claim = { _id: "" }, edit = false }) => {
                     }}
                 >
                     <DatePickerInput
-                        style={{
-                            width: "100%",
-                        }}
                         placeholder={t("claimForm:dateFieldPlaceholder")}
                         onChange={(value) => setDate(value)}
                         data-cy={"dataAserSelecionada"}

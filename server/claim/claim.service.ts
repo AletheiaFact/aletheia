@@ -96,8 +96,8 @@ export class ClaimService {
         newClaim.save();
 
         return {
-            ...newClaim.toObject(),
             ...newClaimRevision.toObject(),
+            ...newClaim.toObject(),
         };
     }
 

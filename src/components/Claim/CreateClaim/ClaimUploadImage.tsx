@@ -1,6 +1,7 @@
-import { Col, Form, Row, DatePicker } from "antd";
+import { Col, Form, Row } from "antd";
 import Text from "antd/lib/typography/Text";
 import { UploadFile } from "antd/lib/upload/interface";
+import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
@@ -11,54 +12,28 @@ import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import AletheiaInput from "../../AletheiaInput";
 import AletheiaButton from "../../Button";
+import DatePickerInput from "../../Form/DatePickerInput";
 import ImageUpload from "../../ImageUpload";
 import Label from "../../Label";
-import styled from "styled-components";
-import moment from "moment";
 import SourceInput from "../../Source/SourceInput";
 
 const ClaimUploadImage = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const router = useRouter();
     const formData = new FormData();
+    moment.locale(i18n.language);
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [sources, setSources] = useState([""]);
     const [isLoading, setIsloading] = useState(false);
     const [imageError, setImageError] = useState(false);
-    const [date, setDate] = useState("");
+    const [date, setDate] = useState(moment());
     //TODO: Add recaptcha validation
 
     const { machineService } = useContext(CreateClaimMachineContext);
     const disabledDate = (current) => {
         return current && current > moment().endOf("day");
     };
-
-    const DatePickerInput = styled(DatePicker)`
-        background: ${(props) =>
-            props.white ? colors.white : colors.lightGray};
-        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-        border-radius: 4px;
-        border: none;
-        height: 40px;
-
-        input::placeholder {
-            color: #515151;
-        }
-
-        :focus {
-            border: none;
-            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-        }
-
-        :active {
-            border: none;
-        }
-
-        :hover {
-            border: none;
-        }
-    `;
 
     const handleSubmit = ({ title }) => {
         if (fileList.length > 0) {
@@ -156,9 +131,6 @@ const ClaimUploadImage = () => {
                     }}
                 >
                     <DatePickerInput
-                        style={{
-                            width: "100%",
-                        }}
                         placeholder={t("claimForm:dateFieldPlaceholder")}
                         onChange={(value) => setDate(value)}
                         data-cy={"dataAserSelecionada"}

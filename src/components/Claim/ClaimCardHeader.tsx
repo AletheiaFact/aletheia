@@ -2,14 +2,17 @@ import { Col, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
+import { ContentModelEnum } from "../../types/enums";
 import LocalizedDate from "../LocalizedDate";
 
 const { Paragraph } = Typography;
 
 const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
     const { t } = useTranslation();
+    const isImage = claimType === ContentModelEnum.Image;
+
     const speechTypeTranslation =
-        claimType.toLowerCase() === "speech"
+        claimType.toLowerCase() === ContentModelEnum.Speech
             ? t("claim:typeSpeech")
             : t("claim:typeTwitter");
     return (
@@ -49,7 +52,7 @@ const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
                 </>
             )}
             <Row>
-                {claimType === "image" ? (
+                {!isImage ? (
                     <Paragraph
                         style={{
                             fontSize: 10,

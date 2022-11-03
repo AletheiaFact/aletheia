@@ -202,7 +202,7 @@ const ClaimView = ({ personality, claim, href }) => {
                                 {sources.length > 0 && (
                                     <SourcesList
                                         sources={sources}
-                                        seeMoreHref={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
+                                        seeMoreHref={`${href}/sources`}
                                     />
                                 )}
                             </section>
