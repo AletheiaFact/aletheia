@@ -17,6 +17,7 @@
     "dateFieldPlaceholder": "Select date",
     "dateFieldError": "Please, insert a date",
     "dateFieldHelp": "When was this speech released or told? Not the date you are adding it to Aletheia.",
+    "dateFieldHelpImage": "When was this released ? Not the date you are adding it to Aletheia.",
     "disclaimer": "* The Add speech tool is only available for manually adding real speeches and claims made by said personality. Any attempt to dissiminate fake news through this platform is utterly forbidden and will result on user ban and possible lawsuit.",
     "errorAcceptTerms": "You need to accept the terms to submit the form",
     "checkboxAcceptTerms": "I personally atest that all information added is truthful.",

@@ -22,6 +22,7 @@ import ClaimSpeechBody from "./ClaimSpeechBody";
 const { Title, Paragraph } = Typography;
 
 const ClaimView = ({ personality, claim, href }) => {
+    console.log(claim, "view");
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     moment.locale(i18n.language);
@@ -78,7 +79,10 @@ const ClaimView = ({ personality, claim, href }) => {
                                                     {t("claim:cardHeader1")}
                                                     &nbsp;
                                                     <LocalizedDate
-                                                        date={claim.date}
+                                                        date={
+                                                            claim.date ||
+                                                            new Date()
+                                                        }
                                                     />
                                                     &nbsp;
                                                     {t("claim:cardHeader2")}
@@ -104,7 +108,10 @@ const ClaimView = ({ personality, claim, href }) => {
                                                     {t("claim:cardHeader3")}
                                                     &nbsp;
                                                     <LocalizedDate
-                                                        date={claim.date}
+                                                        date={
+                                                            claim.date ||
+                                                            new Date()
+                                                        }
                                                     />
                                                 </Paragraph>
                                             )}

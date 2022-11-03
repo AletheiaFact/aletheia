@@ -1,4 +1,4 @@
-import { Col, Form, Row } from "antd";
+import { Col, Form, Row, DatePicker } from "antd";
 import Text from "antd/lib/typography/Text";
 import { UploadFile } from "antd/lib/upload/interface";
 import { useTranslation } from "next-i18next";
@@ -13,6 +13,9 @@ import AletheiaInput from "../../AletheiaInput";
 import AletheiaButton from "../../Button";
 import ImageUpload from "../../ImageUpload";
 import Label from "../../Label";
+import styled from "styled-components";
+import moment from "moment";
+import SourceInput from "../../Source/SourceInput";
 
 const ClaimUploadImage = () => {
     const { t } = useTranslation();
@@ -20,11 +23,42 @@ const ClaimUploadImage = () => {
     const formData = new FormData();
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [sources, setSources] = useState([""]);
     const [isLoading, setIsloading] = useState(false);
     const [imageError, setImageError] = useState(false);
+    const [date, setDate] = useState("");
     //TODO: Add recaptcha validation
 
     const { machineService } = useContext(CreateClaimMachineContext);
+    const disabledDate = (current) => {
+        return current && current > moment().endOf("day");
+    };
+
+    const DatePickerInput = styled(DatePicker)`
+        background: ${(props) =>
+            props.white ? colors.white : colors.lightGray};
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+        border-radius: 4px;
+        border: none;
+        height: 40px;
+
+        input::placeholder {
+            color: #515151;
+        }
+
+        :focus {
+            border: none;
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+        }
+
+        :active {
+            border: none;
+        }
+
+        :hover {
+            border: none;
+        }
+    `;
 
     const handleSubmit = ({ title }) => {
         if (fileList.length > 0) {
@@ -39,6 +73,8 @@ const ClaimUploadImage = () => {
                     setImageError(false);
 
                     const claimData = {
+                        date,
+                        sources,
                         title,
                         content: imagesUploaded[0],
                     };
@@ -96,7 +132,6 @@ const ClaimUploadImage = () => {
                         },
                     ]}
                     wrapperCol={{ sm: 24 }}
-                    style={{ marginTop: "24px" }}
                 >
                     <AletheiaInput
                         style={{ width: "100%" }}
@@ -104,6 +139,56 @@ const ClaimUploadImage = () => {
                         data-cy={"testTitleClaimForm"}
                     />
                 </Form.Item>
+                <Label required>{t("claimForm:dateField")}</Label>
+                <Form.Item
+                    name="date"
+                    rules={[
+                        {
+                            required: true,
+                            message: t("claimForm:dateFieldError"),
+                        },
+                    ]}
+                    extra={t("claimForm:dateFieldHelpImage")}
+                    wrapperCol={{ sm: 24 }}
+                    style={{
+                        width: "100%",
+                        marginBottom: "24px",
+                    }}
+                >
+                    <DatePickerInput
+                        style={{
+                            width: "100%",
+                        }}
+                        placeholder={t("claimForm:dateFieldPlaceholder")}
+                        onChange={(value) => setDate(value)}
+                        data-cy={"dataAserSelecionada"}
+                        disabledDate={disabledDate}
+                    />
+                </Form.Item>
+                <Label required>{t("sourceForm:label")}</Label>
+                <SourceInput
+                    label={null}
+                    name="source"
+                    onChange={(e, index) => {
+                        setSources(
+                            sources.map((source, i) => {
+                                return i === index ? e.target.value : source;
+                            })
+                        );
+                    }}
+                    addSource={() => {
+                        setSources(sources.concat(""));
+                    }}
+                    removeSource={(index) => {
+                        setSources(
+                            sources.filter((_source, i) => {
+                                return i !== index;
+                            })
+                        );
+                    }}
+                    placeholder={t("sourceForm:placeholder")}
+                    sources={sources}
+                />
                 <Row style={{ marginTop: "24px" }}>
                     <Label required>{t("claimForm:fileInputButton")}</Label>
                     <ImageUpload onChange={handleAntdChange} />

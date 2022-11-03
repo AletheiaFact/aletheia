@@ -21,6 +21,7 @@ export interface ClaimPageProps {
 }
 
 const ClaimPage: NextPage<ClaimPageProps> = (props) => {
+    console.log(props, "aquii");
     const { personality, claim, isLoggedIn, userRole, userId, sitekey } = props;
     const { t } = useTranslation();
     const dispatch = useDispatch();

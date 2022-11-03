@@ -59,7 +59,6 @@ export class ClaimRevisionService {
         } else {
             const newImage = await this.imageService.create(claim.content);
             claim.contentId = newImage._id;
-            claim.date = new Date();
         }
 
         const newClaimRevision = new this.ClaimRevisionModel(claim);

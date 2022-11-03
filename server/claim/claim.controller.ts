@@ -232,7 +232,6 @@ export class ClaimController {
         const { claimId } = req.params;
         const parsedUrl = parse(req.url, true);
         const claim = await this.claimService.getById(claimId);
-        console.log("claim", claim);
         if (claim.personality) {
             const personalitySlug = slugify(claim.personality.name, {
                 lower: true,

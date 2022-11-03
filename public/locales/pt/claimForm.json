@@ -17,6 +17,7 @@
     "dateFieldPlaceholder": "Selecione Data",
     "dateFieldError": "Por favor, insira uma data",
     "dateFieldHelp": "Quando esse discurso foi dito ou publicado?",
+    "dateFieldHelpImage": "Quando isso foi publicado?",
     "disclaimer": "* Essa ferramenta esta apenas disponível para adicionar manualmente declarações e discursos reais criados ou ditos por uma personalidade. Qualquer tentativa de dissiminar notícias falsas através dessa plataforma é expressamente proibida e pode resultar em banimento do usuário e possivelmente ação judicial.",
     "errorAcceptTerms": "Você precisa aceitar os termos para submeter o formulário",
     "checkboxAcceptTerms": "Eu atesto pessoalmente que toda informação adicionada é confiável.",

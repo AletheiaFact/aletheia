@@ -7,6 +7,7 @@ import LocalizedDate from "../LocalizedDate";
 const { Paragraph } = Typography;
 
 const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
+    console.log(date, "header");
     const { t } = useTranslation();
     const speechTypeTranslation =
         claimType.toLowerCase() === "speech"
@@ -79,7 +80,7 @@ const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
                     >
                         {t("claim:cardHeader3")}
                         &nbsp;
-                        <LocalizedDate date={date} />
+                        <LocalizedDate date={date || new Date()} />
                     </Paragraph>
                 )}
             </Row>
