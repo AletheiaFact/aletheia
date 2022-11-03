@@ -49,23 +49,39 @@ const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
                 </>
             )}
             <Row>
-                <Paragraph
-                    style={{
-                        fontSize: 10,
-                        fontWeight: 400,
-                        lineHeight: "15px",
-                        marginBottom: 0,
-                        color: colors.blackSecondary,
-                    }}
-                >
-                    {t("claim:cardHeader1")}&nbsp;
-                    <LocalizedDate date={date || new Date()} />
-                    &nbsp;
-                    {t("claim:cardHeader2")}&nbsp;
-                    <span style={{ fontWeight: 700 }}>
-                        {speechTypeTranslation}
-                    </span>
-                </Paragraph>
+                {claimType === "image" ? (
+                    <Paragraph
+                        style={{
+                            fontSize: 10,
+                            fontWeight: 400,
+                            lineHeight: "15px",
+                            marginBottom: 0,
+                            color: colors.blackSecondary,
+                        }}
+                    >
+                        {t("claim:cardHeader1")}&nbsp;
+                        <LocalizedDate date={date || new Date()} />
+                        &nbsp;
+                        {t("claim:cardHeader2")}&nbsp;
+                        <span style={{ fontWeight: 700 }}>
+                            {speechTypeTranslation}
+                        </span>
+                    </Paragraph>
+                ) : (
+                    <Paragraph
+                        style={{
+                            fontSize: 10,
+                            fontWeight: 400,
+                            lineHeight: "15px",
+                            marginBottom: 0,
+                            color: colors.blackSecondary,
+                        }}
+                    >
+                        {t("claim:cardHeader3")}
+                        &nbsp;
+                        <LocalizedDate date={date} />
+                    </Paragraph>
+                )}
             </Row>
         </Col>
     );

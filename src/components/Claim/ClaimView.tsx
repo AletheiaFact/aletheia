@@ -65,27 +65,49 @@ const ClaimView = ({ personality, claim, href }) => {
                                 {date && (
                                     <Row style={{ marginTop: "20px" }}>
                                         <Col>
-                                            <Paragraph
-                                                style={{
-                                                    fontSize: 10,
-                                                    fontWeight: 400,
-                                                    lineHeight: "15px",
-                                                    marginBottom: 0,
-                                                    color: colors.blackSecondary,
-                                                }}
-                                            >
-                                                {t("claim:cardHeader1")}&nbsp;
-                                                <LocalizedDate
-                                                    date={claim.date}
-                                                />
-                                                &nbsp;
-                                                {t("claim:cardHeader2")}&nbsp;
-                                                <span
-                                                    style={{ fontWeight: 700 }}
+                                            {!isImage ? (
+                                                <Paragraph
+                                                    style={{
+                                                        fontSize: 10,
+                                                        fontWeight: 400,
+                                                        lineHeight: "15px",
+                                                        marginBottom: 0,
+                                                        color: colors.blackSecondary,
+                                                    }}
                                                 >
-                                                    {t("claim:typeSpeech")}
-                                                </span>
-                                            </Paragraph>
+                                                    {t("claim:cardHeader1")}
+                                                    &nbsp;
+                                                    <LocalizedDate
+                                                        date={claim.date}
+                                                    />
+                                                    &nbsp;
+                                                    {t("claim:cardHeader2")}
+                                                    &nbsp;
+                                                    <span
+                                                        style={{
+                                                            fontWeight: 700,
+                                                        }}
+                                                    >
+                                                        {t("claim:typeSpeech")}
+                                                    </span>
+                                                </Paragraph>
+                                            ) : (
+                                                <Paragraph
+                                                    style={{
+                                                        fontSize: 10,
+                                                        fontWeight: 400,
+                                                        lineHeight: "15px",
+                                                        marginBottom: 0,
+                                                        color: colors.blackSecondary,
+                                                    }}
+                                                >
+                                                    {t("claim:cardHeader3")}
+                                                    &nbsp;
+                                                    <LocalizedDate
+                                                        date={claim.date}
+                                                    />
+                                                </Paragraph>
+                                            )}
                                         </Col>
                                     </Row>
                                 )}
