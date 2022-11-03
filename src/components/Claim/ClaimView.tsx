@@ -22,7 +22,6 @@ import ClaimSpeechBody from "./ClaimSpeechBody";
 const { Title, Paragraph } = Typography;
 
 const ClaimView = ({ personality, claim, href }) => {
-    console.log(claim, "view");
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     moment.locale(i18n.language);

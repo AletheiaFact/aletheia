@@ -7,7 +7,6 @@ import LocalizedDate from "../LocalizedDate";
 const { Paragraph } = Typography;
 
 const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
-    console.log(date, "header");
     const { t } = useTranslation();
     const speechTypeTranslation =
         claimType.toLowerCase() === "speech"
