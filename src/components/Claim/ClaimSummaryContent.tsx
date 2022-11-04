@@ -6,20 +6,16 @@ import { useTranslation } from "next-i18next";
 const { Paragraph } = Typography;
 
 interface ClaimSummaryContentProps {
-    personality?: { slug: string };
     claimContent: any;
     claimTitle: string;
-    claimSlug: string;
-    claimId?: string;
+    href: string;
     isImage?: boolean;
 }
 
 const ClaimSummaryContent = ({
-    personality,
+    href,
     claimContent,
     claimTitle,
-    claimSlug,
-    claimId = "",
     isImage = false,
 }: ClaimSummaryContentProps) => {
     const { t } = useTranslation();
@@ -35,10 +31,6 @@ const ClaimSummaryContent = ({
               textOverflow: "ellipsis",
           }
         : {};
-
-    const href = personality
-        ? `/personality/${personality.slug}/claim/${claimSlug}`
-        : `/claim/image/${claimId}`;
 
     return (
         <Col>

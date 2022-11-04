@@ -36,6 +36,10 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
         dispatch(actions.setSelectPersonality(personality));
     };
 
+    const href = personality.slug
+        ? `/personality/${personality.slug}/claim/${claim.slug}`
+        : `/claim/${claim._id}`;
+
     useEffect(() => {
         const CreateFirstParagraph = () => {
             let textContent = "";
@@ -77,9 +81,8 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                             {collapsed ? (
                                 <ClaimSummaryContent
                                     claimTitle={claim?.title}
-                                    claimSlug={claim?.slug}
                                     claimContent={claimContent}
-                                    personality={personality}
+                                    href={href}
                                     isImage={isImage}
                                 />
                             ) : (
@@ -153,7 +156,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                 <Col>
                     <Button
                         type={ButtonType.blue}
-                        href={`/personality/${personality.slug}/claim/${claim.slug}`}
+                        href={href}
                         data-cy={personality.name}
                     >
                         <span
