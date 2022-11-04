@@ -7,18 +7,20 @@ import AletheiaTitle from "../AletheiaTitle";
 
 const ReviewStats = (props) => {
     const { t } = useTranslation();
-    const [ showAllReviews, setShowAllReviews ] = useState<boolean>(false)
+    const [showAllReviews, setShowAllReviews] = useState<boolean>(false);
     const { reviews } = props?.stats || {};
-    
+
     return (
         <>
-            {reviews && <ReviewProgress reviews={reviews.slice(0, 3)} statsProps={props} /> }
-            {reviews && showAllReviews && <ReviewProgress reviews={reviews.slice(3)} statsProps={props} /> }
+            {reviews && <ReviewProgress reviews={reviews} statsProps={props} />}
+            {reviews && showAllReviews && (
+                <ReviewProgress reviews={reviews} statsProps={props} />
+            )}
             {reviews && reviews?.length > 3 && props.type === "line" && (
                 <div
                     style={{
                         display: "flex",
-                        justifyContent: "center"
+                        justifyContent: "center",
                     }}
                 >
                     {!showAllReviews && (
@@ -30,8 +32,12 @@ const ReviewStats = (props) => {
                             type={ButtonType.blue}
                             onClick={() => setShowAllReviews(true)}
                         >
-                            <AletheiaTitle level={4}>{t(`personality:seeAllMetricsOverviews`)}</AletheiaTitle>
-                            <ArrowDownOutlined style={{ marginLeft: 5, fontSize: 14 }} />
+                            <AletheiaTitle level={4}>
+                                {t(`personality:seeAllMetricsOverviews`)}
+                            </AletheiaTitle>
+                            <ArrowDownOutlined
+                                style={{ marginLeft: 5, fontSize: 14 }}
+                            />
                         </AletheiaButton>
                     )}
                     {showAllReviews && (
@@ -43,14 +49,18 @@ const ReviewStats = (props) => {
                             type={ButtonType.blue}
                             onClick={() => setShowAllReviews(false)}
                         >
-                            <AletheiaTitle level={4}>{t(`personality:seeLessMetricsOverviews`)}</AletheiaTitle>
-                            <ArrowUpOutlined style={{ marginLeft: 5, fontSize: 14 }} />
+                            <AletheiaTitle level={4}>
+                                {t(`personality:seeLessMetricsOverviews`)}
+                            </AletheiaTitle>
+                            <ArrowUpOutlined
+                                style={{ marginLeft: 5, fontSize: 14 }}
+                            />
                         </AletheiaButton>
                     )}
                 </div>
             )}
         </>
     );
-}
+};
 
 export default ReviewStats;

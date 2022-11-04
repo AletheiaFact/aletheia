@@ -49,14 +49,14 @@ export class ClaimCollectionService {
             // Filter collections for view
             claimCollection.collections =
                 claimCollection?.editorContentObject?.content || [];
-            claimCollection.collections = claimCollection.collections.filter(
-                (c) => {
+            claimCollection.collections = claimCollection.collections
+                .filter((c) => {
                     return (
                         c.type === EditorClaimCardNodeType &&
                         c.attrs.claimId !== null
                     );
-                }
-            );
+                })
+                .slice(-10);
             claimCollection.collections = reverse
                 ? claimCollection.collections.reverse()
                 : claimCollection.collections;
@@ -77,6 +77,7 @@ export class ClaimCollectionService {
         });
         const newClaimCollection = new this.ClaimCollectionModel({
             ...claimCollectionBody,
+            editorContentObject: {},
             slug,
         });
         return newClaimCollection.save();

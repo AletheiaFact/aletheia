@@ -31,18 +31,13 @@ export const CallbackTimerMachine = {
                     });
                 },
                 onDone: {
-                    target: "resetting",
+                    target: "paused",
                     actions: assign({
                         callbackResult: (context, event: any) => {
                             return event.data;
                         },
                     }),
                 },
-            },
-        },
-        resetting: {
-            always: {
-                target: "running",
             },
         },
         paused: {
@@ -59,9 +54,11 @@ export const GlobalStateContext = createContext({});
 export const CallbackTimerProvider = ({
     callback,
     interval = null,
+    stopped,
     children,
 }) => {
     CallbackTimerMachine.context = {
+        stopped: stopped || CallbackTimerMachine.context.stopped,
         ...CallbackTimerMachine.context,
         autoSaveCallback: callback,
         interval: interval || CallbackTimerMachine.context.interval,
