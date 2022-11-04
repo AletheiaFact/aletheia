@@ -14,6 +14,7 @@ import {
     Headers,
     Header,
     Optional,
+    NotFoundException,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
@@ -34,6 +35,7 @@ import { SentenceService } from "../sentence/sentence.service";
 import { BaseRequest } from "../types";
 import slugify from "slugify";
 import { UnleashService } from "nestjs-unleash";
+import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
 
 @Controller()
 export class ClaimController {
@@ -105,6 +107,9 @@ export class ClaimController {
 
     @Post("api/claim/image")
     async createClaimImage(@Body() createClaimDTO) {
+        if (!this.isEnabledImageClaim()) {
+            throw new NotFoundException();
+        }
         return this.claimService.create(createClaimDTO);
     }
 
@@ -190,11 +195,7 @@ export class ClaimController {
     ) {
         const parsedUrl = parse(req.url, true);
 
-        const config = this.configService.get<string>("feature_flag");
-
-        const enableImageClaim = config
-            ? this.unleash.isEnabled("enable_image_claim")
-            : true;
+        const enableImageClaim = this.isEnabledImageClaim();
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
@@ -222,6 +223,10 @@ export class ClaimController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        if (!this.isEnabledImageClaim()) {
+            throw new NotFoundException();
+        }
+
         const parsedUrl = parse(req.url, true);
 
         await this.viewService
@@ -242,6 +247,14 @@ export class ClaimController {
         const { claimId } = req.params;
         const parsedUrl = parse(req.url, true);
         const claim = await this.claimService.getById(claimId);
+
+        if (
+            claim.contentModel === ContentModelEnum.Image &&
+            !this.isEnabledImageClaim()
+        ) {
+            throw new NotFoundException();
+        }
+
         if (claim.personality) {
             const personalitySlug = slugify(claim.personality.name, {
                 lower: true,
@@ -438,5 +451,11 @@ export class ClaimController {
                 targetModel: TargetModel.ClaimReviewTask,
             })
         );
+    }
+
+    private isEnabledImageClaim() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config ? this.unleash.isEnabled("enable_image_claim") : false;
     }
 }
