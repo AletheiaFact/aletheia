@@ -1,3 +1,4 @@
+import { Row, Col } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import Seo from "../Seo";
@@ -8,10 +9,14 @@ const ImageClaimListView = () => {
     return (
         <>
             <Seo
-                title={t("seo:personalityListTitle")}
-                description={t("seo:personalityListDescription")}
+                title={t("seo:noPersonalityClaimListTitle")}
+                description={t("seo:noPersonalityClaimListDescription")}
             />
-            <ClaimList personality={{ _id: null }} />
+            <Row justify="center" style={{ marginTop: "64px" }}>
+                <Col sm={22} md={14} lg={12}>
+                    <ClaimList personality={{ _id: null }} />
+                </Col>
+            </Row>
         </>
     );
 };

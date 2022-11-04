@@ -64,7 +64,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                         <ClaimCardHeader
                             personality={personality}
                             date={claim?.date}
-                            claimType={claim?.type}
+                            claimType={claim?.contentModel}
                         />
                     }
                     content={

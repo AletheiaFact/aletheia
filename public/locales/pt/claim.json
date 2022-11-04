@@ -19,5 +19,6 @@
     "typeSpeech": "Discurso oficial",
     "typeTwitter": "post no Twitter",
     "errorWhileFetching": "Erro ao buscar o Discurso",
-    "cardLinkToImage": "veja a imagem completa"
+    "cardLinkToImage": "veja a imagem completa",
+    "claimListHeader": "Declarações"
 }

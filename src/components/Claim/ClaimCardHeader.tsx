@@ -7,10 +7,13 @@ import LocalizedDate from "../LocalizedDate";
 
 const { Paragraph } = Typography;
 
-const ClaimCardHeader = ({ personality, date, claimType = "speech" }) => {
+const ClaimCardHeader = ({
+    personality,
+    date,
+    claimType = ContentModelEnum.Speech,
+}) => {
     const { t } = useTranslation();
     const isImage = claimType === ContentModelEnum.Image;
-
     const speechTypeTranslation =
         claimType.toLowerCase() === ContentModelEnum.Speech
             ? t("claim:typeSpeech")

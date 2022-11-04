@@ -19,5 +19,6 @@
     "typeSpeech": "Oficial speech",
     "typeTwitter": "Twitter post",
     "errorWhileFetching": "Error while fetching Claim",
-    "cardLinkToImage": "see full image"
+    "cardLinkToImage": "see full image",
+    "claimListHeader": "Claims"
 }
