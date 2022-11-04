@@ -217,7 +217,7 @@ export class ClaimController {
     }
 
     @IsPublic()
-    @Get("no-personality/claim")
+    @Get("claim")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async claimsWithoutPersonalityPage(
         @Req() req: BaseRequest,
