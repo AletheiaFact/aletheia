@@ -18,6 +18,10 @@ const locators = {
         BTN_OK_TUTORIAL: "[data-cy=testButtonTutorialOk]",
         BTN_CLOSE_DRAWER: "[data-cy=testCloseReviewDrawer]",
         BTN_SEE_FULL_REVIEW: "[data-cy=testSeeFullReview]",
+        BTN_ADD_SPEECH: "[data-cy=testSelectTypeSpeech]",
+        BTN_ADD_IMAGE: "[data-cy=testSelectTypeImage]",
+        BTN_SELECT_PERSONALITY: "[data-cy=testSelectPersonality]",
+        BTN_NO_PERSONALITY: "[data-cy=testContinueWithoutPersonality]",
     },
 
     floatButton: {

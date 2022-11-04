@@ -76,6 +76,7 @@ const ClaimSelectPersonality = () => {
                     onClick={continueWithPersonality}
                     disabled={!claimData.personality}
                     style={{ textTransform: "uppercase" }}
+                    data-cy="testSelectPersonality"
                 >
                     {t("claimForm:selectPersonalityButton")}
                 </AletheiaButton>
@@ -83,6 +84,7 @@ const ClaimSelectPersonality = () => {
                     <AletheiaButton
                         onClick={continueWithoutPersonality}
                         style={{ textTransform: "uppercase" }}
+                        data-cy="testContinueWithoutPersonality"
                     >
                         {t("claimForm:noPersonalityButton")}
                     </AletheiaButton>

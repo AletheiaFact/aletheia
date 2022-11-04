@@ -55,6 +55,7 @@ const ClaimSelectType = () => {
                 <AletheiaButton
                     onClick={handleClickImage}
                     style={{ textTransform: "uppercase" }}
+                    data-cy="testSelectTypeImage"
                 >
                     <PictureOutlined />
                     {t("claimForm:image")}
@@ -62,6 +63,7 @@ const ClaimSelectType = () => {
                 <AletheiaButton
                     onClick={handleClickSpeech}
                     style={{ textTransform: "uppercase" }}
+                    data-cy="testSelectTypeSpeech"
                 >
                     <FileOutlined />
                     {t("claimForm:speech")}
