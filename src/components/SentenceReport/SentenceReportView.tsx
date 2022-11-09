@@ -16,8 +16,6 @@ import PartialReviewWarning from "../PartialReviewWarning";
 import SentenceReportContent from "./SentenceReportContent";
 
 const SentenceReportView = ({
-    personality,
-    claim,
     context,
     userIsNotRegular,
     userIsReviewer,
@@ -56,11 +54,7 @@ const SentenceReportView = ({
                             }
                         }
                     >
-                        <SentenceReportContent
-                            context={context}
-                            personality={personality}
-                            claim={claim}
-                        />
+                        <SentenceReportContent context={context} />
                         {!isLoggedIn && <CTARegistration />}
                     </Col>
                 </Row>

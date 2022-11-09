@@ -1,12 +1,17 @@
-import React from 'react'
+import React from "react";
 import { Typography } from "antd";
-import colors from '../styles/colors';
-const { Text } = Typography
+import colors from "../styles/colors";
+const { Text } = Typography;
 
-const Label: React.FC = ({ children }) => {
+const Label = ({ children, required = false }) => {
     return (
-        <Text strong style={{ color: colors.blackSecondary }}>{children}</Text>
-    )
-}
+        <span style={{ color: colors.redText }}>
+            {required && "* "}
+            <Text strong style={{ color: colors.blackSecondary }}>
+                {children}
+            </Text>
+        </span>
+    );
+};
 
-export default Label
+export default Label;

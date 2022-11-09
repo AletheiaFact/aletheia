@@ -11,6 +11,7 @@ import { TypeModel } from "../state-event/schema/state-event.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
+import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
 
 type ClaimMatchParameters = (
     | { _id: string }
@@ -32,9 +33,10 @@ export class ClaimService {
     ) {}
 
     async listAll(page, pageSize, order, query) {
-        if (query.personality) {
-            query.personality = Types.ObjectId(query.personality);
-        }
+        query.personality = query.personality
+            ? Types.ObjectId(query.personality)
+            : null;
+
         const claims = await this.ClaimModel.find(query)
             .populate("latestRevision")
             .skip(page * pageSize)
@@ -63,7 +65,9 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim) {
-        claim.personality = Types.ObjectId(claim.personality);
+        claim.personality = claim.personality
+            ? Types.ObjectId(claim.personality)
+            : null;
         const newClaim = new this.ClaimModel(claim);
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,
@@ -92,8 +96,8 @@ export class ClaimService {
         newClaim.save();
 
         return {
-            ...newClaim.toObject(),
             ...newClaimRevision.toObject(),
+            ...newClaim.toObject(),
         };
     }
 
@@ -272,15 +276,21 @@ export class ClaimService {
     private calculateOverallStats(claim) {
         let totalClaims = 0;
         let totalClaimsReviewed = 0;
+
         if (claim?.content) {
-            claim.content.forEach((p) => {
-                totalClaims += p.content.length;
-                p.content.forEach((sentence) => {
-                    if (sentence.props.classification) {
-                        totalClaimsReviewed++;
-                    }
-                });
-            }, 0);
+            if (claim?.contentModel === ContentModelEnum.Image) {
+                totalClaims += 1;
+                //TODO: count reviews when possible
+            } else {
+                claim.content.forEach((p) => {
+                    totalClaims += p.content.length;
+                    p.content.forEach((sentence) => {
+                        if (sentence.props.classification) {
+                            totalClaimsReviewed++;
+                        }
+                    });
+                }, 0);
+            }
         }
         return {
             totalClaims,

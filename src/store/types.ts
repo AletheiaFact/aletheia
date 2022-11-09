@@ -1,5 +1,6 @@
 import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { Roles } from "../types/enums";
+import { Personality } from "../types/Personality";
 
 export enum ActionTypes {
     TOGGLE_MENU,
@@ -13,12 +14,15 @@ export enum ActionTypes {
     SET_AUTO_SAVE,
     SET_BREAKPOINTS,
     SET_USER_ROLE,
+    SET_CLAIM_CREATE_TYPE,
+    SET_CLAIM_CREATE_PERSONALITY,
     SET_SELECTED_DATA_HASH,
     SET_SELECTED_PERSONALITY,
     SET_SELECTED_CLAIM,
     SET_SELECTED_SENTENCE,
     SET_USER_ID,
     SET_SITEKEY,
+    SET_FEATURE_FLAGS,
 }
 
 export interface RootState {
@@ -35,6 +39,8 @@ export interface RootState {
     login: boolean;
     autoSave: boolean;
     role: Roles;
+    claimType: string;
+    claimPersonality: Personality;
     vw: WidthBreakpoints;
     selectedDataHash: string;
     selectedPersonality: any;
@@ -42,4 +48,7 @@ export interface RootState {
     selectedSentence: any;
     userId: string;
     sitekey: string;
+    featureFlags: {
+        enableImageClaim: boolean;
+    };
 }

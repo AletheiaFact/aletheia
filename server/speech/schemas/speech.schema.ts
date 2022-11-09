@@ -25,6 +25,9 @@ export class Speech {
 }
 
 const SpeechSchemaRaw = SchemaFactory.createForClass(Speech);
+SpeechSchemaRaw.pre("find", function () {
+    this.populate("content");
+});
 
 SpeechSchemaRaw.pre("find", function () {
     this.populate("content");

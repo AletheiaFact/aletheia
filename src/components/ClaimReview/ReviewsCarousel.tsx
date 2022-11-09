@@ -68,7 +68,9 @@ const ReviewsCarousel = () => {
                                 <ClaimCardHeader
                                     personality={currentReview.personality}
                                     date={currentReview.claim?.date}
-                                    claimType={currentReview.claim?.type}
+                                    claimType={
+                                        currentReview.claim?.contentModel
+                                    }
                                 />
                             }
                             content={

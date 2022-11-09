@@ -32,6 +32,9 @@ export class Paragraph {
 }
 
 const ParagraphSchemaRaw = SchemaFactory.createForClass(Paragraph);
+ParagraphSchemaRaw.pre("find", function () {
+    this.populate("content");
+});
 
 ParagraphSchemaRaw.pre("find", function () {
     this.populate("content");

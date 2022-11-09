@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from "react";
-import "draft-js/dist/Draft.css";
-import { DatePicker, Form, Row, Checkbox, FormInstance } from "antd";
-import claimApi from "../../api/claim";
-import { useTranslation } from "next-i18next";
-import styled from "styled-components";
-import { useRouter } from "next/router";
-import PersonalityCard from "../Personality/PersonalityCard";
-import SourceInput from "../Source/SourceInput";
-import Button, { ButtonType } from "../Button";
-import Input from "../AletheiaInput";
-import TextArea from "../TextArea";
-import AletheiaCaptcha from "../AletheiaCaptcha";
+import { useSelector } from "@xstate/react";
+import { Checkbox, Form, FormInstance, Row } from "antd";
 import moment from "moment";
-import colors from "../../styles/colors";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import React, { useContext, useEffect, useState } from "react";
+import styled from "styled-components";
+
+import claimApi from "../../../api/claim";
+import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
+import { claimDataSelector } from "../../../machines/createClaim/selectors";
+import { CreateClaimEvents } from "../../../machines/createClaim/types";
+import AletheiaCaptcha from "../../AletheiaCaptcha";
+import Input from "../../AletheiaInput";
+import Button, { ButtonType } from "../../Button";
+import DatePickerInput from "../../Form/DatePickerInput";
+import SourceInput from "../../Source/SourceInput";
+import TextArea from "../../TextArea";
 
 const formRef = React.createRef<FormInstance>();
 
@@ -26,32 +29,7 @@ const ClaimForm = styled(Form)`
     }
 `;
 
-const DatePickerInput = styled(DatePicker)`
-    background: ${(props) => (props.white ? colors.white : colors.lightGray)};
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    border-radius: 4px;
-    border: none;
-    height: 40px;
-
-    input::placeholder {
-        color: #515151;
-    }
-
-    :focus {
-        border: none;
-        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
-    }
-
-    :active {
-        border: none;
-    }
-
-    :hover {
-        border: none;
-    }
-`;
-
-const ClaimCreate = ({ personality, claim = { _id: "" }, edit = false }) => {
+const ClaimCreate = ({ claim = { _id: "" }, edit = false }) => {
     const { t } = useTranslation();
     const router = useRouter();
     const [title, setTitle] = useState("");
@@ -61,6 +39,10 @@ const ClaimCreate = ({ personality, claim = { _id: "" }, edit = false }) => {
     const [sources, setSources] = useState([""]);
     const [recaptcha, setRecaptcha] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+
+    const { machineService } = useContext(CreateClaimMachineContext);
+    const claimData = useSelector(machineService, claimDataSelector);
+    const { personality } = claimData;
 
     useEffect(() => {
         const setTitleAndContent = async () => {
@@ -77,24 +59,22 @@ const ClaimCreate = ({ personality, claim = { _id: "" }, edit = false }) => {
         return current && current > moment().endOf("day");
     };
 
-    const saveClaim = async () => {
+    const saveClaim = () => {
         if (!isLoading) {
             setIsLoading(true);
-            const { slug } = await claimApi.save(t, {
+
+            const claim = {
                 content,
                 title,
-                personality: personality._id,
-                // TODO: add a new input when twitter is supported
-                contentModel: "Speech",
                 date,
                 sources,
                 recaptcha,
+            };
+            machineService.send(CreateClaimEvents.persist, {
+                claimData: claim,
+                t,
+                router,
             });
-            // Redirect to personality profile in case slug is not present
-            const path = slug
-                ? `/personality/${personality.slug}/claim/${slug}`
-                : `/personality/${personality.slug}`;
-            router.push(path);
         }
     };
 
@@ -125,12 +105,6 @@ const ClaimCreate = ({ personality, claim = { _id: "" }, edit = false }) => {
 
     return (
         <>
-            <PersonalityCard
-                personality={personality}
-                header={true}
-                mobile={true}
-            />
-
             <ClaimForm
                 ref={formRef}
                 layout="vertical"
@@ -201,9 +175,6 @@ const ClaimCreate = ({ personality, claim = { _id: "" }, edit = false }) => {
                     }}
                 >
                     <DatePickerInput
-                        style={{
-                            width: "100%",
-                        }}
                         placeholder={t("claimForm:dateFieldPlaceholder")}
                         onChange={(value) => setDate(value)}
                         data-cy={"dataAserSelecionada"}

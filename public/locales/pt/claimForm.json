@@ -9,8 +9,7 @@
     "contentField": "Conteúdo",
     "contentFieldPlaceholder": "Insira conteúdo aqui",
     "contentFieldError": "Por favor, insira o conteúdo",
-    "contentFieldHelp":
-    "Por favor, não edite ou mude qualquer aspecto do texto original e escolha adicionar discursos completos ao invés de declarações fora de contexto.",
+    "contentFieldHelp": "Por favor, não edite ou mude qualquer aspecto do texto original e escolha adicionar discursos completos ao invés de declarações fora de contexto.",
     "reportField": "Relatório",
     "reportFieldPlaceholder": "Insira o conteúdo do relatório aqui",
     "reportFieldError": "Por favor, insira o conteúdo do relatório",
@@ -18,13 +17,26 @@
     "dateFieldPlaceholder": "Selecione Data",
     "dateFieldError": "Por favor, insira uma data",
     "dateFieldHelp": "Quando esse discurso foi dito ou publicado?",
-    "disclaimer":
-    "* Essa ferramenta esta apenas disponível para adicionar manualmente declarações e discursos reais criados ou ditos por uma personalidade. Qualquer tentativa de dissiminar notícias falsas através dessa plataforma é expressamente proibida e pode resultar em banimento do usuário e possivelmente ação judicial.",
-    "errorAcceptTerms":
-    "Você precisa aceitar os termos para submeter o formulário",
-    "checkboxAcceptTerms":
-    "Eu atesto pessoalmente que toda informação adicionada é confiável.",
+    "dateFieldHelpImage": "Quando isso foi publicado?",
+    "disclaimer": "* Essa ferramenta esta apenas disponível para adicionar manualmente declarações e discursos reais criados ou ditos por uma personalidade. Qualquer tentativa de dissiminar notícias falsas através dessa plataforma é expressamente proibida e pode resultar em banimento do usuário e possivelmente ação judicial.",
+    "errorAcceptTerms": "Você precisa aceitar os termos para submeter o formulário",
+    "checkboxAcceptTerms": "Eu atesto pessoalmente que toda informação adicionada é confiável.",
     "cancelButton": "Cancelar",
     "updateButton": "Atualizar discurso",
-    "saveButton": "Adicionar discurso"
+    "saveButton": "Adicionar discurso",
+    "contentModelTitle": "Formato",
+    "selectContentModel": "Que formato de afirmação você quer incluir?",
+    "image": "Imagem",
+    "speech": "Discurso",
+    "selectPersonalityTitle": "Personalidade",
+    "selectPersonalityText": "Selecione a personalidade que fez a afirmação",
+    "selectPersonalityButton": "Continuar",
+    "noPersonalityButton": "Continuar sem uma personalidade",
+    "personalityFound": "Selecionar",
+    "personalityNotFound": "Criar e selecionar",
+    "uploadImageText": "Escolha uma imagem para enviar",
+    "uploadImageButton": "Enviar imagem",
+    "fileInputButton": "Escolha o arquivo",
+    "fileTypeError": "Voce só pode enviar arquivos nos formatos {{types}}",
+    "fileSizeError": "O arquivo deve ter menos de {{size}}"
 }

@@ -31,6 +31,8 @@ const ContentWrapper = ({ children }) => {
         "home",
         "kanban-page",
         "personality-page",
+        "claim-create",
+        "claim",
         "claim-collection",
     ];
 

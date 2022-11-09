@@ -1,24 +1,28 @@
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import AffixButton from "../components/AffixButton/AffixButton";
 
-import ClaimCreate from "../components/Claim/ClaimCreate";
+import AffixButton from "../components/AffixButton/AffixButton";
+import CreateClaimView from "../components/Claim/CreateClaim/CreateClaimView";
 import Seo from "../components/Seo";
+import { CreateClaimMachineProvider } from "../Context/CreateClaimMachineProvider";
 import { GetLocale } from "../utils/GetLocale";
 import { useDispatch } from "react-redux";
 
 import actions from "../store/actions";
 
-const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
+const ClaimCreatePage: NextPage<any> = ({
     sitekey,
     personality,
     isLoggedIn,
+    enableImageClaim,
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     dispatch(actions.setLoginStatus(isLoggedIn));
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.setFeatureFlags({ enableImageClaim }));
+
     return (
         <>
             <Seo
@@ -27,8 +31,12 @@ const ClaimCreatePage: NextPage<{ sitekey; personality; isLoggedIn }> = ({
                     name: personality.name,
                 })}
             />
-            <ClaimCreate personality={personality} />
-            <AffixButton />
+            <CreateClaimMachineProvider
+                context={{ claimData: { personality: personality } }}
+            >
+                <CreateClaimView />
+                <AffixButton />
+            </CreateClaimMachineProvider>
         </>
     );
 };
@@ -41,9 +49,14 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             sitekey: query.sitekey,
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
-            personality: JSON.parse(JSON.stringify(query.personality)),
+            personality: query?.personality
+                ? JSON.parse(JSON.stringify(query?.personality))
+                : "",
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,
+            enableImageClaim: JSON.parse(
+                JSON.stringify(query?.enableImageClaim)
+            ),
         },
     };
 }

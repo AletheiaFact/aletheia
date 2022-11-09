@@ -15,7 +15,10 @@
     "sourceFooterReport": "Please, report here. ",
     "cardHeader1": "Stated on",
     "cardHeader2": "in",
+    "cardHeader3": "Registered in",
     "typeSpeech": "Oficial speech",
     "typeTwitter": "Twitter post",
-    "errorWhileFetching": "Error while fetching Claim"
+    "errorWhileFetching": "Error while fetching Claim",
+    "cardLinkToImage": "see full image",
+    "claimListHeader": "Claims"
 }

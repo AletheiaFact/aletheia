@@ -77,6 +77,16 @@ const reducer = (state, action) => {
                 ...state,
                 vw: action.vw,
             };
+        case ActionTypes.SET_CLAIM_CREATE_TYPE:
+            return {
+                ...state,
+                claimType: action.claimType,
+            };
+        case ActionTypes.SET_CLAIM_CREATE_PERSONALITY:
+            return {
+                ...state,
+                claimPersonality: action.claimPersonality,
+            };
         case ActionTypes.SET_SELECTED_DATA_HASH:
             return {
                 ...state,
@@ -107,7 +117,12 @@ const reducer = (state, action) => {
                 ...state,
                 sitekey: action.sitekey,
             };
-
+        case ActionTypes.SET_FEATURE_FLAGS: {
+            return {
+                ...state,
+                featureFlags: action.featureFlags,
+            };
+        }
         default:
             return state;
     }
