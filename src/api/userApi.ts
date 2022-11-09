@@ -70,11 +70,29 @@ const getUsers = (
         });
 };
 
+const register = (params, t) => {
+    return request
+        .post(`/register`, { ...params })
+        .then((response) => {
+            message.success(t("login:signupSuccessfulMessage"));
+            return response?.data;
+        })
+        .catch((e) => {
+            if (e.response?.status === 409) {
+                message.error(t("login:userAlreadyExists"));
+            } else {
+                message.error(t("login:signupFailedMessage"));
+            }
+            return e?.response?.data;
+        });
+};
+
 const usersApi = {
     login,
     updatePassword,
     getById,
     getUsers,
+    register,
 };
 
 export default usersApi;

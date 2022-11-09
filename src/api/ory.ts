@@ -78,6 +78,14 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values }) => {
     );
 };
 
+const oryGetRegistrationFlow = (router, setFlow, t) => {
+    ory.initializeSelfServiceRegistrationFlowForBrowsers()
+        .then(({ data }) => {
+            setFlow(data);
+        })
+        .catch(handleFlowError(router, "registration", setFlow, t));
+};
+
 const oryGetSettingsFlow = ({ router, setFlow, t }) => {
     return ory
         .initializeSelfServiceSettingsFlowForBrowsers()
@@ -113,4 +121,5 @@ export {
     orySubmitLogin,
     oryGetSettingsFlow,
     orySubmitSettings,
+    oryGetRegistrationFlow,
 };
