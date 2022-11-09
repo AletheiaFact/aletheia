@@ -36,7 +36,6 @@ describe("Create personality and claim", () => {
         cy.get(locators.floatButton.FLOAT_BUTTON).should("be.visible").click();
         cy.get(locators.floatButton.ADD_CLAIM).should("be.visible").click();
 
-        cy.get(locators.claim.BTN_ADD_SPEECH).should("be.visible").click();
         cy.get(locators.claim.BTN_SELECT_PERSONALITY)
             .should("be.visible")
             .click();
