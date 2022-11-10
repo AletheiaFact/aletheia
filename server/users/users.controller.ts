@@ -64,9 +64,7 @@ export class UsersController {
                 throw new ConflictException(error.message);
             }
             // Problems saving in database
-            throw new UnprocessableEntityException({
-                message: error.message,
-            });
+            throw new UnprocessableEntityException(error.message);
         }
     }
 

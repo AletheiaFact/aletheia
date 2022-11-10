@@ -20,21 +20,7 @@ const getById = (id, params = {}) => {
         });
 };
 
-const login = (params, t) => {
-    return request
-        .post(`/signin`, { ...params }, { withCredentials: true })
-        .then((response) => {
-            return { login: true, ...response };
-        })
-        .catch((e) => {
-            const response = e?.response?.data || {
-                message: t("login:failedMessage"),
-            };
-            return { login: false, ...response };
-        });
-};
-
-const updatePassword = (params, t) => {
+const updatePassword = (params) => {
     return request
         .put(
             `/${params.userId}/password`,
@@ -87,12 +73,11 @@ const register = (params, t) => {
         });
 };
 
-const usersApi = {
-    login,
+const userApi = {
     updatePassword,
     getById,
     getUsers,
     register,
 };
 
-export default usersApi;
+export default userApi;
