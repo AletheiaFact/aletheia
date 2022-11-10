@@ -1,19 +1,18 @@
 import { Col, Row } from "antd";
 import React from "react";
+import SignUpForm from "./SignUpForm";
 
-import OryLoginForm from "./OryLoginForm";
-
-const LoginView = () => {
+const SignUpView = () => {
     return (
         <Row
             justify="center"
             style={{ marginTop: 45, height: "100%", padding: "24px" }}
         >
             <Col xs={22} sm={12}>
-                <OryLoginForm />
+                <SignUpForm />
             </Col>
         </Row>
     );
 };
 
-export default LoginView;
+export default SignUpView;
