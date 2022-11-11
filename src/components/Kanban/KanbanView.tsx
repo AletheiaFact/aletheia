@@ -4,7 +4,7 @@ import React from "react";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import KanbanCol from "./KanbanCol";
 
-const KanbanView = ({ userRole, isLoggedIn }) => {
+const KanbanView = () => {
     // Don't show unassigned and rejected column
     // because we don't save tasks in these states
     const states = Object.keys(ReviewTaskStates).filter(
@@ -28,8 +28,6 @@ const KanbanView = ({ userRole, isLoggedIn }) => {
                 {states.map((state) => {
                     return (
                         <KanbanCol
-                            isLoggedIn={isLoggedIn}
-                            userRole={userRole}
                             key={state}
                             state={ReviewTaskStates[state]}
                         />

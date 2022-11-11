@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 
 const { Text, Paragraph } = Typography;
 
-const KanbanCard = ({ reviewTask, userRole, isLoggedIn }) => {
+const KanbanCard = ({ reviewTask }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const goToClaimReview = () => {
@@ -70,14 +70,7 @@ const KanbanCard = ({ reviewTask, userRole, isLoggedIn }) => {
                         <Avatar.Group>
                             {reviewTask.usersName &&
                                 reviewTask.usersName.map((user, index) => {
-                                    return (
-                                        <UserTag
-                                            userRole={userRole}
-                                            isLoggedIn={isLoggedIn}
-                                            user={user}
-                                            key={index}
-                                        />
-                                    );
+                                    return <UserTag user={user} key={index} />;
                                 })}
                         </Avatar.Group>
                     </Col>
