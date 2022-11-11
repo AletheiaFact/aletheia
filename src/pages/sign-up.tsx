@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import LoginView from "../components/Login/LoginView";
 
-import SignUpView from "../components/Login/SignUpView";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 
@@ -14,7 +14,7 @@ const SignUpPage: NextPage = () => {
                 title={t("login:signup")}
                 description={t("login:signupFormHeader")}
             />
-            <SignUpView />
+            <LoginView isSignUp />
         </>
     );
 };

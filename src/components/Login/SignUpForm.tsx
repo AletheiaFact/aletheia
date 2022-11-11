@@ -1,79 +1,13 @@
-import {
-    SelfServiceLoginFlow,
-    SubmitSelfServiceLoginFlowBody,
-    SubmitSelfServiceLoginFlowWithPasswordMethodBody as ValuesType,
-} from "@ory/client";
-import { Form, message } from "antd";
+import { Form } from "antd";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { oryGetLoginFlow, orySubmitLogin } from "../../api/ory";
-import userApi from "../../api/userApi";
-import { getUiNode } from "../../lib/orysdk/utils";
+import React from "react";
 
 import Input from "../AletheiaInput";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
 
-const SignUpForm = () => {
+const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
     const { t } = useTranslation();
-    const [flow, setFlow] = useState<SelfServiceLoginFlow>();
-    const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter();
-
-    let flowValues: ValuesType = {
-        csrf_token: "",
-        method: "password",
-        password: "",
-        password_identifier: "",
-        identifier: "",
-    };
-
-    useEffect(() => {
-        oryGetLoginFlow({ router, setFlow, t });
-    }, []);
-
-    const onFinish = (values: any) => {
-        const { password, email, name } = values;
-        setIsLoading(true);
-        const payload = {
-            email,
-            password,
-            name,
-        };
-        userApi.register(payload, t).then((res) => {
-            if (!res?.error) {
-                initializeCsrf();
-                flowValues = {
-                    ...flowValues,
-                    password,
-                    password_identifier: email,
-                };
-                submitLogin(flowValues);
-            }
-            setIsLoading(false);
-        });
-    };
-
-    const onFinishFailed = (errorInfo) => {
-        if (typeof errorInfo === "string") {
-            message.error(errorInfo);
-        }
-        setIsLoading(false);
-    };
-
-    const initializeCsrf = () => {
-        const csrfNode = getUiNode(flow, "name", "csrf_token");
-        if (csrfNode) {
-            flowValues.csrf_token = csrfNode.value;
-        }
-    };
-
-    const submitLogin = (values: SubmitSelfServiceLoginFlowBody) => {
-        orySubmitLogin({ router, flow, setFlow, t, values }).then(() => {
-            setIsLoading(false);
-        });
-    };
 
     return (
         <div>
