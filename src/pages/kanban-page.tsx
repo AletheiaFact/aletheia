@@ -23,7 +23,11 @@ const KanbanPage: NextPage<{ isLoggedIn; userId; userRole; sitekey }> = (
     });
     return (
         <>
-            <KanbanView />;
+            <KanbanView
+                userRole={props.userRole}
+                isLoggedIn={props.isLoggedIn}
+            />
+            ;
             <AffixButton />
         </>
     );

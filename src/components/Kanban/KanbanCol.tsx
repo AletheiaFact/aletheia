@@ -18,9 +18,11 @@ const StyledColumn = styled.div`
 
 interface KanbanColProps {
     state: ReviewTaskStates;
+    userRole: string;
+    isLoggedIn: boolean;
 }
 
-const KanbanCol = ({ state }: KanbanColProps) => {
+const KanbanCol = ({ state, userRole, isLoggedIn }: KanbanColProps) => {
     const { t } = useTranslation();
     return (
         <StyledColumn
@@ -35,7 +37,13 @@ const KanbanCol = ({ state }: KanbanColProps) => {
                 title={t(`claimReviewTask:${state}`)}
                 apiCall={ClaimReviewTaskApi.getClaimReviewTasks}
                 filter={{ value: state }}
-                renderItem={(task) => <KanbanCard reviewTask={task} />}
+                renderItem={(task) => (
+                    <KanbanCard
+                        userRole={userRole}
+                        isLoggedIn={isLoggedIn}
+                        reviewTask={task}
+                    />
+                )}
                 emptyFallback={
                     <EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />
                 }
