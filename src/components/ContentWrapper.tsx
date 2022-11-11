@@ -34,6 +34,7 @@ const ContentWrapper = ({ children }) => {
         "claim-create",
         "claim",
         "claim-collection",
+        "admin-page",
     ];
 
     const layout = desktopReadyPages.some((page) =>

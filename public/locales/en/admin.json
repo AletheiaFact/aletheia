@@ -1,0 +1,12 @@
+{
+    "adminTitle": "Admin area",
+    "columnName": "Name",
+    "columnEmail": "Email",
+    "columnRole": "Role",
+    "columnEdit": "Edit",
+    "role-admin": "Admin",
+    "role-regular": "Regular",
+    "role-fact-checker": "Fact-checker",
+    "editDrawerTitle": "Editing user info",
+    "saveButtonLabel": "Save"
+}

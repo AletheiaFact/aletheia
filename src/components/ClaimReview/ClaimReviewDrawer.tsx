@@ -1,16 +1,16 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Col, Drawer, Row } from "antd";
+import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { ReviewTaskMachineProvider } from "../../Context/ReviewTaskMachineProvider";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
-import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
 
 import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";
+import LargeDrawer from "../LargeDrawer";
 
 const ClaimReviewDrawer = () => {
     const dispatch = useDispatch();
@@ -39,17 +39,9 @@ const ClaimReviewDrawer = () => {
     const href = `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
 
     return (
-        <Drawer
+        <LargeDrawer
             visible={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
-            width={vw?.sm ? "100%" : "60%"}
-            height={vw?.sm ? "85%" : "100%"}
-            placement={vw?.sm ? "bottom" : "right"}
-            bodyStyle={{ padding: 0 }}
-            drawerStyle={{
-                backgroundColor: colors.lightGray,
-            }}
-            closable={false}
         >
             {personality && claim && sentence && data_hash ? (
                 <ReviewTaskMachineProvider data_hash={data_hash}>
@@ -95,7 +87,7 @@ const ClaimReviewDrawer = () => {
             ) : (
                 <Loading />
             )}
-        </Drawer>
+        </LargeDrawer>
     );
 };
 

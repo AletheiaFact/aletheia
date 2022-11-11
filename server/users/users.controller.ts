@@ -1,4 +1,13 @@
-import { Controller, Get, Header, Put, Query, Req, Res } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Header,
+    Put,
+    Query,
+    Req,
+    Res,
+    UseGuards,
+} from "@nestjs/common";
 import { Request, Response } from "express";
 import { UsersService } from "./users.service";
 import { parse } from "url";
@@ -7,6 +16,8 @@ import { ConfigService } from "@nestjs/config";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { BaseRequest } from "../types";
 import { Types } from "mongoose";
+import { AbilitiesGuard } from "../ability/abilities.guard";
+import { CheckAbilities, AdminUserAbility } from "../ability/ability.decorator";
 
 @Controller()
 export class UsersController {
@@ -29,6 +40,16 @@ export class UsersController {
                 "/login",
                 Object.assign(parsedUrl.query, { authType })
             );
+    }
+
+    @Get("admin")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
+    public async admin(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/admin-page", Object.assign(parsedUrl.query));
     }
 
     @Put("api/user/:id/password")
