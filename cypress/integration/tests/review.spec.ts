@@ -71,7 +71,7 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.BTN_FULL_REVIEW)
             .should("be.enabled")
             .click();
-        cy.get(locators.claimReview.BTN_FULL_REVIEW).should("not.exist");
+        cy.get(locators.claimReview.INPUT_REPORT).should("exist");
     });
 
     it("should be able to submit full review fields", () => {

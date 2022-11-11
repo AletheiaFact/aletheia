@@ -21,9 +21,7 @@ function Banner() {
                         );
                     }}
                     type={ButtonType.blue}
-                    target="_blank"
-                    rel="noreferrer"
-                    href={t("common:registrationLink")}
+                    href={"sign-up"}
                     className="cta-registration-button"
                     rounded="true"
                     style={{

@@ -59,9 +59,7 @@ function CTARegistration() {
                     trackUmamiEvent("cta-registration-button", "registration");
                 }}
                 type={ButtonType.white}
-                target="_blank"
-                rel="noreferrer"
-                href={t("common:registrationLink")}
+                href={"/sign-up"}
                 className="CTA-registration-button"
                 rounded="true"
                 style={{
