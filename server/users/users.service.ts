@@ -28,7 +28,6 @@ export class UsersService {
 
     async register(user) {
         const newUser = new this.UserModel(user);
-
         if (!newUser.oryId) {
             this.logger.log("No user id provided, creating a new ory identity");
             const { data: oryUser } = await this.oryService.createIdentity(
@@ -38,20 +37,14 @@ export class UsersService {
             );
             newUser.oryId = oryUser.id;
         } else {
-            this.logger.log("User id provided, updating a ory identity");
+            this.logger.log("User id provided, updating an ory identity");
             await this.oryService.updateIdentity(
                 newUser,
                 user.password,
                 user.role
             );
         }
-        try {
-            // @ts-ignore
-            return await newUser.save();
-        } catch (e) {
-            this.logger.error(e);
-            this.logger.error(`Error registering user ${user.email}`);
-        }
+        return await newUser.save();
     }
 
     async getById(userId) {

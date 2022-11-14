@@ -1,11 +1,15 @@
 import {
+    Body,
+    ConflictException,
     Controller,
     Get,
     Header,
+    Post,
     Put,
     Query,
     Req,
     Res,
+    UnprocessableEntityException,
     UseGuards,
 } from "@nestjs/common";
 import { Request, Response } from "express";
@@ -16,6 +20,7 @@ import { ConfigService } from "@nestjs/config";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { BaseRequest } from "../types";
 import { Types } from "mongoose";
+import { CreateUserDTO } from "./dto/create-user.dto";
 import { AbilitiesGuard } from "../ability/abilities.guard";
 import { CheckAbilities, AdminUserAbility } from "../ability/ability.decorator";
 
@@ -29,7 +34,7 @@ export class UsersController {
 
     @IsPublic()
     @Get("login")
-    public async personalityList(@Req() req: Request, @Res() res: Response) {
+    public async login(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const authType = this.configService.get<string>("authentication_type");
         await this.viewService
@@ -40,6 +45,30 @@ export class UsersController {
                 "/login",
                 Object.assign(parsedUrl.query, { authType })
             );
+    }
+
+    @IsPublic()
+    @Get("sign-up")
+    public async signUp(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/sign-up", Object.assign(parsedUrl.query));
+    }
+
+    @IsPublic()
+    @Post("api/user/register")
+    public async register(@Body() createUserDto: CreateUserDTO) {
+        try {
+            return await this.usersService.register(createUserDto);
+        } catch (error) {
+            if (error.response?.status === 409) {
+                // Ory identity already exists
+                throw new ConflictException(error.message);
+            }
+            // Problems saving in database
+            throw new UnprocessableEntityException(error.message);
+        }
     }
 
     @Get("admin")
