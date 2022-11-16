@@ -41,7 +41,7 @@ const OryProfileView = ({ user }) => {
 
     const onSubmit = (values: ValuesType) => {
         orySubmitSettings({ router, flow, setFlow, t, values });
-        userApi.updatePassword({ userId: user._id }).then(() => {
+        userApi.updatePassword().then(() => {
             setIsLoading(false);
         });
     };

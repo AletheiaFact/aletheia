@@ -29,6 +29,13 @@ export default class OryService {
             url,
             schema_id,
         } = this.configService.get("ory");
+        const credentials = password
+            ? {
+                  password: {
+                      config: { password },
+                  },
+              }
+            : {};
         return axios({
             method: "put",
             url: `${url}/${this.adminEndpoint}/identities/${user.oryId}`,
@@ -39,11 +46,7 @@ export default class OryService {
                     user_id: user._id,
                     role,
                 },
-                credentials: {
-                    password: {
-                        config: { password },
-                    },
-                },
+                credentials,
             },
             headers: { Authorization: `Bearer ${token}` },
         });

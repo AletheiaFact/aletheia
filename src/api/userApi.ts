@@ -20,13 +20,9 @@ const getById = (id, params = {}) => {
         });
 };
 
-const updatePassword = (params) => {
+const updatePassword = () => {
     return request
-        .put(
-            `/${params.userId}/password`,
-            { ...params },
-            { withCredentials: true }
-        )
+        .put(`password-change`)
         .then((response) => {
             return response?.data;
         })
@@ -73,11 +69,25 @@ const register = (params, t) => {
         });
 };
 
+const updateRole = (params: { userId: string; role: string }, t) => {
+    return request
+        .put(`/update-role`, { role: params.role, id: params.userId })
+        .then((response) => {
+            message.success(t("admin:roleUpdated"));
+            return response?.data;
+        })
+        .catch((e) => {
+            message.error(t("admin:roleUpdateFailed"));
+            return e?.response?.data;
+        });
+};
+
 const userApi = {
     updatePassword,
     getById,
     getUsers,
     register,
+    updateRole,
 };
 
 export default userApi;
