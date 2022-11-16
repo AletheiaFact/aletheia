@@ -86,6 +86,11 @@ const AdminView = () => {
                         onPageSizeChange={setRowsPerPage}
                         getRowId={(row) => row._id}
                         autoHeight
+                        sx={{
+                            "& .MuiTablePagination-toolbar p": {
+                                marginBottom: 0,
+                            },
+                        }}
                     />
                 )}
             </Grid>
