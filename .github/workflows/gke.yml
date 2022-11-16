@@ -62,7 +62,7 @@ jobs:
           sed -i "s/ORY_ACCESS_TOKEN_STUB/$ORY_ACCESS_TOKEN/g" deployment.yml
 
       # Setup gcloud CLI
-      - uses: google-github-actions/setup-gcloud@main
+      - uses: google-github-actions/setup-gcloud@v0.6.2
         with:
           version: "270.0.0"
           service_account_email: ${{ secrets.GKE_EMAIL }}
