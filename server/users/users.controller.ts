@@ -76,9 +76,23 @@ export class UsersController {
     @CheckAbilities(new AdminUserAbility())
     public async admin(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const users = await this.usersService.findAll({
+            searchName: "",
+            project: {
+                _id: 1,
+                email: 1,
+                name: 1,
+                role: 1,
+            },
+        });
         await this.viewService
             .getNextServer()
-            .render(req, res, "/admin-page", Object.assign(parsedUrl.query));
+            .render(
+                req,
+                res,
+                "/admin-page",
+                Object.assign(parsedUrl.query, { users })
+            );
     }
 
     @Put("api/user/:id/password")
@@ -90,6 +104,25 @@ export class UsersController {
                     res.status(200).json({
                         success: true,
                         message: "Password reset successful",
+                    });
+                })
+                .catch((e) => {
+                    res.status(500).json({ message: e.message });
+                });
+        } catch (e) {
+            res.status(500).json({ message: e.message });
+        }
+    }
+
+    @Put("api/user/:id/role")
+    async updateRole(@Req() req: BaseRequest, @Res() res) {
+        try {
+            this.usersService
+                .updateUserRole(Types.ObjectId(req.params.id), req.body.role)
+                .then(() => {
+                    res.status(200).json({
+                        success: true,
+                        message: "Role updated successfully",
                     });
                 })
                 .catch((e) => {

@@ -1,4 +1,4 @@
-import { EditFilled } from "@ant-design/icons";
+import { EditFilled, EditOutlined } from "@ant-design/icons";
 import { Grid } from "@mui/material";
 import {
     DataGrid,
@@ -11,18 +11,19 @@ import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-import { startEditingUser } from "../../atoms/userEdit";
-import { Roles } from "../../types/enums";
+import { startEditingUser, atomUserList } from "../../atoms/userEdit";
 import { User } from "../../types/User";
 
 const AdminView = () => {
     const { t } = useTranslation();
     // this is a write only atom, so we don't need to use the value
     const [, startEditing] = useAtom(startEditingUser);
+    const [userList] = useAtom(atomUserList);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const handleEdit = React.useCallback(
-        (user: User) => () => {
-            startEditing(user);
+        (userId) => () => {
+            startEditing(userId);
         },
         [startEditing]
     );
@@ -54,8 +55,8 @@ const AdminView = () => {
                 headerName: t("admin:columnEdit"),
                 getActions: (params: GridRowParams) => [
                     <GridActionsCellItem
-                        icon={<EditFilled color="primary" />}
-                        onClick={handleEdit(params.row as User)}
+                        icon={<EditOutlined />}
+                        onClick={handleEdit(params.id)}
                         label="Delete"
                     />,
                 ],
@@ -63,69 +64,6 @@ const AdminView = () => {
         ],
         [handleEdit, t]
     );
-
-    const rows: User[] = [
-        {
-            _id: "1",
-            name: "Snow",
-            email: "Jon.Snow@aletheiafact.org",
-            role: Roles.Admin,
-        },
-        {
-            _id: "2",
-            name: "Lannister",
-            email: "Cersei.Lannister@aletheiafact.org",
-            role: Roles.Regular,
-        },
-        {
-            _id: "3",
-            name: "Lannister",
-            email: "Jaime.Lannister@aletheiafact.org",
-            role: Roles.Regular,
-        },
-        {
-            _id: "4",
-            name: "Stark",
-            email: "Arya.Stark@aletheiafact.org",
-            role: Roles.Regular,
-        },
-        {
-            _id: "5",
-            name: "Targaryen",
-            email: "Daenerys.Targaryen@aletheiafact.org",
-            role: Roles.Admin,
-        },
-        {
-            _id: "6",
-            name: "Melisandre",
-            email: "Melisandre@aletheiafact.org",
-            role: Roles.FactChecker,
-        },
-        {
-            _id: "7",
-            name: "Clifford",
-            email: "Ferrara.Clifford@aletheiafact.org",
-            role: Roles.FactChecker,
-        },
-        {
-            _id: "8",
-            name: "Frances",
-            email: "Rossini.Frances@aletheiafact.org",
-            role: Roles.Regular,
-        },
-        {
-            _id: "9",
-            name: "Roxie",
-            email: "Harvey.Roxie@aletheiafact.org",
-            role: Roles.Regular,
-        },
-        {
-            _id: "10",
-            name: "Byron",
-            email: "Byron@aletheiafact.org",
-            role: Roles.Regular,
-        },
-    ];
 
     return (
         <Grid
@@ -139,13 +77,17 @@ const AdminView = () => {
                 <h2>{t("admin:adminTitle")}</h2>
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    pageSize={10}
-                    getRowId={(row) => row._id}
-                    autoHeight
-                />
+                {userList && (
+                    <DataGrid
+                        rows={userList}
+                        columns={columns}
+                        pageSize={rowsPerPage}
+                        rowsPerPageOptions={[5, 10, 50]}
+                        onPageSizeChange={setRowsPerPage}
+                        getRowId={(row) => row._id}
+                        autoHeight
+                    />
+                )}
             </Grid>
         </Grid>
     );

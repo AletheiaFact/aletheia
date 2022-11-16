@@ -8,5 +8,7 @@
     "role-regular": "Regular",
     "role-fact-checker": "Checador",
     "editDrawerTitle": "Editando dados do usuário",
-    "saveButtonLabel": "Salvar"
+    "saveButtonLabel": "Salvar",
+    "roleUpdated": "Papel atualizado com sucesso",
+    "roleUpdateFailed": "Falha ao atualizar o papel"
 }

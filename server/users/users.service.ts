@@ -14,7 +14,7 @@ export class UsersService {
     ) {}
 
     async findAll(userQuery): Promise<User[]> {
-        const { searchName, filterOutRoles } = userQuery;
+        const { searchName, filterOutRoles, project } = userQuery;
         return this.UserModel.aggregate([
             {
                 $match: {
@@ -22,7 +22,7 @@ export class UsersService {
                     role: { $nin: [...(filterOutRoles || []), null] },
                 },
             },
-            { $project: { _id: 1, name: 1 } },
+            { $project: project || { _id: 1, name: 1 } },
         ]);
     }
 
@@ -60,5 +60,14 @@ export class UsersService {
             this.logger.log(`User ${user._id} changed first password`);
             user.save();
         }
+    }
+
+    async updateUserRole(userId, role) {
+        const user = await this.getById(userId);
+        user.role = role;
+
+        this.oryService.updateIdentity(user, null, role);
+        this.logger.log(`Changed user ${user._id} role to ${role}`);
+        user.save();
     }
 }

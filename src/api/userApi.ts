@@ -73,11 +73,25 @@ const register = (params, t) => {
         });
 };
 
+const updateRole = (params: { userId: string; role: string }, t) => {
+    return request
+        .put(`/${params.userId}/role`, { role: params.role })
+        .then((response) => {
+            message.success(t("admin:roleUpdated"));
+            return response?.data;
+        })
+        .catch((e) => {
+            message.error(t("admin:roleUpdateFailed"));
+            return e?.response?.data;
+        });
+};
+
 const userApi = {
     updatePassword,
     getById,
     getUsers,
     register,
+    updateRole,
 };
 
 export default userApi;

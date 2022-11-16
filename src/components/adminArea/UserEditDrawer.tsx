@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import LargeDrawer from "../LargeDrawer";
 import { useAtom } from "jotai";
-import { isUserEditDrawerOpen, userBeingEdited } from "../../atoms/userEdit";
+import {
+    isUserEditDrawerOpen,
+    finishEditingUser,
+    userBeingEdited,
+} from "../../atoms/userEdit";
 import {
     Button,
     Divider,
@@ -14,23 +18,31 @@ import {
 import { useTranslation } from "next-i18next";
 import { Roles } from "../../types/enums";
 import Label from "../Label";
+import userApi from "../../api/userApi";
 
 const UserEditDrawer = () => {
-    const [visible, setVisible] = useAtom(isUserEditDrawerOpen);
-    const [user] = useAtom(userBeingEdited);
     const { t } = useTranslation();
-    const [userRole, setUserRole] = useState(user?.role || Roles.Regular);
+    const [visible, setVisible] = useAtom(isUserEditDrawerOpen);
+    const [currentUser] = useAtom(userBeingEdited);
+    const [, finishEditing] = useAtom(finishEditingUser);
+    const [userRole, setUserRole] = useState(
+        currentUser?.role || Roles.Regular
+    );
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserRole(event.target.value as Roles);
     };
 
     useEffect(() => {
-        setUserRole(user?.role || Roles.Regular);
-    }, [user]);
+        setUserRole(currentUser?.role || Roles.Regular);
+    }, [currentUser]);
 
     const handleClickSave = () => {
-        setVisible(false);
+        userApi
+            .updateRole({ userId: currentUser?._id, role: userRole }, t)
+            .then(() => {
+                finishEditing({ ...currentUser, role: userRole });
+            });
     };
 
     return (
@@ -50,7 +62,7 @@ const UserEditDrawer = () => {
                 <Grid item xs={10}>
                     <h2>{t("admin:editDrawerTitle")}</h2>
                     <h3>
-                        {user?.name} - {user?.email}
+                        {currentUser?.name} - {currentUser?.email}
                     </h3>
                     <Divider />
                 </Grid>
