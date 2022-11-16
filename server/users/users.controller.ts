@@ -95,11 +95,11 @@ export class UsersController {
             );
     }
 
-    @Put("api/user/:id/password")
+    @Put("api/user/password-change")
     async changePassword(@Req() req: BaseRequest, @Res() res) {
         try {
             this.usersService
-                .registerPasswordChange(Types.ObjectId(req.params.id))
+                .registerPasswordChange(Types.ObjectId(req.user._id))
                 .then(() => {
                     res.status(200).json({
                         success: true,
@@ -114,11 +114,13 @@ export class UsersController {
         }
     }
 
-    @Put("api/user/:id/role")
+    @UseGuards(AbilitiesGuard)
+    @Put("api/user/update-role")
+    @CheckAbilities(new AdminUserAbility())
     async updateRole(@Req() req: BaseRequest, @Res() res) {
         try {
             this.usersService
-                .updateUserRole(Types.ObjectId(req.params.id), req.body.role)
+                .updateUserRole(Types.ObjectId(req.body.id), req.body.role)
                 .then(() => {
                     res.status(200).json({
                         success: true,

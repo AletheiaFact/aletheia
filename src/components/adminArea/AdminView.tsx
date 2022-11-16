@@ -1,4 +1,4 @@
-import { EditFilled, EditOutlined } from "@ant-design/icons";
+import EditIcon from "@mui/icons-material/Edit";
 import { Grid } from "@mui/material";
 import {
     DataGrid,
@@ -55,7 +55,7 @@ const AdminView = () => {
                 headerName: t("admin:columnEdit"),
                 getActions: (params: GridRowParams) => [
                     <GridActionsCellItem
-                        icon={<EditOutlined />}
+                        icon={<EditIcon color="primary" />}
                         onClick={handleEdit(params.id)}
                         label="Delete"
                     />,
