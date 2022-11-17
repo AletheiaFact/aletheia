@@ -1,31 +1,30 @@
-import { useSelector } from "@xstate/react";
 import { Col, Row } from "antd";
-import React, { useContext } from "react";
+import { useAtom } from "jotai";
+import React from "react";
 
-import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
+import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import {
-    notStartedSelector,
-    setupSpeechSelector,
-    setupImageSelector,
     addImageSelector,
-    claimDataSelector,
     addSpeechSelector,
+    notStartedSelector,
+    setupImageSelector,
+    setupSpeechSelector,
 } from "../../../machines/createClaim/selectors";
+import Loading from "../../Loading";
 import PersonalityCard from "../../Personality/PersonalityCard";
-import ClaimUploadImage from "./ClaimUploadImage";
 import ClaimCreate from "./ClaimCreate";
 import ClaimSelectPersonality from "./ClaimSelectPersonality";
 import ClaimSelectType from "./ClaimSelectType";
-import Loading from "../../Loading";
+import ClaimUploadImage from "./ClaimUploadImage";
 
 const CreateClaimView = () => {
-    const { machineService } = useContext(CreateClaimMachineContext);
-    const notStarted = useSelector(machineService, notStartedSelector);
-    const setupSpeech = useSelector(machineService, setupSpeechSelector);
-    const setupImage = useSelector(machineService, setupImageSelector);
-    const addImage = useSelector(machineService, addImageSelector);
-    const addSpeech = useSelector(machineService, addSpeechSelector);
-    const claimData = useSelector(machineService, claimDataSelector);
+    const [state] = useAtom(createClaimMachineAtom);
+    const notStarted = notStartedSelector(state);
+    const setupSpeech = setupSpeechSelector(state);
+    const setupImage = setupImageSelector(state);
+    const addImage = addImageSelector(state);
+    const addSpeech = addSpeechSelector(state);
+    const { claimData } = state.context;
     const isLoading = !(
         notStarted ||
         setupSpeech ||

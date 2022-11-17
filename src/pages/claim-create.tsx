@@ -1,15 +1,16 @@
+import { Provider as CreateClaimMachineProvider } from "jotai";
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useDispatch } from "react-redux";
 
+import { enableImageClaim as featureAtom } from "../atoms/featureFlags";
 import AffixButton from "../components/AffixButton/AffixButton";
 import CreateClaimView from "../components/Claim/CreateClaim/CreateClaimView";
 import Seo from "../components/Seo";
-import { CreateClaimMachineProvider } from "../Context/CreateClaimMachineProvider";
-import { GetLocale } from "../utils/GetLocale";
-import { useDispatch } from "react-redux";
-
+import { claimPersonality } from "../machines/createClaim/provider";
 import actions from "../store/actions";
+import { GetLocale } from "../utils/GetLocale";
 
 const ClaimCreatePage: NextPage<any> = ({
     sitekey,
@@ -21,8 +22,6 @@ const ClaimCreatePage: NextPage<any> = ({
     const dispatch = useDispatch();
     dispatch(actions.setLoginStatus(isLoggedIn));
     dispatch(actions.setSitekey(sitekey));
-    dispatch(actions.setFeatureFlags({ enableImageClaim }));
-
     return (
         <>
             <Seo
@@ -32,7 +31,11 @@ const ClaimCreatePage: NextPage<any> = ({
                 })}
             />
             <CreateClaimMachineProvider
-                context={{ claimData: { personality: personality } }}
+                //@ts-ignore
+                initialValues={[
+                    [claimPersonality, personality],
+                    [featureAtom, enableImageClaim],
+                ]}
             >
                 <CreateClaimView />
                 <AffixButton />

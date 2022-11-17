@@ -1,10 +1,5 @@
-import { Claim } from "../../types/Claim";
 import { ContentModelEnum } from "../../types/enums";
 import { CreateClaimStates } from "./types";
-
-const claimDataSelector = (state): Claim => {
-    return state.context.claimData;
-};
 
 const notStartedSelector = (state) => {
     return state.matches(CreateClaimStates.notStarted);
@@ -34,6 +29,5 @@ export {
     setupSpeechSelector,
     setupImageSelector,
     addImageSelector,
-    claimDataSelector,
     addSpeechSelector,
 };
