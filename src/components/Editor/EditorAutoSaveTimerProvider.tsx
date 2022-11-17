@@ -2,7 +2,9 @@ import React, { useCallback } from "react";
 import { useHelpers } from "@remirror/react";
 import claimCollectionApi from "../../api/claimCollectionApi";
 import { useTranslation } from "next-i18next";
-import { CallbackTimerProvider } from "./CallbackTimerProvider";
+import { Provider as CallbackTimerProvider } from "jotai";
+import { callbackTimerInitialConfig } from "../../machines/callbackTimer/provider";
+import { initialContext } from "../../machines/callbackTimer/context";
 
 export const EditorAutoSaveTimerProvider = ({
     claimCollectionId,
@@ -16,8 +18,16 @@ export const EditorAutoSaveTimerProvider = ({
         });
     }, [getJSON]);
 
+    const timerConfig = {
+        ...initialContext,
+        callbackFunction: autoSaveCallback,
+    };
+
     return (
-        <CallbackTimerProvider callback={autoSaveCallback}>
+        <CallbackTimerProvider
+            //@ts-ignore
+            initialValues={[[callbackTimerInitialConfig, timerConfig]]}
+        >
             {children}
         </CallbackTimerProvider>
     );

@@ -1,15 +1,15 @@
-import React, { useContext, useLayoutEffect, useState } from "react";
-import { GlobalStateContext } from "../Editor/CallbackTimerProvider";
-import { useActor } from "@xstate/react";
+import React, { useLayoutEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import { Timeline } from "antd";
 import { EditorClaimCardNodeType } from "../Editor/EditorClaimCard/EditorClaimCardExtension";
 import ClaimCollectionClaimCardWrapper from "./ClaimCollectionClaimCardWrapper";
 
+import { useAtom } from "jotai";
+import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
 const ClaimCollectionTimelineWrapper = ({ collections, isLive = false }) => {
     const [timelineData, setTimelineData] = useState(collections);
-    const { timerService } = useContext<any>(GlobalStateContext);
-    const [state]: any = useActor<any>(timerService);
+    const [state] = useAtom(callbackTimerAtom);
+
     const { t } = useTranslation();
 
     useLayoutEffect(() => {
