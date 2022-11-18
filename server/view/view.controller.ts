@@ -1,4 +1,12 @@
-import { Controller, Get, Res, Req, Optional, Header } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Res,
+    Req,
+    Optional,
+    Header,
+    Query,
+} from "@nestjs/common";
 import { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "./view.service";
@@ -103,5 +111,26 @@ export class ViewController {
         await this.viewService
             .getNextServer()
             .render(req, res, "/404-page", Object.assign(parsedUrl.query));
+    }
+
+    @IsPublic()
+    @Get("unauthorized")
+    @Header("Cache-Control", "max-age=86400")
+    public async acessDeniedPage(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Query() query: { originalUrl }
+    ) {
+        const parsedUrl = parse(req.url, true);
+        const originalUrl = query.originalUrl;
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/acess-denied-page",
+            Object.assign(parsedUrl.query, {
+                originalUrl,
+            })
+        );
     }
 }

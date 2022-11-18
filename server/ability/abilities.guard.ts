@@ -2,8 +2,8 @@ import { ForbiddenError } from "@casl/ability";
 import {
     CanActivate,
     ExecutionContext,
-    ForbiddenException,
     Injectable,
+    UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
@@ -50,7 +50,7 @@ export class AbilitiesGuard implements CanActivate {
             return true;
         } catch (error) {
             if (error instanceof ForbiddenError) {
-                throw new ForbiddenException(error.message);
+                throw new UnauthorizedException(error.message);
             }
         }
     }
