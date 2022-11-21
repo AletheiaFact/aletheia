@@ -115,7 +115,6 @@ export class ViewController {
 
     @IsPublic()
     @Get("unauthorized")
-    @Header("Cache-Control", "max-age=86400")
     public async acessDeniedPage(
         @Req() req: Request,
         @Res() res: Response,
