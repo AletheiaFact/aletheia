@@ -43,6 +43,7 @@ import { SearchModule } from "./search/search.module";
 import { FileManagementModule } from "./file-management/file-management.module";
 import { UnleashModule } from "nestjs-unleash";
 import { ClaimCollectionModule } from "./claim-collection/claim-collection.module";
+import { UnauthorizedExceptionFilter } from "./filters/unauthorized.filter";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -114,6 +115,10 @@ export class AppModule implements NestModule {
                 {
                     provide: APP_FILTER,
                     useClass: NotFoundFilter,
+                },
+                {
+                    provide: APP_FILTER,
+                    useClass: UnauthorizedExceptionFilter,
                 },
                 {
                     provide: APP_GUARD,
