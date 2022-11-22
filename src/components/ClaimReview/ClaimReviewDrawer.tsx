@@ -3,7 +3,7 @@ import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { ReviewTaskMachineProvider } from "../../Context/ReviewTaskMachineProvider";
+import { ReviewTaskMachineProvider } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
 import AletheiaButton, { ButtonType } from "../Button";

@@ -31,7 +31,7 @@ const getClaimReviewTasks = (options) => {
         });
 };
 
-const getMachineBySentenceHash = (params, t) => {
+const getMachineBySentenceHash = (params) => {
     return request
         .get(`/sentence/${params}`)
         .then((response) => {

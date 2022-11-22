@@ -1,25 +1,23 @@
 import { useSelector } from "@xstate/react";
-import { Col, Row } from "antd";
+import { Row } from "antd";
 import Text from "antd/lib/typography/Text";
 import { useTranslation } from "next-i18next";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
-import { ReviewTaskMachineContext } from "../../../Context/ReviewTaskMachineProvider";
+import { trackUmamiEvent } from "../../../lib/umami";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import getNextEvents from "../../../machines/reviewTask/getNextEvent";
 import getNextForm from "../../../machines/reviewTask/getNextForm";
+import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import {
     preloadedOptionsSelector,
     reviewDataSelector,
 } from "../../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../../store/store";
-import colors from "../../../styles/colors";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
-import DynamicInput from "../../Form/DynamicInput";
-import { trackUmamiEvent } from "../../../lib/umami";
 import DynamicForm from "../../Form/DynamicForm";
 
 const DynamicReviewTaskForm = ({ sentence_hash, personality, claim }) => {

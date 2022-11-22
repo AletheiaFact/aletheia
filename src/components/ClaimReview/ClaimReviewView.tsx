@@ -1,7 +1,7 @@
 import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
-import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { Roles } from "../../types/enums";
 import { reviewDataSelector } from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
@@ -54,8 +54,6 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
             />
             <SentenceReportView
                 context={review?.report || reviewData}
-                personality={personality}
-                claim={claim}
                 userIsNotRegular={userIsNotRegular}
                 userIsReviewer={userIsReviewer}
                 isHidden={review?.isHidden}
