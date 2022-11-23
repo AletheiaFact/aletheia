@@ -142,15 +142,16 @@ export class WikidataService {
             .get(`https://www.wikidata.org/w/api.php`, { params })
             .then((response) => {
                 const { search } = response && response.data;
-                return search.map((wbentity) => {
-                    if (!wbentity.label) {
-                        return;
-                    }
-                    return {
-                        name: wbentity.label,
-                        description: wbentity.description,
-                        wikidata: wbentity.id,
-                    };
+                return search.flatMap((wbentity) => {
+                    return wbentity.label
+                        ? [
+                              {
+                                  name: wbentity.label,
+                                  description: wbentity.description,
+                                  wikidata: wbentity.id,
+                              },
+                          ]
+                        : [];
                 });
             });
     }

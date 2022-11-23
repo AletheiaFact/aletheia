@@ -8,15 +8,6 @@ const nlp = require("compromise");
 nlp.extend(require("compromise-sentences"));
 nlp.extend(require("compromise-paragraphs"));
 
-/* TODO: regex for future rules
- * alphabets /([A-Za-z])/g;
- * prefixes /(Mr|St|Mrs|Ms|Dr)[.]/g;
- * phdRegex /Ph\.D\./g;
- * suffixes "(Inc|Ltd|Jr|Sr|Co)";
- * starters /(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)/g;
- * acronyms /([A-Z][.][A-Z][.](?:[A-Z][.])?)/g;
- * websites /[.](com|net|org|io|gov)/g; */
-
 @Injectable()
 export class ParserService {
     constructor(
