@@ -201,17 +201,6 @@ const DynamicReviewTaskForm = ({ sentence_hash, personality, claim }) => {
                             ref={recaptchaRef}
                         />
                     )}
-                    {!recaptchaString && (
-                        <h1
-                            style={{
-                                color: "red",
-                                fontSize: "14px",
-                                fontFamily: "sans-serif",
-                            }}
-                        >
-                            {t("common:requiredFieldError")}
-                        </h1>
-                    )}
                 </>
             )}
             <Row
