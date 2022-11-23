@@ -75,7 +75,7 @@ export const EditorClaimCard = ({
         if (claimId) {
             claimApi.getById(claimId, t).then(setClaim);
         }
-    }, [personalityApi, claimApi]);
+    }, [personalityId, claimId, t]);
 
     /**
      * If claim changes from undefined/null to an existing object

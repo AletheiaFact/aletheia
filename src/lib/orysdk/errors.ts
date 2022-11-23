@@ -18,11 +18,8 @@ export function handleGetFlowError<S>(
 ) {
     return async (err: AxiosError) => {
         switch (err.response?.data.error?.id) {
-            case "session_refresh_required":
+            case "session_refresh_required" || "session_aal2_required":
                 // set refresh to true so we can redirect back to profile after login
-                window.location.href = err.response?.data.redirect_browser_to;
-                return;
-            case "session_aal2_required":
                 // 2FA is enabled and enforced, but user did not perform 2fa yet
                 window.location.href = err.response?.data.redirect_browser_to;
                 return;

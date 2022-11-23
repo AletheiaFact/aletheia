@@ -1,4 +1,4 @@
-export default {
+const statsReviewColors = {
     "not-fact": "#029393",
     trustworthy: "#00AE00",
     "trustworthy-but": "#7BA91E",
@@ -9,3 +9,4 @@ export default {
     exaggerated: "#DB9F0D",
     unverifiable: "#EF5C2E",
 };
+export default statsReviewColors;

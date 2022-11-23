@@ -1,9 +1,4 @@
-import React, {
-    useState,
-    useEffect,
-    forwardRef,
-    useImperativeHandle,
-} from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useAppSelector } from "../store/store";
 const recaptchaRef = React.createRef<ReCAPTCHA>();
@@ -23,20 +18,15 @@ const AletheiaCaptcha = forwardRef(({ onChange }: CaptchaProps, ref) => {
     }));
 
     const { sitekey } = useAppSelector((state) => state);
-    const [captchaString, setCaptchaString] = useState("");
 
     const handleChangeCaptcha = async () => {
         const recaptchaString: string = recaptchaRef.current.getValue();
-        setCaptchaString(recaptchaString);
+        onChange(recaptchaString);
     };
 
     const onExpiredCaptcha = () => {
-        setCaptchaString("");
+        onChange("");
     };
-
-    useEffect(() => {
-        onChange(captchaString);
-    }, [captchaString]);
 
     return (
         <ReCAPTCHA

@@ -14,7 +14,6 @@ import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 import { CaptchaService } from "../captcha/captcha.service";
-import { IsPublic } from "../decorators/is-public.decorator";
 import { parse } from "url";
 import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";

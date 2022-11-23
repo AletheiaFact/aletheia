@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element  */
+/* eslint-disable jsx-a11y/anchor-has-content */
 import { SubmitSelfServiceSettingsFlowWithTotpMethodBody as ValuesType } from "@ory/client";
 import { Form, message, Row, Typography } from "antd";
 import { Trans, useTranslation } from "next-i18next";
@@ -134,6 +136,7 @@ export const Totp = ({ flow, setFlow }) => {
                                 alignItems: "center",
                                 marginBottom: "20px",
                             }}
+                            alt="TOTP QR code"
                             src={imgSource}
                         />
                         <p>{t("profile:totpCodeDescription")}</p>

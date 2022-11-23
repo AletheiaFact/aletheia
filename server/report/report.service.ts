@@ -18,16 +18,12 @@ export class ReportService {
         if (Object.values(ClassificationEnum).includes(report.classification)) {
             const newReport = new this.ReportModel(report);
             if (report.sources && Array.isArray(report.sources)) {
-                try {
-                    for (let i = 0; i < report.sources.length; i++) {
-                        await this.sourceService.create({
-                            link: report.sources[i],
-                            targetId: newReport.id,
-                            targetModel: SourceTargetModel.ClaimReview,
-                        });
-                    }
-                } catch (e) {
-                    throw e;
+                for (const source of report.sources) {
+                    await this.sourceService.create({
+                        link: source,
+                        targetId: newReport.id,
+                        targetModel: SourceTargetModel.ClaimReview,
+                    });
                 }
             }
             newReport.save();

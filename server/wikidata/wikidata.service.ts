@@ -16,17 +16,19 @@ const languageVariantMap = {
 export class WikidataService {
     constructor(
         @InjectModel(WikidataCache.name)
-        private WikidataCache: Model<WikidataCacheDocument>
+        private wikidataCache: Model<WikidataCacheDocument>
     ) {}
 
     async fetchProperties(params) {
-        const wikidataCache = await this.WikidataCache.findOne({
-            wikidataId: params.wikidataId,
-            language: params.language,
-        }).exec();
+        const wikidataCache = await this.wikidataCache
+            .findOne({
+                wikidataId: params.wikidataId,
+                language: params.language,
+            })
+            .exec();
         if (!wikidataCache) {
             const props = await this.requestProperties(params);
-            const newWikidataCache = new this.WikidataCache({
+            const newWikidataCache = new this.wikidataCache({
                 ...params,
                 props,
             });

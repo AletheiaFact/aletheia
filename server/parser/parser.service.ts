@@ -4,29 +4,29 @@ import { ParagraphService } from "../paragraph/paragraph.service";
 import { SpeechService } from "../speech/speech.service";
 import { SpeechDocument } from "../speech/schemas/speech.schema";
 const md5 = require("md5");
-const nlp = require('compromise')
-nlp.extend(require('compromise-sentences'))
-nlp.extend(require('compromise-paragraphs'))
+const nlp = require("compromise");
+nlp.extend(require("compromise-sentences"));
+nlp.extend(require("compromise-paragraphs"));
 
-// TODO: regex for future rules
-// const alphabets = /([A-Za-z])/g;
-const prefixes = /(Mr|St|Mrs|Ms|Dr)[.]/g;
-const phdRegex = /Ph\.D\./g;
-// const suffixes = "(Inc|Ltd|Jr|Sr|Co)";
-// const starters = /(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)/g;
-// const acronyms = /([A-Z][.][A-Z][.](?:[A-Z][.])?)/g;
-// const websites = /[.](com|net|org|io|gov)/g;
+/* TODO: regex for future rules
+ * alphabets /([A-Za-z])/g;
+ * prefixes /(Mr|St|Mrs|Ms|Dr)[.]/g;
+ * phdRegex /Ph\.D\./g;
+ * suffixes "(Inc|Ltd|Jr|Sr|Co)";
+ * starters /(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)/g;
+ * acronyms /([A-Z][.][A-Z][.](?:[A-Z][.])?)/g;
+ * websites /[.](com|net|org|io|gov)/g; */
 
 @Injectable()
 export class ParserService {
     constructor(
         private speechService: SpeechService,
         private paragraphService: ParagraphService,
-        private sentenceService: SentenceService,
+        private sentenceService: SentenceService
     ) {}
     paragraphSequence: number;
     sentenceSequence: number;
-    nlpOptions: object = { trim:true };
+    nlpOptions: object = { trim: true };
 
     async parse(content: string): Promise<SpeechDocument> {
         this.paragraphSequence = 0;
@@ -34,7 +34,7 @@ export class ParserService {
         const result = [];
         const nlpContent = nlp(content);
         const paragraphs = nlpContent.paragraphs();
-        const text = nlpContent.text(this.nlpOptions)
+        const text = nlpContent.text(this.nlpOptions);
 
         paragraphs.forEach((paragraph) => {
             const paragraphId = this.createParagraphId();
@@ -51,27 +51,31 @@ export class ParserService {
                         props: {
                             id: paragraphId,
                         },
-                        content: sentences.map((sentence) => this.parseSentence(sentence, paragraphDataHash)),
+                        content: sentences.map((sentence) =>
+                            this.parseSentence(sentence, paragraphDataHash)
+                        ),
                     })
-                )
+                );
             }
-        })
+        });
 
-        return await Promise.all(result).then((object): Promise<SpeechDocument> => {
-            return this.speechService.create({ content: object })
-        })
+        return await Promise.all(result).then(
+            (object): Promise<SpeechDocument> => {
+                return this.speechService.create({ content: object });
+            }
+        );
     }
 
     postProcessSentences(sentences) {
         let newSentences = [];
-        sentences.forEach(sentence => {
+        sentences.forEach((sentence) => {
             const sentenceText = sentence.text(this.nlpOptions);
             // Extract semicolon sentences
             let semicolonSentences = sentenceText.split(";");
             if (sentenceText.includes(";")) {
                 semicolonSentences = semicolonSentences.map(
                     (semicolonSentence, index) => {
-                        return index !== (semicolonSentences.length - 1)
+                        return index !== semicolonSentences.length - 1
                             ? `${semicolonSentence};`.trim()
                             : semicolonSentence.trim();
                     }

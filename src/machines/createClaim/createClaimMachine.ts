@@ -1,4 +1,4 @@
-import { createMachine, interpret } from "xstate";
+import { createMachine } from "xstate";
 import {
     CreateClaimEvents as Events,
     CreateClaimStates as States,

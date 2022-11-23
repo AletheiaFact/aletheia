@@ -45,7 +45,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
             let textContent = "";
             paragraphs.forEach((paragraph) => {
                 paragraph.content.forEach((sentence) => {
-                    return (textContent += `${sentence.content} `);
+                    textContent += `${sentence.content} `;
                 });
             });
             setClaimContent(textContent.trim());

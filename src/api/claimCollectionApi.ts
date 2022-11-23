@@ -5,7 +5,7 @@ const request = axios.create({
     baseURL: `/api/claim-collection`,
 });
 
-const getById = (id, t, params = {}) => {
+const getById = (id, params = {}) => {
     return request
         .get(`${id}`, {
             params,

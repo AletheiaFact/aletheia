@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import { useTranslation } from "next-i18next";
 import claimCollectionApi from "../../api/claimCollectionApi";
 
 import ClaimCollectionTimelineWrapper from "./ClaimCollectionTimelineWrapper";
@@ -13,16 +12,14 @@ import { callbackTimerInitialConfig } from "../../machines/callbackTimer/provide
 import { Provider as CallbackTimerProvider } from "jotai";
 
 const ClaimCollectionView = ({ claimCollection }) => {
-    const { t } = useTranslation();
     const collections = claimCollection?.collections;
     const lastCollectionItem = collections
         ? collections[collections.length - 1]
         : [];
     const updateTimeline = useCallback(
         (context: any) => {
-            // TODO: send the last collection item id to load only the necessary data
             return claimCollectionApi
-                .getById(claimCollection?._id, t, {
+                .getById(claimCollection?._id, {
                     reverse: true,
                     lastCollectionItem:
                         context.lastCollectionItemId ||
