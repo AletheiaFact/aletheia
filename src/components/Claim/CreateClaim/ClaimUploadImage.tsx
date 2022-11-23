@@ -11,8 +11,9 @@ import ImageApi from "../../../api/image";
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
+import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaInput from "../../AletheiaInput";
-import AletheiaButton from "../../Button";
+import AletheiaButton, { ButtonType } from "../../Button";
 import DatePickerInput from "../../Form/DatePickerInput";
 import ImageUpload from "../../ImageUpload";
 import Label from "../../Label";
@@ -30,7 +31,8 @@ const ClaimUploadImage = () => {
     const [imageError, setImageError] = useState(false);
     const [date, setDate] = useState("");
     const [, send] = useAtom(createClaimMachineAtom);
-    //TODO: Add recaptcha validation
+    const [recaptcha, setRecaptcha] = useState("");
+    const disableSubmit = !recaptcha;
 
     const disabledDate = (current) => {
         return current && current > moment().endOf("day");
@@ -53,6 +55,7 @@ const ClaimUploadImage = () => {
                         sources,
                         title,
                         content: imagesUploaded[0],
+                        recaptcha,
                     };
 
                     send({
@@ -71,6 +74,10 @@ const ClaimUploadImage = () => {
     };
     const handleAntdChange = (newFileList) => {
         setFileList(newFileList);
+    };
+
+    const onChangeCaptcha = (captchaString) => {
+        setRecaptcha(captchaString);
     };
 
     return (
@@ -163,7 +170,7 @@ const ClaimUploadImage = () => {
                     placeholder={t("sourceForm:placeholder")}
                     sources={sources}
                 />
-                <Row style={{ marginTop: "24px" }}>
+                <Row>
                     <Label required>{t("claimForm:fileInputButton")}</Label>
                     <ImageUpload onChange={handleAntdChange} />
                     {imageError && (
@@ -171,6 +178,17 @@ const ClaimUploadImage = () => {
                             {t("common:requiredFieldError")}
                         </Text>
                     )}
+                </Row>
+
+                <Row
+                    style={{
+                        margin: "24px 0",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-evenly",
+                    }}
+                >
+                    <AletheiaCaptcha onChange={onChangeCaptcha} />
                 </Row>
 
                 <Col
@@ -182,9 +200,16 @@ const ClaimUploadImage = () => {
                     }}
                 >
                     <AletheiaButton
+                        type={ButtonType.white}
+                        onClick={() => router.back()}
+                    >
+                        {t("claimForm:cancelButton")}
+                    </AletheiaButton>
+                    <AletheiaButton
                         style={{ textTransform: "uppercase" }}
                         htmlType="submit"
                         loading={isLoading}
+                        disabled={disableSubmit}
                     >
                         {t("claimForm:uploadImageButton")}
                     </AletheiaButton>

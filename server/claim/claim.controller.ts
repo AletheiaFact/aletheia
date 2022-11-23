@@ -110,6 +110,12 @@ export class ClaimController {
         if (!this.isEnabledImageClaim()) {
             throw new NotFoundException();
         }
+        const validateCaptcha = await this.captchaService.validate(
+            createClaimDTO.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
         return this.claimService.create(createClaimDTO);
     }
 
