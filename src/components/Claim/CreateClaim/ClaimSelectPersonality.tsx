@@ -1,10 +1,8 @@
-import { useSelector } from "@xstate/react";
 import { Col } from "antd";
+import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import { useContext } from "react";
 
-import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
-import { claimDataSelector } from "../../../machines/createClaim/selectors";
+import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import { ContentModelEnum } from "../../../types/enums";
@@ -12,27 +10,29 @@ import AletheiaButton from "../../Button";
 import PersonalityCreateSearch from "../../Personality/PersonalityCreateSearch";
 
 const ClaimSelectPersonality = () => {
-    const { machineService } = useContext(CreateClaimMachineContext);
-    const claimData = useSelector(machineService, claimDataSelector);
+    const [state, send] = useAtom(createClaimMachineAtom);
+    const { claimData } = state.context;
     const { t } = useTranslation();
 
     const canContinueWithoutPersonality =
         claimData.contentModel === ContentModelEnum.Image;
 
     const selectPersonality = (personality) => {
-        machineService.send(CreateClaimEvents.addPersonality, {
+        send({
+            type: CreateClaimEvents.addPersonality,
             claimData: { personality },
         });
     };
 
     const continueWithPersonality = () => {
         if (claimData.personality) {
-            machineService.send(CreateClaimEvents.savePersonality);
+            send(CreateClaimEvents.savePersonality);
         }
     };
 
     const continueWithoutPersonality = () => {
-        machineService.send(CreateClaimEvents.noPersonality, {
+        send({
+            type: CreateClaimEvents.noPersonality,
             claimData: { personality: null },
         });
     };

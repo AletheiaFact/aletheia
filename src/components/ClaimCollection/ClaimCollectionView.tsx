@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "next-i18next";
 import claimCollectionApi from "../../api/claimCollectionApi";
-import { CallbackTimerProvider } from "../Editor/CallbackTimerProvider";
+
 import ClaimCollectionTimelineWrapper from "./ClaimCollectionTimelineWrapper";
 import ClaimCollectionHeader from "./ClaimCollectionHeader";
 import { Col, Row } from "antd";
@@ -9,6 +9,8 @@ import CTARegistration from "../Home/CTARegistration";
 import { useAppSelector } from "../../store/store";
 import VideoCTACard from "../VideoCTACard";
 import DonationCard from "../DonationCard";
+import { callbackTimerInitialConfig } from "../../machines/callbackTimer/provider";
+import { Provider as CallbackTimerProvider } from "jotai";
 
 const ClaimCollectionView = ({ claimCollection }) => {
     const { t } = useTranslation();
@@ -39,6 +41,11 @@ const ClaimCollectionView = ({ claimCollection }) => {
         [claimCollection?._id, lastCollectionItem]
     );
 
+    const timerConfig = {
+        stopped: !claimCollection.isLive,
+        interval: 10,
+        callbackFunction: updateTimeline,
+    };
     const { isLoggedIn } = useAppSelector((state) => ({
         isLoggedIn: state?.login,
     }));
@@ -46,9 +53,8 @@ const ClaimCollectionView = ({ claimCollection }) => {
     return (
         <>
             <CallbackTimerProvider
-                stopped={!claimCollection.isLive}
-                interval={30}
-                callback={updateTimeline}
+                //@ts-ignore
+                initialValues={[[callbackTimerInitialConfig, timerConfig]]}
             >
                 <Row
                     style={{

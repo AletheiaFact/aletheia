@@ -1,23 +1,23 @@
 import { FileOutlined, PictureOutlined } from "@ant-design/icons";
 import { Col } from "antd";
+import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import { useContext } from "react";
 
-import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
+import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import AletheiaButton from "../../Button";
 
 const ClaimSelectType = () => {
-    const { machineService } = useContext(CreateClaimMachineContext);
+    const [, send] = useAtom(createClaimMachineAtom);
     const { t } = useTranslation();
 
     const handleClickSpeech = () => {
-        machineService.send(CreateClaimEvents.startSpeech);
+        send(CreateClaimEvents.startSpeech);
     };
 
     const handleClickImage = () => {
-        machineService.send(CreateClaimEvents.startImage);
+        send(CreateClaimEvents.startImage);
     };
 
     return (

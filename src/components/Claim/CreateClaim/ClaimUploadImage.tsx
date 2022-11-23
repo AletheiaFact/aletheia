@@ -1,13 +1,14 @@
 import { Col, Form, Row } from "antd";
 import Text from "antd/lib/typography/Text";
 import { UploadFile } from "antd/lib/upload/interface";
+import { useAtom } from "jotai";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 import ImageApi from "../../../api/image";
-import { CreateClaimMachineContext } from "../../../Context/CreateClaimMachineProvider";
+import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import AletheiaInput from "../../AletheiaInput";
@@ -27,10 +28,10 @@ const ClaimUploadImage = () => {
     const [sources, setSources] = useState([""]);
     const [isLoading, setIsloading] = useState(false);
     const [imageError, setImageError] = useState(false);
-    const [date, setDate] = useState(moment());
+    const [date, setDate] = useState("");
+    const [, send] = useAtom(createClaimMachineAtom);
     //TODO: Add recaptcha validation
 
-    const { machineService } = useContext(CreateClaimMachineContext);
     const disabledDate = (current) => {
         return current && current > moment().endOf("day");
     };
@@ -54,7 +55,8 @@ const ClaimUploadImage = () => {
                         content: imagesUploaded[0],
                     };
 
-                    machineService.send(CreateClaimEvents.persist, {
+                    send({
+                        type: CreateClaimEvents.persist,
                         claimData,
                         t,
                         router,

@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import personalityApi from "../../api/personality";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+
 import claimApi from "../../api/claim";
+import personalityApi from "../../api/personality";
+import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
 import ClaimCard from "../Claim/ClaimCard";
 import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
-import { GlobalStateContext } from "../Editor/CallbackTimerProvider";
-import { useActor } from "@xstate/react";
 
 const ClaimCollectionClaimCardWrapper = ({ personalityId, claimId }) => {
     const [personality, setPersonality] = useState();
     const [claim, setClaim] = useState();
     const { t } = useTranslation();
-    const { timerService } = useContext<any>(GlobalStateContext);
-    const [state]: any = useActor<any>(timerService);
+    const [state] = useAtom(callbackTimerAtom);
 
     useLayoutEffect(() => {
         if (claimId) {

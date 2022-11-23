@@ -13,7 +13,7 @@ import {
 } from "./actions";
 import { CreateClaimContext } from "./context";
 
-export const createNewMachine = ({ value, context }) => {
+export const newCreateClaimMachine = ({ value, context }) => {
     return createMachine<
         CreateClaimContext,
         CreateClaimMachineEvents,
@@ -73,8 +73,4 @@ export const createNewMachine = ({ value, context }) => {
             },
         },
     });
-};
-
-export const createNewCreateClaimMachineService = (machine: any) => {
-    return interpret(createNewMachine(machine)).start();
 };

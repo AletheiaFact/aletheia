@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import React, { useContext, useEffect, useState } from "react";
 
 import ClaimReviewApi from "../../api/claimReviewApi";
-import { ReviewTaskMachineContext } from "../../Context/ReviewTaskMachineProvider";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { Roles } from "../../types/enums";
 import {
     crossCheckingSelector,

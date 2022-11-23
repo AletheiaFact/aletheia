@@ -8,7 +8,7 @@ import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
-import { ReviewTaskMachineProvider } from "../Context/ReviewTaskMachineProvider";
+import { ReviewTaskMachineProvider } from "../machines/reviewTask/ReviewTaskMachineProvider";
 import { ClassificationEnum } from "../types/enums";
 import actions from "../store/actions";
 import { ActionTypes } from "../store/types";

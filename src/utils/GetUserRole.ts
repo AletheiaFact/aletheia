@@ -5,11 +5,14 @@ export const GetUserRole = () => {
     return ory
         .toSession()
         .then((session) => {
-            return (
-                (session.data.identity.traits.role as Roles) || Roles.Regular
-            );
+            return {
+                role:
+                    (session.data.identity.traits.role as Roles) ||
+                    Roles.Regular,
+                isLoggedIn: true,
+            };
         })
         .catch(() => {
-            return Roles.Regular;
+            return { role: Roles.Regular, isLoggedIn: false };
         });
 };

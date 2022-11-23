@@ -22,7 +22,6 @@ export enum ActionTypes {
     SET_SELECTED_SENTENCE,
     SET_USER_ID,
     SET_SITEKEY,
-    SET_FEATURE_FLAGS,
 }
 
 export interface RootState {
@@ -48,7 +47,4 @@ export interface RootState {
     selectedSentence: any;
     userId: string;
     sitekey: string;
-    featureFlags: {
-        enableImageClaim: boolean;
-    };
 }

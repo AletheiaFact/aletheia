@@ -12,7 +12,6 @@ import colors from "../styles/colors";
 import { DefaultSeo } from "next-seo";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { materialTheme } from "../styles/materialTheme";
-import { Provider as JotaiProvider } from "jotai";
 
 function MyApp({ Component, pageProps }) {
     const store = useStore();
@@ -45,66 +44,64 @@ function MyApp({ Component, pageProps }) {
             <Provider store={store}>
                 <ThemeProvider theme={materialTheme}>
                     <CssBaseline />
-                    <JotaiProvider>
-                        <MainApp>
-                            <DefaultSeo
-                                titleTemplate={`%s | ${t("seo:siteName")}`}
-                                defaultTitle={t("seo:siteName")}
-                                openGraph={{
-                                    type: "website",
-                                    url: pageProps.href,
-                                    site_name: t("seo:siteName"),
-                                    images: [
-                                        {
-                                            url: "https://pbs.twimg.com/profile_images/1426648783614619651/p43eLo43_400x400.jpg",
-                                            width: 90,
-                                            height: 90,
-                                            alt: "aletheiaFact logo",
-                                            type: "image/jpg",
-                                        },
-                                    ],
-                                }}
-                                twitter={{
-                                    site: "@aletheiafact",
-                                    cardType: "summary",
-                                }}
+                    <MainApp>
+                        <DefaultSeo
+                            titleTemplate={`%s | ${t("seo:siteName")}`}
+                            defaultTitle={t("seo:siteName")}
+                            openGraph={{
+                                type: "website",
+                                url: pageProps.href,
+                                site_name: t("seo:siteName"),
+                                images: [
+                                    {
+                                        url: "https://pbs.twimg.com/profile_images/1426648783614619651/p43eLo43_400x400.jpg",
+                                        width: 90,
+                                        height: 90,
+                                        alt: "aletheiaFact logo",
+                                        type: "image/jpg",
+                                    },
+                                ],
+                            }}
+                            twitter={{
+                                site: "@aletheiafact",
+                                cardType: "summary",
+                            }}
+                        />
+                        <Component {...pageProps} />
+                        <CookieConsent
+                            location="bottom"
+                            buttonText={t("cookieConsent:button")}
+                            cookieName="termsAgreementCookie"
+                            style={{ background: colors.grayPrimary }}
+                            buttonStyle={{
+                                background: colors.white,
+                                color: colors.bluePrimary,
+                                fontSize: "13px",
+                                borderWidth: "2px",
+                                borderRadius: "30px",
+                                borderColor: colors.white,
+                                padding: "10px 15px",
+                                marginRight: "100px",
+                            }}
+                            expires={150}
+                        >
+                            <Trans
+                                i18nKey={"cookieConsent:text"}
+                                components={[
+                                    // eslint-disable-next-line jsx-a11y/anchor-has-content
+                                    <a
+                                        style={{ whiteSpace: "pre-wrap" }}
+                                        href="/privacy-policy"
+                                    ></a>,
+                                    // eslint-disable-next-line jsx-a11y/anchor-has-content
+                                    <a
+                                        style={{ whiteSpace: "pre-wrap" }}
+                                        href="/code-of-conduct"
+                                    ></a>,
+                                ]}
                             />
-                            <Component {...pageProps} />
-                            <CookieConsent
-                                location="bottom"
-                                buttonText={t("cookieConsent:button")}
-                                cookieName="termsAgreementCookie"
-                                style={{ background: colors.grayPrimary }}
-                                buttonStyle={{
-                                    background: colors.white,
-                                    color: colors.bluePrimary,
-                                    fontSize: "13px",
-                                    borderWidth: "2px",
-                                    borderRadius: "30px",
-                                    borderColor: colors.white,
-                                    padding: "10px 15px",
-                                    marginRight: "100px",
-                                }}
-                                expires={150}
-                            >
-                                <Trans
-                                    i18nKey={"cookieConsent:text"}
-                                    components={[
-                                        // eslint-disable-next-line jsx-a11y/anchor-has-content
-                                        <a
-                                            style={{ whiteSpace: "pre-wrap" }}
-                                            href="/privacy-policy"
-                                        ></a>,
-                                        // eslint-disable-next-line jsx-a11y/anchor-has-content
-                                        <a
-                                            style={{ whiteSpace: "pre-wrap" }}
-                                            href="/code-of-conduct"
-                                        ></a>,
-                                    ]}
-                                />
-                            </CookieConsent>
-                        </MainApp>
-                    </JotaiProvider>
+                        </CookieConsent>
+                    </MainApp>
                 </ThemeProvider>
             </Provider>
         </>

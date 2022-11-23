@@ -1,12 +1,12 @@
 import { useTranslation } from "next-i18next";
 import { createContext, useEffect, useState } from "react";
 
-import ClaimReviewApi from "../api/claimReviewApi";
-import ClaimReviewTaskApi from "../api/ClaimReviewTaskApi";
-import Loading from "../components/Loading";
-import { initialContext } from "../machines/reviewTask/context";
-import { ReviewTaskStates } from "../machines/reviewTask/enums";
-import { createNewMachineService } from "../machines/reviewTask/reviewTaskMachine";
+import ClaimReviewApi from "../../api/claimReviewApi";
+import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
+import Loading from "../../components/Loading";
+import { initialContext } from "./context";
+import { ReviewTaskStates } from "./enums";
+import { createNewMachineService } from "./reviewTaskMachine";
 
 interface ContextType {
     machineService: any;
@@ -24,6 +24,12 @@ interface ReviewTaskMachineProviderProps {
     publishedReview?: { review: any; descriptionForHide?: string };
 }
 
+/* We chose not to use Jotai as the provider for this machine because we need
+ * to recreate the machine service every time the drawer is opened and at the
+ * moment the best option seems to be to use context rather than try to get
+ * around Jotai's default behavior of keeping the first machine created.
+ */
+
 export const ReviewTaskMachineProvider = (
     props: ReviewTaskMachineProviderProps
 ) => {
@@ -38,7 +44,7 @@ export const ReviewTaskMachineProvider = (
         const fetchReviewTask = (data_hash) => {
             return props.baseMachine
                 ? Promise.resolve(props.baseMachine)
-                : ClaimReviewTaskApi.getMachineBySentenceHash(data_hash, t);
+                : ClaimReviewTaskApi.getMachineBySentenceHash(data_hash);
         };
         setLoading(true);
         fetchReviewTask(props.data_hash).then((machine) => {

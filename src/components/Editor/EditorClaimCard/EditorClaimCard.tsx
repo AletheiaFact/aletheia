@@ -1,14 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import personalityApi from "../../../api/personality";
-import claimApi from "../../../api/claim";
-import ClaimCardHeader from "../../Claim/ClaimCardHeader";
+import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import Button, { ButtonType } from "../../Button";
-import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
+import React, { useEffect, useState } from "react";
 import { uniqueId } from "remirror";
+
+import claimApi from "../../../api/claim";
+import personalityApi from "../../../api/personality";
+import { claimCollectionAtom } from "../../../atoms/claimCollection";
 import colors from "../../../styles/colors";
+import Button, { ButtonType } from "../../Button";
+import ClaimCardHeader from "../../Claim/ClaimCardHeader";
+import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
 import ClaimSkeleton from "../../Skeleton/ClaimSkeleton";
-import { ClaimCollectionContext } from "../Editor";
 
 const EditorClaimCardContent = ({ children }) => {
     return (
@@ -37,7 +39,9 @@ export const EditorClaimCard = ({
     const { t } = useTranslation();
     const [personality, setPersonality] = useState(undefined);
     const [isLoading, setIsLoading] = useState(false);
-    const { sources, title } = useContext<any>(ClaimCollectionContext);
+    const [claimCollection] = useAtom(claimCollectionAtom);
+    const { sources, title } = claimCollection;
+
     const createClaimFromEditor = async (
         t,
         { personality, content },
@@ -130,7 +134,7 @@ export const EditorClaimCard = ({
                             disabled={isLoading}
                             data-cy={"testSaveButton"}
                         >
-                            {t("claimForm:saveButton")}
+                            {t("debates:saveButtonLabel")}
                         </Button>
                     </>
                 ) : (

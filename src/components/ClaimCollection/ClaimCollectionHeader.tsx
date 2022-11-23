@@ -1,20 +1,19 @@
 import { Col, Row, Typography } from "antd";
-import React, { useContext, useLayoutEffect, useState } from "react";
+import { useAtom } from "jotai";
+import { useTranslation } from "next-i18next";
+import React, { useLayoutEffect, useState } from "react";
 
+import personalityApi from "../../api/personality";
+import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import PersonalityCard from "../Personality/PersonalityCard";
-import { GlobalStateContext } from "../Editor/CallbackTimerProvider";
-import { useActor } from "@xstate/react";
-import personalityApi from "../../api/personality";
-import { useTranslation } from "next-i18next";
 
 const { Title } = Typography;
 const ClaimCollectionHeader = ({ title, personalities }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
     const { t } = useTranslation();
-    const { timerService } = useContext<any>(GlobalStateContext);
-    const [state]: any = useActor<any>(timerService);
+    const [state] = useAtom(callbackTimerAtom);
 
     useLayoutEffect(() => {
         if (personalitiesArray) {
@@ -53,7 +52,6 @@ const ClaimCollectionHeader = ({ title, personalities }) => {
                     padding: "18px 18px",
                     marginRight: "auto",
                     position: "relative",
-                    // top: statsHeight / -2,
                     display: "flex",
                     gap: "2vw",
                 }}

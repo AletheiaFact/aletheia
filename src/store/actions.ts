@@ -58,10 +58,6 @@ const actions = {
         type: ActionTypes.SET_SITEKEY,
         sitekey,
     }),
-    setFeatureFlags: (featureFlags) => ({
-        type: ActionTypes.SET_FEATURE_FLAGS,
-        featureFlags,
-    }),
 };
 
 export default actions;
