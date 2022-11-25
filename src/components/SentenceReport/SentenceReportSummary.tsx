@@ -11,7 +11,7 @@ const SentenceReportSummary = styled(Row)`
     background-color: ${colors.lightYellow};
 
     // small triangle pointing to the avatar on the side
-    &:after {
+    &.after:after {
         content: " ";
         position: absolute;
         left: -12px;
@@ -27,6 +27,8 @@ const SentenceReportSummary = styled(Row)`
         font-size: 16px;
         color: ${colors.blackSecondary};
         margin-bottom: 0px;
+        display: flex;
+        flex-direction: column;
 
         cite {
             font-style: normal;
@@ -43,7 +45,7 @@ const SentenceReportSummary = styled(Row)`
         margin-left: 0;
 
         // triangle pointing up
-        &:after {
+        &.after:after {
             left: 50px;
             top: -8px;
             transform: rotate(0deg);

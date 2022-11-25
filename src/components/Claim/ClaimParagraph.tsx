@@ -11,7 +11,8 @@ const ClaimParagraph = ({ paragraph, showHighlights, handleSentenceClick }) => {
             {sentences.map((sentence) => (
                 <ClaimSentence
                     handleSentenceClick={() => {
-                        dispatch(actions.setSelectSentence(sentence));
+                        dispatch(actions.setSelectContent(sentence));
+
                         if (handleSentenceClick) {
                             handleSentenceClick();
                         }

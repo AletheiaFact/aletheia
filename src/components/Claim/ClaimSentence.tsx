@@ -34,7 +34,6 @@ const ClaimSentence = ({
 
     const handleClick = () => {
         handleSentenceClick();
-        dispatch(actions.setSelectDataHash(data_hash));
         dispatch(actions.openReviewDrawer());
     };
     return (

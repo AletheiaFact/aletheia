@@ -18,18 +18,14 @@ const KanbanCard = ({ reviewTask }) => {
         dispatch(actions.openReviewDrawer());
         dispatch(actions.setSelectClaim(null));
         dispatch(actions.setSelectPersonality(null));
-        dispatch(actions.setSelectSentence(null));
-        dispatch(actions.setSelectDataHash(null));
+        dispatch(actions.setSelectContent(null));
         Promise.all([
             claimApi.getById(reviewTask.claimId, t, {}),
             personalityApy.getPersonality(reviewTask.personalityId, {}, t),
         ]).then(([claim, personality]) => {
             dispatch(actions.setSelectClaim(claim));
             dispatch(actions.setSelectPersonality(personality));
-            dispatch(actions.setSelectSentence(reviewTask?.sentence));
-            dispatch(
-                actions.setSelectDataHash(reviewTask?.sentence?.data_hash)
-            );
+            dispatch(actions.setSelectContent(reviewTask?.sentence));
         });
     };
     return (

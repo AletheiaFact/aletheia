@@ -57,7 +57,7 @@ const ClaimSummaryContent = ({
                     </p>
                     {isImage && (
                         <img
-                            src={claimContent}
+                            src={claimContent.content}
                             alt={`${title} claim`}
                             style={{
                                 maxWidth: "100%",

@@ -87,11 +87,6 @@ const reducer = (state, action) => {
                 ...state,
                 claimPersonality: action.claimPersonality,
             };
-        case ActionTypes.SET_SELECTED_DATA_HASH:
-            return {
-                ...state,
-                selectedDataHash: action.selectedDataHash,
-            };
         case ActionTypes.SET_SELECTED_PERSONALITY:
             return {
                 ...state,
@@ -102,10 +97,11 @@ const reducer = (state, action) => {
                 ...state,
                 selectedClaim: action.selectedClaim,
             };
-        case ActionTypes.SET_SELECTED_SENTENCE:
+        case ActionTypes.SET_SELECTED_CONTENT:
             return {
                 ...state,
-                selectedSentence: action.selectedSentence,
+                selectedContent: action.selectedContent,
+                selectedDataHash: action.selectedDataHash,
             };
         case ActionTypes.SET_USER_ID:
             return {

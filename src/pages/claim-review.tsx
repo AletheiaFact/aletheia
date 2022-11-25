@@ -110,7 +110,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 <ClaimReviewView
                     personality={personality}
                     claim={claim}
-                    sentence={sentence}
+                    content={sentence}
                 />
             </ReviewTaskMachineProvider>
             <AffixButton personalitySlug={personality.slug} />

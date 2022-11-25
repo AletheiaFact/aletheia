@@ -254,7 +254,10 @@ export class ClaimService {
                 claim._id
             );
 
-            processedClaim.content = processedClaim.content[0].content;
+            processedClaim.content =
+                processedClaim.contentModel === ContentModelEnum.Speech
+                    ? processedClaim.content[0].content
+                    : processedClaim.content[0];
 
             if (processedClaim?.content) {
                 processedClaim.content = this.transformContentObject(

@@ -25,14 +25,15 @@ const ClaimView = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     moment.locale(i18n.language);
-    const { title, stats, content } = claim;
+    const { title, stats, content: claimContent } = claim;
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     let date = moment(new Date(claim.date));
     const sources = claim?.sources?.map((source) => source.link);
 
-    const paragraphs = Array.isArray(claim.content)
-        ? claim.content
-        : [claim.content];
+    const imageUrl = claimContent.content;
+    const paragraphs = Array.isArray(claimContent)
+        ? claimContent
+        : [claimContent];
 
     const dispatchPersonalityAndClaim = () => {
         dispatch(actions.setSelectClaim(claim));
@@ -42,12 +43,18 @@ const ClaimView = ({ personality, claim, href }) => {
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
-        if (!isImage) {
-            message.info(t("claim:initialInfo"));
+        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectPersonality(personality));
+        if (isImage) {
+            dispatch(actions.setSelectContent(claimContent));
         }
     }, [isImage, t]);
 
-    if (content) {
+    const handleClick = () => {
+        dispatch(actions.openReviewDrawer());
+    };
+
+    if (claimContent) {
         return (
             <>
                 <Row justify="center">
@@ -149,14 +156,21 @@ const ClaimView = ({ personality, claim, href }) => {
                                         style={{ paddingBottom: "20px" }}
                                     >
                                         {isImage ? (
-                                            <img
-                                                src={content}
-                                                alt={`${title} claim`}
+                                            <div
                                                 style={{
-                                                    maxWidth: "100%",
-                                                    maxHeight: "100vh",
+                                                    cursor: "pointer",
                                                 }}
-                                            />
+                                                onClick={handleClick}
+                                            >
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={`${title} claim`}
+                                                    style={{
+                                                        maxWidth: "100%",
+                                                        maxHeight: "100vh",
+                                                    }}
+                                                />
+                                            </div>
                                         ) : (
                                             <cite
                                                 style={{
