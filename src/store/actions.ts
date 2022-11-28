@@ -38,7 +38,7 @@ const actions = {
     setSelectContent: (content: Content) => ({
         type: ActionTypes.SET_SELECTED_CONTENT,
         selectedContent: content,
-        selectedDataHash: content.data_hash,
+        selectedDataHash: content?.data_hash || "",
     }),
     setLoginStatus: (isLoggedIn) => ({
         type: ActionTypes.SET_LOGIN_STATUS,

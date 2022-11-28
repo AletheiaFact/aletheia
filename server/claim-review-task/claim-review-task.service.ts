@@ -18,6 +18,8 @@ import { BaseRequest } from "../types";
 import { SentenceService } from "../sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { Roles } from "../ability/ability.factory";
+import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
+import { ImageService } from "../image/image.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -29,7 +31,8 @@ export class ClaimReviewTaskService {
         private reportService: ReportService,
         private historyService: HistoryService,
         private stateEventService: StateEventService,
-        private sentenceService: SentenceService
+        private sentenceService: SentenceService,
+        private imageService: ImageService
     ) {}
 
     async listAll(page, pageSize, order, value) {
@@ -55,33 +58,42 @@ export class ClaimReviewTaskService {
                 model: "Claim",
                 populate: {
                     path: "latestRevision",
-                    select: "title",
+                    select: "title contentModel",
                 },
                 select: "slug _id",
             });
 
         return Promise.all(
-            reviewTasks.map(async ({ sentence_hash, machine }) => {
+            reviewTasks.map(async ({ sentence_hash: data_hash, machine }) => {
                 const { personality, claim }: any = machine.context.claimReview;
-                const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
+                const { title, contentModel } = claim.latestRevision;
+                const isContentImage = contentModel === ContentModelEnum.Image;
+
+                let reviewHref = personality
+                    ? `/personality/${personality?.slug}/claim/${claim?.slug}`
+                    : `/claim`;
+                reviewHref += isContentImage
+                    ? `/${claim?._id}`
+                    : `/sentence/${data_hash}`;
                 const usersName = machine.context.reviewData.usersId.map(
                     (user) => {
                         return user.name;
                     }
                 );
 
-                const sentence = await this.sentenceService.getByDataHash(
-                    sentence_hash
-                );
+                const content = isContentImage
+                    ? await this.imageService.getByDataHash(data_hash)
+                    : await this.sentenceService.getByDataHash(data_hash);
                 return {
-                    sentence,
+                    content,
                     usersName,
                     value: machine.value,
-                    personalityName: personality.name,
-                    claimTitle: claim.latestRevision.title,
+                    personalityName: personality?.name,
+                    claimTitle: title,
                     claimId: claim._id,
-                    personalityId: personality._id,
+                    personalityId: personality?._id,
                     reviewHref,
+                    contentModel,
                 };
             })
         );

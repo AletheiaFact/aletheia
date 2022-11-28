@@ -35,11 +35,9 @@ const SentenceReportCard = ({
         : "claim:cardLinkToFullText";
 
     let contentPath = personality
-        ? `/personality/${personality?.slug}/claim`
-        : `/claim`;
-    contentPath += isImage
-        ? `/${claim?._id}`
-        : `/${claim?.slug}/sentence/${content.data_hash}`;
+        ? `/personality/${personality?.slug}/claim/${claim?.slug}`
+        : `/claim/${claim?._id}`;
+    contentPath += isImage ? `` : `/sentence/${content.data_hash}`;
 
     return (
         <SentenceReportCardStyle>
