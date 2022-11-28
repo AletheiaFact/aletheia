@@ -40,9 +40,8 @@ const ClaimReviewDrawer = () => {
 
     let href = personality
         ? `/personality/${personality?.slug}/claim/${claim?.slug}`
-        : `/claim`;
-    href += isContentImage ? `/${claim?._id}` : `/sentence/${data_hash}`;
-    // TODO: como fazer pagina de review da imagem sendo que o link é o mesmo da imagem como claim?
+        : `/claim/${claim?._id}`;
+    href += isContentImage ? `/image/${data_hash}` : `/sentence/${data_hash}`;
 
     return (
         <LargeDrawer
