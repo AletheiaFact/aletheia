@@ -10,6 +10,7 @@ import { HistoryModule } from "../history/history.module";
 import { SentenceModule } from "../sentence/sentence.module";
 import { CaptchaModule } from "../captcha/captcha.module";
 import { AbilityModule } from "../ability/ability.module";
+import { ImageModule } from "../image/image.module";
 
 export const ClaimReviewModel = MongooseModule.forFeature([
     {
@@ -27,6 +28,7 @@ export const ClaimReviewModel = MongooseModule.forFeature([
         SentenceModule,
         CaptchaModule,
         AbilityModule,
+        ImageModule,
     ],
     providers: [UtilService, ClaimReviewService],
     exports: [ClaimReviewService],

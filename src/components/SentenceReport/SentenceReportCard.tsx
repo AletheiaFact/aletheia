@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { Col, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
@@ -6,6 +5,7 @@ import { ContentModelEnum } from "../../types/enums";
 
 import AletheiaAvatar from "../AletheiaAvatar";
 import ClassificationText from "../ClassificationText";
+import ImageClaim from "../ImageClaim";
 import LocalizedDate from "../LocalizedDate";
 import SentenceReportCardStyle from "./SentenceReportCard.style";
 import SentenceReportSummary from "./SentenceReportSummary";
@@ -91,13 +91,9 @@ const SentenceReportCard = ({
                         <Paragraph className="sentence-content">
                             <cite>{title}</cite>
                             {isImage && (
-                                <img
+                                <ImageClaim
                                     src={content?.content}
-                                    alt={`${title} claim`}
-                                    style={{
-                                        maxWidth: "100%",
-                                        maxHeight: "5.5em",
-                                    }}
+                                    title={title}
                                 />
                             )}
                             <a href={contentPath}>{t(linkText)}</a>
