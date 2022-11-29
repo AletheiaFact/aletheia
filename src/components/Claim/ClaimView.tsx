@@ -57,10 +57,10 @@ const ClaimView = ({ personality, claim, href }) => {
 
     // TODO: Remove when we implement lottie
     let imageStyle = {};
-    if (claimContent.props.classification && showHighlights) {
+    if (claimContent?.props?.classification && showHighlights) {
         imageStyle = {
             boxShadow: `0 0 3px 3px ${
-                highlightColors[claimContent.props.classification]
+                highlightColors[claimContent?.props?.classification]
             }`,
         };
     }
