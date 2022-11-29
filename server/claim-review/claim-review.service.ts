@@ -211,7 +211,7 @@ export class ClaimReviewService {
                 model: "Claim",
                 populate: {
                     path: "latestRevision",
-                    select: "date contentModel",
+                    select: "date contentModel claimId",
                 },
                 select: "slug",
             });
@@ -234,13 +234,12 @@ export class ClaimReviewService {
 
                 let reviewHref = personality
                     ? `/personality/${personality?.slug}/claim/${review.claim.slug}`
-                    : `/claim/${review.claim._id}`;
+                    : `/claim/${review.claim.latestRevision.claimId}`;
                 reviewHref += isContentImage
                     ? `/image/${data_hash}`
                     : `/sentence/${data_hash}`;
                 return {
-                    sentenceContent: content,
-                    sentence_hash: data_hash,
+                    content,
                     personality,
                     reviewHref,
                     claim,

@@ -102,14 +102,12 @@ const ReviewsCarousel = () => {
                                             {isImage ? (
                                                 <ImageClaim
                                                     src={
-                                                        currentReview
-                                                            .sentenceContent
+                                                        currentReview.content
                                                             .content
                                                     }
                                                 />
                                             ) : (
-                                                currentReview.sentenceContent
-                                                    .content
+                                                currentReview.content.content
                                             )}
                                         </cite>
                                     </Paragraph>
@@ -117,10 +115,7 @@ const ReviewsCarousel = () => {
                             }
                             actions={[
                                 <TagsList
-                                    tags={
-                                        currentReview.sentenceContent.topics ||
-                                        []
-                                    }
+                                    tags={currentReview.content.topics || []}
                                 />,
                                 <div
                                     style={{
@@ -135,8 +130,8 @@ const ReviewsCarousel = () => {
                                         {t("claimReview:claimReview")}
                                         <ClassificationText
                                             classification={
-                                                currentReview.sentenceContent
-                                                    .props.classification
+                                                currentReview.content.props
+                                                    .classification
                                             }
                                         />
                                     </span>

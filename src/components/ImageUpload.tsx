@@ -15,7 +15,7 @@ const ImageUpload = ({ onChange }) => {
     const ONE_MB = 1048576;
     const ALLOWED_MB = 10;
     const MAX_SIZE = ALLOWED_MB * ONE_MB;
-    const ALLOWED_FORMATS = ["png", "jpg", "webp"];
+    const ALLOWED_FORMATS = ["image"];
 
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
@@ -44,7 +44,7 @@ const ImageUpload = ({ onChange }) => {
 
     const validateBeforeUpload = (file: RcFile) => {
         const isAllowedFormat = ALLOWED_FORMATS.includes(
-            file.type.split("/")[1]
+            file.type.split("/")[0]
         );
 
         if (!isAllowedFormat) {
