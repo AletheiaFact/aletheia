@@ -1,10 +1,11 @@
-import { Inject, Injectable, Scope } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { HistoryService } from "../history/history.service";
 import { Model } from "mongoose";
 import { Image, ImageDocument } from "./schemas/image.schema";
 import { TargetModel, HistoryType } from "../history/schema/history.schema";
 import { REQUEST } from "@nestjs/core";
+import { ReportService } from "../report/report.service";
 import { BaseRequest } from "../types";
 
 @Injectable({ scope: Scope.REQUEST })
@@ -13,7 +14,8 @@ export class ImageService {
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(Image.name)
         private ImageModel: Model<ImageDocument>,
-        private historyService: HistoryService
+        private historyService: HistoryService,
+        private reportService: ReportService
     ) {}
 
     async create(image) {
@@ -37,5 +39,19 @@ export class ImageService {
         );
         this.historyService.createHistory(history);
         return newImage;
+    }
+
+    async getByDataHash(data_hash) {
+        const report = await this.reportService.findBySentenceHash(data_hash);
+        const image = await this.ImageModel.findOne({ data_hash });
+        if (image) {
+            image.props = {
+                classification: report?.classification,
+                ...image.props,
+            };
+            return image;
+        } else {
+            throw new NotFoundException();
+        }
     }
 }

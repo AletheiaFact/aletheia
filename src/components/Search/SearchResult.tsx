@@ -16,6 +16,13 @@ const SearchResult = ({
         vw: state.vw,
     }));
 
+    const getTextSpan = () => {
+        if (!avatar) {
+            return 22;
+        }
+        return vw.xs ? 18 : 20;
+    };
+
     return (
         <Row
             style={{
@@ -27,7 +34,7 @@ const SearchResult = ({
             align="middle"
         >
             {avatar && <Col span={vw?.xs ? 4 : 2}>{avatar}</Col>}
-            <Col span={vw.xs ? (avatar ? 18 : 22) : avatar ? 20 : 22}>
+            <Col span={getTextSpan()}>
                 <Paragraph
                     ellipsis={{
                         rows: 1,

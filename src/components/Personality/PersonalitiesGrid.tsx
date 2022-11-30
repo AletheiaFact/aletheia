@@ -1,12 +1,8 @@
-import React from "react";
-import { Col, List, Row } from "antd";
-import PersonalityCard from "./PersonalityCard";
 import { useTranslation } from "next-i18next";
-import Button, { ButtonType } from "../Button";
-import { ArrowRightOutlined } from "@ant-design/icons";
-import SectionTitle from "../SectionTitle";
-import { useAppSelector } from "../../store/store";
+import React from "react";
+
 import GridList from "../GridList";
+import PersonalityCard from "./PersonalityCard";
 
 const PersonalitiesGrid = ({ personalities, title }) => {
     const { t } = useTranslation();

@@ -13,6 +13,8 @@ import { ReportDocument } from "../report/schemas/report.schema";
 import { SentenceService } from "../sentence/sentence.service";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
+import { ImageService } from "../image/image.service";
+import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -24,7 +26,8 @@ export class ClaimReviewService {
             ISoftDeletedModel<ClaimReviewDocument>,
         private historyService: HistoryService,
         private util: UtilService,
-        private senteceService: SentenceService
+        private sentenceService: SentenceService,
+        private imageService: ImageService
     ) {}
 
     agreggateClassification(match: any) {
@@ -208,26 +211,35 @@ export class ClaimReviewService {
                 model: "Claim",
                 populate: {
                     path: "latestRevision",
-                    select: "date contentModel",
+                    select: "date contentModel claimId",
                 },
                 select: "slug",
             });
 
         return Promise.all(
             claimReviews.map(async (review) => {
-                const { personality, sentence_hash } = review;
-                const sentenceContent = await this.senteceService.getByDataHash(
-                    sentence_hash
-                );
+                const { personality, sentence_hash: data_hash } = review;
+
                 const claim = {
                     contentModel: review.claim.latestRevision.contentModel,
                     date: review.claim.latestRevision.date,
                 };
-                const reviewHref = `/personality/${personality.slug}/claim/${review.claim.slug}/sentence/${sentence_hash}`;
 
+                const isContentImage =
+                    claim.contentModel === ContentModelEnum.Image;
+
+                const content = isContentImage
+                    ? await this.imageService.getByDataHash(data_hash)
+                    : await this.sentenceService.getByDataHash(data_hash);
+
+                let reviewHref = personality
+                    ? `/personality/${personality?.slug}/claim/${review.claim.slug}`
+                    : `/claim/${review.claim.latestRevision.claimId}`;
+                reviewHref += isContentImage
+                    ? `/image/${data_hash}`
+                    : `/sentence/${data_hash}`;
                 return {
-                    sentenceContent,
-                    sentence_hash,
+                    content,
                     personality,
                     reviewHref,
                     claim,

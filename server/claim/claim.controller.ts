@@ -36,6 +36,9 @@ import { BaseRequest } from "../types";
 import slugify from "slugify";
 import { UnleashService } from "nestjs-unleash";
 import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
+import { SentenceDocument } from "../sentence/schemas/sentence.schema";
+import { ImageService } from "../image/image.service";
+import { ImageDocument } from "../image/schemas/image.schema";
 
 @Controller()
 export class ClaimController {
@@ -49,6 +52,7 @@ export class ClaimController {
         private configService: ConfigService,
         private viewService: ViewService,
         private captchaService: CaptchaService,
+        private imageService: ImageService,
         @Optional() private readonly unleash: UnleashService
     ) {}
 
@@ -140,7 +144,6 @@ export class ClaimController {
         @Res() res: Response
     ) {
         const { sentence_hash, personalitySlug, claimSlug } = req.params;
-        const parsedUrl = parse(req.url, true);
         const personality = await this.personalityService.getPersonalityBySlug(
             personalitySlug,
             req.language
@@ -157,19 +160,37 @@ export class ClaimController {
             sentence_hash
         );
 
+        await this.returnClaimReviewPage(
+            sentence_hash,
+            req,
+            res,
+            claim,
+            sentence,
+            personality
+        );
+    }
+
+    private async returnClaimReviewPage(
+        data_hash: string,
+        req: BaseRequest,
+        res: Response,
+        claim: any,
+        content: SentenceDocument | ImageDocument,
+        personality: any = null
+    ) {
         const claimReviewTask =
             await this.claimReviewTaskService.getClaimReviewTaskBySentenceHashWithUsernames(
-                sentence_hash
+                data_hash
             );
 
         const claimReview =
-            await this.claimReviewService.getReviewBySentenceHash(
-                sentence_hash
-            );
+            await this.claimReviewService.getReviewBySentenceHash(data_hash);
 
         const description = await this.claimReviewService.getDescriptionForHide(
             claimReview
         );
+
+        const parsedUrl = parse(req.url, true);
 
         await this.viewService.getNextServer().render(
             req,
@@ -178,12 +199,57 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 personality,
                 claim,
-                sentence,
+                content,
                 claimReviewTask,
                 claimReview,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 description,
             })
+        );
+    }
+
+    @IsPublic()
+    @Get("claim/:claimId/image/:data_hash")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getImageWithoutPersonalityClaimReviewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const { data_hash, claimId } = req.params;
+        const claim = await this.claimService.getById(claimId);
+        const image = await this.imageService.getByDataHash(data_hash);
+        await this.returnClaimReviewPage(data_hash, req, res, claim, image);
+    }
+
+    @IsPublic()
+    @Get("personality/:personalitySlug/claim/:claimSlug/image/:data_hash")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getImageClaimReviewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const { data_hash, personalitySlug, claimSlug } = req.params;
+        const personality = await this.personalityService.getPersonalityBySlug(
+            personalitySlug,
+            req.language
+        );
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            claimSlug,
+            undefined,
+            false
+        );
+
+        const image = await this.imageService.getByDataHash(data_hash);
+
+        await this.returnClaimReviewPage(
+            data_hash,
+            req,
+            res,
+            claim,
+            image,
+            personality
         );
     }
 

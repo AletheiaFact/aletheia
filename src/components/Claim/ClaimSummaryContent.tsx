@@ -1,8 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 import colors from "../../styles/colors";
 import { Col, Typography } from "antd";
 import React from "react";
 import { useTranslation } from "next-i18next";
+import ImageClaim from "../ImageClaim";
 const { Paragraph } = Typography;
 
 interface ClaimSummaryContentProps {
@@ -56,14 +56,7 @@ const ClaimSummaryContent = ({
                         {title}
                     </p>
                     {isImage && (
-                        <img
-                            src={claimContent}
-                            alt={`${title} claim`}
-                            style={{
-                                maxWidth: "100%",
-                                maxHeight: "5.5em",
-                            }}
-                        />
+                        <ImageClaim src={claimContent.content} title={title} />
                     )}
                 </cite>
             </Paragraph>

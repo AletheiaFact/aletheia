@@ -1,3 +1,4 @@
+import { Content } from "../types/Content";
 import { Roles } from "../types/enums";
 import { ActionTypes } from "./types";
 
@@ -26,10 +27,6 @@ const actions = {
         type: ActionTypes.TOGGLE_REVIEW_DRAWER,
         reviewDrawerCollapsed: true,
     }),
-    setSelectDataHash: (hash) => ({
-        type: ActionTypes.SET_SELECTED_DATA_HASH,
-        selectedDataHash: hash,
-    }),
     setSelectPersonality: (personality) => ({
         type: ActionTypes.SET_SELECTED_PERSONALITY,
         selectedPersonality: personality,
@@ -38,9 +35,10 @@ const actions = {
         type: ActionTypes.SET_SELECTED_CLAIM,
         selectedClaim: claim,
     }),
-    setSelectSentence: (sentence) => ({
-        type: ActionTypes.SET_SELECTED_SENTENCE,
-        selectedSentence: sentence,
+    setSelectContent: (content: Content) => ({
+        type: ActionTypes.SET_SELECTED_CONTENT,
+        selectedContent: content,
+        selectedDataHash: content?.data_hash || "",
     }),
     setLoginStatus: (isLoggedIn) => ({
         type: ActionTypes.SET_LOGIN_STATUS,

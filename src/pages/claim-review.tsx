@@ -9,15 +9,15 @@ import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
 import { ReviewTaskMachineProvider } from "../machines/reviewTask/ReviewTaskMachineProvider";
-import { ClassificationEnum } from "../types/enums";
+import { ClassificationEnum, ContentModelEnum } from "../types/enums";
 import actions from "../store/actions";
 import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
 export interface ClaimReviewPageProps {
-    personality: any;
+    personality?: any;
     claim: any;
-    sentence: any;
+    content: any;
     sitekey: string;
     claimReviewTask: any;
     claimReview: any;
@@ -34,7 +34,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     const {
         personality,
         claim,
-        sentence,
+        content,
         claimReview,
         isLoggedIn,
         userRole,
@@ -50,8 +50,8 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: false,
     });
-
-    const review = sentence?.props?.classification;
+    const isImage = claim?.contentModel === ContentModelEnum.Image;
+    const review = content?.props?.classification;
 
     const jsonld = {
         "@context": "https://schema.org",
@@ -65,7 +65,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 "https://www.instagram.com/aletheiafact",
             ],
         },
-        claimReviewed: sentence.content,
+        claimReviewed: content.content,
         reviewRating: {
             "@type": "Rating",
             ratingValue: claimReview?.isHidden ? 0 : ClassificationEnum[review],
@@ -79,28 +79,28 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             "@type": "CreativeWork",
             author: {
                 "@type": "Person",
-                name: personality.name,
-                jobTitle: personality.description,
-                image: personality.image,
+                name: personality?.name,
+                jobTitle: personality?.description,
+                image: personality?.image,
             },
             datePublished: claim.date,
             name: claim.title,
         },
-        datePublished: sentence.date,
+        datePublished: content.date,
     };
 
     return (
         <>
             {review && <JsonLd {...jsonld} />}
             <Seo
-                title={sentence.content}
+                title={isImage ? claim.title : content.content}
                 description={t("seo:claimReviewDescription", {
-                    sentence: sentence.content,
+                    sentence: content.content,
                 })}
             />
 
             <ReviewTaskMachineProvider
-                data_hash={sentence.data_hash}
+                data_hash={content.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
                 publishedReview={{
                     review: claimReview,
@@ -110,10 +110,10 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 <ClaimReviewView
                     personality={personality}
                     claim={claim}
-                    sentence={sentence}
+                    content={content}
                 />
             </ReviewTaskMachineProvider>
-            <AffixButton personalitySlug={personality.slug} />
+            <AffixButton personalitySlug={personality?.slug} />
         </>
     );
 };
@@ -127,7 +127,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: JSON.parse(JSON.stringify(query.personality)),
             claim: JSON.parse(JSON.stringify(query.claim)),
-            sentence: JSON.parse(JSON.stringify(query.sentence)),
+            content: JSON.parse(JSON.stringify(query.content)),
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,

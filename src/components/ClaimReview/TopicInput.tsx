@@ -46,7 +46,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
         });
     };
 
-    const duplicated = [...getDuplicated(inputValue, topicsArray)];
+    const duplicated = getDuplicated(inputValue, topicsArray);
 
     const handleEdit = () => {
         if (duplicated.length > 0) {

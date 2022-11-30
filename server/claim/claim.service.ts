@@ -254,7 +254,10 @@ export class ClaimService {
                 claim._id
             );
 
-            processedClaim.content = processedClaim.content[0].content;
+            processedClaim.content =
+                processedClaim.contentModel === ContentModelEnum.Speech
+                    ? processedClaim.content[0].content
+                    : processedClaim.content[0];
 
             if (processedClaim?.content) {
                 processedClaim.content = this.transformContentObject(
@@ -280,7 +283,9 @@ export class ClaimService {
         if (claim?.content) {
             if (claim?.contentModel === ContentModelEnum.Image) {
                 totalClaims += 1;
-                //TODO: count reviews when possible
+                if (claim.content.props.classification) {
+                    totalClaimsReviewed++;
+                }
             } else {
                 claim.content.forEach((p) => {
                     totalClaims += p.content.length;
@@ -302,19 +307,32 @@ export class ClaimService {
         if (!claimContent || reviews.length <= 0) {
             return claimContent;
         }
-        claimContent.forEach((paragraph, paragraphIndex) => {
-            paragraph.content.forEach((sentence, sentenceIndex) => {
-                const claimReview = reviews.find((review) => {
-                    return review._id.sentence_hash === sentence.data_hash;
+        if (claimContent.type === "image") {
+            const claimReview = reviews.find((review) => {
+                return review._id.sentence_hash === claimContent.data_hash;
+            });
+            if (claimReview) {
+                claimContent.props = Object.assign(claimContent.props, {
+                    classification: claimReview._id.classification[0],
                 });
-                if (claimReview) {
-                    claimContent[paragraphIndex].content[sentenceIndex].props =
-                        Object.assign(sentence.props, {
+            }
+        } else {
+            claimContent.forEach((paragraph, paragraphIndex) => {
+                paragraph.content.forEach((sentence, sentenceIndex) => {
+                    const claimReview = reviews.find((review) => {
+                        return review._id.sentence_hash === sentence.data_hash;
+                    });
+                    if (claimReview) {
+                        claimContent[paragraphIndex].content[
+                            sentenceIndex
+                        ].props = Object.assign(sentence.props, {
                             classification: claimReview._id.classification[0],
                         });
-                }
+                    }
+                });
             });
-        });
+        }
+
         return claimContent;
     }
 }

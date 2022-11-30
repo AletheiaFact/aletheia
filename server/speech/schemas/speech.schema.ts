@@ -29,8 +29,4 @@ SpeechSchemaRaw.pre("find", function () {
     this.populate("content");
 });
 
-SpeechSchemaRaw.pre("find", function () {
-    this.populate("content");
-});
-
 export const SpeechSchema = SpeechSchemaRaw;

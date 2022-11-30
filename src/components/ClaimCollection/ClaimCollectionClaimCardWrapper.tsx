@@ -28,7 +28,7 @@ const ClaimCollectionClaimCardWrapper = ({ personalityId, claimId }) => {
         if (claimId) {
             claimApi.getById(claimId, t).then(setClaim);
         }
-    }, [personalityId, claimId]);
+    }, [personalityId, claimId, t]);
 
     return claim && personality ? (
         <ClaimCard personality={personality} claim={claim} collapsed={false} />

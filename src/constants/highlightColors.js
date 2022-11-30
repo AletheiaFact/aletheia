@@ -1,4 +1,4 @@
-export default {
+const highlightColors = {
     "not-fact": "#ADD8D8",
     trustworthy: "#ACE0AC",
     "trustworthy-but": "#D1DFB5",
@@ -9,3 +9,4 @@ export default {
     exaggerated: "#EEDCB0",
     unverifiable: "#F4C8BA",
 };
+export default highlightColors;

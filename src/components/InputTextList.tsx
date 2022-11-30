@@ -48,7 +48,7 @@ export default function InputTextList({
             onChange(contentArray);
         });
         return () => subscription.unsubscribe();
-    }, [watch]);
+    }, [onChange, watch]);
 
     return (
         <div>
