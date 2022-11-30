@@ -44,7 +44,7 @@ const ClaimUploadImage = () => {
                 formData.append("files", file.originFileObj);
             });
 
-            ImageApi.uploadImage(formData)
+            ImageApi.uploadImage(formData, t)
                 .then((imagesUploaded) => {
                     setImageError(false);
 

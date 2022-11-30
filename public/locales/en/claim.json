@@ -20,5 +20,6 @@
     "typeTwitter": "Twitter post",
     "errorWhileFetching": "Error while fetching Claim",
     "cardLinkToImage": "see full image",
-    "claimListHeader": "Claims"
+    "claimListHeader": "Claims",
+    "imageAlreadyExists": "Image already exists in the platform"
 }

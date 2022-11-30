@@ -20,5 +20,6 @@
     "typeTwitter": "post no Twitter",
     "errorWhileFetching": "Erro ao buscar o Discurso",
     "cardLinkToImage": "veja a imagem completa",
-    "claimListHeader": "Declarações"
+    "claimListHeader": "Declarações",
+    "imageAlreadyExists": "Essa imagem já existe em nossa plataforma"
 }
