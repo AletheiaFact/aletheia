@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import "moment/locale/pt";
 
-import { Affix, Col, message, Row, Typography } from "antd";
+import { Affix, Col, Row, Typography } from "antd";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";

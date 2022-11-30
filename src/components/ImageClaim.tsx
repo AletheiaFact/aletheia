@@ -9,6 +9,7 @@ const ImageClaim = ({ src, title = "" }) => {
             style={{
                 maxWidth: "100%",
                 maxHeight: "5.5em",
+                objectFit: "contain",
             }}
         />
     );
