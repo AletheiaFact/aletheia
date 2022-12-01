@@ -1,8 +1,11 @@
 // In this file you can configure migrate-mongo
-
 const config = {
     mongodb: {
+        // Change (or review) the url to your MongoDB:
         url: "MONGODB_URI",
+
+        // Change this to your database name:
+        databaseName: "Aletheia",
 
         options: {
             useNewUrlParser: true, // removes a deprecation warning when connecting
@@ -17,16 +20,6 @@ const config = {
 
     // The mongodb collection where the applied changes are stored. Only edit this when really necessary.
     changelogCollectionName: "changelog",
-
-    // The file extension to create migrations and search for in migration dir
-    migrationFileExtension: ".ts",
-
-    // Enable the algorithm to create a checksum of the file contents and use that in the comparison to determine
-    // if the file should be run.  Requires that scripts are coded to be run multiple times.
-    useFileHash: false,
-
-    // Don't change this, unless you know what you're doing
-    moduleSystem: "commonjs",
 };
 
-module.exports = config;
+export default config;
