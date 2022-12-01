@@ -62,8 +62,12 @@ const ClaimUploadImage = () => {
                         router,
                     });
                 })
-                .catch(() => {
+                .catch((err) => {
                     setIsloading(false);
+                    const seeOtherTarget = err.response.data.target;
+                    if (seeOtherTarget) {
+                        router.push(seeOtherTarget);
+                    }
                 });
         } else {
             setImageError(true);
