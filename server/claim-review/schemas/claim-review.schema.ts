@@ -32,7 +32,7 @@ export class ClaimReview {
     usersId: User[];
 
     @Prop({ required: true })
-    sentence_hash: string;
+    data_hash: string;
 
     @Prop({
         type: mongoose.Types.ObjectId,

@@ -189,8 +189,9 @@ export class ClaimController {
                 data_hash
             );
 
-        const claimReview =
-            await this.claimReviewService.getReviewBySentenceHash(data_hash);
+        const claimReview = await this.claimReviewService.getReviewByDataHash(
+            data_hash
+        );
 
         const description = await this.claimReviewService.getDescriptionForHide(
             claimReview
