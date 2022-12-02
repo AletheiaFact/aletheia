@@ -127,7 +127,7 @@ export const createNewMachine = ({ value, context }) => {
  */
 export const transitionHandler = (state) => {
     const {
-        sentence_hash,
+        data_hash,
         t,
         recaptchaString,
         setCurrentFormAndNextEvents,
@@ -144,7 +144,7 @@ export const transitionHandler = (state) => {
     } else if (event !== Events.init) {
         api.createClaimReviewTask(
             {
-                sentence_hash,
+                data_hash,
                 machine: {
                     context: {
                         reviewData: state.context.reviewData,
@@ -161,7 +161,7 @@ export const transitionHandler = (state) => {
                 setCurrentFormAndNextEvents(event);
             })
             .catch((e) => {
-                // TODO: sentry
+                // TODO: Track errors with Sentry
             })
             .finally(() => resetIsLoading());
     }

@@ -44,7 +44,7 @@ export const ReviewTaskMachineProvider = (
         const fetchReviewTask = (data_hash) => {
             return props.baseMachine
                 ? Promise.resolve(props.baseMachine)
-                : ClaimReviewTaskApi.getMachineBySentenceHash(data_hash);
+                : ClaimReviewTaskApi.getMachineByDataHash(data_hash);
         };
         setLoading(true);
         fetchReviewTask(props.data_hash).then((machine) => {
