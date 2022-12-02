@@ -64,9 +64,11 @@ const ClaimUploadImage = () => {
                 })
                 .catch((err) => {
                     setIsloading(false);
-                    const seeOtherTarget = err.response.data.target;
-                    if (seeOtherTarget) {
-                        router.push(seeOtherTarget);
+                    if (err.response.status === 303) {
+                        const seeOtherTarget = err.response.data.target;
+                        if (seeOtherTarget) {
+                            router.push(seeOtherTarget);
+                        }
                     }
                 });
         } else {
