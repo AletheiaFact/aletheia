@@ -1,8 +1,8 @@
 import {
     Controller,
     HttpStatus,
+    NotFoundException,
     Post,
-    Redirect,
     UseInterceptors,
 } from "@nestjs/common";
 import {
@@ -22,19 +22,23 @@ export class FileManagementController {
         private imageService: ImageService,
         private claimRevisionService: ClaimRevisionService
     ) {}
-
     @Post("api/image")
-    @Redirect()
     @UseInterceptors(FilesInterceptor("files"))
     async upload(@UploadedFiles() files: Express.Multer.File[], @Res() res) {
-        return Promise.all(
+        const result = await Promise.all(
             files.map(async (file) => {
                 const imageDataHash = md5(file.buffer);
-                const foundImage = await this.imageService.getByDataHash(
-                    imageDataHash
-                );
+                let foundImage;
+                try {
+                    foundImage = await this.imageService.getByDataHash(
+                        imageDataHash
+                    );
+                } catch (error) {
+                    if (!(error instanceof NotFoundException)) {
+                        throw error;
+                    }
+                }
                 if (foundImage) {
-                    // get revision with the same id of the found image
                     const foundRevision =
                         await this.claimRevisionService.getByContentId(
                             foundImage._id
@@ -48,5 +52,6 @@ export class FileManagementController {
                 return await this.fileManagementService.upload(file);
             })
         );
+        res.send(result);
     }
 }
