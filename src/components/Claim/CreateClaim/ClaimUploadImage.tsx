@@ -46,7 +46,7 @@ const ClaimUploadImage = () => {
                 formData.append("files", file.originFileObj);
             });
 
-            ImageApi.uploadImage(formData)
+            ImageApi.uploadImage(formData, t)
                 .then((imagesUploaded) => {
                     setImageError(false);
 
@@ -65,8 +65,14 @@ const ClaimUploadImage = () => {
                         router,
                     });
                 })
-                .catch(() => {
+                .catch((err) => {
                     setIsloading(false);
+                    if (err.response.status === 303) {
+                        const seeOtherTarget = err.response.data.target;
+                        if (seeOtherTarget) {
+                            router.push(seeOtherTarget);
+                        }
+                    }
                 });
         } else {
             setImageError(true);

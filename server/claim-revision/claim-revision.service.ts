@@ -117,4 +117,8 @@ export class ClaimRevisionService {
             },
         ]);
     }
+
+    getByContentId(contentId) {
+        return this.ClaimRevisionModel.findOne({ contentId });
+    }
 }

@@ -6,14 +6,14 @@ const request = axios.create({
     baseURL: `/api/image`,
 });
 
-const uploadImage = (files) => {
+const uploadImage = (files, t) => {
     return request
         .post("/", files)
         .then((response) => {
             return response.data;
         })
         .catch((err) => {
-            console.log("response error", err);
+            message.error(t(`claim:${err.response.data.message}`));
             throw err;
         });
 };
@@ -27,7 +27,7 @@ const createClaimTypeImage = (file) => {
         })
         .catch((err) => {
             message.error("upload failed");
-            console.log("response error", err);
+            console.error("upload error", err);
             throw err;
         });
 };
