@@ -68,7 +68,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
             <ClaimReviewForm
                 claimId={claim._id}
                 personalityId={personality?._id}
-                sentenceHash={content.data_hash}
+                dataHash={content.data_hash}
                 userIsReviewer={userIsReviewer}
             />
             <SocialMediaShare

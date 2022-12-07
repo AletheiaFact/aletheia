@@ -47,7 +47,7 @@ export class ClaimReviewController {
     @IsPublic()
     @Get("api/review/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    async getReviewBySentenceHash(@Param("data_hash") data_hash) {
+    async getReviewByDataHash(@Param("data_hash") data_hash) {
         const review = await this.claimReviewService.getReviewByDataHash(
             data_hash
         );

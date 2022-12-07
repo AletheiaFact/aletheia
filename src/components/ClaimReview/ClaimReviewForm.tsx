@@ -19,7 +19,7 @@ import { Roles } from "../../types/enums";
 const ClaimReviewForm = ({
     claimId,
     personalityId,
-    sentenceHash,
+    dataHash,
     userIsReviewer,
 }) => {
     const { t } = useTranslation();
@@ -100,7 +100,7 @@ const ClaimReviewForm = ({
                 </Col>
                 {!formCollapsed && showForm && (
                     <DynamicReviewTaskForm
-                        sentence_hash={sentenceHash}
+                        data_hash={dataHash}
                         personality={personalityId}
                         claim={claimId}
                     />

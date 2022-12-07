@@ -23,6 +23,7 @@
     "checkboxAcceptTerms": "I personally atest that all information added is truthful.",
     "cancelButton": "Cancel",
     "updateButton": "Update speech",
+    "saveButton": "Save speech",
     "contentModelTitle": "Format",
     "selectContentModel": "What claim format do you want to add?",
     "image": "Image",

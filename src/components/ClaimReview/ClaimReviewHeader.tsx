@@ -200,7 +200,7 @@ const ClaimReviewHeader = ({
                             }}
                         >
                             <TopicInput
-                                sentence_hash={content.data_hash}
+                                data_hash={content.data_hash}
                                 topics={content.topics}
                             />
                         </div>

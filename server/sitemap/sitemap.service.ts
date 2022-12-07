@@ -52,7 +52,7 @@ export class SitemapService {
                     );
                 for (const review of reviews) {
                     sites.push({
-                        url: `/personality/${personality.slug}/claim/${claim.slug}/sentence/${review._id.sentence_hash}`,
+                        url: `/personality/${personality.slug}/claim/${claim.slug}/sentence/${review._id.data_hash}`,
                         priority: 1,
                     });
                 }
