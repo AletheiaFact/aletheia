@@ -5,7 +5,7 @@ const config = {
         url: "MONGODB_URI",
 
         // Change this to your database name:
-        databaseName: "Aletheia",
+        databaseName: "MONGODB_NAME",
 
         options: {
             useNewUrlParser: true, // removes a deprecation warning when connecting
