@@ -22,6 +22,7 @@ const locators = {
         BTN_ADD_IMAGE: "[data-cy=testSelectTypeImage]",
         BTN_SELECT_PERSONALITY: "[data-cy=testSelectPersonality]",
         BTN_NO_PERSONALITY: "[data-cy=testContinueWithoutPersonality]",
+        BTN_UPLOAD_IMAGE: "[data-cy=testUploadImage]",
     },
 
     floatButton: {
