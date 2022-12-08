@@ -77,7 +77,7 @@ const ImageUpload = ({ onChange }) => {
     }, [onChange, fileList]);
 
     const uploadButton = (
-        <AletheiaButton icon={<UploadOutlined />}>
+        <AletheiaButton data-cy="testUploadImage" icon={<UploadOutlined />}>
             {t("claimForm:fileInputButton")}
         </AletheiaButton>
     );
