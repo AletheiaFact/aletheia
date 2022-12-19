@@ -1,6 +1,6 @@
 {
     "name": "aletheia",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Crowd-sourced fact-checking platform.",
     "license": "MIT",
     "main": "./dist/server/main.js",
