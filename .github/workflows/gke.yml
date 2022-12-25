@@ -64,7 +64,7 @@ jobs:
       # Setup gcloud CLI
       - uses: google-github-actions/setup-gcloud@v1
         with:
-          version: "270.0.0"
+          version: "latest"
           service_account_email: ${{ secrets.GKE_EMAIL }}
           service_account_key: ${{ secrets.GKE_KEY }}
 
