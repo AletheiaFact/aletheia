@@ -61,15 +61,20 @@ jobs:
           sed -i "s%ORY_SDK_URL_STUB%$ORY_SDK_URL%g" deployment.yml
           sed -i "s/ORY_ACCESS_TOKEN_STUB/$ORY_ACCESS_TOKEN/g" deployment.yml
 
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
       # Setup gcloud CLI
       - uses: google-github-actions/setup-gcloud@v1
         with:
           version: "412.0.0"
-          service_account_email: ${{ secrets.GKE_EMAIL }}
-          service_account_key: ${{ secrets.GKE_KEY }}
 
       # Configure docker to use the gcloud command-line tool as a credential helper
-      - run: gcloud auth configure-docker --quiet
+      - run: gcloud auth configure-docker
 
       # Setting up config.yaml based on environment
       - name: Set config.yaml
