@@ -72,6 +72,7 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v1
         with:
           version: "412.0.0"
+          install_components: "gke-gcloud-auth-plugin"
 
       # Configure docker to use the gcloud command-line tool as a credential helper
       - run: gcloud auth configure-docker
@@ -128,6 +129,8 @@ jobs:
 
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
+        env:
+            USE_GKE_GCLOUD_AUTH_PLUGIN: true
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
           sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
