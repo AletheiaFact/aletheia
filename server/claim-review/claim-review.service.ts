@@ -100,7 +100,7 @@ export class ClaimReviewService {
             {
                 $group: {
                     _id: {
-                        sentence_hash: "$sentence_hash",
+                        data_hash: "$data_hash",
                         classification: "$report.classification",
                     },
                     count: { $sum: 1 },
@@ -115,11 +115,9 @@ export class ClaimReviewService {
      * @param claimReview ClaimReviewBody received of the client.
      * @returns Return a new claim review object.
      */
-    async create(claimReview, sentence_hash) {
+    async create(claimReview, data_hash) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const review = await this.getReviewBySentenceHash(
-            claimReview.sentence_hash
-        );
+        const review = await this.getReviewByDataHash(data_hash);
 
         if (review) {
             throw new Error("This Claim already has a review");
@@ -132,7 +130,7 @@ export class ClaimReviewService {
                 return Types.ObjectId(userId);
             });
             claimReview.report = Types.ObjectId(claimReview.report._id);
-            claimReview.sentence_hash = sentence_hash;
+            claimReview.data_hash = data_hash;
             claimReview.date = new Date();
             const newClaimReview = new this.ClaimReviewModel(claimReview);
             newClaimReview.isPublished = true;
@@ -158,10 +156,10 @@ export class ClaimReviewService {
             .populate("sources", "_id link classification");
     }
 
-    async getReviewBySentenceHash(
-        sentence_hash: string
+    async getReviewByDataHash(
+        data_hash: string
     ): Promise<LeanDocument<ClaimReviewDocument>> {
-        return await this.ClaimReviewModel.findOne({ sentence_hash })
+        return await this.ClaimReviewModel.findOne({ data_hash })
             .populate("report")
             .lean();
     }
@@ -218,7 +216,7 @@ export class ClaimReviewService {
 
         return Promise.all(
             claimReviews.map(async (review) => {
-                const { personality, sentence_hash: data_hash } = review;
+                const { personality, data_hash } = review;
 
                 const claim = {
                     contentModel: review.claim.latestRevision.contentModel,
@@ -248,8 +246,8 @@ export class ClaimReviewService {
         );
     }
 
-    async hideOrUnhideReview(sentence_hash, hide, description) {
-        const review = await this.getReviewBySentenceHash(sentence_hash);
+    async hideOrUnhideReview(data_hash, hide, description) {
+        const review = await this.getReviewByDataHash(data_hash);
         const newReview = {
             ...review,
             ...{

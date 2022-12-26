@@ -64,7 +64,7 @@ export class ClaimReviewTaskService {
             });
 
         return Promise.all(
-            reviewTasks.map(async ({ sentence_hash: data_hash, machine }) => {
+            reviewTasks.map(async ({ data_hash, machine }) => {
                 const { personality, claim }: any = machine.context.claimReview;
                 const { title, contentModel } = claim.latestRevision;
                 const isContentImage = contentModel === ContentModelEnum.Image;
@@ -167,11 +167,11 @@ export class ClaimReviewTaskService {
         this.stateEventService.createStateEvent(stateEvent);
     }
 
-    async _createReportAndClaimReview(sentence_hash, machine) {
+    async _createReportAndClaimReview(data_hash, machine) {
         const claimReviewData = machine.context.claimReview;
 
         const newReport = Object.assign(machine.context.reviewData, {
-            sentence_hash,
+            data_hash,
         });
 
         const report = await this.reportService.create(newReport);
@@ -181,13 +181,13 @@ export class ClaimReviewTaskService {
                 ...claimReviewData,
                 report,
             },
-            sentence_hash
+            data_hash
         );
     }
 
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
-        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
-            claimReviewTaskBody.sentence_hash
+        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
+            claimReviewTaskBody.data_hash
         );
 
         claimReviewTaskBody.machine.context.reviewData.usersId =
@@ -206,7 +206,7 @@ export class ClaimReviewTaskService {
 
         if (claimReviewTask) {
             return this.update(
-                claimReviewTaskBody.sentence_hash,
+                claimReviewTaskBody.data_hash,
                 claimReviewTaskBody
             );
         } else {
@@ -221,13 +221,13 @@ export class ClaimReviewTaskService {
     }
 
     async update(
-        sentence_hash: string,
+        data_hash: string,
         { machine }: UpdateClaimReviewTaskDTO,
         history: boolean = true
     ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
-            sentence_hash
+        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
+            data_hash
         );
 
         const newClaimReviewTaskMachine = {
@@ -253,7 +253,7 @@ export class ClaimReviewTaskService {
                 );
             }
             this._createReportAndClaimReview(
-                sentence_hash,
+                data_hash,
                 newClaimReviewTask.machine
             );
         }
@@ -269,16 +269,16 @@ export class ClaimReviewTaskService {
         );
     }
 
-    getClaimReviewTaskBySentenceHash(sentence_hash: string) {
+    getClaimReviewTaskByDataHash(data_hash: string) {
         return this.ClaimReviewTaskModel.findOne({
-            sentence_hash,
+            data_hash,
         });
     }
 
-    async getClaimReviewTaskBySentenceHashWithUsernames(sentence_hash: string) {
+    async getClaimReviewTaskByDataHashWithUsernames(data_hash: string) {
         // This may cause a false positive in sonarCloud
-        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
-            sentence_hash
+        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
+            data_hash
         )
             .populate({
                 path: "machine.context.reviewData.usersId",

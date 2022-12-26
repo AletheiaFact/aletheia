@@ -141,15 +141,13 @@ export class ClaimController {
     }
 
     @IsPublic()
-    @Get(
-        "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash"
-    )
+    @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getClaimReviewPage(
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
-        const { sentence_hash, personalitySlug, claimSlug } = req.params;
+        const { data_hash, personalitySlug, claimSlug } = req.params;
         const personality = await this.personalityService.getPersonalityBySlug(
             personalitySlug,
             req.language
@@ -162,12 +160,10 @@ export class ClaimController {
             false
         );
 
-        const sentence = await this.sentenceService.getByDataHash(
-            sentence_hash
-        );
+        const sentence = await this.sentenceService.getByDataHash(data_hash);
 
         await this.returnClaimReviewPage(
-            sentence_hash,
+            data_hash,
             req,
             res,
             claim,
@@ -185,12 +181,13 @@ export class ClaimController {
         personality: any = null
     ) {
         const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskBySentenceHashWithUsernames(
+            await this.claimReviewTaskService.getClaimReviewTaskByDataHashWithUsernames(
                 data_hash
             );
 
-        const claimReview =
-            await this.claimReviewService.getReviewBySentenceHash(data_hash);
+        const claimReview = await this.claimReviewService.getReviewByDataHash(
+            data_hash
+        );
 
         const description = await this.claimReviewService.getDescriptionForHide(
             claimReview
@@ -439,11 +436,11 @@ export class ClaimController {
 
     @IsPublic()
     @Get(
-        "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash/sources"
+        "personality/:personalitySlug/claim/:claimSlug/sentence/:data_hash/sources"
     )
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async sourcesReportPage(@Req() req: Request, @Res() res: Response) {
-        const { sentence_hash, personalitySlug, claimSlug } = req.params;
+        const { data_hash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
         const personality = await this.personalityService.getPersonalityBySlug(
@@ -460,7 +457,7 @@ export class ClaimController {
         const report = await this.claimReviewService.getReport({
             personality: personality._id,
             claim: claim._id,
-            sentence_hash,
+            data_hash,
         });
 
         await this.viewService.getNextServer().render(
@@ -500,18 +497,18 @@ export class ClaimController {
     }
 
     @Get(
-        "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash/history"
+        "personality/:personalitySlug/claim/:claimSlug/sentence/:data_hash/history"
     )
     public async ClaimReviewHistoryPage(
         @Req() req: Request,
         @Res() res: Response
     ) {
-        const { sentence_hash } = req.params;
+        const { data_hash } = req.params;
         const parsedUrl = parse(req.url, true);
 
         const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
-                sentence_hash
+            await this.claimReviewTaskService.getClaimReviewTaskByDataHash(
+                data_hash
             );
 
         await this.viewService.getNextServer().render(

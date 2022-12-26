@@ -42,7 +42,7 @@ export class ImageService {
     }
 
     async getByDataHash(data_hash) {
-        const report = await this.reportService.findBySentenceHash(data_hash);
+        const report = await this.reportService.findByDataHash(data_hash);
         const image = await this.ImageModel.findOne({ data_hash });
         if (image) {
             image.props = {

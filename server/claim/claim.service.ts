@@ -309,7 +309,7 @@ export class ClaimService {
         }
         if (claimContent.type === "image") {
             const claimReview = reviews.find((review) => {
-                return review._id.sentence_hash === claimContent.data_hash;
+                return review._id.data_hash === claimContent.data_hash;
             });
             if (claimReview) {
                 claimContent.props = Object.assign(claimContent.props, {
@@ -320,7 +320,7 @@ export class ClaimService {
             claimContent.forEach((paragraph, paragraphIndex) => {
                 paragraph.content.forEach((sentence, sentenceIndex) => {
                     const claimReview = reviews.find((review) => {
-                        return review._id.sentence_hash === sentence.data_hash;
+                        return review._id.data_hash === sentence.data_hash;
                     });
                     if (claimReview) {
                         claimContent[paragraphIndex].content[

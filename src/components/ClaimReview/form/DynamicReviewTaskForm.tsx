@@ -20,7 +20,7 @@ import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
 import DynamicForm from "../../Form/DynamicForm";
 
-const DynamicReviewTaskForm = ({ sentence_hash, personality, claim }) => {
+const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
         handleSubmit,
         control,
@@ -104,7 +104,7 @@ const DynamicReviewTaskForm = ({ sentence_hash, personality, claim }) => {
                 timeout = setTimeout(() => {
                     reviewTaskApi.autoSaveDraft(
                         {
-                            sentence_hash,
+                            data_hash,
                             machine: {
                                 context: {
                                     reviewData: value,
@@ -127,7 +127,7 @@ const DynamicReviewTaskForm = ({ sentence_hash, personality, claim }) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
 
         machineService.send(eventName, {
-            sentence_hash,
+            data_hash,
             reviewData: {
                 ...formData,
             },

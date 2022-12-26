@@ -27,7 +27,6 @@ const createClaimTypeImage = (file) => {
         })
         .catch((err) => {
             message.error("upload failed");
-            console.error("upload error", err);
             throw err;
         });
 };

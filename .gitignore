@@ -28,7 +28,7 @@ dist
 config.yaml
 config.nest.yaml
 config.seed.yaml
-migrate-mongo-config.js
+migrate-mongo-config.*
 
 .idea/**/*
 

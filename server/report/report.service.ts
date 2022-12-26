@@ -33,7 +33,7 @@ export class ReportService {
         }
     }
 
-    findBySentenceHash(sentence_hash) {
-        return this.ReportModel.findOne({ sentence_hash });
+    findByDataHash(data_hash) {
+        return this.ReportModel.findOne({ data_hash });
     }
 }
