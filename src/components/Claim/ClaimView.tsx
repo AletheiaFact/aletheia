@@ -18,7 +18,7 @@ import SocialMediaShare from "../SocialMediaShare";
 import SourcesList from "../SourcesList";
 import ToggleSection from "../ToggleSection";
 import ClaimSpeechBody from "./ClaimSpeechBody";
-import highlightColors from "../../constants/highlightColors";
+import ReviewedImage from "../ReviewedImage";
 
 const { Title, Paragraph } = Typography;
 
@@ -55,15 +55,6 @@ const ClaimView = ({ personality, claim, href }) => {
         dispatch(actions.openReviewDrawer());
     };
 
-    // TODO: Remove when we implement lottie
-    let imageStyle = {};
-    if (claimContent?.props?.classification && showHighlights) {
-        imageStyle = {
-            boxShadow: `0 0 3px 3px ${
-                highlightColors[claimContent?.props?.classification]
-            }`,
-        };
-    }
     if (claimContent) {
         return (
             <>
@@ -172,14 +163,13 @@ const ClaimView = ({ personality, claim, href }) => {
                                                 }}
                                                 onClick={handleClick}
                                             >
-                                                <img
-                                                    src={imageUrl}
-                                                    alt={`${title} claim`}
-                                                    style={{
-                                                        maxWidth: "100%",
-                                                        maxHeight: "100vh",
-                                                        ...imageStyle,
-                                                    }}
+                                                <ReviewedImage
+                                                    imageUrl={imageUrl}
+                                                    title={title}
+                                                    classification={
+                                                        claimContent?.props
+                                                            ?.classification
+                                                    }
                                                 />
                                             </div>
                                         ) : (
