@@ -112,6 +112,7 @@
         "i18next": "^21.6.10",
         "jotai": "^1.9.2",
         "js-cookie": "^3.0.1",
+        "lottie-web": "^5.10.1",
         "md5": "^2.3.0",
         "migrate-mongo-ts": "^1.1.4",
         "mongoose": "^  5.13.5",
