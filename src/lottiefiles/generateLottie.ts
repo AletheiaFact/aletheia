@@ -35,12 +35,21 @@ const getDimensions = async (imageData: any) => {
 
         // @ts-ignore
         let { naturalWidth: width, naturalHeight: height } = image;
-        const windowHeight = window.innerHeight - 200;
+        const windowHeight = window.innerHeight;
+        // 2.25 is the ratio of the lottie container to the window
+        // determined by 66.6% of the claim container
+        // inside a section with 66.6% of the window
+        const windowWidth = window.innerWidth / 2.25;
 
         const aspectRatio = width / height;
+
         if (height > windowHeight) {
             height = windowHeight;
             width = height * aspectRatio;
+        }
+        if (width > windowWidth) {
+            width = windowWidth;
+            height = width / aspectRatio;
         }
         return { width, height };
     } catch (error) {
