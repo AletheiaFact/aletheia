@@ -11,7 +11,7 @@ const locators = {
         BTN_SEE_MORE_PERSONALITY: "[data-cy=testSeeMorePersonality]",
         BTN_ADD_PERSONALITY: "[data-cy=testButtonCreatePersonality]",
         INPUT_SEARCH_PERSONALITY: "[data-cy=testInputSearchPersonality]",
-        SELECT_PERSONALITY: `[data-cy=${personality.name}]`,
+        SELECT_PERSONALITY: `[data-cy="${personality.name}"]`,
     },
 
     claim: {
