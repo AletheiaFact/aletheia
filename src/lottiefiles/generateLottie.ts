@@ -20,45 +20,7 @@ const animations = {
     "trustworthy-but": trustworthyBut,
 };
 
-const getImageMeta = (url) =>
-    new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = (err) => reject(err);
-        img.src = url;
-    });
-
-const getDimensions = async (imageData: any) => {
-    try {
-        const image = await getImageMeta(imageData);
-        console.log(image);
-
-        // @ts-ignore
-        let { naturalWidth: width, naturalHeight: height } = image;
-        const windowHeight = window.innerHeight;
-        // 2.25 is the ratio of the lottie container to the window
-        // determined by 66.6% of the claim container
-        // inside a section with 66.6% of the window
-        const windowWidth = window.innerWidth / 2.25;
-
-        const aspectRatio = width / height;
-
-        if (height > windowHeight) {
-            height = windowHeight;
-            width = height * aspectRatio;
-        }
-        if (width > windowWidth) {
-            width = windowWidth;
-            height = width / aspectRatio;
-        }
-        return { width, height };
-    } catch (error) {
-        console.log(error);
-        return { width: 500, height: 500 };
-    }
-};
-
-export const generateLottie = async (classification, imageData) => {
+export const generateLottie = (classification, imageData, width, height) => {
     if (!classification) {
         return null;
     }
@@ -67,9 +29,6 @@ export const generateLottie = async (classification, imageData) => {
 
     // set the image url in the lottie file
     animation.assets[0].p = imageData;
-
-    // get the natural width and height of the image or fit it to the window
-    const { width, height } = await getDimensions(imageData);
 
     // update the size of the svg element
     animation.w = width;
