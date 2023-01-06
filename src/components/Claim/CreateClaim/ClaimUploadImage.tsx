@@ -216,6 +216,7 @@ const ClaimUploadImage = () => {
                         htmlType="submit"
                         loading={isLoading}
                         disabled={disableSubmit}
+                        data-cy="testSubmitClaimImage"
                     >
                         {t("claimForm:uploadImageButton")}
                     </AletheiaButton>

@@ -39,5 +39,5 @@ services:
         schema_id: {env(ALETHEIA_SCHEMA_ID)}
       feature_flag:
         url: {env(GITLAB_FEATURE_FLAG_URL)}
-        appName: {env(ENV)}
+        appName: Staging
         instanceId: {env(GITLAB_FEATURE_FLAG_INSTANCE_ID)}

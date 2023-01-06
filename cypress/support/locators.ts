@@ -11,7 +11,7 @@ const locators = {
         BTN_SEE_MORE_PERSONALITY: "[data-cy=testSeeMorePersonality]",
         BTN_ADD_PERSONALITY: "[data-cy=testButtonCreatePersonality]",
         INPUT_SEARCH_PERSONALITY: "[data-cy=testInputSearchPersonality]",
-        SELECT_PERSONALITY: `[data-cy=${personality.name}]`,
+        SELECT_PERSONALITY: `[data-cy="${personality.name}"]`,
     },
 
     claim: {
@@ -22,6 +22,12 @@ const locators = {
         BTN_ADD_IMAGE: "[data-cy=testSelectTypeImage]",
         BTN_SELECT_PERSONALITY: "[data-cy=testSelectPersonality]",
         BTN_NO_PERSONALITY: "[data-cy=testContinueWithoutPersonality]",
+        BTN_UPLOAD_IMAGE: "[data-cy=testUploadImage]",
+        BTN_SUBMIT_CLAIM_IMAGE: "[data-cy=testSubmitClaimImage]",
+        INPUT_TITLE: "[data-cy=testTitleClaimForm]",
+        INPUT_DATA: "[data-cy=dataAserSelecionada]",
+        INPUT_DATA_TODAY: "a.ant-picker-today-btn",
+        INPUT_SOURCE: "[data-cy=testSource1]",
     },
 
     floatButton: {
