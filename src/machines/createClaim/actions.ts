@@ -33,6 +33,22 @@ const startImage = assign<CreateClaimContext>((context) => {
     };
 });
 
+const startDebate = assign<CreateClaimContext>((context) => {
+    return {
+        claimData: {
+            ...context.claimData,
+            contentModel: ContentModelEnum.Debate,
+        },
+    };
+});
+
+const persistDebate = assign<CreateClaimContext, PersistClaimEvent>(
+    (context, event) => {
+        console.log("persisting debate", context, event);
+        return context;
+    }
+);
+
 const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
     (context, event) => {
         const claimData = {
@@ -40,31 +56,40 @@ const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
             ...event.claimData,
         };
         const { t, router } = event;
-
+        const personality = claimData.personality[0];
         const sendData = {
             ...claimData,
-            personality: claimData.personality?._id || null,
+            personality: personality._id || null,
         };
-
-        if (claimData.contentModel === ContentModelEnum.Image) {
-            claimApi.saveImage(t, sendData).then((claim) => {
-                const path = claim?.personality
-                    ? `/personality/${claimData.personality.slug}/claim/${claim.slug}`
-                    : `/claim/${claim._id}`;
-                router.push(path);
-            });
-        } else if (claimData.contentModel === ContentModelEnum.Speech) {
-            claimApi.save(t, sendData).then(({ slug }) => {
-                // Redirect to personality profile in case claim slug is not present
-                const path = slug
-                    ? `/personality/${claimData.personality.slug}/claim/${slug}`
-                    : `/personality/${claimData.personality.slug}`;
-                router.push(path);
-            });
+        try {
+            if (claimData.contentModel === ContentModelEnum.Image) {
+                claimApi.saveImage(t, sendData).then((claim) => {
+                    const path = claim?.personality
+                        ? `/personality/${personality.slug}/claim/${claim.slug}`
+                        : `/claim/${claim._id}`;
+                    router.push(path);
+                });
+            } else if (claimData.contentModel === ContentModelEnum.Speech) {
+                claimApi.save(t, sendData).then(({ slug }) => {
+                    // Redirect to personality profile in case claim slug is not present
+                    const path = slug
+                        ? `/personality/${personality.slug}/claim/${slug}`
+                        : `/personality/${personality.slug}`;
+                    router.push(path);
+                });
+            }
+        } catch (error) {
+            console.error("error saving the claim", error);
         }
-
         return { claimData };
     }
 );
 
-export { saveClaimContext, startSpeech, startImage, persistClaim };
+export {
+    saveClaimContext,
+    startSpeech,
+    startImage,
+    startDebate,
+    persistClaim,
+    persistDebate,
+};

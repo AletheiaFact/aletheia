@@ -16,9 +16,9 @@ const ClaimCollectionHeader = ({ title, personalities }) => {
     const [state] = useAtom(callbackTimerAtom);
 
     useLayoutEffect(() => {
-        if (personalitiesArray) {
+        if (personalities) {
             Promise.all(
-                personalitiesArray.map(async (p) => {
+                personalities.map(async (p) => {
                     if (p && p._id) {
                         return personalityApi.getPersonality(p?._id, {}, t);
                     } else {
@@ -31,7 +31,7 @@ const ClaimCollectionHeader = ({ title, personalities }) => {
                 })
                 .catch(() => {});
         }
-    }, [state]);
+    }, [state, personalities]);
 
     const { vw } = useAppSelector((state) => state);
     return (

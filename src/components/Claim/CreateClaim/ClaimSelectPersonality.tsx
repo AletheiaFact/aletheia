@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
+import { stateSelector } from "../../../machines/createClaim/selectors";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
 import { ContentModelEnum } from "../../../types/enums";
@@ -11,16 +12,28 @@ import PersonalityCreateSearch from "../../Personality/PersonalityCreateSearch";
 
 const ClaimSelectPersonality = () => {
     const [state, send] = useAtom(createClaimMachineAtom);
+    const setupDebate = stateSelector(state, "setupDebate");
     const { claimData } = state.context;
     const { t } = useTranslation();
 
     const canContinueWithoutPersonality =
         claimData.contentModel === ContentModelEnum.Image;
 
+    const disableContinueWithPersonality =
+        !claimData.personality ||
+        (setupDebate && claimData.personality.length < 2);
+
     const selectPersonality = (personality) => {
         send({
             type: CreateClaimEvents.addPersonality,
             claimData: { personality: [personality] },
+        });
+    };
+
+    const addPersonality = (personality) => {
+        send({
+            type: CreateClaimEvents.addPersonality,
+            claimData: { personality: [...claimData.personality, personality] },
         });
     };
 
@@ -62,7 +75,9 @@ const ClaimSelectPersonality = () => {
                 </p>
             </div>
             <PersonalityCreateSearch
-                selectPersonality={selectPersonality}
+                selectPersonality={
+                    setupDebate ? addPersonality : selectPersonality
+                }
                 withSuggestions={true}
             />
             <Col
@@ -74,7 +89,7 @@ const ClaimSelectPersonality = () => {
             >
                 <AletheiaButton
                     onClick={continueWithPersonality}
-                    disabled={!claimData.personality}
+                    disabled={disableContinueWithPersonality}
                     style={{ textTransform: "uppercase" }}
                     data-cy="testSelectPersonality"
                 >

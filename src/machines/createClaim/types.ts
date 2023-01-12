@@ -1,6 +1,7 @@
 enum CreateClaimEvents {
     startSpeech = "START_SPEECH",
     startImage = "START_IMAGE",
+    startDebate = "START_DEBATE",
     addPersonality = "ADD_PERSONALITY",
     savePersonality = "SAVE_PERSONALITY",
     noPersonality = "NO_PERSONALITY",
@@ -11,7 +12,9 @@ enum CreateClaimStates {
     notStarted = "not_started",
     setupSpeech = "setup_speech",
     setupImage = "setup_image",
+    setupDebate = "setup_debate",
     personalityAdded = "personality_added",
+    debatePersonalitiesAdded = "debate_personalities_added",
     persisted = "persisted",
 }
 

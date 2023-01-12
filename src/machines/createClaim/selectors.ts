@@ -1,15 +1,10 @@
 import { ContentModelEnum } from "../../types/enums";
 import { CreateClaimStates } from "./types";
 
-const notStartedSelector = (state) => {
-    return state.matches(CreateClaimStates.notStarted);
+const stateSelector = (state, key: keyof typeof CreateClaimStates) => {
+    return state.matches(CreateClaimStates[key]);
 };
-const setupSpeechSelector = (state) => {
-    return state.matches(CreateClaimStates.setupSpeech);
-};
-const setupImageSelector = (state) => {
-    return state.matches(CreateClaimStates.setupImage);
-};
+
 const addImageSelector = (state) => {
     return (
         state.matches(CreateClaimStates.personalityAdded) &&
@@ -24,10 +19,16 @@ const addSpeechSelector = (state) => {
     );
 };
 
+const addDebateSelector = (state) => {
+    return (
+        state.matches(CreateClaimStates.debatePersonalitiesAdded) &&
+        state.context.claimData.contentModel === ContentModelEnum.Debate
+    );
+};
+
 export {
-    notStartedSelector,
-    setupSpeechSelector,
-    setupImageSelector,
     addImageSelector,
     addSpeechSelector,
+    stateSelector,
+    addDebateSelector,
 };

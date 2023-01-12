@@ -7,7 +7,9 @@ import { CreateClaimMachineEvents } from "./events";
 import { CreateClaimMachineStates } from "./states";
 import {
     persistClaim,
+    persistDebate,
     saveClaimContext,
+    startDebate,
     startImage,
     startSpeech,
 } from "./actions";
@@ -31,6 +33,10 @@ export const newCreateClaimMachine = ({ value, context }) => {
                     [Events.startImage]: {
                         target: States.setupImage,
                         actions: [startImage],
+                    },
+                    [Events.startDebate]: {
+                        target: States.setupDebate,
+                        actions: [startDebate],
                     },
                 },
             },
@@ -57,6 +63,25 @@ export const newCreateClaimMachine = ({ value, context }) => {
                     },
                     [Events.savePersonality]: {
                         target: States.personalityAdded,
+                    },
+                },
+            },
+            [States.setupDebate]: {
+                on: {
+                    [Events.addPersonality]: {
+                        target: States.setupDebate,
+                        actions: [saveClaimContext],
+                    },
+                    [Events.savePersonality]: {
+                        target: States.debatePersonalitiesAdded,
+                    },
+                },
+            },
+            [States.debatePersonalitiesAdded]: {
+                on: {
+                    [Events.persist]: {
+                        target: States.persisted,
+                        actions: [persistDebate],
                     },
                 },
             },

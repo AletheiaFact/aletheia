@@ -10,18 +10,21 @@ import { useTranslation } from "next-i18next";
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import colors from "../../../styles/colors";
+import { ContentModelEnum } from "../../../types/enums";
 import AletheiaButton from "../../Button";
 
 const ClaimSelectType = () => {
     const [, send] = useAtom(createClaimMachineAtom);
     const { t } = useTranslation();
 
-    const handleClickSpeech = () => {
-        send(CreateClaimEvents.startSpeech);
+    const icons = {
+        [ContentModelEnum.Image]: <PictureOutlined />,
+        [ContentModelEnum.Speech]: <FileOutlined />,
+        [ContentModelEnum.Debate]: <VideoCameraOutlined />,
     };
 
-    const handleClickImage = () => {
-        send(CreateClaimEvents.startImage);
+    const handleClickStart = (event) => {
+        send(CreateClaimEvents[`start${event}`]);
     };
 
     return (
@@ -56,30 +59,16 @@ const ClaimSelectType = () => {
                     justifyContent: "space-evenly",
                 }}
             >
-                <AletheiaButton
-                    onClick={handleClickImage}
-                    style={{ textTransform: "uppercase" }}
-                    data-cy="testSelectTypeImage"
-                >
-                    <PictureOutlined />
-                    {t("claimForm:image")}
-                </AletheiaButton>
-                <AletheiaButton
-                    onClick={handleClickSpeech}
-                    style={{ textTransform: "uppercase" }}
-                    data-cy="testSelectTypeSpeech"
-                >
-                    <FileOutlined />
-                    {t("claimForm:speech")}
-                </AletheiaButton>
-                <AletheiaButton
-                    onClick={handleClickSpeech}
-                    style={{ textTransform: "uppercase" }}
-                    data-cy="testSelectTypeDebate"
-                >
-                    <VideoCameraOutlined />
-                    {t("claimForm:debate")}
-                </AletheiaButton>
+                {Object.keys(ContentModelEnum).map((key) => (
+                    <AletheiaButton
+                        onClick={() => handleClickStart(key)}
+                        style={{ textTransform: "uppercase" }}
+                        data-cy={`testSelectType${key}`}
+                    >
+                        {icons[key]}
+                        {t(`claimForm:${key}`)}
+                    </AletheiaButton>
+                ))}
             </Col>
         </>
     );
