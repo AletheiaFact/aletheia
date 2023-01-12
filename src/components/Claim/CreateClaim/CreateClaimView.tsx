@@ -38,7 +38,7 @@ const CreateClaimView = () => {
             <Col span={18}>
                 {claimData.personality && (
                     <PersonalityCard
-                        personality={claimData.personality}
+                        personality={claimData.personality[0]}
                         header={true}
                         mobile={true}
                     />

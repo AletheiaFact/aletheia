@@ -1,4 +1,8 @@
-import { FileOutlined, PictureOutlined } from "@ant-design/icons";
+import {
+    FileOutlined,
+    PictureOutlined,
+    VideoCameraOutlined,
+} from "@ant-design/icons";
 import { Col } from "antd";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
@@ -67,6 +71,14 @@ const ClaimSelectType = () => {
                 >
                     <FileOutlined />
                     {t("claimForm:speech")}
+                </AletheiaButton>
+                <AletheiaButton
+                    onClick={handleClickSpeech}
+                    style={{ textTransform: "uppercase" }}
+                    data-cy="testSelectTypeDebate"
+                >
+                    <VideoCameraOutlined />
+                    {t("claimForm:debate")}
                 </AletheiaButton>
             </Col>
         </>

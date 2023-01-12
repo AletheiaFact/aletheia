@@ -20,7 +20,7 @@ const ClaimSelectPersonality = () => {
     const selectPersonality = (personality) => {
         send({
             type: CreateClaimEvents.addPersonality,
-            claimData: { personality },
+            claimData: { personality: [personality] },
         });
     };
 

@@ -78,19 +78,6 @@ const ClaimCreate = ({ claim = { _id: "" }, edit = false }) => {
         }
     };
 
-    const updateClaim = async () => {
-        if (!isLoading) {
-            setIsLoading(true);
-            await claimApi.update(claim._id, t, {
-                title,
-                content,
-            });
-            // Redirect to personality profile in case _id is not present
-            const path = `/personality/${personality._id}`;
-            router.push(path);
-        }
-    };
-
     useEffect(() => {
         if (formRef.current) {
             formRef.current.setFieldsValue({ content });
@@ -109,7 +96,7 @@ const ClaimCreate = ({ claim = { _id: "" }, edit = false }) => {
                 ref={formRef}
                 layout="vertical"
                 id="createClaim"
-                onFinish={edit ? updateClaim : saveClaim}
+                onFinish={saveClaim}
             >
                 <Form.Item
                     name="title"

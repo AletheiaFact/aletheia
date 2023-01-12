@@ -20,7 +20,7 @@ const machineConfig = atom((get) => {
     const context: CreateClaimContext = {
         ...initialContext,
         claimData: {
-            personality: get(claimPersonality),
+            personality: [get(claimPersonality)],
             contentModel: imagesEnabled ? null : ContentModelEnum.Speech,
         },
     };
