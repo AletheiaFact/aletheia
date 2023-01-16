@@ -44,7 +44,25 @@ const startDebate = assign<CreateClaimContext>((context) => {
 
 const persistDebate = assign<CreateClaimContext, PersistClaimEvent>(
     (context, event) => {
-        console.log("persisting debate", context, event);
+        const claimData = {
+            ...context.claimData,
+            ...event.claimData,
+        };
+        const { t, router } = event;
+
+        try {
+            const personalities = claimData.personality.map((p) => p._id);
+            const sendData = {
+                ...claimData,
+                personality: personalities,
+            };
+            claimApi.saveDebate(t, sendData).then((claim) => {
+                console.log("claim created", claim);
+                router.push("/claim/create");
+            });
+        } catch (error) {
+            console.error("error saving the debate", error);
+        }
         return context;
     }
 );
@@ -60,6 +78,7 @@ const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
         const sendData = {
             ...claimData,
             personality: personality._id || null,
+            content: "",
         };
         try {
             if (claimData.contentModel === ContentModelEnum.Image) {

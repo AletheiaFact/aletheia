@@ -17,10 +17,11 @@ const machineConfig = atom((get) => {
         ? CreateClaimStates.notStarted
         : CreateClaimStates.setupSpeech;
 
+    const personality = get(claimPersonality);
     const context: CreateClaimContext = {
         ...initialContext,
         claimData: {
-            personality: [get(claimPersonality)],
+            personality: personality ? [personality] : [],
             contentModel: imagesEnabled ? null : ContentModelEnum.Speech,
         },
     };

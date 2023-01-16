@@ -90,6 +90,25 @@ const saveImage = (t, claimImage = {}) => {
         });
 };
 
+const saveDebate = (t, debate = {}) => {
+    return request
+        .post("/debate", debate)
+        .then((response) => {
+            const { title } = response.data;
+            message.success(
+                `"${title}" ${t("claimForm:successCreateMessage")}`
+            );
+            return response.data;
+        })
+        .catch((err) => {
+            const response = err && err.response;
+            // TODO: Track errors with Sentry
+            if (!response) {
+                console.error(err);
+            }
+        });
+};
+
 const update = (id, t, params = {}) => {
     return request
         .put(`${id}`, params)
@@ -119,6 +138,7 @@ const claimApi = {
     getById,
     save,
     saveImage,
+    saveDebate,
     update,
 };
 export default claimApi;

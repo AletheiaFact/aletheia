@@ -148,7 +148,7 @@ const ClaimUploadImage = () => {
                     <DatePickerInput
                         placeholder={t("claimForm:dateFieldPlaceholder")}
                         onChange={(value) => setDate(value)}
-                        data-cy={"dataAserSelecionada"}
+                        data-cy={"testSelectDate"}
                         disabledDate={disabledDate}
                     />
                 </Form.Item>

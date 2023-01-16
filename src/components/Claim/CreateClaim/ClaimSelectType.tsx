@@ -64,6 +64,7 @@ const ClaimSelectType = () => {
                         onClick={() => handleClickStart(key)}
                         style={{ textTransform: "uppercase" }}
                         data-cy={`testSelectType${key}`}
+                        key={key}
                     >
                         {icons[key]}
                         {t(`claimForm:${key}`)}

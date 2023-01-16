@@ -25,7 +25,7 @@ const locators = {
         BTN_UPLOAD_IMAGE: "[data-cy=testUploadImage]",
         BTN_SUBMIT_CLAIM_IMAGE: "[data-cy=testSubmitClaimImage]",
         INPUT_TITLE: "[data-cy=testTitleClaimForm]",
-        INPUT_DATA: "[data-cy=dataAserSelecionada]",
+        INPUT_DATA: "[data-cy=testSelectDate]",
         INPUT_DATA_TODAY: "a.ant-picker-today-btn",
         INPUT_SOURCE: "[data-cy=testSource1]",
     },

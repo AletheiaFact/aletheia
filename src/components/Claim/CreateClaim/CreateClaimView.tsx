@@ -13,6 +13,7 @@ import ClaimCollectionHeader from "../../ClaimCollection/ClaimCollectionHeader";
 import Loading from "../../Loading";
 import PersonalityCard from "../../Personality/PersonalityCard";
 import ClaimCreate from "./ClaimCreate";
+import ClaimCreateDebate from "./ClaimCreateDebate";
 import ClaimSelectPersonality from "./ClaimSelectPersonality";
 import ClaimSelectType from "./ClaimSelectType";
 import ClaimUploadImage from "./ClaimUploadImage";
@@ -36,9 +37,8 @@ const CreateClaimView = () => {
         addSpeech ||
         addDebate
     );
-
     const CreateClaimHeader = () =>
-        setupDebate ? (
+        claimData.personality.length > 1 ? (
             <ClaimCollectionHeader
                 personalities={claimData.personality}
                 title=""
@@ -54,13 +54,14 @@ const CreateClaimView = () => {
     return (
         <Row justify="center">
             <Col span={18}>
-                {claimData.personality && <CreateClaimHeader />}
+                {!!claimData.personality.length && <CreateClaimHeader />}
                 {notStarted && <ClaimSelectType />}
                 {(setupSpeech || setupImage || setupDebate) && (
                     <ClaimSelectPersonality />
                 )}
                 {addImage && <ClaimUploadImage />}
                 {addSpeech && <ClaimCreate />}
+                {addDebate && <ClaimCreateDebate />}
                 {isLoading && <Loading />}
             </Col>
         </Row>
