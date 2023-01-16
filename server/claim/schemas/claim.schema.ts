@@ -13,7 +13,7 @@ export class Claim {
         required: false,
         ref: "Personality",
     })
-    personality: Personality;
+    personality: Personality | Personality[];
 
     @Prop({ required: true })
     slug: string;

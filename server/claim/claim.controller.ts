@@ -39,6 +39,7 @@ import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema
 import { SentenceDocument } from "../sentence/schemas/sentence.schema";
 import { ImageService } from "../image/image.service";
 import { ImageDocument } from "../image/schemas/image.schema";
+import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
 
 @Controller()
 export class ClaimController {
@@ -99,12 +100,7 @@ export class ClaimController {
         const { referer } = headers;
         // If referer is claim-collection editor endpoints, skip captcha validation
         if (!/claim-collection\/.*\/edit/.test(referer)) {
-            const validateCaptcha = await this.captchaService.validate(
-                createClaimDTO.recaptcha
-            );
-            if (!validateCaptcha) {
-                throw new Error("Error validating captcha");
-            }
+            return await this.createClaim(createClaimDTO);
         }
         return this.claimService.create(createClaimDTO);
     }
@@ -114,6 +110,15 @@ export class ClaimController {
         if (!this.isEnabledImageClaim()) {
             throw new NotFoundException();
         }
+        return await this.createClaim(createClaimDTO);
+    }
+
+    @Post("api/claim/debate")
+    async createClaimDebate(@Body() createClaimDTO: CreateDebateClaimDTO) {
+        return await this.createClaim(createClaimDTO);
+    }
+
+    private async createClaim(createClaimDTO) {
         const validateCaptcha = await this.captchaService.validate(
             createClaimDTO.recaptcha
         );

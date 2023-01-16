@@ -44,6 +44,7 @@ import { FileManagementModule } from "./file-management/file-management.module";
 import { UnleashModule } from "nestjs-unleash";
 import { ClaimCollectionModule } from "./claim-collection/claim-collection.module";
 import { UnauthorizedExceptionFilter } from "./filters/unauthorized.filter";
+import { DebateModule } from "./debate/debate.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -96,6 +97,7 @@ export class AppModule implements NestModule {
             SearchModule,
             FileManagementModule,
             ClaimCollectionModule,
+            DebateModule,
         ];
         if (options.config.feature_flag) {
             imports.push(

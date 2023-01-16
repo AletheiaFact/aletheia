@@ -65,9 +65,15 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim) {
-        claim.personality = claim.personality
-            ? Types.ObjectId(claim.personality)
-            : null;
+        if (Array.isArray(claim.personality)) {
+            claim.personality = claim.personality.map((personality) => {
+                return Types.ObjectId(personality);
+            });
+        } else {
+            claim.personality = claim.personality
+                ? Types.ObjectId(claim.personality)
+                : null;
+        }
         const newClaim = new this.ClaimModel(claim);
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,
@@ -133,6 +139,7 @@ export class ClaimService {
             newClaimRevision,
             previousRevision
         );
+
         await this.historyService.createHistory(history);
 
         claim.save();
