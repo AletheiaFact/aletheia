@@ -30,6 +30,8 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const paragraphs = claim.content;
     const [claimContent, setClaimContent] = useState("");
     const isImage = claim?.contentModel === ContentModelEnum.Image;
+    const isDebate = claim?.contentModel === ContentModelEnum.Debate;
+    const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
 
     const dispatchPersonalityAndClaim = () => {
         dispatch(actions.setSelectClaim(claim));
@@ -50,14 +52,14 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
             });
             setClaimContent(textContent.trim());
         };
-        if (!isImage) {
+        if (isSpeech) {
             CreateFirstParagraph();
         } else {
             setClaimContent(claim.content);
         }
-    }, [claim.content, isImage, paragraphs]);
+    }, [claim.content, isSpeech, paragraphs]);
 
-    if (!claim) {
+    if (!claim || isDebate) {
         return <div></div>;
     }
     return (

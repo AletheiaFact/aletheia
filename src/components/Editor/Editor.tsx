@@ -15,25 +15,25 @@ const extensions = () => [
 ];
 
 export interface IEditorProps {
-    claimCollection: any;
+    claim: any;
 }
 
 export const ClaimCollectionContext = createContext({});
 
-const Editor = ({ claimCollection }: IEditorProps) => {
-    const { personalities } = claimCollection;
+const Editor = ({ claim }: IEditorProps) => {
+    const personalities = claim.personality;
     const { manager, state } = useRemirror({
         extensions,
-        content: claimCollection?.editorContentObject,
+        content: claim?.editor?.editorContentObject,
         stringHandler: "html",
     });
     const [, setClaimCollection] = useAtom(claimCollectionAtom);
     useEffect(() => {
         setClaimCollection({
-            sources: claimCollection?.sources,
-            title: claimCollection?.title,
+            sources: claim?.sources,
+            title: claim?.title,
         });
-    }, [claimCollection, setClaimCollection]);
+    }, [claim, setClaimCollection]);
 
     return (
         <Row
@@ -56,7 +56,7 @@ const Editor = ({ claimCollection }: IEditorProps) => {
                         autoFocus={true}
                     >
                         <EditorAutoSaveTimerProvider
-                            claimCollectionId={claimCollection._id}
+                            reference={claim.editor.reference}
                         >
                             <Affix>
                                 <div
@@ -83,9 +83,7 @@ const Editor = ({ claimCollection }: IEditorProps) => {
                                         })}
                                 </div>
                             </Affix>
-                            <EditorContent
-                                claimCollectionId={claimCollection._id}
-                            />
+                            <EditorContent claimCollectionId={claim._id} />
                         </EditorAutoSaveTimerProvider>
                     </Remirror>
                 </ThemeProvider>

@@ -230,6 +230,7 @@ export class ClaimService {
                         select: { title: 1, contentModel: 1, date: 1, slug: 1 },
                     })
                     .lean();
+
                 claim = {
                     ...foundClaim.latestRevision,
                     ...foundClaim,
@@ -293,7 +294,7 @@ export class ClaimService {
                 if (claim.content.props.classification) {
                     totalClaimsReviewed++;
                 }
-            } else {
+            } else if (claim?.content.length > 0) {
                 claim.content.forEach((p) => {
                     totalClaims += p.content.length;
                     p.content.forEach((sentence) => {

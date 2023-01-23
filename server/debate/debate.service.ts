@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { EditorService } from "../editor/editor.service";
 import { Model } from "mongoose";
 import { Debate, DebateDocument } from "./schemas/debate.schema";
 const md5 = require("md5");
@@ -8,7 +9,8 @@ const md5 = require("md5");
 export class DebateService {
     constructor(
         @InjectModel(Debate.name)
-        private DebateModel: Model<DebateDocument>
+        private DebateModel: Model<DebateDocument>,
+        private editorService: EditorService
     ) {}
 
     async listAll(page, pageSize, order, query) {
@@ -30,10 +32,12 @@ export class DebateService {
             isLive: false,
             data_hash,
         };
-        return this.DebateModel.create(debate);
+        const debateCreated = await this.DebateModel.create(debate);
+        await this.editorService.create(debateCreated._id);
+        return debateCreated;
     }
 
-    async getByDataHash(dataHash) {
-        return this.DebateModel.findOne({ dataHash });
+    async getByDataHash(data_hash) {
+        return this.DebateModel.findOne({ data_hash });
     }
 }

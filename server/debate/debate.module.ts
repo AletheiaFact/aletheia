@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { EditorModule } from "../editor/editor.module";
 import { DebateService } from "./debate.service";
 import { Debate, DebateSchema } from "./schemas/debate.schema";
 
@@ -11,7 +12,7 @@ const DebateModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [DebateModel],
+    imports: [DebateModel, EditorModule],
     providers: [DebateService],
     exports: [DebateService],
 })

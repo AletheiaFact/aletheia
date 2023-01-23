@@ -15,6 +15,7 @@ import {
     Header,
     Optional,
     NotFoundException,
+    UseGuards,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
@@ -40,6 +41,10 @@ import { SentenceDocument } from "../sentence/schemas/sentence.schema";
 import { ImageService } from "../image/image.service";
 import { ImageDocument } from "../image/schemas/image.schema";
 import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
+import { AbilitiesGuard } from "../ability/abilities.guard";
+import { AdminUserAbility, CheckAbilities } from "../ability/ability.decorator";
+import { DebateService } from "../debate/debate.service";
+import { EditorService } from "../editor/editor.service";
 
 @Controller()
 export class ClaimController {
@@ -54,6 +59,8 @@ export class ClaimController {
         private viewService: ViewService,
         private captchaService: CaptchaService,
         private imageService: ImageService,
+        private debateService: DebateService,
+        private editorService: EditorService,
         @Optional() private readonly unleash: UnleashService
     ) {}
 
@@ -227,6 +234,32 @@ export class ClaimController {
         const claim = await this.claimService.getById(claimId);
         const image = await this.imageService.getByDataHash(data_hash);
         await this.returnClaimReviewPage(data_hash, req, res, claim, image);
+    }
+
+    @Get("claim/:claimId/debate/edit")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
+    public async getDebateEditor(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+        const { claimId } = req.params;
+
+        const claim = await this.claimService.getById(claimId);
+        const editor = await this.editorService.getByReference(claim.contentId);
+        claim.editor = editor;
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/debate-editor",
+            Object.assign(parsedUrl.query, {
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 
     @IsPublic()

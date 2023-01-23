@@ -33,7 +33,7 @@ const ContentWrapper = ({ children }) => {
         "personality-page",
         "claim-create",
         "claim",
-        "claim-collection",
+        "debate-editor",
         "sign-up",
         "login",
         "admin-page",

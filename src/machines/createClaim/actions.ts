@@ -57,8 +57,7 @@ const persistDebate = assign<CreateClaimContext, PersistClaimEvent>(
                 personality: personalities,
             };
             claimApi.saveDebate(t, sendData).then((claim) => {
-                console.log("claim created", claim);
-                router.push("/claim/create");
+                router.push(`/claim/${claim._id}/debate/edit`);
             });
         } catch (error) {
             console.error("error saving the debate", error);
