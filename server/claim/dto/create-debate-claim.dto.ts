@@ -5,6 +5,7 @@ import {
     IsDateString,
     IsNotEmpty,
     IsString,
+    ArrayMinSize,
 } from "class-validator";
 import { ContentModelEnum } from "../../claim-revision/schema/claim-revision.schema";
 import { Personality } from "../../personality/schemas/personality.schema";
@@ -34,5 +35,6 @@ export class CreateDebateClaimDTO {
 
     @IsArray()
     @ArrayNotEmpty()
-    personality: Personality[];
+    @ArrayMinSize(2)
+    personalities: Personality[];
 }

@@ -48,11 +48,15 @@ export class ClaimRevision {
     claimId: Claim;
 
     @Prop({
-        type: mongoose.Types.ObjectId,
-        required: false,
-        ref: "Personality",
+        type: [
+            {
+                type: mongoose.Types.ObjectId,
+                required: true,
+                ref: "Personality",
+            },
+        ],
     })
-    personality: Personality | Personality[];
+    personalities: Personality[];
 }
 
 const ClaimRevisionSchemaRaw = SchemaFactory.createForClass(ClaimRevision);

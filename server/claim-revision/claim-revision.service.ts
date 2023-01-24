@@ -36,7 +36,7 @@ export class ClaimRevisionService {
     getRevision(match) {
         try {
             return this.ClaimRevisionModel.findOne(match)
-                .populate("personality", "_id name")
+                .populate("personalities", "_id name")
                 .lean();
         } catch {
             throw new NotFoundException();
@@ -107,7 +107,7 @@ export class ClaimRevisionService {
             {
                 $lookup: {
                     from: "personalities",
-                    localField: "personality",
+                    localField: "personalities",
                     foreignField: "_id",
                     as: "personality",
                 },
@@ -115,7 +115,7 @@ export class ClaimRevisionService {
             {
                 $project: {
                     title: 1,
-                    personality: 1,
+                    personalities: 1,
                     slug: 1,
                     date: 1,
                 },

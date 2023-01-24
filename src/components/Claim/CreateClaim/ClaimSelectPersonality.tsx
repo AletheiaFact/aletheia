@@ -12,7 +12,7 @@ import PersonalityCreateSearch from "../../Personality/PersonalityCreateSearch";
 
 const ClaimSelectPersonality = () => {
     const [state, send] = useAtom(createClaimMachineAtom);
-    const setupDebate = stateSelector(state, "setupDebate");
+    const isDebate = stateSelector(state, "setupDebate");
     const { claimData } = state.context;
     const { t } = useTranslation();
 
@@ -20,25 +20,29 @@ const ClaimSelectPersonality = () => {
         claimData.contentModel === ContentModelEnum.Image;
 
     const disableContinueWithPersonality =
-        !claimData.personality ||
-        (setupDebate && claimData.personality.length < 2);
+        !claimData.personalities ||
+        (isDebate && claimData.personalities.length < 2);
 
     const selectPersonality = (personality) => {
         send({
             type: CreateClaimEvents.addPersonality,
-            claimData: { personality: [personality] },
+            claimData: { personalities: [personality] },
         });
     };
 
     const addPersonality = (personality) => {
         send({
             type: CreateClaimEvents.addPersonality,
-            claimData: { personality: [...claimData.personality, personality] },
+            claimData: {
+                personalities: isDebate
+                    ? [...claimData.personalities, personality]
+                    : [personality],
+            },
         });
     };
 
     const continueWithPersonality = () => {
-        if (claimData.personality) {
+        if (claimData.personalities) {
             send(CreateClaimEvents.savePersonality);
         }
     };
@@ -46,7 +50,7 @@ const ClaimSelectPersonality = () => {
     const continueWithoutPersonality = () => {
         send({
             type: CreateClaimEvents.noPersonality,
-            claimData: { personality: null },
+            claimData: { personalities: [] },
         });
     };
 
@@ -76,7 +80,7 @@ const ClaimSelectPersonality = () => {
             </div>
             <PersonalityCreateSearch
                 selectPersonality={
-                    setupDebate ? addPersonality : selectPersonality
+                    isDebate ? addPersonality : selectPersonality
                 }
                 withSuggestions={true}
             />

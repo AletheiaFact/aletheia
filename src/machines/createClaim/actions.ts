@@ -51,10 +51,10 @@ const persistDebate = assign<CreateClaimContext, PersistClaimEvent>(
         const { t, router } = event;
 
         try {
-            const personalities = claimData.personality.map((p) => p._id);
+            const personalities = claimData.personalities.map((p) => p._id);
             const sendData = {
                 ...claimData,
-                personality: personalities,
+                personalities,
             };
             claimApi.saveDebate(t, sendData).then((claim) => {
                 router.push(`/claim/${claim._id}/debate/edit`);
@@ -73,13 +73,12 @@ const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
             ...event.claimData,
         };
         const { t, router } = event;
-        const personality = claimData.personality[0];
         const sendData = {
             ...claimData,
-            personality: personality._id || null,
-            content: "",
+            personalities: claimData.personalities.map((p) => p._id),
         };
         try {
+            const personality = claimData.personalities[0];
             if (claimData.contentModel === ContentModelEnum.Image) {
                 claimApi.saveImage(t, sendData).then((claim) => {
                     const path = claim?.personality

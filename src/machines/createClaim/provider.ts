@@ -7,9 +7,9 @@ import { CreateClaimContext, initialContext } from "./context";
 import { newCreateClaimMachine } from "./createClaimMachine";
 import { CreateClaimStates } from "./types";
 
-const claimPersonality = atom<Personality | null>(
-    null
-) as PrimitiveAtom<Personality | null>;
+const claimPersonalities = atom<Personality[]>([]) as PrimitiveAtom<
+    Personality[]
+>;
 
 const machineConfig = atom((get) => {
     const imagesEnabled = get(enableImageClaim);
@@ -17,11 +17,11 @@ const machineConfig = atom((get) => {
         ? CreateClaimStates.notStarted
         : CreateClaimStates.setupSpeech;
 
-    const personality = get(claimPersonality);
+    const personalities = get(claimPersonalities);
     const context: CreateClaimContext = {
         ...initialContext,
         claimData: {
-            personality: personality ? [personality] : [],
+            personalities,
             contentModel: imagesEnabled ? null : ContentModelEnum.Speech,
         },
     };
@@ -33,4 +33,4 @@ const createClaimMachineAtom = atomWithMachine((get) =>
     newCreateClaimMachine(get(machineConfig))
 );
 
-export { claimPersonality, createClaimMachineAtom };
+export { claimPersonalities, createClaimMachineAtom };

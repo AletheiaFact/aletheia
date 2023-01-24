@@ -15,7 +15,7 @@ import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema
 
 type ClaimMatchParameters = (
     | { _id: string }
-    | { personality: string; slug: string }
+    | { personalities: string; slug: string }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -33,8 +33,8 @@ export class ClaimService {
     ) {}
 
     async listAll(page, pageSize, order, query) {
-        query.personality = query.personality
-            ? Types.ObjectId(query.personality)
+        query.personalities = query.personalities
+            ? Types.ObjectId(query.personalities)
             : null;
 
         const claims = await this.ClaimModel.find(query)
@@ -65,15 +65,10 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim) {
-        if (Array.isArray(claim.personality)) {
-            claim.personality = claim.personality.map((personality) => {
-                return Types.ObjectId(personality);
-            });
-        } else {
-            claim.personality = claim.personality
-                ? Types.ObjectId(claim.personality)
-                : null;
-        }
+        claim.personalities = claim.personalities.map((personality) => {
+            return Types.ObjectId(personality);
+        });
+
         const newClaim = new this.ClaimModel(claim);
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,
@@ -100,7 +95,6 @@ export class ClaimService {
         this.stateEventService.createStateEvent(stateEvent);
 
         newClaim.save();
-
         return {
             ...newClaimRevision.toObject(),
             ...newClaim.toObject(),
@@ -179,7 +173,7 @@ export class ClaimService {
         population = true
     ) {
         return this._getClaim(
-            { personality: personalityId, slug: claimSlug },
+            { personalities: personalityId, slug: claimSlug },
             revisionId,
             true,
             population
@@ -214,16 +208,16 @@ export class ClaimService {
         } else {
             if (population) {
                 claim = await this.ClaimModel.findOne(match)
-                    .populate("personality", "_id name")
+                    .populate("personalities", "_id name")
                     .populate("sources", "_id link")
                     .populate("latestRevision")
                     .lean();
             } else {
                 const foundClaim = await this.ClaimModel.findOne(
                     match,
-                    "_id personality latestRevision"
+                    "_id personalities latestRevision"
                 )
-                    .populate("personality", "_id name")
+                    .populate("personalities", "_id name")
                     .populate("sources", "_id link")
                     .populate({
                         path: "latestRevision",

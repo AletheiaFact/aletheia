@@ -21,7 +21,7 @@ export interface IEditorProps {
 export const ClaimCollectionContext = createContext({});
 
 const Editor = ({ claim }: IEditorProps) => {
-    const personalities = claim.personality;
+    const personalities = claim.personalities;
     const { manager, state } = useRemirror({
         extensions,
         content: claim?.editor?.editorContentObject,
@@ -67,20 +67,17 @@ const Editor = ({ claim }: IEditorProps) => {
                                         padding: "10px",
                                     }}
                                 >
-                                    {Array.isArray(personalities) &&
-                                        personalities.map((personality) => {
-                                            return (
-                                                <AddPersonalityEditorButton
-                                                    key={personality._id}
-                                                    personalityId={
-                                                        personality._id
-                                                    }
-                                                    personalityName={
-                                                        personality.name
-                                                    }
-                                                />
-                                            );
-                                        })}
+                                    {personalities.map((personality) => {
+                                        return (
+                                            <AddPersonalityEditorButton
+                                                key={personality._id}
+                                                personalityId={personality._id}
+                                                personalityName={
+                                                    personality.name
+                                                }
+                                            />
+                                        );
+                                    })}
                                 </div>
                             </Affix>
                             <EditorContent claimCollectionId={claim._id} />

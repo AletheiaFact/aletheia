@@ -9,11 +9,15 @@ export type ClaimDocument = Claim & mongoose.Document & { revisions: any };
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Claim {
     @Prop({
-        type: mongoose.Types.ObjectId,
-        required: false,
-        ref: "Personality",
+        type: [
+            {
+                type: mongoose.Types.ObjectId,
+                required: true,
+                ref: "Personality",
+            },
+        ],
     })
-    personality: Personality | Personality[];
+    personalities: Personality[];
 
     @Prop({ required: true })
     slug: string;

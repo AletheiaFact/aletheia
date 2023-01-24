@@ -8,7 +8,7 @@ import { enableImageClaim as featureAtom } from "../atoms/featureFlags";
 import AffixButton from "../components/AffixButton/AffixButton";
 import CreateClaimView from "../components/Claim/CreateClaim/CreateClaimView";
 import Seo from "../components/Seo";
-import { claimPersonality } from "../machines/createClaim/provider";
+import { claimPersonalities } from "../machines/createClaim/provider";
 import actions from "../store/actions";
 import { GetLocale } from "../utils/GetLocale";
 
@@ -33,7 +33,7 @@ const ClaimCreatePage: NextPage<any> = ({
             <CreateClaimMachineProvider
                 //@ts-ignore
                 initialValues={[
-                    [claimPersonality, personality],
+                    [claimPersonalities, personality ? [personality] : []],
                     [featureAtom, enableImageClaim],
                 ]}
             >

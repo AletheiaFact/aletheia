@@ -38,14 +38,14 @@ const CreateClaimView = () => {
         addDebate
     );
     const CreateClaimHeader = () =>
-        claimData.personality.length > 1 ? (
+        claimData.personalities?.length > 1 ? (
             <ClaimCollectionHeader
-                personalities={claimData.personality}
+                personalities={claimData.personalities}
                 title=""
             />
         ) : (
             <PersonalityCard
-                personality={claimData.personality[0]}
+                personality={claimData.personalities[0]}
                 header={true}
                 mobile={true}
             />
@@ -54,7 +54,7 @@ const CreateClaimView = () => {
     return (
         <Row justify="center">
             <Col span={18}>
-                {!!claimData.personality.length && <CreateClaimHeader />}
+                {!!claimData.personalities?.length && <CreateClaimHeader />}
                 {notStarted && <ClaimSelectType />}
                 {(setupSpeech || setupImage || setupDebate) && (
                     <ClaimSelectPersonality />

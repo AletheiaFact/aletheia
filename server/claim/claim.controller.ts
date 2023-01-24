@@ -68,7 +68,9 @@ export class ClaimController {
         const inputs = {};
         if (query.personality) {
             // @ts-ignore
-            inputs.personality = new mongoose.Types.ObjectId(query.personality);
+            inputs.personalities = new mongoose.Types.ObjectId(
+                query.personality
+            );
         }
 
         return inputs;
@@ -362,8 +364,8 @@ export class ClaimController {
             throw new NotFoundException();
         }
 
-        if (claim.personality) {
-            const personalitySlug = slugify(claim.personality.name, {
+        if (claim.personalities.length > 0) {
+            const personalitySlug = slugify(claim.personalities[0].name, {
                 lower: true,
                 strict: true,
             });
@@ -397,7 +399,6 @@ export class ClaimController {
                 personalitySlug,
                 req.language
             );
-
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
             claimSlug

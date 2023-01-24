@@ -24,7 +24,7 @@ export class DebateService {
     }
 
     async create(claim) {
-        let hashString = claim.personality.join(" ");
+        let hashString = claim.personalities.join(" ");
         hashString += ` ${claim.title} ${claim.date.toString()}`;
         const data_hash = md5(hashString);
         const debate = {
