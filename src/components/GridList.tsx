@@ -10,7 +10,7 @@ const GridList = ({
     loggedInMaxColumns = 3,
     dataSource,
     title,
-    seeMoreButtonLabel,
+    seeMoreButtonLabel = "",
     disableSeeMoreButton = false,
     gridLayout = {},
 }) => {

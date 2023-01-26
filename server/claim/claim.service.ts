@@ -208,7 +208,7 @@ export class ClaimService {
         } else {
             if (population) {
                 claim = await this.ClaimModel.findOne(match)
-                    .populate("personalities", "_id name")
+                    .populate("personalities")
                     .populate("sources", "_id link")
                     .populate("latestRevision")
                     .lean();

@@ -36,7 +36,7 @@ export class ClaimRevisionService {
     getRevision(match) {
         try {
             return this.ClaimRevisionModel.findOne(match)
-                .populate("personalities", "_id name")
+                .populate("personalities")
                 .lean();
         } catch {
             throw new NotFoundException();
@@ -124,6 +124,8 @@ export class ClaimRevisionService {
     }
 
     getByContentId(contentId) {
-        return this.ClaimRevisionModel.findOne({ contentId });
+        return this.ClaimRevisionModel.findOne({ contentId }).populate(
+            "personalities"
+        );
     }
 }

@@ -7,8 +7,8 @@ import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
 import ReviewsCarousel from "../ClaimReview/ReviewsCarousel";
 import { useTranslation } from "next-i18next";
-import ClaimCollectionGrid from "../ClaimCollection/ClaimCollectionGrid";
-const HomeContent = ({ personalities, href, title, claimCollections }) => {
+import DebateGrid from "../Debate/DebateGrid";
+const HomeContent = ({ personalities, href, title, debateClaims }) => {
     const { isLoggedIn, vw } = useAppSelector((state) => ({
         isLoggedIn: state.login,
         vw: state.vw,
@@ -25,18 +25,15 @@ const HomeContent = ({ personalities, href, title, claimCollections }) => {
                     justifyContent: "center",
                 }}
             >
-                {Array.isArray(claimCollections) &&
-                    claimCollections.length > 0 && (
-                        <Col
-                            xs={{ span: 20, order: 1 }}
-                            sm={{ span: 20, order: 1 }}
-                            md={{ span: 18, order: 1 }}
-                        >
-                            <ClaimCollectionGrid
-                                claimCollections={claimCollections}
-                            />
-                        </Col>
-                    )}
+                {Array.isArray(debateClaims) && debateClaims.length > 0 && (
+                    <Col
+                        xs={{ span: 20, order: 1 }}
+                        sm={{ span: 20, order: 1 }}
+                        md={{ span: 18, order: 1 }}
+                    >
+                        <DebateGrid debates={debateClaims} />
+                    </Col>
+                )}
                 <Col
                     xs={{ span: 22, order: 2 }}
                     sm={{ span: 22, order: 2 }}

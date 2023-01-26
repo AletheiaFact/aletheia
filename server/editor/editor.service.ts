@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 import { Editor, EditorDocument } from "./schema/editor.schema";
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
 
 @Injectable()
 export class EditorService {

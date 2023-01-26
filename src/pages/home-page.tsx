@@ -14,7 +14,7 @@ const HomePage: NextPage<{
     stats;
     href;
     isLoggedIn;
-    claimCollections;
+    claims;
 }> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -38,9 +38,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personalities: JSON.parse(JSON.stringify(query.personalities)),
-            claimCollections: JSON.parse(
-                JSON.stringify(query.claimCollections)
-            ),
+            claims: JSON.parse(JSON.stringify(query.claims)),
             stats: JSON.parse(JSON.stringify(query.stats)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             isLoggedIn: req.user ? true : false,

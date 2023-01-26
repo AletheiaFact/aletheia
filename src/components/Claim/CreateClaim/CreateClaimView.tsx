@@ -9,14 +9,13 @@ import {
     addSpeechSelector,
     stateSelector,
 } from "../../../machines/createClaim/selectors";
-import DebateHeader from "../../ClaimCollection/DebateHeader";
 import Loading from "../../Loading";
-import PersonalityCard from "../../Personality/PersonalityCard";
 import ClaimCreate from "./ClaimCreate";
 import ClaimCreateDebate from "./ClaimCreateDebate";
 import ClaimSelectPersonality from "./ClaimSelectPersonality";
 import ClaimSelectType from "./ClaimSelectType";
 import ClaimUploadImage from "./ClaimUploadImage";
+import { CreateClaimHeader } from "./CreateClaimHeader";
 
 const CreateClaimView = () => {
     const [state] = useAtom(createClaimMachineAtom);
@@ -37,21 +36,13 @@ const CreateClaimView = () => {
         addSpeech ||
         addDebate
     );
-    const CreateClaimHeader = () =>
-        claimData.personalities?.length > 1 ? (
-            <DebateHeader personalities={claimData.personalities} title="" />
-        ) : (
-            <PersonalityCard
-                personality={claimData.personalities[0]}
-                header={true}
-                mobile={true}
-            />
-        );
 
     return (
         <Row justify="center">
             <Col span={18}>
-                {!!claimData.personalities?.length && <CreateClaimHeader />}
+                {!!claimData.personalities?.length && (
+                    <CreateClaimHeader claimData={claimData} />
+                )}
                 {notStarted && <ClaimSelectType />}
                 {(setupSpeech || setupImage || setupDebate) && (
                     <ClaimSelectPersonality />

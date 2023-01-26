@@ -6,7 +6,8 @@ import { PersonalityService } from "../personality/personality.service";
 import { StatsService } from "../stats/stats.service";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { BaseRequest } from "../types";
-import { ClaimCollectionService } from "../claim-collection/claim-collection.service";
+import { DebateService } from "../debate/debate.service";
+import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 
 @Controller("/")
 export class HomeController {
@@ -14,7 +15,8 @@ export class HomeController {
         private viewService: ViewService,
         private personalityService: PersonalityService,
         private statsService: StatsService,
-        private claimCollectionService: ClaimCollectionService
+        private debateService: DebateService,
+        private claimRevisionService: ClaimRevisionService
     ) {}
 
     @Get("/home")
@@ -40,27 +42,17 @@ export class HomeController {
             }
         );
 
-        const rawClaimCollections = await this.claimCollectionService.listAll(
-            0,
-            6,
-            "asc",
-            {}
-        );
+        const liveDebates = await this.debateService.listAll(0, 6, "asc", {
+            isLive: true,
+        });
 
-        const claimCollections = await Promise.all(
-            rawClaimCollections.map(async (claimCollection) => {
-                claimCollection.personalities = await Promise.all(
-                    claimCollection.personalities.map(async (p) => {
-                        return await this.personalityService.postProcess(
-                            p,
-                            req.language
-                        );
-                    })
+        const claims = await Promise.all(
+            liveDebates.map(async (debate) => {
+                return await this.claimRevisionService.getByContentId(
+                    debate._id
                 );
-                return claimCollection;
             })
         );
-
         const stats = await this.statsService.getHomeStats();
         await this.viewService.getNextServer().render(
             req,
@@ -69,7 +61,7 @@ export class HomeController {
             Object.assign(parsedUrl.query, {
                 personalities,
                 stats,
-                claimCollections,
+                claims,
             })
         );
     }

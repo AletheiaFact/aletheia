@@ -38,10 +38,7 @@ const ClaimCreate = ({ claim = { _id: "" }, edit = false }) => {
     const [sources, setSources] = useState([""]);
     const [recaptcha, setRecaptcha] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [state, send] = useAtom(createClaimMachineAtom);
-
-    const { claimData } = state.context;
-    const { personality } = claimData;
+    const [_, send] = useAtom(createClaimMachineAtom);
 
     useEffect(() => {
         const setTitleAndContent = async () => {

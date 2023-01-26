@@ -2,7 +2,7 @@ import { InferGetServerSidePropsType, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 import { GetLocale } from "../utils/GetLocale";
-import DebateView from "../components/ClaimCollection/DebateView";
+import DebateView from "../components/Debate/DebateView";
 
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";

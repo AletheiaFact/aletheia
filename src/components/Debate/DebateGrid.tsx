@@ -10,13 +10,13 @@ import PersonalityCard from "../Personality/PersonalityCard";
 
 const { Title } = Typography;
 
-const ClaimCollectionGrid = ({ claimCollections }) => {
+const DebateGrid = ({ debates }) => {
     const { t } = useTranslation();
 
     return (
         <GridList
             title={"Debates"}
-            dataSource={claimCollections}
+            dataSource={debates}
             loggedInMaxColumns={1}
             gridLayout={{
                 gutter: 10,
@@ -26,8 +26,7 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
                 lg: 1,
             }}
             disableSeeMoreButton={true}
-            seeMoreButtonLabel={t("home:seeMorePersonalitiesButton")}
-            renderItem={(cc) => {
+            renderItem={(debateClaim) => {
                 return (
                     <CardBase
                         style={{
@@ -52,11 +51,8 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
                                         color: colors.grayPrimary,
                                     }}
                                 >
-                                    {cc.title} (
-                                    {cc.isLive
-                                        ? t("debates:liveLabel")
-                                        : t("debates:isEnded")}
-                                    )
+                                    {debateClaim.title} (
+                                    {t("debates:liveLabel")})
                                 </Title>
                             </Row>
                             <Row
@@ -64,7 +60,7 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
                                     justifyContent: "space-evenly",
                                 }}
                             >
-                                {cc.personalities.map((p) => {
+                                {debateClaim.personalities.map((p) => {
                                     return (
                                         <Col>
                                             <PersonalityCard
@@ -83,7 +79,7 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
                                 <Col>
                                     <Button
                                         type={ButtonType.blue}
-                                        href={`/claim-collection/${cc._id}`}
+                                        href={`/claim/${debateClaim._id}/debate`}
                                         style={{
                                             fontSize: "12px",
                                             lineHeight: "20px",
@@ -105,4 +101,4 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
     );
 };
 
-export default ClaimCollectionGrid;
+export default DebateGrid;
