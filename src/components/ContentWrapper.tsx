@@ -34,6 +34,7 @@ const ContentWrapper = ({ children }) => {
         "claim-create",
         "claim",
         "debate-editor",
+        "debate-page",
         "sign-up",
         "login",
         "admin-page",

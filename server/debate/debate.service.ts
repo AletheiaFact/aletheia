@@ -43,10 +43,6 @@ export class DebateService {
         return debateCreated;
     }
 
-    async getByDataHash(data_hash) {
-        return this.DebateModel.findOne({ data_hash });
-    }
-
     //add speech to debate content list
     async addSpeechToDebate(debateId, speechId) {
         const debate = await this.DebateModel.findById(debateId);

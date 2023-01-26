@@ -10,7 +10,7 @@ import colors from "../../styles/colors";
 import PersonalityCard from "../Personality/PersonalityCard";
 
 const { Title } = Typography;
-const ClaimCollectionHeader = ({ title, personalities }) => {
+const DebateHeader = ({ title, personalities }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
     const { t } = useTranslation();
     const [state] = useAtom(callbackTimerAtom);
@@ -99,4 +99,4 @@ const ClaimCollectionHeader = ({ title, personalities }) => {
     );
 };
 
-export default ClaimCollectionHeader;
+export default DebateHeader;

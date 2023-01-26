@@ -282,6 +282,26 @@ export class ClaimController {
     }
 
     @IsPublic()
+    @Get("claim/:claimId/debate")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getDebate(@Req() req: BaseRequest, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        const { claimId } = req.params;
+
+        const claim = await this.claimService.getById(claimId);
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/debate-page",
+            Object.assign(parsedUrl.query, {
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
+    }
+
+    @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug/image/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getImageClaimReviewPage(

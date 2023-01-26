@@ -9,7 +9,7 @@ import {
     addSpeechSelector,
     stateSelector,
 } from "../../../machines/createClaim/selectors";
-import ClaimCollectionHeader from "../../ClaimCollection/ClaimCollectionHeader";
+import DebateHeader from "../../ClaimCollection/DebateHeader";
 import Loading from "../../Loading";
 import PersonalityCard from "../../Personality/PersonalityCard";
 import ClaimCreate from "./ClaimCreate";
@@ -39,10 +39,7 @@ const CreateClaimView = () => {
     );
     const CreateClaimHeader = () =>
         claimData.personalities?.length > 1 ? (
-            <ClaimCollectionHeader
-                personalities={claimData.personalities}
-                title=""
-            />
+            <DebateHeader personalities={claimData.personalities} title="" />
         ) : (
             <PersonalityCard
                 personality={claimData.personalities[0]}

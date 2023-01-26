@@ -8,8 +8,6 @@ import React, { ComponentType } from "react";
 import { NodeViewComponentProps } from "@remirror/react";
 import { EditorClaimCard } from "./EditorClaimCard";
 
-export const EditorClaimCardNodeType = "editor-claim-card";
-
 class EditorClaimCardExtension extends NodeExtension {
     get name() {
         return "editor-claim-card" as const;
