@@ -109,15 +109,15 @@ const saveDebate = (t, debate = {}) => {
         });
 };
 
-const update = (id, t, params = {}) => {
+const updateDebate = (
+    debateId,
+    t,
+    params: { content: string; personality: string }
+) => {
     return request
-        .put(`${id}`, params)
+        .put(`/debate/${debateId}`, params)
         .then((response) => {
-            const { title, _id } = response.data;
-            message.success(
-                `"${title}" ${t("claimForm:successUpdateMessage")}`
-            );
-            return _id;
+            return response.data;
         })
         .catch((err) => {
             const response = err && err.response;
@@ -139,6 +139,6 @@ const claimApi = {
     save,
     saveImage,
     saveDebate,
-    update,
+    updateDebate,
 };
 export default claimApi;

@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
 import { EditorComponent, useHelpers } from "@remirror/react";
-import claimCollectionApi from "../../api/claimCollectionApi";
-import { useTranslation } from "next-i18next";
-import AletheiaButton from "../Button";
-import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
 import { useAtom } from "jotai";
+import { useTranslation } from "next-i18next";
 
-export const EditorContent = ({ claimCollectionId }) => {
+import EditorApi from "../../api/editor";
+import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
+import AletheiaButton from "../Button";
+
+export const EditorContent = ({ reference }) => {
     const { t } = useTranslation();
     // this needs to be called inside the scope of the provider
     // to start the machine with the correct context
@@ -14,9 +15,7 @@ export const EditorContent = ({ claimCollectionId }) => {
     function SaveButton() {
         const { getJSON } = useHelpers();
         const handleClick = useCallback(() => {
-            claimCollectionApi.update(claimCollectionId, t, {
-                editorContentObject: getJSON(),
-            });
+            return EditorApi.update(reference, getJSON(), t);
         }, [getJSON]);
 
         return (

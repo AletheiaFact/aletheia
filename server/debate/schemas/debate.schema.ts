@@ -15,7 +15,15 @@ export class Debate {
     @Prop({ required: true })
     data_hash: string;
 
-    @Prop({ required: true })
+    @Prop({
+        type: [
+            {
+                type: mongoose.Types.ObjectId,
+                required: true,
+                ref: "Speech",
+            },
+        ],
+    })
     content: Speech[];
 
     @Prop({ type: Boolean, default: false, required: true })

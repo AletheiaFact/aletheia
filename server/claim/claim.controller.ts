@@ -45,6 +45,8 @@ import { AbilitiesGuard } from "../ability/abilities.guard";
 import { AdminUserAbility, CheckAbilities } from "../ability/ability.decorator";
 import { DebateService } from "../debate/debate.service";
 import { EditorService } from "../editor/editor.service";
+import { UpdateDebateDto } from "./dto/update-debate.dto";
+import { ParserService } from "../parser/parser.service";
 
 @Controller()
 export class ClaimController {
@@ -61,6 +63,7 @@ export class ClaimController {
         private imageService: ImageService,
         private debateService: DebateService,
         private editorService: EditorService,
+        private parserService: ParserService,
         @Optional() private readonly unleash: UnleashService
     ) {}
 
@@ -125,6 +128,20 @@ export class ClaimController {
     @Post("api/claim/debate")
     async createClaimDebate(@Body() createClaimDTO: CreateDebateClaimDTO) {
         return await this.createClaim(createClaimDTO);
+    }
+
+    @Put("api/claim/debate/:debateId")
+    async updateClaimDebate(
+        @Param("debateId") debateId,
+        @Body() updateClaimDebateDto: UpdateDebateDto
+    ) {
+        const newSpeech = await this.parserService.parse(
+            updateClaimDebateDto.content,
+            updateClaimDebateDto.personality
+        );
+
+        await this.debateService.addSpeechToDebate(debateId, newSpeech._id);
+        return newSpeech;
     }
 
     private async createClaim(createClaimDTO) {
