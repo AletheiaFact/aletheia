@@ -3,6 +3,21 @@ import * as mongoose from "mongoose";
 
 export type EditorDocument = Editor & mongoose.Document;
 
+export type EditorContentObjectType = {
+    type: string;
+    content: {
+        type: string;
+        attrs?: {
+            personalityId: string;
+            speechId: string;
+            cardId: string;
+        };
+        content?: {
+            type: string;
+            content: { type: string; text: string }[];
+        }[];
+    }[];
+};
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Editor {
     @Prop({
@@ -10,7 +25,7 @@ export class Editor {
         type: Object,
         default: {},
     })
-    editorContentObject: any; // TODO: define a type for the editor content object
+    editorContentObject: EditorContentObjectType;
 
     @Prop({
         type: mongoose.Types.ObjectId,

@@ -51,7 +51,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     }, []);
 
     const handleHideModal = () => {
-        Cookies.set("tutorial_shown", true);
+        Cookies.set("tutorial_shown", "true");
         setIsModalVisible(false);
     };
 
@@ -112,8 +112,9 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 </PulseAnimation>
 
                 {isOptionsVisible &&
-                    actions.map((action) => (
+                    actions.map((action, index) => (
                         <Fab
+                            key={index}
                             tooltipText={action.tooltip}
                             icon={action.icon}
                             href={action.href}
@@ -140,7 +141,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 >
                     <Trans
                         i18nKey={"tutorial:modalContent"}
-                        components={[<PlusCircleFilled />]}
+                        components={[<PlusCircleFilled key={"icon"} />]}
                     />
                 </p>
 

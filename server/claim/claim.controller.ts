@@ -11,7 +11,6 @@ import {
     Redirect,
     Req,
     Res,
-    Headers,
     Header,
     Optional,
     NotFoundException,

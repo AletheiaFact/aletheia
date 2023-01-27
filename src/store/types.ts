@@ -1,6 +1,5 @@
 import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { Content } from "../types/Content";
-import { Roles } from "../types/enums";
 import { Personality } from "../types/Personality";
 
 export enum ActionTypes {

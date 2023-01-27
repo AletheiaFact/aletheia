@@ -9,7 +9,6 @@ import {
     isPartialReviewSelector,
     publishedSelector,
 } from "../../machines/reviewTask/selectors";
-import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
 import PartialReviewWarning from "../PartialReviewWarning";
