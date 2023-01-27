@@ -12,7 +12,6 @@ const { Title } = Typography;
 
 const DebateGrid = ({ debates }) => {
     const { t } = useTranslation();
-
     return (
         <GridList
             title={"Debates"}
@@ -62,7 +61,7 @@ const DebateGrid = ({ debates }) => {
                             >
                                 {debateClaim.personalities.map((p) => {
                                     return (
-                                        <Col>
+                                        <Col key={p._id} xs={24} md={11}>
                                             <PersonalityCard
                                                 personality={p}
                                                 summarized={true}
@@ -79,7 +78,7 @@ const DebateGrid = ({ debates }) => {
                                 <Col>
                                     <Button
                                         type={ButtonType.blue}
-                                        href={`/claim/${debateClaim._id}/debate`}
+                                        href={`/claim/${debateClaim.claimId}/debate`}
                                         style={{
                                             fontSize: "12px",
                                             lineHeight: "20px",

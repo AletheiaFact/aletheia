@@ -48,11 +48,24 @@ export class HomeController {
 
         const claims = await Promise.all(
             liveDebates.map(async (debate) => {
-                return await this.claimRevisionService.getByContentId(
-                    debate._id
+                const debateRevision =
+                    await this.claimRevisionService.getByContentId(debate._id);
+                const personalities = await Promise.all(
+                    debateRevision.personalities.map((personality) => {
+                        return this.personalityService.getById(
+                            personality,
+                            req.language
+                        );
+                    })
                 );
+                return {
+                    title: debateRevision.title,
+                    claimId: debateRevision.claimId,
+                    personalities,
+                };
             })
         );
+
         const stats = await this.statsService.getHomeStats();
         await this.viewService.getNextServer().render(
             req,

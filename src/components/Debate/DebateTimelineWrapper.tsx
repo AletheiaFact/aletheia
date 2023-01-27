@@ -8,7 +8,6 @@ import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
 const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
     const [timelineData, setTimelineData] = useState(speeches);
     const [state] = useAtom(callbackTimerAtom);
-
     const { t } = useTranslation();
 
     useLayoutEffect(() => {
@@ -16,9 +15,9 @@ const DebateTimelineWrapper = ({ speeches, isLive = false }) => {
         if (claim?.content?.content) {
             setTimelineData(claim?.content?.content.reverse());
         } else {
-            setTimelineData([]);
+            setTimelineData(speeches.reverse());
         }
-    }, [state?.context?.callbackResult]);
+    }, [state?.context?.callbackResult, speeches]);
 
     return (
         <>

@@ -124,8 +124,6 @@ export class ClaimRevisionService {
     }
 
     getByContentId(contentId) {
-        return this.ClaimRevisionModel.findOne({ contentId }).populate(
-            "personalities"
-        );
+        return this.ClaimRevisionModel.findOne({ contentId });
     }
 }
