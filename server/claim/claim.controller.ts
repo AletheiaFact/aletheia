@@ -108,12 +108,7 @@ export class ClaimController {
     }
 
     @Post("api/claim")
-    async create(@Body() createClaimDTO: CreateClaimDTO, @Headers() headers) {
-        const { referer } = headers;
-        // If referer is claim-collection editor endpoints, skip captcha validation
-        if (!/claim-collection\/.*\/edit/.test(referer)) {
-            return await this.createClaim(createClaimDTO);
-        }
+    async create(@Body() createClaimDTO: CreateClaimDTO) {
         return this.claimService.create(createClaimDTO);
     }
 
