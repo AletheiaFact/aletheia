@@ -35,9 +35,7 @@ export interface RootState {
         searchInput: string;
         searchPageSize: number;
     };
-    login: boolean;
     autoSave: boolean;
-    role: Roles;
     claimType: string;
     claimPersonality: Personality;
     vw: WidthBreakpoints;
@@ -45,6 +43,5 @@ export interface RootState {
     selectedPersonality: any;
     selectedClaim: any;
     selectedContent: Content;
-    userId: string;
     sitekey: string;
 }

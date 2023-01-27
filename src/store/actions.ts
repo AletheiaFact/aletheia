@@ -1,5 +1,4 @@
 import { Content } from "../types/Content";
-import { Roles } from "../types/enums";
 import { ActionTypes } from "./types";
 
 const actions = {
@@ -39,18 +38,6 @@ const actions = {
         type: ActionTypes.SET_SELECTED_CONTENT,
         selectedContent: content,
         selectedDataHash: content?.data_hash || "",
-    }),
-    setLoginStatus: (isLoggedIn) => ({
-        type: ActionTypes.SET_LOGIN_STATUS,
-        login: isLoggedIn,
-    }),
-    setUserId: (userId) => ({
-        type: ActionTypes.SET_USER_ID,
-        userId,
-    }),
-    setUserRole: (role) => ({
-        type: ActionTypes.SET_USER_ROLE,
-        role: role || Roles.Regular,
     }),
     setSitekey: (sitekey) => ({
         type: ActionTypes.SET_SITEKEY,

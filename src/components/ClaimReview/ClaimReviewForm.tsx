@@ -15,6 +15,12 @@ import {
     reviewDataSelector,
 } from "../../machines/reviewTask/selectors";
 import { Roles } from "../../types/enums";
+import { useAtom } from "jotai";
+import {
+    currentUserRole,
+    isUserLoggedIn,
+    currentUserId,
+} from "../../atoms/currentUser";
 
 const ClaimReviewForm = ({
     claimId,
@@ -23,11 +29,9 @@ const ClaimReviewForm = ({
     userIsReviewer,
 }) => {
     const { t } = useTranslation();
-    const {
-        login: isLoggedIn,
-        userId,
-        role,
-    } = useAppSelector((state) => state);
+    const [role] = useAtom(currentUserRole);
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [userId] = useAtom(currentUserId);
 
     const { machineService } = useContext(ReviewTaskMachineContext);
 
@@ -72,7 +76,7 @@ const ClaimReviewForm = ({
                         }}
                     >
                         <>
-                            {isLoggedIn && (
+                            {isUserLoggedIn && (
                                 <Button
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}

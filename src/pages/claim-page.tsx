@@ -15,19 +15,13 @@ export interface ClaimPageProps {
     claim: any;
     sitekey: string;
     href: string;
-    isLoggedIn: boolean;
-    userRole: string;
-    userId: string;
 }
 
 const ClaimPage: NextPage<ClaimPageProps> = (props) => {
-    const { personality, claim, isLoggedIn, userRole, userId, sitekey } = props;
+    const { personality, claim, sitekey } = props;
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
-    dispatch(actions.setLoginStatus(isLoggedIn));
-    dispatch(actions.setUserId(userId));
-    dispatch(actions.setUserRole(userRole));
     dispatch(actions.setSitekey(sitekey));
 
     const jsonld = {
@@ -71,10 +65,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
                 : null,
             claim: JSON.parse(JSON.stringify(query.claim)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
-            isLoggedIn: req.user ? true : false,
             sitekey: query.sitekey,
-            userRole: req?.user?.role ? req?.user?.role : null,
-            userId: req?.user?._id || "",
         },
     };
 }

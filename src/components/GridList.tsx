@@ -1,9 +1,10 @@
 import SectionTitle from "./SectionTitle";
 import { Col, List, Row } from "antd";
 import React from "react";
-import { useAppSelector } from "../store/store";
 import Button, { ButtonType } from "./Button";
 import { ArrowRightOutlined } from "@ant-design/icons";
+import { isUserLoggedIn } from "../atoms/currentUser";
+import { useAtom } from "jotai";
 
 const GridList = ({
     renderItem,
@@ -14,9 +15,7 @@ const GridList = ({
     disableSeeMoreButton = false,
     gridLayout = {},
 }) => {
-    const { isLoggedIn } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-    }));
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     const overrideGridLayout = isLoggedIn
         ? {

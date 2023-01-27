@@ -22,6 +22,8 @@ import Banner from "../SentenceReport/Banner";
 import SentenceReportCard from "../SentenceReport/SentenceReportCard";
 import TopicInput from "./TopicInput";
 import { Content } from "../../types/Content";
+import { useAtom } from "jotai";
+import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 
 interface ClaimReviewHeaderProps {
     personality?: string;
@@ -48,7 +50,9 @@ const ClaimReviewHeader = ({
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
-    const { vw, role, login } = useAppSelector((state) => state);
+    const { vw } = useAppSelector((state) => state);
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [role] = useAtom(currentUserRole);
 
     const { machineService, publishedReview } = useContext(
         ReviewTaskMachineContext
@@ -100,7 +104,7 @@ const ClaimReviewHeader = ({
 
     const [alert, setAlert] = useState(alertTypes.noAlert);
     const getAlert = () => {
-        if (!login) {
+        if (!isLoggedIn) {
             return alertTypes.noAlert;
         }
         if (hide) {
@@ -129,7 +133,7 @@ const ClaimReviewHeader = ({
     useEffect(() => {
         const newAlert = getAlert();
         setAlert(newAlert);
-    }, [isCrossChecking, hide, login, reviewData.rejectionComment]);
+    }, [isCrossChecking, hide, isLoggedIn, reviewData.rejectionComment]);
 
     useEffect(() => {
         setHide(isHidden);

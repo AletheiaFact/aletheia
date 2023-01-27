@@ -1,27 +1,19 @@
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useDispatch } from "react-redux";
-import AffixButton from "../components/AffixButton/AffixButton";
 
+import AffixButton from "../components/AffixButton/AffixButton";
 import Home from "../components/Home/Home";
 import Seo from "../components/Seo";
-import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
 
 const HomePage: NextPage<{
     personalities;
     stats;
     href;
-    isLoggedIn;
     claims;
 }> = (props) => {
     const { t } = useTranslation();
-    const dispatch = useDispatch();
-    dispatch({
-        type: ActionTypes.SET_LOGIN_STATUS,
-        login: props.isLoggedIn,
-    });
     return (
         <>
             <Seo title="Home" description={t("landingPage:description")} />
@@ -40,8 +32,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personalities: JSON.parse(JSON.stringify(query.personalities)),
             claims: JSON.parse(JSON.stringify(query.claims)),
             stats: JSON.parse(JSON.stringify(query.stats)),
-            href: req.protocol + "://" + req.get("host") + req.originalUrl,
-            isLoggedIn: req.user ? true : false,
         },
     };
 }

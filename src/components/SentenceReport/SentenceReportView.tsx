@@ -14,6 +14,8 @@ import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
 import PartialReviewWarning from "../PartialReviewWarning";
 import SentenceReportContent from "./SentenceReportContent";
+import { useAtom } from "jotai";
+import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 
 const SentenceReportView = ({
     context,
@@ -21,7 +23,8 @@ const SentenceReportView = ({
     userIsReviewer,
     isHidden,
 }) => {
-    const { login: isLoggedIn, role } = useAppSelector((state) => state);
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [role] = useAtom(currentUserRole);
     const { machineService, publishedReview } = useContext(
         ReviewTaskMachineContext
     );

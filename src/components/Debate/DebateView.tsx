@@ -3,7 +3,7 @@ import { Col, Row } from "antd";
 import { Provider as CallbackTimerProvider, useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 
-import { isLoggedIn } from "../../atoms/currentUser";
+import { isUserLoggedIn } from "../../atoms/currentUser";
 import claimApi from "../../api/claim";
 import { callbackTimerInitialConfig } from "../../machines/callbackTimer/provider";
 import DonationCard from "../DonationCard";
@@ -16,7 +16,7 @@ const DebateView = ({ claim }) => {
     const debate = claim?.content;
     const { t } = useTranslation();
     const speeches = debate.content;
-    const [isLogged] = useAtom(isLoggedIn);
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     // the new debate data will in the callbackResult of the state
     const updateTimeline = useCallback(() => {
@@ -72,7 +72,7 @@ const DebateView = ({ claim }) => {
                             <DonationCard />
                         </Col>
                     </Row>
-                    {!isLogged && (
+                    {!isLoggedIn && (
                         <Row
                             style={{
                                 padding: "30px 10%",

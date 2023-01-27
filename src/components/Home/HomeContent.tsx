@@ -2,17 +2,20 @@ import React from "react";
 import CTARegistration from "./CTARegistration";
 import { Row, Col } from "antd";
 import SocialMediaShare from "../SocialMediaShare";
+import { isUserLoggedIn } from "../../atoms/currentUser";
 import SectionTitle from "../SectionTitle";
+import { useAtom } from "jotai";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
 import ReviewsCarousel from "../ClaimReview/ReviewsCarousel";
 import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
 const HomeContent = ({ personalities, href, title, debateClaims }) => {
-    const { isLoggedIn, vw } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
+    const { vw } = useAppSelector((state) => ({
         vw: state.vw,
     }));
+
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     const { t } = useTranslation();
 

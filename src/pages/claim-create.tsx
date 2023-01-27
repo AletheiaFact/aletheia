@@ -15,12 +15,10 @@ import { GetLocale } from "../utils/GetLocale";
 const ClaimCreatePage: NextPage<any> = ({
     sitekey,
     personality,
-    isLoggedIn,
     enableImageClaim,
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    dispatch(actions.setLoginStatus(isLoggedIn));
     dispatch(actions.setSitekey(sitekey));
     return (
         <>
@@ -55,8 +53,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personality: query?.personality
                 ? JSON.parse(JSON.stringify(query?.personality))
                 : "",
-            href: req.protocol + "://" + req.get("host") + req.originalUrl,
-            isLoggedIn: req.user ? true : false,
             enableImageClaim: JSON.parse(
                 JSON.stringify(query?.enableImageClaim)
             ),
