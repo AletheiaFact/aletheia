@@ -68,13 +68,17 @@ export class ClaimReviewTaskService {
                 const { personality, claim }: any = machine.context.claimReview;
                 const { title, contentModel } = claim.latestRevision;
                 const isContentImage = contentModel === ContentModelEnum.Image;
+                const isContentDebate =
+                    contentModel === ContentModelEnum.Debate;
 
                 let reviewHref = personality
                     ? `/personality/${personality?.slug}/claim/${claim?.slug}`
                     : `/claim`;
-                reviewHref += isContentImage
-                    ? `/${claim?._id}`
-                    : `/sentence/${data_hash}`;
+                reviewHref +=
+                    isContentImage || isContentDebate
+                        ? `/${claim?._id}`
+                        : `/sentence/${data_hash}`;
+                reviewHref += isContentDebate ? `/debate` : ``;
                 const usersName = machine.context.reviewData.usersId.map(
                     (user) => {
                         return user.name;

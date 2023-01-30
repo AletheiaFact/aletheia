@@ -25,19 +25,33 @@ const SentenceReportCard = ({
 }) => {
     const { t } = useTranslation();
     const isImage = claim?.contentModel === ContentModelEnum.Image;
-    const speechTypeTranslation =
-        claim?.contentModel === "Speech"
-            ? t("claim:typeSpeech")
-            : t("claim:typeTwitter");
-    const title = isImage ? claim.title : `"(...) ${content.content}"`;
-    const linkText = isImage
-        ? "claim:cardLinkToImage"
-        : "claim:cardLinkToFullText";
+    console.log("claim", claim);
 
-    let contentPath = personality
-        ? `/personality/${personality?.slug}/claim/${claim?.slug}`
-        : `/claim/${claim?._id}`;
-    contentPath += isImage ? `` : `/sentence/${content.data_hash}`;
+    const contentProps = {
+        [ContentModelEnum.Speech]: {
+            linkText: "claim:cardLinkToFullText",
+            contentPath: `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${content.data_hash}`,
+            title: `"(...) ${content.content}"`,
+            speechTypeTranslation: "claim:typeSpeech",
+        },
+        [ContentModelEnum.Image]: {
+            linkText: "claim:cardLinkToImage",
+            contentPath: personality
+                ? `/personality/${personality?.slug}/claim/${claim?.slug}`
+                : `/claim/${claim?._id}`,
+            title: claim.title,
+            speechTypeTranslation: "",
+        },
+        [ContentModelEnum.Debate]: {
+            linkText: "claim:cardLinkToDebate",
+            contentPath: `/claim/${claim?._id}/debate`,
+            title: `"(...) ${content.content}"`,
+            speechTypeTranslation: "claim:typeDebate",
+        },
+    };
+
+    const { linkText, contentPath, title, speechTypeTranslation } =
+        contentProps[claim?.contentModel];
 
     return (
         <SentenceReportCardStyle>
@@ -100,11 +114,14 @@ const SentenceReportCard = ({
                         </Paragraph>
                     </SentenceReportSummary>
                     <Paragraph className="claim-info">
-                        {t("claim:cardHeader1")}&nbsp;
+                        {isImage
+                            ? t("claim:cardHeader3")
+                            : t("claim:cardHeader1")}
+                        &nbsp;
                         <LocalizedDate date={claim?.date} />
                         &nbsp;
-                        {t("claim:cardHeader2")}&nbsp;
-                        <strong>{speechTypeTranslation}</strong>
+                        {!isImage && t("claim:cardHeader2")}&nbsp;
+                        <strong>{t(speechTypeTranslation)}</strong>
                     </Paragraph>
                 </Col>
             </Row>

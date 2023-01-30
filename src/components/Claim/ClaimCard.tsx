@@ -13,6 +13,7 @@ import ClaimSpeechBody from "./ClaimSpeechBody";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
 import { ContentModelEnum } from "../../types/enums";
+import { useAppSelector } from "../../store/store";
 
 const { Paragraph } = Typography;
 
@@ -26,15 +27,21 @@ const CommentStyled = styled(Comment)`
 const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const { selectedClaim } = useAppSelector((state) => state);
     const review = claim?.stats?.reviews[0];
     const paragraphs = claim.content;
     const [claimContent, setClaimContent] = useState("");
     const isImage = claim?.contentModel === ContentModelEnum.Image;
-    const isDebate = claim?.contentModel === ContentModelEnum.Debate;
+    const isDebate = selectedClaim?.contentModel === ContentModelEnum.Debate;
     const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
 
     const dispatchPersonalityAndClaim = () => {
-        dispatch(actions.setSelectClaim(claim));
+        if (!isDebate) {
+            // when selecting a claim from the debate page to review or to read,
+            // we don't want to change the selected claim
+            // se we can keep reference to the debate
+            dispatch(actions.setSelectClaim(claim));
+        }
         dispatch(actions.setSelectPersonality(personality));
     };
 
@@ -59,7 +66,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
         }
     }, [claim.content, isSpeech, paragraphs]);
 
-    if (!claim || isDebate) {
+    if (!claim) {
         return <div></div>;
     }
     return (

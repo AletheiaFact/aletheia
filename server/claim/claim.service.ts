@@ -309,7 +309,7 @@ export class ClaimService {
         if (!claimContent || reviews.length <= 0) {
             return claimContent;
         }
-        if (claimContent.type === "image") {
+        if (claimContent.type !== ContentModelEnum.Speech) {
             const claimReview = reviews.find((review) => {
                 return review._id.data_hash === claimContent.data_hash;
             });

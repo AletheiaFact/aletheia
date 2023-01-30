@@ -11,12 +11,16 @@ import CTARegistration from "../Home/CTARegistration";
 import VideoCTACard from "../VideoCTACard";
 import DebateHeader from "./DebateHeader";
 import DebateTimelineWrapper from "./DebateTimelineWrapper";
+import { useDispatch } from "react-redux";
+import actions from "../../store/actions";
 
 const DebateView = ({ claim }) => {
     const debate = claim?.content;
     const { t } = useTranslation();
     const speeches = debate.content;
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const dispatch = useDispatch();
+    dispatch(actions.setSelectClaim(claim));
 
     // the new debate data will in the callbackResult of the state
     const updateTimeline = useCallback(() => {
