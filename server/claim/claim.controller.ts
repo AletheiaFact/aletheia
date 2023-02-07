@@ -108,7 +108,18 @@ export class ClaimController {
 
     @Post("api/claim")
     async create(@Body() createClaimDTO: CreateClaimDTO) {
-        return this.claimService.create(createClaimDTO);
+        try {
+            const claim = await this.claimService.create(createClaimDTO);
+            const personality = await this.personalityService.getById(
+                claim.personalities[0]
+            );
+            const path = claim.slug
+                ? `/personality/${personality.slug}/claim/${claim.slug}`
+                : `/personality/${personality.slug}`;
+            return { title: claim.title, path };
+        } catch (error) {
+            return error;
+        }
     }
 
     @Post("api/claim/image")
@@ -116,12 +127,31 @@ export class ClaimController {
         if (!this.isEnabledImageClaim()) {
             throw new NotFoundException();
         }
-        return await this.createClaim(createClaimDTO);
+        try {
+            const claim = await this.createClaim(createClaimDTO);
+
+            const personality = claim.personalities[0]
+                ? await this.personalityService.getById(claim.personalities[0])
+                : null;
+            const path = personality
+                ? `/personality/${personality.slug}/claim/${claim.slug}`
+                : `/claim/${claim._id}`;
+            return { title: claim.title, path };
+        } catch (error) {
+            return error;
+        }
     }
 
     @Post("api/claim/debate")
     async createClaimDebate(@Body() createClaimDTO: CreateDebateClaimDTO) {
-        return await this.createClaim(createClaimDTO);
+        try {
+            const claim = await this.createClaim(createClaimDTO);
+            const path = `/claim/${claim._id}/debate/edit`;
+            // TODO: IF NOT ADMIN, ONLY VIEW THE DEBATE
+            return { title: claim.title, path };
+        } catch (error) {
+            return error;
+        }
     }
 
     @Put("api/claim/debate/:debateId")

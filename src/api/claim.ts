@@ -46,7 +46,7 @@ const getById = (id, t, params = {}) => {
         });
 };
 
-const save = (t, claim = {}) => {
+const saveSpeech = (t, claim = {}) => {
     return request
         .post("/", claim)
         .then((response) => {
@@ -136,7 +136,7 @@ const updateDebate = (
 const claimApi = {
     get,
     getById,
-    save,
+    saveSpeech,
     saveImage,
     saveDebate,
     updateDebate,

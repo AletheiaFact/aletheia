@@ -14,7 +14,6 @@ enum CreateClaimStates {
     setupImage = "setup_image",
     setupDebate = "setup_debate",
     personalityAdded = "personality_added",
-    debatePersonalitiesAdded = "debate_personalities_added",
     persisted = "persisted",
 }
 

@@ -7,7 +7,6 @@ import { CreateClaimMachineEvents } from "./events";
 import { CreateClaimMachineStates } from "./states";
 import {
     persistClaim,
-    persistDebate,
     saveClaimContext,
     startDebate,
     startImage,
@@ -73,15 +72,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         actions: [saveClaimContext],
                     },
                     [Events.savePersonality]: {
-                        target: States.debatePersonalitiesAdded,
-                    },
-                },
-            },
-            [States.debatePersonalitiesAdded]: {
-                on: {
-                    [Events.persist]: {
-                        target: States.persisted,
-                        actions: [persistDebate],
+                        target: States.personalityAdded,
                     },
                 },
             },

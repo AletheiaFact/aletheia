@@ -21,7 +21,7 @@ const addSpeechSelector = (state) => {
 
 const addDebateSelector = (state) => {
     return (
-        state.matches(CreateClaimStates.debatePersonalitiesAdded) &&
+        state.matches(CreateClaimStates.personalityAdded) &&
         state.context.claimData.contentModel === ContentModelEnum.Debate
     );
 };

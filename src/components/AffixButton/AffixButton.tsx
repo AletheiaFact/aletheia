@@ -112,9 +112,9 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 </PulseAnimation>
 
                 {isOptionsVisible &&
-                    actions.map((action, index) => (
+                    actions.map((action) => (
                         <Fab
-                            key={index}
+                            key={action.href}
                             tooltipText={action.tooltip}
                             icon={action.icon}
                             href={action.href}
