@@ -46,6 +46,7 @@ import { DebateService } from "../debate/debate.service";
 import { EditorService } from "../editor/editor.service";
 import { UpdateDebateDto } from "./dto/update-debate.dto";
 import { ParserService } from "../parser/parser.service";
+import { Roles } from "../ability/ability.factory";
 
 @Controller()
 export class ClaimController {
@@ -143,11 +144,17 @@ export class ClaimController {
     }
 
     @Post("api/claim/debate")
-    async createClaimDebate(@Body() createClaimDTO: CreateDebateClaimDTO) {
+    async createClaimDebate(
+        @Body() createClaimDTO: CreateDebateClaimDTO,
+        @Req() req: BaseRequest
+    ) {
         try {
             const claim = await this.createClaim(createClaimDTO);
-            const path = `/claim/${claim._id}/debate/edit`;
-            // TODO: IF NOT ADMIN, ONLY VIEW THE DEBATE
+
+            const path =
+                req.user.role === Roles.Admin
+                    ? `/claim/${claim._id}/debate/edit`
+                    : `/claim/${claim._id}/debate`;
             return { title: claim.title, path };
         } catch (error) {
             return error;

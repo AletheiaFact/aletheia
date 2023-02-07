@@ -31,12 +31,13 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const review = claim?.stats?.reviews[0];
     const paragraphs = claim.content;
     const [claimContent, setClaimContent] = useState("");
-    const isImage = claim?.contentModel === ContentModelEnum.Image;
-    const isDebate = selectedClaim?.contentModel === ContentModelEnum.Debate;
     const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
+    const isDebate = claim?.contentModel === ContentModelEnum.Debate;
 
+    const isInsideDebate =
+        selectedClaim?.contentModel === ContentModelEnum.Debate;
     const dispatchPersonalityAndClaim = () => {
-        if (!isDebate) {
+        if (!isInsideDebate) {
             // when selecting a claim from the debate page to review or to read,
             // we don't want to change the selected claim
             // se we can keep reference to the debate
@@ -45,9 +46,13 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
         dispatch(actions.setSelectPersonality(personality));
     };
 
-    const href = personality.slug
+    let href = personality.slug
         ? `/personality/${personality.slug}/claim/${claim.slug}`
         : `/claim/${claim._id}`;
+
+    if (isDebate) {
+        href = `/claim/${claim._id}/debate`;
+    }
 
     useEffect(() => {
         const CreateFirstParagraph = () => {
@@ -91,8 +96,8 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                                 <ClaimSummaryContent
                                     claimTitle={claim?.title}
                                     claimContent={claimContent}
+                                    contentModel={claim?.contentModel}
                                     href={href}
-                                    isImage={isImage}
                                 />
                             ) : (
                                 <ClaimSpeechBody
@@ -157,7 +162,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                                 >
                                     {t(`claimReviewForm:${review?._id}`)}
                                 </span>
-                                ({0})
+                                ({review?.count})
                             </span>
                         )}
                     </Paragraph>
