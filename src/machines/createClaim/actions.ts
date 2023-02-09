@@ -62,7 +62,6 @@ const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
 
         saveFunctions[claimData.contentModel](t, sendData)
             .then((claim) => {
-                console.log(claim);
                 router.push(claim.path);
             })
             .catch((err) => {

@@ -126,19 +126,21 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                         flexWrap: "wrap",
                     }}
                 >
-                    <p
-                        style={{
-                            width: "100%",
-                            fontSize: "14px",
-                            lineHeight: "18px",
-                            color: colors.blackSecondary,
-                            margin: 0,
-                        }}
-                    >
-                        {t("claim:metricsHeaderInfo", {
-                            totalReviews: claim?.stats?.total,
-                        })}
-                    </p>{" "}
+                    {claim?.stats && (
+                        <p
+                            style={{
+                                width: "100%",
+                                fontSize: "14px",
+                                lineHeight: "18px",
+                                color: colors.blackSecondary,
+                                margin: 0,
+                            }}
+                        >
+                            {t("claim:metricsHeaderInfo", {
+                                totalReviews: claim?.stats?.total,
+                            })}
+                        </p>
+                    )}{" "}
                     <Paragraph
                         style={{
                             fontSize: "10px",

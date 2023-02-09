@@ -25,7 +25,6 @@ const SentenceReportCard = ({
 }) => {
     const { t } = useTranslation();
     const isImage = claim?.contentModel === ContentModelEnum.Image;
-    console.log("claim", claim);
 
     const contentProps = {
         [ContentModelEnum.Speech]: {

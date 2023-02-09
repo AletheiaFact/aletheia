@@ -255,17 +255,27 @@ export class ClaimService {
             const reviews = await this.claimReviewService.getReviewsByClaimId(
                 claim._id
             );
-
             processedClaim.content =
                 processedClaim.contentModel === ContentModelEnum.Speech
                     ? processedClaim.content[0].content
                     : processedClaim.content[0];
 
             if (processedClaim?.content) {
-                processedClaim.content = this.transformContentObject(
-                    processedClaim.content,
-                    reviews
-                );
+                if (processedClaim?.contentModel === ContentModelEnum.Debate) {
+                    processedClaim.content.content =
+                        processedClaim.content.content.map((speech) => {
+                            const content = this.transformContentObject(
+                                speech.content,
+                                reviews
+                            );
+                            return { ...speech, content };
+                        });
+                } else {
+                    processedClaim.content = this.transformContentObject(
+                        processedClaim.content,
+                        reviews
+                    );
+                }
             }
             const reviewStats =
                 await this.claimReviewService.getReviewStatsByClaimId(
@@ -309,7 +319,8 @@ export class ClaimService {
         if (!claimContent || reviews.length <= 0) {
             return claimContent;
         }
-        if (claimContent.type !== ContentModelEnum.Speech) {
+        // TODO: we might need to add something for the debate
+        if (claimContent.type === ContentModelEnum.Image) {
             const claimReview = reviews.find((review) => {
                 return review._id.data_hash === claimContent.data_hash;
             });
