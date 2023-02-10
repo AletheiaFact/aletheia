@@ -26,6 +26,7 @@ const CreateClaimView = () => {
     const addImage = addImageSelector(state);
     const addSpeech = addSpeechSelector(state);
     const addDebate = addDebateSelector(state);
+    const showPersonality = addSpeech || addImage || addDebate;
     const { claimData } = state.context;
     const isLoading = !(
         notStarted ||
@@ -40,7 +41,7 @@ const CreateClaimView = () => {
     return (
         <Row justify="center">
             <Col span={18}>
-                {!!claimData.personalities?.length && (
+                {showPersonality && !!claimData.personalities?.length && (
                     <CreateClaimHeader claimData={claimData} />
                 )}
                 {notStarted && <ClaimSelectType />}

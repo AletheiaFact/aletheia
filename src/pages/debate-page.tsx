@@ -6,6 +6,7 @@ import DebateView from "../components/Debate/DebateView";
 
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";
+import AffixButton from "../components/AffixButton/AffixButton";
 
 const DebatePage: NextPage<any> = ({
     claim,
@@ -14,7 +15,12 @@ const DebatePage: NextPage<any> = ({
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
 
-    return <DebateView claim={claim} />;
+    return (
+        <>
+            <AffixButton />
+            <DebateView claim={claim} />;
+        </>
+    );
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {

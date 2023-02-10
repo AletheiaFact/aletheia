@@ -1,5 +1,9 @@
 import { assign } from "xstate";
-import { PersistClaimEvent, SaveContextEvent } from "./events";
+import {
+    PersistClaimEvent,
+    RemovePersonalityEvent,
+    SaveContextEvent,
+} from "./events";
 import { CreateClaimContext } from "./context";
 import { ContentModelEnum } from "../../types/enums";
 import claimApi from "../../api/claim";
@@ -42,6 +46,22 @@ const startDebate = assign<CreateClaimContext>((context) => {
     };
 });
 
+const removePersonality = assign<CreateClaimContext, RemovePersonalityEvent>(
+    (contex, event) => {
+        const { personality } = event;
+        const { personalities } = contex.claimData;
+
+        return {
+            claimData: {
+                ...contex.claimData,
+                personalities: personalities.filter(
+                    (p) => p._id !== personality._id
+                ),
+            },
+        };
+    }
+);
+
 const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
     (context, event) => {
         const claimData = {
@@ -72,4 +92,11 @@ const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
     }
 );
 
-export { saveClaimContext, startSpeech, startImage, startDebate, persistClaim };
+export {
+    saveClaimContext,
+    startSpeech,
+    startImage,
+    startDebate,
+    removePersonality,
+    persistClaim,
+};

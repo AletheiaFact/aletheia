@@ -3,6 +3,7 @@ enum CreateClaimEvents {
     startImage = "START_IMAGE",
     startDebate = "START_DEBATE",
     addPersonality = "ADD_PERSONALITY",
+    removePersonality = "REMOVE_PERSONALITY",
     savePersonality = "SAVE_PERSONALITY",
     noPersonality = "NO_PERSONALITY",
     persist = "PERSIST",
