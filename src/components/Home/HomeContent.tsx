@@ -33,6 +33,11 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
                         xs={{ span: 20, order: 1 }}
                         sm={{ span: 20, order: 1 }}
                         md={{ span: 18, order: 1 }}
+                        style={{
+                            width: "100%",
+                            paddingBottom: "32px",
+                            justifyContent: "center",
+                        }}
                     >
                         <DebateGrid debates={debateClaims} />
                     </Col>
@@ -51,7 +56,7 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
                     xs={{ span: 20, order: 1 }}
                     sm={{ span: 20, order: 1 }}
                     md={{ span: 6, order: 2 }}
-                    style={{ paddingLeft: vw?.sm ? 0 : 50 }}
+                    style={{ paddingLeft: vw?.sm ? 0 : 20 }}
                 >
                     <SectionTitle>{t("home:latestReviewsTitle")}</SectionTitle>
                     <ReviewsCarousel />

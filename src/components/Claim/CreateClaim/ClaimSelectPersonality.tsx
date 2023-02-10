@@ -111,7 +111,7 @@ const ClaimSelectPersonality = () => {
                 {personalities &&
                     personalities.length > 0 &&
                     personalities.map((personality) => (
-                        <Col span={12}>
+                        <Col span={12} key={personality._id}>
                             <Card variant="elevation" style={{ margin: "8px" }}>
                                 <CardContent>
                                     <PersonalityMinimalCard

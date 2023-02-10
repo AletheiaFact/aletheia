@@ -142,14 +142,14 @@ const ReviewsCarousel = () => {
                                         <span
                                             style={{
                                                 color: colors.white,
-                                                fontSize: 16,
+                                                fontSize: 12,
                                                 fontWeight: 400,
                                                 margin: 0,
                                                 padding: 0,
                                                 lineHeight: "24px",
                                             }}
                                         >
-                                            Ver
+                                            {t("home:reviewsCarouselOpen")}
                                         </span>
                                     </AletheiaButton>
                                 </div>,
