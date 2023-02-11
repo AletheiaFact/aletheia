@@ -1,7 +1,7 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { EditorService } from "../editor/editor.service";
-import { Model } from "mongoose";
+import { LeanDocument, Model } from "mongoose";
 import { Debate, DebateDocument } from "./schemas/debate.schema";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
@@ -43,15 +43,31 @@ export class DebateService {
         return debateCreated;
     }
 
-    //add speech to debate content list
     async addSpeechToDebate(debateId, speechId) {
         const debate = await this.DebateModel.findById(debateId);
         const previousDebate = debate.toObject();
         debate.content.push(speechId);
         const newDebate = await debate.save();
 
+        await this.saveHistory(newDebate, previousDebate);
+
+        return newDebate;
+    }
+
+    async updateDebateStatus(debateId, isLive) {
+        const debate = await this.DebateModel.findById(debateId);
+        const previousDebate = debate.toObject();
+        debate.isLive = isLive;
+        const newDebate = await debate.save();
+
+        await this.saveHistory(newDebate, previousDebate);
+
+        return newDebate;
+    }
+
+    private async saveHistory(newDebate, previousDebate) {
         const history = this.historyService.getHistoryParams(
-            debateId,
+            newDebate._id,
             TargetModel.Debate,
             this.req.user,
             HistoryType.Update,
@@ -60,7 +76,5 @@ export class DebateService {
         );
 
         await this.historyService.createHistory(history);
-
-        return newDebate;
     }
 }

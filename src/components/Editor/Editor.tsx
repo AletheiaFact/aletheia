@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Remirror, ThemeProvider, useRemirror } from "@remirror/react";
 import { AllStyledComponent } from "@remirror/styles/emotion";
-import { Affix, Row } from "antd";
+import { Affix, Col, Row } from "antd";
 import { useAtom } from "jotai";
 
 import { debateAtom } from "../../atoms/debate";
@@ -10,6 +10,9 @@ import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
 import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
 import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
 import { EditorContent } from "./EditorContent";
+import Button, { ButtonType } from "../Button";
+import { useTranslation } from "next-i18next";
+import claimApi from "../../api/claim";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
@@ -20,21 +23,40 @@ export interface IEditorProps {
 }
 
 const Editor = ({ claim }: IEditorProps) => {
+    const { t } = useTranslation();
     const personalities = claim.personalities;
     const { manager, state } = useRemirror({
         extensions,
         content: claim?.editor?.editorContentObject,
         stringHandler: "html",
     });
-    const [, setDebate] = useAtom(debateAtom);
+    const [debate, setDebate] = useAtom(debateAtom);
+    const isLive = debate.isLive;
+
     useEffect(() => {
         setDebate({
             sources: claim?.sources,
             title: claim?.title,
             date: claim?.date,
             debateId: claim?.contentId,
+            isLive: claim?.content.isLive,
         });
     }, [claim, setDebate]);
+
+    const handleClickUpdateStatus = () => {
+        claimApi
+            .updateDebate(debate.debateId, t, {
+                content: "",
+                personality: "",
+                isLive: !isLive,
+            })
+            .then((res) => {
+                setDebate({
+                    ...debate,
+                    isLive: res.isLive,
+                });
+            });
+    };
 
     return (
         <Row
@@ -44,6 +66,21 @@ const Editor = ({ claim }: IEditorProps) => {
                 justifyContent: "center",
             }}
         >
+            <Col span={21} style={{ display: "flex", justifyContent: "end" }}>
+                <Button
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={handleClickUpdateStatus}
+                    type={ButtonType.whiteBlack}
+                >
+                    {t(
+                        `debates:${
+                            isLive
+                                ? "finishDebateButtonLabel"
+                                : "reopenDebateButtonLabel"
+                        }`
+                    )}
+                </Button>
+            </Col>
             <AllStyledComponent
                 style={{
                     padding: "10px",
@@ -76,12 +113,16 @@ const Editor = ({ claim }: IEditorProps) => {
                                                 personalityName={
                                                     personality.name
                                                 }
+                                                disabled={!isLive}
                                             />
                                         );
                                     })}
                                 </div>
                             </Affix>
-                            <EditorContent reference={claim._id} />
+                            <EditorContent
+                                reference={claim.editor.reference}
+                                isLive={isLive}
+                            />
                         </EditorAutoSaveTimerProvider>
                     </Remirror>
                 </ThemeProvider>

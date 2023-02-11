@@ -8,6 +8,7 @@ import personalityApi from "../../../api/personality";
 import SpeechApi from "../../../api/speechApi";
 import { debateAtom } from "../../../atoms/debate";
 import colors from "../../../styles/colors";
+import { ContentModelEnum } from "../../../types/enums";
 import Button, { ButtonType } from "../../Button";
 import ClaimCardHeader from "../../Claim/ClaimCardHeader";
 import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
@@ -41,10 +42,11 @@ export const EditorClaimCard = ({
     const [personality, setPersonality] = useState(undefined);
     const [isLoading, setIsLoading] = useState(false);
     const [claim] = useAtom(debateAtom);
-    const { date, debateId } = claim;
+    const { date, debateId, isLive } = claim;
 
     const fetchSpeech = async (speechId: string) => {
         SpeechApi.getById(speechId).then(setSpeech);
+        console.log("fetchSpeech");
     };
 
     const createSpeechFromEditor = async (
@@ -56,8 +58,10 @@ export const EditorClaimCard = ({
             .updateDebate(debateId, t, {
                 content,
                 personality: personality._id,
+                isLive,
             })
             .then((newSpeech: any) => {
+                console.log("newSpeech", newSpeech);
                 fetchSpeech(newSpeech._id).then(() => {
                     setIsLoading(false);
                 });
@@ -101,6 +105,7 @@ export const EditorClaimCard = ({
                 <ClaimCardHeader
                     personality={personality}
                     date={date || new Date()}
+                    claimType={ContentModelEnum.Debate}
                 />
             </div>
             <div

@@ -112,7 +112,7 @@ const saveDebate = (t, debate = {}) => {
 const updateDebate = (
     debateId,
     t,
-    params: { content: string; personality: string }
+    params: { content: string; personality: string; isLive: boolean }
 ) => {
     return request
         .put(`/debate/${debateId}`, params)

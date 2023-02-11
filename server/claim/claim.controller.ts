@@ -166,13 +166,19 @@ export class ClaimController {
         @Param("debateId") debateId,
         @Body() updateClaimDebateDto: UpdateDebateDto
     ) {
-        const newSpeech = await this.parserService.parse(
-            updateClaimDebateDto.content,
-            updateClaimDebateDto.personality
-        );
+        const { content, personality, isLive } = updateClaimDebateDto;
+        let newSpeech;
+        if (content && personality) {
+            newSpeech = await this.parserService.parse(
+                updateClaimDebateDto.content,
+                updateClaimDebateDto.personality
+            );
 
-        await this.debateService.addSpeechToDebate(debateId, newSpeech._id);
-        return newSpeech;
+            await this.debateService.addSpeechToDebate(debateId, newSpeech._id);
+            return newSpeech;
+        } else {
+            return this.debateService.updateDebateStatus(debateId, isLive);
+        }
     }
 
     private async createClaim(createClaimDTO) {

@@ -5,6 +5,7 @@ const debateAtom = atom({
     title: "",
     date: new Date(),
     debateId: "",
+    isLive: true,
 });
 
 export { debateAtom };
