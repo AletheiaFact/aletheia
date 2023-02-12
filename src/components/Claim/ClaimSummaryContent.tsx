@@ -2,15 +2,36 @@ import colors from "../../styles/colors";
 import { Col, Typography } from "antd";
 import React from "react";
 import { useTranslation } from "next-i18next";
+import ImageClaim from "../ImageClaim";
 const { Paragraph } = Typography;
 
+interface ClaimSummaryContentProps {
+    claimContent: any;
+    claimTitle: string;
+    href: string;
+    isImage?: boolean;
+}
+
 const ClaimSummaryContent = ({
-    personality,
+    href,
     claimContent,
     claimTitle,
-    claimSlug,
-}) => {
+    isImage = false,
+}: ClaimSummaryContentProps) => {
     const { t } = useTranslation();
+    const title = isImage ? claimTitle : claimContent;
+    const linkText = isImage
+        ? "claim:cardLinkToImage"
+        : "claim:cardLinkToFullText";
+
+    const elipsizedTitleProps: React.CSSProperties = isImage
+        ? {
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+          }
+        : {};
+
     return (
         <Col>
             <Paragraph
@@ -28,15 +49,19 @@ const ClaimSummaryContent = ({
                             fontWeight: 400,
                             margin: 0,
                             lineHeight: 1.6,
-                            height: "6.4em",
+                            height: isImage ? "1.6em" : "6.4em",
+                            ...elipsizedTitleProps,
                         }}
                     >
-                        {claimContent || claimTitle}
+                        {title}
                     </p>
+                    {isImage && (
+                        <ImageClaim src={claimContent.content} title={title} />
+                    )}
                 </cite>
             </Paragraph>
             <a
-                href={`/personality/${personality.slug}/claim/${claimSlug}`}
+                href={href}
                 style={{
                     fontSize: 14,
                     color: colors.bluePrimary,
@@ -45,7 +70,7 @@ const ClaimSummaryContent = ({
                 }}
                 data-cy={"testSeeFullSpeech"}
             >
-                {t("claim:cardLinkToFullText")}
+                {t(linkText)}
             </a>
         </Col>
     );

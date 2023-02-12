@@ -15,5 +15,6 @@ const colors = {
     blackSecondary: "rgb(81, 81, 81)", //#515151
     lightYellow: "rgba(219, 159, 13, 0.3)", //#db9f0d
     logoWhite: "#E8E8E8",
+    redText: "#ff4d4f",
 };
 export default colors;

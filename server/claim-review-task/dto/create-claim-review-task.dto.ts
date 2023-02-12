@@ -14,13 +14,13 @@ export type ReviewTaskMachineContext = {
         verification?: string;
         sources?: string[];
         classification?: ClassificationEnum;
-        sentence_hash: string;
+        data_hash: string;
         reviewerId?: any;
         rejectionComment?: string;
     };
     claimReview: {
         usersId?: User[];
-        sentence_hash: string;
+        data_hash: string;
         personality: Personality;
         claim: Claim;
         isPartialReview: boolean;
@@ -43,7 +43,7 @@ export class CreateClaimReviewTaskDTO {
 
     @IsNotEmpty()
     @IsString()
-    sentence_hash: string;
+    data_hash: string;
 
     @IsNotEmpty()
     @IsString()

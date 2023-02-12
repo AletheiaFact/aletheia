@@ -1,6 +1,6 @@
 import React from "react";
 import CTARegistration from "./CTARegistration";
-import { Row, Col, List } from "antd";
+import { Row, Col } from "antd";
 import SocialMediaShare from "../SocialMediaShare";
 import SectionTitle from "../SectionTitle";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";

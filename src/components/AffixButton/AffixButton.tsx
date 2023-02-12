@@ -37,14 +37,14 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
         },
     ];
 
-    if (personalitySlug) {
-        actions.push({
-            icon: <FileAddFilled />,
-            tooltip: t("affix:affixButtonCreateClaim"),
-            href: `/personality/${personalitySlug}/claim/create`,
-            dataCy: "testFloatButtonAddClaim",
-        });
-    }
+    actions.push({
+        icon: <FileAddFilled />,
+        tooltip: t("affix:affixButtonCreateClaim"),
+        href: `/claim/create${
+            personalitySlug ? `?personality=${personalitySlug}` : ""
+        }`,
+        dataCy: "testFloatButtonAddClaim",
+    });
 
     useEffect(() => {
         const tutorialShown = Cookies.get("tutorial_shown") || false;

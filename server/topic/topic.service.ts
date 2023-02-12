@@ -34,7 +34,7 @@ export class TopicService {
      * @returns updated sentence with new topics
      */
     async create(
-        { topics, sentence_hash }: { topics: string[]; sentence_hash: string },
+        { topics, data_hash }: { topics: string[]; data_hash: string },
         language: string = "pt"
     ) {
         const createdTopics = await Promise.all(
@@ -57,7 +57,7 @@ export class TopicService {
 
         return this.sentenceService.updateSentenceWithTopics(
             createdTopics,
-            sentence_hash
+            data_hash
         );
     }
 

@@ -1,16 +1,17 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Col, Drawer, Row } from "antd";
+import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { GlobalStateMachineProvider } from "../../Context/GlobalStateMachineProvider";
+import { ReviewTaskMachineProvider } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
-import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
 
 import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";
+import LargeDrawer from "../LargeDrawer";
+import { ContentModelEnum } from "../../types/enums";
 
 const ClaimReviewDrawer = () => {
     const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const ClaimReviewDrawer = () => {
         vw,
         personality,
         claim,
-        sentence,
+        content,
         data_hash,
     } = useAppSelector((state) => {
         return {
@@ -31,28 +32,24 @@ const ClaimReviewDrawer = () => {
             vw: state?.vw,
             personality: state?.selectedPersonality,
             claim: state?.selectedClaim,
-            sentence: state?.selectedSentence,
+            content: state?.selectedContent,
             data_hash: state?.selectedDataHash,
         };
     });
+    const isContentImage = claim?.contentModel === ContentModelEnum.Image;
 
-    const href = `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
+    let href = personality
+        ? `/personality/${personality?.slug}/claim/${claim?.slug}`
+        : `/claim/${claim?._id}`;
+    href += isContentImage ? `/image/${data_hash}` : `/sentence/${data_hash}`;
 
     return (
-        <Drawer
+        <LargeDrawer
             visible={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
-            width={vw?.sm ? "100%" : "60%"}
-            height={vw?.sm ? "85%" : "100%"}
-            placement={vw?.sm ? "bottom" : "right"}
-            bodyStyle={{ padding: 0 }}
-            drawerStyle={{
-                backgroundColor: colors.lightGray,
-            }}
-            closable={false}
         >
-            {personality && claim && sentence && data_hash ? (
-                <GlobalStateMachineProvider data_hash={data_hash}>
+            {claim && data_hash ? (
+                <ReviewTaskMachineProvider data_hash={data_hash}>
                     <Row
                         justify="space-between"
                         style={{
@@ -89,13 +86,13 @@ const ClaimReviewDrawer = () => {
                     <ClaimReviewView
                         personality={personality}
                         claim={claim}
-                        sentence={sentence}
+                        content={content}
                     />
-                </GlobalStateMachineProvider>
+                </ReviewTaskMachineProvider>
             ) : (
                 <Loading />
             )}
-        </Drawer>
+        </LargeDrawer>
     );
 };
 

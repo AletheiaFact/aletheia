@@ -1,12 +1,12 @@
-import PersonalityCard from "../Personality/PersonalityCard";
-import React from "react";
+import { Col, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import GridList from "../GridList";
-import { Col, Row } from "antd";
-import Button, { ButtonType } from "../Button";
+import React from "react";
+
 import colors from "../../styles/colors";
-import { Typography } from "antd";
+import Button, { ButtonType } from "../Button";
 import CardBase from "../CardBase";
+import GridList from "../GridList";
+import PersonalityCard from "../Personality/PersonalityCard";
 
 const { Title } = Typography;
 

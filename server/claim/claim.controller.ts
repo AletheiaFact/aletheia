@@ -8,10 +8,13 @@ import {
     Post,
     Put,
     Query,
+    Redirect,
     Req,
     Res,
     Headers,
     Header,
+    Optional,
+    NotFoundException,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
@@ -29,6 +32,13 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { SentenceService } from "../sentence/sentence.service";
+import { BaseRequest } from "../types";
+import slugify from "slugify";
+import { UnleashService } from "nestjs-unleash";
+import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
+import { SentenceDocument } from "../sentence/schemas/sentence.schema";
+import { ImageService } from "../image/image.service";
+import { ImageDocument } from "../image/schemas/image.schema";
 
 @Controller()
 export class ClaimController {
@@ -41,7 +51,9 @@ export class ClaimController {
         private sentenceService: SentenceService,
         private configService: ConfigService,
         private viewService: ViewService,
-        private captchaService: CaptchaService
+        private captchaService: CaptchaService,
+        private imageService: ImageService,
+        @Optional() private readonly unleash: UnleashService
     ) {}
 
     _verifyInputsQuery(query) {
@@ -97,11 +109,24 @@ export class ClaimController {
         return this.claimService.create(createClaimDTO);
     }
 
+    @Post("api/claim/image")
+    async createClaimImage(@Body() createClaimDTO) {
+        if (!this.isEnabledImageClaim()) {
+            throw new NotFoundException();
+        }
+        const validateCaptcha = await this.captchaService.validate(
+            createClaimDTO.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
+        return this.claimService.create(createClaimDTO);
+    }
+
     @IsPublic()
     @Get("api/claim/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    getById(@Param("id") claimId, @Headers() headers) {
-        // FIXME: this is returning a _id which is actually a revisionId
+    getById(@Param("id") claimId) {
         return this.claimService.getById(claimId);
     }
 
@@ -116,16 +141,15 @@ export class ClaimController {
     }
 
     @IsPublic()
-    @Get(
-        "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash"
-    )
+    @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    public async getClaimReviewPage(@Req() req: Request, @Res() res: Response) {
-        const { sentence_hash, personalitySlug, claimSlug } = req.params;
-        const parsedUrl = parse(req.url, true);
+    public async getClaimReviewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const { data_hash, personalitySlug, claimSlug } = req.params;
         const personality = await this.personalityService.getPersonalityBySlug(
             personalitySlug,
-            // @ts-ignore
             req.language
         );
 
@@ -136,23 +160,40 @@ export class ClaimController {
             false
         );
 
-        const sentence = await this.sentenceService.getByDataHash(
-            sentence_hash
+        const sentence = await this.sentenceService.getByDataHash(data_hash);
+
+        await this.returnClaimReviewPage(
+            data_hash,
+            req,
+            res,
+            claim,
+            sentence,
+            personality
         );
+    }
 
+    private async returnClaimReviewPage(
+        data_hash: string,
+        req: BaseRequest,
+        res: Response,
+        claim: any,
+        content: SentenceDocument | ImageDocument,
+        personality: any = null
+    ) {
         const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskBySentenceHashWithUsernames(
-                sentence_hash
+            await this.claimReviewTaskService.getClaimReviewTaskByDataHashWithUsernames(
+                data_hash
             );
 
-        const claimReview =
-            await this.claimReviewService.getReviewBySentenceHash(
-                sentence_hash
-            );
+        const claimReview = await this.claimReviewService.getReviewByDataHash(
+            data_hash
+        );
 
         const description = await this.claimReviewService.getDescriptionForHide(
             claimReview
         );
+
+        const parsedUrl = parse(req.url, true);
 
         await this.viewService.getNextServer().render(
             req,
@@ -161,7 +202,7 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 personality,
                 claim,
-                sentence,
+                content,
                 claimReviewTask,
                 claimReview,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
@@ -170,17 +211,67 @@ export class ClaimController {
         );
     }
 
-    @Get("personality/:personalitySlug/claim/create/")
-    public async claimCreatePage(@Req() req: Request, @Res() res: Response) {
-        const { personalitySlug } = req.params;
+    @IsPublic()
+    @Get("claim/:claimId/image/:data_hash")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getImageWithoutPersonalityClaimReviewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const { data_hash, claimId } = req.params;
+        const claim = await this.claimService.getById(claimId);
+        const image = await this.imageService.getByDataHash(data_hash);
+        await this.returnClaimReviewPage(data_hash, req, res, claim, image);
+    }
+
+    @IsPublic()
+    @Get("personality/:personalitySlug/claim/:claimSlug/image/:data_hash")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getImageClaimReviewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const { data_hash, personalitySlug, claimSlug } = req.params;
+        const personality = await this.personalityService.getPersonalityBySlug(
+            personalitySlug,
+            req.language
+        );
+
+        const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
+            personality._id,
+            claimSlug,
+            undefined,
+            false
+        );
+
+        const image = await this.imageService.getByDataHash(data_hash);
+
+        await this.returnClaimReviewPage(
+            data_hash,
+            req,
+            res,
+            claim,
+            image,
+            personality
+        );
+    }
+
+    @Get("claim/create")
+    public async claimCreatePage(
+        @Query() query: { personality?: string },
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
         const parsedUrl = parse(req.url, true);
 
-        const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
-                personalitySlug,
-                // @ts-ignore
-                req.language
-            );
+        const enableImageClaim = this.isEnabledImageClaim();
+
+        const personality = query.personality
+            ? await this.personalityService.getClaimsByPersonalitySlug(
+                  query.personality,
+                  req.language
+              )
+            : null;
 
         await this.viewService.getNextServer().render(
             req,
@@ -188,6 +279,66 @@ export class ClaimController {
             "/claim-create",
             Object.assign(parsedUrl.query, {
                 personality,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                enableImageClaim,
+            })
+        );
+    }
+
+    @IsPublic()
+    @Get("claim")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async claimsWithoutPersonalityPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        if (!this.isEnabledImageClaim()) {
+            throw new NotFoundException();
+        }
+
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/image-claims-page",
+                Object.assign(parsedUrl.query, {})
+            );
+    }
+
+    @IsPublic()
+    @Redirect()
+    @Get("claim/:claimId")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async imageClaimPage(@Req() req: BaseRequest, @Res() res: Response) {
+        const { claimId } = req.params;
+        const parsedUrl = parse(req.url, true);
+        const claim = await this.claimService.getById(claimId);
+
+        if (
+            claim.contentModel === ContentModelEnum.Image &&
+            !this.isEnabledImageClaim()
+        ) {
+            throw new NotFoundException();
+        }
+
+        if (claim.personality) {
+            const personalitySlug = slugify(claim.personality.name, {
+                lower: true,
+                strict: true,
+            });
+            return res.redirect(
+                `/personality/${personalitySlug}/claim/${claim.slug}`
+            );
+        }
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-page",
+            Object.assign(parsedUrl.query, {
+                claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
             })
         );
@@ -197,16 +348,15 @@ export class ClaimController {
     @Get("personality/:personalitySlug/claim/:claimSlug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async personalityClaimPage(
-        @Req() req: Request,
+        @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const { personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 personalitySlug,
-                // @ts-ignore
                 req.language
             );
 
@@ -229,16 +379,14 @@ export class ClaimController {
 
     @Get("personality/:personalitySlug/claim/:claimSlug/revision/:revisionId")
     public async personalityClaimPageWithRevision(
-        @Req() req: Request,
+        @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const { personalitySlug, claimSlug, revisionId } = req.params;
         const parsedUrl = parse(req.url, true);
-        // @ts-ignore
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 personalitySlug,
-                // @ts-ignore
                 req.language
             );
 
@@ -288,11 +436,11 @@ export class ClaimController {
 
     @IsPublic()
     @Get(
-        "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash/sources"
+        "personality/:personalitySlug/claim/:claimSlug/sentence/:data_hash/sources"
     )
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async sourcesReportPage(@Req() req: Request, @Res() res: Response) {
-        const { sentence_hash, personalitySlug, claimSlug } = req.params;
+        const { data_hash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
         const personality = await this.personalityService.getPersonalityBySlug(
@@ -309,7 +457,7 @@ export class ClaimController {
         const report = await this.claimReviewService.getReport({
             personality: personality._id,
             claim: claim._id,
-            sentence_hash,
+            data_hash,
         });
 
         await this.viewService.getNextServer().render(
@@ -328,7 +476,7 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 personalitySlug
             );
 
@@ -349,18 +497,18 @@ export class ClaimController {
     }
 
     @Get(
-        "personality/:personalitySlug/claim/:claimSlug/sentence/:sentence_hash/history"
+        "personality/:personalitySlug/claim/:claimSlug/sentence/:data_hash/history"
     )
     public async ClaimReviewHistoryPage(
         @Req() req: Request,
         @Res() res: Response
     ) {
-        const { sentence_hash } = req.params;
+        const { data_hash } = req.params;
         const parsedUrl = parse(req.url, true);
 
         const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
-                sentence_hash
+            await this.claimReviewTaskService.getClaimReviewTaskByDataHash(
+                data_hash
             );
 
         await this.viewService.getNextServer().render(
@@ -372,5 +520,11 @@ export class ClaimController {
                 targetModel: TargetModel.ClaimReviewTask,
             })
         );
+    }
+
+    private isEnabledImageClaim() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config ? this.unleash.isEnabled("enable_image_claim") : false;
     }
 }

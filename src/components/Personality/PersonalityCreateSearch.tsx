@@ -10,7 +10,10 @@ import Label from "../Label";
 import PersonalitySearchResultSection from "./PersonalitySearchResultSection";
 import { ActionTypes } from "../../store/types";
 
-const PersonalityCreateSearch = ({ withSuggestions }) => {
+const PersonalityCreateSearch = ({
+    withSuggestions,
+    selectPersonality = null,
+}) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
 
@@ -28,7 +31,7 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
             searchName: trimmedName,
         });
         api.getPersonalities(
-            { withSuggestions, personalities, searchName: trimmedName, i18n },
+            { withSuggestions, searchName: trimmedName, i18n },
             dispatch
         );
     };
@@ -64,10 +67,12 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
                 </Form.Item>
             </Form>
             <PersonalitySearchResultSection
+                selectPersonality={selectPersonality}
                 personalities={personalitiesCreated}
                 label={t("personalityCTA:created")}
             />
             <PersonalitySearchResultSection
+                selectPersonality={selectPersonality}
                 personalities={personalitiesAvailable}
                 label={t("personalityCTA:available")}
             />

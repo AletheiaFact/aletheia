@@ -1,6 +1,6 @@
 import usersApi from "../../../../api/userApi";
-import { Roles } from "../../../../machine/enums";
-import { createFormField, FormField } from "./FormField";
+import { Roles } from "../../../../types/enums";
+import { createFormField, FormField } from "../../../Form/FormField";
 
 export const fetchUserList = async (name, t) => {
     const userSearchResults = await usersApi.getUsers(

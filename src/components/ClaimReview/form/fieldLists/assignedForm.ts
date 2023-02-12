@@ -1,5 +1,9 @@
-import { ClassificationEnum } from "../../../../machine/enums";
-import { createFormField, FormField, fieldValidation } from "./FormField";
+import { ClassificationEnum } from "../../../../types/enums";
+import {
+    createFormField,
+    FormField,
+    fieldValidation,
+} from "../../../Form/FormField";
 
 const assignedForm: FormField[] = [
     createFormField({

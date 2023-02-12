@@ -8,7 +8,9 @@ import { SourceTargetModel } from "../source/schemas/source.schema";
 import {
     ClaimRevision,
     ClaimRevisionDocument,
+    ContentModelEnum,
 } from "./schema/claim-revision.schema";
+import { ImageService } from "../image/image.service";
 
 @Injectable()
 export class ClaimRevisionService {
@@ -19,7 +21,8 @@ export class ClaimRevisionService {
         @InjectModel(ClaimRevision.name)
         private ClaimRevisionModel: Model<ClaimRevisionDocument>,
         private sourceService: SourceService,
-        private parserService: ParserService
+        private parserService: ParserService,
+        private imageService: ImageService
     ) {
         this.optionsToUpdate = {
             new: true,
@@ -50,9 +53,12 @@ export class ClaimRevisionService {
             strict: true, // strip special characters except replacement, defaults to `false`
         });
 
-        if (typeof claim.content === "string") {
+        if (claim.contentModel === ContentModelEnum.Speech) {
             const newSpeech = await this.parserService.parse(claim.content);
             claim.contentId = newSpeech._id;
+        } else {
+            const newImage = await this.imageService.create(claim.content);
+            claim.contentId = newImage._id;
         }
 
         const newClaimRevision = new this.ClaimRevisionModel(claim);
@@ -110,5 +116,9 @@ export class ClaimRevisionService {
                 },
             },
         ]);
+    }
+
+    getByContentId(contentId) {
+        return this.ClaimRevisionModel.findOne({ contentId });
     }
 }

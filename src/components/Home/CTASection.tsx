@@ -37,9 +37,7 @@ const CTASection = () => {
                                 "registration"
                             );
                         }}
-                        href={t("common:registrationLink")}
-                        target="_blank"
-                        rel="noreferrer"
+                        href={"/sign-up"}
                         type={ButtonType.white}
                         rounded="true"
                         style={{

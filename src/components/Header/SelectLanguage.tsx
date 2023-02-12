@@ -1,7 +1,7 @@
 import { Select } from "antd";
 import { BR, GB } from "country-flag-icons/react/3x2";
 import Cookies from "js-cookie";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 
@@ -16,13 +16,7 @@ const SelectInput = styled(Select)`
 `;
 
 const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
-    const [language, setLanguage] = useState(props.defaultLanguage);
-
-    useEffect(() => {
-        const cookieLanguage =
-            Cookies.get("default_language") || props.defaultLanguage;
-        setLanguage(cookieLanguage);
-    }, []);
+    const language = Cookies.get("default_language") || props.defaultLanguage;
 
     const setDefaultLanguage = (language) => {
         if (!document.cookie.includes(`default_language=${language}`)) {

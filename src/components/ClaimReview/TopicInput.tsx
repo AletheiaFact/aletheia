@@ -2,7 +2,7 @@ import { Button, Col } from "antd";
 import React, { useState, useEffect } from "react";
 import topicApi from "../../api/topicsApi";
 import sentenceApi from "../../api/sentenceApi";
-import AutoComplete from "./Autocomplete";
+import AutoComplete from "../Form/Autocomplete";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import { EditFilled, PlusOutlined } from "@ant-design/icons";
@@ -10,7 +10,7 @@ import AletheiaButton from "../Button";
 import { useAppSelector } from "../../store/store";
 import TagsList from "./TagsList";
 
-const TopicInput = ({ sentence_hash, topics }) => {
+const TopicInput = ({ data_hash, topics }) => {
     const { t } = useTranslation();
     const { isLoggedIn } = useAppSelector((state) => ({
         isLoggedIn: state.login,
@@ -35,7 +35,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
     const handleClose = async (removedTopic: string) => {
         const newTopics = topicsArray.filter((topic) => topic !== removedTopic);
         setTopicsArray(newTopics);
-        sentenceApi.deleteSentenceTopic(newTopics, sentence_hash);
+        sentenceApi.deleteSentenceTopic(newTopics, data_hash);
     };
 
     const getDuplicated = (array1, array2) => {
@@ -46,7 +46,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
         });
     };
 
-    const duplicated = [...getDuplicated(inputValue, topicsArray)];
+    const duplicated = getDuplicated(inputValue, topicsArray);
 
     const handleEdit = () => {
         if (duplicated.length > 0) {
@@ -54,7 +54,7 @@ const TopicInput = ({ sentence_hash, topics }) => {
         } else if (inputValue.length) {
             setTopicsArray(tags);
             setCurrentInputValue([]);
-            topicApi.createTopics({ topics: tags, sentence_hash }, t);
+            topicApi.createTopics({ topics: tags, data_hash }, t);
         } else {
             setShowErrorMessage(!showErrorMessage);
         }

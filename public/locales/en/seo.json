@@ -9,5 +9,7 @@
     "sourcesTitle": "Sources",
     "sourcesDescription": "Claim sources {{claimId}}",
     "claimReviewDescription": "See sentence reviews {{sentence}} on AletheiaFact.org",
-    "siteName": "AletheiaFact.org"
+    "siteName": "AletheiaFact.org",
+    "noPersonalityClaimListTitle": "Claims",
+    "noPersonalityClaimListDescription": "See claims without a related personality"
 }

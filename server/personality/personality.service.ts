@@ -149,7 +149,7 @@ export class PersonalityService {
         }
     }
 
-    async getClaimsPersonalityBySlug(personalitySlug, language = "pt") {
+    async getClaimsByPersonalitySlug(personalitySlug, language = "pt") {
         try {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             const personality: any = await this.PersonalityModel.findOne({
@@ -162,7 +162,6 @@ export class PersonalityService {
                 },
                 select: "_id",
             });
-            // TODO: Do the latest revision population in the populate above
             personality.claims = await Promise.all(
                 personality.claims.map((claim) => {
                     return {

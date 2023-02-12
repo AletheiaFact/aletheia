@@ -12,6 +12,7 @@ import ClaimSummaryContent from "./ClaimSummaryContent";
 import ClaimSpeechBody from "./ClaimSpeechBody";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
+import { ContentModelEnum } from "../../types/enums";
 
 const { Paragraph } = Typography;
 
@@ -28,25 +29,33 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const review = claim?.stats?.reviews[0];
     const paragraphs = claim.content;
     const [claimContent, setClaimContent] = useState("");
+    const isImage = claim?.contentModel === ContentModelEnum.Image;
 
     const dispatchPersonalityAndClaim = () => {
         dispatch(actions.setSelectClaim(claim));
         dispatch(actions.setSelectPersonality(personality));
     };
 
-    const CreateFirstParagraph = () => {
-        let textContent = "";
-        paragraphs.forEach((paragraph) => {
-            paragraph.content.forEach((sentence) => {
-                return (textContent += `${sentence.content} `);
-            });
-        });
-        setClaimContent(textContent.trim());
-    };
+    const href = personality.slug
+        ? `/personality/${personality.slug}/claim/${claim.slug}`
+        : `/claim/${claim._id}`;
 
     useEffect(() => {
-        CreateFirstParagraph();
-    }, []);
+        const CreateFirstParagraph = () => {
+            let textContent = "";
+            paragraphs.forEach((paragraph) => {
+                paragraph.content.forEach((sentence) => {
+                    textContent += `${sentence.content} `;
+                });
+            });
+            setClaimContent(textContent.trim());
+        };
+        if (!isImage) {
+            CreateFirstParagraph();
+        } else {
+            setClaimContent(claim.content);
+        }
+    }, [claim.content, isImage, paragraphs]);
 
     if (!claim) {
         return <div></div>;
@@ -59,7 +68,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                         <ClaimCardHeader
                             personality={personality}
                             date={claim?.date}
-                            claimType={claim?.type}
+                            claimType={claim?.contentModel}
                         />
                     }
                     content={
@@ -72,9 +81,9 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                             {collapsed ? (
                                 <ClaimSummaryContent
                                     claimTitle={claim?.title}
-                                    claimSlug={claim?.slug}
                                     claimContent={claimContent}
-                                    personality={personality}
+                                    href={href}
+                                    isImage={isImage}
                                 />
                             ) : (
                                 <ClaimSpeechBody
@@ -147,7 +156,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                 <Col>
                     <Button
                         type={ButtonType.blue}
-                        href={`/personality/${personality.slug}/claim/${claim.slug}`}
+                        href={href}
                         data-cy={personality.name}
                     >
                         <span

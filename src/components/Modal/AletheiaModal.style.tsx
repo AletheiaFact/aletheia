@@ -14,6 +14,7 @@ const AletheiaModal = styled(Modal)`
         background-color: ${colors.lightGray};
         box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
         padding: 26px 26px;
+        max-width: 90vw;
     }
 
     .ant-modal-body {

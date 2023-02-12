@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import actions from "../store/actions";
+import Seo from "../components/Seo";
 const KanbanPage: NextPage<{ isLoggedIn; userId; userRole; sitekey }> = (
     props
 ) => {
@@ -23,7 +24,8 @@ const KanbanPage: NextPage<{ isLoggedIn; userId; userRole; sitekey }> = (
     });
     return (
         <>
-            <KanbanView />;
+            <Seo title="Kanban" />
+            <KanbanView />
             <AffixButton />
         </>
     );

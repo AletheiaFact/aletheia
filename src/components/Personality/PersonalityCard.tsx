@@ -14,6 +14,7 @@ const { Title, Paragraph } = Typography;
 
 interface PersonalityCardProps {
     personality: any;
+    isCreatingClaim?: boolean;
     summarized?: boolean;
     enableStats?: boolean;
     header?: boolean;
@@ -22,6 +23,7 @@ interface PersonalityCardProps {
     fullWidth?: boolean;
     hoistAvatar?: boolean;
     style?: CSSProperties;
+    selectPersonality?: any;
     onClick?: (personality: any) => {};
     titleLevel?: 1 | 2 | 3 | 4 | 5;
 }
@@ -38,9 +40,22 @@ const PersonalityCard = ({
     style,
     onClick,
     titleLevel = 1,
+    selectPersonality = null,
 }: PersonalityCardProps) => {
+    const isCreatingClaim = selectPersonality !== null;
+
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const { vw } = useAppSelector((state) => state);
+    const personalityFoundProps = isCreatingClaim
+        ? {
+              onClick: () => {
+                  if (selectPersonality) {
+                      selectPersonality(personality);
+                  }
+              },
+          }
+        : { href: `${hrefBase || "/personality/"}${personality.slug}` };
+
     const { t } = useTranslation();
     const componentStyle = {
         titleSpan: !fullWidth ? 14 : 24,
@@ -262,9 +277,7 @@ const PersonalityCard = ({
                                     <Button
                                         type={ButtonType.blue}
                                         data-cy={personality.name}
-                                        href={`${hrefBase || "/personality/"}${
-                                            personality.slug
-                                        }`}
+                                        {...personalityFoundProps}
                                         style={{
                                             fontSize: "12px",
                                             lineHeight: "20px",
@@ -273,7 +286,13 @@ const PersonalityCard = ({
                                         }}
                                     >
                                         <span style={{ marginTop: 4 }}>
-                                            {t("personality:profile_button")}
+                                            {isCreatingClaim
+                                                ? t(
+                                                      "claimForm:personalityFound"
+                                                  )
+                                                : t(
+                                                      "personality:profile_button"
+                                                  )}
                                         </span>
                                     </Button>
                                 ) : (
@@ -296,7 +315,9 @@ const PersonalityCard = ({
                                         }}
                                     >
                                         <PlusOutlined />{" "}
-                                        {t("personality:add_button")}
+                                        {isCreatingClaim
+                                            ? t("claimForm:personalityNotFound")
+                                            : t("personality:add_button")}
                                     </Button>
                                 )}
                             </Col>

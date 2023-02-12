@@ -1,24 +1,25 @@
 import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
-import { Roles } from "../../machine/enums";
-import { reviewDataSelector } from "../../machine/selectors";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import { ContentModelEnum, Roles } from "../../types/enums";
+import { reviewDataSelector } from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import SocialMediaShare from "../SocialMediaShare";
 import ClaimReviewForm from "./ClaimReviewForm";
 import ClaimReviewHeader from "./ClaimReviewHeader";
+import { Content } from "../../types/Content";
 
 export interface ClaimReviewViewProps {
-    personality: any;
+    personality?: any;
     claim: any;
-    sentence: { data_hash: string; content: string; topics: string[] };
+    content: Content;
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const { machineService, publishedReview } = useContext(
-        GlobalStateMachineContext
+        ReviewTaskMachineContext
     );
     const { review, descriptionForHide } = publishedReview || {};
 
@@ -30,15 +31,21 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const userIsReviewer = reviewData.reviewerId === userId;
     const userIsAssignee = reviewData.usersId.includes(userId);
 
-    const { personality, claim, sentence } = props;
+    const { personality, claim, content } = props;
+    const isContentImage = claim.contentModel === ContentModelEnum.Image;
 
     const origin =
         typeof window !== "undefined" && window.location.origin
             ? window.location.origin
             : "";
 
-    const sentencePath = `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${sentence.data_hash}`;
-    const shareHref = `${origin}${sentencePath}`;
+    let contentPath = personality
+        ? `/personality/${personality?.slug}/claim`
+        : `/claim`;
+    contentPath += isContentImage
+        ? `/${claim?._id}`
+        : `/${claim?.slug}/sentence/${content.data_hash}`;
+    const shareHref = `${origin}${contentPath}`;
 
     return (
         <div>
@@ -54,16 +61,14 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
             />
             <SentenceReportView
                 context={review?.report || reviewData}
-                personality={personality}
-                claim={claim}
                 userIsNotRegular={userIsNotRegular}
                 userIsReviewer={userIsReviewer}
                 isHidden={review?.isHidden}
             />
             <ClaimReviewForm
                 claimId={claim._id}
-                personalityId={personality._id}
-                sentenceHash={sentence.data_hash}
+                personalityId={personality?._id}
+                dataHash={content.data_hash}
                 userIsReviewer={userIsReviewer}
             />
             <SocialMediaShare

@@ -18,8 +18,7 @@ export class SentenceService {
     }
 
     async getByDataHash(data_hash) {
-        //Fix me
-        const report = await this.reportService.findBySentenceHash(data_hash);
+        const report = await this.reportService.findByDataHash(data_hash);
         const sentence = await this.SentenceModel.findOne({ data_hash });
         if (sentence) {
             sentence.props = {

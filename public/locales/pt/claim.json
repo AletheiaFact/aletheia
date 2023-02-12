@@ -15,7 +15,11 @@
     "sourceFooterReport": "Por favor, reporte aqui. ",
     "cardHeader1": "Declarou em",
     "cardHeader2": "em um",
+    "cardHeader3": "Registrado em",
     "typeSpeech": "Discurso oficial",
     "typeTwitter": "post no Twitter",
-    "errorWhileFetching": "Erro ao buscar o Discurso"
+    "errorWhileFetching": "Erro ao buscar o Discurso",
+    "cardLinkToImage": "veja a imagem completa",
+    "claimListHeader": "Declarações",
+    "imageAlreadyExists": "Essa imagem já existe em nossa plataforma"
 }

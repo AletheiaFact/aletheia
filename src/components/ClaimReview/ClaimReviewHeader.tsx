@@ -4,14 +4,14 @@ import { useTranslation } from "next-i18next";
 import React, { useContext, useEffect, useState } from "react";
 
 import ClaimReviewApi from "../../api/claimReviewApi";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
-import { Roles } from "../../machine/enums";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import { ClassificationEnum, Roles } from "../../types/enums";
 import {
     crossCheckingSelector,
     publishedSelector,
     reviewDataSelector,
     reviewNotStartedSelector,
-} from "../../machine/selectors";
+} from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaAlert from "../AletheiaAlert";
@@ -21,17 +21,29 @@ import UnhideReviewModal from "../Modal/UnhideReviewModal";
 import Banner from "../SentenceReport/Banner";
 import SentenceReportCard from "../SentenceReport/SentenceReportCard";
 import TopicInput from "./TopicInput";
+import { Content } from "../../types/Content";
+
+interface ClaimReviewHeaderProps {
+    personality?: string;
+    claim: any;
+    content: Content;
+    classification?: ClassificationEnum;
+    hideDescription: string;
+    userIsReviewer: boolean;
+    userIsAssignee: boolean;
+    userIsNotRegular: boolean;
+}
 
 const ClaimReviewHeader = ({
     personality,
     claim,
-    sentence,
-    classification = "",
+    content,
+    classification,
     hideDescription,
     userIsReviewer,
     userIsAssignee,
     userIsNotRegular,
-}) => {
+}: ClaimReviewHeaderProps) => {
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +51,7 @@ const ClaimReviewHeader = ({
     const { vw, role, login } = useAppSelector((state) => state);
 
     const { machineService, publishedReview } = useContext(
-        GlobalStateMachineContext
+        ReviewTaskMachineContext
     );
     const isHidden = publishedReview?.review?.isHidden;
     const [hide, setHide] = useState(isHidden);
@@ -176,7 +188,7 @@ const ClaimReviewHeader = ({
                         <SentenceReportCard
                             personality={personality}
                             claim={claim}
-                            sentence={sentence}
+                            content={content}
                             classification={
                                 showClassification ? classification : ""
                             }
@@ -188,8 +200,8 @@ const ClaimReviewHeader = ({
                             }}
                         >
                             <TopicInput
-                                sentence_hash={sentence.data_hash}
-                                topics={sentence.topics}
+                                data_hash={content.data_hash}
+                                topics={content.topics}
                             />
                         </div>
                     </Col>
@@ -225,7 +237,7 @@ const ClaimReviewHeader = ({
                 handleOk={({ description, recaptcha }) => {
                     setIsLoading(true);
                     ClaimReviewApi.hideReview(
-                        sentence.data_hash,
+                        content.data_hash,
                         !hide,
                         t,
                         recaptcha,
@@ -246,7 +258,7 @@ const ClaimReviewHeader = ({
                 handleOk={({ recaptcha }) => {
                     setIsLoading(true);
                     ClaimReviewApi.hideReview(
-                        sentence.data_hash,
+                        content.data_hash,
                         !hide,
                         t,
                         recaptcha

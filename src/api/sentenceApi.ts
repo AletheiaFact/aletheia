@@ -5,9 +5,9 @@ const request = axios.create({
     baseURL: `/api/sentence`,
 });
 
-const deleteSentenceTopic = (topics, sentence_hash) => {
+const deleteSentenceTopic = (topics, data_hash) => {
     return request
-        .put(`/${sentence_hash}`, topics)
+        .put(`/${data_hash}`, topics)
         .then((response) => {
             return response.data;
         })

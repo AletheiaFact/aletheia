@@ -1,6 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
-import { Roles } from "../machine/enums";
+import { Roles } from "../types/enums";
 
 const request = axios.create({
     withCredentials: true,
@@ -20,27 +20,9 @@ const getById = (id, params = {}) => {
         });
 };
 
-const login = (params, t) => {
+const updatePassword = () => {
     return request
-        .post(`/signin`, { ...params }, { withCredentials: true })
-        .then((response) => {
-            return { login: true, ...response };
-        })
-        .catch((e) => {
-            const response = e?.response?.data || {
-                message: t("login:failedMessage"),
-            };
-            return { login: false, ...response };
-        });
-};
-
-const updatePassword = (params, t) => {
-    return request
-        .put(
-            `/${params.userId}/password`,
-            { ...params },
-            { withCredentials: true }
-        )
+        .put(`password-change`)
         .then((response) => {
             return response?.data;
         })
@@ -70,11 +52,42 @@ const getUsers = (
         });
 };
 
-const usersApi = {
-    login,
+const register = (params, t) => {
+    return request
+        .post(`/register`, { ...params })
+        .then((response) => {
+            message.success(t("login:signupSuccessfulMessage"));
+            return response?.data;
+        })
+        .catch((e) => {
+            if (e.response?.status === 409) {
+                message.error(t("login:userAlreadyExists"));
+            } else {
+                message.error(t("login:signupFailedMessage"));
+            }
+            return e?.response?.data;
+        });
+};
+
+const updateRole = (params: { userId: string; role: string }, t) => {
+    return request
+        .put(`/update-role`, { role: params.role, id: params.userId })
+        .then((response) => {
+            message.success(t("admin:roleUpdated"));
+            return response?.data;
+        })
+        .catch((e) => {
+            message.error(t("admin:roleUpdateFailed"));
+            return e?.response?.data;
+        });
+};
+
+const userApi = {
     updatePassword,
     getById,
     getUsers,
+    register,
+    updateRole,
 };
 
-export default usersApi;
+export default userApi;

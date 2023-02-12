@@ -5,11 +5,8 @@ import { SentenceService } from "./sentence.service";
 export class SentenceController {
     constructor(private sentenceService: SentenceService) {}
 
-    @Put("api/sentence/:sentence_hash")
-    async update(@Param("sentence_hash") sentence_hash, @Body() topics) {
-        return this.sentenceService.updateSentenceWithTopics(
-            topics,
-            sentence_hash
-        );
+    @Put("api/sentence/:data_hash")
+    async update(@Param("data_hash") data_hash, @Body() topics) {
+        return this.sentenceService.updateSentenceWithTopics(topics, data_hash);
     }
 }

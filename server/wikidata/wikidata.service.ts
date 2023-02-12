@@ -16,17 +16,19 @@ const languageVariantMap = {
 export class WikidataService {
     constructor(
         @InjectModel(WikidataCache.name)
-        private WikidataCache: Model<WikidataCacheDocument>
+        private wikidataCache: Model<WikidataCacheDocument>
     ) {}
 
     async fetchProperties(params) {
-        const wikidataCache = await this.WikidataCache.findOne({
-            wikidataId: params.wikidataId,
-            language: params.language,
-        }).exec();
+        const wikidataCache = await this.wikidataCache
+            .findOne({
+                wikidataId: params.wikidataId,
+                language: params.language,
+            })
+            .exec();
         if (!wikidataCache) {
             const props = await this.requestProperties(params);
-            const newWikidataCache = new this.WikidataCache({
+            const newWikidataCache = new this.wikidataCache({
                 ...params,
                 props,
             });
@@ -140,15 +142,16 @@ export class WikidataService {
             .get(`https://www.wikidata.org/w/api.php`, { params })
             .then((response) => {
                 const { search } = response && response.data;
-                return search.map((wbentity) => {
-                    if (!wbentity.label) {
-                        return;
-                    }
-                    return {
-                        name: wbentity.label,
-                        description: wbentity.description,
-                        wikidata: wbentity.id,
-                    };
+                return search.flatMap((wbentity) => {
+                    return wbentity.label
+                        ? [
+                              {
+                                  name: wbentity.label,
+                                  description: wbentity.description,
+                                  wikidata: wbentity.id,
+                              },
+                          ]
+                        : [];
                 });
             });
     }

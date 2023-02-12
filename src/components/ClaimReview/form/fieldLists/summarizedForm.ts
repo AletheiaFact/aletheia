@@ -1,4 +1,4 @@
-import { createFormField, FormField } from "./FormField";
+import { createFormField, FormField } from "../../../Form/FormField";
 
 const summarizedForm: FormField[] = [
     createFormField({

@@ -31,9 +31,9 @@ const getClaimReviewTasks = (options) => {
         });
 };
 
-const getMachineBySentenceHash = (params, t) => {
+const getMachineByDataHash = (params) => {
     return request
-        .get(`/sentence/${params}`)
+        .get(`/hash/${params}`)
         .then((response) => {
             return response.data.machine;
         })
@@ -57,7 +57,7 @@ const createClaimReviewTask = (params, t, type) => {
 
 const autoSaveDraft = (params, t) => {
     return request
-        .put(`/${params.sentence_hash}`, { ...params })
+        .put(`/${params.data_hash}`, { ...params })
         .then((response) => {
             message.success(t(`claimReviewTask:SAVE_DRAFT_SUCCESS`));
             return response.data;
@@ -68,7 +68,7 @@ const autoSaveDraft = (params, t) => {
 };
 
 const ClaimReviewTaskApi = {
-    getMachineBySentenceHash,
+    getMachineByDataHash,
     createClaimReviewTask,
     getClaimReviewTasks,
     autoSaveDraft,

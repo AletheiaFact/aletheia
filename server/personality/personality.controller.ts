@@ -118,7 +118,7 @@ export class PersonalityController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 req.params.slug,
                 req.language
             );
@@ -166,7 +166,7 @@ export class PersonalityController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 req.params.slug
             );
         await this.viewService.getNextServer().render(

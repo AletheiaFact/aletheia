@@ -1,9 +1,12 @@
 import { Layout } from "antd";
+import { useSetAtom } from "jotai";
 import React from "react";
+import { currentUserRole, isLoggedIn } from "../atoms/currentUser";
 
 import { useMediaQueryBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { useAppSelector } from "../store/store";
 import colors from "../styles/colors";
+import { GetUserRole } from "../utils/GetUserRole";
 import ClaimReviewDrawer from "./ClaimReview/ClaimReviewDrawer";
 import ContentWrapper from "./ContentWrapper";
 import Footer from "./Footer/Footer";
@@ -16,6 +19,12 @@ const MainApp = ({ children }) => {
         return {
             enableOverlay: state?.search?.overlayVisible,
         };
+    });
+    const setCurrentRole = useSetAtom(currentUserRole);
+    const setCurrentLoginStatus = useSetAtom(isLoggedIn);
+    GetUserRole().then(({ role, isLoggedIn }) => {
+        setCurrentRole(role);
+        setCurrentLoginStatus(isLoggedIn);
     });
 
     // Setup to provide breakpoints object on redux

@@ -14,7 +14,7 @@ export class UsersService {
     ) {}
 
     async findAll(userQuery): Promise<User[]> {
-        const { searchName, filterOutRoles } = userQuery;
+        const { searchName, filterOutRoles, project } = userQuery;
         return this.UserModel.aggregate([
             {
                 $match: {
@@ -22,13 +22,12 @@ export class UsersService {
                     role: { $nin: [...(filterOutRoles || []), null] },
                 },
             },
-            { $project: { _id: 1, name: 1 } },
+            { $project: project || { _id: 1, name: 1 } },
         ]);
     }
 
     async register(user) {
         const newUser = new this.UserModel(user);
-
         if (!newUser.oryId) {
             this.logger.log("No user id provided, creating a new ory identity");
             const { data: oryUser } = await this.oryService.createIdentity(
@@ -38,20 +37,14 @@ export class UsersService {
             );
             newUser.oryId = oryUser.id;
         } else {
-            this.logger.log("User id provided, updating a ory identity");
+            this.logger.log("User id provided, updating an ory identity");
             await this.oryService.updateIdentity(
                 newUser,
                 user.password,
                 user.role
             );
         }
-        try {
-            // @ts-ignore
-            return await newUser.save();
-        } catch (e) {
-            this.logger.error(e);
-            this.logger.error(`Error registering user ${user.email}`);
-        }
+        return await newUser.save();
     }
 
     async getById(userId) {
@@ -67,5 +60,14 @@ export class UsersService {
             this.logger.log(`User ${user._id} changed first password`);
             user.save();
         }
+    }
+
+    async updateUserRole(userId, role) {
+        const user = await this.getById(userId);
+        user.role = role;
+
+        this.oryService.updateIdentity(user, null, role);
+        this.logger.log(`Changed user ${user._id} role to ${role}`);
+        user.save();
     }
 }

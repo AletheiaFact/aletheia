@@ -21,10 +21,16 @@ env:
   ENVIRONMENT: development
   UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
   MONGODB_URI: ${{ secrets.DEVELOPMENT_MONGODB_URI }}
+  MONGODB_NAME: ${{ secrets.DEVELOPMENT_MONGODB_NAME }}
   ORY_SDK_URL: ${{ secrets.DEVELOPMENT_ORY_SDK_URL }}
   ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
   ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
   RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
+  AWS_SDK_BUCKET: ${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.DEVELOPMENT_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVELOPMENT_AWS_SECRET_ACCESS_KEY }}
+  GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
+  GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
   # Needed env variables for first build on next
   NEXT_PUBLIC_UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
   NEXT_PUBLIC_RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
@@ -88,9 +94,10 @@ jobs:
             sed -i "s/ORY_ACCESS_TOKEN/$ORY_ACCESS_TOKEN/g" config.$ENVIRONMENT.yaml
             sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.$ENVIRONMENT.yaml
 
-      - name: Set migrate-mongo-config.js
+      - name: Set migrate-mongo-config.ts
         run: |
-            sed -i "s%MONGODB_URI%$MONGODB_URI%g" migrate-mongo-config-example.js
+            sed -i "s%MONGODB_URI%$MONGODB_URI%g" migrate-mongo-config-example.ts
+            sed -i "s%MONGODB_NAME%$MONGODB_NAME%g" migrate-mongo-config-example.ts
 
       # Setting user seed config
       - name: Set config.seed.example.yaml

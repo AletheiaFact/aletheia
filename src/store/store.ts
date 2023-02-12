@@ -77,10 +77,15 @@ const reducer = (state, action) => {
                 ...state,
                 vw: action.vw,
             };
-        case ActionTypes.SET_SELECTED_DATA_HASH:
+        case ActionTypes.SET_CLAIM_CREATE_TYPE:
             return {
                 ...state,
-                selectedDataHash: action.selectedDataHash,
+                claimType: action.claimType,
+            };
+        case ActionTypes.SET_CLAIM_CREATE_PERSONALITY:
+            return {
+                ...state,
+                claimPersonality: action.claimPersonality,
             };
         case ActionTypes.SET_SELECTED_PERSONALITY:
             return {
@@ -92,10 +97,11 @@ const reducer = (state, action) => {
                 ...state,
                 selectedClaim: action.selectedClaim,
             };
-        case ActionTypes.SET_SELECTED_SENTENCE:
+        case ActionTypes.SET_SELECTED_CONTENT:
             return {
                 ...state,
-                selectedSentence: action.selectedSentence,
+                selectedContent: action.selectedContent,
+                selectedDataHash: action.selectedDataHash,
             };
         case ActionTypes.SET_USER_ID:
             return {
@@ -107,7 +113,6 @@ const reducer = (state, action) => {
                 ...state,
                 sitekey: action.sitekey,
             };
-
         default:
             return state;
     }

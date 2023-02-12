@@ -70,17 +70,6 @@ const HideReviewModal = ({ visible, isLoading, handleOk, handleCancel }) => {
                         onChange={setRecaptcha}
                         ref={recaptchaRef}
                     />
-                    {!recaptcha && (
-                        <h1
-                            style={{
-                                color: "red",
-                                fontSize: "14px",
-                                fontFamily: "sans-serif",
-                            }}
-                        >
-                            {t("common:requiredFieldError")}
-                        </h1>
-                    )}
                 </Form.Item>
 
                 <Col style={{ display: "flex", justifyContent: "flex-end" }}>

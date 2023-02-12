@@ -14,7 +14,6 @@ import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 import { CaptchaService } from "../captcha/captcha.service";
-import { IsPublic } from "../decorators/is-public.decorator";
 import { parse } from "url";
 import { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
@@ -71,19 +70,19 @@ export class ClaimReviewController {
         return this.claimReviewTaskService.create(createClaimReviewTask);
     }
 
-    @Put("api/claimreviewtask/:sentence_hash")
+    @Put("api/claimreviewtask/:data_hash")
     @Header("Cache-Control", "no-cache")
     async autoSaveDraft(
-        @Param("sentence_hash") sentence_hash,
+        @Param("data_hash") data_hash,
         @Body() claimReviewTaskBody: UpdateClaimReviewTaskDTO
     ) {
         const history = false;
         return this.claimReviewTaskService
-            .getClaimReviewTaskBySentenceHash(sentence_hash)
+            .getClaimReviewTaskByDataHash(data_hash)
             .then((review) => {
                 if (review) {
                     return this.claimReviewTaskService.update(
-                        sentence_hash,
+                        data_hash,
                         claimReviewTaskBody,
                         history
                     );
@@ -91,11 +90,11 @@ export class ClaimReviewController {
             });
     }
 
-    @Get("api/claimreviewtask/sentence/:sentence_hash")
+    @Get("api/claimreviewtask/hash/:data_hash")
     @Header("Cache-Control", "no-cache")
-    async getBySentenceHash(@Param("sentence_hash") sentence_hash: string) {
-        return this.claimReviewTaskService.getClaimReviewTaskBySentenceHash(
-            sentence_hash
+    async getByDataHash(@Param("data_hash") data_hash: string) {
+        return this.claimReviewTaskService.getClaimReviewTaskByDataHash(
+            data_hash
         );
     }
 
