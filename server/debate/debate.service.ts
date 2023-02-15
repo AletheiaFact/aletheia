@@ -1,7 +1,7 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { EditorService } from "../editor/editor.service";
-import { LeanDocument, Model } from "mongoose";
+import { Model } from "mongoose";
 import { Debate, DebateDocument } from "./schemas/debate.schema";
 import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";

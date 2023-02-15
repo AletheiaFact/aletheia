@@ -46,7 +46,6 @@ export const EditorClaimCard = ({
 
     const fetchSpeech = async (speechId: string) => {
         SpeechApi.getById(speechId).then(setSpeech);
-        console.log("fetchSpeech");
     };
 
     const createSpeechFromEditor = async (
@@ -61,7 +60,6 @@ export const EditorClaimCard = ({
                 isLive,
             })
             .then((newSpeech: any) => {
-                console.log("newSpeech", newSpeech);
                 fetchSpeech(newSpeech._id).then(() => {
                     setIsLoading(false);
                 });

@@ -23,7 +23,7 @@ const locators = {
         BTN_SELECT_PERSONALITY: "[data-cy=testSelectPersonality]",
         BTN_NO_PERSONALITY: "[data-cy=testContinueWithoutPersonality]",
         BTN_UPLOAD_IMAGE: "[data-cy=testUploadImage]",
-        BTN_SUBMIT_CLAIM_IMAGE: "[data-cy=testSubmitClaimImage]",
+        BTN_SUBMIT_CLAIM: "[data-cy=testSaveButton]",
         INPUT_TITLE: "[data-cy=testTitleClaimForm]",
         INPUT_DATA: "[data-cy=testSelectDate]",
         INPUT_DATA_TODAY: "a.ant-picker-today-btn",

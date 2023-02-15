@@ -75,7 +75,7 @@ const ClaimReviewForm = ({
                         }}
                     >
                         <>
-                            {isUserLoggedIn && (
+                            {isLoggedIn && (
                                 <Button
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}
