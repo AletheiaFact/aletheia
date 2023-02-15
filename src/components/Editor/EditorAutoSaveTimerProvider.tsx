@@ -16,7 +16,7 @@ export const EditorAutoSaveTimerProvider = ({ reference, children }) => {
     const timerConfig = {
         ...initialContext,
         callbackFunction: autoSaveCallback,
-        interval: 100000,
+        interval: 10000,
     };
 
     return (
