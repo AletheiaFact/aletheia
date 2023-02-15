@@ -46,7 +46,7 @@ const getById = (id, t, params = {}) => {
         });
 };
 
-const save = (t, claim = {}) => {
+const saveSpeech = (t, claim = {}) => {
     return request
         .post("/", claim)
         .then((response) => {
@@ -90,15 +90,34 @@ const saveImage = (t, claimImage = {}) => {
         });
 };
 
-const update = (id, t, params = {}) => {
+const saveDebate = (t, debate = {}) => {
     return request
-        .put(`${id}`, params)
+        .post("/debate", debate)
         .then((response) => {
-            const { title, _id } = response.data;
+            const { title } = response.data;
             message.success(
-                `"${title}" ${t("claimForm:successUpdateMessage")}`
+                `"${title}" ${t("claimForm:successCreateMessage")}`
             );
-            return _id;
+            return response.data;
+        })
+        .catch((err) => {
+            const response = err && err.response;
+            // TODO: Track errors with Sentry
+            if (!response) {
+                console.error(err);
+            }
+        });
+};
+
+const updateDebate = (
+    debateId,
+    t,
+    params: { content: string; personality: string; isLive: boolean }
+) => {
+    return request
+        .put(`/debate/${debateId}`, params)
+        .then((response) => {
+            return response.data;
         })
         .catch((err) => {
             const response = err && err.response;
@@ -117,8 +136,9 @@ const update = (id, t, params = {}) => {
 const claimApi = {
     get,
     getById,
-    save,
+    saveSpeech,
     saveImage,
-    update,
+    saveDebate,
+    updateDebate,
 };
 export default claimApi;

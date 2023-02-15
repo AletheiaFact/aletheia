@@ -1,11 +1,13 @@
 import { useSelector } from "@xstate/react";
 import { Row } from "antd";
 import Text from "antd/lib/typography/Text";
+import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
+import { isUserLoggedIn } from "../../../atoms/currentUser";
 import { trackUmamiEvent } from "../../../lib/umami";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import getNextEvents from "../../../machines/reviewTask/getNextEvent";
@@ -46,10 +48,10 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
 
-    const { isLoggedIn, autoSave } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
+    const { autoSave } = useAppSelector((state) => ({
         autoSave: state.autoSave,
     }));
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     const setCurrentFormAndNextEvents = (param) => {
         if (param !== ReviewTaskEvents.draft) {

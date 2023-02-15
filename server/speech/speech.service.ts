@@ -13,4 +13,8 @@ export class SpeechService {
     create(speechBody) {
         return new this.SpeechModel(speechBody).save();
     }
+
+    async getSpeech(id: string) {
+        return await this.SpeechModel.findById(id);
+    }
 }

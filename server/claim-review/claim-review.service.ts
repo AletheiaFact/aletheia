@@ -225,6 +225,8 @@ export class ClaimReviewService {
 
                 const isContentImage =
                     claim.contentModel === ContentModelEnum.Image;
+                const isContentDebate =
+                    claim.contentModel === ContentModelEnum.Debate;
 
                 const content = isContentImage
                     ? await this.imageService.getByDataHash(data_hash)
@@ -236,6 +238,10 @@ export class ClaimReviewService {
                 reviewHref += isContentImage
                     ? `/image/${data_hash}`
                     : `/sentence/${data_hash}`;
+                if (isContentDebate) {
+                    reviewHref = `/claim/${review.claim.latestRevision.claimId}/debate`;
+                }
+
                 return {
                     content,
                     personality,

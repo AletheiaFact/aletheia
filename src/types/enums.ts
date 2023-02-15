@@ -19,6 +19,7 @@ enum Roles {
 enum ContentModelEnum {
     Speech = "Speech",
     Image = "Image",
+    Debate = "Debate",
 }
 
 export { ClassificationEnum, Roles, ContentModelEnum };

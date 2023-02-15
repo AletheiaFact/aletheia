@@ -1,39 +1,62 @@
-import React, { createContext, useEffect } from "react";
-import { Remirror, useRemirror, ThemeProvider } from "@remirror/react";
-import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
+import React, { useEffect } from "react";
+import { Remirror, ThemeProvider, useRemirror } from "@remirror/react";
 import { AllStyledComponent } from "@remirror/styles/emotion";
-import { Affix, Row } from "antd";
-import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
-import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
-import colors from "../../styles/colors";
-import { EditorContent } from "./EditorContent";
+import { Affix, Col, Row } from "antd";
 import { useAtom } from "jotai";
-import { claimCollectionAtom } from "../../atoms/claimCollection";
+
+import { debateAtom } from "../../atoms/debate";
+import colors from "../../styles/colors";
+import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
+import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
+import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
+import { EditorContent } from "./EditorContent";
+import Button, { ButtonType } from "../Button";
+import { useTranslation } from "next-i18next";
+import claimApi from "../../api/claim";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
 ];
 
 export interface IEditorProps {
-    claimCollection: any;
+    claim: any;
 }
 
-export const ClaimCollectionContext = createContext({});
-
-const Editor = ({ claimCollection }: IEditorProps) => {
-    const { personalities } = claimCollection;
+const Editor = ({ claim }: IEditorProps) => {
+    const { t } = useTranslation();
+    const personalities = claim.personalities;
     const { manager, state } = useRemirror({
         extensions,
-        content: claimCollection?.editorContentObject,
+        content: claim?.editor?.editorContentObject,
         stringHandler: "html",
     });
-    const [, setClaimCollection] = useAtom(claimCollectionAtom);
+    const [debate, setDebate] = useAtom(debateAtom);
+    const isLive = debate.isLive;
+
     useEffect(() => {
-        setClaimCollection({
-            sources: claimCollection?.sources,
-            title: claimCollection?.title,
+        setDebate({
+            sources: claim?.sources,
+            title: claim?.title,
+            date: claim?.date,
+            debateId: claim?.contentId,
+            isLive: claim?.content.isLive,
         });
-    }, [claimCollection, setClaimCollection]);
+    }, [claim, setDebate]);
+
+    const handleClickUpdateStatus = () => {
+        claimApi
+            .updateDebate(debate.debateId, t, {
+                content: "",
+                personality: "",
+                isLive: !isLive,
+            })
+            .then((res) => {
+                setDebate({
+                    ...debate,
+                    isLive: res.isLive,
+                });
+            });
+    };
 
     return (
         <Row
@@ -43,6 +66,21 @@ const Editor = ({ claimCollection }: IEditorProps) => {
                 justifyContent: "center",
             }}
         >
+            <Col span={21} style={{ display: "flex", justifyContent: "end" }}>
+                <Button
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={handleClickUpdateStatus}
+                    type={ButtonType.whiteBlack}
+                >
+                    {t(
+                        `debates:${
+                            isLive
+                                ? "finishDebateButtonLabel"
+                                : "reopenDebateButtonLabel"
+                        }`
+                    )}
+                </Button>
+            </Col>
             <AllStyledComponent
                 style={{
                     padding: "10px",
@@ -56,7 +94,7 @@ const Editor = ({ claimCollection }: IEditorProps) => {
                         autoFocus={true}
                     >
                         <EditorAutoSaveTimerProvider
-                            claimCollectionId={claimCollection._id}
+                            reference={claim.editor.reference}
                         >
                             <Affix>
                                 <div
@@ -67,24 +105,23 @@ const Editor = ({ claimCollection }: IEditorProps) => {
                                         padding: "10px",
                                     }}
                                 >
-                                    {Array.isArray(personalities) &&
-                                        personalities.map((personality) => {
-                                            return (
-                                                <AddPersonalityEditorButton
-                                                    key={personality._id}
-                                                    personalityId={
-                                                        personality._id
-                                                    }
-                                                    personalityName={
-                                                        personality.name
-                                                    }
-                                                />
-                                            );
-                                        })}
+                                    {personalities.map((personality) => {
+                                        return (
+                                            <AddPersonalityEditorButton
+                                                key={personality._id}
+                                                personalityId={personality._id}
+                                                personalityName={
+                                                    personality.name
+                                                }
+                                                disabled={!isLive}
+                                            />
+                                        );
+                                    })}
                                 </div>
                             </Affix>
                             <EditorContent
-                                claimCollectionId={claimCollection._id}
+                                reference={claim.editor.reference}
+                                isLive={isLive}
                             />
                         </EditorAutoSaveTimerProvider>
                     </Remirror>

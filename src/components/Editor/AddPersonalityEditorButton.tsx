@@ -4,7 +4,11 @@ import { getEditorClaimCardContentHtml } from "./EditorClaimCard/EditorClaimCard
 import AletheiaButton from "../Button";
 import { useTranslation } from "next-i18next";
 
-const AddPersonalityEditorButton = ({ personalityId, personalityName }) => {
+const AddPersonalityEditorButton = ({
+    personalityId,
+    personalityName,
+    disabled,
+}) => {
     const commands = useCommands();
     const { t } = useTranslation();
     const handleClick = useCallback(() => {
@@ -23,6 +27,7 @@ const AddPersonalityEditorButton = ({ personalityId, personalityName }) => {
         <AletheiaButton
             onMouseDown={(event) => event.preventDefault()}
             onClick={handleClick}
+            disabled={disabled}
         >
             {`${t("debates:addClaimEditorButton")} ${personalityName}`}
         </AletheiaButton>

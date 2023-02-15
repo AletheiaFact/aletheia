@@ -13,16 +13,15 @@ import {
 import { useTranslation } from "next-i18next";
 import colors from "../styles/colors";
 import SocialMediaShareStyle from "./SocialMediaShare.style";
-import { useAppSelector } from "../store/store";
 import { trackUmamiEvent } from "../lib/umami";
+import { useAtom } from "jotai";
+import { isUserLoggedIn } from "../atoms/currentUser";
 
 const { Title } = Typography;
 
 const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
     const { t } = useTranslation();
-    const { isLoggedIn } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-    }));
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     quote = quote || t("share:quote");
 

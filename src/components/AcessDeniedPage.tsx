@@ -1,9 +1,11 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
-import { useAppSelector } from "../store/store";
+import { useAtom } from "jotai";
+import { currentUserRole } from "../atoms/currentUser";
 
 const AcessDeniedPage = ({ originalUrl }) => {
-    const { role } = useAppSelector((state) => state);
+    const [role] = useAtom(currentUserRole);
+
     const { t } = useTranslation();
     return (
         <div

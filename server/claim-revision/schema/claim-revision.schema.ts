@@ -8,6 +8,7 @@ export type ClaimRevisionDocument = ClaimRevision & mongoose.Document;
 export enum ContentModelEnum {
     Speech = "Speech",
     Image = "Image",
+    Debate = "Debate",
 }
 
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
@@ -47,11 +48,15 @@ export class ClaimRevision {
     claimId: Claim;
 
     @Prop({
-        type: mongoose.Types.ObjectId,
-        required: false,
-        ref: "Personality",
+        type: [
+            {
+                type: mongoose.Types.ObjectId,
+                required: true,
+                ref: "Personality",
+            },
+        ],
     })
-    personality: Personality;
+    personalities: Personality[];
 }
 
 const ClaimRevisionSchemaRaw = SchemaFactory.createForClass(ClaimRevision);

@@ -3,5 +3,7 @@
     "addClaimEditorButton": "Add claim from",
     "saveButtonLabel": "Save",
     "isEnded": "Debate ended",
-    "seeDebate": "Acompanhe as checagens do debate"
+    "seeDebate": "Watch the debate reviews",
+    "finishDebateButtonLabel": "Finish debate",
+    "reopenDebateButtonLabel": "Reopen debate"
 }

@@ -3,6 +3,7 @@ import { Col, Typography } from "antd";
 import React from "react";
 import { useTranslation } from "next-i18next";
 import ImageClaim from "../ImageClaim";
+import { ContentModelEnum } from "../../types/enums";
 const { Paragraph } = Typography;
 
 interface ClaimSummaryContentProps {
@@ -10,19 +11,37 @@ interface ClaimSummaryContentProps {
     claimTitle: string;
     href: string;
     isImage?: boolean;
+    isDebate?: boolean;
+    contentModel: ContentModelEnum;
 }
 
 const ClaimSummaryContent = ({
     href,
     claimContent,
     claimTitle,
-    isImage = false,
+    contentModel,
 }: ClaimSummaryContentProps) => {
     const { t } = useTranslation();
-    const title = isImage ? claimTitle : claimContent;
-    const linkText = isImage
-        ? "claim:cardLinkToImage"
-        : "claim:cardLinkToFullText";
+    const isImage = contentModel === ContentModelEnum.Image;
+    const contentProps = {
+        [ContentModelEnum.Speech]: {
+            linkText: "claim:cardLinkToFullText",
+            title: claimContent,
+            contentHeight: "6.4em",
+        },
+        [ContentModelEnum.Image]: {
+            linkText: "claim:cardLinkToImage",
+            title: claimTitle,
+            contentHeight: "1.6em",
+        },
+        [ContentModelEnum.Debate]: {
+            linkText: "claim:cardLinkToDebate",
+            title: claimTitle,
+            contentHeight: "5.3em",
+        },
+    };
+
+    const { linkText, title, contentHeight } = contentProps[contentModel];
 
     const elipsizedTitleProps: React.CSSProperties = isImage
         ? {
@@ -49,7 +68,7 @@ const ClaimSummaryContent = ({
                             fontWeight: 400,
                             margin: 0,
                             lineHeight: 1.6,
-                            height: isImage ? "1.6em" : "6.4em",
+                            height: contentHeight,
                             ...elipsizedTitleProps,
                         }}
                     >

@@ -8,6 +8,6 @@ export type Claim = {
     date?: string;
     contentModel: ContentModelEnum;
     sources?: string[];
-    personality?: Personality;
+    personalities?: Personality[];
     recaptcha?: string;
 };

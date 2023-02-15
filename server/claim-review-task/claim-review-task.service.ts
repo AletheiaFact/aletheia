@@ -69,12 +69,18 @@ export class ClaimReviewTaskService {
                 const { title, contentModel } = claim.latestRevision;
                 const isContentImage = contentModel === ContentModelEnum.Image;
 
-                let reviewHref = personality
-                    ? `/personality/${personality?.slug}/claim/${claim?.slug}`
-                    : `/claim`;
-                reviewHref += isContentImage
-                    ? `/${claim?._id}`
-                    : `/sentence/${data_hash}`;
+                const personalityPath = `/personality/${personality?.slug}`;
+
+                const contentModelPathMap = {
+                    [ContentModelEnum.Debate]: `/claim/${claim?._id}/debate`,
+                    [ContentModelEnum.Image]: personality
+                        ? `${personalityPath}/claim/${claim?.slug}/${claim?._id}`
+                        : `/claim/${claim?._id}`,
+                    [ContentModelEnum.Speech]: `${personalityPath}/claim/${claim?.slug}/sentence/${data_hash}`,
+                };
+
+                let reviewHref = contentModelPathMap[contentModel];
+
                 const usersName = machine.context.reviewData.usersId.map(
                     (user) => {
                         return user.name;
@@ -84,6 +90,7 @@ export class ClaimReviewTaskService {
                 const content = isContentImage
                     ? await this.imageService.getByDataHash(data_hash)
                     : await this.sentenceService.getByDataHash(data_hash);
+
                 return {
                     content,
                     usersName,

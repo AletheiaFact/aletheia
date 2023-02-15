@@ -28,10 +28,10 @@ describe("Create image claim", () => {
         cy.get('input[type="file"]').selectFile(claim.imageSource, {
             force: true,
         });
+        cy.get("[data-cy=testCheckboxAcceptTerms]").click();
+
         cy.checkRecaptcha();
-        cy.get(locators.claim.BTN_SUBMIT_CLAIM_IMAGE)
-            .should("be.visible")
-            .click();
+        cy.get(locators.claim.BTN_SUBMIT_CLAIM).should("be.visible").click();
         cy.title().should("contain", claim.imageTitle);
     });
 });

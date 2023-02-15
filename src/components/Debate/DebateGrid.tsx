@@ -3,20 +3,19 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 
 import colors from "../../styles/colors";
-import Button, { ButtonType } from "../Button";
+import Button from "../Button";
 import CardBase from "../CardBase";
 import GridList from "../GridList";
-import PersonalityCard from "../Personality/PersonalityCard";
+import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 
 const { Title } = Typography;
 
-const ClaimCollectionGrid = ({ claimCollections }) => {
+const DebateGrid = ({ debates }) => {
     const { t } = useTranslation();
-
     return (
         <GridList
             title={"Debates"}
-            dataSource={claimCollections}
+            dataSource={debates}
             loggedInMaxColumns={1}
             gridLayout={{
                 gutter: 10,
@@ -26,8 +25,7 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
                 lg: 1,
             }}
             disableSeeMoreButton={true}
-            seeMoreButtonLabel={t("home:seeMorePersonalitiesButton")}
-            renderItem={(cc) => {
+            renderItem={(debateClaim) => {
                 return (
                     <CardBase
                         style={{
@@ -52,11 +50,8 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
                                         color: colors.grayPrimary,
                                     }}
                                 >
-                                    {cc.title} (
-                                    {cc.isLive
-                                        ? t("debates:liveLabel")
-                                        : t("debates:isEnded")}
-                                    )
+                                    {debateClaim.title} (
+                                    {t("debates:liveLabel")})
                                 </Title>
                             </Row>
                             <Row
@@ -64,12 +59,11 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
                                     justifyContent: "space-evenly",
                                 }}
                             >
-                                {cc.personalities.map((p) => {
+                                {debateClaim.personalities.map((p) => {
                                     return (
-                                        <Col>
-                                            <PersonalityCard
+                                        <Col key={p._id} xs={24} md={11}>
+                                            <PersonalityMinimalCard
                                                 personality={p}
-                                                summarized={true}
                                             />
                                         </Col>
                                     );
@@ -77,19 +71,13 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
                             </Row>
                             <Row
                                 style={{
-                                    justifyContent: "space-evenly",
+                                    justifyContent: "center",
+                                    marginTop: "16px",
                                 }}
                             >
                                 <Col>
                                     <Button
-                                        type={ButtonType.blue}
-                                        href={`/claim-collection/${cc._id}`}
-                                        style={{
-                                            fontSize: "12px",
-                                            lineHeight: "20px",
-                                            height: "auto",
-                                            padding: "4px 12px",
-                                        }}
+                                        href={`/claim/${debateClaim.claimId}/debate`}
                                     >
                                         <span style={{ marginTop: 4 }}>
                                             {t("debates:seeDebate")}
@@ -105,4 +93,4 @@ const ClaimCollectionGrid = ({ claimCollections }) => {
     );
 };
 
-export default ClaimCollectionGrid;
+export default DebateGrid;

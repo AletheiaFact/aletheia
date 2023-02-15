@@ -6,6 +6,11 @@ export type SaveContextEvent = {
     claimData: Partial<Claim>;
 };
 
+export type RemovePersonalityEvent = {
+    type: string;
+    personality: any;
+};
+
 export type PersistClaimEvent = {
     type: string;
     claimData: Partial<Claim>;
@@ -13,4 +18,7 @@ export type PersistClaimEvent = {
     router: NextRouter;
 };
 
-export type CreateClaimMachineEvents = SaveContextEvent | PersistClaimEvent;
+export type CreateClaimMachineEvents =
+    | SaveContextEvent
+    | PersistClaimEvent
+    | RemovePersonalityEvent;

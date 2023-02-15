@@ -11,6 +11,7 @@ import {
     ContentModelEnum,
 } from "./schema/claim-revision.schema";
 import { ImageService } from "../image/image.service";
+import { DebateService } from "../debate/debate.service";
 
 @Injectable()
 export class ClaimRevisionService {
@@ -22,7 +23,8 @@ export class ClaimRevisionService {
         private ClaimRevisionModel: Model<ClaimRevisionDocument>,
         private sourceService: SourceService,
         private parserService: ParserService,
-        private imageService: ImageService
+        private imageService: ImageService,
+        private debateService: DebateService
     ) {
         this.optionsToUpdate = {
             new: true,
@@ -34,7 +36,7 @@ export class ClaimRevisionService {
     getRevision(match) {
         try {
             return this.ClaimRevisionModel.findOne(match)
-                .populate("personality", "_id name")
+                .populate("personalities")
                 .lean();
         } catch {
             throw new NotFoundException();
@@ -56,9 +58,12 @@ export class ClaimRevisionService {
         if (claim.contentModel === ContentModelEnum.Speech) {
             const newSpeech = await this.parserService.parse(claim.content);
             claim.contentId = newSpeech._id;
-        } else {
+        } else if (claim.contentModel === ContentModelEnum.Image) {
             const newImage = await this.imageService.create(claim.content);
             claim.contentId = newImage._id;
+        } else if (claim.contentModel === ContentModelEnum.Debate) {
+            const newDebate = await this.debateService.create(claim);
+            claim.contentId = newDebate._id;
         }
 
         const newClaimRevision = new this.ClaimRevisionModel(claim);
@@ -102,7 +107,7 @@ export class ClaimRevisionService {
             {
                 $lookup: {
                     from: "personalities",
-                    localField: "personality",
+                    localField: "personalities",
                     foreignField: "_id",
                     as: "personality",
                 },
@@ -110,7 +115,7 @@ export class ClaimRevisionService {
             {
                 $project: {
                     title: 1,
-                    personality: 1,
+                    personalities: 1,
                     slug: 1,
                     date: 1,
                 },

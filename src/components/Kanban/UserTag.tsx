@@ -1,13 +1,15 @@
 import { Avatar, Tooltip } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { useAppSelector } from "../../store/store";
+import { useAtom } from "jotai";
+import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 import colors from "../../styles/colors";
 import { Roles } from "../../types/enums";
 
 const UserTag = ({ user }) => {
     const { t } = useTranslation();
-    const { login: isLoggedIn, role } = useAppSelector((state) => state);
+    const [role] = useAtom(currentUserRole);
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
     const userName =
         role !== Roles.Regular && isLoggedIn
             ? user

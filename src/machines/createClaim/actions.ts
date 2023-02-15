@@ -1,5 +1,9 @@
 import { assign } from "xstate";
-import { PersistClaimEvent, SaveContextEvent } from "./events";
+import {
+    PersistClaimEvent,
+    RemovePersonalityEvent,
+    SaveContextEvent,
+} from "./events";
 import { CreateClaimContext } from "./context";
 import { ContentModelEnum } from "../../types/enums";
 import claimApi from "../../api/claim";
@@ -33,6 +37,31 @@ const startImage = assign<CreateClaimContext>((context) => {
     };
 });
 
+const startDebate = assign<CreateClaimContext>((context) => {
+    return {
+        claimData: {
+            ...context.claimData,
+            contentModel: ContentModelEnum.Debate,
+        },
+    };
+});
+
+const removePersonality = assign<CreateClaimContext, RemovePersonalityEvent>(
+    (contex, event) => {
+        const { personality } = event;
+        const { personalities } = contex.claimData;
+
+        return {
+            claimData: {
+                ...contex.claimData,
+                personalities: personalities.filter(
+                    (p) => p._id !== personality._id
+                ),
+            },
+        };
+    }
+);
+
 const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
     (context, event) => {
         const claimData = {
@@ -40,31 +69,34 @@ const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
             ...event.claimData,
         };
         const { t, router } = event;
-
         const sendData = {
             ...claimData,
-            personality: claimData.personality?._id || null,
+            personalities: claimData.personalities.map((p) => p._id),
         };
 
-        if (claimData.contentModel === ContentModelEnum.Image) {
-            claimApi.saveImage(t, sendData).then((claim) => {
-                const path = claim?.personality
-                    ? `/personality/${claimData.personality.slug}/claim/${claim.slug}`
-                    : `/claim/${claim._id}`;
-                router.push(path);
+        const saveFunctions = {
+            [ContentModelEnum.Speech]: claimApi.saveSpeech,
+            [ContentModelEnum.Image]: claimApi.saveImage,
+            [ContentModelEnum.Debate]: claimApi.saveDebate,
+        };
+
+        saveFunctions[claimData.contentModel](t, sendData)
+            .then((claim) => {
+                router.push(claim.path);
+            })
+            .catch((err) => {
+                console.error("error saving the claim", err);
             });
-        } else if (claimData.contentModel === ContentModelEnum.Speech) {
-            claimApi.save(t, sendData).then(({ slug }) => {
-                // Redirect to personality profile in case claim slug is not present
-                const path = slug
-                    ? `/personality/${claimData.personality.slug}/claim/${slug}`
-                    : `/personality/${claimData.personality.slug}`;
-                router.push(path);
-            });
-        }
 
         return { claimData };
     }
 );
 
-export { saveClaimContext, startSpeech, startImage, persistClaim };
+export {
+    saveClaimContext,
+    startSpeech,
+    startImage,
+    startDebate,
+    removePersonality,
+    persistClaim,
+};

@@ -1,7 +1,8 @@
 import { atom } from "jotai";
 import { Roles } from "../types/enums";
 
-const isLoggedIn = atom(false);
+const isUserLoggedIn = atom(false);
 const currentUserRole = atom(Roles.Regular);
+const currentUserId = atom("");
 
-export { isLoggedIn, currentUserRole };
+export { isUserLoggedIn, currentUserRole, currentUserId };

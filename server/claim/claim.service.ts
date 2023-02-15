@@ -15,7 +15,7 @@ import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema
 
 type ClaimMatchParameters = (
     | { _id: string }
-    | { personality: string; slug: string }
+    | { personalities: string; slug: string }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -33,8 +33,8 @@ export class ClaimService {
     ) {}
 
     async listAll(page, pageSize, order, query) {
-        query.personality = query.personality
-            ? Types.ObjectId(query.personality)
+        query.personalities = query.personalities
+            ? Types.ObjectId(query.personalities)
             : null;
 
         const claims = await this.ClaimModel.find(query)
@@ -65,9 +65,10 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async create(claim) {
-        claim.personality = claim.personality
-            ? Types.ObjectId(claim.personality)
-            : null;
+        claim.personalities = claim.personalities.map((personality) => {
+            return Types.ObjectId(personality);
+        });
+
         const newClaim = new this.ClaimModel(claim);
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,
@@ -94,7 +95,6 @@ export class ClaimService {
         this.stateEventService.createStateEvent(stateEvent);
 
         newClaim.save();
-
         return {
             ...newClaimRevision.toObject(),
             ...newClaim.toObject(),
@@ -133,6 +133,7 @@ export class ClaimService {
             newClaimRevision,
             previousRevision
         );
+
         await this.historyService.createHistory(history);
 
         claim.save();
@@ -172,7 +173,7 @@ export class ClaimService {
         population = true
     ) {
         return this._getClaim(
-            { personality: personalityId, slug: claimSlug },
+            { personalities: personalityId, slug: claimSlug },
             revisionId,
             true,
             population
@@ -207,22 +208,23 @@ export class ClaimService {
         } else {
             if (population) {
                 claim = await this.ClaimModel.findOne(match)
-                    .populate("personality", "_id name")
+                    .populate("personalities")
                     .populate("sources", "_id link")
                     .populate("latestRevision")
                     .lean();
             } else {
                 const foundClaim = await this.ClaimModel.findOne(
                     match,
-                    "_id personality latestRevision"
+                    "_id personalities latestRevision"
                 )
-                    .populate("personality", "_id name")
+                    .populate("personalities", "_id name")
                     .populate("sources", "_id link")
                     .populate({
                         path: "latestRevision",
                         select: { title: 1, contentModel: 1, date: 1, slug: 1 },
                     })
                     .lean();
+
                 claim = {
                     ...foundClaim.latestRevision,
                     ...foundClaim,
@@ -253,17 +255,27 @@ export class ClaimService {
             const reviews = await this.claimReviewService.getReviewsByClaimId(
                 claim._id
             );
-
             processedClaim.content =
                 processedClaim.contentModel === ContentModelEnum.Speech
                     ? processedClaim.content[0].content
                     : processedClaim.content[0];
 
             if (processedClaim?.content) {
-                processedClaim.content = this.transformContentObject(
-                    processedClaim.content,
-                    reviews
-                );
+                if (processedClaim?.contentModel === ContentModelEnum.Debate) {
+                    processedClaim.content.content =
+                        processedClaim.content.content.map((speech) => {
+                            const content = this.transformContentObject(
+                                speech.content,
+                                reviews
+                            );
+                            return { ...speech, content };
+                        });
+                } else {
+                    processedClaim.content = this.transformContentObject(
+                        processedClaim.content,
+                        reviews
+                    );
+                }
             }
             const reviewStats =
                 await this.claimReviewService.getReviewStatsByClaimId(
@@ -286,7 +298,7 @@ export class ClaimService {
                 if (claim.content.props.classification) {
                     totalClaimsReviewed++;
                 }
-            } else {
+            } else if (claim?.content.length > 0) {
                 claim.content.forEach((p) => {
                     totalClaims += p.content.length;
                     p.content.forEach((sentence) => {
@@ -307,7 +319,7 @@ export class ClaimService {
         if (!claimContent || reviews.length <= 0) {
             return claimContent;
         }
-        if (claimContent.type === "image") {
+        if (claimContent.type === ContentModelEnum.Image) {
             const claimReview = reviews.find((review) => {
                 return review._id.data_hash === claimContent.data_hash;
             });

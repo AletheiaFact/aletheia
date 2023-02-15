@@ -13,6 +13,7 @@ import { ClaimRevisionService } from "./claim-revision.service";
 import { ParagraphModule } from "../paragraph/paragraph.module";
 import { SpeechModule } from "../speech/speech.module";
 import { ImageModule } from "../image/image.module";
+import { DebateModule } from "../debate/debate.module";
 
 const ClaimRevisionModel = MongooseModule.forFeature([
     {
@@ -29,6 +30,7 @@ const ClaimRevisionModel = MongooseModule.forFeature([
         ParagraphModule,
         SpeechModule,
         ImageModule,
+        DebateModule,
         ConfigModule,
         HttpModule,
         ViewModule,

@@ -8,8 +8,6 @@ import React, { ComponentType } from "react";
 import { NodeViewComponentProps } from "@remirror/react";
 import { EditorClaimCard } from "./EditorClaimCard";
 
-export const EditorClaimCardNodeType = "editor-claim-card";
-
 class EditorClaimCardExtension extends NodeExtension {
     get name() {
         return "editor-claim-card" as const;
@@ -19,13 +17,13 @@ class EditorClaimCardExtension extends NodeExtension {
         node,
         forwardRef,
     }) => {
-        const { personalityId, claimId } = node.attrs;
+        const { personalityId, speechId } = node.attrs;
 
         return (
             <EditorClaimCard
                 node={node}
                 personalityId={personalityId}
-                claimId={claimId}
+                speechId={speechId}
                 forwardRef={forwardRef}
             />
         );
@@ -53,14 +51,14 @@ class EditorClaimCardExtension extends NodeExtension {
             isolating: true,
             attrs: {
                 personalityId: { default: "" },
-                claimId: { default: "" },
+                speechId: { default: "" },
                 cardId: { default: "" },
             },
             content: "block*",
             toDOM: (node) => {
                 const attrs: DOMCompatibleAttributes = {
                     "data-personality-id": node.attrs.personalityId,
-                    "data-claim-id": node.attrs.claimId,
+                    "data-speech-id": node.attrs.speechId,
                     "card-id": node.attrs.cardId,
                 };
                 return ["div", attrs, 0];
@@ -69,7 +67,7 @@ class EditorClaimCardExtension extends NodeExtension {
                 {
                     attrs: {
                         personalityId: { default: "" },
-                        claimId: { default: "" },
+                        speechId: { default: "" },
                         cardId: { default: "" },
                     },
                     tag: `div[card-id]`,
@@ -77,12 +75,12 @@ class EditorClaimCardExtension extends NodeExtension {
                         const node = dom as HTMLAnchorElement;
                         const personalityId =
                             node.getAttribute(`data-personality-id`);
-                        const claimId = node.getAttribute("data-claim-id");
+                        const speechId = node.getAttribute("data-speech-id");
                         const cardId = node.getAttribute("card-id");
 
                         return {
                             personalityId,
-                            claimId,
+                            speechId,
                             cardId,
                         };
                     },

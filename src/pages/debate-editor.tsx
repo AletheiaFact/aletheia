@@ -12,11 +12,11 @@ const Editor = dynamic<IEditorProps>(
     }
 );
 
-const ClaimCollectionEditor: NextPage<{ data: string }> = ({
-    claimCollection,
+const DebateEditor: NextPage<{ data: string }> = ({
+    claim,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     // @ts-ignore
-    return <Editor claimCollection={claimCollection} />;
+    return <Editor claim={claim} />;
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
@@ -24,9 +24,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            claimCollection: JSON.parse(JSON.stringify(query?.claimCollection)),
+            claim: JSON.parse(JSON.stringify(query?.claim)),
         },
     };
 }
 
-export default ClaimCollectionEditor;
+export default DebateEditor;
