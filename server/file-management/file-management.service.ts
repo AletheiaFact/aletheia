@@ -15,7 +15,7 @@ export class FileManagementService {
             secretAccessKey: this.configService.get<string>(
                 "aws.secretAccessKey"
             ),
-            endpoint: process.env.AWS_ENDPOINT,
+            endpoint: this.configService.get<string>("aws.endpoint"),
             s3ForcePathStyle: true,
         };
 

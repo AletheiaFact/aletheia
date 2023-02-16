@@ -45,3 +45,4 @@ services:
         bucket: {env(AWS_SDK_BUCKET)}
         accessKeyId: {env(AWS_ACCESS_KEY_ID)}
         secretAccessKey: {env(AWS_SECRET_ACCESS_KEY)}
+        endpoint: {env(AWS_ENDPOINT)}
