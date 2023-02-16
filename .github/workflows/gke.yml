@@ -57,6 +57,9 @@ jobs:
           echo "ALETHEIA_SCHEMA_ID=${{ secrets.PRODUCTION_ALETHEIA_SCHEMA_ID }}" >> $GITHUB_ENV
           echo "API_URL=${{ secrets.API_URL_PRODUCTION }}" >> $GITHUB_ENV
           echo "MONGODB_NAME=${{ secrets.PRODUCTION_MONGODB_NAME }}" >> $GITHUB_ENV
+          echo "AWS_SDK_BUCKET=${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}" >> $GITHUB_ENV
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.DEVELOPMENT_AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.DEVELOPMENT_AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
 
 
       - name: Set environment
