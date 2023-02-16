@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { S3 } from "aws-sdk";
 const md5 = require("md5");
 
@@ -7,12 +8,14 @@ export class FileManagementService {
     private readonly bucket;
     private s3;
 
-    constructor() {
-        this.bucket = process.env.AWS_SDK_BUCKET;
+    constructor(private configService: ConfigService) {
+        this.bucket = this.configService.get<string>("aws.bucket");
         const s3Config = {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            endpoint: process.env.AWS_ENDPOINT,
+            accessKeyId: this.configService.get<string>("aws.accessKeyId"),
+            secretAccessKey: this.configService.get<string>(
+                "aws.secretAccessKey"
+            ),
+            endpoint: this.configService.get<string>("aws.endpoint"),
             s3ForcePathStyle: true,
         };
 

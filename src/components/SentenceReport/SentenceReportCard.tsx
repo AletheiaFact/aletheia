@@ -37,7 +37,6 @@ const SentenceReportCard = ({
     let contentPath = personality
         ? `/personality/${personality?.slug}/claim/${claim?.slug}`
         : `/claim/${claim?._id}`;
-    contentPath += isImage ? `` : `/sentence/${content.data_hash}`;
 
     return (
         <SentenceReportCardStyle>
