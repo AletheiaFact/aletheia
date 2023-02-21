@@ -1,3 +1,5 @@
+[![Build and Deploy to GKE](https://github.com/AletheiaFact/aletheia/actions/workflows/gke.yml/badge.svg)](https://github.com/AletheiaFact/aletheia/actions/workflows/gke.yml)
+
 <h1 align="center">Aletheia</h1>
 
 <p align="center">Plataforma de análise de discursos de personalidades públicas e combate a Fake News.</p>
