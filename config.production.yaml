@@ -58,4 +58,3 @@ services:
         bucket: AWS_SDK_BUCKET
         accessKeyId: AWS_ACCESS_KEY_ID
         secretAccessKey: AWS_SECRET_ACCESS_KEY
-        endpoint: AWS_ENDPOINT

@@ -2,7 +2,7 @@ import { Col } from "antd";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { isUserLoggedIn } from "../../atoms/currentUser";
+import { isLoggedIn as isUserLoggedIn } from "../../atoms/currentUser";
 import { trackUmamiEvent } from "../../lib/umami";
 
 import Button, { ButtonType } from "../Button";
