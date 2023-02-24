@@ -11,7 +11,7 @@ export class CreateBadgeDTO {
 
     @IsObject()
     @IsNotEmpty()
-    image: Object;
+    image: any;
 
     @IsDateString()
     @IsNotEmpty()

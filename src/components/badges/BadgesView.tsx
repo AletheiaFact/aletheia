@@ -10,13 +10,13 @@ import { Badge } from "../../types/Badge";
 import EditIcon from "@mui/icons-material/Edit";
 import { Avatar, Button, Grid } from "@mui/material";
 import { useAtom } from "jotai";
-import { isBadgesFormOpen } from "../../atoms/badgesForm";
+import { badgesList, isBadgesFormOpen } from "../../atoms/badgesForm";
 
 const BadgesView = () => {
     const { t } = useTranslation();
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [, setVisible] = useAtom(isBadgesFormOpen);
-
+    const [badges] = useAtom(badgesList);
     const handleEdit = React.useCallback(
         (badgeId) => () => {
             console.log("edit", badgeId);
@@ -29,15 +29,6 @@ const BadgesView = () => {
         setVisible(true);
     };
 
-    const userList = [
-        {
-            _id: "1",
-            name: "badge1",
-            description: "badge1",
-            image: "https://picsum.photos/200",
-        },
-    ];
-
     const columns = React.useMemo<GridColumns<Badge>>(
         () => [
             {
@@ -45,7 +36,7 @@ const BadgesView = () => {
                 headerName: t("badges:imageColumn"),
                 flex: 1,
                 renderCell: (params) => (
-                    <Avatar src={params.value} alt={params.row.name} />
+                    <Avatar src={params.value.content} alt={params.row.name} />
                 ),
             },
             {
@@ -87,9 +78,9 @@ const BadgesView = () => {
                 <h2>{t("badges:title")}</h2>
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
-                {userList && (
+                {badges && (
                     <DataGrid
-                        rows={userList}
+                        rows={badges}
                         columns={columns}
                         pageSize={rowsPerPage}
                         rowsPerPageOptions={[5, 10, 50]}

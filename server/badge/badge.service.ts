@@ -12,8 +12,10 @@ export class BadgeService {
     ) {}
 
     async create(badge) {
-        badge.image = Types.ObjectId(badge.image._id);
-        const newBadge = new this.BadgeModel(badge);
+        const newBadge = new this.BadgeModel({
+            ...badge,
+            image: Types.ObjectId(badge.image._id),
+        });
         return await newBadge.save();
     }
 

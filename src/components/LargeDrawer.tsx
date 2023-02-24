@@ -17,6 +17,7 @@ const LargeDrawer = ({ children, visible, onClose }) => {
                 backgroundColor: colors.lightGraySecondary,
             }}
             closable={false}
+            destroyOnClose
         >
             {children}
         </Drawer>

@@ -11,7 +11,7 @@ const createBadge = (badge, t) => {
         .post(`/`, badge)
         .then((response) => {
             message.success(t("badges:badgeSaved"));
-            return response;
+            return response.data;
         })
         .catch((err) => {
             message.error(err.response.data?.message);

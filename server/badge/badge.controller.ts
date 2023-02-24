@@ -23,14 +23,21 @@ export class BadgeController {
             badge.image = image;
         }
         const createdBadge = await this.badgeService.create(badge);
+        createdBadge.image = badge.image;
         return createdBadge;
     }
 
     @Get("admin/badges")
     public async adminBadges(@Req() req: Request, @Res() res: Response) {
+        const badges = await this.badgeService.listAll();
         const parsedUrl = parse(req.url, true);
         await this.viewService
             .getNextServer()
-            .render(req, res, "/admin-badges", Object.assign(parsedUrl.query));
+            .render(
+                req,
+                res,
+                "/admin-badges",
+                Object.assign(parsedUrl.query, { badges })
+            );
     }
 }

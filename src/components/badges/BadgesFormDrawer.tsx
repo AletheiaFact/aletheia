@@ -3,11 +3,11 @@ import { Form } from "antd";
 import { UploadFile } from "antd/lib/upload/interface";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import BadgesApi from "../../api/badgesApi";
 import ImageApi from "../../api/image";
-import { isBadgesFormOpen } from "../../atoms/badgesForm";
+import { addBadgeToList, isBadgesFormOpen } from "../../atoms/badgesForm";
 import AletheiaInput from "../AletheiaInput";
 import Button from "../Button";
 import ImageUpload from "../ImageUpload";
@@ -18,12 +18,22 @@ import TextArea from "../TextArea";
 const BadgesFormDrawer = () => {
     const { t } = useTranslation();
     const [visible, setVisible] = useAtom(isBadgesFormOpen);
+    const [, addBadge] = useAtom(addBadgeToList);
+
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [imageError, setImageError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    const resetForm = () => {
+        setName("");
+        setDescription("");
+        setFileList([]);
+        setImageError(false);
+        setIsLoading(false);
+    };
 
     const handleSubmit = () => {
         const formData = new FormData();
@@ -45,8 +55,10 @@ const BadgesFormDrawer = () => {
                     };
 
                     BadgesApi.createBadge(values, t)
-                        .then(() => {
-                            setIsLoading(false);
+                        .then((createdBadge) => {
+                            console.log(createdBadge);
+                            addBadge(createdBadge);
+                            resetForm();
                             setVisible(false);
                         })
                         .catch((err) => {
