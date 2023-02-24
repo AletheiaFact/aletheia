@@ -45,6 +45,7 @@ import { UnleashModule } from "nestjs-unleash";
 import { UnauthorizedExceptionFilter } from "./filters/unauthorized.filter";
 import { DebateModule } from "./debate/debate.module";
 import { EditorModule } from "./editor/editor.module";
+import { BadgeModule } from "./badge/badge.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -98,6 +99,7 @@ export class AppModule implements NestModule {
             FileManagementModule,
             DebateModule,
             EditorModule,
+            BadgeModule,
         ];
         if (options.config.feature_flag) {
             imports.push(
