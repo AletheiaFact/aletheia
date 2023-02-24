@@ -14,7 +14,7 @@ const LargeDrawer = ({ children, visible, onClose }) => {
             placement={vw?.sm ? "bottom" : "right"}
             bodyStyle={{ padding: 0 }}
             drawerStyle={{
-                backgroundColor: colors.lightGray,
+                backgroundColor: colors.lightGraySecondary,
             }}
             closable={false}
         >

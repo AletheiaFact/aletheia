@@ -1,0 +1,9 @@
+{
+    "nameColumn": "Name",
+    "descriptionColumn": "Description",
+    "imageColumn": "Image",
+    "title": "Badges area",
+    "addBadge": "Add badge",
+    "editBadge": "Edit badge",
+    "badgeSaved": "Badge was saved successfully"
+}

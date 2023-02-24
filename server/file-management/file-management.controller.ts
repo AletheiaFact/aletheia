@@ -43,11 +43,14 @@ export class FileManagementController {
                         await this.claimRevisionService.getByContentId(
                             foundImage._id
                         );
-
-                    return res.status(HttpStatus.SEE_OTHER).json({
-                        message: "imageAlreadyExists",
-                        target: `/claim/${foundRevision.claimId}`,
-                    });
+                    if (foundRevision) {
+                        return res.status(HttpStatus.SEE_OTHER).json({
+                            message: "imageAlreadyExists",
+                            target: `/claim/${foundRevision.claimId}`,
+                        });
+                    } else {
+                        return foundImage;
+                    }
                 }
                 return await this.fileManagementService.upload(file);
             })

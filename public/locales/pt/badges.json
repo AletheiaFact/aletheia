@@ -1,0 +1,9 @@
+{
+    "nameColumn": "Nome",
+    "descriptionColumn": "Descrição",
+    "imageColumn": "Imagem",
+    "title": "Área de Insígnias",
+    "addBadge": "Adicionar Insígnia",
+    "editBadge": "Editar Insígnia",
+    "badgeSaved": "Insígnia salva com sucesso"
+}

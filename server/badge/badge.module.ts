@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { ImageModule } from "../image/image.module";
 import { AbilityModule } from "../ability/ability.module";
 import { ViewModule } from "../view/view.module";
 import { BadgeController } from "./badge.controller";
@@ -14,7 +15,7 @@ const BadgeModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [BadgeModel, ViewModule, AbilityModule],
+    imports: [BadgeModel, ViewModule, AbilityModule, ImageModule],
     exports: [BadgeService],
     providers: [BadgeService],
     controllers: [BadgeController],

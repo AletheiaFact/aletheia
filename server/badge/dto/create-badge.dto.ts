@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsString } from "class-validator";
+import { IsDateString, IsNotEmpty, IsObject, IsString } from "class-validator";
 
 export class CreateBadgeDTO {
     @IsString()
@@ -9,9 +9,9 @@ export class CreateBadgeDTO {
     @IsNotEmpty()
     description: string;
 
-    @IsString()
+    @IsObject()
     @IsNotEmpty()
-    image: string;
+    image: Object;
 
     @IsDateString()
     @IsNotEmpty()

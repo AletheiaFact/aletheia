@@ -9,7 +9,14 @@ import AletheiaButton from "./Button";
 import { AletheiaModal } from "./Modal/AletheiaModal.style";
 
 import type { UploadFile } from "antd/lib/upload/interface";
-const ImageUpload = ({ onChange }) => {
+import Text from "antd/lib/typography/Text";
+
+interface ImageUploadProps {
+    onChange: (fileList: UploadFile[]) => void;
+    error?: boolean;
+}
+
+const ImageUpload = ({ onChange, error = false }: ImageUploadProps) => {
     const { t } = useTranslation();
     const UPLOAD_LIMIT = 1;
     const ONE_MB = 1048576;
@@ -93,6 +100,11 @@ const ImageUpload = ({ onChange }) => {
             >
                 {fileList.length >= UPLOAD_LIMIT ? null : uploadButton}
             </Upload>
+            {error && (
+                <Text type="danger" style={{ display: "block" }}>
+                    {t("common:requiredFieldError")}
+                </Text>
+            )}
             <AletheiaModal
                 visible={previewOpen}
                 title={previewTitle}

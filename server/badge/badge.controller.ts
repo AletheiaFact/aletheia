@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Req, Res } from "@nestjs/common";
 import { Request, Response } from "express";
+import { ImageService } from "../image/image.service";
 import { parse } from "url";
 
 import { ViewService } from "../view/view.service";
@@ -10,11 +11,17 @@ import { CreateBadgeDTO } from "./dto/create-badge.dto";
 export class BadgeController {
     constructor(
         private badgeService: BadgeService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private imageService: ImageService
     ) {}
 
-    @Post("api/badge/create")
+    @Post("api/badge")
     public async createBadge(@Body() badge: CreateBadgeDTO) {
+        // @ts-ignore
+        if (!badge.image._id) {
+            const image = await this.imageService.create(badge.image);
+            badge.image = image;
+        }
         const createdBadge = await this.badgeService.create(badge);
         return createdBadge;
     }

@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Badge, BadgeDocument } from "./schemas/badge.schema";
+import { Types } from "mongoose";
 
 @Injectable()
 export class BadgeService {
@@ -11,6 +12,7 @@ export class BadgeService {
     ) {}
 
     async create(badge) {
+        badge.image = Types.ObjectId(badge.image._id);
         const newBadge = new this.BadgeModel(badge);
         return await newBadge.save();
     }
