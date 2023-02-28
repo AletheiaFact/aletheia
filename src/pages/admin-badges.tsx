@@ -6,6 +6,8 @@ import BadgesView from "../components/badges/BadgesView";
 import BadgesFormDrawer from "../components/badges/BadgesFormDrawer";
 import { useAtom } from "jotai";
 import { badgesList } from "../atoms/badges";
+import Seo from "../components/Seo";
+import { useTranslation } from "next-i18next";
 
 const AdminBadgesPage: NextPage<{ data: string }> = ({
     badges,
@@ -14,9 +16,11 @@ const AdminBadgesPage: NextPage<{ data: string }> = ({
     useEffect(() => {
         setBadgesList(badges);
     }, [badges, setBadgesList]);
+    const { t } = useTranslation();
 
     return (
         <>
+            <Seo title={t("menu:badgesItem")} description={t("badges:title")} />
             <BadgesView />
             <BadgesFormDrawer />
         </>
