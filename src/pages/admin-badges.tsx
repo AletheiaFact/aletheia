@@ -5,7 +5,7 @@ import { GetLocale } from "../utils/GetLocale";
 import BadgesView from "../components/badges/BadgesView";
 import BadgesFormDrawer from "../components/badges/BadgesFormDrawer";
 import { useAtom } from "jotai";
-import { badgesList } from "../atoms/badgesForm";
+import { badgesList } from "../atoms/badges";
 
 const AdminBadgesPage: NextPage<{ data: string }> = ({
     badges,

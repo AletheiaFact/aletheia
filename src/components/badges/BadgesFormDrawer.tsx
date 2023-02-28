@@ -7,7 +7,9 @@ import React, { useState } from "react";
 
 import BadgesApi from "../../api/badgesApi";
 import ImageApi from "../../api/image";
-import { addBadgeToList, isBadgesFormOpen } from "../../atoms/badgesForm";
+import { addBadgeToList } from "../../atoms/badges";
+import { isEditDrawerOpen } from "../../atoms/editDrawer";
+import colors from "../../styles/colors";
 import AletheiaInput from "../AletheiaInput";
 import Button from "../Button";
 import ImageUpload from "../ImageUpload";
@@ -17,7 +19,7 @@ import TextArea from "../TextArea";
 
 const BadgesFormDrawer = () => {
     const { t } = useTranslation();
-    const [visible, setVisible] = useAtom(isBadgesFormOpen);
+    const [visible, setVisible] = useAtom(isEditDrawerOpen);
     const [, addBadge] = useAtom(addBadgeToList);
 
     const [name, setName] = useState("");
@@ -84,6 +86,7 @@ const BadgesFormDrawer = () => {
             onClose={() => {
                 setVisible(false);
             }}
+            backgroundColor={colors.lightGraySecondary}
         >
             <Grid
                 container

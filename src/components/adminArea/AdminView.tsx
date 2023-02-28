@@ -10,20 +10,21 @@ import {
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React from "react";
+import { startEditingItem } from "../../atoms/editDrawer";
 
-import { startEditingUser, atomUserList } from "../../atoms/userEdit";
+import { atomUserList } from "../../atoms/userEdit";
 import { User } from "../../types/User";
 
 const AdminView = () => {
     const { t } = useTranslation();
     // this is a write only atom, so we don't need to use the value
-    const [, startEditing] = useAtom(startEditingUser);
+    const [, startEditing] = useAtom(startEditingItem);
     const [userList] = useAtom(atomUserList);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const handleEdit = React.useCallback(
         (userId) => () => {
-            startEditing(userId);
+            startEditing({ itemId: userId, listAtom: atomUserList });
         },
         [startEditing]
     );

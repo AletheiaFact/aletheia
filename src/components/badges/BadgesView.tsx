@@ -10,19 +10,22 @@ import { Badge } from "../../types/Badge";
 import EditIcon from "@mui/icons-material/Edit";
 import { Avatar, Button, Grid } from "@mui/material";
 import { useAtom } from "jotai";
-import { badgesList, isBadgesFormOpen } from "../../atoms/badgesForm";
+import { isEditDrawerOpen, startEditingItem } from "../../atoms/editDrawer";
+import { badgesList } from "../../atoms/badges";
 
 const BadgesView = () => {
     const { t } = useTranslation();
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [, setVisible] = useAtom(isBadgesFormOpen);
+    const [, setVisible] = useAtom(isEditDrawerOpen);
     const [badges] = useAtom(badgesList);
+    const [, setBadgeToEdit] = useAtom(startEditingItem);
+
     const handleEdit = React.useCallback(
         (badgeId) => () => {
-            console.log("edit", badgeId);
+            setBadgeToEdit({ itemId: badgeId, listAtom: badgesList });
             setVisible(true);
         },
-        [setVisible]
+        [setVisible, setBadgeToEdit]
     );
 
     const handleAddButtonClick = () => {

@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import LargeDrawer from "../LargeDrawer";
 import { useAtom } from "jotai";
-import {
-    isUserEditDrawerOpen,
-    finishEditingUser,
-    userBeingEdited,
-} from "../../atoms/userEdit";
+import { atomUserList, userBeingEdited } from "../../atoms/userEdit";
 import {
     Button,
     Divider,
@@ -19,12 +15,13 @@ import { useTranslation } from "next-i18next";
 import { Roles } from "../../types/enums";
 import Label from "../Label";
 import userApi from "../../api/userApi";
+import { finishEditingItem, isEditDrawerOpen } from "../../atoms/editDrawer";
 
 const UserEditDrawer = () => {
     const { t } = useTranslation();
-    const [visible, setVisible] = useAtom(isUserEditDrawerOpen);
+    const [visible, setVisible] = useAtom(isEditDrawerOpen);
     const [currentUser] = useAtom(userBeingEdited);
-    const [, finishEditing] = useAtom(finishEditingUser);
+    const [, finishEditing] = useAtom(finishEditingItem);
     const [userRole, setUserRole] = useState(
         currentUser?.role || Roles.Regular
     );
@@ -41,7 +38,10 @@ const UserEditDrawer = () => {
         userApi
             .updateRole({ userId: currentUser?._id, role: userRole }, t)
             .then(() => {
-                finishEditing({ ...currentUser, role: userRole });
+                finishEditing({
+                    newItem: { ...currentUser, role: userRole },
+                    listAtom: atomUserList,
+                });
             });
     };
 

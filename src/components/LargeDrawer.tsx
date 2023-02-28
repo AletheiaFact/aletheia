@@ -3,7 +3,12 @@ import React from "react";
 import { useAppSelector } from "../store/store";
 import colors from "../styles/colors";
 
-const LargeDrawer = ({ children, visible, onClose }) => {
+const LargeDrawer = ({
+    children,
+    visible,
+    onClose,
+    backgroundColor = colors.lightGray,
+}) => {
     const { vw } = useAppSelector((state) => state);
     return (
         <Drawer
@@ -14,7 +19,7 @@ const LargeDrawer = ({ children, visible, onClose }) => {
             placement={vw?.sm ? "bottom" : "right"}
             bodyStyle={{ padding: 0 }}
             drawerStyle={{
-                backgroundColor: colors.lightGraySecondary,
+                backgroundColor,
             }}
             closable={false}
             destroyOnClose
