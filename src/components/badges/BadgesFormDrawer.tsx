@@ -1,7 +1,6 @@
 import { Divider, Grid, Typography } from "@mui/material";
-import { Form } from "antd";
 import { UploadFile } from "antd/lib/upload/interface";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 
@@ -12,7 +11,11 @@ import {
     badgeBeeingEdited,
     badgesList,
 } from "../../atoms/badges";
-import { finishEditingItem, isEditDrawerOpen } from "../../atoms/editDrawer";
+import {
+    finishEditingItem,
+    isEditDrawerOpen,
+    cancelEditingItem,
+} from "../../atoms/editDrawer";
 import colors from "../../styles/colors";
 import AletheiaInput from "../AletheiaInput";
 import Button from "../Button";
@@ -49,9 +52,11 @@ const BadgesFormDrawer = () => {
 
     const { t } = useTranslation();
     const [visible, setVisible] = useAtom(isEditDrawerOpen);
-    const [, addBadge] = useAtom(addBadgeToList);
-    const [, finishEditing] = useAtom(finishEditingItem);
+    const addBadge = useSetAtom(addBadgeToList);
+    const finishEditing = useSetAtom(finishEditingItem);
+    const cancelEditing = useSetAtom(cancelEditingItem);
 
+    const isEdit = !!badgeEdited;
     const [imageError, setImageError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -66,18 +71,19 @@ const BadgesFormDrawer = () => {
     }, [badgeEdited]);
 
     const resetForm = () => {
-        reset();
+        reset({
+            name: "",
+            description: "",
+            image: [],
+        });
         setImageError(false);
         setIsLoading(false);
     };
 
     const onSubmit = (data) => {
         console.log(data);
-        resetForm();
-        finishEditing({
-            newItem: { ...badgeEdited, ...data },
-            listAtom: badgesList,
-        });
+        const { name, description } = data;
+
         const formData = new FormData();
         const fileList = data.image;
         if (fileList.length > 0) {
@@ -89,23 +95,42 @@ const BadgesFormDrawer = () => {
             ImageApi.uploadImage(formData, t)
                 .then((imagesUploaded) => {
                     setImageError(false);
-                    console.log(imagesUploaded);
-                    const values = {
-                        ...data,
-                        created_at: new Date().toISOString(),
-                        image: imagesUploaded[0],
-                    };
+                    const image = imagesUploaded[0] || badgeEdited?.image;
 
-                    BadgesApi.createBadge(values, t)
-                        .then((createdBadge) => {
-                            console.log(createdBadge);
-                            addBadge(createdBadge);
-                            resetForm();
-                            setVisible(false);
-                        })
-                        .catch((err) => {
-                            setIsLoading(false);
-                        });
+                    if (isEdit) {
+                        const newItem = {
+                            _id: badgeEdited._id,
+                            name,
+                            description,
+                            image,
+                        };
+
+                        BadgesApi.updateBadge(newItem, t).then(
+                            (updatedBadge) => {
+                                finishEditing({
+                                    newItem,
+                                    listAtom: badgesList,
+                                });
+                                resetForm();
+                            }
+                        );
+                    } else {
+                        const values = {
+                            created_at: new Date().toISOString(),
+                            name,
+                            description,
+                            image,
+                        };
+                        BadgesApi.createBadge(values, t)
+                            .then((createdBadge) => {
+                                addBadge(createdBadge);
+                                resetForm();
+                                setVisible(false);
+                            })
+                            .catch((err) => {
+                                setIsLoading(false);
+                            });
+                    }
                 })
                 .catch((err) => {
                     setIsLoading(false);
@@ -116,12 +141,15 @@ const BadgesFormDrawer = () => {
         }
     };
 
+    const onCloseDrawer = () => {
+        resetForm();
+        cancelEditing();
+    };
+
     return (
         <LargeDrawer
             visible={visible}
-            onClose={() => {
-                setVisible(false);
-            }}
+            onClose={onCloseDrawer}
             backgroundColor={colors.lightGraySecondary}
         >
             <Grid
@@ -132,7 +160,9 @@ const BadgesFormDrawer = () => {
                 mt={2}
             >
                 <Grid item xs={10}>
-                    <h2>{t("badges:addBadge")}</h2>
+                    <h2>
+                        {t(isEdit ? "badges:editBadge" : "badges:addBadge")}
+                    </h2>
                     <Divider />
                 </Grid>
                 <Grid item xs={10} mt={2}>

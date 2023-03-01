@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Get, Post, Put, Req, Res } from "@nestjs/common";
 import { Request, Response } from "express";
 import { ImageService } from "../image/image.service";
 import { parse } from "url";
@@ -6,6 +6,7 @@ import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { BadgeService } from "./badge.service";
 import { CreateBadgeDTO } from "./dto/create-badge.dto";
+import { UpdateBadgeDTO } from "./dto/update-badge.dto";
 
 @Controller()
 export class BadgeController {
@@ -17,7 +18,6 @@ export class BadgeController {
 
     @Post("api/badge")
     public async createBadge(@Body() badge: CreateBadgeDTO) {
-        // @ts-ignore
         if (!badge.image._id) {
             const image = await this.imageService.create(badge.image);
             badge.image = image;
@@ -25,6 +25,17 @@ export class BadgeController {
         const createdBadge = await this.badgeService.create(badge);
         createdBadge.image = badge.image;
         return createdBadge;
+    }
+
+    @Put("api/badge/:id")
+    public async updateBadge(@Body() badge: UpdateBadgeDTO) {
+        if (!badge.image._id) {
+            const image = await this.imageService.create(badge.image);
+            badge.image = image;
+        }
+        const updatedBadge = await this.badgeService.update(badge);
+        updatedBadge.image = badge.image;
+        return updatedBadge;
     }
 
     @Get("admin/badges")

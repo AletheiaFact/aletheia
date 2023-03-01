@@ -34,9 +34,15 @@ const finishEditingItem = atom(
     }
 );
 
+const cancelEditingItem = atom(null, (_get, set) => {
+    set(indexOfItemBeingEdited, null);
+    set(isEditDrawerOpen, false);
+});
+
 export {
     indexOfItemBeingEdited,
     isEditDrawerOpen,
     startEditingItem,
     finishEditingItem,
+    cancelEditingItem,
 };

@@ -19,8 +19,22 @@ const createBadge = (badge, t) => {
         });
 };
 
+const updateBadge = (badge, t) => {
+    return request
+        .put(`/${badge._id}`, badge)
+        .then((response) => {
+            message.success(t("badges:badgeSaved"));
+            return response.data;
+        })
+        .catch((err) => {
+            message.error(err.response.data?.message);
+            throw err;
+        });
+};
+
 const BadgesApi = {
     createBadge,
+    updateBadge,
 };
 
 export default BadgesApi;
