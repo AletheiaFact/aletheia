@@ -38,6 +38,11 @@ export class BadgeController {
         return updatedBadge;
     }
 
+    @Get("api/badge")
+    public async listBadges() {
+        return this.badgeService.listAll();
+    }
+
     @Get("admin/badges")
     public async adminBadges(@Req() req: Request, @Res() res: Response) {
         const badges = await this.badgeService.listAll();

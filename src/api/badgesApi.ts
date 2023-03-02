@@ -32,9 +32,22 @@ const updateBadge = (badge, t) => {
         });
 };
 
+const getBadges = () => {
+    return request
+        .get(`/`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            message.error(err.response.data?.message);
+            throw err;
+        });
+};
+
 const BadgesApi = {
     createBadge,
     updateBadge,
+    getBadges,
 };
 
 export default BadgesApi;

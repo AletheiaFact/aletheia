@@ -5,14 +5,14 @@ import { GetLocale } from "../utils/GetLocale";
 import BadgesView from "../components/badges/BadgesView";
 import BadgesFormDrawer from "../components/badges/BadgesFormDrawer";
 import { useAtom } from "jotai";
-import { badgesList } from "../atoms/badges";
+import { atomBadgesList } from "../atoms/badges";
 import Seo from "../components/Seo";
 import { useTranslation } from "next-i18next";
 
 const AdminBadgesPage: NextPage<{ data: string }> = ({
     badges,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    const [, setBadgesList] = useAtom(badgesList);
+    const [, setBadgesList] = useAtom(atomBadgesList);
     useEffect(() => {
         setBadgesList(badges);
     }, [badges, setBadgesList]);

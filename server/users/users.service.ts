@@ -1,9 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { Roles } from "../ability/ability.factory";
 import { Model } from "mongoose";
 
 import OryService from "../ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
+import { Badge } from "../badge/schemas/badge.schema";
 
 @Injectable()
 export class UsersService {
@@ -15,15 +17,10 @@ export class UsersService {
 
     async findAll(userQuery): Promise<User[]> {
         const { searchName, filterOutRoles, project } = userQuery;
-        return this.UserModel.aggregate([
-            {
-                $match: {
-                    name: { $regex: searchName, $options: "i" },
-                    role: { $nin: [...(filterOutRoles || []), null] },
-                },
-            },
-            { $project: project || { _id: 1, name: 1 } },
-        ]);
+        return this.UserModel.find({
+            name: { $regex: searchName, $options: "i" },
+            role: { $nin: [...(filterOutRoles || []), null] },
+        }).select(project || { _id: 1, name: 1 });
     }
 
     async register(user) {
@@ -62,12 +59,11 @@ export class UsersService {
         }
     }
 
-    async updateUserRole(userId, role) {
-        const user = await this.getById(userId);
-        user.role = role;
-
-        this.oryService.updateIdentity(user, null, role);
-        this.logger.log(`Changed user ${user._id} role to ${role}`);
-        user.save();
+    async updateUser(userId, updates: { role?: Roles; badges?: Badge[] }) {
+        const user = await this.UserModel.findByIdAndUpdate(userId, updates, {
+            new: true,
+        });
+        this.logger.log(`Updated user ${userId}`);
+        return user;
     }
 }

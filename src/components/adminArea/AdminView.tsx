@@ -9,7 +9,9 @@ import {
 } from "@mui/x-data-grid";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import React from "react";
+import React, { useEffect } from "react";
+import BadgesApi from "../../api/badgesApi";
+import { atomBadgesList } from "../../atoms/badges";
 import { startEditingItem } from "../../atoms/editDrawer";
 
 import { atomUserList } from "../../atoms/userEdit";
@@ -20,7 +22,14 @@ const AdminView = () => {
     // this is a write only atom, so we don't need to use the value
     const [, startEditing] = useAtom(startEditingItem);
     const [userList] = useAtom(atomUserList);
+    const [, setBadgesList] = useAtom(atomBadgesList);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+    useEffect(() => {
+        BadgesApi.getBadges().then((badges) => {
+            setBadgesList(badges);
+        });
+    }, []);
 
     const handleEdit = React.useCallback(
         (userId) => () => {

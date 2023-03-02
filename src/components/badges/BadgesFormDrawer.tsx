@@ -9,7 +9,7 @@ import ImageApi from "../../api/image";
 import {
     addBadgeToList,
     badgeBeeingEdited,
-    badgesList,
+    atomBadgesList,
 } from "../../atoms/badges";
 import {
     finishEditingItem,
@@ -109,7 +109,7 @@ const BadgesFormDrawer = () => {
                             (updatedBadge) => {
                                 finishEditing({
                                     newItem,
-                                    listAtom: badgesList,
+                                    listAtom: atomBadgesList,
                                 });
                                 resetForm();
                             }

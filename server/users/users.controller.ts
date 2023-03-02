@@ -4,6 +4,7 @@ import {
     Controller,
     Get,
     Header,
+    Param,
     Post,
     Put,
     Query,
@@ -23,6 +24,7 @@ import { Types } from "mongoose";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { AbilitiesGuard } from "../ability/abilities.guard";
 import { CheckAbilities, AdminUserAbility } from "../ability/ability.decorator";
+import { UpdateUserDTO } from "./dto/update-user.dto";
 
 @Controller()
 export class UsersController {
@@ -83,6 +85,7 @@ export class UsersController {
                 email: 1,
                 name: 1,
                 role: 1,
+                badges: 1,
             },
         });
         await this.viewService
@@ -115,16 +118,20 @@ export class UsersController {
     }
 
     @UseGuards(AbilitiesGuard)
-    @Put("api/user/update-role")
     @CheckAbilities(new AdminUserAbility())
-    async updateRole(@Req() req: BaseRequest, @Res() res) {
+    @Put("api/user/:id")
+    async updateUser(
+        @Param("id") userId,
+        @Body() updates: UpdateUserDTO,
+        @Res() res
+    ) {
         try {
             this.usersService
-                .updateUserRole(Types.ObjectId(req.body.id), req.body.role)
+                .updateUser(Types.ObjectId(userId), updates)
                 .then(() => {
                     res.status(200).json({
                         success: true,
-                        message: "Role updated successfully",
+                        message: "User updated successfully",
                     });
                 })
                 .catch((e) => {
