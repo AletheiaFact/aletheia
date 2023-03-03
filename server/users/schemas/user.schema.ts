@@ -37,5 +37,8 @@ export class User {
 }
 
 const UserSchemaRaw = SchemaFactory.createForClass(User);
+UserSchemaRaw.pre("find", function () {
+    this.populate("badges");
+});
 
 export const UserSchema = UserSchemaRaw;

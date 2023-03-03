@@ -41,13 +41,18 @@ const UserEditDrawer = () => {
     };
 
     useEffect(() => {
+        // this was necessery because the select was not recognizing the
+        // badges in currentUser.badges as selected items
+        const badgeIds = currentUser?.badges?.map((obj) => obj._id);
         setUserRole(currentUser?.role || Roles.Regular);
         setBadges(
-            badgesList.filter((badge) =>
-                currentUser?.badges?.includes(badge._id)
-            )
+            badgeIds?.length
+                ? badgesList.filter((badge) => {
+                      return badgeIds?.includes(badge._id);
+                  })
+                : []
         );
-    }, [currentUser]);
+    }, [badgesList, currentUser]);
 
     const handleClickSave = () => {
         const sendBadges = badges.map((badge) => badge._id);
@@ -111,6 +116,7 @@ const UserEditDrawer = () => {
                         value={badges}
                         onChange={handleChangeBadges}
                         defaultValue={currentUser?.badges}
+                        disableCloseOnSelect
                         renderInput={(params) => (
                             <TextField
                                 {...params}

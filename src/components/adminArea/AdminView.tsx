@@ -1,5 +1,5 @@
 import EditIcon from "@mui/icons-material/Edit";
-import { Grid } from "@mui/material";
+import { Avatar, AvatarGroup, Grid } from "@mui/material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -26,6 +26,7 @@ const AdminView = () => {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     useEffect(() => {
+        console.log(userList);
         BadgesApi.getBadges().then((badges) => {
             setBadgesList(badges);
         });
@@ -57,6 +58,28 @@ const AdminView = () => {
                 valueGetter: (params: GridValueGetterParams) => {
                     return t(`admin:role-${params.row.role}`);
                 },
+            },
+            {
+                field: "badges",
+                headerName: t("admin:columnBadges"),
+                flex: 1,
+                valueGetter: (params: GridValueGetterParams) => {
+                    return params.row.badges || "";
+                },
+                renderCell: (params) => (
+                    <AvatarGroup max={4}>
+                        {params.value.map((badge) => {
+                            return (
+                                <Avatar
+                                    key={badge._id}
+                                    title={badge?.name}
+                                    src={badge?.image?.content}
+                                    alt={badge}
+                                />
+                            );
+                        })}
+                    </AvatarGroup>
+                ),
             },
             {
                 field: "actions",

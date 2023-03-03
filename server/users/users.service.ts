@@ -45,7 +45,7 @@ export class UsersService {
     }
 
     async getById(userId) {
-        const user = await this.UserModel.findById(userId);
+        const user = await this.UserModel.findById(userId).populate("badges");
         this.logger.log(`Found user ${user._id}`);
         return user;
     }
