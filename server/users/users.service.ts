@@ -15,11 +15,12 @@ export class UsersService {
         private oryService: OryService
     ) {}
 
-    async findAll(userQuery): Promise<User[]> {
-        const { searchName, filterOutRoles, project } = userQuery;
+    async findAll(userQuery): Promise<UserDocument[]> {
+        const { searchName, filterOutRoles, badges, project } = userQuery;
         return this.UserModel.find({
-            name: { $regex: searchName, $options: "i" },
+            name: { $regex: searchName || "", $options: "i" },
             role: { $nin: [...(filterOutRoles || []), null] },
+            ...(badges ? { badges } : {}),
         }).select(project || { _id: 1, name: 1 });
     }
 

@@ -22,15 +22,7 @@ const AdminView = () => {
     // this is a write only atom, so we don't need to use the value
     const [, startEditing] = useAtom(startEditingItem);
     const [userList] = useAtom(atomUserList);
-    const [, setBadgesList] = useAtom(atomBadgesList);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-    useEffect(() => {
-        console.log(userList);
-        BadgesApi.getBadges().then((badges) => {
-            setBadgesList(badges);
-        });
-    }, []);
 
     const handleEdit = React.useCallback(
         (userId) => () => {

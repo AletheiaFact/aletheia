@@ -6,6 +6,7 @@ import { ViewModule } from "../view/view.module";
 import { BadgeController } from "./badge.controller";
 import { BadgeService } from "./badge.service";
 import { Badge, BadgeSchema } from "./schemas/badge.schema";
+import { UsersModule } from "../users/users.module";
 
 const BadgeModel = MongooseModule.forFeature([
     {
@@ -15,7 +16,7 @@ const BadgeModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [BadgeModel, ViewModule, AbilityModule, ImageModule],
+    imports: [BadgeModel, ViewModule, AbilityModule, ImageModule, UsersModule],
     exports: [BadgeService],
     providers: [BadgeService],
     controllers: [BadgeController],

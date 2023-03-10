@@ -19,9 +19,9 @@ const createBadge = (badge, t) => {
         });
 };
 
-const updateBadge = (badge, t) => {
+const updateBadge = (badge, users, t) => {
     return request
-        .put(`/${badge._id}`, badge)
+        .put(`/${badge._id}`, { ...badge, users })
         .then((response) => {
             message.success(t("badges:badgeSaved"));
             return response.data;

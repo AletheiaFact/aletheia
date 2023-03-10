@@ -29,7 +29,23 @@ export class BadgeService {
     }
 
     async listAll() {
-        return await this.BadgeModel.find();
+        return await this.BadgeModel.aggregate([
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "_id",
+                    foreignField: "badges",
+                    as: "users",
+                    pipeline: [
+                        {
+                            $project: {
+                                _id: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+        ]);
     }
 
     async getById(badgeId) {

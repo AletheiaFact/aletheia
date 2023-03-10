@@ -13,4 +13,5 @@ export type Badge = {
     };
     created_at: string;
     _id: string;
+    users: any[];
 };

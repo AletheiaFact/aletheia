@@ -4,18 +4,22 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
 import BadgesView from "../components/badges/BadgesView";
 import BadgesFormDrawer from "../components/badges/BadgesFormDrawer";
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { atomBadgesList } from "../atoms/badges";
 import Seo from "../components/Seo";
 import { useTranslation } from "next-i18next";
+import { atomUserList } from "../atoms/userEdit";
 
 const AdminBadgesPage: NextPage<{ data: string }> = ({
     badges,
+    users,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    const [, setBadgesList] = useAtom(atomBadgesList);
+    const setBadgesList = useSetAtom(atomBadgesList);
+    const setUserlist = useSetAtom(atomUserList);
     useEffect(() => {
         setBadgesList(badges);
-    }, [badges, setBadgesList]);
+        setUserlist(users);
+    }, [badges, setBadgesList, setUserlist, users]);
     const { t } = useTranslation();
 
     return (
@@ -33,6 +37,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             badges: JSON.parse(JSON.stringify(query.badges)),
+            users: JSON.parse(JSON.stringify(query.users)),
         },
     };
 }

@@ -52,7 +52,6 @@ const BadgesView = () => {
                 headerName: t("badges:descriptionColumn"),
                 flex: 4,
             },
-
             {
                 field: "actions",
                 type: "actions",

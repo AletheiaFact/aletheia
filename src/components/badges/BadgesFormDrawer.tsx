@@ -1,4 +1,10 @@
-import { Divider, Grid, Typography } from "@mui/material";
+import {
+    Autocomplete,
+    Divider,
+    Grid,
+    TextField,
+    Typography,
+} from "@mui/material";
 import { UploadFile } from "antd/lib/upload/interface";
 import { useAtom, useSetAtom } from "jotai";
 import { useTranslation } from "next-i18next";
@@ -23,9 +29,12 @@ import ImageUpload from "../ImageUpload";
 import Label from "../Label";
 import LargeDrawer from "../LargeDrawer";
 import { Controller, useForm } from "react-hook-form";
+import { atomUserList } from "../../atoms/userEdit";
+import { User } from "../../types/User";
 
 const BadgesFormDrawer = () => {
     const [badgeEdited] = useAtom(badgeBeeingEdited);
+    const [userList] = useAtom(atomUserList);
     const initialFileList: UploadFile[] = badgeEdited
         ? [
               {
@@ -47,6 +56,7 @@ const BadgesFormDrawer = () => {
             name: badgeEdited?.name,
             description: badgeEdited?.description,
             image: initialFileList,
+            users: [],
         },
     });
 
@@ -59,9 +69,17 @@ const BadgesFormDrawer = () => {
     const isEdit = !!badgeEdited;
     const [imageError, setImageError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         if (badgeEdited) {
+            const userIds = badgeEdited?.users?.map((user) => user._id);
+            setUsers(
+                userIds?.length
+                    ? userList.filter((user) => userIds.includes(user._id))
+                    : []
+            );
+
             reset({
                 name: badgeEdited?.name,
                 description: badgeEdited?.description,
@@ -75,13 +93,13 @@ const BadgesFormDrawer = () => {
             name: "",
             description: "",
             image: [],
+            users: [],
         });
         setImageError(false);
         setIsLoading(false);
     };
 
     const onSubmit = (data) => {
-        console.log(data);
         const { name, description } = data;
 
         const formData = new FormData();
@@ -105,15 +123,13 @@ const BadgesFormDrawer = () => {
                             image,
                         };
 
-                        BadgesApi.updateBadge(newItem, t).then(
-                            (updatedBadge) => {
-                                finishEditing({
-                                    newItem,
-                                    listAtom: atomBadgesList,
-                                });
-                                resetForm();
-                            }
-                        );
+                        BadgesApi.updateBadge(newItem, users, t).then(() => {
+                            finishEditing({
+                                newItem,
+                                listAtom: atomBadgesList,
+                            });
+                            resetForm();
+                        });
                     } else {
                         const values = {
                             created_at: new Date().toISOString(),
@@ -207,6 +223,26 @@ const BadgesFormDrawer = () => {
                                         {...field}
                                     />
                                 )}
+                            />
+                        </Grid>
+                        <Grid item mb={2}>
+                            <Autocomplete
+                                multiple
+                                id="badge-users"
+                                options={userList}
+                                getOptionLabel={(option: User) => option.name}
+                                disableCloseOnSelect
+                                limitTags={3}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        placeholder="Users"
+                                    />
+                                )}
+                                value={users}
+                                onChange={(_event, newValue) => {
+                                    setUsers(newValue);
+                                }}
                             />
                         </Grid>
                         <Button

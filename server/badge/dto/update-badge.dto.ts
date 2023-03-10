@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsObject, IsString } from "class-validator";
+import {
+    IsArray,
+    IsNotEmpty,
+    IsObject,
+    IsOptional,
+    IsString,
+} from "class-validator";
 
 export class UpdateBadgeDTO {
     @IsString()
@@ -16,4 +22,8 @@ export class UpdateBadgeDTO {
     @IsObject()
     @IsNotEmpty()
     image: any;
+
+    @IsArray()
+    @IsOptional()
+    users: { badges: any[]; name: string; _id: string }[];
 }
