@@ -98,50 +98,62 @@ const About = ({ enableWarningDocument }) => {
                     <li key={3}>{t("about:valueAutonomy")}</li>
                 </ul>
             </Row>
-            <Row style={paragraphStyle}>
-                <Trans
-                    i18nKey={"about:firstParagraph"}
-                    components={[
-                        <a
-                            style={{ whiteSpace: "pre-wrap" }}
-                            href="https://wikipedia.org"
-                            target="_blank"
-                            rel="noreferrer"
-                        ></a>,
-                        <a
-                            style={{ whiteSpace: "pre-wrap" }}
-                            href="https://demagog.cz/"
-                            target="_blank"
-                            rel="noreferrer"
-                        ></a>,
-                    ]}
-                />
+            <Row style={{ width: "100%", textAlign: "center" }}>
+                <Typography.Title style={{ width: "100%" }} level={3}>
+                    {t("about:fullTextTitle")}
+                </Typography.Title>
             </Row>
-            <Row style={paragraphStyle}>{t("about:secondParagraph")}</Row>
             <Row style={paragraphStyle}>
-                <Trans
-                    i18nKey={"about:thirdParagraph"}
-                    components={[
-                        <a
-                            style={{ whiteSpace: "pre-wrap" }}
-                            href="https://github.com/AletheiaFact/aletheia"
-                            target="_blank"
-                            rel="noreferrer"
-                        ></a>,
-                        <a
-                            style={{ whiteSpace: "pre-wrap" }}
-                            href="https://builders.mozilla.community/programs.html#open-lab"
-                            target="_blank"
-                            rel="noreferrer"
-                        ></a>,
-                        <a
-                            style={{ whiteSpace: "pre-wrap" }}
-                            href="https://www.figma.com/proto/J6OY3ZQILdR7H1qCWyqVw7/Aletheia?node-id=670%3A3370&viewport=849%2C517%2C0.33680295944213867&scaling=scale-down"
-                            target="_blank"
-                            rel="noreferrer"
-                        ></a>,
-                    ]}
-                />
+                <p>
+                    <Trans
+                        i18nKey={"about:firstParagraph"}
+                        components={[
+                            <a
+                                style={{ whiteSpace: "pre-wrap" }}
+                                href="https://github.com/AletheiaFact/aletheia"
+                                target="_blank"
+                                rel="noreferrer"
+                            ></a>,
+                            <a
+                                style={{ whiteSpace: "pre-wrap" }}
+                                href="https://builders.mozilla.community/programs.html#open-lab"
+                                target="_blank"
+                                rel="noreferrer"
+                            ></a>,
+                        ]}
+                    />
+                </p>
+            </Row>
+            <Row style={paragraphStyle}>
+                <p>
+                    <Trans
+                        i18nKey={"about:secondParagraph"}
+                        components={[
+                            <a
+                                style={{ whiteSpace: "pre-wrap" }}
+                                href="https://wikipedia.org"
+                                target="_blank"
+                                rel="noreferrer"
+                            ></a>,
+                            <a
+                                style={{ whiteSpace: "pre-wrap" }}
+                                href="https://demagog.cz/"
+                                target="_blank"
+                                rel="noreferrer"
+                            ></a>,
+                        ]}
+                    />
+                </p>
+            </Row>
+            <Row style={paragraphStyle}>
+                <p>
+                    <Trans i18nKey={"about:thirdParagraph"} />
+                </p>
+            </Row>
+            <Row style={paragraphStyle}>
+                <p>
+                    <Trans i18nKey={"about:forthParagraph"} />
+                </p>
             </Row>
         </Row>
     );
