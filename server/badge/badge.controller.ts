@@ -46,13 +46,14 @@ export class BadgeController {
     @Put("api/badge/:id")
     public async updateBadge(@Body() badge: UpdateBadgeDTO) {
         const { users, ...rest } = badge;
-        if (!badge.image._id) {
-            const image = await this.imageService.create(badge.image);
-            badge.image = image;
+
+        if (!rest.image._id) {
+            const image = await this.imageService.create(rest.image);
+            rest.image = Types.ObjectId(image._id);
         }
 
         const updatedBadge = await this.badgeService.update(rest);
-        updatedBadge.image = badge.image;
+        updatedBadge.image = rest.image;
 
         const usersWithBadge = await this.usersService.findAll({
             badges: Types.ObjectId(updatedBadge._id),
@@ -89,6 +90,8 @@ export class BadgeController {
                 });
             }
         });
+
+        console.log(updatedBadge, "end of the function");
 
         return updatedBadge;
     }
