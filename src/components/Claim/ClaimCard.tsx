@@ -13,6 +13,7 @@ import ClaimSpeechBody from "./ClaimSpeechBody";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
 import { ContentModelEnum } from "../../types/enums";
+import { useAppSelector } from "../../store/store";
 
 const { Paragraph } = Typography;
 
@@ -26,19 +27,32 @@ const CommentStyled = styled(Comment)`
 const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const { selectedClaim } = useAppSelector((state) => state);
     const review = claim?.stats?.reviews[0];
     const paragraphs = claim.content;
     const [claimContent, setClaimContent] = useState("");
-    const isImage = claim?.contentModel === ContentModelEnum.Image;
+    const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
+    const isDebate = claim?.contentModel === ContentModelEnum.Debate;
 
+    const isInsideDebate =
+        selectedClaim?.contentModel === ContentModelEnum.Debate;
     const dispatchPersonalityAndClaim = () => {
-        dispatch(actions.setSelectClaim(claim));
+        if (!isInsideDebate) {
+            // when selecting a claim from the debate page to review or to read,
+            // we don't want to change the selected claim
+            // se we can keep reference to the debate
+            dispatch(actions.setSelectClaim(claim));
+        }
         dispatch(actions.setSelectPersonality(personality));
     };
 
-    const href = personality.slug
+    let href = personality.slug
         ? `/personality/${personality.slug}/claim/${claim.slug}`
         : `/claim/${claim._id}`;
+
+    if (isDebate) {
+        href = `/claim/${claim._id}/debate`;
+    }
 
     useEffect(() => {
         const CreateFirstParagraph = () => {
@@ -50,12 +64,12 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
             });
             setClaimContent(textContent.trim());
         };
-        if (!isImage) {
+        if (isSpeech) {
             CreateFirstParagraph();
         } else {
             setClaimContent(claim.content);
         }
-    }, [claim.content, isImage, paragraphs]);
+    }, [claim.content, isSpeech, paragraphs]);
 
     if (!claim) {
         return <div></div>;
@@ -82,8 +96,8 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                                 <ClaimSummaryContent
                                     claimTitle={claim?.title}
                                     claimContent={claimContent}
+                                    contentModel={claim?.contentModel}
                                     href={href}
-                                    isImage={isImage}
                                 />
                             ) : (
                                 <ClaimSpeechBody
@@ -112,19 +126,21 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                         flexWrap: "wrap",
                     }}
                 >
-                    <p
-                        style={{
-                            width: "100%",
-                            fontSize: "14px",
-                            lineHeight: "18px",
-                            color: colors.blackSecondary,
-                            margin: 0,
-                        }}
-                    >
-                        {t("claim:metricsHeaderInfo", {
-                            totalReviews: claim?.stats?.total,
-                        })}
-                    </p>{" "}
+                    {claim?.stats && (
+                        <p
+                            style={{
+                                width: "100%",
+                                fontSize: "14px",
+                                lineHeight: "18px",
+                                color: colors.blackSecondary,
+                                margin: 0,
+                            }}
+                        >
+                            {t("claim:metricsHeaderInfo", {
+                                totalReviews: claim?.stats?.total,
+                            })}
+                        </p>
+                    )}{" "}
                     <Paragraph
                         style={{
                             fontSize: "10px",
@@ -148,7 +164,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                                 >
                                     {t(`claimReviewForm:${review?._id}`)}
                                 </span>
-                                ({0})
+                                ({review?.count})
                             </span>
                         )}
                     </Paragraph>

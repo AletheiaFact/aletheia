@@ -16,6 +16,9 @@ import { ClaimReviewTaskModule } from "../claim-review-task/claim-review-task.mo
 import { SentenceModule } from "../sentence/sentence.module";
 import { StateEventModule } from "../state-event/state-event.module";
 import { ImageModule } from "../image/image.module";
+import { DebateModule } from "../debate/debate.module";
+import { EditorModule } from "../editor/editor.module";
+import { AbilityModule } from "../ability/ability.module";
 
 const ClaimModel = MongooseModule.forFeature([
     {
@@ -40,6 +43,9 @@ const ClaimModel = MongooseModule.forFeature([
         SourceModule,
         CaptchaModule,
         ImageModule,
+        DebateModule,
+        EditorModule,
+        AbilityModule,
     ],
     exports: [ClaimService],
     providers: [ClaimService],

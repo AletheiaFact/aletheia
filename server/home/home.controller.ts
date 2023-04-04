@@ -6,7 +6,8 @@ import { PersonalityService } from "../personality/personality.service";
 import { StatsService } from "../stats/stats.service";
 import { IsPublic } from "../decorators/is-public.decorator";
 import { BaseRequest } from "../types";
-import { ClaimCollectionService } from "../claim-collection/claim-collection.service";
+import { DebateService } from "../debate/debate.service";
+import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
 
 @Controller("/")
 export class HomeController {
@@ -14,7 +15,8 @@ export class HomeController {
         private viewService: ViewService,
         private personalityService: PersonalityService,
         private statsService: StatsService,
-        private claimCollectionService: ClaimCollectionService
+        private debateService: DebateService,
+        private claimRevisionService: ClaimRevisionService
     ) {}
 
     @Get("/home")
@@ -40,24 +42,27 @@ export class HomeController {
             }
         );
 
-        const rawClaimCollections = await this.claimCollectionService.listAll(
-            0,
-            6,
-            "asc",
-            {}
-        );
+        const liveDebates = await this.debateService.listAll(0, 6, "asc", {
+            isLive: true,
+        });
 
-        const claimCollections = await Promise.all(
-            rawClaimCollections.map(async (claimCollection) => {
-                claimCollection.personalities = await Promise.all(
-                    claimCollection.personalities.map(async (p) => {
-                        return await this.personalityService.postProcess(
-                            p,
+        const claims = await Promise.all(
+            liveDebates.map(async (debate) => {
+                const debateRevision =
+                    await this.claimRevisionService.getByContentId(debate._id);
+                const personalities = await Promise.all(
+                    debateRevision.personalities.map((personality) => {
+                        return this.personalityService.getById(
+                            personality,
                             req.language
                         );
                     })
                 );
-                return claimCollection;
+                return {
+                    title: debateRevision.title,
+                    claimId: debateRevision.claimId,
+                    personalities,
+                };
             })
         );
 
@@ -69,7 +74,7 @@ export class HomeController {
             Object.assign(parsedUrl.query, {
                 personalities,
                 stats,
-                claimCollections,
+                claims,
             })
         );
     }

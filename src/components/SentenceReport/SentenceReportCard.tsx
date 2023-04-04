@@ -3,10 +3,10 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import { ContentModelEnum } from "../../types/enums";
 
-import AletheiaAvatar from "../AletheiaAvatar";
 import ClassificationText from "../ClassificationText";
 import ImageClaim from "../ImageClaim";
 import LocalizedDate from "../LocalizedDate";
+import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import SentenceReportCardStyle from "./SentenceReportCard.style";
 import SentenceReportSummary from "./SentenceReportSummary";
 
@@ -25,51 +25,39 @@ const SentenceReportCard = ({
 }) => {
     const { t } = useTranslation();
     const isImage = claim?.contentModel === ContentModelEnum.Image;
-    const speechTypeTranslation =
-        claim?.contentModel === "Speech"
-            ? t("claim:typeSpeech")
-            : t("claim:typeTwitter");
-    const title = isImage ? claim.title : `"(...) ${content.content}"`;
-    const linkText = isImage
-        ? "claim:cardLinkToImage"
-        : "claim:cardLinkToFullText";
 
-    let contentPath = personality
-        ? `/personality/${personality?.slug}/claim/${claim?.slug}`
-        : `/claim/${claim?._id}`;
+    const contentProps = {
+        [ContentModelEnum.Speech]: {
+            linkText: "claim:cardLinkToFullText",
+            contentPath: `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${content.data_hash}`,
+            title: `"(...) ${content.content}"`,
+            speechTypeTranslation: "claim:typeSpeech",
+        },
+        [ContentModelEnum.Image]: {
+            linkText: "claim:cardLinkToImage",
+            contentPath: personality
+                ? `/personality/${personality?.slug}/claim/${claim?.slug}`
+                : `/claim/${claim?._id}`,
+            title: claim.title,
+            speechTypeTranslation: "",
+        },
+        [ContentModelEnum.Debate]: {
+            linkText: "claim:cardLinkToDebate",
+            contentPath: `/claim/${claim?._id}/debate`,
+            title: `"(...) ${content.content}"`,
+            speechTypeTranslation: "claim:typeDebate",
+        },
+    };
+
+    const { linkText, contentPath, title, speechTypeTranslation } =
+        contentProps[claim?.contentModel];
 
     return (
         <SentenceReportCardStyle>
             <Row className="main-content">
                 {personality && (
                     <Col md={6} sm={24}>
-                        <Row className="personality-card">
-                            <Col>
-                                <AletheiaAvatar
-                                    size={117}
-                                    src={personality.avatar}
-                                    alt={t("seo:personalityImageAlt", {
-                                        name: personality.name,
-                                    })}
-                                />
-                            </Col>
-                            <Col className="personality">
-                                <Title level={2} className="personality-name">
-                                    {personality.name}
-                                </Title>
-                                <Paragraph className="personality-description-content">
-                                    <span className="personality-description">
-                                        {personality.description}
-                                    </span>
-                                    <a
-                                        className="personality-profile"
-                                        href={`/personality/${personality.slug}`}
-                                    >
-                                        {t("personality:profile_button")}
-                                    </a>
-                                </Paragraph>
-                            </Col>
-                        </Row>
+                        <PersonalityMinimalCard personality={personality} />
                     </Col>
                 )}
                 <Col md={18} sm={24} className="sentence-card">
@@ -99,11 +87,14 @@ const SentenceReportCard = ({
                         </Paragraph>
                     </SentenceReportSummary>
                     <Paragraph className="claim-info">
-                        {t("claim:cardHeader1")}&nbsp;
+                        {isImage
+                            ? t("claim:cardHeader3")
+                            : t("claim:cardHeader1")}
+                        &nbsp;
                         <LocalizedDate date={claim?.date} />
                         &nbsp;
-                        {t("claim:cardHeader2")}&nbsp;
-                        <strong>{speechTypeTranslation}</strong>
+                        {!isImage && t("claim:cardHeader2")}&nbsp;
+                        <strong>{t(speechTypeTranslation)}</strong>
                     </Paragraph>
                 </Col>
             </Row>

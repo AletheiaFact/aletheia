@@ -21,30 +21,15 @@ export interface ClaimReviewPageProps {
     sitekey: string;
     claimReviewTask: any;
     claimReview: any;
-    isLoggedIn: boolean;
     description: string;
-    userRole: string;
-    userId?: string;
 }
 
 const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
-    const {
-        personality,
-        claim,
-        content,
-        claimReview,
-        isLoggedIn,
-        userRole,
-        userId,
-        sitekey,
-    } = props;
+    const { personality, claim, content, claimReview, sitekey } = props;
 
-    dispatch(actions.setLoginStatus(isLoggedIn));
-    dispatch(actions.setUserId(userId));
-    dispatch(actions.setUserRole(userRole));
     dispatch(actions.setSitekey(sitekey));
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
@@ -132,9 +117,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             description: query.description,
-            isLoggedIn: req.user ? true : false,
-            userRole: req?.user?.role ? req?.user?.role : null,
-            userId: req?.user?._id || "",
         },
     };
 }

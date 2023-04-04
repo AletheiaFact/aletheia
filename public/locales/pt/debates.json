@@ -3,5 +3,7 @@
     "addClaimEditorButton": "Adicionar afirmação de",
     "saveButtonLabel": "Salvar",
     "isEnded": "Debate ended",
-    "seeDebate": "Acompanhe as checagens do debate"
+    "seeDebate": "Acompanhe as checagens do debate",
+    "finishDebateButtonLabel": "Encerrar debate",
+    "reopenDebateButtonLabel": "Reabrir debate"
 }

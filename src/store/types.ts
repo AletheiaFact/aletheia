@@ -1,6 +1,5 @@
 import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { Content } from "../types/Content";
-import { Roles } from "../types/enums";
 import { Personality } from "../types/Personality";
 
 export enum ActionTypes {
@@ -35,9 +34,7 @@ export interface RootState {
         searchInput: string;
         searchPageSize: number;
     };
-    login: boolean;
     autoSave: boolean;
-    role: Roles;
     claimType: string;
     claimPersonality: Personality;
     vw: WidthBreakpoints;
@@ -45,6 +42,5 @@ export interface RootState {
     selectedPersonality: any;
     selectedClaim: any;
     selectedContent: Content;
-    userId: string;
     sitekey: string;
 }

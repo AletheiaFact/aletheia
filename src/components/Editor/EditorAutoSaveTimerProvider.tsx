@@ -1,26 +1,22 @@
 import React, { useCallback } from "react";
 import { useHelpers } from "@remirror/react";
-import claimCollectionApi from "../../api/claimCollectionApi";
 import { useTranslation } from "next-i18next";
 import { Provider as CallbackTimerProvider } from "jotai";
 import { callbackTimerInitialConfig } from "../../machines/callbackTimer/provider";
 import { initialContext } from "../../machines/callbackTimer/context";
+import EditorApi from "../../api/editor";
 
-export const EditorAutoSaveTimerProvider = ({
-    claimCollectionId,
-    children,
-}) => {
+export const EditorAutoSaveTimerProvider = ({ reference, children }) => {
     const { getJSON } = useHelpers();
     const { t } = useTranslation();
     const autoSaveCallback = useCallback(() => {
-        return claimCollectionApi.update(claimCollectionId, t, {
-            editorContentObject: getJSON(),
-        });
+        return EditorApi.update(reference, getJSON(), t);
     }, [getJSON]);
 
     const timerConfig = {
         ...initialContext,
         callbackFunction: autoSaveCallback,
+        interval: 10000,
     };
 
     return (

@@ -6,13 +6,13 @@ import SectionTitle from "../SectionTitle";
 import PersonalitiesGrid from "./PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
 import CTARegistration from "../Home/CTARegistration";
+import { useAtom } from "jotai";
+import { isUserLoggedIn } from "../../atoms/currentUser";
 
 const MorePersonalities = ({ personalities, href, title }) => {
     const { t } = useTranslation();
-    const { isLoggedIn, vw } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-        vw: state.vw,
-    }));
+    const { vw } = useAppSelector((state) => state);
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
         <Row

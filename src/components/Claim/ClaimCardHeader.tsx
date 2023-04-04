@@ -14,10 +14,13 @@ const ClaimCardHeader = ({
 }) => {
     const { t } = useTranslation();
     const isImage = claimType === ContentModelEnum.Image;
-    const speechTypeTranslation =
-        claimType.toLowerCase() === ContentModelEnum.Speech
-            ? t("claim:typeSpeech")
-            : t("claim:typeTwitter");
+    const speechTypeMapping = {
+        [ContentModelEnum.Speech]: t("claim:typeSpeech"),
+        [ContentModelEnum.Image]: t("claim:typeImage"),
+        [ContentModelEnum.Debate]: t("claim:typeDebate"),
+    };
+
+    const speechTypeTranslation = speechTypeMapping[claimType];
     return (
         <Col
             span={24}

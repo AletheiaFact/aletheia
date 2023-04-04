@@ -16,10 +16,11 @@
     "cardHeader1": "Stated on",
     "cardHeader2": "in",
     "cardHeader3": "Registered in",
-    "typeSpeech": "Oficial speech",
-    "typeTwitter": "Twitter post",
+    "typeSpeech": "an Oficial Speech",
+    "typeDebate": "a debate",
     "errorWhileFetching": "Error while fetching Claim",
     "cardLinkToImage": "see full image",
+    "cardLinkToDebate": "see full debate",
     "claimListHeader": "Claims",
     "imageAlreadyExists": "Image already exists in the platform"
 }

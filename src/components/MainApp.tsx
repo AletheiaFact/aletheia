@@ -1,7 +1,11 @@
 import { Layout } from "antd";
 import { useSetAtom } from "jotai";
 import React from "react";
-import { currentUserRole, isLoggedIn } from "../atoms/currentUser";
+import {
+    currentUserId,
+    currentUserRole,
+    isUserLoggedIn,
+} from "../atoms/currentUser";
 
 import { useMediaQueryBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { useAppSelector } from "../store/store";
@@ -21,10 +25,12 @@ const MainApp = ({ children }) => {
         };
     });
     const setCurrentRole = useSetAtom(currentUserRole);
-    const setCurrentLoginStatus = useSetAtom(isLoggedIn);
-    GetUserRole().then(({ role, isLoggedIn }) => {
+    const setCurrentLoginStatus = useSetAtom(isUserLoggedIn);
+    const setCurrentUserId = useSetAtom(currentUserId);
+    GetUserRole().then(({ role, isLoggedIn, id }) => {
         setCurrentRole(role);
         setCurrentLoginStatus(isLoggedIn);
+        setCurrentUserId(id);
     });
 
     // Setup to provide breakpoints object on redux

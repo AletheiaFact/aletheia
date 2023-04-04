@@ -8,19 +8,17 @@ import { enableImageClaim as featureAtom } from "../atoms/featureFlags";
 import AffixButton from "../components/AffixButton/AffixButton";
 import CreateClaimView from "../components/Claim/CreateClaim/CreateClaimView";
 import Seo from "../components/Seo";
-import { claimPersonality } from "../machines/createClaim/provider";
+import { claimPersonalities } from "../machines/createClaim/provider";
 import actions from "../store/actions";
 import { GetLocale } from "../utils/GetLocale";
 
 const ClaimCreatePage: NextPage<any> = ({
     sitekey,
     personality,
-    isLoggedIn,
     enableImageClaim,
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    dispatch(actions.setLoginStatus(isLoggedIn));
     dispatch(actions.setSitekey(sitekey));
     return (
         <>
@@ -33,7 +31,7 @@ const ClaimCreatePage: NextPage<any> = ({
             <CreateClaimMachineProvider
                 //@ts-ignore
                 initialValues={[
-                    [claimPersonality, personality],
+                    [claimPersonalities, personality ? [personality] : []],
                     [featureAtom, enableImageClaim],
                 ]}
             >
@@ -55,8 +53,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personality: query?.personality
                 ? JSON.parse(JSON.stringify(query?.personality))
                 : "",
-            href: req.protocol + "://" + req.get("host") + req.originalUrl,
-            isLoggedIn: req.user ? true : false,
             enableImageClaim: JSON.parse(
                 JSON.stringify(query?.enableImageClaim)
             ),

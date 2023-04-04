@@ -3,6 +3,7 @@ import { SentenceService } from "../sentence/sentence.service";
 import { ParagraphService } from "../paragraph/paragraph.service";
 import { SpeechService } from "../speech/speech.service";
 import { SpeechDocument } from "../speech/schemas/speech.schema";
+import { Types } from "mongoose";
 const md5 = require("md5");
 const nlp = require("compromise");
 nlp.extend(require("compromise-sentences"));
@@ -19,7 +20,7 @@ export class ParserService {
     sentenceSequence: number;
     nlpOptions: object = { trim: true };
 
-    async parse(content: string): Promise<SpeechDocument> {
+    async parse(content: string, personality = null): Promise<SpeechDocument> {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
         const result = [];
@@ -50,9 +51,16 @@ export class ParserService {
             }
         });
 
+        if (personality) {
+            personality = Types.ObjectId(personality);
+        }
+
         return await Promise.all(result).then(
             (object): Promise<SpeechDocument> => {
-                return this.speechService.create({ content: object });
+                return this.speechService.create({
+                    content: object,
+                    personality,
+                });
             }
         );
     }

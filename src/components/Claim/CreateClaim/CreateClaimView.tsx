@@ -4,49 +4,53 @@ import React from "react";
 
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import {
+    addDebateSelector,
     addImageSelector,
     addSpeechSelector,
-    notStartedSelector,
-    setupImageSelector,
-    setupSpeechSelector,
+    stateSelector,
 } from "../../../machines/createClaim/selectors";
 import Loading from "../../Loading";
-import PersonalityCard from "../../Personality/PersonalityCard";
 import ClaimCreate from "./ClaimCreate";
+import ClaimCreateDebate from "./ClaimCreateDebate";
 import ClaimSelectPersonality from "./ClaimSelectPersonality";
 import ClaimSelectType from "./ClaimSelectType";
 import ClaimUploadImage from "./ClaimUploadImage";
+import { CreateClaimHeader } from "./CreateClaimHeader";
 
 const CreateClaimView = () => {
     const [state] = useAtom(createClaimMachineAtom);
-    const notStarted = notStartedSelector(state);
-    const setupSpeech = setupSpeechSelector(state);
-    const setupImage = setupImageSelector(state);
+    const setupImage = stateSelector(state, "setupImage");
+    const notStarted = stateSelector(state, "notStarted");
+    const setupSpeech = stateSelector(state, "setupSpeech");
+    const setupDebate = stateSelector(state, "setupDebate");
     const addImage = addImageSelector(state);
     const addSpeech = addSpeechSelector(state);
+    const addDebate = addDebateSelector(state);
+    const showPersonality = addSpeech || addImage || addDebate;
     const { claimData } = state.context;
     const isLoading = !(
         notStarted ||
         setupSpeech ||
         setupImage ||
+        setupDebate ||
         addImage ||
-        addSpeech
+        addSpeech ||
+        addDebate
     );
 
     return (
         <Row justify="center">
             <Col span={18}>
-                {claimData.personality && (
-                    <PersonalityCard
-                        personality={claimData.personality}
-                        header={true}
-                        mobile={true}
-                    />
+                {showPersonality && !!claimData.personalities?.length && (
+                    <CreateClaimHeader claimData={claimData} />
                 )}
                 {notStarted && <ClaimSelectType />}
-                {(setupSpeech || setupImage) && <ClaimSelectPersonality />}
+                {(setupSpeech || setupImage || setupDebate) && (
+                    <ClaimSelectPersonality />
+                )}
                 {addImage && <ClaimUploadImage />}
                 {addSpeech && <ClaimCreate />}
+                {addDebate && <ClaimCreateDebate />}
                 {isLoading && <Loading />}
             </Col>
         </Row>

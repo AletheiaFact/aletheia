@@ -7,7 +7,6 @@ export type SourceDocument = Source & mongoose.Document;
 export enum SourceTargetModel {
     Claim = "Claim",
     ClaimReview = "ClaimReview",
-    ClaimCollection = "ClaimCollection",
 }
 @Schema()
 export class Source {

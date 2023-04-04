@@ -11,10 +11,10 @@ import {
     Redirect,
     Req,
     Res,
-    Headers,
     Header,
     Optional,
     NotFoundException,
+    UseGuards,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
@@ -39,6 +39,14 @@ import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema
 import { SentenceDocument } from "../sentence/schemas/sentence.schema";
 import { ImageService } from "../image/image.service";
 import { ImageDocument } from "../image/schemas/image.schema";
+import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
+import { AbilitiesGuard } from "../ability/abilities.guard";
+import { AdminUserAbility, CheckAbilities } from "../ability/ability.decorator";
+import { DebateService } from "../debate/debate.service";
+import { EditorService } from "../editor/editor.service";
+import { UpdateDebateDto } from "./dto/update-debate.dto";
+import { ParserService } from "../parser/parser.service";
+import { Roles } from "../ability/ability.factory";
 
 @Controller()
 export class ClaimController {
@@ -53,6 +61,9 @@ export class ClaimController {
         private viewService: ViewService,
         private captchaService: CaptchaService,
         private imageService: ImageService,
+        private debateService: DebateService,
+        private editorService: EditorService,
+        private parserService: ParserService,
         @Optional() private readonly unleash: UnleashService
     ) {}
 
@@ -60,7 +71,9 @@ export class ClaimController {
         const inputs = {};
         if (query.personality) {
             // @ts-ignore
-            inputs.personality = new mongoose.Types.ObjectId(query.personality);
+            inputs.personalities = new mongoose.Types.ObjectId(
+                query.personality
+            );
         }
 
         return inputs;
@@ -95,18 +108,19 @@ export class ClaimController {
     }
 
     @Post("api/claim")
-    async create(@Body() createClaimDTO: CreateClaimDTO, @Headers() headers) {
-        const { referer } = headers;
-        // If referer is claim-collection editor endpoints, skip captcha validation
-        if (!/claim-collection\/.*\/edit/.test(referer)) {
-            const validateCaptcha = await this.captchaService.validate(
-                createClaimDTO.recaptcha
+    async create(@Body() createClaimDTO: CreateClaimDTO) {
+        try {
+            const claim = await this.claimService.create(createClaimDTO);
+            const personality = await this.personalityService.getById(
+                claim.personalities[0]
             );
-            if (!validateCaptcha) {
-                throw new Error("Error validating captcha");
-            }
+            const path = claim.slug
+                ? `/personality/${personality.slug}/claim/${claim.slug}`
+                : `/personality/${personality.slug}`;
+            return { title: claim.title, path };
+        } catch (error) {
+            return error;
         }
-        return this.claimService.create(createClaimDTO);
     }
 
     @Post("api/claim/image")
@@ -114,6 +128,60 @@ export class ClaimController {
         if (!this.isEnabledImageClaim()) {
             throw new NotFoundException();
         }
+        try {
+            const claim = await this.createClaim(createClaimDTO);
+
+            const personality = claim.personalities[0]
+                ? await this.personalityService.getById(claim.personalities[0])
+                : null;
+            const path = personality
+                ? `/personality/${personality.slug}/claim/${claim.slug}`
+                : `/claim/${claim._id}`;
+            return { title: claim.title, path };
+        } catch (error) {
+            return error;
+        }
+    }
+
+    @Post("api/claim/debate")
+    async createClaimDebate(
+        @Body() createClaimDTO: CreateDebateClaimDTO,
+        @Req() req: BaseRequest
+    ) {
+        try {
+            const claim = await this.createClaim(createClaimDTO);
+
+            const path =
+                req.user.role === Roles.Admin
+                    ? `/claim/${claim._id}/debate/edit`
+                    : `/claim/${claim._id}/debate`;
+            return { title: claim.title, path };
+        } catch (error) {
+            return error;
+        }
+    }
+
+    @Put("api/claim/debate/:debateId")
+    async updateClaimDebate(
+        @Param("debateId") debateId,
+        @Body() updateClaimDebateDto: UpdateDebateDto
+    ) {
+        const { content, personality, isLive } = updateClaimDebateDto;
+        let newSpeech;
+        if (content && personality) {
+            newSpeech = await this.parserService.parse(
+                updateClaimDebateDto.content,
+                updateClaimDebateDto.personality
+            );
+
+            await this.debateService.addSpeechToDebate(debateId, newSpeech._id);
+            return newSpeech;
+        } else {
+            return this.debateService.updateDebateStatus(debateId, isLive);
+        }
+    }
+
+    private async createClaim(createClaimDTO) {
         const validateCaptcha = await this.captchaService.validate(
             createClaimDTO.recaptcha
         );
@@ -224,6 +292,52 @@ export class ClaimController {
         await this.returnClaimReviewPage(data_hash, req, res, claim, image);
     }
 
+    @Get("claim/:claimId/debate/edit")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
+    public async getDebateEditor(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+        const { claimId } = req.params;
+
+        const claim = await this.claimService.getById(claimId);
+        const editor = await this.editorService.getByReference(claim.contentId);
+        claim.editor = editor;
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/debate-editor",
+            Object.assign(parsedUrl.query, {
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
+    }
+
+    @IsPublic()
+    @Get("claim/:claimId/debate")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getDebate(@Req() req: BaseRequest, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        const { claimId } = req.params;
+
+        const claim = await this.claimService.getById(claimId);
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/debate-page",
+            Object.assign(parsedUrl.query, {
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
+    }
+
     @IsPublic()
     @Get("personality/:personalitySlug/claim/:claimSlug/image/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
@@ -324,8 +438,8 @@ export class ClaimController {
             throw new NotFoundException();
         }
 
-        if (claim.personality) {
-            const personalitySlug = slugify(claim.personality.name, {
+        if (claim.personalities.length > 0) {
+            const personalitySlug = slugify(claim.personalities[0].name, {
                 lower: true,
                 strict: true,
             });
@@ -359,7 +473,6 @@ export class ClaimController {
                 personalitySlug,
                 req.language
             );
-
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
             claimSlug

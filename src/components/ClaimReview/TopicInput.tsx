@@ -7,14 +7,13 @@ import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import { EditFilled, PlusOutlined } from "@ant-design/icons";
 import AletheiaButton from "../Button";
-import { useAppSelector } from "../../store/store";
 import TagsList from "./TagsList";
+import { useAtom } from "jotai";
+import { isUserLoggedIn } from "../../atoms/currentUser";
 
 const TopicInput = ({ data_hash, topics }) => {
     const { t } = useTranslation();
-    const { isLoggedIn } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-    }));
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [showTopicsInput, setShowTopicsInput] = useState<boolean>(false);
     const [topicsArray, setTopicsArray] = useState<string[]>(topics);
     const [inputValue, setInputValue] = useState<string[]>([]);
