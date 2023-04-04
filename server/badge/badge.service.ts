@@ -20,16 +20,21 @@ export class BadgeService {
     }
 
     async update(badge) {
+        const { image, ...updatedFields } = badge;
+        const controlledBadge = {
+            ...updatedFields,
+            image: Types.ObjectId(badge.image._id),
+        };
         const updatedBadge = await this.BadgeModel.findByIdAndUpdate(
             badge._id,
-            badge,
+            controlledBadge,
             { new: true }
         );
         return updatedBadge;
     }
 
     async listAll() {
-        return await this.BadgeModel.aggregate([
+        const badge = await this.BadgeModel.aggregate([
             {
                 $lookup: {
                     from: "users",
@@ -45,7 +50,23 @@ export class BadgeService {
                     ],
                 },
             },
+            {
+                $lookup: {
+                    from: "images",
+                    localField: "image",
+                    foreignField: "_id",
+                    as: "image",
+                },
+            },
+            {
+                $addFields: {
+                    image: {
+                        $arrayElemAt: ["$image", 0],
+                    },
+                },
+            },
         ]);
+        return badge;
     }
 
     async getById(badgeId) {

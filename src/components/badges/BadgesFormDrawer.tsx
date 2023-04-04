@@ -93,8 +93,8 @@ const BadgesFormDrawer = () => {
             name: "",
             description: "",
             image: [],
-            users: [],
         });
+        setUsers([]);
         setImageError(false);
         setIsLoading(false);
     };
@@ -137,7 +137,7 @@ const BadgesFormDrawer = () => {
                             description,
                             image,
                         };
-                        BadgesApi.createBadge(values, t)
+                        BadgesApi.createBadge(values, users, t)
                             .then((createdBadge) => {
                                 addBadge(createdBadge);
                                 resetForm();

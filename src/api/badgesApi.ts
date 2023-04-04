@@ -6,9 +6,9 @@ const request = axios.create({
     baseURL: `/api/badge`,
 });
 
-const createBadge = (badge, t) => {
+const createBadge = (badge, users, t) => {
     return request
-        .post(`/`, badge)
+        .post(`/`, { ...badge, users })
         .then((response) => {
             message.success(t("badges:badgeSaved"));
             return response.data;

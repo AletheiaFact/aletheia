@@ -21,12 +21,25 @@ export class BadgeController {
 
     @Post("api/badge")
     public async createBadge(@Body() badge: CreateBadgeDTO) {
-        if (!badge.image._id) {
-            const image = await this.imageService.create(badge.image);
-            badge.image = image;
+        const { users, ...rest } = badge;
+        if (!rest.image._id) {
+            const image = await this.imageService.create(rest.image);
+            rest.image = image;
         }
-        const createdBadge = await this.badgeService.create(badge);
-        createdBadge.image = badge.image;
+
+        const createdBadge = await this.badgeService.create(rest);
+        createdBadge.image = rest.image;
+
+        if (users) {
+            users.forEach((user) => {
+                {
+                    this.usersService.updateUser(user._id, {
+                        badges: [...user.badges, createdBadge._id],
+                    });
+                }
+            });
+        }
+
         return createdBadge;
     }
 
@@ -44,20 +57,18 @@ export class BadgeController {
         const usersWithBadge = await this.usersService.findAll({
             badges: Types.ObjectId(updatedBadge._id),
         });
-        // FIXME: this logic is not working,
-        // it's not removing the badge from users that no longer have it
-        // and its adding the badge repeatedly to users that already have it
 
         // Remove badge from users that no longer have it
         usersWithBadge.forEach((user) => {
-            if (
-                users.some((userBadge) => {
-                    return userBadge._id.toString() === user._id.toString();
-                })
-            ) {
+            const userId = user._id.toString();
+            const usersIds = users.map((user) => user._id);
+            const isUserIdOnUsersList = usersIds.includes(userId);
+
+            if (!isUserIdOnUsersList) {
                 this.usersService.updateUser(user._id, {
                     badges: user.badges.filter(
                         (userBadge) =>
+                            // @ts-ignore
                             userBadge._id.toString() !==
                             updatedBadge._id.toString()
                     ),
@@ -70,7 +81,7 @@ export class BadgeController {
             if (
                 !user.badges?.some(
                     (userBadge) =>
-                        userBadge._id === Types.ObjectId(updatedBadge._id)
+                        userBadge._id !== Types.ObjectId(updatedBadge._id)
                 )
             ) {
                 this.usersService.updateUser(user._id, {
