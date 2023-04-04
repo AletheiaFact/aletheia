@@ -41,3 +41,7 @@ services:
         url: {env(GITLAB_FEATURE_FLAG_URL)}
         appName: Staging
         instanceId: {env(GITLAB_FEATURE_FLAG_INSTANCE_ID)}
+      aws:
+        bucket: {env(AWS_SDK_BUCKET)}
+        accessKeyId: {env(AWS_ACCESS_KEY_ID)}
+        secretAccessKey: {env(AWS_SECRET_ACCESS_KEY)}

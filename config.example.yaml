@@ -42,3 +42,10 @@ services:
         url: GITLAB_FEATURE_FLAG_URL
         appName: ENV
         instanceId: GITLAB_FEATURE_FLAG_INSTANCE_ID
+      # example when using localstack
+      aws:
+        bucket: aletheia
+        accessKeyId: test
+        secretAccessKey: test
+        # endpoint is only needed when using localstack
+        endpoint: http://localhost:4566

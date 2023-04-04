@@ -56,6 +56,11 @@ jobs:
           echo "ORY_ACCESS_TOKEN=${{ secrets.PRODUCTION_ORY_ACCESS_TOKEN }}" >> $GITHUB_ENV
           echo "ALETHEIA_SCHEMA_ID=${{ secrets.PRODUCTION_ALETHEIA_SCHEMA_ID }}" >> $GITHUB_ENV
           echo "API_URL=${{ secrets.API_URL_PRODUCTION }}" >> $GITHUB_ENV
+          echo "MONGODB_NAME=${{ secrets.PRODUCTION_MONGODB_NAME }}" >> $GITHUB_ENV
+          echo "AWS_SDK_BUCKET=${{ secrets.PRODUCTION_AWS_SDK_BUCKET }}" >> $GITHUB_ENV
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+
 
       - name: Set environment
         run: |
@@ -88,11 +93,17 @@ jobs:
         env:
             RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
         run: |
+            sed -i "s/ENV/$ENVIRONMENT/g" config.$ENVIRONMENT.yaml
             sed -i "s%RECAPTCHA_SECRET%$RECAPTCHA_SECRET%g" config.$ENVIRONMENT.yaml
             sed -i "s%MONGODB_URI%$MONGODB_URI%g" config.$ENVIRONMENT.yaml
             sed -i "s%ORY_SDK_URL%$ORY_SDK_URL%g" config.$ENVIRONMENT.yaml
+            sed -i "s%GITLAB_FEATURE_FLAG_URL%$GITLAB_FEATURE_FLAG_URL%g" config.$ENVIRONMENT.yaml
+            sed -i "s%GITLAB_FEATURE_FLAG_INSTANCE_ID%$GITLAB_FEATURE_FLAG_INSTANCE_ID%g" config.$ENVIRONMENT.yaml
             sed -i "s/ORY_ACCESS_TOKEN/$ORY_ACCESS_TOKEN/g" config.$ENVIRONMENT.yaml
             sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.$ENVIRONMENT.yaml
+            sed -i "s%AWS_SDK_BUCKET%$AWS_SDK_BUCKET%g" config.$ENVIRONMENT.yaml
+            sed -i "s%AWS_ACCESS_KEY_ID%$AWS_ACCESS_KEY_ID%g" config.$ENVIRONMENT.yaml
+            sed -i "s%AWS_SECRET_ACCESS_KEY%$AWS_SECRET_ACCESS_KEY%g" config.$ENVIRONMENT.yaml
 
       - name: Set migrate-mongo-config.ts
         run: |
