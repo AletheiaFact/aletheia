@@ -91,8 +91,6 @@ export class BadgeController {
             }
         });
 
-        console.log(updatedBadge, "end of the function");
-
         return updatedBadge;
     }
 
