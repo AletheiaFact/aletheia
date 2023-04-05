@@ -21,4 +21,8 @@ export class Badge {
 
 const BadgeSchemaRaw = SchemaFactory.createForClass(Badge);
 
+BadgeSchemaRaw.pre("find", function () {
+    this.populate("image");
+});
+
 export const BadgeSchema = BadgeSchemaRaw;
