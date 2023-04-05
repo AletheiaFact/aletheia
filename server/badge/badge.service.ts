@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { Badge, BadgeDocument } from "./schemas/badge.schema";
-import { Types } from "mongoose";
 
 @Injectable()
 export class BadgeService {
@@ -25,7 +24,7 @@ export class BadgeService {
             ...updatedFields,
             image: Types.ObjectId(badge.image._id),
         };
-        const updatedBadge = await this.BadgeModel.findByIdAndUpdate(
+        const updatedBadge = this.BadgeModel.findByIdAndUpdate(
             badge._id,
             controlledBadge,
             { new: true }
@@ -34,7 +33,7 @@ export class BadgeService {
     }
 
     async listAll() {
-        const badge = await this.BadgeModel.aggregate([
+        const badge = this.BadgeModel.aggregate([
             {
                 $lookup: {
                     from: "users",
@@ -70,7 +69,7 @@ export class BadgeService {
     }
 
     async getById(badgeId) {
-        const badge = await this.BadgeModel.findById(badgeId);
+        const badge = this.BadgeModel.findById(badgeId);
         return badge;
     }
 }

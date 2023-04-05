@@ -3,7 +3,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Col, message, Upload } from "antd";
 import { RcFile, UploadChangeParam, UploadProps } from "antd/lib/upload";
 import { useTranslation } from "next-i18next";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import AletheiaButton from "./Button";
 import { AletheiaModal } from "./Modal/AletheiaModal.style";

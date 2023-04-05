@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Row } from "antd";
 import { UploadFile } from "antd/lib/upload/interface";
 import { useAtom } from "jotai";
-import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 

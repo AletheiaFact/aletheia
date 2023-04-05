@@ -61,7 +61,7 @@ export class UsersService {
     }
 
     async updateUser(userId, updates: { role?: Roles; badges?: Badge[] }) {
-        const user = await this.UserModel.findByIdAndUpdate(userId, updates, {
+        const user = this.UserModel.findByIdAndUpdate(userId, updates, {
             new: true,
         });
         this.logger.log(`Updated user ${userId}`);

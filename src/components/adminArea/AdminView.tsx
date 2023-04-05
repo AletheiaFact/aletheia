@@ -9,9 +9,7 @@ import {
 } from "@mui/x-data-grid";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import React, { useEffect } from "react";
-import BadgesApi from "../../api/badgesApi";
-import { atomBadgesList } from "../../atoms/badges";
+import React from "react";
 import { startEditingItem } from "../../atoms/editDrawer";
 
 import { atomUserList } from "../../atoms/userEdit";

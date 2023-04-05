@@ -59,6 +59,7 @@ const BadgesView = () => {
                 headerName: t("admin:columnEdit"),
                 getActions: (params: GridRowParams) => [
                     <GridActionsCellItem
+                        key={params.id}
                         icon={<EditIcon color="primary" />}
                         onClick={handleEdit(params.id)}
                         label="Delete"
