@@ -1,4 +1,11 @@
-import { IsInt, IsNumber, IsString, Min } from "class-validator";
+import {
+    IsArray,
+    IsInt,
+    IsNumber,
+    IsOptional,
+    IsString,
+    Min,
+} from "class-validator";
 
 export class GetTasksDTO {
     @IsNumber()
@@ -16,4 +23,7 @@ export class GetTasksDTO {
     @IsString()
     value: string;
 
+    @IsArray()
+    @IsOptional()
+    usersId?: string[];
 }

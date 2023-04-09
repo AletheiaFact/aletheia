@@ -33,9 +33,21 @@ export class ClaimReviewController {
     @Get("api/claimreviewtask")
     @Header("Cache-Control", "no-cache")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
-        const { page = 0, pageSize = 10, order = 1, value } = getTasksDTO;
+        const {
+            page = 0,
+            pageSize = 10,
+            order = 1,
+            value,
+            usersId,
+        } = getTasksDTO;
         return Promise.all([
-            this.claimReviewTaskService.listAll(page, pageSize, order, value),
+            this.claimReviewTaskService.listAll(
+                page,
+                pageSize,
+                order,
+                value,
+                usersId
+            ),
             this.claimReviewTaskService.count(
                 getQueryMatchForMachineValue(value)
             ),

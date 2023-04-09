@@ -35,8 +35,12 @@ export class ClaimReviewTaskService {
         private imageService: ImageService
     ) {}
 
-    async listAll(page, pageSize, order, value) {
+    async listAll(page, pageSize, order, value, usersId) {
         const query = getQueryMatchForMachineValue(value);
+        if (usersId)
+            query["machine.context.reviewData.usersId"] = usersId.map(
+                (userId) => Types.ObjectId(userId)
+            );
         const reviewTasks = await this.ClaimReviewTaskModel.find({
             ...query,
         })
