@@ -48,9 +48,9 @@ const ClaimSelectPersonality = () => {
     };
 
     const continueWithPersonality = () => {
-        if (claimData.personalities) {
+        if (claimData.personalities.length !== 0) {
             send(CreateClaimEvents.savePersonality);
-        }
+        } else message.warning(t("claimForm:selectPersonalityText"));
     };
 
     const continueWithoutPersonality = () => {
