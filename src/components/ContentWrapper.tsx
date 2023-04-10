@@ -38,6 +38,8 @@ const ContentWrapper = ({ children }) => {
         "sign-up",
         "login",
         "admin-page",
+        "admin-badges",
+        "profile",
     ];
 
     const layout = desktopReadyPages.some((page) =>

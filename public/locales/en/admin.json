@@ -4,6 +4,7 @@
     "columnEmail": "Email",
     "columnRole": "Role",
     "columnEdit": "Edit",
+    "columnBadges": "Badges",
     "role-admin": "Admin",
     "role-regular": "Regular",
     "role-fact-checker": "Fact-checker",

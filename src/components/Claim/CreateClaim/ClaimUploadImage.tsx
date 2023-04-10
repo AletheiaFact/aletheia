@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Row } from "antd";
-import Text from "antd/lib/typography/Text";
 import { UploadFile } from "antd/lib/upload/interface";
 import { useAtom } from "jotai";
-import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -16,10 +14,9 @@ import Label from "../../Label";
 import BaseClaimForm from "./BaseClaimForm";
 
 const ClaimUploadImage = () => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const router = useRouter();
     const formData = new FormData();
-    moment.locale(i18n.language);
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [imageError, setImageError] = useState(false);
@@ -99,12 +96,10 @@ const ClaimUploadImage = () => {
                 content={
                     <Row style={{ marginBottom: 24 }}>
                         <Label required>{t("claimForm:fileInputButton")}</Label>
-                        <ImageUpload onChange={handleAntdChange} />
-                        {imageError && (
-                            <Text type="danger" style={{ display: "block" }}>
-                                {t("common:requiredFieldError")}
-                            </Text>
-                        )}
+                        <ImageUpload
+                            onChange={handleAntdChange}
+                            error={imageError}
+                        />
                     </Row>
                 }
             />

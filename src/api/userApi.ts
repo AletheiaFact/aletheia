@@ -1,6 +1,7 @@
 import axios from "axios";
 import { message } from "antd";
 import { Roles } from "../types/enums";
+import { Badge } from "../types/Badge";
 
 const request = axios.create({
     withCredentials: true,
@@ -69,9 +70,9 @@ const register = (params, t) => {
         });
 };
 
-const updateRole = (params: { userId: string; role: string }, t) => {
+const update = (userId, params: { role: string; badges: Badge[] }, t) => {
     return request
-        .put(`/update-role`, { role: params.role, id: params.userId })
+        .put(`/${userId}`, params)
         .then((response) => {
             message.success(t("admin:roleUpdated"));
             return response?.data;
@@ -87,7 +88,7 @@ const userApi = {
     getById,
     getUsers,
     register,
-    updateRole,
+    update,
 };
 
 export default userApi;
