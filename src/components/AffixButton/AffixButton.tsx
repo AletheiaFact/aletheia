@@ -44,7 +44,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
             href: `/claim/create${
                 personalitySlug ? `?personality=${personalitySlug}` : ""
             }`,
-            dataCy: "testFloatButtonAd dClaim",
+            dataCy: "testFloatButtonAddClaim",
         });
 
     useEffect(() => {
