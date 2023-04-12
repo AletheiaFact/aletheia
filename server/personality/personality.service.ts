@@ -45,6 +45,7 @@ export class PersonalityService {
         withSuggestions = false
     ) {
         let personalities;
+        let wbentities;
 
         if (order === "random") {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
@@ -54,7 +55,15 @@ export class PersonalityService {
             ]);
         } else {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            personalities = await this.PersonalityModel.find(query)
+            wbentities = await this.wikidata.queryWikibaseEntities(
+                query.name.$regex,
+                language
+            );
+            const wikidataList = wbentities.map((entity) => entity.wikidata);
+
+            personalities = await this.PersonalityModel.find({
+                $or: [{ wikidata: { $in: wikidataList } }, query],
+            })
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order })
@@ -62,10 +71,6 @@ export class PersonalityService {
         }
 
         if (withSuggestions) {
-            const wbentities = await this.wikidata.queryWikibaseEntities(
-                query.name.$regex,
-                language
-            );
             personalities = this.util.mergeObjectsInUnique(
                 [...wbentities, ...personalities],
                 "wikidata"
