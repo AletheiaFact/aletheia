@@ -36,6 +36,15 @@ export class PersonalityService {
         private wikidata: WikidataService,
         private util: UtilService
     ) {}
+
+    async getWikidataEntities(regex, language) {
+        return await this.wikidata.queryWikibaseEntities(regex, language);
+    }
+    async getWikidataList(regex, language) {
+        const wbentities = await this.getWikidataEntities(regex, language);
+        return wbentities.map((entity) => entity.wikidata);
+    }
+
     async listAll(
         page,
         pageSize,
@@ -47,13 +56,24 @@ export class PersonalityService {
         let personalities;
 
         if (order === "random") {
-            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             personalities = await this.PersonalityModel.aggregate([
                 { $match: query },
                 { $sample: { size: pageSize } },
             ]);
+        } else if (query.length > 0) {
+            const wikidataList = await this.getWikidataList(
+                query?.name.$regex,
+                language
+            );
+
+            personalities = await this.PersonalityModel.find({
+                $or: [{ wikidata: { $in: wikidataList } }, query],
+            })
+                .skip(page * pageSize)
+                .limit(pageSize)
+                .sort({ _id: order })
+                .lean();
         } else {
-            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
             personalities = await this.PersonalityModel.find(query)
                 .skip(page * pageSize)
                 .limit(pageSize)
@@ -62,15 +82,18 @@ export class PersonalityService {
         }
 
         if (withSuggestions) {
-            const wbentities = await this.wikidata.queryWikibaseEntities(
-                query.name.$regex,
-                language
-            );
             personalities = this.util.mergeObjectsInUnique(
-                [...wbentities, ...personalities],
+                [
+                    ...(await this.getWikidataEntities(
+                        query?.name.$regex,
+                        language
+                    )),
+                    ...personalities,
+                ],
                 "wikidata"
             );
         }
+
         return Promise.all(
             personalities.map(async (personality) => {
                 return await this.postProcess(personality, language);
