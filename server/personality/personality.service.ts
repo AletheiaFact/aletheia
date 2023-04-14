@@ -60,7 +60,7 @@ export class PersonalityService {
                 { $match: query },
                 { $sample: { size: pageSize } },
             ]);
-        } else if (query.length > 0) {
+        } else if (Object.keys(query).length > 0) {
             const wikidataList = await this.getWikidataList(
                 query?.name.$regex,
                 language
