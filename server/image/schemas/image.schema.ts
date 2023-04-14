@@ -6,7 +6,7 @@ export type ImageDocument = Image & mongoose.Document;
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Image {
     @Prop({
-        default: "image",
+        default: "Image",
         required: true,
     })
     type: string;
