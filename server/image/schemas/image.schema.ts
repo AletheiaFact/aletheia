@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { ContentModelEnum } from "claim-revision/schema/claim-revision.schema";
+import { ContentModelEnum } from "../../types/enums";
 import * as mongoose from "mongoose";
 
 export type ImageDocument = Image & mongoose.Document;
