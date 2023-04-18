@@ -2,14 +2,9 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { Personality } from "../../personality/schemas/personality.schema";
+import { ContentModelEnum } from "../../types/enums";
 
 export type ClaimRevisionDocument = ClaimRevision & mongoose.Document;
-
-export enum ContentModelEnum {
-    Speech = "Speech",
-    Image = "Image",
-    Debate = "Debate",
-}
 
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class ClaimRevision {
@@ -77,3 +72,4 @@ ClaimRevisionSchemaRaw.virtual("content", {
 });
 
 export const ClaimRevisionSchema = ClaimRevisionSchemaRaw;
+export { ContentModelEnum };

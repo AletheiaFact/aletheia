@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { ContentModelEnum } from "../../types/enums";
 import * as mongoose from "mongoose";
 
 export type ImageDocument = Image & mongoose.Document;
@@ -6,7 +7,7 @@ export type ImageDocument = Image & mongoose.Document;
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Image {
     @Prop({
-        default: "image",
+        default: ContentModelEnum.Image,
         required: true,
     })
     type: string;
