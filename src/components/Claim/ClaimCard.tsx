@@ -171,7 +171,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                     </Paragraph>
                 </Col>
                 <Col>
-                    {isDebate && (
+                    {!isInsideDebate && (
                         <Button
                             type={ButtonType.blue}
                             href={href}
