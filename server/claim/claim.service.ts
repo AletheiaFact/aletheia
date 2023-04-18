@@ -11,7 +11,7 @@ import { TypeModel } from "../state-event/schema/state-event.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
-import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
+import { ContentModelEnum } from "../types/enums";
 
 type ClaimMatchParameters = (
     | { _id: string }

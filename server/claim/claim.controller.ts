@@ -35,7 +35,7 @@ import { SentenceService } from "../sentence/sentence.service";
 import { BaseRequest } from "../types";
 import slugify from "slugify";
 import { UnleashService } from "nestjs-unleash";
-import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
+import { ContentModelEnum } from "../types/enums";
 import { SentenceDocument } from "../sentence/schemas/sentence.schema";
 import { ImageService } from "../image/image.service";
 import { ImageDocument } from "../image/schemas/image.schema";

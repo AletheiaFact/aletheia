@@ -72,4 +72,3 @@ ClaimRevisionSchemaRaw.virtual("content", {
 });
 
 export const ClaimRevisionSchema = ClaimRevisionSchemaRaw;
-export { ContentModelEnum };
