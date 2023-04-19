@@ -28,6 +28,12 @@ export class Debate {
 
     @Prop({ type: Boolean, default: false, required: true })
     isLive: boolean;
+
+    @Prop({ type: Date, default: Date.now })
+    createdAt: Date;
+
+    @Prop({ type: Date })
+    updatedAt: Date;
 }
 
 const DebateSchemaRaw = SchemaFactory.createForClass(Debate);
