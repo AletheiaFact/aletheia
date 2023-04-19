@@ -47,6 +47,7 @@ export class DebateService {
         const debate = await this.DebateModel.findById(debateId);
         const previousDebate = debate.toObject();
         debate.content.push(speechId);
+        debate.updatedAt = new Date();
         const newDebate = await debate.save();
 
         await this.saveHistory(newDebate, previousDebate);
@@ -57,6 +58,7 @@ export class DebateService {
     async updateDebateStatus(debateId, isLive) {
         const debate = await this.DebateModel.findById(debateId);
         const previousDebate = debate.toObject();
+        debate.updatedAt = new Date();
         debate.isLive = isLive;
         const newDebate = await debate.save();
 
