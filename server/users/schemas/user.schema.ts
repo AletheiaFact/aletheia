@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Roles } from "../../ability/ability.factory";
+import { Roles } from "../../auth/ability/ability.factory";
 import { Document, Types } from "mongoose";
 import { Badge } from "../../badge/schemas/badge.schema";
 

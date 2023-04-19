@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
+import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
 import { HistoryService } from "../history/history.service";
 import { StateEventService } from "../state-event/state-event.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";

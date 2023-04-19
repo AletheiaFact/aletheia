@@ -4,10 +4,10 @@ import { Response } from "express";
 import { parse } from "url";
 import { PersonalityService } from "../personality/personality.service";
 import { StatsService } from "../stats/stats.service";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { BaseRequest } from "../types";
-import { DebateService } from "../debate/debate.service";
-import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
+import { DebateService } from "../claim/types/debate/debate.service";
+import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
 
 @Controller("/")
 export class HomeController {

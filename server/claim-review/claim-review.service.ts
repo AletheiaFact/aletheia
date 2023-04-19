@@ -10,10 +10,10 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
-import { SentenceService } from "../sentence/sentence.service";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
-import { ImageService } from "../image/image.service";
+import { ImageService } from "../claim/types/image/image.service";
 import { ContentModelEnum } from "../types/enums";
 
 @Injectable({ scope: Scope.REQUEST })

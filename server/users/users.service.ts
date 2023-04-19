@@ -1,9 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Roles } from "../ability/ability.factory";
+import { Roles } from "../auth/ability/ability.factory";
 import { Model } from "mongoose";
 
-import OryService from "../ory/ory.service";
+import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
 import { Badge } from "../badge/schemas/badge.schema";
 
