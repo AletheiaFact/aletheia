@@ -74,6 +74,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
     if (!claim) {
         return <div></div>;
     }
+
     return (
         <CardBase style={{ padding: "16px 12px" }}>
             <Row style={{ width: "100%" }}>
@@ -170,24 +171,26 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                     </Paragraph>
                 </Col>
                 <Col>
-                    <Button
-                        type={ButtonType.blue}
-                        href={href}
-                        data-cy={personality.name}
-                    >
-                        <span
-                            style={{
-                                color: colors.white,
-                                fontSize: 16,
-                                fontWeight: 400,
-                                margin: 0,
-                                padding: 0,
-                                lineHeight: "24px",
-                            }}
+                    {!isInsideDebate && (
+                        <Button
+                            type={ButtonType.blue}
+                            href={href}
+                            data-cy={personality.name}
                         >
-                            {t("claim:cardReviewButton")}
-                        </span>
-                    </Button>
+                            <span
+                                style={{
+                                    color: colors.white,
+                                    fontSize: 16,
+                                    fontWeight: 400,
+                                    margin: 0,
+                                    padding: 0,
+                                    lineHeight: "24px",
+                                }}
+                            >
+                                {t("claim:cardReviewButton")}
+                            </span>
+                        </Button>
+                    )}
                 </Col>
             </Row>
         </CardBase>
