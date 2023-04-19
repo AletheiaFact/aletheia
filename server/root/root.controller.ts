@@ -1,5 +1,5 @@
 import { Controller, Get, Header, Req, Res } from "@nestjs/common";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 
 @Controller("")
 export class RootController {

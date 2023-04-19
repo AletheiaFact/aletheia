@@ -3,7 +3,7 @@ import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
 import slugify from "slugify";
-import { SentenceService } from "../sentence/sentence.service";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
 
 @Injectable()
 export class TopicService {

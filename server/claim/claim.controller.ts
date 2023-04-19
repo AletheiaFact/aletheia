@@ -27,26 +27,29 @@ import * as mongoose from "mongoose";
 import { CreateClaimDTO } from "./dto/create-claim.dto";
 import { GetClaimsDTO } from "./dto/get-claims.dto";
 import { UpdateClaimDTO } from "./dto/update-claim.dto";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
-import { SentenceService } from "../sentence/sentence.service";
+import { SentenceService } from "./types/sentence/sentence.service";
 import { BaseRequest } from "../types";
 import slugify from "slugify";
 import { UnleashService } from "nestjs-unleash";
 import { ContentModelEnum } from "../types/enums";
-import { SentenceDocument } from "../sentence/schemas/sentence.schema";
-import { ImageService } from "../image/image.service";
-import { ImageDocument } from "../image/schemas/image.schema";
+import { SentenceDocument } from "./types/sentence/schemas/sentence.schema";
+import { ImageService } from "./types/image/image.service";
+import { ImageDocument } from "./types/image/schemas/image.schema";
 import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
-import { AbilitiesGuard } from "../ability/abilities.guard";
-import { AdminUserAbility, CheckAbilities } from "../ability/ability.decorator";
-import { DebateService } from "../debate/debate.service";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../auth/ability/ability.decorator";
+import { DebateService } from "./types/debate/debate.service";
 import { EditorService } from "../editor/editor.service";
 import { UpdateDebateDto } from "./dto/update-debate.dto";
-import { ParserService } from "../parser/parser.service";
-import { Roles } from "../ability/ability.factory";
+import { ParserService } from "./parser/parser.service";
+import { Roles } from "../auth/ability/ability.factory";
 
 @Controller()
 export class ClaimController {
@@ -123,6 +126,7 @@ export class ClaimController {
         }
     }
 
+    // TODO: create a image controller under types and move the endpoints to it
     @Post("api/claim/image")
     async createClaimImage(@Body() createClaimDTO) {
         if (!this.isEnabledImageClaim()) {
@@ -143,6 +147,7 @@ export class ClaimController {
         }
     }
 
+    // TODO: create a debate controller under types and move the endpoints to it
     @Post("api/claim/debate")
     async createClaimDebate(
         @Body() createClaimDTO: CreateDebateClaimDTO,

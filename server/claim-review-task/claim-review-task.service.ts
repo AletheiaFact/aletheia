@@ -15,10 +15,10 @@ import { StateEventService } from "../state-event/state-event.service";
 import { TypeModel } from "../state-event/schema/state-event.schema";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
-import { SentenceService } from "../sentence/sentence.service";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
-import { Roles } from "../ability/ability.factory";
-import { ImageService } from "../image/image.service";
+import { Roles } from "../auth/ability/ability.factory";
+import { ImageService } from "../claim/types/image/image.service";
 import { ContentModelEnum } from "../types/enums";
 
 @Injectable({ scope: Scope.REQUEST })
