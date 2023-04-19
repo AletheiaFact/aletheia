@@ -29,7 +29,7 @@ const SentenceReportCard = ({
     const contentProps = {
         [ContentModelEnum.Speech]: {
             linkText: "claim:cardLinkToFullText",
-            contentPath: `/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${content.data_hash}`,
+            contentPath: `/personality/${personality?.slug}/claim/${claim?.slug}`,
             title: `"(...) ${content.content}"`,
             speechTypeTranslation: "claim:typeSpeech",
         },
