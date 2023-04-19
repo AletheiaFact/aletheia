@@ -14,7 +14,7 @@ import { SentenceService } from "../sentence/sentence.service";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
 import { ImageService } from "../image/image.service";
-import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
+import { ContentModelEnum } from "../types/enums";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {

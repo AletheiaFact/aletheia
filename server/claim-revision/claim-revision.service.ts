@@ -8,8 +8,8 @@ import { SourceTargetModel } from "../source/schemas/source.schema";
 import {
     ClaimRevision,
     ClaimRevisionDocument,
-    ContentModelEnum,
 } from "./schema/claim-revision.schema";
+import { ContentModelEnum } from "../types/enums";
 import { ImageService } from "../image/image.service";
 import { DebateService } from "../debate/debate.service";
 

@@ -18,8 +18,8 @@ import { BaseRequest } from "../types";
 import { SentenceService } from "../sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { Roles } from "../ability/ability.factory";
-import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
 import { ImageService } from "../image/image.service";
+import { ContentModelEnum } from "../types/enums";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
