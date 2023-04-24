@@ -24,7 +24,7 @@ const finishEditingItem = atom(
     null,
     (_get, set, update: { newItem: any; listAtom: PrimitiveAtom<any[]> }) => {
         const index = _get(indexOfItemBeingEdited);
-        if (index) {
+        if (index >= 0) {
             const newBadges = [..._get(update.listAtom)];
             newBadges[index] = update.newItem;
             set(update.listAtom, newBadges);

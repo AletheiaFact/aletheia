@@ -56,7 +56,7 @@ const BadgesFormDrawer = () => {
             name: badgeEdited?.name,
             description: badgeEdited?.description,
             image: initialFileList,
-            users: [],
+            users: badgeEdited?.users.map((user) => user._id),
         },
     });
 
@@ -70,7 +70,6 @@ const BadgesFormDrawer = () => {
     const [imageError, setImageError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [users, setUsers] = useState([]);
-
     useEffect(() => {
         if (badgeEdited) {
             const userIds = badgeEdited?.users?.map((user) => user._id);
@@ -110,6 +109,7 @@ const BadgesFormDrawer = () => {
                 formData.append("files", file.originFileObj);
             });
 
+            // TODO: make a single component to upload images
             ImageApi.uploadImage(formData, t)
                 .then((imagesUploaded) => {
                     setImageError(false);
@@ -125,7 +125,7 @@ const BadgesFormDrawer = () => {
 
                         BadgesApi.updateBadge(newItem, users, t).then(() => {
                             finishEditing({
-                                newItem,
+                                newItem: { ...newItem, users },
                                 listAtom: atomBadgesList,
                             });
                             resetForm();
