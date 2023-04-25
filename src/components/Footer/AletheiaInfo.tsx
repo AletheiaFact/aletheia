@@ -1,4 +1,3 @@
-import { Col } from "antd";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
@@ -8,15 +7,7 @@ const AletheiaInfo = () => {
     const { vw } = useAppSelector((state) => state);
 
     return (
-        <Col
-            lg={8}
-            md={10}
-            sm={24}
-            style={{
-                display: "flex",
-                flexDirection: "column",
-            }}
-        >
+        <>
             <h3
                 style={{
                     width: "100%",
@@ -65,7 +56,7 @@ const AletheiaInfo = () => {
             >
                 46.428.905/0001-68
             </span>
-        </Col>
+        </>
     );
 };
 

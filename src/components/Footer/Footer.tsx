@@ -92,7 +92,17 @@ const Footer = () => {
                         </h3>
                     </Row>
                 </Col>
-                <AletheiaInfo />
+                <Col
+                    lg={8}
+                    md={10}
+                    sm={24}
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
+                    <AletheiaInfo />
+                </Col>
             </Row>
         </Layout.Footer>
     );
