@@ -7,6 +7,7 @@ import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 import FooterInfo from "./FooterInfo";
+import AletheiaInfo from "./AletheiaInfo";
 
 const Footer = () => {
     const { t } = useTranslation();
@@ -22,7 +23,7 @@ const Footer = () => {
             }}
         >
             <Row gutter={24} justify="center">
-                <Col lg={9} md={12} sm={24}>
+                <Col lg={8} md={10} sm={24}>
                     <AletheiaSocialMediaFooter />
 
                     <Row
@@ -66,8 +67,8 @@ const Footer = () => {
                     </Row>
                 </Col>
                 <Col
-                    lg={9}
-                    md={12}
+                    lg={8}
+                    md={10}
                     sm={24}
                     style={{
                         display: "flex",
@@ -84,13 +85,14 @@ const Footer = () => {
                                 color: colors.white,
                                 marginBottom: 0,
                                 marginTop: vw?.sm ? "64px" : "0",
-                                textAlign: vw?.sm ? "center" : "left",
+                                textAlign: "center",
                             }}
                         >
                             {t("footer:copyright")}
                         </h3>
                     </Row>
                 </Col>
+                <AletheiaInfo />
             </Row>
         </Layout.Footer>
     );
