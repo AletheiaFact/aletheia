@@ -18,6 +18,8 @@ import Loading from "../Loading";
 
 import OryLoginForm from "./OryLoginForm";
 import SignUpForm from "./SignUpForm";
+import CTAButton from "../Home/CTAButton";
+import { ButtonType } from "../Button";
 
 const LoginView = ({ isSignUp = false }) => {
     const [flow, setFlow] = useState<SelfServiceLoginFlow>();
@@ -149,13 +151,19 @@ const LoginView = ({ isSignUp = false }) => {
                         isLoading={isLoading}
                     />
                 ) : (
-                    <OryLoginForm
-                        flow={flow}
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
-                        isLoading={isLoading}
-                        onFinishTotp={onFinishTotp}
-                    />
+                    <>
+                        <OryLoginForm
+                            flow={flow}
+                            onFinish={onFinish}
+                            onFinishFailed={onFinishFailed}
+                            isLoading={isLoading}
+                            onFinishTotp={onFinishTotp}
+                        />
+                        <Row className="typo-grey typo-center">
+                            <h2>{t("login:signUpHeader")}</h2>
+                        </Row>
+                        <CTAButton type={ButtonType.blue} />
+                    </>
                 )}
             </Col>
         </Row>
