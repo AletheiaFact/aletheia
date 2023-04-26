@@ -14,8 +14,6 @@ const getClaimReviewTasks = (options) => {
         value: options.value,
         filterUser: options.filterUser ? true : null,
     };
-    console.log("#######", params.filterUser);
-
     return request
         .get(`/`, { params })
         .then((response) => {
