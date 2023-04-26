@@ -8,7 +8,7 @@ import { useAtom } from "jotai";
 import Cookies from "js-cookie";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
-import { isUserLoggedIn } from "../../atoms/currentUser";
+import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
@@ -24,6 +24,7 @@ interface AffixButtonProps {
  */
 const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [userRole] = useAtom(currentUserRole);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsVisible, setIsOptionsVisible] = useState(false);
     const { t } = useTranslation();
@@ -36,14 +37,15 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
         },
     ];
 
-    actions.push({
-        icon: <FileAddFilled />,
-        tooltip: t("affix:affixButtonCreateClaim"),
-        href: `/claim/create${
-            personalitySlug ? `?personality=${personalitySlug}` : ""
-        }`,
-        dataCy: "testFloatButtonAddClaim",
-    });
+    userRole !== "regular" &&
+        actions.push({
+            icon: <FileAddFilled />,
+            tooltip: t("affix:affixButtonCreateClaim"),
+            href: `/claim/create${
+                personalitySlug ? `?personality=${personalitySlug}` : ""
+            }`,
+            dataCy: "testFloatButtonAddClaim",
+        });
 
     useEffect(() => {
         const tutorialShown = Cookies.get("tutorial_shown") || false;
@@ -97,7 +99,11 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                     }}
                 >
                     <Fab
-                        tooltipText={t("affix:affixButtonTitle")}
+                        tooltipText={t(
+                            userRole !== "regular"
+                                ? "affix:affixButtonTitle"
+                                : "affix:affixButtonCreatePersonality"
+                        )}
                         size="70px"
                         onClick={handleClick}
                         data-cy={"testFloatButton"}

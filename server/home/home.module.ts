@@ -3,8 +3,8 @@ import { HomeController } from "./home.controller";
 import { PersonalityModule } from "../personality/personality.module";
 import { StatsModule } from "../stats/stats.module";
 import { ViewModule } from "../view/view.module";
-import { DebateModule } from "../debate/debate.module";
-import { ClaimRevisionModule } from "../claim-revision/claim-revision.module";
+import { DebateModule } from "../claim/types/debate/debate.module";
+import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.module";
 
 @Module({
     imports: [

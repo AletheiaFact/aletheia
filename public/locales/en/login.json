@@ -1,5 +1,6 @@
 {
     "formHeader": "Login to your account",
+    "signUpHeader": "Don't have an account yet? Sign up",
     "emailLabel": "E-mail",
     "passwordLabel": "Password",
     "nameLabel": "Name",

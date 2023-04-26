@@ -3,13 +3,25 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Col, message, Upload } from "antd";
 import { RcFile, UploadChangeParam, UploadProps } from "antd/lib/upload";
 import { useTranslation } from "next-i18next";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import AletheiaButton from "./Button";
 import { AletheiaModal } from "./Modal/AletheiaModal.style";
 
 import type { UploadFile } from "antd/lib/upload/interface";
-const ImageUpload = ({ onChange }) => {
+import Text from "antd/lib/typography/Text";
+
+interface ImageUploadProps {
+    onChange: (fileList: UploadFile[]) => void;
+    error?: boolean;
+    defaultFileList?: UploadFile[];
+}
+
+const ImageUpload = ({
+    onChange,
+    error = false,
+    defaultFileList,
+}: ImageUploadProps) => {
     const { t } = useTranslation();
     const UPLOAD_LIMIT = 1;
     const ONE_MB = 1048576;
@@ -20,7 +32,9 @@ const ImageUpload = ({ onChange }) => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [fileList, setFileList] = useState<UploadFile[]>(
+        defaultFileList || []
+    );
 
     const getBase64 = (file: RcFile): Promise<string> => {
         return new Promise((resolve, reject) => {
@@ -35,7 +49,9 @@ const ImageUpload = ({ onChange }) => {
 
     const handlePreview = async (file: UploadFile) => {
         if (!file.preview) {
-            file.preview = await getBase64(file.originFileObj);
+            file.preview = file.originFileObj
+                ? await getBase64(file.originFileObj)
+                : file.url;
         }
         setPreviewImage(file.preview);
         setPreviewOpen(true);
@@ -69,12 +85,9 @@ const ImageUpload = ({ onChange }) => {
     }: UploadChangeParam<UploadFile>) => {
         if (file.originFileObj && validateBeforeUpload(file.originFileObj)) {
             setFileList(fileList);
-        }
+            onChange(fileList);
+        } else setFileList([]);
     };
-
-    useEffect(() => {
-        onChange(fileList);
-    }, [onChange, fileList]);
 
     const uploadButton = (
         <AletheiaButton data-cy="testUploadImage" icon={<UploadOutlined />}>
@@ -90,9 +103,15 @@ const ImageUpload = ({ onChange }) => {
                 onPreview={handlePreview}
                 onChange={handleChange}
                 beforeUpload={validateBeforeUpload}
+                defaultFileList={defaultFileList || []}
             >
                 {fileList.length >= UPLOAD_LIMIT ? null : uploadButton}
             </Upload>
+            {error && (
+                <Text type="danger" style={{ display: "block" }}>
+                    {t("common:requiredFieldError")}
+                </Text>
+            )}
             <AletheiaModal
                 visible={previewOpen}
                 title={previewTitle}

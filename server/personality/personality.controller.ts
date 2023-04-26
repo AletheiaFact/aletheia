@@ -18,7 +18,7 @@ import { ViewService } from "../view/view.service";
 import { PersonalityService } from "./personality.service";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonality } from "./dto/create-personality.dto";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { TargetModel } from "../history/schema/history.schema";
 import { BaseRequest } from "../types";
 

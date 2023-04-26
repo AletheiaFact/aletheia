@@ -5,7 +5,7 @@ import { Personality, PersonalitySchema } from "./schemas/personality.schema";
 import { UtilService } from "../util";
 import { WikidataModule } from "../wikidata/wikidata.module";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
-import { ClaimRevisionModule } from "../claim-revision/claim-revision.module";
+import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.module";
 import { HistoryModule } from "../history/history.module";
 import { PersonalityController } from "./personality.controller";
 import Logger from "../logger";
@@ -25,7 +25,7 @@ const PersonalityModel = MongooseModule.forFeature([
         ClaimReviewModule,
         ClaimRevisionModule,
         HistoryModule,
-        ViewModule
+        ViewModule,
     ],
     exports: [PersonalityService],
     providers: [UtilService, PersonalityService, Logger],

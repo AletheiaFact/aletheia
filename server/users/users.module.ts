@@ -4,9 +4,9 @@ import { User, UserSchema } from "./schemas/user.schema";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
 import { ViewModule } from "../view/view.module";
-import OryModule from "../ory/ory.module";
+import OryModule from "../auth/ory/ory.module";
 import { ConfigModule } from "@nestjs/config";
-import { AbilityModule } from "../ability/ability.module";
+import { AbilityModule } from "../auth/ability/ability.module";
 
 const UserModel = MongooseModule.forFeature([
     {

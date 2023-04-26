@@ -1,9 +1,9 @@
 import { Controller, Get, Header, Logger, Query, Req } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { PersonalityService } from "../personality/personality.service";
-import { SentenceService } from "../sentence/sentence.service";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
 
 @Controller()
 export class SearchController {

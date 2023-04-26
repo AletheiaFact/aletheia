@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { SentenceModule } from "../sentence/sentence.module";
+import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { Topic, TopicSchema } from "./schemas/topic.schema";
 import { TopicController } from "./topic.controller";
 import { TopicService } from "./topic.service";

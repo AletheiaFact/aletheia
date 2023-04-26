@@ -6,15 +6,22 @@ import AdminView from "../components/adminArea/AdminView";
 import UserEditDrawer from "../components/adminArea/UserEditDrawer";
 import { useAtom } from "jotai";
 import { atomUserList } from "../atoms/userEdit";
+import { atomBadgesList } from "../atoms/badges";
+import BadgesApi from "../api/badgesApi";
 
 const Admin: NextPage<{ data: string }> = ({
     users,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const [userList, setUserList] = useAtom(atomUserList);
+    const [, setBadgesList] = useAtom(atomBadgesList);
+
     useEffect(() => {
         if (userList.length === 0) {
             setUserList(users);
         }
+        BadgesApi.getBadges().then((badges) => {
+            setBadgesList(badges);
+        });
     });
 
     return (

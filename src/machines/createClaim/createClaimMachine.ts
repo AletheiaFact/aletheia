@@ -49,6 +49,10 @@ export const newCreateClaimMachine = ({ value, context }) => {
                     [Events.savePersonality]: {
                         target: States.personalityAdded,
                     },
+                    [Events.removePersonality]: {
+                        target: States.setupSpeech,
+                        actions: [removePersonality],
+                    },
                 },
             },
             [States.setupImage]: {

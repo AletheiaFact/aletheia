@@ -102,6 +102,7 @@ export class ClaimReviewController {
             });
     }
 
+    // TODO: remove hash from the url
     @Get("api/claimreviewtask/hash/:data_hash")
     @Header("Cache-Control", "no-cache")
     async getByDataHash(@Param("data_hash") data_hash: string) {

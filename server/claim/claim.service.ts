@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { FilterQuery, Model, Types } from "mongoose";
 import { Claim, ClaimDocument } from "../claim/schemas/claim.schema";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
+import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
 import { HistoryService } from "../history/history.service";
 import { StateEventService } from "../state-event/state-event.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
@@ -11,7 +11,7 @@ import { TypeModel } from "../state-event/schema/state-event.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
-import { ContentModelEnum } from "../claim-revision/schema/claim-revision.schema";
+import { ContentModelEnum } from "../types/enums";
 
 type ClaimMatchParameters = (
     | { _id: string }

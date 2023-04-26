@@ -1,5 +1,5 @@
 import EditIcon from "@mui/icons-material/Edit";
-import { Grid } from "@mui/material";
+import { Avatar, AvatarGroup, Grid } from "@mui/material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -10,20 +10,21 @@ import {
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React from "react";
+import { startEditingItem } from "../../atoms/editDrawer";
 
-import { startEditingUser, atomUserList } from "../../atoms/userEdit";
+import { atomUserList } from "../../atoms/userEdit";
 import { User } from "../../types/User";
 
 const AdminView = () => {
     const { t } = useTranslation();
     // this is a write only atom, so we don't need to use the value
-    const [, startEditing] = useAtom(startEditingUser);
+    const [, startEditing] = useAtom(startEditingItem);
     const [userList] = useAtom(atomUserList);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const handleEdit = React.useCallback(
         (userId) => () => {
-            startEditing(userId);
+            startEditing({ itemId: userId, listAtom: atomUserList });
         },
         [startEditing]
     );
@@ -47,6 +48,28 @@ const AdminView = () => {
                 valueGetter: (params: GridValueGetterParams) => {
                     return t(`admin:role-${params.row.role}`);
                 },
+            },
+            {
+                field: "badges",
+                headerName: t("admin:columnBadges"),
+                flex: 1,
+                valueGetter: (params: GridValueGetterParams) => {
+                    return params.row.badges || "";
+                },
+                renderCell: (params) => (
+                    <AvatarGroup max={4}>
+                        {params.value.map((badge) => {
+                            return (
+                                <Avatar
+                                    key={badge._id}
+                                    title={badge?.name}
+                                    src={badge?.image?.content}
+                                    alt={badge}
+                                />
+                            );
+                        })}
+                    </AvatarGroup>
+                ),
             },
             {
                 field: "actions",
