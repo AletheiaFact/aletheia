@@ -18,12 +18,15 @@ import { UsersService } from "./users.service";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { ConfigService } from "@nestjs/config";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { BaseRequest } from "../types";
 import { Types } from "mongoose";
 import { CreateUserDTO } from "./dto/create-user.dto";
-import { AbilitiesGuard } from "../ability/abilities.guard";
-import { CheckAbilities, AdminUserAbility } from "../ability/ability.decorator";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import {
+    CheckAbilities,
+    AdminUserAbility,
+} from "../auth/ability/ability.decorator";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 
 @Controller()

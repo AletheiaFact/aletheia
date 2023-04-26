@@ -10,9 +10,9 @@ import {
     UploadedFiles,
 } from "@nestjs/common/decorators/http/route-params.decorator";
 import { FilesInterceptor } from "@nestjs/platform-express/multer";
-import { ClaimRevisionService } from "../claim-revision/claim-revision.service";
+import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
 import { FileManagementService } from "./file-management.service";
-import { ImageService } from "../image/image.service";
+import { ImageService } from "../claim/types/image/image.service";
 const md5 = require("md5");
 
 @Controller()

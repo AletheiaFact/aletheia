@@ -1,4 +1,4 @@
-import { Roles } from "../../ability/ability.factory";
+import { Roles } from "../../auth/ability/ability.factory";
 import { IsArray, IsOptional, IsString } from "class-validator";
 import { Badge } from "../../badge/schemas/badge.schema";
 

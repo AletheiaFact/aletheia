@@ -7,11 +7,14 @@ import {
     UseGuards,
     Header,
 } from "@nestjs/common";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewService } from "./claim-review.service";
-import { AbilitiesGuard } from "../ability/abilities.guard";
-import { AdminUserAbility, CheckAbilities } from "../ability/ability.decorator";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../auth/ability/ability.decorator";
 
 @Controller()
 export class ClaimReviewController {

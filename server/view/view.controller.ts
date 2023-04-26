@@ -10,7 +10,7 @@ import {
 import { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "./view.service";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { UnleashService } from "nestjs-unleash";
 import { ConfigService } from "@nestjs/config";
 
