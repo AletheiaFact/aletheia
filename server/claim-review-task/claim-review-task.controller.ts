@@ -38,7 +38,7 @@ export class ClaimReviewController {
             pageSize = 10,
             order = 1,
             value,
-            usersId,
+            filterUser,
         } = getTasksDTO;
         return Promise.all([
             this.claimReviewTaskService.listAll(
@@ -46,7 +46,7 @@ export class ClaimReviewController {
                 pageSize,
                 order,
                 value,
-                usersId
+                filterUser
             ),
             this.claimReviewTaskService.count(
                 getQueryMatchForMachineValue(value)

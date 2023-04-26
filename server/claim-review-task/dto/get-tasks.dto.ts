@@ -1,5 +1,5 @@
 import {
-    IsArray,
+    IsBoolean,
     IsInt,
     IsNumber,
     IsOptional,
@@ -23,7 +23,7 @@ export class GetTasksDTO {
     @IsString()
     value: string;
 
-    @IsArray()
+    @IsBoolean()
     @IsOptional()
-    usersId?: string[];
+    filterUser?: boolean;
 }

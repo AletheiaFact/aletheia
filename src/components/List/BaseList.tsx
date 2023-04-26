@@ -66,10 +66,12 @@ const BaseList = ({
 
     useEffect(() => {
         console.log("setquery", filter);
+        setLoading(true);
         setExecLoadMore(false);
         setQuery({
             ...query,
             ...filter,
+            page: 1,
         });
     }, [filter]);
 

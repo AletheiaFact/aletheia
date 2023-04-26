@@ -1,13 +1,15 @@
 import { Col, Row } from "antd";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useTranslation } from "next-i18next";
 
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import KanbanCol from "./KanbanCol";
-import Button from "@mui/material/Button";
+import { FormControlLabel, Switch } from "@mui/material";
 
 const KanbanView = (props) => {
     // Don't show unassigned and rejected column
     // because we don't save tasks in these states
+    const { t } = useTranslation();
     const states = Object.keys(ReviewTaskStates).filter(
         (state) =>
             state !== ReviewTaskStates.unassigned &&
@@ -21,15 +23,18 @@ const KanbanView = (props) => {
                 style={{
                     flexWrap: "nowrap",
                     width: "100%",
-                    padding: "1vh 4vh 0vh 4vh",
+                    padding: "1vh 5vh 0vh 5vh",
                 }}
             >
-                <Button variant="text" onClick={() => setFilterUser(false)}>
-                    Tarefas
-                </Button>
-                <Button variant="text" onClick={() => setFilterUser(true)}>
-                    Minhas tarefas
-                </Button>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={filterUser}
+                            onChange={() => setFilterUser(!filterUser)}
+                        />
+                    }
+                    label={t("kanban:myTasks")}
+                />
             </Col>
             <Col
                 span={23}

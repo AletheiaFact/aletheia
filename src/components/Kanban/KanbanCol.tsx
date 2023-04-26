@@ -35,15 +35,10 @@ const KanbanCol = ({ state, filterUser }: KanbanColProps) => {
             <BaseList
                 title={t(`claimReviewTask:${state}`)}
                 apiCall={ClaimReviewTaskApi.getClaimReviewTasks}
-                filter={
-                    filterUser
-                        ? {
-                              value: state,
-                              usersId: ["63fb9476bbfd1a42e847c19a"],
-                              //   usersName: "Main Admin User",
-                          }
-                        : { value: state }
-                }
+                filter={{
+                    value: state,
+                    filterUser: filterUser,
+                }}
                 renderItem={(task) => <KanbanCard reviewTask={task} />}
                 emptyFallback={
                     <EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />
