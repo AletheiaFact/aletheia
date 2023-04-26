@@ -50,10 +50,12 @@ export class HomeController {
                     await this.claimRevisionService.getByContentId(debate._id);
                 const personalities = await Promise.all(
                     debateRevision.personalities.map((personality) => {
-                        return this.personalityService.getById(
-                            personality,
-                            req.language
-                        );
+                        if (personality) {
+                            return this.personalityService.getById(
+                                personality,
+                                req.language
+                            );
+                        }
                     })
                 );
                 return {
