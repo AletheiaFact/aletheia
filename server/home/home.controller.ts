@@ -42,9 +42,7 @@ export class HomeController {
             }
         );
 
-        const liveDebates = await this.debateService.listAll(0, 6, "asc", {
-            isLive: true,
-        });
+        const liveDebates = await this.debateService.listAll(0, 6, "asc", {});
 
         const claims = await Promise.all(
             liveDebates.map(async (debate) => {
