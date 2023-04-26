@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import axios from "axios";
 import { ConfigService } from "@nestjs/config";
 import { Configuration, V0alpha2Api, V0alpha2ApiInterface } from "@ory/client";
+import { Roles } from "../../auth/ability/ability.factory";
 
 @Injectable()
 export default class OryService {
@@ -52,7 +53,27 @@ export default class OryService {
         });
     }
 
-    async createIdentity(user, password, role): Promise<any> {
+    async updateUserRole(user, role): Promise<any> {
+        const {
+            access_token: token,
+            url,
+            schema_id,
+        } = this.configService.get("ory");
+
+        return axios({
+            method: "put",
+            url: `${url}/${this.adminEndpoint}/identities/${user.oryId}`,
+            data: {
+                schema_id,
+                traits: {
+                    role: role,
+                },
+            },
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+
+    async createIdentity(user, password, role?): Promise<any> {
         const {
             access_token: token,
             url,
@@ -66,7 +87,7 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
-                    role,
+                    role: role ? role : Roles.Regular,
                 },
                 credentials: {
                     password: {
