@@ -62,7 +62,17 @@ const BaseList = ({
                 execLoadMore ? [...items, ...newItems.data] : newItems.data
             );
         });
-    }, [query, apiCall]);
+    }, [query]);
+
+    useEffect(() => {
+        setLoading(true);
+        setExecLoadMore(false);
+        setQuery({
+            ...query,
+            ...filter,
+            page: 1,
+        });
+    }, [filter]);
 
     const loadMoreData = () => {
         if (execLoadMore !== true) {
