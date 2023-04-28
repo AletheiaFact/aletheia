@@ -65,6 +65,7 @@ export default class OryService {
             url: `${url}/${this.adminEndpoint}/identities/${user.oryId}`,
             data: {
                 schema_id,
+                //When updating any traits, the user_id and email traits are required.
                 traits: {
                     email: user.email,
                     user_id: user._id,
