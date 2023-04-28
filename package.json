@@ -1,6 +1,6 @@
 {
     "name": "aletheia",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Crowd-sourced fact-checking platform.",
     "private": false,
     "license": "MIT",
