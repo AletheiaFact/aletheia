@@ -129,9 +129,8 @@ export class UsersController {
         @Res() res
     ) {
         try {
-            const user = await this.usersService.getById(userId);
             this.usersService
-                .updateUser(user, updates)
+                .updateUser(Types.ObjectId(userId), updates)
                 .then(() => {
                     res.status(200).json({
                         success: true,

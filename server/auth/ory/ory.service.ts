@@ -66,6 +66,8 @@ export default class OryService {
             data: {
                 schema_id,
                 traits: {
+                    email: user.email,
+                    user_id: user._id,
                     role: role,
                 },
             },
