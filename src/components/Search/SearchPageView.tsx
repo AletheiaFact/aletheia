@@ -72,16 +72,14 @@ function SearchPageView() {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            await router.push({
+        router
+            .push({
                 pathname: "/search",
                 query: { searchText: searchName, pageSize: pageSize },
-            });
-        } catch (error) {
-            console.log(`Error: ${error.message}`);
-        }
+            })
+            .catch((error) => console.log(`Error: ${error.message}`));
     };
 
     const handleOnChange = async (optionClicked) => {
