@@ -75,7 +75,7 @@ function SearchPageView() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            router.push({
+            await router.push({
                 pathname: "/search",
                 query: { searchText: searchName, pageSize: pageSize },
             });
@@ -84,9 +84,9 @@ function SearchPageView() {
         }
     };
 
-    const handleOnChange = (optionClicked) => {
+    const handleOnChange = async (optionClicked) => {
         try {
-            router.push({
+            await router.push({
                 pathname: "/search",
                 query: { searchText: optionClicked, pageSize: pageSize },
             });
