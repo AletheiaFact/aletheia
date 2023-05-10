@@ -54,40 +54,52 @@ function SearchPageView() {
 
     const enableSearchResults = results?.some((subArr) => subArr.length > 0);
 
-    const handleInputSearch = (term) => {
+    const handleInputSearch = async (term) => {
         dispatch({
             type: ActionTypes.SET_SEARCH_NAME,
             searchName: term,
         });
 
-        SearchApi.getResults(dispatch, {
-            type: SearchTypes.AUTOCOMPLETE,
-            page,
-            pageSize,
-            searchText: term,
-        });
+        try {
+            await SearchApi.getResults(dispatch, {
+                type: SearchTypes.AUTOCOMPLETE,
+                page,
+                pageSize,
+                searchText: term,
+            });
+        } catch (error) {
+            console.log(`Error: ${error.message}`);
+        }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        router.push({
-            pathname: "/search",
-            query: { searchText: searchName, pageSize: pageSize },
-        });
+        try {
+            router.push({
+                pathname: "/search",
+                query: { searchText: searchName, pageSize: pageSize },
+            });
+        } catch (error) {
+            console.log(`Error: ${error.message}`);
+        }
     };
 
     const handleOnChange = (optionClicked) => {
-        router.push({
-            pathname: "/search",
-            query: { searchText: optionClicked, pageSize: pageSize },
-        });
+        try {
+            router.push({
+                pathname: "/search",
+                query: { searchText: optionClicked, pageSize: pageSize },
+            });
+        } catch (error) {
+            console.log(`Error: ${error.message}`);
+        }
         dispatch({
             type: ActionTypes.SET_SEARCH_NAME,
             searchName: optionClicked,
         });
     };
 
-    const handleSearchClick = ({
+    const handleSearchClick = async ({
         type,
         claimSlug = "",
         personalitySlug = "",
@@ -95,15 +107,15 @@ function SearchPageView() {
     }) => {
         switch (type) {
             case "personality":
-                router.push(`/personality/${personalitySlug}`);
+                await router.push(`/personality/${personalitySlug}`);
                 break;
             case "claim":
-                router.push(
+                await router.push(
                     `/personality/${personalitySlug}/claim/${claimSlug}`
                 );
                 break;
             case "sentence":
-                router.push(
+                await router.push(
                     `/personality/${personalitySlug}/claim/${claimSlug}/sentence/${data_hash}`
                 );
                 break;

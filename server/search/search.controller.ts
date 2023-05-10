@@ -14,7 +14,7 @@ import { PersonalityService } from "../personality/personality.service";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { ViewService } from "../view/view.service";
 import { parse } from "url";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { BaseRequest } from "../types";
 
 @Controller()
