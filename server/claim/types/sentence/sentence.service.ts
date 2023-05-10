@@ -49,6 +49,9 @@ export class SentenceService {
                     autocomplete: {
                         query: searchText,
                         path: "content",
+                        fuzzy: {
+                            maxEdits: 1,
+                        },
                     },
                 },
             },
@@ -82,7 +85,7 @@ export class SentenceService {
             {
                 $lookup: {
                     from: "personalities",
-                    localField: "claim.personality",
+                    localField: "claim.personalities",
                     foreignField: "_id",
                     as: "personality",
                 },

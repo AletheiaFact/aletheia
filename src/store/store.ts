@@ -25,6 +25,22 @@ const reducer = (state, action) => {
                     overlayVisible: action.overlayVisible,
                 },
             };
+        case ActionTypes.RESULTS_AUTOCOMPLETE:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    autocompleteResults: action.results,
+                },
+            };
+        case ActionTypes.RESULTS_SEARCH_VISIBLE:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    resultsVisible: action.resultsVisible,
+                },
+            };
         case ActionTypes.SEARCH_RESULTS:
             return {
                 ...state,

@@ -3,6 +3,7 @@ import { Content } from "../types/Content";
 import { Personality } from "../types/Personality";
 
 export enum ActionTypes {
+    RESULTS_AUTOCOMPLETE,
     TOGGLE_MENU,
     TOGGLE_REVIEW_DRAWER,
     RESULTS_OVERLAY_VISIBLE,
@@ -21,12 +22,21 @@ export enum ActionTypes {
     SET_SELECTED_CONTENT,
     SET_USER_ID,
     SET_SITEKEY,
+    RESULTS_SEARCH_VISIBLE,
+}
+
+export enum SearchTypes {
+    AUTOCOMPLETE,
+    OVERLAY,
+    RESULTS,
 }
 
 export interface RootState {
     menuCollapsed: boolean;
     reviewDrawerCollapsed: boolean;
     search: {
+        resultsVisible: boolean;
+        autocompleteResults: any;
         overlayVisible: boolean;
         searchResults: any;
         searchTotalPages: any;

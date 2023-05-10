@@ -1,14 +1,22 @@
 import axios from "axios";
 import actions from "../store/actions";
-import { ActionTypes } from "../store/types";
+import { ActionTypes, SearchTypes } from "../store/types";
+
+interface SearchOptions {
+    type?: SearchTypes;
+    searchText?: string;
+    page?: number;
+    pageSize?: number;
+}
 
 const request = axios.create({
     withCredentials: true,
-    baseURL: `/api/search`,
+    baseURL: `api/results`,
 });
 
-const getResults = (dispatch, options = {}) => {
+const getResults = (dispatch, options: SearchOptions = {}) => {
     const params = {
+        type: options.type,
         searchText: options.searchText,
         pageSize: options.pageSize ? options.pageSize : 5,
     };
@@ -17,11 +25,18 @@ const getResults = (dispatch, options = {}) => {
         .get(`/`, { params })
         .then((response) => {
             const { personalities, sentences, claims } = response.data;
-            dispatch(actions.openResultsOverlay());
-            dispatch({
-                type: ActionTypes.SEARCH_RESULTS,
-                results: { personalities, sentences, claims },
-            });
+            if (params.type === SearchTypes.AUTOCOMPLETE) {
+                dispatch({
+                    type: ActionTypes.RESULTS_AUTOCOMPLETE,
+                    results: { personalities, sentences, claims },
+                });
+            } else {
+                dispatch(actions.openResultsOverlay());
+                dispatch({
+                    type: ActionTypes.SEARCH_RESULTS,
+                    results: { personalities, sentences, claims },
+                });
+            }
         })
         .catch((e) => {
             // TODO: sentry

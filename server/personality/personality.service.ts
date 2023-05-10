@@ -365,6 +365,9 @@ export class PersonalityService {
                     autocomplete: {
                         query: searchText,
                         path: "name",
+                        fuzzy: {
+                            maxEdits: 1,
+                        },
                     },
                 },
             },

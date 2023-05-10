@@ -98,6 +98,9 @@ export class ClaimRevisionService {
                     autocomplete: {
                         query: searchText,
                         path: "title",
+                        fuzzy: {
+                            maxEdits: 1,
+                        },
                     },
                 },
             },
@@ -115,7 +118,8 @@ export class ClaimRevisionService {
             {
                 $project: {
                     title: 1,
-                    personalities: 1,
+                    "personality.slug": 1,
+                    "personality.name": 1,
                     slug: 1,
                     date: 1,
                 },
