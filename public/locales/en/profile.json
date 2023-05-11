@@ -1,5 +1,6 @@
 {
     "pageTitle": "My Account",
+    "badgesTitle": "My Accomplishments",
     "changePasswordSectionTitle": "Change password",
     "successMessage": "Password updated with success",
     "userUnauthenticated": "User unauthenticated",
