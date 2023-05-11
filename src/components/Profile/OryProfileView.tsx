@@ -80,6 +80,10 @@ const OryProfileView = ({ user }) => {
                     {t("profile:loggedInAs")}: <Label>{user.email}</Label>
                 </Typography>
 
+                <Typography.Title level={4}>
+                    {t("profile:badgesTitle")}
+                </Typography.Title>
+
                 <Grid container spacing={1} mt={1} mb={3}>
                     {user.badges?.map((badge) => (
                         <Grid item key={badge._id}>
