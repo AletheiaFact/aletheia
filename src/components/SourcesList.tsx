@@ -43,7 +43,7 @@ const SourcesList = ({
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        {link.replace(/(^\w+:|^)\/\//, "")}
+                                        {link}
                                     </a>
                                 </List.Item>
                             </Col>
