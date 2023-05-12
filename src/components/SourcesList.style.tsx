@@ -11,6 +11,10 @@ export const SourcesListStyle = styled.div`
         margin-top: 10px;
     }
 
+    a {
+        overflow-wrap: anywhere;
+    }
+
     .all-sources-link {
         font-size: 14px;
         color: ${colors.white};
