@@ -60,7 +60,8 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values }) => {
                 message.success(t("profile:changesSaved"));
                 return;
             }
-            router.back();
+
+            router.push("/");
         })
         .catch(handleFlowError(router, "login", setFlow, t))
         .catch(() => {
