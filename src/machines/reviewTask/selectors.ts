@@ -12,7 +12,10 @@ const crossCheckingSelector = (state) => {
 };
 
 const reviewNotStartedSelector = (state) => {
-    return state.matches(ReviewTaskStates.unassigned);
+    return (
+        state.matches(ReviewTaskStates.unassigned) &&
+        state.context.claimReview.claim === ""
+    );
 };
 
 const reviewDataSelector = (state) => {

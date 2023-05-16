@@ -90,7 +90,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         if (isLoggedIn) {
             setCurrentFormAndNextEvents(machineService.machine.config.initial);
         }
-    }, []);
+    }, [isLoggedIn]);
 
     useEffect(() => {
         reset(reviewData);
@@ -231,11 +231,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                                     handleSendEvent(event);
                             }}
                             event={event}
-                            disabled={
-                                event === ReviewTaskEvents.goback
-                                    ? false
-                                    : !hasCaptcha
-                            }
+                            disabled={!hasCaptcha}
                             data-cy={`testClaimReview${event}`}
                         >
                             {t(`claimReviewTask:${event}`)}
