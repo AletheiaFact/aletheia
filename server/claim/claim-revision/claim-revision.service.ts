@@ -90,22 +90,19 @@ export class ClaimRevisionService {
         return newClaimRevision.save();
     }
 
-    findAll(searchText, pageSize) {
-        return this.ClaimRevisionModel.aggregate([
+    async findAll(searchText, pageSize, skipedDocuments) {
+        const claimRevisions = await this.ClaimRevisionModel.aggregate([
             {
                 $search: {
                     index: "claimrevisions_fields",
-                    autocomplete: {
+                    text: {
                         query: searchText,
                         path: "title",
                         fuzzy: {
-                            maxEdits: 1,
+                            maxEdits: 2,
                         },
                     },
                 },
-            },
-            {
-                $limit: parseInt(pageSize, 10),
             },
             {
                 $lookup: {
@@ -124,7 +121,36 @@ export class ClaimRevisionService {
                     date: 1,
                 },
             },
+            {
+                $facet: {
+                    rows: [
+                        {
+                            $skip: skipedDocuments,
+                        },
+                        {
+                            $limit: pageSize,
+                        },
+                    ],
+                    totalRows: [
+                        {
+                            $count: "totalRows",
+                        },
+                    ],
+                },
+            },
+            {
+                $set: {
+                    totalRows: {
+                        $arrayElemAt: ["$totalRows.totalRows", 0],
+                    },
+                },
+            },
         ]);
+
+        return {
+            totalRows: claimRevisions[0].totalRows,
+            processedRevisions: claimRevisions[0].rows,
+        };
     }
 
     getByContentId(contentId) {

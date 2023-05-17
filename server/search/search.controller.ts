@@ -35,68 +35,106 @@ export class SearchController {
         @Req() req: BaseRequest,
         @Res() res: Response,
         @Query("searchText") searchText: string,
-        @Query("pageSize") pageSize: number
+        @Query("pageSize") pageSize: number,
+        @Query("page") page: number
     ) {
-        const parsedUrl = parse(req.url, true);
+        try {
+            const parsedUrl = parse(req.url, true);
+            let searchResults;
+            if (this.configService.get<string>("db.atlas") && searchText) {
+                //This is necessary cause the page and pageSize logic is applied to 3 different collections
+                const processedPageSize = Math.ceil(pageSize / 3);
+                const skipedDocuments =
+                    page != 1 ? processedPageSize * (page - 1) : 0;
 
-        let searchResults;
-        if (this.configService.get<string>("db.atlas") && searchText) {
-            searchResults = await Promise.all([
-                this.personalityService.findAll(
+                const [personalities, sentences, claims] = await Promise.all([
+                    this.personalityService.findAll(
+                        searchText,
+                        processedPageSize,
+                        req.language,
+                        skipedDocuments
+                    ),
+                    this.sentenceService.findAll(
+                        searchText,
+                        processedPageSize,
+                        skipedDocuments
+                    ),
+                    this.claimRevisionService.findAll(
+                        searchText,
+                        processedPageSize,
+                        skipedDocuments
+                    ),
+                ]);
+                const totalResults =
+                    (personalities?.totalRows || 0) +
+                    (sentences?.totalRows || 0) +
+                    (claims?.totalRows || 0);
+                const totalPages = Math.ceil(totalResults / pageSize);
+
+                searchResults = {
+                    personalities: personalities.processedPersonalities,
+                    sentences: sentences.processedSentences,
+                    claims: claims.processedRevisions,
+                    totalResults,
+                    totalPages,
+                };
+            } else if (searchText) {
+                searchResults = await this.personalityService.combinedListAll({
+                    name: searchText,
+                    pageSize,
+                    language: req.language,
+                });
+            }
+
+            await this.viewService.getNextServer().render(
+                req,
+                res,
+                "/search-page",
+                Object.assign(parsedUrl.query, {
+                    searchResults,
                     searchText,
                     pageSize,
-                    req.language
-                ),
-                this.sentenceService.findAll(searchText, pageSize),
-                this.claimRevisionService.findAll(searchText, pageSize),
-            ])
-                .then(([personalities, sentences, claims]) => {
-                    return {
-                        personalities,
-                        sentences,
-                        claims,
-                    };
+                    page,
                 })
-                .catch((error) => this.logger.error(error));
-        } else if (searchText) {
-            searchResults = await this.personalityService.combinedListAll({
-                name: searchText,
-                pageSize,
-                language: req.language,
-            });
+            );
+        } catch (error) {
+            this.logger.error(error);
+            res.status(500).json({ error: "An error occurred" });
         }
-
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/search-page",
-            Object.assign(parsedUrl.query, {
-                searchResults,
-            })
-        );
     }
 
     @IsPublic()
     @Get("api/results")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async listAll(@Query() query, @Req() req) {
-        const { pageSize, searchText } = query;
+        const { pageSize, searchText, page } = query;
+        const parsedPageSize = parseInt(pageSize, 10);
+        const parsedPage = parseInt(page, 0);
 
         if (this.configService.get<string>("db.atlas")) {
             return Promise.all([
                 this.personalityService.findAll(
                     searchText,
-                    pageSize,
-                    req.language
+                    parsedPageSize,
+                    req.language,
+                    parsedPage
                 ),
-                this.sentenceService.findAll(searchText, pageSize),
-                this.claimRevisionService.findAll(searchText, pageSize),
+                this.sentenceService.findAll(
+                    searchText,
+                    parsedPageSize,
+                    parsedPage
+                ),
+                this.claimRevisionService.findAll(
+                    searchText,
+                    parsedPageSize,
+                    parsedPage
+                ),
             ])
                 .then(([personalities, sentences, claims]) => {
                     return {
-                        personalities,
-                        sentences,
-                        claims,
+                        personalities: personalities.processedPersonalities,
+                        sentences: sentences.processedSentences,
+                        claims: claims.processedRevisions,
                     };
                 })
                 .catch((error) => this.logger.error(error));

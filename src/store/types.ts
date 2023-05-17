@@ -23,6 +23,8 @@ export enum ActionTypes {
     SET_USER_ID,
     SET_SITEKEY,
     RESULTS_SEARCH_VISIBLE,
+    SET_TOTAL_RESULTS,
+    SET_PAGE_SIZE,
 }
 
 export enum SearchTypes {
@@ -43,6 +45,7 @@ export interface RootState {
         searchCurPage: number;
         searchInput: string;
         searchPageSize: number;
+        totalResults: number;
     };
     autoSave: boolean;
     claimType: string;

@@ -18,6 +18,7 @@ const getResults = (dispatch, options: SearchOptions = {}) => {
     const params = {
         type: options.type,
         searchText: options.searchText,
+        page: options.page ? options.page : 0,
         pageSize: options.pageSize ? options.pageSize : 5,
     };
 

@@ -41,22 +41,19 @@ export class SentenceService {
         return this.SentenceModel.updateOne({ _id: sentence._id }, newSentence);
     }
 
-    async findAll(searchText, pageSize) {
+    async findAll(searchText, pageSize, skipedDocuments) {
         const sentences = await this.SentenceModel.aggregate([
             {
                 $search: {
                     index: "sentence_fields",
-                    autocomplete: {
+                    text: {
                         query: searchText,
                         path: "content",
                         fuzzy: {
-                            maxEdits: 1,
+                            maxEdits: 2,
                         },
                     },
                 },
-            },
-            {
-                $limit: parseInt(pageSize, 10),
             },
             {
                 $lookup: {
@@ -102,15 +99,45 @@ export class SentenceService {
                     "claim.contentModel": 1,
                 },
             },
+            {
+                $facet: {
+                    rows: [
+                        {
+                            $skip: skipedDocuments,
+                        },
+                        {
+                            $limit: pageSize,
+                        },
+                    ],
+                    totalRows: [
+                        {
+                            $count: "totalRows",
+                        },
+                    ],
+                },
+            },
+            {
+                $set: {
+                    totalRows: {
+                        $arrayElemAt: ["$totalRows.totalRows", 0],
+                    },
+                },
+            },
         ]);
 
-        return Promise.all(
-            sentences.map(async (sentence) => {
-                const sentenceWithProps = await this.getByDataHash(
-                    sentence.data_hash
-                );
-                return Object.assign(sentence, sentenceWithProps.toObject());
-            })
-        );
+        return {
+            totalRows: sentences[0].totalRows,
+            processedSentences: await Promise.all(
+                sentences[0].rows.map(async (sentence) => {
+                    const sentenceWithProps = await this.getByDataHash(
+                        sentence.data_hash
+                    );
+                    return Object.assign(
+                        sentence,
+                        sentenceWithProps.toObject()
+                    );
+                })
+            ),
+        };
     }
 }

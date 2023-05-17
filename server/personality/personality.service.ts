@@ -357,27 +357,53 @@ export class PersonalityService {
             .catch((error) => this.logger.error(error));
     }
 
-    async findAll(searchText, pageSize, language) {
+    async findAll(searchText, pageSize, language, skipedDocuments) {
         const personalities = await this.PersonalityModel.aggregate([
             {
                 $search: {
                     index: "personality_fields",
-                    autocomplete: {
+                    text: {
                         query: searchText,
                         path: "name",
                         fuzzy: {
-                            maxEdits: 1,
+                            maxEdits: 2,
                         },
                     },
                 },
             },
-            { $limit: parseInt(pageSize, 10) },
+            {
+                $facet: {
+                    rows: [
+                        {
+                            $skip: skipedDocuments,
+                        },
+                        {
+                            $limit: pageSize,
+                        },
+                    ],
+                    totalRows: [
+                        {
+                            $count: "totalRows",
+                        },
+                    ],
+                },
+            },
+            {
+                $set: {
+                    totalRows: {
+                        $arrayElemAt: ["$totalRows.totalRows", 0],
+                    },
+                },
+            },
         ]);
 
-        return Promise.all(
-            personalities.map(async (personality) => {
-                return await this.postProcess(personality, language);
-            })
-        );
+        return {
+            totalRows: personalities[0].totalRows,
+            processedPersonalities: await Promise.all(
+                personalities[0].rows.map(async (personality) => {
+                    return await this.postProcess(personality, language);
+                })
+            ),
+        };
     }
 }

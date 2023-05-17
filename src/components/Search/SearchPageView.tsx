@@ -11,14 +11,15 @@ import { useRouter } from "next/router";
 import SearchCard from "./SearchCard";
 import SearchWithAutocomplete from "./AutoCompleteList";
 import { useTranslation } from "next-i18next";
+import PaginationOptions from "./PaginationOptions";
 
-function SearchPageView() {
+function SearchPageView({ searchText }) {
     const dispatch = useDispatch();
     const router = useRouter();
     const { t } = useTranslation();
 
-    const { results, autoCompleteResults, searchName } = useAppSelector(
-        (state) => {
+    const { results, autoCompleteResults, searchName, totalResults } =
+        useAppSelector((state) => {
             return {
                 results: [
                     state?.search?.searchResults?.personalities || [],
@@ -31,14 +32,15 @@ function SearchPageView() {
                     state?.search?.autocompleteResults?.sentences || [],
                 ],
                 searchName: state?.search?.searchInput || null,
+                totalResults: state?.search?.totalResults || 0,
             };
-        }
-    );
+        });
 
-    const { page, pageSize } = useAppSelector((state) => {
+    const { page, pageSize, totalPages } = useAppSelector((state) => {
         return {
             page: state?.search?.searchCurPage || 1,
-            pageSize: state?.search?.searchPageSize || 5,
+            pageSize: state?.search?.searchPageSize || 10,
+            totalPages: state?.search?.searchTotalPages || 1,
         };
     });
 
@@ -63,7 +65,7 @@ function SearchPageView() {
         try {
             await SearchApi.getResults(dispatch, {
                 type: SearchTypes.AUTOCOMPLETE,
-                page,
+                page: 0,
                 pageSize,
                 searchText: term,
             });
@@ -77,7 +79,7 @@ function SearchPageView() {
         router
             .push({
                 pathname: "/search",
-                query: { searchText: searchName, pageSize: pageSize },
+                query: { searchText: searchName, pageSize: pageSize, page: 1 },
             })
             .catch((error) => console.log(`Error: ${error.message}`));
     };
@@ -86,15 +88,15 @@ function SearchPageView() {
         try {
             await router.push({
                 pathname: "/search",
-                query: { searchText: optionClicked, pageSize: pageSize },
+                query: {
+                    searchText: optionClicked,
+                    pageSize: pageSize,
+                    page: 1,
+                },
             });
         } catch (error) {
             console.log(`Error: ${error.message}`);
         }
-        dispatch({
-            type: ActionTypes.SET_SEARCH_NAME,
-            searchName: optionClicked,
-        });
     };
 
     const handleSearchClick = async ({
@@ -120,6 +122,7 @@ function SearchPageView() {
         }
     };
 
+    const paginationRequired = pageSize < totalResults;
     return (
         <>
             <Grid
@@ -134,6 +137,7 @@ function SearchPageView() {
                     <form onSubmit={handleSubmit}>
                         <div style={{ display: "flex" }}>
                             <SearchWithAutocomplete
+                                value={searchName}
                                 options={filterAutoCompleteResults(
                                     autoCompleteResults
                                 )}
@@ -155,6 +159,7 @@ function SearchPageView() {
                                 ][i];
                                 return (
                                     <SearchCard
+                                        key={i}
                                         title={t(`search:${type}HeaderTitle`)}
                                         content={result}
                                         searchName={searchName}
@@ -164,6 +169,14 @@ function SearchPageView() {
                                     />
                                 );
                             })}
+                            {paginationRequired && (
+                                <PaginationOptions
+                                    searchText={searchText}
+                                    pageSize={pageSize}
+                                    totalPages={totalPages}
+                                    page={page}
+                                />
+                            )}
                         </>
                     )}
                 </Grid>

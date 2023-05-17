@@ -2,10 +2,11 @@ import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 
-function SearchWithAutocomplete({ options, handleOnChange, onSearch }) {
+function SearchWithAutocomplete({ options, handleOnChange, onSearch, value }) {
     return (
         <Autocomplete
             freeSolo
+            value={value}
             disableClearable
             options={options}
             onChange={(event, newValue) => handleOnChange(newValue)}
