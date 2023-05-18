@@ -4,6 +4,7 @@ import { ReportModule } from "../../../report/report.module";
 import { HistoryModule } from "../../../history/history.module";
 import { ImageService } from "./image.service";
 import { Image, ImageSchema } from "./schemas/image.schema";
+import { ImageController } from "./image.controller";
 
 const ImageModel = MongooseModule.forFeature([
     {
@@ -14,6 +15,7 @@ const ImageModel = MongooseModule.forFeature([
 
 @Module({
     imports: [ImageModel, HistoryModule, ReportModule],
+    controllers: [ImageController],
     providers: [ImageService],
     exports: [ImageService],
 })
