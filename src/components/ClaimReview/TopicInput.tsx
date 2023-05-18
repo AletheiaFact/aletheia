@@ -43,8 +43,8 @@ const TopicInput = ({ contentModel, data_hash, topics }) => {
         setCurrentInputValue(newInputValue);
 
         contentModel === ContentModelEnum.Image
-            ? ImageApi.deleteImageTopic(newTopics, data_hash)
-            : sentenceApi.deleteSentenceTopic(newTopics, data_hash);
+            ? await ImageApi.deleteImageTopic(newTopics, data_hash)
+            : await sentenceApi.deleteSentenceTopic(newTopics, data_hash);
     };
 
     const getDuplicated = (array1, array2) => {
@@ -63,7 +63,9 @@ const TopicInput = ({ contentModel, data_hash, topics }) => {
         } else if (inputValue.length) {
             setTopicsArray(tags);
             setCurrentInputValue([]);
-            topicApi.createTopics({ contentModel, topics: tags, data_hash }, t);
+            topicApi
+                .createTopics({ contentModel, topics: tags, data_hash }, t)
+                .catch((e) => e);
         } else {
             setShowErrorMessage(!showErrorMessage);
         }

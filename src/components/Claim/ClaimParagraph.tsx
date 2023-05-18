@@ -14,11 +14,13 @@ const ClaimParagraph = ({ paragraph, showHighlights, handleSentenceClick }) => {
                     handleSentenceClick={() => {
                         SentenceApi.getSentenceTopicsByDatahash(
                             sentence.data_hash
-                        ).then((sentenceWithTopics) => {
-                            dispatch(
-                                actions.setSelectContent(sentenceWithTopics)
-                            );
-                        });
+                        )
+                            .then((sentenceWithTopics) => {
+                                dispatch(
+                                    actions.setSelectContent(sentenceWithTopics)
+                                );
+                            })
+                            .catch((e) => e);
 
                         if (handleSentenceClick) {
                             handleSentenceClick();

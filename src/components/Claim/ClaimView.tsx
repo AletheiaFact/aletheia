@@ -55,11 +55,11 @@ const ClaimView = ({ personality, claim, href }) => {
     }, [isImage, t]);
 
     const handleClickOnImage = () => {
-        ImageApi.getImageTopicsByDatahash(selectedContent?.data_hash).then(
-            (image) => {
+        ImageApi.getImageTopicsByDatahash(selectedContent?.data_hash)
+            .then((image) => {
                 dispatch(actions.setSelectContent(image));
-            }
-        );
+            })
+            .catch((e) => e);
         dispatch(actions.openReviewDrawer());
     };
 
