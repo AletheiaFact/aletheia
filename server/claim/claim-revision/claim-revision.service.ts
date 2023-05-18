@@ -91,7 +91,7 @@ export class ClaimRevisionService {
     }
 
     async findAll(searchText, pageSize, skipedDocuments) {
-        const claimRevisions = await this.ClaimRevisionModel.aggregate([
+        const aggregationPipeline = [
             {
                 $search: {
                     index: "claimrevisions_fields",
@@ -145,11 +145,17 @@ export class ClaimRevisionService {
                     },
                 },
             },
-        ]);
+        ];
+
+        const [result] = await this.ClaimRevisionModel.aggregate(
+            aggregationPipeline
+        );
+
+        const { rows, totalRows } = result;
 
         return {
-            totalRows: claimRevisions[0].totalRows,
-            processedRevisions: claimRevisions[0].rows,
+            totalRows,
+            processedRevisions: rows,
         };
     }
 

@@ -157,9 +157,10 @@ function SearchPageView({ searchText }) {
                                     "claim",
                                     "sentence",
                                 ][i];
+                                const key = `searchCard_${i}`;
                                 return (
                                     <SearchCard
-                                        key={i}
+                                        key={key}
                                         title={t(`search:${type}HeaderTitle`)}
                                         content={result}
                                         searchName={searchName}

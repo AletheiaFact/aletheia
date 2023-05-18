@@ -112,7 +112,7 @@ export class SearchController {
         const parsedPage = parseInt(page, 0);
 
         if (this.configService.get<string>("db.atlas")) {
-            return Promise.all([
+            return await Promise.all([
                 this.personalityService.findAll(
                     searchText,
                     parsedPageSize,
