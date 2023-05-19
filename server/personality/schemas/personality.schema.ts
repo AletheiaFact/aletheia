@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { softDeletePlugin } from 'mongoose-softdelete-typescript';
+import { softDeletePlugin } from "mongoose-softdelete-typescript";
 import * as mongoose from "mongoose";
 
 export type PersonalityDocument = Personality & mongoose.Document;
@@ -19,15 +19,14 @@ export class Personality {
     wikidata: string;
 }
 
-
 const PersonalitySchemaRaw = SchemaFactory.createForClass(Personality);
 
-PersonalitySchemaRaw.virtual('claims', {
-    ref: 'Claim',
-    localField: '_id',
-    foreignField: 'personality'
+PersonalitySchemaRaw.virtual("claims", {
+    ref: "Claim",
+    localField: "_id",
+    foreignField: "personalities",
 });
 
-PersonalitySchemaRaw.plugin(softDeletePlugin)
+PersonalitySchemaRaw.plugin(softDeletePlugin);
 
 export const PersonalitySchema = PersonalitySchemaRaw;
