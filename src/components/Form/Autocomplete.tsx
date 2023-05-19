@@ -10,6 +10,7 @@ interface AutocompleteProps {
     style?: {};
     value?: string | string[];
     preloadedOptions?: string[];
+    preloadedTopics?: string[];
 }
 
 const Autocomplete = ({
@@ -21,6 +22,7 @@ const Autocomplete = ({
     style = {},
     value = [],
     preloadedOptions = [],
+    preloadedTopics = [],
 }: AutocompleteProps) => {
     return (
         <SelectOptions
@@ -32,6 +34,7 @@ const Autocomplete = ({
             mode={mode}
             value={value}
             preloadedOptions={preloadedOptions}
+            preloadedTopics={preloadedTopics}
         />
     );
 };

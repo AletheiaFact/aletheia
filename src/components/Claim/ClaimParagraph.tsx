@@ -2,6 +2,7 @@ import ClaimSentence from "./ClaimSentence";
 import React from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
+import SentenceApi from "../../api/sentenceApi";
 
 const ClaimParagraph = ({ paragraph, showHighlights, handleSentenceClick }) => {
     const dispatch = useDispatch();
@@ -11,7 +12,15 @@ const ClaimParagraph = ({ paragraph, showHighlights, handleSentenceClick }) => {
             {sentences.map((sentence) => (
                 <ClaimSentence
                     handleSentenceClick={() => {
-                        dispatch(actions.setSelectContent(sentence));
+                        SentenceApi.getSentenceTopicsByDatahash(
+                            sentence.data_hash
+                        )
+                            .then((sentenceWithTopics) => {
+                                dispatch(
+                                    actions.setSelectContent(sentenceWithTopics)
+                                );
+                            })
+                            .catch((e) => e);
 
                         if (handleSentenceClick) {
                             handleSentenceClick();

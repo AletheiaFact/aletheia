@@ -57,4 +57,15 @@ export class ImageService {
             throw new NotFoundException();
         }
     }
+
+    async updateImageWithTopics(topics, data_hash) {
+        const image = await this.getByDataHash(data_hash);
+
+        const newImage = {
+            ...image.toObject,
+            topics,
+        };
+
+        return this.ImageModel.updateOne({ _id: image._id }, newImage);
+    }
 }
