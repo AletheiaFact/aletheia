@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Row } from "antd";
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
@@ -9,13 +9,38 @@ import colors from "../../styles/colors";
 import Label from "../Label";
 import PersonalitySearchResultSection from "./PersonalitySearchResultSection";
 import { ActionTypes } from "../../store/types";
+import { useRouter } from "next/router";
 
 const PersonalityCreateSearch = ({
     withSuggestions,
     selectPersonality = null,
 }) => {
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const router = useRouter();
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
+
+    const createPersonality = async (personality) => {
+        setIsFormSubmitted(!isFormSubmitted);
+        const personalityCreated = await api.createPersonality(personality, t);
+        const { slug } = personalityCreated;
+        const newPersonality = {
+            ...personality,
+            ...personalityCreated,
+        };
+        const createClaim = () => {
+            selectPersonality(newPersonality);
+            setIsFormSubmitted(false);
+        };
+
+        // Redirect to personality list in case _id is not present
+        const path = slug ? `/personality/${slug}` : "/personality";
+        selectPersonality !== null ? createClaim() : router.push(path);
+    };
+
+    const onClickSeeProfile = () => {
+        setIsFormSubmitted(!isFormSubmitted);
+    };
 
     const { personalities } = useAppSelector((state) => {
         return {
@@ -70,11 +95,15 @@ const PersonalityCreateSearch = ({
                 selectPersonality={selectPersonality}
                 personalities={personalitiesCreated}
                 label={t("personalityCTA:created")}
+                onClick={onClickSeeProfile}
+                isFormSubmitted={isFormSubmitted}
             />
             <PersonalitySearchResultSection
                 selectPersonality={selectPersonality}
                 personalities={personalitiesAvailable}
                 label={t("personalityCTA:available")}
+                onClick={createPersonality}
+                isFormSubmitted={isFormSubmitted}
             />
         </Row>
     );
