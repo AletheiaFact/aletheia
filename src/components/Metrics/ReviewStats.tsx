@@ -13,8 +13,6 @@ const ReviewStats = (props) => {
     const remainingReviews = reviews.slice(3);
 
     const reviewStats = props.type === "line" ? firstThreeReviews : reviews;
-    console.log("firsThreeReviews", firstThreeReviews);
-    console.log("reviews", reviews);
     return (
         <>
             {reviews && (
