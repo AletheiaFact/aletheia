@@ -1,9 +1,9 @@
 ### INGRESS FRONTEND ###
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-aletheia
-  namespace: ENVIRONMENT
+  namespace: development
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:
@@ -11,24 +11,30 @@ spec:
     - host: test.aletheiafact.org
       http:
         paths:
-          - path: /
-            backend:
-              serviceName: aletheia
-              servicePort: aletheia
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: aletheia
+              port:
+                name: aletheia
     - host: www.aletheiafact.org
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: aletheia
-              servicePort: aletheia
+              service:
+                name: aletheia
+                port:
+                  name: aletheia
 ---
 ### SERVICE  FRONTEND ###
 apiVersion: v1
 kind: Service
 metadata:
   name: aletheia
-  namespace: ENVIRONMENT
+  namespace: development
 spec:
   type: NodePort
   selector:
@@ -43,7 +49,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: aletheia
-  namespace: ENVIRONMENT
+  namespace: development
 spec:
   replicas: 3
   selector:
@@ -56,7 +62,7 @@ spec:
     spec:
       containers:
         - name: aletheia
-          image: us.gcr.io/aletheia-opentesseract/aletheia:TAG
+          image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:latest
           imagePullPolicy: Always
           readinessProbe:
             httpGet:

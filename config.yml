@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aletheia-config
+  namespace: development
+  uid: f9c04d1d-e06b-4c60-9672-e019264010c8
+  resourceVersion: '14814359'
+  creationTimestamp: '2021-05-23T10:16:09Z'
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"v1","data":{"api_url":"https://aletheiafact.org/api","mongodb_host":"10.128.0.5","mongodb_name":"production","recaptcha_sitekey":"6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":"2021-05-22T19:48:31Z","name":"aletheia-config","namespace":"development","resourceVersion":"14472316","selfLink":"/api/v1/namespaces/default/configmaps/aletheia-config","uid":"d58157ef-faae-455d-a191-6feb86734d10"}}
+  managedFields:
+    - manager: kubectl-create
+      operation: Update
+      apiVersion: v1
+      time: '2021-05-23T10:16:09Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:data:
+          .: {}
+          f:mongodb_host: {}
+          f:recaptcha_sitekey: {}
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:kubectl.kubernetes.io/last-applied-configuration: {}
+    - manager: kubectl-edit
+      operation: Update
+      apiVersion: v1
+      time: '2021-05-23T12:23:37Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:data:
+          f:api_url: {}
+          f:mongodb_name: {}
+  selfLink: /api/v1/namespaces/development/configmaps/aletheia-config
+data:
+  api_url: https://test.aletheiafact.org/api
+  mongodb_host: 10.128.0.5
+  mongodb_name: development
+  recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
+binaryData: {}
