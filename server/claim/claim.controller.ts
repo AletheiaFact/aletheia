@@ -113,7 +113,7 @@ export class ClaimController {
     @Post("api/claim")
     async create(@Body() createClaimDTO: CreateClaimDTO) {
         try {
-            const claim = await this.claimService.create(createClaimDTO);
+            const claim = await this.createClaim(createClaimDTO);
             const personality = await this.personalityService.getById(
                 claim.personalities[0]
             );
