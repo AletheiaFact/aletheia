@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Col, Divider, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties } from "react";
 
 import colors from "../../styles/colors";
 import AletheiaAvatar from "../AletheiaAvatar";

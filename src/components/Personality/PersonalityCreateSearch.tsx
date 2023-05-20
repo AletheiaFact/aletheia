@@ -28,14 +28,16 @@ const PersonalityCreateSearch = ({
             ...personality,
             ...personalityCreated,
         };
-        const createClaim = () => {
+        const createClaim = async () => {
             selectPersonality(newPersonality);
             setIsFormSubmitted(false);
         };
 
         // Redirect to personality list in case _id is not present
         const path = slug ? `/personality/${slug}` : "/personality";
-        selectPersonality !== null ? createClaim() : router.push(path);
+        selectPersonality !== null
+            ? createClaim().catch((e) => e)
+            : router.push(path);
     };
 
     const onClickSeeProfile = () => {
