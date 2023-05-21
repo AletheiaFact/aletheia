@@ -62,7 +62,7 @@ spec:
     spec:
       containers:
         - name: aletheia
-          image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:latest
+          image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:TAG
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
