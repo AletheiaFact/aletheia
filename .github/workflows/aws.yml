@@ -17,10 +17,9 @@ env:
   AWS_SDK_BUCKET: ${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-  ECR_REPOSITORY: aletheiafact-production
   GITHUB_SHA: ${{ github.sha }}
   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-  IMAGE: aletheia
+  IMAGE: aletheiafact-production
   ENVIRONMENT: development
   UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
   MONGODB_URI: ${{ secrets.DEVELOPMENT_MONGODB_URI }}
@@ -133,14 +132,14 @@ jobs:
           docker build --build-arg ENVIRONMENT=$ENVIRONMENT \
             --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
             --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} \
-            -t "$ECR_REGISTRY"/"$ECR_REPOSITORY"/"$IMAGE":"$GITHUB_SHA" .
-          docker tag "$ECR_REGISTRY"/"$ECR_REPOSITORY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$ECR_REPOSITORY"/"$IMAGE":latest
+            -t "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" .
+          docker tag "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$IMAGE":latest
 
       # Push the Docker image to Google Container Registry
       - name: Publish
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY/$IMAGE:$GITHUB_SHA
-          if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$ECR_REGISTRY"/"$ECR_REPOSITORY"/"$IMAGE":latest; fi
+          if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$ECR_REGISTRY"/"$IMAGE":latest; fi
 
       - name: Set deployment.yml
         run: |
