@@ -5,19 +5,22 @@ on:
     branches:
       - master
       - stage
+      - feature/aws-migration
   # For future
   # release:
   #   types: [created]
 
 env:
-  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
-  GKE_EMAIL: ${{ secrets.GKE_EMAIL }}
-  GITHUB_SHA: ${{ github.sha }}
-  GKE_ZONE: us-central1-c
-  GKE_CLUSTER: aletheia
-  IMAGE: aletheia
-  REGISTRY_HOSTNAME: us.gcr.io
   API_URL: ${{ secrets.API_URL }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.DEVELOPMENT_AWS_ACCESS_KEY_ID }}
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_SDK_BUCKET: ${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVELOPMENT_AWS_SECRET_ACCESS_KEY }}
+  ECR_REGISTRY: ${{ secrets.GKE_PROJECT }}
+  ECR_REPOSITORY: aletheia-production
+  GITHUB_SHA: ${{ github.sha }}
+  KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+  IMAGE: aletheia
   ENVIRONMENT: development
   UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
   MONGODB_URI: ${{ secrets.DEVELOPMENT_MONGODB_URI }}
@@ -26,9 +29,7 @@ env:
   ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
   ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
   RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
-  AWS_SDK_BUCKET: ${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.DEVELOPMENT_AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVELOPMENT_AWS_SECRET_ACCESS_KEY }}
+
   GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
   GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
   # Needed env variables for first build on next
@@ -73,20 +74,16 @@ jobs:
           sed -i "s/ORY_ACCESS_TOKEN_STUB/$ORY_ACCESS_TOKEN/g" deployment.yml
 
 
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v1'
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
+          aws-region: $AWS_DEFAULT_REGION
 
-      # Setup gcloud CLI
-      - uses: google-github-actions/setup-gcloud@v1
-        with:
-          version: "412.0.0"
-          install_components: "gke-gcloud-auth-plugin"
-
-      # Configure docker to use the gcloud command-line tool as a credential helper
-      - run: gcloud auth configure-docker
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
       # Setting up config.yaml based on environment
       - name: Set config.yaml
@@ -136,20 +133,20 @@ jobs:
           docker build --build-arg ENVIRONMENT=$ENVIRONMENT \
             --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
             --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} \
-            -t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" .
-          docker tag "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest
+            -t "$ECR_REGISTRY"/"$ECR_REPOSITORY"/"$IMAGE":"$GITHUB_SHA" .
+          docker tag "$ECR_REGISTRY"/"$ECR_REPOSITORY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$ECR_REPOSITORY"/"$IMAGE":latest
 
       # Push the Docker image to Google Container Registry
       - name: Publish
         run: |
-          docker push $REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
-          if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":latest; fi
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY/$IMAGE:$GITHUB_SHA
+          if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$ECR_REGISTRY"/"$ECR_REPOSITORY"/"$IMAGE":latest; fi
 
-      # Deploy the Docker image to the GKE cluster
-      - name: Deploy
-        env:
-            USE_GKE_GCLOUD_AUTH_PLUGIN: true
+      - name: Set deployment.yml
         run: |
-          gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
           sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
-          kubectl apply -f deployment.yml
+
+      - name: Deploy
+        uses: appleboy/kubectl@master
+        with:
+          args: apply -f deployment.yml
