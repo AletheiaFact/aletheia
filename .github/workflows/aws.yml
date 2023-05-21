@@ -12,11 +12,11 @@ on:
 
 env:
   API_URL: ${{ secrets.API_URL }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.DEVELOPMENT_AWS_ACCESS_KEY_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_DEFAULT_REGION: us-east-1
   AWS_SDK_BUCKET: ${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVELOPMENT_AWS_SECRET_ACCESS_KEY }}
-  ECR_REGISTRY: ${{ secrets.GKE_PROJECT }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
   ECR_REPOSITORY: aletheia-production
   GITHUB_SHA: ${{ github.sha }}
   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
