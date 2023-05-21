@@ -17,7 +17,7 @@ env:
   AWS_SDK_BUCKET: ${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-  ECR_REPOSITORY: aletheia-production
+  ECR_REPOSITORY: aletheiafact-production
   GITHUB_SHA: ${{ github.sha }}
   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
   IMAGE: aletheia
