@@ -138,7 +138,7 @@ jobs:
       # Push the Docker image to Google Container Registry
       - name: Publish
         run: |
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY/$IMAGE:$GITHUB_SHA
+          docker push $ECR_REGISTRY/$IMAGE:$GITHUB_SHA
           if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$ECR_REGISTRY"/"$IMAGE":latest; fi
 
       - name: Set deployment.yml
