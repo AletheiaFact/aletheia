@@ -146,7 +146,14 @@ jobs:
         run: |
           sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
 
-      - name: Deploy
-        uses: appleboy/kubectl@master
+      - name: deploy to cluster
+        uses: kodermax/kubectl-aws-eks@master
+        env:
+          KUBE_CONFIG_DATA: $KUBE_CONFIG
+          ECR_REGISTRY: $ECR_REGISTRY
+          ECR_REPOSITORY: $ECR_REPOSITORY
+          IMAGE_TAG: $GITHUB_SHA
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
         with:
-          args: apply -f deployment.yml
+          args: set image deployment/$ECR_REPOSITORY $ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
