@@ -204,6 +204,7 @@ const ClaimReviewHeader = ({
                             }}
                         >
                             <TopicInput
+                                contentModel={claim.contentModel}
                                 data_hash={content.data_hash}
                                 topics={content.topics}
                             />

@@ -19,6 +19,8 @@ import SourcesList from "../SourcesList";
 import ToggleSection from "../ToggleSection";
 import ClaimSpeechBody from "./ClaimSpeechBody";
 import ReviewedImage from "../ReviewedImage";
+import { useAppSelector } from "../../store/store";
+import ImageApi from "../../api/image";
 
 const { Title, Paragraph } = Typography;
 
@@ -30,6 +32,7 @@ const ClaimView = ({ personality, claim, href }) => {
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     let date = moment(new Date(claim.date));
     const sources = claim?.sources?.map((source) => source.link);
+    const { selectedContent } = useAppSelector((state) => state);
 
     const imageUrl = claimContent.content;
     const paragraphs = Array.isArray(claimContent)
@@ -51,7 +54,12 @@ const ClaimView = ({ personality, claim, href }) => {
         }
     }, [isImage, t]);
 
-    const handleClick = () => {
+    const handleClickOnImage = () => {
+        ImageApi.getImageTopicsByDatahash(selectedContent?.data_hash)
+            .then((image) => {
+                dispatch(actions.setSelectContent(image));
+            })
+            .catch((e) => e);
         dispatch(actions.openReviewDrawer());
     };
 
@@ -161,7 +169,7 @@ const ClaimView = ({ personality, claim, href }) => {
                                                 style={{
                                                     cursor: "pointer",
                                                 }}
-                                                onClick={handleClick}
+                                                onClick={handleClickOnImage}
                                             >
                                                 <ReviewedImage
                                                     imageUrl={imageUrl}

@@ -27,6 +27,11 @@ function SelectOptions({
     const [fetching, setFetching] = useState(false);
     const [options, setOptions] = useState(preloadedOptions);
 
+    const filteredOptions = options.filter(({ value }) => {
+        const slug = value.toLowerCase().replace(" ", "-");
+        return !props?.preloadedTopics.includes(slug || value);
+    });
+
     const { t } = useTranslation();
 
     const getOptions = useMemo(() => {
@@ -47,7 +52,8 @@ function SelectOptions({
             filterOption={false}
             onSearch={getOptions}
             notFoundContent={fetching ? <Loading /> : null}
-            options={options}
+            options={filteredOptions}
+            tokenSeparators={[","]}
             style={{ ...style }}
             value={value}
             loading={loading}

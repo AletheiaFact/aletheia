@@ -13,6 +13,7 @@ interface AutocompleteProps {
     style?: {};
     value?: string[] | any;
     preloadedOptions?: string[];
+    preloadedTopics?: string[];
 }
 
 const Autocomplete = ({
@@ -25,6 +26,7 @@ const Autocomplete = ({
     style = {},
     value = [],
     preloadedOptions = [],
+    preloadedTopics = [],
 }: AutocompleteProps) => {
     const [treatedValue, setTreatedValue] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -69,8 +71,8 @@ const Autocomplete = ({
             style={{ width: "100%", ...style }}
             mode={mode}
             value={treatedValue}
-            preloadedOptions={preloadedOptions}
             loading={isLoading}
+            preloadedTopics={preloadedTopics}
         />
     );
 };
