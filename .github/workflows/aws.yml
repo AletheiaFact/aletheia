@@ -145,19 +145,19 @@ jobs:
         run: |
           sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
 
-      - name: Deploy to AWS EKS
-        run: |
-          docker run --env AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} \
-            --env AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-            --env AWS_DEFAULT_REGION=us-east-1 -v $PWD/deployment.yml:/deployment.yml \
-            giovannirossini/aws-eks:latest apply -f deployment.yml
-
       # - name: Deploy to AWS EKS
-      #   uses: giovannirossini/aws-eks@v0.10-beta
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: 'us-east-1'
-      #     cluster-name: 'production'
-      #     command: |
-      #       kubectl apply -f deployment.yml
+      #   run: |
+      #     docker run --env AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} \
+      #       --env AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+      #       --env AWS_DEFAULT_REGION=us-east-1 -v $PWD/deployment.yml:/deployment.yml \
+      #       giovannirossini/aws-eks:latest apply -f deployment.yml
+
+      - name: Deploy to AWS EKS
+        uses: giovannirossini/aws-eks@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'us-east-1'
+          cluster-name: 'production'
+          command: |
+            kubectl apply -f deployment.yml
