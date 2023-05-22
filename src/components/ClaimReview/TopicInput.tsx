@@ -10,6 +10,7 @@ import AletheiaButton from "../Button";
 import TagsList from "./TagsList";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
+import { AutoCompleteType } from "../Form/FormField";
 
 const TopicInput = ({ data_hash, topics }) => {
     const { t } = useTranslation();
@@ -113,6 +114,7 @@ const TopicInput = ({ data_hash, topics }) => {
                                     setInputValue(value);
                                     setCurrentInputValue(value);
                                 }}
+                                type={AutoCompleteType.INPUT_TOPIC}
                                 mode="tags"
                                 dataLoader={fetchTopicList}
                                 style={{

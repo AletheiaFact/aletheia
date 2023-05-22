@@ -21,6 +21,7 @@ function SelectOptions({
     style,
     value,
     preloadedOptions = [],
+    loading,
     ...props
 }) {
     const [fetching, setFetching] = useState(false);
@@ -49,6 +50,7 @@ function SelectOptions({
             options={options}
             style={{ ...style }}
             value={value}
+            loading={loading}
             {...props}
         />
     );

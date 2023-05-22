@@ -4,6 +4,7 @@ import ClaimReviewSelect from "./ClaimReviewSelect";
 import TextArea from "../TextArea";
 import AutoComplete from "./Autocomplete";
 import InputTextList from "../InputTextList";
+import { AutoCompleteType } from "./FormField";
 
 interface DynamicInputProps {
     fieldName: string;
@@ -39,6 +40,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     dataCy={props["data-cy"]}
                     dataLoader={props.extraProps.dataLoader}
                     value={props.value}
+                    type={AutoCompleteType.INPUT_SEARCH}
                     mode={props.extraProps.mode}
                     preloadedOptions={props.extraProps.preloadedOptions}
                 />

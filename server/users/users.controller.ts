@@ -166,4 +166,12 @@ export class UsersController {
     public async getAll(@Query() getUsers) {
         return this.usersService.findAll(getUsers);
     }
+
+    @IsPublic()
+    @Get("api/user/:id")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getUser(@Param("id") userId) {
+        const value = Types.ObjectId(userId);
+        return this.usersService.getById(value);
+    }
 }
