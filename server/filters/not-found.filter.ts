@@ -18,7 +18,7 @@ export class NotFoundFilter implements ExceptionFilter {
         const status = exception.getStatus();
 
         const url = request.originalUrl;
-        const isApiRequest = request.headers["x-api-request"] === "true";
+        const isApiRequest = url.startsWith("/api");
 
         if (isApiRequest) {
             this.logger.log(`API URL not found: ${url}`);
