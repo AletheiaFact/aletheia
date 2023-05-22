@@ -135,11 +135,12 @@ export const transitionHandler = (state) => {
     } = state.event;
     const event = state.event.type;
 
-    if (event === Events.goback || event === Events.reject) {
-        const nextState =
-            typeof state.value !== "string"
-                ? Object.keys(state.value)[0]
-                : state.value;
+    const nextState =
+        typeof state.value !== "string"
+            ? Object.keys(state.value)[0]
+            : state.value;
+
+    if (event === Events.reject) {
         setCurrentFormAndNextEvents(nextState);
     } else if (event !== Events.init) {
         api.createClaimReviewTask(
@@ -158,7 +159,9 @@ export const transitionHandler = (state) => {
             event
         )
             .then(() => {
-                setCurrentFormAndNextEvents(event);
+                return event === Events.goback
+                    ? setCurrentFormAndNextEvents(nextState)
+                    : setCurrentFormAndNextEvents(event);
             })
             .catch((e) => {
                 // TODO: Track errors with Sentry
