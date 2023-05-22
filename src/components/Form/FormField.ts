@@ -12,11 +12,6 @@ export type FormField = {
     extraProps?: FormFieldExtraProps;
 };
 
-export enum AutoCompleteType {
-    INPUT_SEARCH,
-    INPUT_TOPIC,
-}
-
 // Use to add properties specific to one type of field
 type FormFieldExtraProps = {
     dataLoader?: (value: string, t: any) => Promise<any>;

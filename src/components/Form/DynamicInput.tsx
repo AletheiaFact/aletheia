@@ -2,9 +2,8 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import ClaimReviewSelect from "./ClaimReviewSelect";
 import TextArea from "../TextArea";
-import AutoComplete from "./Autocomplete";
 import InputTextList from "../InputTextList";
-import { AutoCompleteType } from "./FormField";
+import UserInput from "./UserInput";
 
 interface DynamicInputProps {
     fieldName: string;
@@ -34,13 +33,12 @@ const DynamicInput = (props: DynamicInputProps) => {
             );
         case "inputSearch":
             return (
-                <AutoComplete
+                <UserInput
                     placeholder={t(props.placeholder)}
                     onChange={props.onChange}
                     dataCy={props["data-cy"]}
                     dataLoader={props.extraProps.dataLoader}
                     value={props.value}
-                    type={AutoCompleteType.INPUT_SEARCH}
                     mode={props.extraProps.mode}
                     preloadedOptions={props.extraProps.preloadedOptions}
                 />

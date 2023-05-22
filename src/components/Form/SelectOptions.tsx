@@ -21,7 +21,8 @@ function SelectOptions({
     style,
     value,
     preloadedOptions = [],
-    loading,
+    preloadedTopics = [],
+    loading = false,
     ...props
 }) {
     const [fetching, setFetching] = useState(false);
@@ -56,7 +57,6 @@ function SelectOptions({
             tokenSeparators={[","]}
             style={{ ...style }}
             value={value}
-            loading={loading}
             {...props}
         />
     );

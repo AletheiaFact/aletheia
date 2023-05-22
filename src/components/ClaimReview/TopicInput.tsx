@@ -10,7 +10,6 @@ import AletheiaButton from "../Button";
 import TagsList from "./TagsList";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
-import { AutoCompleteType } from "../Form/FormField";
 import { ContentModelEnum } from "../../types/enums";
 import ImageApi from "../../api/image";
 
@@ -131,7 +130,6 @@ const TopicInput = ({ contentModel, data_hash, topics }) => {
                                     setInputValue(value);
                                     setCurrentInputValue(value);
                                 }}
-                                type={AutoCompleteType.INPUT_TOPIC}
                                 mode="tags"
                                 dataLoader={fetchTopicList}
                                 style={{
