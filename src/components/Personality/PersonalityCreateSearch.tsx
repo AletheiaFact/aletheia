@@ -38,7 +38,7 @@ const PersonalityCreateSearch = ({
         if (selectPersonality !== null) {
             createClaim();
         } else {
-            router.push(path);
+            router.push(path).catch((e) => e);
         }
     };
 
