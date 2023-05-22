@@ -14,9 +14,10 @@ const Editor = dynamic<IEditorProps>(
 
 const DebateEditor: NextPage<{ data: string }> = ({
     claim,
+    sitekey,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     // @ts-ignore
-    return <Editor claim={claim} />;
+    return <Editor claim={claim} sitekey={sitekey} />;
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {
@@ -25,6 +26,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             claim: JSON.parse(JSON.stringify(query?.claim)),
+            sitekey: query.sitekey,
         },
     };
 }

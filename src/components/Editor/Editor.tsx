@@ -13,6 +13,8 @@ import { EditorContent } from "./EditorContent";
 import Button, { ButtonType } from "../Button";
 import { useTranslation } from "next-i18next";
 import claimApi from "../../api/claim";
+import { useDispatch } from "react-redux";
+import { ActionTypes } from "../../store/types";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
@@ -20,9 +22,11 @@ const extensions = () => [
 
 export interface IEditorProps {
     claim: any;
+    sitekey: string;
 }
 
-const Editor = ({ claim }: IEditorProps) => {
+const Editor = ({ claim, sitekey }: IEditorProps) => {
+    const dispatch = useDispatch();
     const { t } = useTranslation();
     const personalities = claim.personalities;
     const { manager, state } = useRemirror({
@@ -30,6 +34,16 @@ const Editor = ({ claim }: IEditorProps) => {
         content: claim?.editor?.editorContentObject,
         stringHandler: "html",
     });
+
+    dispatch({
+        type: ActionTypes.SET_SELECTED_CLAIM,
+        selectedClaim: claim,
+    });
+    dispatch({
+        type: ActionTypes.SET_SITEKEY,
+        sitekey,
+    });
+
     const [debate, setDebate] = useAtom(debateAtom);
     const isLive = debate.isLive;
 
