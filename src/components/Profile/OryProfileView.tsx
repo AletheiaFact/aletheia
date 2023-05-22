@@ -84,16 +84,22 @@ const OryProfileView = ({ user }) => {
                     {t("profile:badgesTitle")}
                 </Typography.Title>
 
-                <Grid container spacing={1} mt={1} mb={3}>
-                    {user.badges?.map((badge) => (
-                        <Grid item key={badge._id}>
-                            <Avatar
-                                src={badge.image.content}
-                                title={badge.name}
-                            />
-                        </Grid>
-                    ))}
-                </Grid>
+                {user.badges.length > 0 ? (
+                    <Grid container spacing={1} mt={1} mb={3}>
+                        {user.badges?.map((badge) => (
+                            <Grid item key={badge._id}>
+                                <Avatar
+                                    src={badge.image.content}
+                                    title={badge.name}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                ) : (
+                    <Typography.Text>
+                        {t("profile:emptyBadges")}
+                    </Typography.Text>
+                )}
 
                 <Typography.Title level={4}>
                     {t("profile:changePasswordSectionTitle")}
