@@ -11,7 +11,7 @@ interface AutocompleteProps {
     type: AutoCompleteType;
     mode?: string;
     style?: {};
-    value?: string[] | any;
+    value?: any;
     preloadedOptions?: string[];
     preloadedTopics?: string[];
 }
@@ -50,7 +50,6 @@ const Autocomplete = ({
                     setTreatedValue(treatedValues);
                 } catch (error) {
                     console.error(error);
-                    setTreatedValue(value);
                 } finally {
                     setIsLoading(false);
                 }
@@ -59,7 +58,10 @@ const Autocomplete = ({
             }
         };
 
-        fetchUserNames();
+        fetchUserNames().catch((error) => {
+            console.error(error);
+            setIsLoading(false);
+        });
     }, [value, type]);
 
     return (
