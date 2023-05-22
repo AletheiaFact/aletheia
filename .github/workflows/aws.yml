@@ -73,84 +73,91 @@ jobs:
           sed -i "s/ORY_ACCESS_TOKEN_STUB/$ORY_ACCESS_TOKEN/g" deployment.yml
 
 
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: us-east-1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-      # - name: Login to Amazon ECR
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-      # # Setting up config.yaml based on environment
-      # - name: Set config.yaml
-      #   env:
-      #       RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
-      #   run: |
-      #       sed -i "s/ENV/$ENVIRONMENT/g" config.$ENVIRONMENT.yaml
-      #       sed -i "s%RECAPTCHA_SECRET%$RECAPTCHA_SECRET%g" config.$ENVIRONMENT.yaml
-      #       sed -i "s%MONGODB_URI%$MONGODB_URI%g" config.$ENVIRONMENT.yaml
-      #       sed -i "s%ORY_SDK_URL%$ORY_SDK_URL%g" config.$ENVIRONMENT.yaml
-      #       sed -i "s%GITLAB_FEATURE_FLAG_URL%$GITLAB_FEATURE_FLAG_URL%g" config.$ENVIRONMENT.yaml
-      #       sed -i "s%GITLAB_FEATURE_FLAG_INSTANCE_ID%$GITLAB_FEATURE_FLAG_INSTANCE_ID%g" config.$ENVIRONMENT.yaml
-      #       sed -i "s/ORY_ACCESS_TOKEN/$ORY_ACCESS_TOKEN/g" config.$ENVIRONMENT.yaml
-      #       sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.$ENVIRONMENT.yaml
-      #       sed -i "s%AWS_SDK_BUCKET%$AWS_SDK_BUCKET%g" config.$ENVIRONMENT.yaml
-      #       sed -i "s%AWS_ACCESS_KEY_ID%$AWS_ACCESS_KEY_ID%g" config.$ENVIRONMENT.yaml
-      #       sed -i "s%AWS_SECRET_ACCESS_KEY%$AWS_SECRET_ACCESS_KEY%g" config.$ENVIRONMENT.yaml
+      # Setting up config.yaml based on environment
+      - name: Set config.yaml
+        env:
+            RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
+        run: |
+            sed -i "s/ENV/$ENVIRONMENT/g" config.$ENVIRONMENT.yaml
+            sed -i "s%RECAPTCHA_SECRET%$RECAPTCHA_SECRET%g" config.$ENVIRONMENT.yaml
+            sed -i "s%MONGODB_URI%$MONGODB_URI%g" config.$ENVIRONMENT.yaml
+            sed -i "s%ORY_SDK_URL%$ORY_SDK_URL%g" config.$ENVIRONMENT.yaml
+            sed -i "s%GITLAB_FEATURE_FLAG_URL%$GITLAB_FEATURE_FLAG_URL%g" config.$ENVIRONMENT.yaml
+            sed -i "s%GITLAB_FEATURE_FLAG_INSTANCE_ID%$GITLAB_FEATURE_FLAG_INSTANCE_ID%g" config.$ENVIRONMENT.yaml
+            sed -i "s/ORY_ACCESS_TOKEN/$ORY_ACCESS_TOKEN/g" config.$ENVIRONMENT.yaml
+            sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.$ENVIRONMENT.yaml
+            sed -i "s%AWS_SDK_BUCKET%$AWS_SDK_BUCKET%g" config.$ENVIRONMENT.yaml
+            sed -i "s%AWS_ACCESS_KEY_ID%$AWS_ACCESS_KEY_ID%g" config.$ENVIRONMENT.yaml
+            sed -i "s%AWS_SECRET_ACCESS_KEY%$AWS_SECRET_ACCESS_KEY%g" config.$ENVIRONMENT.yaml
 
-      # - name: Set migrate-mongo-config.ts
-      #   run: |
-      #       sed -i "s%MONGODB_URI%$MONGODB_URI%g" migrate-mongo-config-example.ts
-      #       sed -i "s%MONGODB_NAME%$MONGODB_NAME%g" migrate-mongo-config-example.ts
+      - name: Set migrate-mongo-config.ts
+        run: |
+            sed -i "s%MONGODB_URI%$MONGODB_URI%g" migrate-mongo-config-example.ts
+            sed -i "s%MONGODB_NAME%$MONGODB_NAME%g" migrate-mongo-config-example.ts
 
-      # # Setting user seed config
-      # - name: Set config.seed.example.yaml
-      #   env:
-      #       SMTP_HOST: ${{ secrets.SMTP_HOST }}
-      #       SMTP_PORT: ${{ secrets.SMTP_PORT }}
-      #       SMTP_EMAIL_USER: ${{ secrets.SMTP_EMAIL_USER }}
-      #       SMTP_EMAIL_PASS: ${{ secrets.SMTP_EMAIL_PASS }}
-      #       TEST_USER_PASS: ${{ secrets.TEST_USER_PASS }}
+      # Setting user seed config
+      - name: Set config.seed.example.yaml
+        env:
+            SMTP_HOST: ${{ secrets.SMTP_HOST }}
+            SMTP_PORT: ${{ secrets.SMTP_PORT }}
+            SMTP_EMAIL_USER: ${{ secrets.SMTP_EMAIL_USER }}
+            SMTP_EMAIL_PASS: ${{ secrets.SMTP_EMAIL_PASS }}
+            TEST_USER_PASS: ${{ secrets.TEST_USER_PASS }}
 
-      #   run: |
-      #       sed -i "s%SMTP_HOST%$SMTP_HOST%g" config.seed.example.yaml
-      #       sed -i "s%SMTP_PORT%$SMTP_PORT%g" config.seed.example.yaml
-      #       sed -i "s%SMTP_EMAIL_USER%$SMTP_EMAIL_USER%g" config.seed.example.yaml
-      #       sed -i "s%SMTP_EMAIL_PASS%$SMTP_EMAIL_PASS%g" config.seed.example.yaml
-      #       sed -i "s/TEST_USER_PASS/$TEST_USER_PASS/g" config.seed.example.yaml
-      #       sed -i "s%MONGODB_URI%$MONGODB_URI%g" config.seed.example.yaml
-      #       sed -i "s%ORY_SDK_URL%$ORY_SDK_URL%g" config.seed.example.yaml
-      #       sed -i "s/ORY_ACCESS_TOKEN/$ORY_ACCESS_TOKEN/g" config.seed.example.yaml
-      #       sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.seed.example.yaml
+        run: |
+            sed -i "s%SMTP_HOST%$SMTP_HOST%g" config.seed.example.yaml
+            sed -i "s%SMTP_PORT%$SMTP_PORT%g" config.seed.example.yaml
+            sed -i "s%SMTP_EMAIL_USER%$SMTP_EMAIL_USER%g" config.seed.example.yaml
+            sed -i "s%SMTP_EMAIL_PASS%$SMTP_EMAIL_PASS%g" config.seed.example.yaml
+            sed -i "s/TEST_USER_PASS/$TEST_USER_PASS/g" config.seed.example.yaml
+            sed -i "s%MONGODB_URI%$MONGODB_URI%g" config.seed.example.yaml
+            sed -i "s%ORY_SDK_URL%$ORY_SDK_URL%g" config.seed.example.yaml
+            sed -i "s/ORY_ACCESS_TOKEN/$ORY_ACCESS_TOKEN/g" config.seed.example.yaml
+            sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.seed.example.yaml
 
-      # # Build the Docker image
-      # - name: Build
-      #   run: |
-      #     docker build --build-arg ENVIRONMENT=$ENVIRONMENT \
-      #       --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
-      #       --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} \
-      #       -t "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" .
-      #     docker tag "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$IMAGE":latest
+      # Build the Docker image
+      - name: Build
+        run: |
+          docker build --build-arg ENVIRONMENT=$ENVIRONMENT \
+            --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
+            --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} \
+            -t "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" .
+          docker tag "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$IMAGE":latest
 
-      # # Push the Docker image to Google Container Registry
-      # - name: Publish
-      #   run: |
-      #     docker push $ECR_REGISTRY/$IMAGE:$GITHUB_SHA
-      #     if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$ECR_REGISTRY"/"$IMAGE":latest; fi
+      # Push the Docker image to Google Container Registry
+      - name: Publish
+        run: |
+          docker push $ECR_REGISTRY/$IMAGE:$GITHUB_SHA
+          if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$ECR_REGISTRY"/"$IMAGE":latest; fi
 
       - name: Set deployment.yml
         run: |
-          sed -i "s/TAG/54bac796c00c6282827324cf7d0d77711ea1fc60/" deployment.yml
+          sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
 
       - name: Deploy to AWS EKS
-        uses: giovannirossini/aws-eks@v0.10-beta
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'us-east-1'
-          cluster-name: 'production'
-          command: |
-            kubectl apply -f deployment.yml
+        run: |
+          docker run --env AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }} \
+            --env AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            --env AWS_DEFAULT_REGION=us-east-1 -v $PWD/deployment.yml:/deployment.yml \
+            giovannirossini/aws-eks:latest apply -f deployment.yml
+
+      # - name: Deploy to AWS EKS
+      #   uses: giovannirossini/aws-eks@v0.10-beta
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: 'us-east-1'
+      #     cluster-name: 'production'
+      #     command: |
+      #       kubectl apply -f deployment.yml
