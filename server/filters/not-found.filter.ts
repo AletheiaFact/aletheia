@@ -3,18 +3,24 @@ import {
     Catch,
     ExceptionFilter,
     NotFoundException,
+    Logger,
 } from "@nestjs/common";
-import { Response } from "express";
+import { Response, Request } from "express";
 
-/**
- * Filters out not found exceptions and redirect to our custom 404 page, avoiding the default json error message
- */
 @Catch(NotFoundException)
-export class NotFoundFilter<NotFoundException> implements ExceptionFilter {
-    catch(exception: NotFoundException, host: ArgumentsHost) {
-        const context = host.switchToHttp();
-        const response = context.getResponse<Response>();
+export class NotFoundFilter implements ExceptionFilter {
+    private readonly logger = new Logger(NotFoundFilter.name);
 
-        response.redirect("/404");
+    catch(exception: NotFoundException, host: ArgumentsHost) {
+        const ctx = host.switchToHttp();
+        const response = ctx.getResponse<Response>();
+        const request = ctx.getRequest<Request>();
+        const status = exception.getStatus();
+
+        const url = request.originalUrl;
+
+        this.logger.log(`URL not found: ${url}`);
+
+        response.status(status).redirect("/404");
     }
 }
