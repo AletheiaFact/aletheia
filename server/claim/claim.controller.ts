@@ -113,7 +113,7 @@ export class ClaimController {
     @Post("api/claim")
     async create(@Body() createClaimDTO: CreateClaimDTO) {
         try {
-            const claim = await this.createClaim(createClaimDTO);
+            const claim = await this._createClaim(createClaimDTO);
             const personality = await this.personalityService.getById(
                 claim.personalities[0]
             );
@@ -133,7 +133,7 @@ export class ClaimController {
             throw new NotFoundException();
         }
         try {
-            const claim = await this.createClaim(createClaimDTO);
+            const claim = await this._createClaim(createClaimDTO);
 
             const personality = claim.personalities[0]
                 ? await this.personalityService.getById(claim.personalities[0])
@@ -154,7 +154,7 @@ export class ClaimController {
         @Req() req: BaseRequest
     ) {
         try {
-            const claim = await this.createClaim(createClaimDTO);
+            const claim = await this._createClaim(createClaimDTO);
 
             const path =
                 req.user.role === Roles.Admin
@@ -186,7 +186,7 @@ export class ClaimController {
         }
     }
 
-    private async createClaim(createClaimDTO) {
+    private async _createClaim(createClaimDTO) {
         const validateCaptcha = await this.captchaService.validate(
             createClaimDTO.recaptcha
         );
