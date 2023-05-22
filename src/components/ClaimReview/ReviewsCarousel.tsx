@@ -22,9 +22,10 @@ const StyledComment = styled(Comment)`
     }
 `;
 const ReviewsCarousel = () => {
-    const [currIndex, setCurrIndex] = useState(0);
-    const [loading, setLoading] = useState(true);
+    const [currIndex, setCurrIndex] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(true);
     const [reviewsList, setReviewsList] = useState([]);
+    const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false);
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -138,6 +139,8 @@ const ReviewsCarousel = () => {
                                     <AletheiaButton
                                         type={ButtonType.blue}
                                         href={currentReview?.reviewHref}
+                                        onClick={() => setIsButtonLoading(true)}
+                                        loading={isButtonLoading}
                                     >
                                         <span
                                             style={{
