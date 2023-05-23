@@ -27,7 +27,7 @@ const oryGetLoginFlow = ({ router, setFlow, t }) => {
         .catch(handleFlowError(router, "login", setFlow, t));
 };
 
-const orySubmitLogin = ({ router, flow, setFlow, t, values }) => {
+const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
     return ory
         .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
         .then((response) => {
@@ -60,8 +60,11 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values }) => {
                 message.success(t("profile:changesSaved"));
                 return;
             }
-
-            router.push("/");
+            if (shouldGoBack) {
+                router.back();
+            } else {
+                router.push("/");
+            }
         })
         .catch(handleFlowError(router, "login", setFlow, t))
         .catch(() => {

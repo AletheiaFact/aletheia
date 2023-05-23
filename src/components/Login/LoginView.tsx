@@ -21,7 +21,7 @@ import SignUpForm from "./SignUpForm";
 import CTAButton from "../Home/CTAButton";
 import { ButtonType } from "../Button";
 
-const LoginView = ({ isSignUp = false }) => {
+const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
     const [flow, setFlow] = useState<SelfServiceLoginFlow>();
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
@@ -38,11 +38,16 @@ const LoginView = ({ isSignUp = false }) => {
             password,
             password_identifier: email,
         };
-        orySubmitLogin({ router, flow, setFlow, t, values: flowValues }).then(
-            () => {
-                setIsLoading(false);
-            }
-        );
+        orySubmitLogin({
+            router,
+            flow,
+            setFlow,
+            t,
+            values: flowValues,
+            shouldGoBack,
+        }).then(() => {
+            setIsLoading(false);
+        });
     };
 
     const onSubmitTotp = (values: SubmitSelfServiceLoginFlowBody) =>
@@ -54,7 +59,11 @@ const LoginView = ({ isSignUp = false }) => {
                     window.location.href = flow?.return_to;
                     return;
                 }
-                router.push("/");
+                if (shouldGoBack) {
+                    router.back();
+                } else {
+                    router.push("/");
+                }
             })
             .catch(handleFlowError(router, "login", setFlow, t))
             .catch((err: AxiosError) => {
