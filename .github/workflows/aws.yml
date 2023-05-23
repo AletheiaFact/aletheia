@@ -1,4 +1,4 @@
-name: Build and Deploy to GKE
+name: Deploy to AWS EKS
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 env:
   API_URL: ${{ secrets.API_URL }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_DEFAULT_REGION: us-east-1
   AWS_SDK_BUCKET: ${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -37,7 +37,7 @@ env:
 
 jobs:
   setup-build-publish:
-    name: Setup, Build, Publish, and Deploy
+    name: Build & Publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -140,8 +140,9 @@ jobs:
         run: |
           docker push $ECR_REGISTRY/$IMAGE:$GITHUB_SHA
           if [[ "$ENVIRONMENT" == "production" ]]; then docker push "$ECR_REGISTRY"/"$IMAGE":latest; fi
+
   deploy:
-    name: Deploy to AWS EKS
+    name: Deploy
     needs: setup-build-publish
     runs-on: ubuntu-latest
     steps:
@@ -152,33 +153,31 @@ jobs:
         run: |
           sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
 
-      - name: Deploy to AWS EKS
+      - name: Applying Kubernetes Deployment
         uses: giovannirossini/aws-eks@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
           cluster-name: 'production'
-          command: |
-            kubectl apply -f deployment.yml
+          command: kubectl apply -f deployment.yml
 
-      - name: Wait for deployment to finish
+      - name: Validation
         uses: giovannirossini/aws-eks@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
           cluster-name: 'production'
-          command: |
-            kubectl rollout status deployments/aletheia -n $ENVIRONMENT --timeout=120s
+          command: kubectl rollout status deployments/aletheia -n $ENVIRONMENT --timeout=120s
+        if: success()
 
-      - name: Wait for deployment to finish
+      - name: Rollback
         uses: giovannirossini/aws-eks@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
           cluster-name: 'production'
-          command: |
-            kubectl rollout undo deployments/aletheia -n $ENVIRONMENT --timeout=120s
+          command: kubectl rollout undo deployments/aletheia -n $ENVIRONMENT --timeout=120s
         if: failure()
