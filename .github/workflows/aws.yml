@@ -169,7 +169,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
           cluster-name: 'production'
-          command: kubectl rollout status deployments/aletheia -n development --timeout=120s
+          command: kubectl rollout status deployments/aletheia -n development --timeout=240s
         if: success()
 
       - name: Rollback
