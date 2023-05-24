@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Col, Divider, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties } from "react";
 
 import colors from "../../styles/colors";
 import AletheiaAvatar from "../AletheiaAvatar";
@@ -24,7 +24,8 @@ interface PersonalityCardProps {
     hoistAvatar?: boolean;
     style?: CSSProperties;
     selectPersonality?: any;
-    onClick?: (personality: any) => {};
+    isFormSubmitted?: boolean;
+    onClick?: any;
     titleLevel?: 1 | 2 | 3 | 4 | 5;
 }
 
@@ -41,10 +42,9 @@ const PersonalityCard = ({
     onClick,
     titleLevel = 1,
     selectPersonality = null,
+    isFormSubmitted,
 }: PersonalityCardProps) => {
     const isCreatingClaim = selectPersonality !== null;
-
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const { vw } = useAppSelector((state) => state);
     const personalityFoundProps = isCreatingClaim
         ? {
@@ -54,7 +54,10 @@ const PersonalityCard = ({
                   }
               },
           }
-        : { href: `${hrefBase || "/personality/"}${personality.slug}` };
+        : {
+              href: `${hrefBase || "/personality/"}${personality.slug}`,
+              onClick,
+          };
 
     const { t } = useTranslation();
     const componentStyle = {
@@ -278,6 +281,7 @@ const PersonalityCard = ({
                                         type={ButtonType.blue}
                                         data-cy={personality.name}
                                         {...personalityFoundProps}
+                                        disabled={isFormSubmitted}
                                         style={{
                                             fontSize: "12px",
                                             lineHeight: "20px",
@@ -300,7 +304,6 @@ const PersonalityCard = ({
                                         type={ButtonType.blue}
                                         onClick={() => {
                                             if (!isFormSubmitted) {
-                                                setIsFormSubmitted(true);
                                                 onClick(personality);
                                             }
                                         }}
