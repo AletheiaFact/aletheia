@@ -21,6 +21,8 @@ function SelectOptions({
     style,
     value,
     preloadedOptions = [],
+    preloadedTopics = [],
+    loading = false,
     ...props
 }) {
     const [fetching, setFetching] = useState(false);
