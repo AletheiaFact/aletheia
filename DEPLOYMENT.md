@@ -1,0 +1,2 @@
+## Setting up the config files
+NOTICE: config.yml and config.yaml are two different stuff that we need to fix in the future. The first ons is for the k8s deployment and the second is for the Nodejs server.
