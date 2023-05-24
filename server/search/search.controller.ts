@@ -43,9 +43,9 @@ export class SearchController {
             let searchResults;
             if (this.configService.get<string>("db.atlas") && searchText) {
                 //This is necessary cause the page and pageSize logic is applied to 3 different collections
-                const processedPageSize = Math.ceil(pageSize / 3);
+                const processedPageSize = Math.ceil((pageSize || 10) / 3);
                 const skipedDocuments =
-                    page != 1 ? processedPageSize * (page - 1) : 0;
+                    page > 1 ? processedPageSize * (page - 1) : 0;
 
                 const [personalities, sentences, claims] = await Promise.all([
                     this.personalityService.findAll(
