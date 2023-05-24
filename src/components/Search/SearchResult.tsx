@@ -20,7 +20,7 @@ const SearchResult = ({
         if (!avatar) {
             return 22;
         }
-        return vw.xs ? 18 : 20;
+        return vw?.xs ? 18 : 20;
     };
 
     return (
