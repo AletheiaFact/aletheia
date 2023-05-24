@@ -137,6 +137,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Check Environment
+        if: endsWith(github.ref, '/master' || github.ref, '/feature/aws-migration')
+        run: |
+          sed -i '11{s/test.//}' deployment.yml
+          echo "ENVIRONMENT=production" >> $GITHUB_ENV
+          echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
+          echo "MONGODB_URI=${{ secrets.PRODUCTION_MONGODB_URI }}" >> $GITHUB_ENV
+          echo "ORY_SDK_URL=${{ secrets.PRODUCTION_ORY_SDK_URL }}" >> $GITHUB_ENV
+          echo "ORY_ACCESS_TOKEN=${{ secrets.PRODUCTION_ORY_ACCESS_TOKEN }}" >> $GITHUB_ENV
+          echo "ALETHEIA_SCHEMA_ID=${{ secrets.PRODUCTION_ALETHEIA_SCHEMA_ID }}" >> $GITHUB_ENV
+          echo "API_URL=${{ secrets.API_URL_PRODUCTION }}" >> $GITHUB_ENV
+          echo "MONGODB_NAME=${{ secrets.PRODUCTION_MONGODB_NAME }}" >> $GITHUB_ENV
+          echo "AWS_SDK_BUCKET=${{ secrets.PRODUCTION_AWS_SDK_BUCKET }}" >> $GITHUB_ENV
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+
       - name: Set environment
         run: |
           sed -i "s/ENVIRONMENT/${{ env.ENVIRONMENT }}/g" deployment.yml
@@ -165,7 +182,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
           cluster-name: 'production'
-          command: kubectl rollout status deployments/aletheia -n development --timeout=240s
+          command: kubectl rollout status deployments/aletheia -n ${{ env.ENVIRONMENT }} --timeout=240s
         if: success()
 
       - name: Rollback
@@ -175,5 +192,5 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
           cluster-name: 'production'
-          command: kubectl rollout undo deployments/aletheia -n development
+          command: kubectl rollout undo deployments/aletheia -n ${{ env.ENVIRONMENT }}
         if: failure()

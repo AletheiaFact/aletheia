@@ -3,7 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-aletheia
-  namespace: development
+  namespace: ENVIRONMENT
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:
@@ -34,7 +34,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: aletheia
-  namespace: development
+  namespace: ENVIRONMENT
 spec:
   type: NodePort
   selector:
@@ -49,7 +49,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: aletheia
-  namespace: development
+  namespace: ENVIRONMENT
 spec:
   replicas: 1
   selector:
