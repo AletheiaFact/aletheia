@@ -1,7 +1,7 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { ReviewTaskMachineProvider } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import actions from "../../store/actions";
@@ -14,6 +14,7 @@ import LargeDrawer from "../LargeDrawer";
 import { ContentModelEnum } from "../../types/enums";
 
 const ClaimReviewDrawer = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const {
@@ -36,6 +37,9 @@ const ClaimReviewDrawer = () => {
             data_hash: state?.selectedDataHash,
         };
     });
+
+    useEffect(() => setIsLoading(false), [claim, data_hash]);
+
     const isContentImage = claim?.contentModel === ContentModelEnum.Image;
 
     let href = personality
@@ -48,7 +52,7 @@ const ClaimReviewDrawer = () => {
             visible={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
         >
-            {claim && data_hash ? (
+            {claim && data_hash && !isLoading ? (
                 <ReviewTaskMachineProvider data_hash={data_hash}>
                     <Row
                         justify="space-between"
@@ -72,6 +76,7 @@ const ClaimReviewDrawer = () => {
                         <Col>
                             <AletheiaButton
                                 href={href}
+                                onClick={() => setIsLoading(true)}
                                 type={ButtonType.gray}
                                 style={{
                                     textDecoration: "underline",
