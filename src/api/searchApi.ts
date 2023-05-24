@@ -11,7 +11,7 @@ interface SearchOptions {
 
 const request = axios.create({
     withCredentials: true,
-    baseURL: `api/results`,
+    baseURL: `api/search`,
 });
 
 const getResults = (dispatch, options: SearchOptions = {}) => {

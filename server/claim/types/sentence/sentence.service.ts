@@ -103,7 +103,7 @@ export class SentenceService {
                 $facet: {
                     rows: [
                         {
-                            $skip: skipedDocuments,
+                            $skip: skipedDocuments || 0,
                         },
                         {
                             $limit: pageSize,

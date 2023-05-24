@@ -65,7 +65,7 @@ function SearchPageView({ searchText }) {
         try {
             await SearchApi.getResults(dispatch, {
                 type: SearchTypes.AUTOCOMPLETE,
-                page: 0,
+                page: page,
                 pageSize,
                 searchText: term,
             });
@@ -152,12 +152,13 @@ function SearchPageView({ searchText }) {
                     {enableSearchResults && (
                         <>
                             {results.map((result, i) => {
+                                console.log("passing");
                                 const type = [
                                     "personality",
                                     "claim",
                                     "sentence",
                                 ][i];
-                                const key = `searchCard_${i}`;
+                                const key = type + i;
                                 return (
                                     <SearchCard
                                         key={key}

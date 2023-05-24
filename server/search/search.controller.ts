@@ -65,11 +65,17 @@ export class SearchController {
                         skipedDocuments
                     ),
                 ]);
+                const totalPersonalities = personalities?.totalRows || 0;
+                const totalSentences = sentences?.totalRows || 0;
+                const totalClaims = claims?.totalRows || 0;
+
                 const totalResults =
-                    (personalities?.totalRows || 0) +
-                    (sentences?.totalRows || 0) +
-                    (claims?.totalRows || 0);
-                const totalPages = Math.ceil(totalResults / pageSize);
+                    totalPersonalities + totalSentences + totalClaims;
+                const totalPages = Math.max(
+                    Math.ceil(totalPersonalities / processedPageSize) || 0,
+                    Math.ceil(totalSentences / processedPageSize) || 0,
+                    Math.ceil(totalClaims / processedPageSize) || 0
+                );
 
                 searchResults = {
                     personalities: personalities.processedPersonalities,
@@ -79,6 +85,7 @@ export class SearchController {
                     totalPages,
                 };
             } else if (searchText) {
+                //TODO: Create Search Logic for Local Usage
                 searchResults = await this.personalityService.combinedListAll({
                     name: searchText,
                     pageSize,
@@ -104,12 +111,11 @@ export class SearchController {
     }
 
     @IsPublic()
-    @Get("api/results")
+    @Get("api/search")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async listAll(@Query() query, @Req() req) {
-        const { pageSize, searchText, page } = query;
+        const { pageSize, searchText } = query;
         const parsedPageSize = parseInt(pageSize, 10);
-        const parsedPage = parseInt(page, 0);
 
         if (this.configService.get<string>("db.atlas")) {
             return await Promise.all([
@@ -117,17 +123,13 @@ export class SearchController {
                     searchText,
                     parsedPageSize,
                     req.language,
-                    parsedPage
+                    null
                 ),
-                this.sentenceService.findAll(
-                    searchText,
-                    parsedPageSize,
-                    parsedPage
-                ),
+                this.sentenceService.findAll(searchText, parsedPageSize, null),
                 this.claimRevisionService.findAll(
                     searchText,
                     parsedPageSize,
-                    parsedPage
+                    null
                 ),
             ])
                 .then(([personalities, sentences, claims]) => {

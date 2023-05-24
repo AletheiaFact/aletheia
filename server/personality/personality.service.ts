@@ -375,7 +375,7 @@ export class PersonalityService {
                 $facet: {
                     rows: [
                         {
-                            $skip: skipedDocuments,
+                            $skip: skipedDocuments || 0,
                         },
                         {
                             $limit: pageSize,

@@ -125,7 +125,7 @@ export class ClaimRevisionService {
                 $facet: {
                     rows: [
                         {
-                            $skip: skipedDocuments,
+                            $skip: skipedDocuments || 0,
                         },
                         {
                             $limit: pageSize,
