@@ -152,7 +152,6 @@ function SearchPageView({ searchText }) {
                     {enableSearchResults && (
                         <>
                             {results.map((result, i) => {
-                                console.log("passing");
                                 const type = [
                                     "personality",
                                     "claim",
