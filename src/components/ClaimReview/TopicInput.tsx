@@ -27,7 +27,7 @@ const TopicInput = ({ contentModel, data_hash, topics }) => {
     const [duplicatedErrorMessage, setDuplicatedErrorMessage] = useState("");
 
     const fetchTopicList = async (topic) => {
-        const topicSearchResults = await topicApi.getTopics(topic, t);
+        const topicSearchResults = await topicApi.getTopics(null, topic, t);
         return topicSearchResults.map((topic) => ({
             value: topic.name,
         }));

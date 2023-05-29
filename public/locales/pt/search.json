@@ -1,5 +1,9 @@
 {
   "personalityHeaderTitle": "Personalidades",
   "sentenceHeaderTitle": "Sentenças",
-  "claimHeaderTitle": "Afirmações"
+  "claimHeaderTitle": "Afirmações",
+  "searchPageTittle": "Busca",
+  "searchInputLabel": "pesquisar",
+  "advancedSearchLabel": "Pesquisa avançada",
+  "advancedSearchPlaceHolder": "Filtrar por tópicos"
 }

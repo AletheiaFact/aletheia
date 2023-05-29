@@ -41,20 +41,8 @@ export class SentenceService {
         return this.SentenceModel.updateOne({ _id: sentence._id }, newSentence);
     }
 
-    async findAll(searchText, pageSize, skipedDocuments) {
-        const sentences = await this.SentenceModel.aggregate([
-            {
-                $search: {
-                    index: "sentence_fields",
-                    text: {
-                        query: searchText,
-                        path: "content",
-                        fuzzy: {
-                            maxEdits: 2,
-                        },
-                    },
-                },
-            },
+    async findAll(searchText, pageSize, skipedDocuments, filter) {
+        let pipeline: object[] = [
             {
                 $lookup: {
                     from: "paragraphs",
@@ -123,7 +111,45 @@ export class SentenceService {
                     },
                 },
             },
-        ]);
+        ];
+
+        if (searchText) {
+            pipeline.splice(0, 0, {
+                $search: {
+                    index: "sentence_fields",
+                    text: {
+                        query: searchText,
+                        path: "content",
+                        fuzzy: {
+                            maxEdits: 2,
+                        },
+                    },
+                },
+            });
+        } else {
+            pipeline.splice(0, 0, {
+                $search: {
+                    index: "sentence_fields",
+                    text: {
+                        query: filter,
+                        path: "topics",
+                        fuzzy: {
+                            maxEdits: 2,
+                        },
+                    },
+                },
+            });
+        }
+
+        if (filter) {
+            pipeline.splice(1, 0, {
+                $match: {
+                    topics: { $in: Array.isArray(filter) ? filter : [filter] },
+                },
+            });
+        }
+
+        const sentences = await this.SentenceModel.aggregate(pipeline);
 
         return {
             totalRows: sentences[0].totalRows,

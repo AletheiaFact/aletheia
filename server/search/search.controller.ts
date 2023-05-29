@@ -36,35 +36,44 @@ export class SearchController {
         @Res() res: Response,
         @Query("searchText") searchText: string,
         @Query("pageSize") pageSize: number,
-        @Query("page") page: number
+        @Query("page") page: number,
+        @Query("filter") filter: string | Array<string>
     ) {
         try {
             const parsedUrl = parse(req.url, true);
             let searchResults;
-            if (this.configService.get<string>("db.atlas") && searchText) {
+            if (this.configService.get<string>("db.atlas")) {
                 //This is necessary cause the page and pageSize logic is applied to 3 different collections
                 const processedPageSize = Math.ceil((pageSize || 10) / 3);
                 const skipedDocuments =
                     page > 1 ? processedPageSize * (page - 1) : 0;
 
                 const [personalities, sentences, claims] = await Promise.all([
-                    this.personalityService.findAll(
-                        searchText,
-                        processedPageSize,
-                        req.language,
-                        skipedDocuments
-                    ),
-                    this.sentenceService.findAll(
-                        searchText,
-                        processedPageSize,
-                        skipedDocuments
-                    ),
-                    this.claimRevisionService.findAll(
-                        searchText,
-                        processedPageSize,
-                        skipedDocuments
-                    ),
+                    searchText
+                        ? this.personalityService.findAll(
+                              searchText,
+                              processedPageSize,
+                              req.language,
+                              skipedDocuments
+                          )
+                        : Promise.resolve(undefined),
+                    searchText || filter
+                        ? this.sentenceService.findAll(
+                              searchText,
+                              processedPageSize,
+                              skipedDocuments,
+                              filter
+                          )
+                        : Promise.resolve(undefined),
+                    searchText
+                        ? this.claimRevisionService.findAll(
+                              searchText,
+                              processedPageSize,
+                              skipedDocuments
+                          )
+                        : Promise.resolve(undefined),
                 ]);
+
                 const totalPersonalities = personalities?.totalRows || 0;
                 const totalSentences = sentences?.totalRows || 0;
                 const totalClaims = claims?.totalRows || 0;
@@ -78,9 +87,9 @@ export class SearchController {
                 );
 
                 searchResults = {
-                    personalities: personalities.processedPersonalities,
-                    sentences: sentences.processedSentences,
-                    claims: claims.processedRevisions,
+                    personalities: personalities?.processedPersonalities,
+                    sentences: sentences?.processedSentences,
+                    claims: claims?.processedRevisions,
                     totalResults,
                     totalPages,
                 };
@@ -102,6 +111,7 @@ export class SearchController {
                     searchText,
                     pageSize,
                     page,
+                    filter,
                 })
             );
         } catch (error) {
@@ -125,7 +135,12 @@ export class SearchController {
                     req.language,
                     null
                 ),
-                this.sentenceService.findAll(searchText, parsedPageSize, null),
+                this.sentenceService.findAll(
+                    searchText,
+                    parsedPageSize,
+                    null,
+                    null
+                ),
                 this.claimRevisionService.findAll(
                     searchText,
                     parsedPageSize,

@@ -2,6 +2,7 @@ import { Col, Tag } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
+import router from "next/router";
 
 interface TagsListProps {
     tags: string[];
@@ -11,6 +12,13 @@ interface TagsListProps {
 
 const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
     const { t } = useTranslation();
+
+    const handleTagClick = (tag) => {
+        router.push({
+            pathname: "/search",
+            query: { filter: tag },
+        });
+    };
 
     return (
         <Col>
@@ -28,7 +36,9 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                             padding: "4px 10px 2px",
                             marginTop: 4,
                             marginBottom: 4,
+                            cursor: "pointer",
                         }}
+                        onClick={() => handleTagClick(tag)}
                     >
                         {tag.toUpperCase()}
                     </Tag>

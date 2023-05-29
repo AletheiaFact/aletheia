@@ -25,6 +25,9 @@ export enum ActionTypes {
     RESULTS_SEARCH_VISIBLE,
     SET_TOTAL_RESULTS,
     SET_PAGE_SIZE,
+    RESULTS_TOPICS_AUTOCOMPLETE,
+    SET_SEARCH_FILTER,
+    SET_SEARCH_FILTER_USED,
 }
 
 export enum SearchTypes {
@@ -39,11 +42,14 @@ export interface RootState {
     search: {
         resultsVisible: boolean;
         autocompleteResults: any;
+        autocompleteTopicsResults: any;
         overlayVisible: boolean;
         searchResults: any;
         searchTotalPages: any;
         searchCurPage: number;
         searchInput: string;
+        searchFilter: any;
+        searchFilterUsed: any;
         searchPageSize: number;
         totalResults: number;
     };

@@ -41,6 +41,14 @@ const reducer = (state, action) => {
                     autocompleteResults: action.results,
                 },
             };
+        case ActionTypes.RESULTS_TOPICS_AUTOCOMPLETE:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    autocompleteTopicsResults: action.results,
+                },
+            };
         case ActionTypes.RESULTS_SEARCH_VISIBLE:
             return {
                 ...state,
@@ -87,6 +95,22 @@ const reducer = (state, action) => {
                 search: {
                     ...(state?.search || {}),
                     searchInput: action.searchName,
+                },
+            };
+        case ActionTypes.SET_SEARCH_FILTER:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchFilter: action.filters,
+                },
+            };
+        case ActionTypes.SET_SEARCH_FILTER_USED:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchFilterUsed: action.filterUsed,
                 },
             };
         case ActionTypes.SET_LOGIN_STATUS:
