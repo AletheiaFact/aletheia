@@ -14,10 +14,12 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
     const { t } = useTranslation();
 
     const handleTagClick = (tag) => {
-        router.push({
-            pathname: "/search",
-            query: { filter: tag },
-        });
+        router
+            .push({
+                pathname: "/search",
+                query: { filter: tag },
+            })
+            .catch((error) => console.log(`Error: ${error.message}`));
     };
 
     return (
