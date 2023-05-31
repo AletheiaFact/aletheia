@@ -12,6 +12,7 @@ import {
 import { ContentModelEnum } from "../../types/enums";
 import { ImageService } from "../types/image/image.service";
 import { DebateService } from "../types/debate/debate.service";
+import { FindAllOptions } from "personality/personality.service";
 
 @Injectable()
 export class ClaimRevisionService {
@@ -90,7 +91,7 @@ export class ClaimRevisionService {
         return newClaimRevision.save();
     }
 
-    async findAll(searchText, pageSize, skipedDocuments) {
+    async findAll({ searchText, pageSize, skipedDocuments }: FindAllOptions) {
         const aggregationPipeline = [
             {
                 $search: {

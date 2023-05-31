@@ -48,30 +48,72 @@ export class SearchController {
                 const skipedDocuments =
                     page > 1 ? processedPageSize * (page - 1) : 0;
 
+                const findPersonalities = async (
+                    searchText,
+                    processedPageSize,
+                    req,
+                    skipedDocuments
+                ) => {
+                    if (searchText) {
+                        return await this.personalityService.findAll({
+                            searchText,
+                            pageSize: processedPageSize,
+                            language: req.language,
+                            skipedDocuments,
+                        });
+                    } else {
+                        return undefined;
+                    }
+                };
+
+                const findSentences = async (
+                    searchText,
+                    processedPageSize,
+                    skipedDocuments,
+                    filter
+                ) => {
+                    if (searchText || filter) {
+                        return await this.sentenceService.findAll({
+                            searchText,
+                            pageSize: processedPageSize,
+                            skipedDocuments,
+                            filter,
+                        });
+                    } else {
+                        return undefined;
+                    }
+                };
+
+                const findClaims = async (
+                    searchText,
+                    processedPageSize,
+                    skipedDocuments
+                ) => {
+                    if (searchText) {
+                        return await this.claimRevisionService.findAll({
+                            searchText,
+                            pageSize: processedPageSize,
+                            skipedDocuments,
+                        });
+                    } else {
+                        return undefined;
+                    }
+                };
+
                 const [personalities, sentences, claims] = await Promise.all([
-                    searchText
-                        ? this.personalityService.findAll(
-                              searchText,
-                              processedPageSize,
-                              req.language,
-                              skipedDocuments
-                          )
-                        : Promise.resolve(undefined),
-                    searchText || filter
-                        ? this.sentenceService.findAll(
-                              searchText,
-                              processedPageSize,
-                              skipedDocuments,
-                              filter
-                          )
-                        : Promise.resolve(undefined),
-                    searchText
-                        ? this.claimRevisionService.findAll(
-                              searchText,
-                              processedPageSize,
-                              skipedDocuments
-                          )
-                        : Promise.resolve(undefined),
+                    findPersonalities(
+                        searchText,
+                        processedPageSize,
+                        req,
+                        skipedDocuments
+                    ),
+                    findSentences(
+                        searchText,
+                        processedPageSize,
+                        skipedDocuments,
+                        filter
+                    ),
+                    findClaims(searchText, processedPageSize, skipedDocuments),
                 ]);
 
                 const totalPersonalities = personalities?.totalRows || 0;
@@ -129,23 +171,19 @@ export class SearchController {
 
         if (this.configService.get<string>("db.atlas")) {
             return await Promise.all([
-                this.personalityService.findAll(
+                this.personalityService.findAll({
+                    searchText: searchText,
+                    pageSize: parsedPageSize,
+                    language: req.language,
+                }),
+                this.sentenceService.findAll({
                     searchText,
-                    parsedPageSize,
-                    req.language,
-                    null
-                ),
-                this.sentenceService.findAll(
+                    pageSize: parsedPageSize,
+                }),
+                this.claimRevisionService.findAll({
                     searchText,
-                    parsedPageSize,
-                    null,
-                    null
-                ),
-                this.claimRevisionService.findAll(
-                    searchText,
-                    parsedPageSize,
-                    null
-                ),
+                    pageSize: parsedPageSize,
+                }),
             ])
                 .then(([personalities, sentences, claims]) => {
                     return {

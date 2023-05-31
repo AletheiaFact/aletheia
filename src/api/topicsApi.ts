@@ -2,12 +2,18 @@ import axios from "axios";
 import { message } from "antd";
 import { ActionTypes } from "../store/types";
 
+interface IGetTopicsOptions {
+    topicName: string;
+    t: Function;
+    dispatch?: Function;
+}
+
 const request = axios.create({
     withCredentials: true,
     baseURL: `/api/topics`,
 });
 
-const getTopics = (dispatch, topicName, t) => {
+const getTopics = ({ topicName, t, dispatch }: IGetTopicsOptions) => {
     const params = {
         topicName,
     };

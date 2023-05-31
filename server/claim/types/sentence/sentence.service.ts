@@ -4,6 +4,14 @@ import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
 
+interface FindAllOptionsFilters {
+    searchText: string;
+    pageSize: number;
+    language?: string;
+    skipedDocuments?: number;
+    filter?: string | string[];
+}
+
 @Injectable()
 export class SentenceService {
     constructor(
@@ -41,8 +49,51 @@ export class SentenceService {
         return this.SentenceModel.updateOne({ _id: sentence._id }, newSentence);
     }
 
-    async findAll(searchText, pageSize, skipedDocuments, filter) {
-        let pipeline: object[] = [
+    async findAll({
+        searchText,
+        pageSize,
+        skipedDocuments,
+        filter,
+    }: FindAllOptionsFilters) {
+        let pipeline: object[] = [];
+
+        if (searchText) {
+            pipeline.push({
+                $search: {
+                    index: "sentence_fields",
+                    text: {
+                        query: searchText,
+                        path: "content",
+                        fuzzy: {
+                            maxEdits: 2,
+                        },
+                    },
+                },
+            });
+        } else {
+            pipeline.push({
+                $search: {
+                    index: "sentence_fields",
+                    text: {
+                        query: filter,
+                        path: "topics",
+                        fuzzy: {
+                            maxEdits: 2,
+                        },
+                    },
+                },
+            });
+        }
+
+        if (filter) {
+            pipeline.push({
+                $match: {
+                    topics: { $in: Array.isArray(filter) ? filter : [filter] },
+                },
+            });
+        }
+
+        pipeline.push(
             {
                 $lookup: {
                     from: "paragraphs",
@@ -110,44 +161,8 @@ export class SentenceService {
                         $arrayElemAt: ["$totalRows.totalRows", 0],
                     },
                 },
-            },
-        ];
-
-        if (searchText) {
-            pipeline.splice(0, 0, {
-                $search: {
-                    index: "sentence_fields",
-                    text: {
-                        query: searchText,
-                        path: "content",
-                        fuzzy: {
-                            maxEdits: 2,
-                        },
-                    },
-                },
-            });
-        } else {
-            pipeline.splice(0, 0, {
-                $search: {
-                    index: "sentence_fields",
-                    text: {
-                        query: filter,
-                        path: "topics",
-                        fuzzy: {
-                            maxEdits: 2,
-                        },
-                    },
-                },
-            });
-        }
-
-        if (filter) {
-            pipeline.splice(1, 0, {
-                $match: {
-                    topics: { $in: Array.isArray(filter) ? filter : [filter] },
-                },
-            });
-        }
+            }
+        );
 
         const sentences = await this.SentenceModel.aggregate(pipeline);
 

@@ -79,7 +79,7 @@ function SearchPageView({ searchText }) {
             await SearchApi.getResults(dispatch, {
                 type: SearchTypes.AUTOCOMPLETE,
                 page: page,
-                pageSize,
+                pageSize: pageSize,
                 searchText: term,
             });
         } catch (error) {
@@ -127,7 +127,11 @@ function SearchPageView({ searchText }) {
 
     const fetchTopicList = async (term) => {
         try {
-            await topicApi.getTopics(dispatch, term, t);
+            await topicApi.getTopics({
+                topicName: term,
+                t: t,
+                dispatch: dispatch,
+            });
         } catch (error) {
             console.log(`Error: ${error.message}`);
         }
@@ -198,7 +202,6 @@ function SearchPageView({ searchText }) {
                             onSearch={fetchTopicList}
                             options={autoCompleteTopicsResults}
                             handleFilter={handleFilter}
-                            t={t}
                         />
                     </form>
                     {enableSearchResults && (

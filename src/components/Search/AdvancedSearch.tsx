@@ -1,13 +1,10 @@
 import React from "react";
 import { TextField, Autocomplete } from "@mui/material";
+import colors from "../../styles/colors";
+import { useTranslation } from "next-i18next";
 
-const AdvancedSearch = ({
-    onSearch,
-    options,
-    defaltValue,
-    handleFilter,
-    t,
-}) => {
+const AdvancedSearch = ({ onSearch, options, defaltValue, handleFilter }) => {
+    const { t } = useTranslation();
     return (
         <Autocomplete
             multiple
@@ -20,7 +17,7 @@ const AdvancedSearch = ({
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    style={{ backgroundColor: "#f8f9fa" }}
+                    style={{ backgroundColor: colors.lightGray }}
                     label={t("search:advancedSearchLabel")}
                     placeholder={t("search:advancedSearchPlaceHolder")}
                     onChange={(event) => onSearch(event.target.value)}
