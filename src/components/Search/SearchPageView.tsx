@@ -2,9 +2,8 @@ import React from "react";
 import SearchApi from "../../api/searchApi";
 import { Typography } from "antd";
 import Button, { ButtonType } from "../Button";
-import { SearchOutlined } from "@ant-design/icons";
 import { useAppSelector } from "../../store/store";
-import { Grid } from "@mui/material";
+import { Divider, Grid } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { ActionTypes, SearchTypes } from "../../store/types";
 import { useRouter } from "next/router";
@@ -12,29 +11,43 @@ import SearchCard from "./SearchCard";
 import SearchWithAutocomplete from "./AutoCompleteList";
 import { useTranslation } from "next-i18next";
 import PaginationOptions from "./PaginationOptions";
+import topicApi from "../../api/topicsApi";
+import AdvancedSearch from "./AdvancedSearch";
+import SearchIcon from "@mui/icons-material/Search";
 
 function SearchPageView({ searchText }) {
     const dispatch = useDispatch();
     const router = useRouter();
     const { t } = useTranslation();
 
-    const { results, autoCompleteResults, searchName, totalResults } =
-        useAppSelector((state) => {
-            return {
-                results: [
-                    state?.search?.searchResults?.personalities || [],
-                    state?.search?.searchResults?.claims || [],
-                    state?.search?.searchResults?.sentences || [],
-                ],
-                autoCompleteResults: [
-                    state?.search?.autocompleteResults?.personalities || [],
-                    state?.search?.autocompleteResults?.claims || [],
-                    state?.search?.autocompleteResults?.sentences || [],
-                ],
-                searchName: state?.search?.searchInput || null,
-                totalResults: state?.search?.totalResults || 0,
-            };
-        });
+    const {
+        results,
+        autoCompleteResults,
+        autoCompleteTopicsResults,
+        searchName,
+        filters,
+        filtersUsed,
+        totalResults,
+    } = useAppSelector((state) => {
+        return {
+            results: [
+                state?.search?.searchResults?.personalities || [],
+                state?.search?.searchResults?.claims || [],
+                state?.search?.searchResults?.sentences || [],
+            ],
+            autoCompleteResults: [
+                state?.search?.autocompleteResults?.personalities || [],
+                state?.search?.autocompleteResults?.claims || [],
+                state?.search?.autocompleteResults?.sentences || [],
+            ],
+            autoCompleteTopicsResults:
+                state?.search?.autocompleteTopicsResults || [],
+            searchName: state?.search?.searchInput || null,
+            filters: state?.search?.searchFilter || [],
+            filtersUsed: state?.search?.searchFilterUsed || [],
+            totalResults: state?.search?.totalResults || 0,
+        };
+    });
 
     const { page, pageSize, totalPages } = useAppSelector((state) => {
         return {
@@ -66,7 +79,7 @@ function SearchPageView({ searchText }) {
             await SearchApi.getResults(dispatch, {
                 type: SearchTypes.AUTOCOMPLETE,
                 page: page,
-                pageSize,
+                pageSize: pageSize,
                 searchText: term,
             });
         } catch (error) {
@@ -79,9 +92,21 @@ function SearchPageView({ searchText }) {
         router
             .push({
                 pathname: "/search",
-                query: { searchText: searchName, pageSize: pageSize, page: 1 },
+                query: {
+                    searchText: searchName,
+                    pageSize: pageSize,
+                    page: 1,
+                    filter: filters,
+                },
             })
             .catch((error) => console.log(`Error: ${error.message}`));
+    };
+
+    const handleFilter = (newValue) => {
+        dispatch({
+            type: ActionTypes.SET_SEARCH_FILTER,
+            filters: newValue,
+        });
     };
 
     const handleOnChange = async (optionClicked) => {
@@ -92,7 +117,20 @@ function SearchPageView({ searchText }) {
                     searchText: optionClicked,
                     pageSize: pageSize,
                     page: 1,
+                    filter: filters,
                 },
+            });
+        } catch (error) {
+            console.log(`Error: ${error.message}`);
+        }
+    };
+
+    const fetchTopicList = async (term) => {
+        try {
+            await topicApi.getTopics({
+                topicName: term,
+                t: t,
+                dispatch: dispatch,
             });
         } catch (error) {
             console.log(`Error: ${error.message}`);
@@ -123,6 +161,7 @@ function SearchPageView({ searchText }) {
     };
 
     const paginationRequired = pageSize < totalResults;
+
     return (
         <>
             <Grid
@@ -133,9 +172,18 @@ function SearchPageView({ searchText }) {
                 my={2}
             >
                 <Grid item xs={7}>
-                    <Typography.Title level={3}>Busca</Typography.Title>
-                    <form onSubmit={handleSubmit}>
-                        <div style={{ display: "flex" }}>
+                    <Typography.Title level={3}>
+                        {t("search:searchPageTittle")}
+                    </Typography.Title>
+                    <Divider />
+                    <form style={{ width: "50%" }} onSubmit={handleSubmit}>
+                        <div
+                            style={{
+                                display: "flex",
+                                marginBottom: "10px",
+                                marginTop: "10px",
+                            }}
+                        >
                             <SearchWithAutocomplete
                                 value={searchName}
                                 options={filterAutoCompleteResults(
@@ -143,11 +191,18 @@ function SearchPageView({ searchText }) {
                                 )}
                                 handleOnChange={handleOnChange}
                                 onSearch={handleInputSearch}
+                                t={t}
                             />
                             <Button type={ButtonType.blue} htmlType="submit">
-                                <SearchOutlined />
+                                <SearchIcon />
                             </Button>
                         </div>
+                        <AdvancedSearch
+                            defaltValue={filtersUsed}
+                            onSearch={fetchTopicList}
+                            options={autoCompleteTopicsResults}
+                            handleFilter={handleFilter}
+                        />
                     </form>
                     {enableSearchResults && (
                         <>
@@ -176,6 +231,7 @@ function SearchPageView({ searchText }) {
                                     pageSize={pageSize}
                                     totalPages={totalPages}
                                     page={page}
+                                    filters={filters}
                                 />
                             )}
                         </>

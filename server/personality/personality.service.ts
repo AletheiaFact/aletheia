@@ -18,6 +18,13 @@ import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
 
+export interface FindAllOptions {
+    searchText: string;
+    pageSize: number;
+    language?: string;
+    skipedDocuments?: number;
+}
+
 @Injectable({ scope: Scope.REQUEST })
 export class PersonalityService {
     private readonly logger = new Logger("PersonalityService");
@@ -357,7 +364,12 @@ export class PersonalityService {
             .catch((error) => this.logger.error(error));
     }
 
-    async findAll(searchText, pageSize, language, skipedDocuments) {
+    async findAll({
+        searchText,
+        pageSize,
+        language,
+        skipedDocuments,
+    }: FindAllOptions) {
         const personalities = await this.PersonalityModel.aggregate([
             {
                 $search: {

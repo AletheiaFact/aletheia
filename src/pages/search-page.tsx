@@ -12,6 +12,7 @@ const SearchPage: NextPage<any> = ({
     searchText,
     pageSize,
     page,
+    filter,
 }) => {
     const dispatch = useDispatch();
 
@@ -42,6 +43,14 @@ const SearchPage: NextPage<any> = ({
             type: ActionTypes.SET_PAGE_SIZE,
             pageSize: pageSize,
         });
+        dispatch({
+            type: ActionTypes.SET_SEARCH_FILTER_USED,
+            filterUsed: filter,
+        });
+        dispatch({
+            type: ActionTypes.SET_SEARCH_FILTER,
+            filters: filter,
+        });
     }
 
     return (
@@ -66,6 +75,9 @@ export async function getServerSideProps({ locale, locales, req, query }) {
                 ? JSON.parse(JSON.stringify(query.pageSize))
                 : null,
             page: query.page ? JSON.parse(JSON.stringify(query.page)) : null,
+            filter: query.filter
+                ? JSON.parse(JSON.stringify(query.filter))
+                : null,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
         },
     };

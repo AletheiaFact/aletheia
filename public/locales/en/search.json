@@ -1,5 +1,9 @@
 {
   "personalityHeaderTitle": "Personalities",
   "sentenceHeaderTitle": "Sentences",
-  "claimHeaderTitle": "Claims"
+  "claimHeaderTitle": "Claims",
+  "searchPageTittle": "Search",
+  "searchInputLabel": "searching",
+  "advancedSearchLabel": "Advanced search",
+  "advancedSearchPlaceHolder": "Filter by topics"
 }

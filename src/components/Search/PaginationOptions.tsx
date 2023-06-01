@@ -2,7 +2,13 @@ import { useRouter } from "next/router";
 import React from "react";
 import { Pagination, Stack } from "@mui/material";
 
-function PaginationOptions({ pageSize, searchText, totalPages, page }) {
+function PaginationOptions({
+    pageSize,
+    searchText,
+    totalPages,
+    page,
+    filters,
+}) {
     const router = useRouter();
 
     const handlePageSizeChange = (event, value) => {
@@ -13,6 +19,7 @@ function PaginationOptions({ pageSize, searchText, totalPages, page }) {
                     searchText: searchText,
                     pageSize: pageSize,
                     page: value,
+                    filter: filters,
                 },
             })
             .catch((error) => console.log(`Error: ${error.message}`));
