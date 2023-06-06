@@ -52,7 +52,7 @@ const PersonalityCreateSearch = ({
                 "Cache-Control": "no-cache",
             };
 
-            api.getPersonalities(
+            await api.getPersonalities(
                 { withSuggestions, searchName: searchName, i18n, headers },
                 dispatch
             );
