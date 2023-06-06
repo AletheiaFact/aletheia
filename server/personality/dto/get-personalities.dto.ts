@@ -1,4 +1,14 @@
-import { IsAlpha, IsBoolean, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+    IsAlpha,
+    IsBoolean,
+    IsInt,
+    IsNumber,
+    IsObject,
+    IsOptional,
+    IsString,
+    Min,
+    ValidateNested,
+} from "class-validator";
 export class GetPersonalities {
     @IsNumber()
     @IsInt()
@@ -23,4 +33,10 @@ export class GetPersonalities {
     @IsString()
     @IsOptional()
     name?: string;
+
+    @IsObject()
+    @IsOptional()
+    headers?: {
+        [key: string]: string;
+    };
 }

@@ -12,6 +12,7 @@ interface FetchOptions {
     withSuggestions?: boolean;
     fetchOnly?: boolean;
     i18n?: { languages?: any };
+    headers?: { [key: string]: string };
 }
 
 const getPersonalities = (options: FetchOptions, dispatch) => {
@@ -23,9 +24,12 @@ const getPersonalities = (options: FetchOptions, dispatch) => {
         withSuggestions: options.withSuggestions,
         language: options?.i18n?.languages[0] || "pt",
     };
+    const headers = options?.headers || {
+        "Cache-Control": "max-age=60, must-revalidate",
+    };
 
     return axios
-        .get(`${baseUrl}`, { params })
+        .get(`${baseUrl}`, { params: params, headers: headers })
         .then((response) => {
             const { personalities, totalPages, totalPersonalities } =
                 response.data;

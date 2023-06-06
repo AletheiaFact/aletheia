@@ -32,7 +32,6 @@ export class PersonalityController {
 
     @IsPublic()
     @Get("api/personality")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
     async listAll(@Query() getPersonalities: GetPersonalities) {
         return this.personalityService.combinedListAll(getPersonalities);
     }
