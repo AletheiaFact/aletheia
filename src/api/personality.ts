@@ -24,9 +24,7 @@ const getPersonalities = (options: FetchOptions, dispatch) => {
         withSuggestions: options.withSuggestions,
         language: options?.i18n?.languages[0] || "pt",
     };
-    const headers = options?.headers || {
-        "Cache-Control": "max-age=60, must-revalidate",
-    };
+    const headers = options?.headers || {};
 
     return axios
         .get(`${baseUrl}`, { params: params, headers: headers })
