@@ -55,10 +55,6 @@ const SentenceReportContent = ({ context }) => {
                 </Col>
             )}
             <Col span={24}>
-                <Paragraph className="title">
-                    {t("claim:sourceSectionTitle")}
-                </Paragraph>
-
                 {sources && (
                     <SourcesList
                         sources={sources}
