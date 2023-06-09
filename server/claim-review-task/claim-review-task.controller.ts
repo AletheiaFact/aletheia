@@ -48,7 +48,7 @@ export class ClaimReviewController {
                 value,
                 filterUser
             ),
-            this.claimReviewTaskService.count(
+            this.claimReviewTaskService.countReviewTasksNotDeleted(
                 getQueryMatchForMachineValue(value)
             ),
         ]).then(([tasks, totalTasks]) => {

@@ -20,6 +20,11 @@ import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { Roles } from "../auth/ability/ability.factory";
 import { ImageService } from "../claim/types/image/image.service";
 import { ContentModelEnum } from "../types/enums";
+import lookupUsers from "../mongo-pipelines/lookupUsers";
+import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
+import lookupClaims from "../mongo-pipelines/lookupClaims";
+import lookupClaimReviews from "../mongo-pipelines/lookupClaimReviews";
+import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -35,7 +40,32 @@ export class ClaimReviewTaskService {
         private imageService: ImageService
     ) {}
 
-    async listAll(page, pageSize, order, value, filterUser) {
+    _verifyMachineValueAndAddMatchPipeline(pipeline, value) {
+        if (value === "published") {
+            pipeline.push(
+                lookupClaimReviews({
+                    as: "machine.context.claimReview.claimReview",
+                }),
+                { $unwind: "$machine.context.claimReview.claimReview" },
+                {
+                    $match: {
+                        "machine.context.claimReview.claimReview.isDeleted":
+                            false,
+                        "machine.context.claimReview.claim.isDeleted": false,
+                    },
+                }
+            );
+        } else {
+            pipeline.push({
+                $match: {
+                    "machine.context.claimReview.claim.isDeleted": false,
+                },
+            });
+        }
+    }
+
+    _buildPipeline(value, filterUser) {
+        const pipeline = [];
         const query = getQueryMatchForMachineValue(value);
 
         if (filterUser === true) {
@@ -43,35 +73,44 @@ export class ClaimReviewTaskService {
                 Types.ObjectId(this.req.user._id),
             ];
         }
-        const reviewTasks = await this.ClaimReviewTaskModel.find({
-            ...query,
-        })
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .sort({ _id: order })
-            .populate({
-                path: "machine.context.reviewData.usersId",
-                model: "User",
-                select: "name",
+
+        pipeline.push(
+            { $match: query },
+            lookupUsers(),
+            lookUpPersonalityties(),
+            lookupClaims({
+                pipeline: [
+                    { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
+                    lookupClaimRevisions(),
+                    { $unwind: "$latestRevision" },
+                ],
+                as: "machine.context.claimReview.claim",
             })
-            .populate({
-                path: "machine.context.claimReview.personality",
-                model: "Personality",
-                select: "slug name _id",
-            })
-            .populate({
-                path: "machine.context.claimReview.claim",
-                model: "Claim",
-                populate: {
-                    path: "latestRevision",
-                    select: "title contentModel",
-                },
-                select: "slug _id",
-            });
+        );
+
+        this._verifyMachineValueAndAddMatchPipeline(pipeline, value);
+
+        return pipeline;
+    }
+
+    async listAll(page, pageSize, order, value, filterUser) {
+        const pipeline = this._buildPipeline(value, filterUser);
+        pipeline.push(
+            { $sort: { _id: order === "asc" ? 1 : 0 } },
+            { $skip: page * pageSize },
+            { $limit: pageSize }
+        );
+
+        const reviewTasks = await this.ClaimReviewTaskModel.aggregate(
+            pipeline
+        ).exec();
 
         return Promise.all(
-            reviewTasks.map(async ({ data_hash, machine }) => {
-                const { personality, claim }: any = machine.context.claimReview;
+            reviewTasks?.map(async ({ data_hash, machine }) => {
+                const {
+                    personality: [personality],
+                    claim: [claim],
+                }: any = machine.context.claimReview;
                 const { title, contentModel } = claim.latestRevision;
                 const isContentImage = contentModel === ContentModelEnum.Image;
 
@@ -87,7 +126,7 @@ export class ClaimReviewTaskService {
 
                 let reviewHref = contentModelPathMap[contentModel];
 
-                const usersName = machine.context.reviewData.usersId.map(
+                const usersName = machine.context.reviewData.users.map(
                     (user) => {
                         return user.name;
                     }
@@ -340,5 +379,47 @@ export class ClaimReviewTaskService {
 
     count(query: any = {}) {
         return this.ClaimReviewTaskModel.countDocuments().where(query);
+    }
+
+    async countReviewTasksNotDeleted(query: any = {}) {
+        try {
+            const pipeline = [
+                { $match: query },
+                lookupClaimReviews({
+                    as: "machine.context.claimReview.claimReview",
+                }),
+                lookupClaims({
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
+                        { $project: { isDeleted: 1 } },
+                    ],
+                    as: "machine.context.claimReview.claim",
+                }),
+                {
+                    $match: {
+                        "machine.context.claimReview.claimReview.isDeleted": {
+                            $ne: true,
+                        },
+                        "machine.context.claimReview.claim.isDeleted": {
+                            $ne: true,
+                        },
+                    },
+                },
+                { $count: "count" },
+            ];
+
+            const result = await this.ClaimReviewTaskModel.aggregate(
+                pipeline
+            ).exec();
+
+            if (result.length > 0) {
+                return result[0].count;
+            }
+
+            return 0;
+        } catch (error) {
+            console.error("Error in countReviewTasksNotDeleted:", error);
+            throw error;
+        }
     }
 }
