@@ -48,17 +48,15 @@ export async function up(db: Db) {
                                         .findOne({
                                             _id: ObjectId(latestRevision),
                                         });
-                                    await db
-                                        .collection("speeches")
-                                        .updateOne(
-                                            { _id: ObjectId(contentId) },
-                                            {
-                                                $set: {
-                                                    personality:
-                                                        claim.personalities[0],
-                                                },
-                                            }
-                                        );
+                                    await db.collection("speeches").updateOne(
+                                        { _id: ObjectId(contentId) },
+                                        {
+                                            $set: {
+                                                personality:
+                                                    claim.personalities[0],
+                                            },
+                                        }
+                                    );
                                     return contentId;
                                 }
                             })
@@ -87,7 +85,12 @@ export async function up(db: Db) {
                                 .collection("claimreviews")
                                 .updateMany(
                                     { claim: ObjectId(claimId) },
-                                    { $set: { claim: claimRevision.claimId } }
+                                    {
+                                        $set: {
+                                            claim: claimRevision.claimId,
+                                            isDeleted: true,
+                                        },
+                                    }
                                 );
                         });
                     }
@@ -151,6 +154,17 @@ export async function down(db: Db) {
                             .updateOne(
                                 { _id: ObjectId(claimId) },
                                 { $set: { isDeleted: false } }
+                            );
+                        await db
+                            .collection("claimreviews")
+                            .updateMany(
+                                { claim: ObjectId(claimId) },
+                                {
+                                    $set: {
+                                        claim: claimRevision.claimId,
+                                        isDeleted: false,
+                                    },
+                                }
                             );
                     });
                 }
