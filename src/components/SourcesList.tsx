@@ -17,9 +17,6 @@ const SourcesList = ({
 
     return (
         <SourcesListStyle>
-            <Typography.Title level={4}>
-                {t("claim:sourceSectionTitle")}
-            </Typography.Title>
             {sources && (
                 <List
                     dataSource={sources.slice(0, 6)}
