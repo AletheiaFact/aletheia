@@ -138,7 +138,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Check Environment
-        if: endsWith(github.ref, '/master') || endsWith(github.ref, '/feature/aws-migration')
+        if: endsWith(github.ref, '/master')
         run: |
           sed -i '11{s/test.//}' deployment.yml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
