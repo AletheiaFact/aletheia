@@ -9,6 +9,8 @@ import Button, { ButtonType } from "../Button";
 import ReviewStats from "../Metrics/ReviewStats";
 import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 import { useAppSelector } from "../../store/store";
+import { useAtom } from "jotai";
+import { createClaimMachineAtom } from "../../machines/createClaim/provider";
 
 const { Title, Paragraph } = Typography;
 
@@ -45,6 +47,9 @@ const PersonalityCard = ({
     isFormSubmitted,
 }: PersonalityCardProps) => {
     const isCreatingClaim = selectPersonality !== null;
+    const [state] = useAtom(createClaimMachineAtom);
+    const { claimData } = state.context;
+    const { personalities } = claimData;
     const { vw } = useAppSelector((state) => state);
     const personalityFoundProps = isCreatingClaim
         ? {
@@ -58,6 +63,10 @@ const PersonalityCard = ({
               href: `${hrefBase || "/personality/"}${personality.slug}`,
               onClick,
           };
+
+    const personalityIsSelected = personalities.some(
+        (item) => item._id === personality._id
+    );
 
     const { t } = useTranslation();
     const componentStyle = {
@@ -281,7 +290,10 @@ const PersonalityCard = ({
                                         type={ButtonType.blue}
                                         data-cy={personality.name}
                                         {...personalityFoundProps}
-                                        disabled={isFormSubmitted}
+                                        disabled={
+                                            isFormSubmitted ||
+                                            personalityIsSelected
+                                        }
                                         style={{
                                             fontSize: "12px",
                                             lineHeight: "20px",
@@ -307,7 +319,10 @@ const PersonalityCard = ({
                                                 onClick(personality);
                                             }
                                         }}
-                                        disabled={isFormSubmitted}
+                                        disabled={
+                                            isFormSubmitted ||
+                                            personalityIsSelected
+                                        }
                                         data-cy={personality.name}
                                         style={{
                                             display: "flex",

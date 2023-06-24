@@ -19,26 +19,45 @@ const PersonalityCreateSearch = ({
     const router = useRouter();
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
+    const { searchName } = useAppSelector((state) => {
+        return { searchName: state?.search?.searchInput || null };
+    });
 
     const createPersonality = async (personality) => {
-        setIsFormSubmitted(!isFormSubmitted);
-        const personalityCreated = await api.createPersonality(personality, t);
-        const { slug } = personalityCreated;
-        const newPersonality = {
-            ...personality,
-            ...personalityCreated,
-        };
-        const createClaim = () => {
-            selectPersonality(newPersonality);
-            setIsFormSubmitted(false);
-        };
+        try {
+            setIsFormSubmitted(!isFormSubmitted);
+            const personalityCreated = await api.createPersonality(
+                personality,
+                t
+            );
+            const { slug } = personalityCreated;
+            const newPersonality = {
+                ...personality,
+                ...personalityCreated,
+            };
+            const createClaim = () => {
+                selectPersonality(newPersonality);
+                setIsFormSubmitted(false);
+            };
 
-        // Redirect to personality list in case _id is not present
-        const path = slug ? `/personality/${slug}` : "/personality";
-        if (selectPersonality !== null) {
-            createClaim();
-        } else {
-            router.push(path).catch((e) => e);
+            // Redirect to personality list in case _id is not present
+            const path = slug ? `/personality/${slug}` : "/personality";
+            if (selectPersonality !== null) {
+                createClaim();
+            } else {
+                router.push(path).catch((e) => e);
+            }
+
+            const headers = {
+                "Cache-Control": "no-cache",
+            };
+
+            await api.getPersonalities(
+                { withSuggestions, searchName: searchName, i18n, headers },
+                dispatch
+            );
+        } catch (e) {
+            console.log(e);
         }
     };
 
