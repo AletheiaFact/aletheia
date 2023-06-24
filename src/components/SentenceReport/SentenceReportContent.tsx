@@ -55,15 +55,16 @@ const SentenceReportContent = ({ context }) => {
                 </Col>
             )}
             <Col span={24}>
-                <Paragraph className="title">
-                    {t("claim:sourceSectionTitle")}
-                </Paragraph>
-
                 {sources && (
-                    <SourcesList
-                        sources={sources}
-                        seeMoreHref={`${router.asPath}/sources`}
-                    />
+                    <>
+                        <Typography.Title level={4}>
+                            {t("claim:sourceSectionTitle")}
+                        </Typography.Title>
+                        <SourcesList
+                            sources={sources}
+                            seeMoreHref={`${router.asPath}/sources`}
+                        />
+                    </>
                 )}
             </Col>
         </SentenceReportContentStyle>

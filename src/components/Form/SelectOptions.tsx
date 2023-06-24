@@ -30,7 +30,7 @@ function SelectOptions({
 
     const filteredOptions = options.filter(({ value }) => {
         const slug = value.toLowerCase().replace(" ", "-");
-        return !props?.preloadedTopics.includes(slug || value);
+        return !props?.preloadedTopics?.includes(slug || value);
     });
 
     const { t } = useTranslation();
