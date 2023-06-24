@@ -223,10 +223,15 @@ const ClaimView = ({ personality, claim, href }) => {
                                     </Affix>
                                 </Row>
                                 {sources.length > 0 && (
-                                    <SourcesList
-                                        sources={sources}
-                                        seeMoreHref={`${href}/sources`}
-                                    />
+                                    <>
+                                        <Typography.Title level={4}>
+                                            {t("claim:sourceSectionTitle")}
+                                        </Typography.Title>
+                                        <SourcesList
+                                            sources={sources}
+                                            seeMoreHref={`${href}/sources`}
+                                        />
+                                    </>
                                 )}
                             </section>
                             {stats.total !== 0 && (
