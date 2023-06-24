@@ -1,12 +1,8 @@
-import { LinkPreview } from "@dhaiwat10/react-link-preview";
-import { Col, List, Skeleton, Typography } from "antd";
+import { Col, List, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import React from "react";
 
-import colors from "../styles/colors";
 import AletheiaButton, { ButtonType } from "./Button";
-import Paragraph from "./Paragraph";
 
 import { SourcesListStyle } from "./SourcesList.style";
 
@@ -21,60 +17,46 @@ const SourcesList = ({
 
     return (
         <SourcesListStyle>
+            <Typography.Title level={4}>
+                {t("claim:sourceSectionTitle")}
+            </Typography.Title>
             {sources && (
                 <List
-                    itemLayout="horizontal"
                     dataSource={sources.slice(0, 6)}
                     style={{ width: "100%" }}
                     grid={{
                         gutter: 38,
                         xs: 1,
                         sm: 2,
-                        md: 3,
+                        md: 2,
                         lg: 3,
                         xl: 3,
                         xxl: 3,
                     }}
-                    renderItem={(link: any) => {
+                    renderItem={(link, index) => {
                         return (
                             <Col className="source">
-                                <LinkPreview
-                                    url={link}
-                                    borderRadius="10px"
-                                    backgroundColor={colors.white}
-                                    borderColor={colors.blueQuartiary}
-                                    imageHeight="156px"
-                                    height={244}
-                                    secondaryTextColor={colors.grayPrimary}
-                                    fallback={
-                                        <>
-                                            <Skeleton.Image className="source-placeholder-image" />
-                                            <Link href={link}>{link}</Link>
-                                        </>
-                                    }
-                                    showPlaceholderIfNoImage
-                                    width="100%"
-                                    descriptionLength={140}
-                                />
-                                <Paragraph className="source-footer">
-                                    <span>{t("claim:sourceFooter2")}</span>{" "}
+                                <List.Item key={link}>
+                                    {index + 1}.{" "}
                                     <a
-                                        href={`mailto:${t(
-                                            "common:supportEmail"
-                                        )}`}
+                                        href={link}
                                         target="_blank"
-                                        rel="noreferrer"
+                                        rel="noopener noreferrer"
                                     >
-                                        {t("claim:sourceFooterReport")}
+                                        {link}
                                     </a>
-                                </Paragraph>
+                                </List.Item>
                             </Col>
                         );
                     }}
                 />
             )}
-            {sources?.length > 4 && (
-                <AletheiaButton type={ButtonType.blue} href={seeMoreHref}>
+            {sources?.length > 6 && (
+                <AletheiaButton
+                    type={ButtonType.blue}
+                    href={seeMoreHref}
+                    className="all-sources-link-button"
+                >
                     <Typography.Title level={4} className="all-sources-link">
                         {t("claim:seeSourcesButton")}
                     </Typography.Title>

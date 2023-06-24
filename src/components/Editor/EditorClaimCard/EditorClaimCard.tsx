@@ -13,6 +13,8 @@ import Button, { ButtonType } from "../../Button";
 import ClaimCardHeader from "../../Claim/ClaimCardHeader";
 import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
 import ClaimSkeleton from "../../Skeleton/ClaimSkeleton";
+import { useDispatch } from "react-redux";
+import actions from "../../../store/actions";
 
 const EditorClaimCardContent = ({ children }) => {
     return (
@@ -37,6 +39,7 @@ export const EditorClaimCard = ({
     forwardRef,
     node,
 }) => {
+    const dispatch = useDispatch();
     const [speech, setSpeech] = useState(undefined);
     const { t } = useTranslation();
     const [personality, setPersonality] = useState(undefined);
@@ -80,6 +83,10 @@ export const EditorClaimCard = ({
             fetchSpeech(speechId);
         }
     }, [personalityId, speechId, t]);
+
+    const dispatchPersonality = () => {
+        dispatch(actions.setSelectPersonality(personality));
+    };
 
     /**
      * If speech changes from undefined/null to an existing object
@@ -151,6 +158,7 @@ export const EditorClaimCard = ({
                                         : [speech.content]
                                 }
                                 showHighlights={true}
+                                handleSentenceClick={dispatchPersonality}
                             />
                         </EditorClaimCardContent>
                     </div>

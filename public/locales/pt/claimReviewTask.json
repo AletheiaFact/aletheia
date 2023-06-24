@@ -15,6 +15,8 @@
     "PARTIAL_REVIEW_ERROR": "Erro ao salvar resumo",
     "FULL_REVIEW_SUCCESS": "Resumo salvo com sucesso",
     "FULL_REVIEW_ERROR": "Erro ao salvar resumo",
+    "GO_BACK_SUCCESS": "Passo voltado com sucesso",
+    "GO_BACK_ERROR": "Não foi possível voltar",
 
     "ADD_REJECTION_COMMENT": "Enviar comentário",
     "ASSIGN_USER": "Atribuir",

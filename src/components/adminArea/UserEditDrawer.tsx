@@ -52,7 +52,7 @@ const UserEditDrawer = () => {
                   })
                 : []
         );
-    }, [badgesList, currentUser]);
+    }, [visible]);
 
     const handleClickSave = () => {
         const sendBadges = badges.map((badge) => badge._id);
@@ -66,13 +66,12 @@ const UserEditDrawer = () => {
             });
     };
 
+    const onCloseDrawer = () => {
+        setVisible(false);
+    };
+
     return (
-        <LargeDrawer
-            visible={visible}
-            onClose={() => {
-                setVisible(false);
-            }}
-        >
+        <LargeDrawer visible={visible} onClose={onCloseDrawer}>
             <Grid
                 container
                 justifyContent="center"

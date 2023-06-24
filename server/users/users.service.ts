@@ -61,10 +61,14 @@ export class UsersService {
     }
 
     async updateUser(userId, updates: { role?: Roles; badges?: Badge[] }) {
-        const user = this.UserModel.findByIdAndUpdate(userId, updates, {
+        if (updates.role) {
+            const user = await this.getById(userId);
+            await this.oryService.updateUserRole(user, updates.role);
+        }
+        const updatedUser = this.UserModel.findByIdAndUpdate(userId, updates, {
             new: true,
         });
-        this.logger.log(`Updated user ${userId}`);
-        return user;
+        this.logger.log(`Updated user ${userId._id}`);
+        return updatedUser;
     }
 }

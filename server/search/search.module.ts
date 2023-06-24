@@ -4,9 +4,11 @@ import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.modu
 import { PersonalityModule } from "../personality/personality.module";
 import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { SearchController } from "./search.controller";
+import { ViewModule } from "../view/view.module";
 
 @Module({
     imports: [
+        ViewModule,
         SentenceModule,
         PersonalityModule,
         ClaimRevisionModule,

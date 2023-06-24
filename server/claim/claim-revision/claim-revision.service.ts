@@ -12,6 +12,7 @@ import {
 import { ContentModelEnum } from "../../types/enums";
 import { ImageService } from "../types/image/image.service";
 import { DebateService } from "../types/debate/debate.service";
+import { FindAllOptions } from "../../personality/personality.service";
 
 @Injectable()
 export class ClaimRevisionService {
@@ -90,19 +91,19 @@ export class ClaimRevisionService {
         return newClaimRevision.save();
     }
 
-    findAll(searchText, pageSize) {
-        return this.ClaimRevisionModel.aggregate([
+    async findAll({ searchText, pageSize, skipedDocuments }: FindAllOptions) {
+        const aggregationPipeline = [
             {
                 $search: {
                     index: "claimrevisions_fields",
-                    autocomplete: {
+                    text: {
                         query: searchText,
                         path: "title",
+                        fuzzy: {
+                            maxEdits: 2,
+                        },
                     },
                 },
-            },
-            {
-                $limit: parseInt(pageSize, 10),
             },
             {
                 $lookup: {
@@ -115,12 +116,48 @@ export class ClaimRevisionService {
             {
                 $project: {
                     title: 1,
-                    personalities: 1,
+                    "personality.slug": 1,
+                    "personality.name": 1,
                     slug: 1,
                     date: 1,
                 },
             },
-        ]);
+            {
+                $facet: {
+                    rows: [
+                        {
+                            $skip: skipedDocuments || 0,
+                        },
+                        {
+                            $limit: pageSize,
+                        },
+                    ],
+                    totalRows: [
+                        {
+                            $count: "totalRows",
+                        },
+                    ],
+                },
+            },
+            {
+                $set: {
+                    totalRows: {
+                        $arrayElemAt: ["$totalRows.totalRows", 0],
+                    },
+                },
+            },
+        ];
+
+        const [result] = await this.ClaimRevisionModel.aggregate(
+            aggregationPipeline
+        );
+
+        const { rows, totalRows } = result;
+
+        return {
+            totalRows,
+            processedRevisions: rows,
+        };
     }
 
     getByContentId(contentId) {

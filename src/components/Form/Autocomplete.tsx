@@ -9,7 +9,7 @@ interface AutocompleteProps {
     mode?: string;
     style?: {};
     value?: string | string[];
-    preloadedOptions?: string[];
+    preloadedTopics?: string[];
 }
 
 const Autocomplete = ({
@@ -20,7 +20,7 @@ const Autocomplete = ({
     mode = "multiple",
     style = {},
     value = [],
-    preloadedOptions = [],
+    preloadedTopics = [],
 }: AutocompleteProps) => {
     return (
         <SelectOptions
@@ -31,7 +31,7 @@ const Autocomplete = ({
             style={{ width: "100%", ...style }}
             mode={mode}
             value={value}
-            preloadedOptions={preloadedOptions}
+            preloadedTopics={preloadedTopics}
         />
     );
 };

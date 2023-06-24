@@ -10,8 +10,10 @@ import AletheiaButton from "../Button";
 import TagsList from "./TagsList";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
+import { ContentModelEnum } from "../../types/enums";
+import ImageApi from "../../api/image";
 
-const TopicInput = ({ data_hash, topics }) => {
+const TopicInput = ({ contentModel, data_hash, topics }) => {
     const { t } = useTranslation();
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [showTopicsInput, setShowTopicsInput] = useState<boolean>(false);
@@ -25,7 +27,10 @@ const TopicInput = ({ data_hash, topics }) => {
     const [duplicatedErrorMessage, setDuplicatedErrorMessage] = useState("");
 
     const fetchTopicList = async (topic) => {
-        const topicSearchResults = await topicApi.getTopics(topic, t);
+        const topicSearchResults = await topicApi.getTopics({
+            topicName: topic,
+            t: t,
+        });
         return topicSearchResults.map((topic) => ({
             value: topic.name,
         }));
@@ -33,8 +38,16 @@ const TopicInput = ({ data_hash, topics }) => {
 
     const handleClose = async (removedTopic: string) => {
         const newTopics = topicsArray.filter((topic) => topic !== removedTopic);
+        const newInputValue = inputValue.filter(
+            (topic) => topic !== removedTopic
+        );
         setTopicsArray(newTopics);
-        sentenceApi.deleteSentenceTopic(newTopics, data_hash);
+        setInputValue(newInputValue);
+        setCurrentInputValue(newInputValue);
+
+        contentModel === ContentModelEnum.Image
+            ? await ImageApi.deleteImageTopic(newTopics, data_hash)
+            : await sentenceApi.deleteSentenceTopic(newTopics, data_hash);
     };
 
     const getDuplicated = (array1, array2) => {
@@ -53,7 +66,9 @@ const TopicInput = ({ data_hash, topics }) => {
         } else if (inputValue.length) {
             setTopicsArray(tags);
             setCurrentInputValue([]);
-            topicApi.createTopics({ topics: tags, data_hash }, t);
+            topicApi
+                .createTopics({ contentModel, topics: tags, data_hash }, t)
+                .catch((e) => e);
         } else {
             setShowErrorMessage(!showErrorMessage);
         }
@@ -63,7 +78,12 @@ const TopicInput = ({ data_hash, topics }) => {
         duplicated.length > 0
             ? setDuplicatedErrorMessage(duplicated.join(", "))
             : setShowTopicErrorMessage(false);
-        const filterValues = inputValue.filter(
+
+        const inputValueFormatted = inputValue.map((value) =>
+            value.toLowerCase().replace(" ", "-")
+        );
+
+        const filterValues = inputValueFormatted.filter(
             (value) => !topicsArray.includes(value)
         );
         setTags(topicsArray?.concat(filterValues) || []);
@@ -120,6 +140,7 @@ const TopicInput = ({ data_hash, topics }) => {
                                     borderBottomLeftRadius: 4,
                                 }}
                                 value={currentInputValue}
+                                preloadedTopics={topicsArray}
                             />
                             <AletheiaButton
                                 style={{

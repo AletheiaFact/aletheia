@@ -17,12 +17,44 @@ const reducer = (state, action) => {
                 ...state,
                 reviewDrawerCollapsed: action.reviewDrawerCollapsed,
             };
+        case ActionTypes.SET_TOTAL_RESULTS:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    totalResults: action.totalResults,
+                },
+            };
         case ActionTypes.RESULTS_OVERLAY_VISIBLE:
             return {
                 ...state,
                 search: {
                     ...(state?.search || {}),
                     overlayVisible: action.overlayVisible,
+                },
+            };
+        case ActionTypes.RESULTS_AUTOCOMPLETE:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    autocompleteResults: action.results,
+                },
+            };
+        case ActionTypes.RESULTS_TOPICS_AUTOCOMPLETE:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    autocompleteTopicsResults: action.results,
+                },
+            };
+        case ActionTypes.RESULTS_SEARCH_VISIBLE:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    resultsVisible: action.resultsVisible,
                 },
             };
         case ActionTypes.SEARCH_RESULTS:
@@ -49,12 +81,36 @@ const reducer = (state, action) => {
                     searchCurPage: action.page,
                 },
             };
+        case ActionTypes.SET_PAGE_SIZE:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchPageSize: action.pageSize,
+                },
+            };
         case ActionTypes.SET_SEARCH_NAME:
             return {
                 ...state,
                 search: {
                     ...(state?.search || {}),
                     searchInput: action.searchName,
+                },
+            };
+        case ActionTypes.SET_SEARCH_FILTER:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchFilter: action.filters,
+                },
+            };
+        case ActionTypes.SET_SEARCH_FILTER_USED:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchFilterUsed: action.filterUsed,
                 },
             };
         case ActionTypes.SET_LOGIN_STATUS:

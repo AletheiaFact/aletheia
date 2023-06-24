@@ -2,7 +2,7 @@
 
 <p align="center">Plataforma de análise de discursos de personalidades públicas e combate a Fake News.</p>
 
-## Instalação
+## Installation
 
 - Fork this repo and clone it locally:
   ``` sh

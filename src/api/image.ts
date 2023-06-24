@@ -6,6 +6,17 @@ const request = axios.create({
     baseURL: `/api/image`,
 });
 
+const getImageTopicsByDatahash = (data_hash) => {
+    return request
+        .get(`/${data_hash}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            throw err;
+        });
+};
+
 const uploadImage = (files, t) => {
     return request
         .post("/", files)
@@ -31,9 +42,22 @@ const createClaimTypeImage = (file) => {
         });
 };
 
+const deleteImageTopic = (topics, data_hash) => {
+    return request
+        .put(`/${data_hash}`, topics)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            throw err;
+        });
+};
+
 const ImageApi = {
     uploadImage,
     createClaimTypeImage,
+    deleteImageTopic,
+    getImageTopicsByDatahash,
 };
 
 export default ImageApi;

@@ -18,9 +18,10 @@ const StyledColumn = styled.div`
 
 interface KanbanColProps {
     state: ReviewTaskStates;
+    filterUser: boolean;
 }
 
-const KanbanCol = ({ state }: KanbanColProps) => {
+const KanbanCol = ({ state, filterUser }: KanbanColProps) => {
     const { t } = useTranslation();
     return (
         <StyledColumn
@@ -34,7 +35,10 @@ const KanbanCol = ({ state }: KanbanColProps) => {
             <BaseList
                 title={t(`claimReviewTask:${state}`)}
                 apiCall={ClaimReviewTaskApi.getClaimReviewTasks}
-                filter={{ value: state }}
+                filter={{
+                    value: state,
+                    filterUser: filterUser,
+                }}
                 renderItem={(task) => <KanbanCard reviewTask={task} />}
                 emptyFallback={
                     <EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />

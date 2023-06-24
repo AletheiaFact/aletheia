@@ -15,6 +15,8 @@
     "PARTIAL_REVIEW_ERROR": "Error when saving the summary",
     "FULL_REVIEW_SUCCESS": "Summary saved succesfully",
     "FULL_REVIEW_ERROR": "Error when saving the summary",
+    "GO_BACK_SUCCESS": "Successfully turned step",
+    "GO_BACK_ERROR": "It was not possible to return",
 
     "ADD_REJECTION_COMMENT": "Send comment",
     "ASSIGN_USER": "Assign",

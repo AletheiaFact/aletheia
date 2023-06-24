@@ -1,5 +1,5 @@
 ### INGRESS FRONTEND ###
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-aletheia
@@ -11,17 +11,23 @@ spec:
     - host: test.aletheiafact.org
       http:
         paths:
-          - path: /
-            backend:
-              serviceName: aletheia
-              servicePort: aletheia
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: aletheia
+              port:
+                name: aletheia
     - host: www.aletheiafact.org
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: aletheia
-              servicePort: aletheia
+              service:
+                name: aletheia
+                port:
+                  name: aletheia
 ---
 ### SERVICE  FRONTEND ###
 apiVersion: v1
@@ -45,7 +51,7 @@ metadata:
   name: aletheia
   namespace: ENVIRONMENT
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: aletheia
@@ -56,7 +62,7 @@ spec:
     spec:
       containers:
         - name: aletheia
-          image: us.gcr.io/aletheia-opentesseract/aletheia:TAG
+          image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:TAG
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
@@ -93,5 +99,7 @@ spec:
           resources:
             limits:
               cpu: 300m
+              memory: 512Mi
             requests:
               cpu: 250m
+              memory: 256Mi

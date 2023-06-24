@@ -25,7 +25,7 @@ const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
                 const defaultValue = machineValues[fieldName];
 
                 return (
-                    <Row key={index}>
+                    <Row key={fieldName + index}>
                         <Col span={24}>
                             <h4
                                 style={{

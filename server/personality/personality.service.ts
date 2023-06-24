@@ -18,6 +18,13 @@ import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
 
+export interface FindAllOptions {
+    searchText: string;
+    pageSize: number;
+    language?: string;
+    skipedDocuments?: number;
+}
+
 @Injectable({ scope: Scope.REQUEST })
 export class PersonalityService {
     private readonly logger = new Logger("PersonalityService");
@@ -357,24 +364,58 @@ export class PersonalityService {
             .catch((error) => this.logger.error(error));
     }
 
-    async findAll(searchText, pageSize, language) {
+    async findAll({
+        searchText,
+        pageSize,
+        language,
+        skipedDocuments,
+    }: FindAllOptions) {
         const personalities = await this.PersonalityModel.aggregate([
             {
                 $search: {
                     index: "personality_fields",
-                    autocomplete: {
+                    text: {
                         query: searchText,
                         path: "name",
+                        fuzzy: {
+                            maxEdits: 2,
+                        },
                     },
                 },
             },
-            { $limit: parseInt(pageSize, 10) },
+            {
+                $facet: {
+                    rows: [
+                        {
+                            $skip: skipedDocuments || 0,
+                        },
+                        {
+                            $limit: pageSize,
+                        },
+                    ],
+                    totalRows: [
+                        {
+                            $count: "totalRows",
+                        },
+                    ],
+                },
+            },
+            {
+                $set: {
+                    totalRows: {
+                        $arrayElemAt: ["$totalRows.totalRows", 0],
+                    },
+                },
+            },
         ]);
 
-        return Promise.all(
-            personalities.map(async (personality) => {
-                return await this.postProcess(personality, language);
-            })
-        );
+        return {
+            totalRows: personalities[0].totalRows,
+            processedPersonalities: await Promise.all(
+                personalities[0].rows.map(async (personality) => {
+                    return await this.postProcess(personality, language);
+                })
+            ),
+        };
     }
 }

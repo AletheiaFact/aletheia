@@ -1,5 +1,7 @@
 {
     "pageTitle": "Minha conta",
+    "badgesTitle": "Minhas Conquistas",
+    "emptyBadges": "Você ainda não possui conquistas.", 
     "changePasswordSectionTitle": "Mudar senha",
     "successMessage": "Senha atualizada com sucesso",
     "userUnauthenticated": "Usuário nao autenticado",

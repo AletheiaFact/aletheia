@@ -6,12 +6,15 @@ import LoginView from "../components/Login/LoginView";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 
-const LoginPage: NextPage = () => {
+const LoginPage: NextPage<{ previousUrl: string; host: string }> = ({
+    previousUrl,
+    host,
+}) => {
     const { t } = useTranslation();
     return (
         <>
             <Seo title="Login" description={t("login:formHeader")} />
-            <LoginView />
+            <LoginView shouldGoBack={previousUrl.startsWith(host)} />
         </>
     );
 };
