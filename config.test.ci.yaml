@@ -29,6 +29,8 @@ services:
         options:
           useUnifiedTopology: true
           useNewUrlParser: true
+          retryWrites: true
+          w: majority
       throttle:
         ttl: 60
         limit: 1000
