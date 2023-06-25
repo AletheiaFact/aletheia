@@ -1,9 +1,10 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { SentenceModule } from "../sentence/sentence.module";
+import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { Topic, TopicSchema } from "./schemas/topic.schema";
 import { TopicController } from "./topic.controller";
 import { TopicService } from "./topic.service";
+import { ImageModule } from "../claim/types/image/image.module";
 
 const TopicModel = MongooseModule.forFeature([
     {
@@ -13,7 +14,7 @@ const TopicModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [TopicModel, SentenceModule],
+    imports: [TopicModel, SentenceModule, ImageModule],
     controllers: [TopicController],
     providers: [TopicService],
     exports: [TopicService],

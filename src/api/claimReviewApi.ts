@@ -15,9 +15,9 @@ const getLatestReviews = () => {
         .catch();
 };
 
-const hideReview = (sentence_hash, hide, t, recaptcha, description = "") => {
+const hideReview = (data_hash, hide, t, recaptcha, description = "") => {
     return request
-        .put(`/review/${sentence_hash}`, { hide, description, recaptcha })
+        .put(`/review/${data_hash}`, { hide, description, recaptcha })
         .then((response) => {
             message.success(
                 t(`claimReview:${hide ? "reviewHidded" : "reviewUnhidded"}`)
@@ -29,9 +29,9 @@ const hideReview = (sentence_hash, hide, t, recaptcha, description = "") => {
         });
 };
 
-const getClaimReviewBySentenceHash = (sentenceHash) => {
+const getClaimReviewByHash = (dataHash) => {
     return request
-        .get(`/review/${sentenceHash}`)
+        .get(`/review/${dataHash}`)
         .then((response) => {
             return response.data;
         })
@@ -43,6 +43,6 @@ const getClaimReviewBySentenceHash = (sentenceHash) => {
 const ClaimReviewApi = {
     getLatestReviews,
     hideReview,
-    getClaimReviewByHash: getClaimReviewBySentenceHash,
+    getClaimReviewByHash,
 };
 export default ClaimReviewApi;

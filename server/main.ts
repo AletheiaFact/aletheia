@@ -46,7 +46,6 @@ const initApp = async (options) => {
             );
         },
     });
-    // app.setGlobalPrefix("api");
     await app.listen(options.config.port);
     options.logger.log(
         "info",

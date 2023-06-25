@@ -5,7 +5,7 @@
     "showHighlightsButton": "Mostrar destaques",
     "hideHighlightsButton": "Ocultar destaques",
     "seeSourcesButton": "Ver todas as fontes",
-    "metricsHeaderInfo": "{{totalReviews}} avaliações de sentenças",
+    "metricsHeaderInfo": "{{totalReviews}} avaliações",
     "dateFormat": "L",
     "info": "declarado em {{claimDate}}:",
     "initialInfo": "Clique em uma frase para iniciar uma revisão",
@@ -15,7 +15,12 @@
     "sourceFooterReport": "Por favor, reporte aqui. ",
     "cardHeader1": "Declarou em",
     "cardHeader2": "em um",
+    "cardHeader3": "Registrado em",
     "typeSpeech": "Discurso oficial",
-    "typeTwitter": "post no Twitter",
-    "errorWhileFetching": "Erro ao buscar o Discurso"
+    "typeDebate": "Debate",
+    "errorWhileFetching": "Erro ao buscar o Discurso",
+    "cardLinkToImage": "veja a imagem completa",
+    "cardLinkToDebate": "veja o debate completo",
+    "claimListHeader": "Declarações",
+    "imageAlreadyExists": "Essa imagem já existe em nossa plataforma"
 }

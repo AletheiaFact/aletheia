@@ -6,7 +6,7 @@ import HomeContent from "./HomeContent";
 import HomeHeader from "./HomeHeader";
 import HomeStats from "./HomeStats";
 
-const Home = ({ personalities, stats, href, claimCollections }) => {
+const Home = ({ personalities, stats, href, claims }) => {
     const { t } = useTranslation();
 
     if (stats) {
@@ -16,7 +16,7 @@ const Home = ({ personalities, stats, href, claimCollections }) => {
                 <HomeStats stats={stats} />
                 <HomeContent
                     personalities={personalities}
-                    claimCollections={claimCollections}
+                    debateClaims={claims}
                     href={href}
                     title={t("home:sectionTitle1")}
                 />

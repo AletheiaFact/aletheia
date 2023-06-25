@@ -1,17 +1,22 @@
 {
     "formHeader": "Acesse sua conta",
+    "signUpHeader": "Ainda não tem uma conta? Cadastre-se",
     "emailLabel": "E-mail",
     "passwordLabel": "Senha",
+    "nameLabel": "Nome",
     "submitButton": "Enviar",
     "emailErrorMessage": "Por favor, insira seu e-mail",
+    "nameErrorMessage": "Por favor, insira seu nome",
     "passwordErrorMessage": "Por favor, insira sua senha",
     "loginFailedMessage": "Erro ao fazer login",
     "loginSuccessfulMessage": "Login realizado com sucesso",
     "failedMessage": "Login não autorizado",
     "signup": "Registre-se",
+    "repeatPasswordLabel": "Confirme a senha",
     "signupFormHeader": "Crie uma nova conta",
     "signupFailedMessage": "Erro ao criar a conta",
     "signupSuccessfulMessage": "Cadastro realizado com sucesso",
     "getUsersFailed": "Erro ao buscar usuários",
-    "refreshLoginMessage": "Por favor, confirme o seu login antes de alterar as definições da sua conta"
+    "refreshLoginMessage": "Por favor, confirme o seu login antes de alterar as definições da sua conta",
+    "userAlreadyExists": "E-mail já cadastrado"
 }

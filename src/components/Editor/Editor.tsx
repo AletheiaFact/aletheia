@@ -1,57 +1,76 @@
-import React, { createContext, useCallback } from "react";
-import {
-    EditorComponent,
-    Remirror,
-    useHelpers,
-    useRemirror,
-    ThemeProvider,
-} from "@remirror/react";
-import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
-import claimCollectionApi from "../../api/claimCollectionApi";
-import { useTranslation } from "next-i18next";
+import React, { useEffect } from "react";
+import { Remirror, ThemeProvider, useRemirror } from "@remirror/react";
 import { AllStyledComponent } from "@remirror/styles/emotion";
-import { Affix, Row } from "antd";
-import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
-import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
+import { Affix, Col, Row } from "antd";
+import { useAtom } from "jotai";
+
+import { debateAtom } from "../../atoms/debate";
 import colors from "../../styles/colors";
-import AletheiaButton from "../Button";
+import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
+import { EditorAutoSaveTimerProvider } from "./EditorAutoSaveTimerProvider";
+import EditorClaimCardExtension from "./EditorClaimCard/EditorClaimCardExtension";
+import { EditorContent } from "./EditorContent";
+import Button, { ButtonType } from "../Button";
+import { useTranslation } from "next-i18next";
+import claimApi from "../../api/claim";
+import { useDispatch } from "react-redux";
+import { ActionTypes } from "../../store/types";
 
 const extensions = () => [
     new EditorClaimCardExtension({ disableExtraAttributes: true }),
 ];
 
 export interface IEditorProps {
-    claimCollection: any;
+    claim: any;
+    sitekey: string;
 }
 
-export const ClaimCollectionContext = createContext({});
-
-const Editor = ({ claimCollection }: IEditorProps) => {
-    const { personalities } = claimCollection;
+const Editor = ({ claim, sitekey }: IEditorProps) => {
+    const dispatch = useDispatch();
     const { t } = useTranslation();
+    const personalities = claim.personalities;
     const { manager, state } = useRemirror({
         extensions,
-        content: claimCollection?.editorContentObject,
+        content: claim?.editor?.editorContentObject,
         stringHandler: "html",
     });
 
-    function SaveButton() {
-        const { getJSON } = useHelpers();
-        const handleClick = useCallback(() => {
-            claimCollectionApi.update(claimCollection._id, t, {
-                editorContentObject: getJSON(),
-            });
-        }, [getJSON]);
+    dispatch({
+        type: ActionTypes.SET_SELECTED_CLAIM,
+        selectedClaim: claim,
+    });
+    dispatch({
+        type: ActionTypes.SET_SITEKEY,
+        sitekey,
+    });
 
-        return (
-            <AletheiaButton
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={handleClick}
-            >
-                {t("debates:saveButtonLabel")}
-            </AletheiaButton>
-        );
-    }
+    const [debate, setDebate] = useAtom(debateAtom);
+    const isLive = debate.isLive;
+
+    useEffect(() => {
+        setDebate({
+            sources: claim?.sources,
+            title: claim?.title,
+            date: claim?.date,
+            debateId: claim?.contentId,
+            isLive: claim?.content.isLive,
+        });
+    }, [claim, setDebate]);
+
+    const handleClickUpdateStatus = () => {
+        claimApi
+            .updateDebate(debate.debateId, t, {
+                content: "",
+                personality: "",
+                isLive: !isLive,
+            })
+            .then((res) => {
+                setDebate({
+                    ...debate,
+                    isLive: res.isLive,
+                });
+            });
+    };
 
     return (
         <Row
@@ -61,59 +80,67 @@ const Editor = ({ claimCollection }: IEditorProps) => {
                 justifyContent: "center",
             }}
         >
-            <ClaimCollectionContext.Provider
-                value={{
-                    sources: claimCollection?.sources,
-                    title: claimCollection?.title,
+            <Col span={21} style={{ display: "flex", justifyContent: "end" }}>
+                <Button
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={handleClickUpdateStatus}
+                    type={ButtonType.whiteBlack}
+                >
+                    {t(
+                        `debates:${
+                            isLive
+                                ? "finishDebateButtonLabel"
+                                : "reopenDebateButtonLabel"
+                        }`
+                    )}
+                </Button>
+            </Col>
+            <AllStyledComponent
+                style={{
+                    padding: "10px",
+                    width: "90%",
                 }}
             >
-                <AllStyledComponent
-                    style={{
-                        padding: "10px",
-                        width: "90%",
-                    }}
-                >
-                    <ThemeProvider>
-                        <Remirror
-                            manager={manager}
-                            initialContent={state}
-                            autoFocus={true}
+                <ThemeProvider>
+                    <Remirror
+                        manager={manager}
+                        initialContent={state}
+                        autoFocus={true}
+                    >
+                        <EditorAutoSaveTimerProvider
+                            reference={claim.editor.reference}
                         >
-                            <EditorAutoSaveTimerProvider
-                                claimCollectionId={claimCollection._id}
-                            >
-                                <Affix>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-evenly",
-                                            backgroundColor: colors.grayPrimary,
-                                            padding: "10px",
-                                        }}
-                                    >
-                                        {Array.isArray(personalities) &&
-                                            personalities.map((personality) => {
-                                                return (
-                                                    <AddPersonalityEditorButton
-                                                        key={personality._id}
-                                                        personalityId={
-                                                            personality._id
-                                                        }
-                                                        personalityName={
-                                                            personality.name
-                                                        }
-                                                    />
-                                                );
-                                            })}
-                                    </div>
-                                </Affix>
-                                <EditorComponent />
-                                <SaveButton />
-                            </EditorAutoSaveTimerProvider>
-                        </Remirror>
-                    </ThemeProvider>
-                </AllStyledComponent>
-            </ClaimCollectionContext.Provider>
+                            <Affix>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-evenly",
+                                        backgroundColor: colors.grayPrimary,
+                                        padding: "10px",
+                                    }}
+                                >
+                                    {personalities.map((personality) => {
+                                        return (
+                                            <AddPersonalityEditorButton
+                                                key={personality._id}
+                                                personalityId={personality._id}
+                                                personalityName={
+                                                    personality.name
+                                                }
+                                                disabled={!isLive}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </Affix>
+                            <EditorContent
+                                reference={claim.editor.reference}
+                                isLive={isLive}
+                            />
+                        </EditorAutoSaveTimerProvider>
+                    </Remirror>
+                </ThemeProvider>
+            </AllStyledComponent>
         </Row>
     );
 };

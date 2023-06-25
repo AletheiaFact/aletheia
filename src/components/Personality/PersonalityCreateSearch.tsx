@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Row } from "antd";
 import InputSearch from "../Form/InputSearch";
 import api from "../../api/personality";
@@ -9,10 +9,61 @@ import colors from "../../styles/colors";
 import Label from "../Label";
 import PersonalitySearchResultSection from "./PersonalitySearchResultSection";
 import { ActionTypes } from "../../store/types";
+import { useRouter } from "next/router";
 
-const PersonalityCreateSearch = ({ withSuggestions }) => {
+const PersonalityCreateSearch = ({
+    withSuggestions,
+    selectPersonality = null,
+}) => {
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const router = useRouter();
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
+    const { searchName } = useAppSelector((state) => {
+        return { searchName: state?.search?.searchInput || null };
+    });
+
+    const createPersonality = async (personality) => {
+        try {
+            setIsFormSubmitted(!isFormSubmitted);
+            const personalityCreated = await api.createPersonality(
+                personality,
+                t
+            );
+            const { slug } = personalityCreated;
+            const newPersonality = {
+                ...personality,
+                ...personalityCreated,
+            };
+            const createClaim = () => {
+                selectPersonality(newPersonality);
+                setIsFormSubmitted(false);
+            };
+
+            // Redirect to personality list in case _id is not present
+            const path = slug ? `/personality/${slug}` : "/personality";
+            if (selectPersonality !== null) {
+                createClaim();
+            } else {
+                router.push(path).catch((e) => e);
+            }
+
+            const headers = {
+                "Cache-Control": "no-cache",
+            };
+
+            await api.getPersonalities(
+                { withSuggestions, searchName: searchName, i18n, headers },
+                dispatch
+            );
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    const onClickSeeProfile = () => {
+        setIsFormSubmitted(!isFormSubmitted);
+    };
 
     const { personalities } = useAppSelector((state) => {
         return {
@@ -28,7 +79,7 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
             searchName: trimmedName,
         });
         api.getPersonalities(
-            { withSuggestions, personalities, searchName: trimmedName, i18n },
+            { withSuggestions, searchName: trimmedName, i18n },
             dispatch
         );
     };
@@ -64,12 +115,18 @@ const PersonalityCreateSearch = ({ withSuggestions }) => {
                 </Form.Item>
             </Form>
             <PersonalitySearchResultSection
+                selectPersonality={selectPersonality}
                 personalities={personalitiesCreated}
                 label={t("personalityCTA:created")}
+                onClick={onClickSeeProfile}
+                isFormSubmitted={isFormSubmitted}
             />
             <PersonalitySearchResultSection
+                selectPersonality={selectPersonality}
                 personalities={personalitiesAvailable}
                 label={t("personalityCTA:available")}
+                onClick={createPersonality}
+                isFormSubmitted={isFormSubmitted}
             />
         </Row>
     );

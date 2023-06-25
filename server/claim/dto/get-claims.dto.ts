@@ -1,4 +1,11 @@
-import { IsAlpha, IsInt, IsNumber, IsString, Min } from 'class-validator';
+import {
+    IsAlpha,
+    IsInt,
+    IsNumber,
+    IsOptional,
+    IsString,
+    Min,
+} from "class-validator";
 export class GetClaimsDTO {
     @IsNumber()
     @IsInt()
@@ -17,5 +24,6 @@ export class GetClaimsDTO {
     language: string;
 
     @IsString()
+    @IsOptional()
     personality: string;
 }

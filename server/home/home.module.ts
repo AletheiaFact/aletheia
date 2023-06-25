@@ -3,14 +3,16 @@ import { HomeController } from "./home.controller";
 import { PersonalityModule } from "../personality/personality.module";
 import { StatsModule } from "../stats/stats.module";
 import { ViewModule } from "../view/view.module";
-import { ClaimCollectionModule } from "../claim-collection/claim-collection.module";
+import { DebateModule } from "../claim/types/debate/debate.module";
+import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.module";
 
 @Module({
     imports: [
         PersonalityModule,
         StatsModule,
         ViewModule,
-        ClaimCollectionModule,
+        DebateModule,
+        ClaimRevisionModule,
     ],
     providers: [],
     controllers: [HomeController],

@@ -1,17 +1,22 @@
 {
     "formHeader": "Login to your account",
+    "signUpHeader": "Don't have an account yet? Sign up",
     "emailLabel": "E-mail",
     "passwordLabel": "Password",
+    "nameLabel": "Name",
     "submitButton": "Submit",
     "emailErrorMessage": "Please, insert your e-mail",
+    "nameErrorMessage": "Please, insert your name",
     "passwordErrorMessage": "Please, insert your password",
     "loginFailedMessage": "Error while logging in",
     "loginSuccessfulMessage": "Login successful",
     "failed": "Unauthorized",
     "signup": "Sign-up",
+    "repeatPasswordLabel": "Confirm password",
     "signupFormHeader": "Create a new account",
     "signupFailedMessage": "Error while signing up",
     "signupSuccessfulMessage": "Sign-up successful",
     "getUsersFailed": "Error while getting users",
-    "refreshLoginMessage": "Please, confirm your login before changing your account settings"
+    "refreshLoginMessage": "Please, confirm your login before changing your account settings",
+    "userAlreadyExists": "Email already registered"
 }

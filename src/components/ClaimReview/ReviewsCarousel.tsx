@@ -12,6 +12,8 @@ import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import TagsList from "./TagsList";
 import ReviewCarouselSkeleton from "../Skeleton/ReviewCarouselSkeleton";
+import { ContentModelEnum } from "../../types/enums";
+import ImageClaim from "../ImageClaim";
 const { Paragraph } = Typography;
 
 const StyledComment = styled(Comment)`
@@ -20,9 +22,10 @@ const StyledComment = styled(Comment)`
     }
 `;
 const ReviewsCarousel = () => {
-    const [currIndex, setCurrIndex] = useState(0);
-    const [loading, setLoading] = useState(true);
+    const [currIndex, setCurrIndex] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(true);
     const [reviewsList, setReviewsList] = useState([]);
+    const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false);
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -33,6 +36,8 @@ const ReviewsCarousel = () => {
     }, []);
 
     const currentReview = reviewsList[currIndex];
+    const isImage =
+        currentReview?.claim.contentModel === ContentModelEnum.Image;
 
     const nextCard = () => {
         if (currIndex < reviewsList.length - 1) setCurrIndex(currIndex + 1);
@@ -68,7 +73,9 @@ const ReviewsCarousel = () => {
                                 <ClaimCardHeader
                                     personality={currentReview.personality}
                                     date={currentReview.claim?.date}
-                                    claimType={currentReview.claim?.type}
+                                    claimType={
+                                        currentReview.claim?.contentModel
+                                    }
                                 />
                             }
                             content={
@@ -93,17 +100,23 @@ const ReviewsCarousel = () => {
                                                 color: colors.blackPrimary,
                                             }}
                                         >
-                                            {
-                                                currentReview.sentenceContent
-                                                    .content
-                                            }
+                                            {isImage ? (
+                                                <ImageClaim
+                                                    src={
+                                                        currentReview.content
+                                                            .content
+                                                    }
+                                                />
+                                            ) : (
+                                                currentReview.content.content
+                                            )}
                                         </cite>
                                     </Paragraph>
                                 </ClaimSummary>
                             }
                             actions={[
                                 <TagsList
-                                    tags={currentReview.sentenceContent.topics}
+                                    tags={currentReview.content.topics || []}
                                 />,
                                 <div
                                     style={{
@@ -118,26 +131,28 @@ const ReviewsCarousel = () => {
                                         {t("claimReview:claimReview")}
                                         <ClassificationText
                                             classification={
-                                                currentReview.sentenceContent
-                                                    .props.classification
+                                                currentReview.content.props
+                                                    .classification
                                             }
                                         />
                                     </span>
                                     <AletheiaButton
                                         type={ButtonType.blue}
                                         href={currentReview?.reviewHref}
+                                        onClick={() => setIsButtonLoading(true)}
+                                        loading={isButtonLoading}
                                     >
                                         <span
                                             style={{
                                                 color: colors.white,
-                                                fontSize: 16,
+                                                fontSize: 12,
                                                 fontWeight: 400,
                                                 margin: 0,
                                                 padding: 0,
                                                 lineHeight: "24px",
                                             }}
                                         >
-                                            Ver
+                                            {t("home:reviewsCarouselOpen")}
                                         </span>
                                     </AletheiaButton>
                                 </div>,

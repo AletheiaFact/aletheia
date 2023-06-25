@@ -6,7 +6,7 @@ import {
     IsNotEmpty,
     IsString,
 } from "class-validator";
-import { ContentModelEnum } from "../../claim-revision/schema/claim-revision.schema";
+import { ContentModelEnum } from "../../types/enums";
 import { Personality } from "../../personality/schemas/personality.schema";
 
 export class CreateClaimDTO {
@@ -36,7 +36,7 @@ export class CreateClaimDTO {
     @IsString()
     recaptcha: string;
 
-    @IsNotEmpty()
-    @IsString()
-    personality: Personality;
+    @IsArray()
+    @ArrayNotEmpty()
+    personalities: Personality[];
 }

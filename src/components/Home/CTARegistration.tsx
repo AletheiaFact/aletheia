@@ -1,9 +1,9 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
-import Button, { ButtonType } from "../Button";
 import CTARegistrationStyle from "./CTARegistration.style";
 import colors from "../../styles/colors";
-import { trackUmamiEvent } from "../../lib/umami";
+import CTAButton from "./CTAButton";
+import { ButtonType } from "../Button";
 
 function CTARegistration() {
     const { t } = useTranslation();
@@ -54,26 +54,7 @@ function CTARegistration() {
             >
                 {t("CTARegistration:footer")}
             </p>
-            <Button
-                onClick={() => {
-                    trackUmamiEvent("cta-registration-button", "registration");
-                }}
-                type={ButtonType.white}
-                target="_blank"
-                rel="noreferrer"
-                href={t("common:registrationLink")}
-                className="CTA-registration-button"
-                rounded="true"
-                style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "40px",
-                    padding: "0 15px",
-                    fontWeight: 700,
-                }}
-            >
-                {t("CTARegistration:button")}
-            </Button>
+            <CTAButton type={ButtonType.white} />
         </CTARegistrationStyle>
     );
 }

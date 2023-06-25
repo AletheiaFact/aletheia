@@ -3,14 +3,17 @@ import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
 import slugify from "slugify";
-import { SentenceService } from "../sentence/sentence.service";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
+import { ContentModelEnum } from "../types/enums";
+import { ImageService } from "../claim/types/image/image.service";
 
 @Injectable()
 export class TopicService {
     constructor(
         @InjectModel(Topic.name)
         private TopicModel: Model<TopicDocument>,
-        private sentenceService: SentenceService
+        private sentenceService: SentenceService,
+        private imageService: ImageService
     ) {}
 
     /**
@@ -29,12 +32,20 @@ export class TopicService {
     /**
      * iteration on each item in the topic set, checking if it already exists
      * if it does not exist will create a new topic
-     * @param sentenceBody topics array and sentence hash
+     * @param content model, topics array and data hash
      * @param language topics language
-     * @returns updated sentence with new topics
+     * @returns updated sentence or image with new topics
      */
     async create(
-        { topics, sentence_hash }: { topics: string[]; sentence_hash: string },
+        {
+            contentModel,
+            topics,
+            data_hash,
+        }: {
+            contentModel: ContentModelEnum;
+            topics: string[];
+            data_hash: string;
+        },
         language: string = "pt"
     ) {
         const createdTopics = await Promise.all(
@@ -55,10 +66,12 @@ export class TopicService {
             })
         );
 
-        return this.sentenceService.updateSentenceWithTopics(
-            createdTopics,
-            sentence_hash
-        );
+        return contentModel === ContentModelEnum.Image
+            ? this.imageService.updateImageWithTopics(createdTopics, data_hash)
+            : this.sentenceService.updateSentenceWithTopics(
+                  createdTopics,
+                  data_hash
+              );
     }
 
     /**

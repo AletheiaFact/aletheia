@@ -5,31 +5,34 @@ import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import { PlusOutlined } from "@ant-design/icons";
-import DynamicForm from "./form/DynamicForm";
-import { useAppSelector } from "../../store/store";
-import { GlobalStateMachineContext } from "../../Context/GlobalStateMachineProvider";
+import DynamicReviewTaskForm from "./form/DynamicReviewTaskForm";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import {
     publishedSelector,
     crossCheckingSelector,
     reviewNotStartedSelector,
     reviewDataSelector,
-} from "../../machine/selectors";
-import { Roles } from "../../machine/enums";
+} from "../../machines/reviewTask/selectors";
+import { Roles } from "../../types/enums";
+import { useAtom } from "jotai";
+import {
+    currentUserRole,
+    isUserLoggedIn,
+    currentUserId,
+} from "../../atoms/currentUser";
 
 const ClaimReviewForm = ({
     claimId,
     personalityId,
-    sentenceHash,
+    dataHash,
     userIsReviewer,
 }) => {
     const { t } = useTranslation();
-    const {
-        login: isLoggedIn,
-        userId,
-        role,
-    } = useAppSelector((state) => state);
+    const [role] = useAtom(currentUserRole);
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [userId] = useAtom(currentUserId);
 
-    const { machineService } = useContext(GlobalStateMachineContext);
+    const { machineService } = useContext(ReviewTaskMachineContext);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isPublished = useSelector(machineService, publishedSelector);
@@ -99,8 +102,8 @@ const ClaimReviewForm = ({
                     )}
                 </Col>
                 {!formCollapsed && showForm && (
-                    <DynamicForm
-                        sentence_hash={sentenceHash}
+                    <DynamicReviewTaskForm
+                        data_hash={dataHash}
                         personality={personalityId}
                         claim={claimId}
                     />

@@ -1,53 +1,45 @@
-import React from "react";
 import { Row } from "antd";
-import api from "../../api/personality";
-import PersonalityCard from "./PersonalityCard";
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
+import React from "react";
+
 import Label from "../Label";
+import PersonalityCard from "./PersonalityCard";
 
-const PersonalitySearchResultSection = ({ personalities, label }) => {
-    const { t } = useTranslation();
-    const router = useRouter();
+const PersonalitySearchResultSection = ({
+    personalities,
+    label,
+    selectPersonality,
+    isFormSubmitted,
+    onClick,
+}) => {
+    const isCreatingClaim = selectPersonality !== null;
 
-    const createPersonality = async (personality) => {
-        const { slug } = await api.createPersonality(personality, t);
-        // Redirect to personality list in case _id is not present
-        const path = slug ? `/personality/${slug}` : "/personality";
-        router.push(path);
-    }
+    return personalities.length ? (
+        <Row
+            style={{
+                marginTop: "10px",
+                width: "100%",
+            }}
+        >
+            <Label>{label}</Label>
 
-
-
-    return (
-        personalities.length ? (
-            <Row
-                style={{
-                    marginTop: "10px",
-                    width: "100%"
-                }}
-            >
-                <Label>
-                    {label}
-                </Label>
-
-                {personalities.map(
-                    (p, i) =>
-                        p && (
-                            <PersonalityCard
-                                personality={p}
-                                summarized={true}
-                                enableStats={false}
-                                hrefBase="./"
-                                onClick={createPersonality}
-                                key={i}
-                            />
-                        )
-                )}
-            </Row>
-        ) :
-            null
-    );
+            {personalities.map(
+                (p, i) =>
+                    p && (
+                        <PersonalityCard
+                            selectPersonality={selectPersonality}
+                            isCreatingClaim={isCreatingClaim}
+                            personality={p}
+                            summarized={true}
+                            enableStats={false}
+                            hrefBase="./"
+                            onClick={onClick}
+                            key={i}
+                            isFormSubmitted={isFormSubmitted}
+                        />
+                    )
+            )}
+        </Row>
+    ) : null;
 };
 
 export default PersonalitySearchResultSection;

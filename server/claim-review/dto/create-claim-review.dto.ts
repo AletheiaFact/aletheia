@@ -35,7 +35,7 @@ export class CreateClaimReview {
 
     @IsString()
     @IsAlphanumeric()
-    sentence_hash: string;
+    data_hash: string;
 
     @IsNotEmpty()
     @IsString()

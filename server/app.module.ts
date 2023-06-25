@@ -21,27 +21,31 @@ import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { NotFoundFilter } from "./filters/not-found.filter";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
-import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
+import { ClaimRevisionModule } from "./claim/claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
 import { ClaimReviewTaskModule } from "./claim-review-task/claim-review-task.module";
 import { LoggerMiddleware } from "./middleware/logger.middleware";
 import { ReportModule } from "./report/report.module";
-import OryModule from "./ory/ory.module";
+import OryModule from "./auth/ory/ory.module";
 import { SessionGuard } from "./auth/session.guard";
 import { GetLanguageMiddleware } from "./middleware/language.middleware";
 import { DisableBodyParserMiddleware } from "./middleware/disable-body-parser.middleware";
-import OryController from "./ory/ory.controller";
+import OryController from "./auth/ory/ory.controller";
 import { JsonBodyMiddleware } from "./middleware/json-body.middleware";
 import { CaptchaModule } from "./captcha/captcha.module";
-import { SpeechModule } from "./speech/speech.module";
-import { ParagraphModule } from "./paragraph/paragraph.module";
-import { SentenceModule } from "./sentence/sentence.module";
+import { SpeechModule } from "./claim/types/speech/speech.module";
+import { ParagraphModule } from "./claim/types/paragraph/paragraph.module";
+import { SentenceModule } from "./claim/types/sentence/sentence.module";
 import { StateEventModule } from "./state-event/state-event.module";
 import { TopicModule } from "./topic/topic.module";
-import { ImageModule } from "./image/image.module";
+import { ImageModule } from "./claim/types/image/image.module";
 import { SearchModule } from "./search/search.module";
+import { FileManagementModule } from "./file-management/file-management.module";
 import { UnleashModule } from "nestjs-unleash";
-import { ClaimCollectionModule } from "./claim-collection/claim-collection.module";
+import { UnauthorizedExceptionFilter } from "./filters/unauthorized.filter";
+import { DebateModule } from "./claim/types/debate/debate.module";
+import { EditorModule } from "./editor/editor.module";
+import { BadgeModule } from "./badge/badge.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -92,7 +96,10 @@ export class AppModule implements NestModule {
             TopicModule,
             ImageModule,
             SearchModule,
-            ClaimCollectionModule,
+            FileManagementModule,
+            DebateModule,
+            EditorModule,
+            BadgeModule,
         ];
         if (options.config.feature_flag) {
             imports.push(
@@ -112,6 +119,10 @@ export class AppModule implements NestModule {
                 {
                     provide: APP_FILTER,
                     useClass: NotFoundFilter,
+                },
+                {
+                    provide: APP_FILTER,
+                    useClass: UnauthorizedExceptionFilter,
                 },
                 {
                     provide: APP_GUARD,

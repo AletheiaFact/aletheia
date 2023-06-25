@@ -28,12 +28,14 @@ const UserMenu = () => {
         router.push(hasSession ? "profile" : "login");
     };
 
+    const onSignUp = () => {
+        router.push("sign-up");
+    };
+
     const onLogout = () => {
         if (!isLoading) {
             setIsLoading(true);
-            CreateLogoutHandler()
-                .then(() => router.push("/"))
-                .then(() => router.reload());
+            CreateLogoutHandler().then(() => router.reload());
         }
     };
 
@@ -49,7 +51,7 @@ const UserMenu = () => {
             >
                 {t(`menu:${hasSession ? "myAccount" : "login"}Item`)}
             </Menu.Item>
-            {hasSession && (
+            {hasSession ? (
                 <Menu.Item
                     data-cy={"testLogout"}
                     key="/home"
@@ -60,6 +62,18 @@ const UserMenu = () => {
                     onClick={onLogout}
                 >
                     {t("menu:logout")}
+                </Menu.Item>
+            ) : (
+                <Menu.Item
+                    data-cy={"testRegister"}
+                    key="/sign-up"
+                    disabled={isLoading}
+                    style={{
+                        fontSize: "18px",
+                    }}
+                    onClick={onSignUp}
+                >
+                    {t("login:signup")}
                 </Menu.Item>
             )}
         </Menu>

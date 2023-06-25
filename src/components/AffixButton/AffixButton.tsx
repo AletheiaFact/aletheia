@@ -4,10 +4,11 @@ import {
     PlusOutlined,
     UserAddOutlined,
 } from "@ant-design/icons";
+import { useAtom } from "jotai";
 import Cookies from "js-cookie";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
-import { useAppSelector } from "../../store/store";
+import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
@@ -22,9 +23,8 @@ interface AffixButtonProps {
  * @param personalitySlug if present will display the Create Claim option too
  */
 const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
-    const { isLoggedIn } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-    }));
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [userRole] = useAtom(currentUserRole);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsVisible, setIsOptionsVisible] = useState(false);
     const { t } = useTranslation();
@@ -37,14 +37,15 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
         },
     ];
 
-    if (personalitySlug) {
+    userRole !== "regular" &&
         actions.push({
             icon: <FileAddFilled />,
             tooltip: t("affix:affixButtonCreateClaim"),
-            href: `/personality/${personalitySlug}/claim/create`,
+            href: `/claim/create${
+                personalitySlug ? `?personality=${personalitySlug}` : ""
+            }`,
             dataCy: "testFloatButtonAddClaim",
         });
-    }
 
     useEffect(() => {
         const tutorialShown = Cookies.get("tutorial_shown") || false;
@@ -52,7 +53,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     }, []);
 
     const handleHideModal = () => {
-        Cookies.set("tutorial_shown", true);
+        Cookies.set("tutorial_shown", "true");
         setIsModalVisible(false);
     };
 
@@ -98,7 +99,11 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                     }}
                 >
                     <Fab
-                        tooltipText={t("affix:affixButtonTitle")}
+                        tooltipText={t(
+                            userRole !== "regular"
+                                ? "affix:affixButtonTitle"
+                                : "affix:affixButtonCreatePersonality"
+                        )}
                         size="70px"
                         onClick={handleClick}
                         data-cy={"testFloatButton"}
@@ -115,6 +120,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 {isOptionsVisible &&
                     actions.map((action) => (
                         <Fab
+                            key={action.href}
                             tooltipText={action.tooltip}
                             icon={action.icon}
                             href={action.href}
@@ -141,7 +147,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 >
                     <Trans
                         i18nKey={"tutorial:modalContent"}
-                        components={[<PlusCircleFilled />]}
+                        components={[<PlusCircleFilled key={"icon"} />]}
                     />
                 </p>
 

@@ -15,9 +15,16 @@ import { StateEventService } from "../state-event/state-event.service";
 import { TypeModel } from "../state-event/schema/state-event.schema";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
-import { SentenceService } from "../sentence/sentence.service";
+import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
-import { Roles } from "../ability/ability.factory";
+import { Roles } from "../auth/ability/ability.factory";
+import { ImageService } from "../claim/types/image/image.service";
+import { ContentModelEnum } from "../types/enums";
+import lookupUsers from "../mongo-pipelines/lookupUsers";
+import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
+import lookupClaims from "../mongo-pipelines/lookupClaims";
+import lookupClaimReviews from "../mongo-pipelines/lookupClaimReviews";
+import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -29,59 +36,116 @@ export class ClaimReviewTaskService {
         private reportService: ReportService,
         private historyService: HistoryService,
         private stateEventService: StateEventService,
-        private sentenceService: SentenceService
+        private sentenceService: SentenceService,
+        private imageService: ImageService
     ) {}
 
-    async listAll(page, pageSize, order, value) {
-        const query = getQueryMatchForMachineValue(value);
-        const reviewTasks = await this.ClaimReviewTaskModel.find({
-            ...query,
-        })
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .sort({ _id: order })
-            .populate({
-                path: "machine.context.reviewData.usersId",
-                model: "User",
-                select: "name",
-            })
-            .populate({
-                path: "machine.context.claimReview.personality",
-                model: "Personality",
-                select: "slug name _id",
-            })
-            .populate({
-                path: "machine.context.claimReview.claim",
-                model: "Claim",
-                populate: {
-                    path: "latestRevision",
-                    select: "title",
+    _verifyMachineValueAndAddMatchPipeline(pipeline, value) {
+        if (value === "published") {
+            pipeline.push(
+                lookupClaimReviews({
+                    as: "machine.context.claimReview.claimReview",
+                }),
+                { $unwind: "$machine.context.claimReview.claimReview" },
+                {
+                    $match: {
+                        "machine.context.claimReview.claimReview.isDeleted":
+                            false,
+                        "machine.context.claimReview.claim.isDeleted": false,
+                    },
+                }
+            );
+        } else {
+            pipeline.push({
+                $match: {
+                    "machine.context.claimReview.claim.isDeleted": false,
                 },
-                select: "slug _id",
             });
+        }
+    }
+
+    _buildPipeline(value, filterUser) {
+        const pipeline = [];
+        const query = getQueryMatchForMachineValue(value);
+
+        if (filterUser === true) {
+            query["machine.context.reviewData.usersId"] = [
+                Types.ObjectId(this.req.user._id),
+            ];
+        }
+
+        pipeline.push(
+            { $match: query },
+            lookupUsers(),
+            lookUpPersonalityties(),
+            lookupClaims({
+                pipeline: [
+                    { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
+                    lookupClaimRevisions(),
+                    { $unwind: "$latestRevision" },
+                ],
+                as: "machine.context.claimReview.claim",
+            })
+        );
+
+        this._verifyMachineValueAndAddMatchPipeline(pipeline, value);
+
+        return pipeline;
+    }
+
+    async listAll(page, pageSize, order, value, filterUser) {
+        const pipeline = this._buildPipeline(value, filterUser);
+        pipeline.push(
+            { $sort: { _id: order === "asc" ? 1 : 0 } },
+            { $skip: page * pageSize },
+            { $limit: pageSize }
+        );
+
+        const reviewTasks = await this.ClaimReviewTaskModel.aggregate(
+            pipeline
+        ).exec();
 
         return Promise.all(
-            reviewTasks.map(async ({ sentence_hash, machine }) => {
-                const { personality, claim }: any = machine.context.claimReview;
-                const reviewHref = `/personality/${personality.slug}/claim/${claim.slug}/sentence/${sentence_hash}`;
-                const usersName = machine.context.reviewData.usersId.map(
+            reviewTasks?.map(async ({ data_hash, machine }) => {
+                const {
+                    personality: [personality],
+                    claim: [claim],
+                }: any = machine.context.claimReview;
+                const { title, contentModel } = claim.latestRevision;
+                const isContentImage = contentModel === ContentModelEnum.Image;
+
+                const personalityPath = `/personality/${personality?.slug}`;
+
+                const contentModelPathMap = {
+                    [ContentModelEnum.Debate]: `/claim/${claim?._id}/debate`,
+                    [ContentModelEnum.Image]: personality
+                        ? `${personalityPath}/claim/${claim?.slug}/${claim?._id}`
+                        : `/claim/${claim?._id}`,
+                    [ContentModelEnum.Speech]: `${personalityPath}/claim/${claim?.slug}/sentence/${data_hash}`,
+                };
+
+                let reviewHref = contentModelPathMap[contentModel];
+
+                const usersName = machine.context.reviewData.users.map(
                     (user) => {
                         return user.name;
                     }
                 );
 
-                const sentence = await this.sentenceService.getByDataHash(
-                    sentence_hash
-                );
+                const content = isContentImage
+                    ? await this.imageService.getByDataHash(data_hash)
+                    : await this.sentenceService.getByDataHash(data_hash);
+
                 return {
-                    sentence,
+                    content,
                     usersName,
                     value: machine.value,
-                    personalityName: personality.name,
-                    claimTitle: claim.latestRevision.title,
+                    personalityName: personality?.name,
+                    claimTitle: title,
                     claimId: claim._id,
-                    personalityId: personality._id,
+                    personalityId: personality?._id,
                     reviewHref,
+                    contentModel,
                 };
             })
         );
@@ -155,11 +219,11 @@ export class ClaimReviewTaskService {
         this.stateEventService.createStateEvent(stateEvent);
     }
 
-    async _createReportAndClaimReview(sentence_hash, machine) {
+    async _createReportAndClaimReview(data_hash, machine) {
         const claimReviewData = machine.context.claimReview;
 
         const newReport = Object.assign(machine.context.reviewData, {
-            sentence_hash,
+            data_hash,
         });
 
         const report = await this.reportService.create(newReport);
@@ -169,13 +233,13 @@ export class ClaimReviewTaskService {
                 ...claimReviewData,
                 report,
             },
-            sentence_hash
+            data_hash
         );
     }
 
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
-        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
-            claimReviewTaskBody.sentence_hash
+        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
+            claimReviewTaskBody.data_hash
         );
 
         claimReviewTaskBody.machine.context.reviewData.usersId =
@@ -194,7 +258,7 @@ export class ClaimReviewTaskService {
 
         if (claimReviewTask) {
             return this.update(
-                claimReviewTaskBody.sentence_hash,
+                claimReviewTaskBody.data_hash,
                 claimReviewTaskBody
             );
         } else {
@@ -209,13 +273,13 @@ export class ClaimReviewTaskService {
     }
 
     async update(
-        sentence_hash: string,
+        data_hash: string,
         { machine }: UpdateClaimReviewTaskDTO,
         history: boolean = true
     ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
-            sentence_hash
+        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
+            data_hash
         );
 
         const newClaimReviewTaskMachine = {
@@ -241,7 +305,7 @@ export class ClaimReviewTaskService {
                 );
             }
             this._createReportAndClaimReview(
-                sentence_hash,
+                data_hash,
                 newClaimReviewTask.machine
             );
         }
@@ -257,16 +321,16 @@ export class ClaimReviewTaskService {
         );
     }
 
-    getClaimReviewTaskBySentenceHash(sentence_hash: string) {
+    getClaimReviewTaskByDataHash(data_hash: string) {
         return this.ClaimReviewTaskModel.findOne({
-            sentence_hash,
+            data_hash,
         });
     }
 
-    async getClaimReviewTaskBySentenceHashWithUsernames(sentence_hash: string) {
+    async getClaimReviewTaskByDataHashWithUsernames(data_hash: string) {
         // This may cause a false positive in sonarCloud
-        const claimReviewTask = await this.getClaimReviewTaskBySentenceHash(
-            sentence_hash
+        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
+            data_hash
         )
             .populate({
                 path: "machine.context.reviewData.usersId",
@@ -315,5 +379,47 @@ export class ClaimReviewTaskService {
 
     count(query: any = {}) {
         return this.ClaimReviewTaskModel.countDocuments().where(query);
+    }
+
+    async countReviewTasksNotDeleted(query: any = {}) {
+        try {
+            const pipeline = [
+                { $match: query },
+                lookupClaimReviews({
+                    as: "machine.context.claimReview.claimReview",
+                }),
+                lookupClaims({
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
+                        { $project: { isDeleted: 1 } },
+                    ],
+                    as: "machine.context.claimReview.claim",
+                }),
+                {
+                    $match: {
+                        "machine.context.claimReview.claimReview.isDeleted": {
+                            $ne: true,
+                        },
+                        "machine.context.claimReview.claim.isDeleted": {
+                            $ne: true,
+                        },
+                    },
+                },
+                { $count: "count" },
+            ];
+
+            const result = await this.ClaimReviewTaskModel.aggregate(
+                pipeline
+            ).exec();
+
+            if (result.length > 0) {
+                return result[0].count;
+            }
+
+            return 0;
+        } catch (error) {
+            console.error("Error in countReviewTasksNotDeleted:", error);
+            throw error;
+        }
     }
 }

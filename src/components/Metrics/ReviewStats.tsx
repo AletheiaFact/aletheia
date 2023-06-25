@@ -9,12 +9,17 @@ const ReviewStats = (props) => {
     const { t } = useTranslation();
     const [showAllReviews, setShowAllReviews] = useState<boolean>(false);
     const { reviews } = props?.stats || {};
+    const firstThreeReviews = reviews?.slice(0, 3);
+    const remainingReviews = reviews?.slice(3);
 
+    const reviewStats = props.type === "line" ? firstThreeReviews : reviews;
     return (
         <>
-            {reviews && <ReviewProgress reviews={reviews} statsProps={props} />}
+            {reviews && (
+                <ReviewProgress reviews={reviewStats} statsProps={props} />
+            )}
             {reviews && showAllReviews && (
-                <ReviewProgress reviews={reviews} statsProps={props} />
+                <ReviewProgress reviews={remainingReviews} statsProps={props} />
             )}
             {reviews && reviews?.length > 3 && props.type === "line" && (
                 <div

@@ -4,5 +4,7 @@
     "aboutItem": "Sobre nós",
     "privacyPolicyItem": "Política de Privacidade",
     "codeOfConductItem": "Código de Conduta",
-    "logout": "Encerrar Sessão"
+    "logout": "Encerrar Sessão",
+    "badgesItem": "Insígnias",
+    "adminItem": "Admin"
 }

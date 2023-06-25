@@ -1,14 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
-import personalityApi from "../../../api/personality";
-import claimApi from "../../../api/claim";
-import ClaimCardHeader from "../../Claim/ClaimCardHeader";
+import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-import Button, { ButtonType } from "../../Button";
-import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
+import React, { useEffect, useState } from "react";
 import { uniqueId } from "remirror";
+
+import claimApi from "../../../api/claim";
+import personalityApi from "../../../api/personality";
+import SpeechApi from "../../../api/speechApi";
+import { debateAtom } from "../../../atoms/debate";
 import colors from "../../../styles/colors";
+import { ContentModelEnum } from "../../../types/enums";
+import Button, { ButtonType } from "../../Button";
+import ClaimCardHeader from "../../Claim/ClaimCardHeader";
+import ClaimSpeechBody from "../../Claim/ClaimSpeechBody";
 import ClaimSkeleton from "../../Skeleton/ClaimSkeleton";
-import { ClaimCollectionContext } from "../Editor";
+import { useDispatch } from "react-redux";
+import actions from "../../../store/actions";
 
 const EditorClaimCardContent = ({ children }) => {
     return (
@@ -29,33 +35,38 @@ const EditorClaimCardContent = ({ children }) => {
 
 export const EditorClaimCard = ({
     personalityId,
-    claimId,
+    speechId,
     forwardRef,
     node,
 }) => {
-    const [claim, setClaim] = useState(undefined);
+    const dispatch = useDispatch();
+    const [speech, setSpeech] = useState(undefined);
     const { t } = useTranslation();
     const [personality, setPersonality] = useState(undefined);
     const [isLoading, setIsLoading] = useState(false);
-    const { sources, title } = useContext<any>(ClaimCollectionContext);
-    const createClaimFromEditor = async (
+    const [claim] = useAtom(debateAtom);
+    const { date, debateId, isLive } = claim;
+
+    const fetchSpeech = async (speechId: string) => {
+        SpeechApi.getById(speechId).then(setSpeech);
+    };
+
+    const createSpeechFromEditor = async (
         t,
-        { personality, content },
-        setClaim
+        { personality, content }
     ): Promise<void> => {
-        const date = new Date();
         setIsLoading(true);
-        const res = await claimApi.save(t, {
-            content,
-            title: `${title} ${date.toISOString().slice(11, 19)}`,
-            personality: personality._id,
-            contentModel: "Speech",
-            date,
-            sources,
-            recaptcha: "dummy", // the server will get the referer and bypass recaptcha
-        });
-        setIsLoading(false);
-        setClaim(res);
+        claimApi
+            .updateDebate(debateId, t, {
+                content,
+                personality: personality._id,
+                isLive,
+            })
+            .then((newSpeech: any) => {
+                fetchSpeech(newSpeech._id).then(() => {
+                    setIsLoading(false);
+                });
+            });
     };
 
     /**
@@ -68,22 +79,22 @@ export const EditorClaimCard = ({
                 .getPersonality(personalityId, { language: "pt" }, t)
                 .then(setPersonality);
         }
-        if (claimId) {
-            claimApi.getById(claimId, t).then(setClaim);
+        if (speechId) {
+            fetchSpeech(speechId);
         }
-    }, [personalityApi, claimApi]);
+    }, [personalityId, speechId, t]);
+
+    const dispatchPersonality = () => {
+        dispatch(actions.setSelectPersonality(personality));
+    };
 
     /**
-     * If claim changes from undefined/null to an existing object
-     * we need to retrieve the full claim content from the API
-     * and define the claimId in the node attribute
+     * If speech changes from undefined/null to an existing object
+     * we need to define the speechId in the node attribute
      */
     useEffect(() => {
-        if (claim?.claimId) {
-            node.attrs.claimId = claim?.claimId;
-            claimApi.getById(claim?.claimId, t).then(setClaim);
-        }
-    }, [!claim]);
+        node.attrs.speechId = speech ? speech._id : speechId;
+    }, [node.attrs, speech, speechId]);
 
     return personality ? (
         <div
@@ -98,7 +109,8 @@ export const EditorClaimCard = ({
             <div contentEditable={false}>
                 <ClaimCardHeader
                     personality={personality}
-                    date={claim?.date || new Date()}
+                    date={date || new Date()}
+                    claimType={ContentModelEnum.Debate}
                 />
             </div>
             <div
@@ -109,7 +121,7 @@ export const EditorClaimCard = ({
                     flexDirection: "column",
                 }}
             >
-                {!claim ? (
+                {!speech ? (
                     <>
                         <EditorClaimCardContent>
                             <p ref={forwardRef} />
@@ -118,19 +130,15 @@ export const EditorClaimCard = ({
                             loading={isLoading}
                             type={ButtonType.blue}
                             onClick={() =>
-                                createClaimFromEditor(
-                                    t,
-                                    {
-                                        personality,
-                                        content: node?.textContent,
-                                    },
-                                    setClaim
-                                )
+                                createSpeechFromEditor(t, {
+                                    personality,
+                                    content: node?.textContent,
+                                })
                             }
                             disabled={isLoading}
                             data-cy={"testSaveButton"}
                         >
-                            {t("claimForm:saveButton")}
+                            {t("debates:saveButtonLabel")}
                         </Button>
                     </>
                 ) : (
@@ -143,16 +151,15 @@ export const EditorClaimCard = ({
                         contentEditable={false}
                     >
                         <EditorClaimCardContent>
-                            {claim && (
-                                <ClaimSpeechBody
-                                    paragraphs={
-                                        Array.isArray(claim.content)
-                                            ? claim.content
-                                            : [claim.content]
-                                    }
-                                    showHighlights={true}
-                                />
-                            )}
+                            <ClaimSpeechBody
+                                paragraphs={
+                                    Array.isArray(speech.content)
+                                        ? speech.content
+                                        : [speech.content]
+                                }
+                                showHighlights={true}
+                                handleSentenceClick={dispatchPersonality}
+                            />
                         </EditorClaimCardContent>
                     </div>
                 )}
@@ -175,17 +182,17 @@ export const EditorClaimCard = ({
 
 interface IClaimCardContentHtml {
     personalityId: string;
-    claimId?: string;
+    speechId?: string;
 }
 
 export const getEditorClaimCardContentHtml = ({
     personalityId,
-    claimId,
+    speechId,
 }: IClaimCardContentHtml) => `
     <div
         card-id="${uniqueId()}"
         data-personality-id="${personalityId}"
-        ${() => claimId && `data-claim-id="${claimId}"`}
+        ${() => speechId && `data-speech-id="${speechId}"`}
     >
         <p></p>
     </div>`;

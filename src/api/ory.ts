@@ -1,15 +1,8 @@
+/* eslint-disable no-fallthrough */
 import { ory } from "../lib/orysdk";
 import { handleFlowError } from "../lib/orysdk/errors";
 import { AxiosError } from "axios";
 import { message } from "antd";
-
-const handleAxiosError = (err: AxiosError, setFlow) => {
-    if (err.response?.status === 400) {
-        setFlow(err.response?.data);
-        return;
-    }
-    return Promise.reject(err);
-};
 
 const oryGetLoginFlow = ({ router, setFlow, t }) => {
     const { return_to: returnTo, flow: flowId, refresh, aal } = router.query;
@@ -34,48 +27,49 @@ const oryGetLoginFlow = ({ router, setFlow, t }) => {
         .catch(handleFlowError(router, "login", setFlow, t));
 };
 
-const orySubmitLogin = ({ router, flow, setFlow, t, values }) => {
-    return (
-        ory
-            .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
-            .then((response) => {
-                return ory
-                    .toSession()
-                    .then(() => response)
-                    .catch((err: AxiosError) => {
-                        switch (err.response?.status) {
-                            case 403:
-                            // This is a legacy error code thrown. See code 422 for
-                            // more details.
-                            case 422:
-                                // This status code is returned when we are trying to
-                                // validate a session which has not yet completed
-                                // it's second factor
-                                return router.push("/login?aal=aal2");
-                            case 401:
-                                // do nothing, the user is not logged in
-                                return;
-                        }
+const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
+    return ory
+        .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
+        .then((response) => {
+            return ory
+                .toSession()
+                .then(() => response)
+                .catch((err: AxiosError) => {
+                    switch (err.response?.status) {
+                        case 403:
+                        // This is a legacy error code thrown. See code 422 for
+                        // more details.
+                        case 422:
+                            // This status code is returned when we are trying to
+                            // validate a session which has not yet completed
+                            // it's second factor
+                            return router.push("/login?aal=aal2");
+                        case 401:
+                            // do nothing, the user is not logged in
+                            return;
+                    }
 
-                        // Something else happened!
-                        return Promise.reject(err);
-                    });
-            })
-            .then(() => {
-                message.success(`${t("login:loginSuccessfulMessage")}`);
-                if (flow?.return_to) {
-                    window.location.href = flow?.return_to;
-                    message.success(t("profile:changesSaved"));
-                    return;
-                }
+                    // Something else happened!
+                    return Promise.reject(err);
+                });
+        })
+        .then(() => {
+            message.success(`${t("login:loginSuccessfulMessage")}`);
+            if (flow?.return_to) {
+                window.location.href = flow?.return_to;
+                message.success(t("profile:changesSaved"));
+                return;
+            }
+            if (shouldGoBack) {
                 router.back();
-            })
-            .catch(handleFlowError(router, "login", setFlow, t))
-            // .catch((err: AxiosError) => handleAxiosError(err, setFlow))
-            .catch(() => {
-                message.error(`${t("login:loginFailedMessage")}`);
-            })
-    );
+            } else {
+                router.push("/");
+            }
+        })
+        .catch(handleFlowError(router, "login", setFlow, t))
+        .catch(() => {
+            message.error(`${t("login:loginFailedMessage")}`);
+        });
 };
 
 const oryGetSettingsFlow = ({ router, setFlow, t }) => {

@@ -5,9 +5,20 @@ const request = axios.create({
     baseURL: `/api/sentence`,
 });
 
-const deleteSentenceTopic = (topics, sentence_hash) => {
+const getSentenceTopicsByDatahash = (data_hash) => {
     return request
-        .put(`/${sentence_hash}`, topics)
+        .get(`/${data_hash}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            throw err;
+        });
+};
+
+const deleteSentenceTopic = (topics, data_hash) => {
+    return request
+        .put(`/${data_hash}`, topics)
         .then((response) => {
             return response.data;
         })
@@ -18,6 +29,7 @@ const deleteSentenceTopic = (topics, sentence_hash) => {
 
 const SentenceApi = {
     deleteSentenceTopic,
+    getSentenceTopicsByDatahash,
 };
 
 export default SentenceApi;

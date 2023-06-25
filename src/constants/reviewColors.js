@@ -1,4 +1,4 @@
-export default {
+const reviewColors = {
     "not-fact": "#006060",
     trustworthy: "#008000",
     "trustworthy-but": "#5A781D",
@@ -9,3 +9,4 @@ export default {
     exaggerated: "#B8860B",
     unverifiable: "#C9502A",
 };
+export default reviewColors;

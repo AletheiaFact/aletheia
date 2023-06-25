@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Col, Divider, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties } from "react";
 
 import colors from "../../styles/colors";
 import AletheiaAvatar from "../AletheiaAvatar";
@@ -9,11 +9,14 @@ import Button, { ButtonType } from "../Button";
 import ReviewStats from "../Metrics/ReviewStats";
 import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 import { useAppSelector } from "../../store/store";
+import { useAtom } from "jotai";
+import { createClaimMachineAtom } from "../../machines/createClaim/provider";
 
 const { Title, Paragraph } = Typography;
 
 interface PersonalityCardProps {
     personality: any;
+    isCreatingClaim?: boolean;
     summarized?: boolean;
     enableStats?: boolean;
     header?: boolean;
@@ -22,7 +25,9 @@ interface PersonalityCardProps {
     fullWidth?: boolean;
     hoistAvatar?: boolean;
     style?: CSSProperties;
-    onClick?: (personality: any) => {};
+    selectPersonality?: any;
+    isFormSubmitted?: boolean;
+    onClick?: any;
     titleLevel?: 1 | 2 | 3 | 4 | 5;
 }
 
@@ -38,9 +43,31 @@ const PersonalityCard = ({
     style,
     onClick,
     titleLevel = 1,
+    selectPersonality = null,
+    isFormSubmitted,
 }: PersonalityCardProps) => {
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const isCreatingClaim = selectPersonality !== null;
+    const [state] = useAtom(createClaimMachineAtom);
+    const { claimData } = state.context;
+    const { personalities } = claimData;
     const { vw } = useAppSelector((state) => state);
+    const personalityFoundProps = isCreatingClaim
+        ? {
+              onClick: () => {
+                  if (selectPersonality) {
+                      selectPersonality(personality);
+                  }
+              },
+          }
+        : {
+              href: `${hrefBase || "/personality/"}${personality.slug}`,
+              onClick,
+          };
+
+    const personalityIsSelected = personalities.some(
+        (item) => item._id === personality._id
+    );
+
     const { t } = useTranslation();
     const componentStyle = {
         titleSpan: !fullWidth ? 14 : 24,
@@ -262,9 +289,11 @@ const PersonalityCard = ({
                                     <Button
                                         type={ButtonType.blue}
                                         data-cy={personality.name}
-                                        href={`${hrefBase || "/personality/"}${
-                                            personality.slug
-                                        }`}
+                                        {...personalityFoundProps}
+                                        disabled={
+                                            isFormSubmitted ||
+                                            personalityIsSelected
+                                        }
                                         style={{
                                             fontSize: "12px",
                                             lineHeight: "20px",
@@ -273,7 +302,13 @@ const PersonalityCard = ({
                                         }}
                                     >
                                         <span style={{ marginTop: 4 }}>
-                                            {t("personality:profile_button")}
+                                            {isCreatingClaim
+                                                ? t(
+                                                      "claimForm:personalityFound"
+                                                  )
+                                                : t(
+                                                      "personality:profile_button"
+                                                  )}
                                         </span>
                                     </Button>
                                 ) : (
@@ -281,11 +316,13 @@ const PersonalityCard = ({
                                         type={ButtonType.blue}
                                         onClick={() => {
                                             if (!isFormSubmitted) {
-                                                setIsFormSubmitted(true);
                                                 onClick(personality);
                                             }
                                         }}
-                                        disabled={isFormSubmitted}
+                                        disabled={
+                                            isFormSubmitted ||
+                                            personalityIsSelected
+                                        }
                                         data-cy={personality.name}
                                         style={{
                                             display: "flex",
@@ -296,7 +333,9 @@ const PersonalityCard = ({
                                         }}
                                     >
                                         <PlusOutlined />{" "}
-                                        {t("personality:add_button")}
+                                        {isCreatingClaim
+                                            ? t("claimForm:personalityNotFound")
+                                            : t("personality:add_button")}
                                     </Button>
                                 )}
                             </Col>

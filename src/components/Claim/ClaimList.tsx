@@ -13,7 +13,7 @@ const ClaimList = ({ personality }) => {
         <BaseList
             apiCall={claimApi.get}
             filter={{ personality: personality._id, i18n }}
-            title={t("personality:speechesListHeader")}
+            title={t("claim:claimListHeader")}
             showDividers={false}
             bluePrimary={true}
             grid={{

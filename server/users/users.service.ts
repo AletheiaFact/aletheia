@@ -1,9 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import { Roles } from "../auth/ability/ability.factory";
 import { Model } from "mongoose";
 
-import OryService from "../ory/ory.service";
+import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
+import { Badge } from "../badge/schemas/badge.schema";
 
 @Injectable()
 export class UsersService {
@@ -13,22 +15,17 @@ export class UsersService {
         private oryService: OryService
     ) {}
 
-    async findAll(userQuery): Promise<User[]> {
-        const { searchName, filterOutRoles } = userQuery;
-        return this.UserModel.aggregate([
-            {
-                $match: {
-                    name: { $regex: searchName, $options: "i" },
-                    role: { $nin: [...(filterOutRoles || []), null] },
-                },
-            },
-            { $project: { _id: 1, name: 1 } },
-        ]);
+    async findAll(userQuery): Promise<UserDocument[]> {
+        const { searchName, filterOutRoles, badges, project } = userQuery;
+        return this.UserModel.find({
+            name: { $regex: searchName || "", $options: "i" },
+            role: { $nin: [...(filterOutRoles || []), null] },
+            ...(badges ? { badges } : {}),
+        }).select(project || { _id: 1, name: 1 });
     }
 
     async register(user) {
         const newUser = new this.UserModel(user);
-
         if (!newUser.oryId) {
             this.logger.log("No user id provided, creating a new ory identity");
             const { data: oryUser } = await this.oryService.createIdentity(
@@ -38,24 +35,18 @@ export class UsersService {
             );
             newUser.oryId = oryUser.id;
         } else {
-            this.logger.log("User id provided, updating a ory identity");
+            this.logger.log("User id provided, updating an ory identity");
             await this.oryService.updateIdentity(
                 newUser,
                 user.password,
                 user.role
             );
         }
-        try {
-            // @ts-ignore
-            return await newUser.save();
-        } catch (e) {
-            this.logger.error(e);
-            this.logger.error(`Error registering user ${user.email}`);
-        }
+        return await newUser.save();
     }
 
     async getById(userId) {
-        const user = await this.UserModel.findById(userId);
+        const user = await this.UserModel.findById(userId).populate("badges");
         this.logger.log(`Found user ${user._id}`);
         return user;
     }
@@ -67,5 +58,17 @@ export class UsersService {
             this.logger.log(`User ${user._id} changed first password`);
             user.save();
         }
+    }
+
+    async updateUser(userId, updates: { role?: Roles; badges?: Badge[] }) {
+        if (updates.role) {
+            const user = await this.getById(userId);
+            await this.oryService.updateUserRole(user, updates.role);
+        }
+        const updatedUser = this.UserModel.findByIdAndUpdate(userId, updates, {
+            new: true,
+        });
+        this.logger.log(`Updated user ${userId._id}`);
+        return updatedUser;
     }
 }

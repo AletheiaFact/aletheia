@@ -31,7 +31,16 @@ const ContentWrapper = ({ children }) => {
         "home",
         "kanban-page",
         "personality-page",
-        "claim-collection",
+        "claim-create",
+        "claim",
+        "debate-editor",
+        "debate-page",
+        "sign-up",
+        "login",
+        "admin-page",
+        "admin-badges",
+        "profile",
+        "search-page",
     ];
 
     const layout = desktopReadyPages.some((page) =>

@@ -7,11 +7,14 @@ import {
     UseGuards,
     Header,
 } from "@nestjs/common";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewService } from "./claim-review.service";
-import { AbilitiesGuard } from "../ability/abilities.guard";
-import { AdminUserAbility, CheckAbilities } from "../ability/ability.decorator";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../auth/ability/ability.decorator";
 
 @Controller()
 export class ClaimReviewController {
@@ -20,10 +23,10 @@ export class ClaimReviewController {
         private captchaService: CaptchaService
     ) {}
 
-    @Put("api/review/:sentence_hash")
+    @Put("api/review/:data_hash")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    async update(@Param("sentence_hash") sentence_hash, @Body() body) {
+    async update(@Param("data_hash") data_hash, @Body() body) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );
@@ -31,7 +34,7 @@ export class ClaimReviewController {
             throw new Error("Error validating captcha");
         }
         return this.claimReviewService.hideOrUnhideReview(
-            sentence_hash,
+            data_hash,
             body.hide,
             body.description
         );
@@ -45,11 +48,11 @@ export class ClaimReviewController {
     }
 
     @IsPublic()
-    @Get("api/review/:sentence_hash")
+    @Get("api/review/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    async getReviewBySentenceHash(@Param("sentence_hash") sentence_hash) {
-        const review = await this.claimReviewService.getReviewBySentenceHash(
-            sentence_hash
+    async getReviewByDataHash(@Param("data_hash") data_hash) {
+        const review = await this.claimReviewService.getReviewByDataHash(
+            data_hash
         );
         const descriptionForHide =
             await this.claimReviewService.getDescriptionForHide(review);

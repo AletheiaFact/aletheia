@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Roles } from "../../ability/ability.factory";
-import { Document } from "mongoose";
+import { Roles } from "../../auth/ability/ability.factory";
+import { Document, Types } from "mongoose";
+import { Badge } from "../../badge/schemas/badge.schema";
 
 export interface UserDocument extends User, Document {
     authenticate(): any;
@@ -22,6 +23,22 @@ export class User {
 
     @Prop({ required: true, default: Roles.Regular })
     role: Roles;
+
+    @Prop({
+        type: [
+            {
+                type: Types.ObjectId,
+                ref: "Badge",
+                required: false,
+            },
+        ],
+    })
+    badges: Badge[];
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+const UserSchemaRaw = SchemaFactory.createForClass(User);
+UserSchemaRaw.pre("find", function () {
+    this.populate("badges");
+});
+
+export const UserSchema = UserSchemaRaw;

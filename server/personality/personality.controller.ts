@@ -18,7 +18,7 @@ import { ViewService } from "../view/view.service";
 import { PersonalityService } from "./personality.service";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonality } from "./dto/create-personality.dto";
-import { IsPublic } from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { TargetModel } from "../history/schema/history.schema";
 import { BaseRequest } from "../types";
 
@@ -118,7 +118,7 @@ export class PersonalityController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 req.params.slug,
                 req.language
             );
@@ -166,7 +166,7 @@ export class PersonalityController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsPersonalityBySlug(
+            await this.personalityService.getClaimsByPersonalitySlug(
                 req.params.slug
             );
         await this.viewService.getNextServer().render(

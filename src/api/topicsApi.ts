@@ -1,19 +1,31 @@
 import axios from "axios";
 import { message } from "antd";
+import { ActionTypes } from "../store/types";
+
+interface IGetTopicsOptions {
+    topicName: string;
+    t: Function;
+    dispatch?: Function;
+}
 
 const request = axios.create({
     withCredentials: true,
     baseURL: `/api/topics`,
 });
 
-const getTopics = (topicName, t) => {
+const getTopics = ({ topicName, t, dispatch }: IGetTopicsOptions) => {
     const params = {
         topicName,
     };
     return request
         .get(`/`, { params })
         .then((response) => {
-            return response?.data;
+            const topicResults = response.data;
+            dispatch({
+                type: ActionTypes.RESULTS_TOPICS_AUTOCOMPLETE,
+                results: topicResults,
+            });
+            return topicResults;
         })
         .catch((e) => {
             return (

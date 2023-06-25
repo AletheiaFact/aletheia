@@ -1,6 +1,6 @@
 const personality = {
-    name: 'Beyoncé',
-    slug: 'beyonce'
-}
+    name: "Oprah Winfrey",
+    slug: "oprah-winfrey",
+};
 
 export default personality;

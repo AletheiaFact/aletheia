@@ -19,10 +19,8 @@ export function handleGetFlowError<S>(
     return async (err: AxiosError) => {
         switch (err.response?.data.error?.id) {
             case "session_refresh_required":
-                // set refresh to true so we can redirect back to profile after login
-                window.location.href = err.response?.data.redirect_browser_to;
-                return;
             case "session_aal2_required":
+                // set refresh to true so we can redirect back to profile after login
                 // 2FA is enabled and enforced, but user did not perform 2fa yet
                 window.location.href = err.response?.data.redirect_browser_to;
                 return;
@@ -36,7 +34,6 @@ export function handleGetFlowError<S>(
             case "self_service_flow_expired":
                 message.error(t("oryErrors:flowExpired"));
                 await requestNewFlow();
-
                 return;
             case "security_csrf_violation":
                 message.error(t("oryErrors:csrfViolation"));

@@ -4,7 +4,7 @@
 
 <p align="center">Plataforma de análise de discursos de personalidades públicas e combate a Fake News.</p>
 
-## Instalação
+## Installation
 
 - Fork this repo and clone it locally:
   ``` sh
@@ -149,3 +149,15 @@ yarn build
 - ``Instance ID``: Unique token that authorizes the retrieval of the feature flags.
 - ``Application name``: The name of the environment the application runs in (not the name of the application itself).
 - Follow the example to put the variables in the right places.
+
+#### Localstack (AWS)
+
+```shell
+docker-compose up -d localstack  # Run in detached mode
+```
+
+##### Create a s3 bucket
+
+```shell
+docker-compose exec localstack awslocal s3 mb s3://aletheia
+```

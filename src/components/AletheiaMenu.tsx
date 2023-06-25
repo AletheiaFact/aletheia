@@ -1,11 +1,14 @@
 import { Menu } from "antd";
+import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch } from "react-redux";
+import { currentUserRole } from "../atoms/currentUser";
 
 import actions from "../store/actions";
 import colors from "../styles/colors";
+import { Roles } from "../types/enums";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
@@ -16,6 +19,8 @@ const AletheiaMenu = () => {
         dispatch(actions.openSideMenu());
         router.push(menuItem.key);
     };
+
+    const [role] = useAtom(currentUserRole);
 
     return (
         <Menu
@@ -50,6 +55,24 @@ const AletheiaMenu = () => {
             >
                 {t("menu:codeOfConductItem")}
             </Menu.Item>
+            {role === Roles.Admin && (
+                <>
+                    <Menu.Item
+                        key="/admin"
+                        data-cy={"testadminItem"}
+                        onClick={handleClick}
+                    >
+                        {t("menu:adminItem")}
+                    </Menu.Item>
+                    <Menu.Item
+                        key="/admin/badges"
+                        data-cy={"testadminBadgeItem"}
+                        onClick={handleClick}
+                    >
+                        {t("menu:Badges")}
+                    </Menu.Item>
+                </>
+            )}
         </Menu>
     );
 };

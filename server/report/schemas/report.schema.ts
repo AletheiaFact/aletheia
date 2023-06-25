@@ -8,7 +8,7 @@ export type ReportDocument = Report & mongoose.Document;
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Report {
     @Prop({ required: true })
-    sentence_hash: string;
+    data_hash: string;
 
     @Prop({
         type: mongoose.Types.ObjectId,

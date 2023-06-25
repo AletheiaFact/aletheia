@@ -8,7 +8,7 @@ ENV PARCEL_WORKERS=1
 COPY ./.babelrc /app/.babelrc
 COPY config.$ENVIRONMENT.yaml /app/config.yaml
 COPY config.seed.example.yaml /app/config.seed.yaml
-COPY migrate-mongo-config-example.js /app/migrate-mongo-config.js
+COPY migrate-mongo-config-example.ts /app/migrate-mongo-config.ts
 COPY ./migrations /app/migrations
 COPY ./.eslintignore /app/.eslintignore
 COPY ./.eslintrc.yml /app/.eslintrc.yml

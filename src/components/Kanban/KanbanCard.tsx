@@ -8,6 +8,9 @@ import personalityApy from "../../api/personality";
 import { useTranslation } from "next-i18next";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
+import { ContentModelEnum } from "../../types/enums";
+import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 
 const { Text, Paragraph } = Typography;
 
@@ -15,23 +18,22 @@ const KanbanCard = ({ reviewTask }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const goToClaimReview = () => {
-        dispatch(actions.openReviewDrawer());
         dispatch(actions.setSelectClaim(null));
         dispatch(actions.setSelectPersonality(null));
-        dispatch(actions.setSelectSentence(null));
-        dispatch(actions.setSelectDataHash(null));
+        dispatch(actions.setSelectContent(null));
         Promise.all([
             claimApi.getById(reviewTask.claimId, t, {}),
             personalityApy.getPersonality(reviewTask.personalityId, {}, t),
         ]).then(([claim, personality]) => {
             dispatch(actions.setSelectClaim(claim));
             dispatch(actions.setSelectPersonality(personality));
-            dispatch(actions.setSelectSentence(reviewTask?.sentence));
-            dispatch(
-                actions.setSelectDataHash(reviewTask?.sentence?.data_hash)
-            );
+            dispatch(actions.setSelectContent(reviewTask?.content));
         });
+        dispatch(actions.openReviewDrawer());
     };
+    const isImage = reviewTask.contentModel === ContentModelEnum.Image;
+    const title = isImage ? reviewTask.claimTitle : reviewTask.content.content;
+
     return (
         <a
             onClick={goToClaimReview}
@@ -59,14 +61,22 @@ const KanbanCard = ({ reviewTask }) => {
                                 fontWeight: "bold",
                             }}
                         >
-                            {reviewTask?.sentence?.content}
+                            {title}
                         </Paragraph>
                         <Text>{reviewTask.personalityName}</Text>
                     </Col>
                     <Col
                         span={24}
-                        style={{ display: "flex", justifyContent: "flex-end" }}
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}
                     >
+                        {isImage ? (
+                            <PhotoOutlinedIcon color="primary" />
+                        ) : (
+                            <ArticleOutlinedIcon color="primary" />
+                        )}
                         <Avatar.Group>
                             {reviewTask.usersName &&
                                 reviewTask.usersName.map((user, index) => {

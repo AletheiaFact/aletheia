@@ -1,22 +1,26 @@
+/* eslint-disable @next/next/no-img-element */
 import "moment/locale/pt";
 
-import { LinkPreview } from "@dhaiwat10/react-link-preview";
-import { Affix, Col, message, Row, Typography } from "antd";
+import { Affix, Col, Row, Typography } from "antd";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import actions from "../../store/actions";
 import colors from "../../styles/colors";
-import AletheiaButton, { ButtonType } from "../Button";
+import { ContentModelEnum } from "../../types/enums";
 import Loading from "../Loading";
+import LocalizedDate from "../LocalizedDate";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SocialMediaShare from "../SocialMediaShare";
+import SourcesList from "../SourcesList";
 import ToggleSection from "../ToggleSection";
 import ClaimSpeechBody from "./ClaimSpeechBody";
+import ReviewedImage from "../ReviewedImage";
+import { useAppSelector } from "../../store/store";
+import ImageApi from "../../api/image";
 
 const { Title, Paragraph } = Typography;
 
@@ -24,222 +28,218 @@ const ClaimView = ({ personality, claim, href }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     moment.locale(i18n.language);
-    const { title, stats } = claim;
+    const { title, stats, content: claimContent } = claim;
+    const isImage = claim?.contentModel === ContentModelEnum.Image;
+    let date = moment(new Date(claim.date));
+    const sources = claim?.sources?.map((source) => source.link);
+    const { selectedContent } = useAppSelector((state) => state);
 
-    let date = claim.date;
-    const paragraphs = Array.isArray(claim.content)
-        ? claim.content
-        : [claim.content];
+    const imageUrl = claimContent.content;
+    const paragraphs = Array.isArray(claimContent)
+        ? claimContent
+        : [claimContent];
 
     const dispatchPersonalityAndClaim = () => {
         dispatch(actions.setSelectClaim(claim));
         dispatch(actions.setSelectPersonality(personality));
     };
 
-    date = moment(new Date(date));
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
-        message.info(t("claim:initialInfo"));
-    }, [t]);
+        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectPersonality(personality));
+        if (isImage) {
+            dispatch(actions.setSelectContent(claimContent));
+        }
+    }, [isImage, t]);
 
-    if (paragraphs && personality) {
+    const handleClickOnImage = () => {
+        ImageApi.getImageTopicsByDatahash(selectedContent?.data_hash)
+            .then((image) => {
+                dispatch(actions.setSelectContent(image));
+            })
+            .catch((e) => e);
+        dispatch(actions.openReviewDrawer());
+    };
+
+    if (claimContent) {
         return (
             <>
-                <article>
-                    <PersonalityCard
-                        personality={personality}
-                        header={true}
-                        mobile={true}
-                        titleLevel={2}
-                    />
-                    <section>
-                        {date && (
-                            <Row style={{ marginTop: "20px" }}>
-                                <Col offset={2} span={18}>
-                                    <Title
-                                        level={2}
-                                        style={{
-                                            fontSize: 14,
-                                            lineHeight: 1.5715,
-                                            fontWeight: "bold",
-                                            marginBottom: 0,
-                                        }}
-                                    >
-                                        {personality.name}
-                                    </Title>
-                                    <p style={{ marginBottom: 0 }}>
-                                        {t("claim:info", {
-                                            claimDate: date.format("L"),
-                                        })}
-                                    </p>
-                                </Col>
-                            </Row>
-                        )}
-                        <Row
-                            style={{
-                                background: "#F5F5F5",
-                                boxShadow: "0px 3px 5px rgba(0, 0, 0, 0.15)",
-                                borderRadius: "30px 30px 0px 0px",
-                                margin: "15px -15px 0px -15px",
-                                paddingBottom: "15px",
-                            }}
-                        >
-                            <Row style={{ marginTop: "20px", width: "100%" }}>
-                                <Col offset={2} span={18}>
-                                    <Title
-                                        level={1}
-                                        style={{
-                                            fontSize: 20,
-                                            lineHeight: 1.4,
-                                        }}
-                                    >
-                                        {title}
-                                    </Title>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col offset={2} span={18}>
-                                    <cite style={{ fontStyle: "normal" }}>
-                                        <ClaimSpeechBody
-                                            handleSentenceClick={
-                                                dispatchPersonalityAndClaim
-                                            }
-                                            paragraphs={paragraphs}
-                                            showHighlights={showHighlights}
-                                        />
-                                    </cite>
-                                </Col>
-                            </Row>
-                            <Affix
-                                offsetBottom={15}
-                                style={{
-                                    textAlign: "center",
-                                    width: "100%",
-                                }}
-                            >
-                                <ToggleSection
-                                    defaultValue={showHighlights}
-                                    onChange={(e) => {
-                                        setShowHighlights(e.target.value);
-                                    }}
-                                    labelTrue={t("claim:showHighlightsButton")}
-                                    labelFalse={t("claim:hideHighlightsButton")}
+                <Row justify="center">
+                    <Col xs={20} sm={18} md={16}>
+                        <article>
+                            {personality && (
+                                <PersonalityCard
+                                    personality={personality}
+                                    header={true}
+                                    mobile={true}
+                                    titleLevel={2}
                                 />
-                            </Affix>
-                        </Row>
-                        {claim.sources &&
-                            Array.isArray(claim.sources) &&
-                            claim.sources.length > 0 && (
-                                <Row
-                                    style={{
-                                        background: "#F5F5F5",
-                                        boxShadow:
-                                            "0px 3px 5px rgba(0, 0, 0, 0.15)",
-                                        margin: "0px -15px 5px -15px",
-                                        padding: "15px",
-                                    }}
-                                >
-                                    <Title
-                                        level={3}
-                                        style={{
-                                            fontSize: "14px",
-                                            lineHeight: "21px",
-                                            color: "#111111",
-                                            marginBottom: 0,
-                                            paddingBottom: "15px",
-                                            fontWeight: 400,
-                                        }}
-                                    >
-                                        {t("claim:sourceSectionTitle")}
-                                    </Title>
-                                    {claim.sources && (
-                                        <>
-                                            <LinkPreview
-                                                url={claim.sources[0].link}
-                                                borderRadius="10px"
-                                                borderColor="transparent"
-                                                imageHeight="156px"
-                                                secondaryTextColor="#515151"
-                                                fallback={
-                                                    <Link
-                                                        href={
-                                                            claim.sources[0]
-                                                                .link
-                                                        }
-                                                    >
-                                                        {claim.sources[0].link}
-                                                    </Link>
-                                                }
-                                                width="100%"
-                                            />
-                                            <AletheiaButton
-                                                style={{
-                                                    width: "100%",
-                                                    marginTop: "21px",
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    paddingBottom: 0,
-                                                }}
-                                                type={ButtonType.blue}
-                                                href={`/personality/${personality.slug}/claim/${claim.slug}/sources`}
-                                                data-cy={personality.name}
-                                            >
-                                                <Title
-                                                    level={4}
+                            )}
+                            <section>
+                                {date && (
+                                    <Row style={{ marginTop: "20px" }}>
+                                        <Col>
+                                            {!isImage ? (
+                                                <Paragraph
                                                     style={{
-                                                        fontSize: 14,
-                                                        color: colors.white,
+                                                        fontSize: 10,
                                                         fontWeight: 400,
-                                                        margin: 0,
+                                                        lineHeight: "15px",
+                                                        marginBottom: 0,
+                                                        color: colors.blackSecondary,
                                                     }}
                                                 >
-                                                    {t(
-                                                        "claim:seeSourcesButton"
-                                                    )}
-                                                </Title>
-                                            </AletheiaButton>
-                                        </>
-                                    )}
-                                    <Paragraph
+                                                    {t("claim:cardHeader1")}
+                                                    &nbsp;
+                                                    <LocalizedDate
+                                                        date={
+                                                            claim.date ||
+                                                            new Date()
+                                                        }
+                                                    />
+                                                    &nbsp;
+                                                    {t("claim:cardHeader2")}
+                                                    &nbsp;
+                                                    <span
+                                                        style={{
+                                                            fontWeight: 700,
+                                                        }}
+                                                    >
+                                                        {t("claim:typeSpeech")}
+                                                    </span>
+                                                </Paragraph>
+                                            ) : (
+                                                <Paragraph
+                                                    style={{
+                                                        fontSize: 10,
+                                                        fontWeight: 400,
+                                                        lineHeight: "15px",
+                                                        marginBottom: 0,
+                                                        color: colors.blackSecondary,
+                                                    }}
+                                                >
+                                                    {t("claim:cardHeader3")}
+                                                    &nbsp;
+                                                    <LocalizedDate
+                                                        date={
+                                                            claim.date ||
+                                                            new Date()
+                                                        }
+                                                    />
+                                                </Paragraph>
+                                            )}
+                                        </Col>
+                                    </Row>
+                                )}
+                                <Row
+                                    style={{
+                                        paddingBottom: "15px",
+                                    }}
+                                    justify="center"
+                                >
+                                    <Col
                                         style={{
-                                            fontSize: "10px",
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            lineHeight: "15px",
-                                            color: colors.bluePrimary,
-                                            padding: "20px 30px 0px 30px",
-                                            marginBottom: 0,
+                                            margin: "20px 0",
+                                            width: "100%",
+                                        }}
+                                        xs={20}
+                                        sm={18}
+                                        md={16}
+                                    >
+                                        <Title
+                                            level={1}
+                                            style={{
+                                                fontSize: 20,
+                                                lineHeight: 1.4,
+                                            }}
+                                        >
+                                            {title}
+                                        </Title>
+                                    </Col>
+                                    <Col
+                                        xs={20}
+                                        sm={18}
+                                        md={16}
+                                        style={{ paddingBottom: "20px" }}
+                                    >
+                                        {isImage ? (
+                                            <div
+                                                style={{
+                                                    cursor: "pointer",
+                                                }}
+                                                onClick={handleClickOnImage}
+                                            >
+                                                <ReviewedImage
+                                                    imageUrl={imageUrl}
+                                                    title={title}
+                                                    classification={
+                                                        claimContent?.props
+                                                            ?.classification
+                                                    }
+                                                />
+                                            </div>
+                                        ) : (
+                                            <cite
+                                                style={{
+                                                    fontStyle: "normal",
+                                                }}
+                                            >
+                                                <ClaimSpeechBody
+                                                    handleSentenceClick={
+                                                        dispatchPersonalityAndClaim
+                                                    }
+                                                    paragraphs={paragraphs}
+                                                    showHighlights={
+                                                        showHighlights
+                                                    }
+                                                />
+                                            </cite>
+                                        )}
+                                    </Col>
+
+                                    <Affix
+                                        offsetBottom={15}
+                                        style={{
+                                            textAlign: "center",
+                                            width: "100%",
                                         }}
                                     >
-                                        <p
-                                            style={{
-                                                marginBottom: 0,
-                                                marginRight: 3,
+                                        <ToggleSection
+                                            defaultValue={showHighlights}
+                                            onChange={(e) => {
+                                                setShowHighlights(
+                                                    e.target.value
+                                                );
                                             }}
-                                        >
-                                            {t("claim:sourceFooter")}
-                                        </p>
-                                        <a
-                                            href={`mailto:${t(
-                                                "common:supportEmail"
-                                            )}`}
-                                            style={{
-                                                color: colors.blueSecondary,
-                                            }}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            {" "}
-                                            {t("claim:sourceFooterReport")}
-                                        </a>
-                                    </Paragraph>
+                                            labelTrue={t(
+                                                "claim:showHighlightsButton"
+                                            )}
+                                            labelFalse={t(
+                                                "claim:hideHighlightsButton"
+                                            )}
+                                        />
+                                    </Affix>
                                 </Row>
+                                {sources.length > 0 && (
+                                    <>
+                                        <Typography.Title level={4}>
+                                            {t("claim:sourceSectionTitle")}
+                                        </Typography.Title>
+                                        <SourcesList
+                                            sources={sources}
+                                            seeMoreHref={`${href}/sources`}
+                                        />
+                                    </>
+                                )}
+                            </section>
+                            {stats.total !== 0 && (
+                                <MetricsOverview stats={stats} />
                             )}
-                    </section>
-                    {stats.total !== 0 && <MetricsOverview stats={stats} />}
-                </article>
+                        </article>
+                    </Col>
+                </Row>
                 <SocialMediaShare
                     quote={personality?.name}
                     href={href}

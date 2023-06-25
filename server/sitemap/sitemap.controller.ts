@@ -1,12 +1,6 @@
-import {
-    Controller,
-    Get,
-    Header,
-    Request,
-    Res,
-} from "@nestjs/common";
+import { Controller, Get, Header, Request, Res } from "@nestjs/common";
 import { SitemapService } from "./sitemap.service";
-import {IsPublic} from "../decorators/is-public.decorator";
+import { IsPublic } from "../auth/decorators/is-public.decorator";
 
 @Controller("/")
 export class SitemapController {

@@ -1,18 +1,17 @@
 import { Col } from "antd";
+import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React from "react";
+import { isUserLoggedIn } from "../../atoms/currentUser";
 
 import { trackUmamiEvent } from "../../lib/umami";
-import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import CtaSectionStyle from "./CTASection.style";
 
 const CTASection = () => {
     const { t } = useTranslation();
-    const { isLoggedIn } = useAppSelector((state) => ({
-        isLoggedIn: state.login,
-    }));
+    const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
         <CtaSectionStyle>
@@ -37,9 +36,7 @@ const CTASection = () => {
                                 "registration"
                             );
                         }}
-                        href={t("common:registrationLink")}
-                        target="_blank"
-                        rel="noreferrer"
+                        href={"/sign-up"}
                         type={ButtonType.white}
                         rounded="true"
                         style={{

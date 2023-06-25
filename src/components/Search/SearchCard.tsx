@@ -85,7 +85,7 @@ const SearchCard = ({
                                                     c?.personality[0]?.name
                                                 }
                                                 claimDate={
-                                                    c?.date || c?.claim[0].date
+                                                    c?.date || c?.claim[0]?.date
                                                 }
                                                 sentence={c}
                                             />

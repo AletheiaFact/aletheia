@@ -14,7 +14,7 @@ describe("Create personality and claim", () => {
             .should("be.visible")
             .click();
         cy.get(locators.personality.INPUT_SEARCH_PERSONALITY).type(
-            personality.slug
+            personality.name
         );
         cy.get(`${locators.personality.SELECT_PERSONALITY}`, {
             timeout: 5000,
@@ -35,8 +35,13 @@ describe("Create personality and claim", () => {
 
         cy.get(locators.floatButton.FLOAT_BUTTON).should("be.visible").click();
         cy.get(locators.floatButton.ADD_CLAIM).should("be.visible").click();
+        cy.get(locators.claim.BTN_ADD_SPEECH).should("be.visible").click();
 
-        cy.get("[ data-cy=testTitleClaimForm]")
+        cy.get(locators.claim.BTN_SELECT_PERSONALITY)
+            .should("be.visible")
+            .click();
+
+        cy.get(locators.claim.INPUT_TITLE)
             .should("be.visible")
             .type(claim.title);
 
@@ -44,21 +49,58 @@ describe("Create personality and claim", () => {
             .should("be.visible")
             .type(claim.content);
 
-        cy.get("[data-cy=dataAserSelecionada]").should("be.visible").click();
-        cy.get("a.ant-picker-today-btn")
+        cy.get(locators.claim.INPUT_DATA).should("be.visible").click();
+        cy.get(locators.claim.INPUT_DATA_TODAY)
             .contains("Today")
             .should("be.visible")
             .click();
 
-        cy.get("[data-cy=testSource1]").should("be.visible").type(claim.source);
+        cy.get(locators.claim.INPUT_SOURCE)
+            .should("be.visible")
+            .type(claim.source);
 
         cy.get("[data-cy=testCheckboxAcceptTerms]").click();
 
         cy.checkRecaptcha();
-        cy.get("[data-cy=testSaveButton]").click();
+        cy.get(locators.claim.BTN_SUBMIT_CLAIM).click();
         cy.url().should(
             "contains",
             `http://localhost:3000/personality/${personality.slug}/claim/${claim.slug}`
         );
+    });
+
+    it("should create an image claim with a personality", () => {
+        cy.get(locators.floatButton.FLOAT_BUTTON).should("be.visible").click();
+        cy.get(locators.floatButton.ADD_CLAIM).should("be.visible").click();
+        cy.get(locators.claim.BTN_ADD_IMAGE).should("be.visible").click();
+        cy.get(locators.personality.INPUT_SEARCH_PERSONALITY).type(
+            personality.name
+        );
+        cy.get(`${locators.personality.SELECT_PERSONALITY}`, {
+            timeout: 5000,
+        }).click();
+        cy.get(locators.claim.BTN_SELECT_PERSONALITY)
+            .should("be.visible")
+            .click();
+        cy.get(locators.claim.INPUT_TITLE)
+            .should("be.visible")
+            .type(claim.imageTitle);
+        cy.get(locators.claim.INPUT_DATA).should("be.visible").click();
+        cy.get(locators.claim.INPUT_DATA_TODAY)
+            .contains("Today")
+            .should("be.visible")
+            .click();
+        cy.get(locators.claim.INPUT_SOURCE)
+            .should("be.visible")
+            .type(claim.source);
+        cy.get(locators.claim.BTN_UPLOAD_IMAGE).should("be.visible");
+        cy.get('input[type="file"]').selectFile(claim.imagePersonalitySource, {
+            force: true,
+        });
+        cy.get("[data-cy=testCheckboxAcceptTerms]").click();
+
+        cy.checkRecaptcha();
+        cy.get(locators.claim.BTN_SUBMIT_CLAIM).should("be.visible").click();
+        cy.title().should("contain", claim.imageTitle);
     });
 });
