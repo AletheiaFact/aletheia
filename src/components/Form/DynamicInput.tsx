@@ -75,7 +75,6 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "collaborative":
             return (
                 <CollaborativeEditor
-                    // onChange={(value) => props.onChange(value)}
                     defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
                 />
