@@ -4,6 +4,14 @@ import ClaimReviewSelect from "./ClaimReviewSelect";
 import TextArea from "../TextArea";
 import InputTextList from "../InputTextList";
 import UserInput from "./UserInput";
+import dynamic from "next/dynamic";
+
+const CollaborativeEditor = dynamic<any>(
+    () => import("./CollaborativeEditor"),
+    {
+        ssr: false,
+    }
+);
 
 interface DynamicInputProps {
     fieldName: string;
@@ -60,6 +68,14 @@ const DynamicInput = (props: DynamicInputProps) => {
                 <ClaimReviewSelect
                     type="select"
                     onChange={(value) => props.onChange(value)}
+                    defaultValue={props.defaultValue}
+                    placeholder={t(props.placeholder)}
+                />
+            );
+        case "collaborative":
+            return (
+                <CollaborativeEditor
+                    // onChange={(value) => props.onChange(value)}
                     defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
                 />

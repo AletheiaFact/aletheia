@@ -20,7 +20,7 @@ const assignedForm: FormField[] = [
     }),
     createFormField({
         fieldName: "summary",
-        type: "textArea",
+        type: "collaborative",
         defaultValue: "",
     }),
     createFormField({
