@@ -28,6 +28,7 @@ export enum ActionTypes {
     RESULTS_TOPICS_AUTOCOMPLETE,
     SET_SEARCH_FILTER,
     SET_SEARCH_FILTER_USED,
+    SET_COLLABORATIVE_EDIT,
 }
 
 export enum SearchTypes {
@@ -54,6 +55,7 @@ export interface RootState {
         totalResults: number;
     };
     autoSave: boolean;
+    collaborativeEdit: boolean;
     claimType: string;
     claimPersonality: Personality;
     vw: WidthBreakpoints;

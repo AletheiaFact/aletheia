@@ -123,6 +123,11 @@ const reducer = (state, action) => {
                 ...state,
                 autoSave: action.autoSave,
             };
+        case ActionTypes.SET_COLLABORATIVE_EDIT:
+            return {
+                ...state,
+                collaborativeEdit: action.collaborativeEdit,
+            };
         case ActionTypes.SET_USER_ROLE:
             return {
                 ...state,

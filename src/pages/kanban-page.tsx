@@ -9,9 +9,15 @@ import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import actions from "../store/actions";
 import Seo from "../components/Seo";
-const KanbanPage: NextPage<{ sitekey }> = (props) => {
+const KanbanPage: NextPage<{ sitekey; enableCollaborativeEditor }> = (
+    props
+) => {
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(props.sitekey));
+    dispatch({
+        type: ActionTypes.SET_COLLABORATIVE_EDIT,
+        collaborativeEdit: props.enableCollaborativeEditor,
+    });
 
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
@@ -33,6 +39,9 @@ export async function getServerSideProps({ locale, locales, req, query }) {
         props: {
             ...(await serverSideTranslations(locale)),
             sitekey: query.sitekey,
+            enableCollaborativeEditor: JSON.parse(
+                JSON.stringify(query?.enableCollaborativeEditor)
+            ),
         },
     };
 }

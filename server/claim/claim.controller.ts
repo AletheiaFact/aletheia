@@ -262,6 +262,8 @@ export class ClaimController {
             data_hash
         );
 
+        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+
         const description = await this.claimReviewService.getDescriptionForHide(
             claimReview
         );
@@ -280,6 +282,7 @@ export class ClaimController {
                 claimReview,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 description,
+                enableCollaborativeEditor,
             })
         );
     }
@@ -436,6 +439,8 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
         const claim = await this.claimService.getById(claimId);
 
+        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+
         if (
             claim.contentModel === ContentModelEnum.Image &&
             !this.isEnabledImageClaim()
@@ -459,6 +464,7 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                enableCollaborativeEditor,
             })
         );
     }
@@ -472,6 +478,8 @@ export class ClaimController {
     ) {
         const { personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
+
+        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
@@ -491,6 +499,7 @@ export class ClaimController {
                 personality,
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                enableCollaborativeEditor,
             })
         );
     }
@@ -508,6 +517,8 @@ export class ClaimController {
                 req.language
             );
 
+        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
             claimSlug,
@@ -520,7 +531,11 @@ export class ClaimController {
                 req,
                 res,
                 "/claim-page",
-                Object.assign(parsedUrl.query, { personality, claim })
+                Object.assign(parsedUrl.query, {
+                    personality,
+                    claim,
+                    enableCollaborativeEditor,
+                })
             );
     }
 
@@ -644,5 +659,13 @@ export class ClaimController {
         const config = this.configService.get<string>("feature_flag");
 
         return config ? this.unleash.isEnabled("enable_image_claim") : false;
+    }
+
+    private isEnableCollaborativeEditor() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_collaborative_editor")
+            : false;
     }
 }
