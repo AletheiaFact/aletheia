@@ -9,20 +9,26 @@ import JsonLd from "../components/JsonLd";
 import Seo from "../components/Seo";
 import actions from "../store/actions";
 import { GetLocale } from "../utils/GetLocale";
+import { ActionTypes } from "../store/types";
 
 export interface ClaimPageProps {
     personality: any;
     claim: any;
     sitekey: string;
     href: string;
+    enableCollaborativeEditor: boolean;
 }
 
 const ClaimPage: NextPage<ClaimPageProps> = (props) => {
-    const { personality, claim, sitekey } = props;
+    const { personality, claim, sitekey, enableCollaborativeEditor } = props;
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
     dispatch(actions.setSitekey(sitekey));
+    dispatch({
+        type: ActionTypes.SET_COLLABORATIVE_EDIT,
+        collaborativeEdit: enableCollaborativeEditor,
+    });
 
     const jsonld = {
         "@context": "https://schema.org",
@@ -66,6 +72,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claim: JSON.parse(JSON.stringify(query.claim)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
+            enableCollaborativeEditor: JSON.parse(
+                JSON.stringify(query?.enableCollaborativeEditor)
+            ),
         },
     };
 }

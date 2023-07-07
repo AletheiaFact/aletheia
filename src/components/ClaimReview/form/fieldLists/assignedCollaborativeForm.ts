@@ -5,7 +5,7 @@ import {
     fieldValidation,
 } from "../../../Form/FormField";
 
-const assignedForm: FormField[] = [
+const assignedCollaborativeForm: FormField[] = [
     createFormField({
         fieldName: "classification",
         type: "select",
@@ -20,7 +20,7 @@ const assignedForm: FormField[] = [
     }),
     createFormField({
         fieldName: "summary",
-        type: "textArea",
+        type: "collaborative",
         defaultValue: "",
     }),
     createFormField({
@@ -54,4 +54,4 @@ function isValidClassification(string) {
     return Object.values(ClassificationEnum).includes(string);
 }
 
-export default assignedForm;
+export default assignedCollaborativeForm;
