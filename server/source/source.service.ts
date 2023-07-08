@@ -13,9 +13,12 @@ export class SourceService {
     async create(data) {
         data.targetId = [Types.ObjectId(data.targetId)];
         data.user = Types.ObjectId(data.user);
-        const source = new this.SourceModel(data);
-        await source.save();
-        return source;
+        const source = await new this.SourceModel(data).save();
+
+        return {
+            _id: source._id,
+            link: source.link,
+        };
     }
 
     async update(sourceId, newTargetId) {
@@ -33,5 +36,13 @@ export class SourceService {
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order });
+    }
+
+    async getSource(match) {
+        return await this.SourceModel.find({ match }, { _id: 1, link: 1 });
+    }
+
+    async getById(_id) {
+        return await this.SourceModel.findById(_id, { _id: 1, link: 1 });
     }
 }

@@ -128,3 +128,19 @@ h5,
 h6 {
     font-family: "Noticia Text", serif;
 }
+
+.css-advny6-MuiPopper-root.MuiPopperUnstyled-root {
+    z-index: 1000;
+}
+
+button.MuiButtonBase-root.MuiToggleButton-root.MuiToggleButton-sizeSmall.MuiToggleButton-primary.css-m1p39f-MuiButtonBase-root-MuiToggleButton-root {
+    border-width: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    border-radius: 4px;
+    background: #11273a;
+    color: #fff;
+}
+

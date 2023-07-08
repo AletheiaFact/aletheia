@@ -18,7 +18,9 @@ const SentenceReportContent = ({ context }) => {
                 <Paragraph className="title">
                     {t("claimReview:summarySectionTitle")}
                 </Paragraph>
-                <Paragraph className="paragraph">{summary}</Paragraph>
+                <Paragraph className="paragraph">
+                    <p dangerouslySetInnerHTML={{ __html: summary }} />
+                </Paragraph>
                 <Divider />
             </Col>
             {questions.length > 0 && (

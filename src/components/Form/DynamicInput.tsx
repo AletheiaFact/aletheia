@@ -7,7 +7,7 @@ import UserInput from "./UserInput";
 import dynamic from "next/dynamic";
 
 const CollaborativeEditor = dynamic<any>(
-    () => import("./CollaborativeEditor"),
+    () => import("../Collaborative/CollaborativeEditor"),
     {
         ssr: false,
     }
@@ -23,6 +23,8 @@ interface DynamicInputProps {
     defaultValue: string | [];
     "data-cy": string;
     extraProps: any;
+    editorRef: any;
+    collabEditorError: any;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -75,8 +77,12 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "collaborative":
             return (
                 <CollaborativeEditor
-                    defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
+                    onChange={({ state }) =>
+                        props.onChange(state?.doc?.textContent)
+                    }
+                    editorRef={props.editorRef}
+                    error={props.collabEditorError}
                 />
             );
         default:

@@ -14,21 +14,9 @@ export class Source {
     link: string;
 
     @Prop({
-        validate: {
-            validator: (v) => {
-                return (
-                    ["unclassified", "reliable", "unreliable", "fake"].indexOf(
-                        v
-                    ) !== -1
-                );
-            },
-        },
-        message: (tag) => `${tag} is not a valid classification.`,
+        required: false,
     })
-    classification: string;
-
-    @Prop()
-    description: string;
+    targetText: string;
 
     /**
      * Use Dynamic ref https://mongoosejs.com/docs/populate.html#dynamic-ref

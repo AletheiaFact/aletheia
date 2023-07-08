@@ -45,8 +45,10 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const [isLoading, setIsLoading] = useState({});
     const [reviewerError, setReviewerError] = useState(false);
     const [recaptchaString, setRecaptchaString] = useState("");
+    const [collabEditorError, setCollabEditorError] = useState(null);
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
+    const editorRef = useRef(null);
 
     const { autoSave, isCollaborativeEdit } = useAppSelector((state) => ({
         autoSave: state.autoSave,
@@ -164,6 +166,47 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             data = getValues();
         }
 
+        const editorContent = editorRef.current;
+
+        if (editorContent) {
+            setCollabEditorError(null);
+            if (!editorContent.html.includes("<a")) {
+                //TODO: create better error message
+                setCollabEditorError("atribua um link ao texto de sumário");
+                return;
+            }
+
+            // Regular expression pattern to match HTML <a> tags and capture the text within them
+            const regex = /<a[^>]*>([^<]*)<\/a>/g;
+            let sourceReference = 1;
+            // Function to replace the href attribute with the captured text
+            const replaceHrefWithText = (match, text) => {
+                // Replace href with the captured text
+                const modifiedTag = `<a href="#${text}">${text}<sup>${sourceReference}</sup></a>`;
+                sourceReference += 1;
+                return modifiedTag;
+            };
+            // Use replace() method with the regular expression and the replaceHrefWithText function
+            const modifiedHtml = editorContent.html.replace(
+                regex,
+                replaceHrefWithText
+            );
+
+            data.summary = modifiedHtml;
+            data.sources = editorContent.JSON.content
+                .flatMap((paragraph) => {
+                    return paragraph?.content
+                        ?.filter((content) => content.marks)
+                        .map((content) => {
+                            return {
+                                targetText: content.text,
+                                link: content.marks[0].attrs.href,
+                            };
+                        });
+                })
+                .filter((source) => source);
+        }
+
         trackUmamiEvent(`${event}_BUTTON`, "Fact-checking workflow");
         sendEventToMachine(data, event);
     };
@@ -189,6 +232,8 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                         machineValues={reviewData}
                         control={control}
                         errors={errors}
+                        editorRef={editorRef}
+                        collabEditorError={collabEditorError}
                     />
                     <div
                         style={{

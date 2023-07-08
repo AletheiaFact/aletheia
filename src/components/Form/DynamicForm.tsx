@@ -7,7 +7,14 @@ import { Controller } from "react-hook-form";
 import colors from "../../styles/colors";
 import DynamicInput from "./DynamicInput";
 
-const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
+const DynamicForm = ({
+    currentForm,
+    machineValues,
+    control,
+    errors,
+    editorRef,
+    collabEditorError,
+}) => {
     const { t } = useTranslation();
     return (
         <div>
@@ -55,6 +62,8 @@ const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
                                         defaultValue={defaultValue}
                                         data-cy={`testClaimReview${fieldName}`}
                                         extraProps={extraProps}
+                                        editorRef={editorRef}
+                                        collabEditorError={collabEditorError}
                                     />
                                 )}
                             />

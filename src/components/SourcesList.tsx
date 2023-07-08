@@ -10,7 +10,7 @@ const SourcesList = ({
     sources,
     seeMoreHref,
 }: {
-    sources: string[];
+    sources: any[];
     seeMoreHref: string;
 }) => {
     const { t } = useTranslation();
@@ -30,20 +30,41 @@ const SourcesList = ({
                         xl: 3,
                         xxl: 3,
                     }}
-                    renderItem={(link, index) => {
+                    renderItem={(source, index) => {
                         return (
-                            <Col className="source">
-                                <List.Item key={link}>
-                                    {index + 1}.{" "}
-                                    <a
-                                        href={link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {link}
-                                    </a>
-                                </List.Item>
-                            </Col>
+                            // TODO: source migration to new schema
+                            <>
+                                {typeof source === "object" ? (
+                                    <Col className="source">
+                                        <List.Item
+                                            id={source.targetText}
+                                            key={source.link}
+                                        >
+                                            {index + 1}.{" "}
+                                            <a
+                                                href={source.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {source.link}
+                                            </a>
+                                        </List.Item>
+                                    </Col>
+                                ) : (
+                                    <Col className="source">
+                                        <List.Item id={source} key={source}>
+                                            {index + 1}.{" "}
+                                            <a
+                                                href={source}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {source}
+                                            </a>
+                                        </List.Item>
+                                    </Col>
+                                )}
+                            </>
                         );
                     }}
                 />
