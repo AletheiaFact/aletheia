@@ -14,9 +14,16 @@ export class Source {
     link: string;
 
     @Prop({
+        type: "string",
         required: false,
     })
     targetText: string;
+
+    @Prop({
+        type: "string",
+        required: false,
+    })
+    targetReference: string;
 
     /**
      * Use Dynamic ref https://mongoosejs.com/docs/populate.html#dynamic-ref

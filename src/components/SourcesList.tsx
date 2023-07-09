@@ -32,12 +32,11 @@ const SourcesList = ({
                     }}
                     renderItem={(source, index) => {
                         return (
-                            // TODO: source migration to new schema
                             <>
                                 {typeof source === "object" ? (
                                     <Col className="source">
                                         <List.Item
-                                            id={source.targetText}
+                                            id={source.ref}
                                             key={source.link}
                                         >
                                             {index + 1}.{" "}

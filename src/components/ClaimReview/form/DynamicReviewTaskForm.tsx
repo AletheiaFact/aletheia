@@ -21,6 +21,8 @@ import { useAppSelector } from "../../../store/store";
 import AletheiaCaptcha from "../../AletheiaCaptcha";
 import AletheiaButton, { ButtonType } from "../../Button";
 import DynamicForm from "../../Form/DynamicForm";
+import replaceHrefReferenceWithHash from "../../Collaborative/utils/replaceHrefReferenceWithHash";
+import getEditorSources from "../../Collaborative/utils/getEditorSources";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -57,7 +59,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
-    const setCurrentFormAndNextEvents = (param, isCollaborativeEdit) => {
+    const setCurrentFormAndNextEvents = (param) => {
         if (param !== ReviewTaskEvents.draft) {
             let nextForm = getNextForm(param, isCollaborativeEdit);
             nextForm = setUserPreloads(nextForm);
@@ -92,10 +94,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            setCurrentFormAndNextEvents(
-                machineService.machine.config.initial,
-                isCollaborativeEdit
-            );
+            setCurrentFormAndNextEvents(machineService.machine.config.initial);
         }
     }, [isLoggedIn]);
 
@@ -162,50 +161,20 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     };
 
     const handleSendEvent = async (event, data = null) => {
+        const editorContent = editorRef.current;
         if (!data) {
             data = getValues();
         }
-
-        const editorContent = editorRef.current;
 
         if (editorContent) {
             setCollabEditorError(null);
             if (!editorContent.html.includes("<a")) {
                 setCollabEditorError(t("sourceForm:errorMessageNoURL"));
-                return;
             }
 
-            // Regular expression pattern to match HTML <a> tags and capture the text within them
-            const regex = /<a[^>]*>([^<]*)<\/a>/g;
-            let sourceReference = 1;
-            // Function to replace the href attribute with the captured text
-            const replaceHrefWithText = (match, text) => {
-                // Replace href with the captured text
-                const modifiedTag = `<a href="#${text}">${text}<sup>${sourceReference}</sup></a>`;
-                sourceReference += 1;
-                return modifiedTag;
-            };
-            // Use replace() method with the regular expression and the replaceHrefWithText function
-            const modifiedHtml = editorContent.html.replace(
-                regex,
-                replaceHrefWithText
-            );
-
-            data.summary = modifiedHtml;
-            data.sources = editorContent.JSON.content
-                .flatMap((paragraph) => {
-                    return paragraph?.content
-                        ?.filter((content) => content.marks)
-                        .map((content) => {
-                            return {
-                                targetText: content.text,
-                                link: content.marks[0].attrs.href,
-                            };
-                        });
-                })
-                .filter((source) => source);
+            data.summary = replaceHrefReferenceWithHash(editorContent);
+            data.sources = getEditorSources(editorContent);
         }
-
         trackUmamiEvent(`${event}_BUTTON`, "Fact-checking workflow");
         sendEventToMachine(data, event);
     };

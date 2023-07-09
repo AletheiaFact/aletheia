@@ -13,12 +13,8 @@ export class SourceService {
     async create(data) {
         data.targetId = [Types.ObjectId(data.targetId)];
         data.user = Types.ObjectId(data.user);
-        const source = await new this.SourceModel(data).save();
-
-        return {
-            _id: source._id,
-            link: source.link,
-        };
+        //TODO: don't create duplicate sources in one claim review task
+        return await new this.SourceModel(data).save();
     }
 
     async update(sourceId, newTargetId) {

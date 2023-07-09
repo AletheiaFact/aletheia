@@ -12,7 +12,9 @@ const getNextForm = (
 ) => {
     const formMap = {
         [ReviewTaskStates.unassigned]: unassignedForm,
-        [ReviewTaskEvents.assignUser]: assignedForm,
+        [ReviewTaskEvents.assignUser]: collaborativeEdit
+            ? assignedCollaborativeForm
+            : assignedForm,
         [ReviewTaskStates.assigned]: collaborativeEdit
             ? assignedCollaborativeForm
             : assignedForm,
@@ -27,7 +29,9 @@ const getNextForm = (
         [ReviewTaskEvents.submit]: [],
         [ReviewTaskStates.submitted]: [],
         [ReviewTaskStates.rejected]: rejectedForm,
-        [ReviewTaskEvents.addRejectionComment]: assignedForm,
+        [ReviewTaskEvents.addRejectionComment]: collaborativeEdit
+            ? assignedCollaborativeForm
+            : assignedForm,
         [ReviewTaskStates.published]: [],
         [ReviewTaskEvents.publish]: [],
     };

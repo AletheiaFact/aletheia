@@ -31,6 +31,8 @@ const Editor = ({ state, editorRef }: { state: any; editorRef: any }) => {
             JSON: getJSON(),
             html: getHTML(),
         };
+
+        return () => {};
     }, [state, getJSON, getHTML, editorRef]);
 
     return <></>;
@@ -54,8 +56,10 @@ const CollaborativeEditor = ({
     }));
 
     const url = window.location.href;
+    const hashIndex = url.indexOf("#");
     const startIndex = url.indexOf("sentence/") + "sentence/".length;
-    const url_hash = url.slice(startIndex);
+    const endIndex = hashIndex !== -1 ? hashIndex : undefined;
+    const url_hash = url.slice(startIndex, endIndex);
 
     const provider = useMemo(
         () => createWebsocketConnection(data_hash || url_hash),
