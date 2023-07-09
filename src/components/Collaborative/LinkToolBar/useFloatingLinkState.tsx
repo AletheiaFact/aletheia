@@ -18,6 +18,14 @@ import {
     useExtensionEvent,
     useUpdateReason,
 } from "@remirror/react";
+import { useTranslation } from "next-i18next";
+
+function useUpdateSelection() {
+    const { empty } = useCurrentSelection();
+    const isSelected = !empty;
+
+    return isSelected;
+}
 
 function useLinkShortcut() {
     const [linkShortcut, setLinkShortcut] = useState<
@@ -44,11 +52,16 @@ function useLinkShortcut() {
 }
 
 function useFloatingLinkState() {
+    const { t } = useTranslation();
+
+    const [error, setError] = useState(null);
     const chain = useChainedCommands();
     const { isEditing, linkShortcut, setIsEditing } = useLinkShortcut();
     const { to, empty } = useCurrentSelection();
-    const url = (useAttrs().link()?.href as string) ?? "";
+    const url = (useAttrs().link()?.href as string) ?? "https://";
     const [href, setHref] = useState<string>(url);
+
+    const isSelected = useUpdateSelection();
 
     // A positioner which only shows for links.
     const linkPositioner = useMemo(
@@ -56,14 +69,10 @@ function useFloatingLinkState() {
         []
     );
 
-    const onRemove = useCallback(
+    const onRemoveLink = useCallback(
         () => chain.removeLink().focus().run(),
         [chain]
     );
-
-    const onOpen = useCallback(() => {
-        window.open(href, "_blank");
-    }, [href]);
 
     const updateReason = useUpdateReason();
 
@@ -81,24 +90,38 @@ function useFloatingLinkState() {
         setHref(url);
     }, [url]);
 
-    const submitHref = useCallback(() => {
-        setIsEditing(false);
-        const range = linkShortcut ?? undefined;
-
-        if (href === "") {
-            chain.removeLink();
-        } else {
-            chain.updateLink({ href, auto: false }, range);
+    const validateLink = useCallback(() => {
+        const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/;
+        if (!urlPattern.test(href)) {
+            throw new Error(t("sourceForm:errorMessageValidURL"));
         }
+    }, [href, t]);
 
-        chain.focus(range?.to ?? to).run();
-    }, [setIsEditing, linkShortcut, chain, href, to]);
+    const submitHref = useCallback(() => {
+        try {
+            validateLink();
+            setIsEditing(false);
+            const range = linkShortcut ?? undefined;
+
+            if (href === "") {
+                chain.removeLink();
+            } else {
+                chain.updateLink({ href, auto: false }, range);
+            }
+            chain.focus(range?.to ?? to).run();
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setHref("https://");
+        }
+    }, [validateLink, setIsEditing, linkShortcut, href, chain, to]);
 
     const cancelHref = useCallback(() => {
         setIsEditing(false);
     }, [setIsEditing]);
 
     const clickEdit = useCallback(() => {
+        setError(null);
         if (empty) {
             chain.selectLink();
         }
@@ -114,10 +137,11 @@ function useFloatingLinkState() {
             linkPositioner,
             isEditing,
             clickEdit,
-            onRemove,
-            onOpen,
+            onRemoveLink,
             submitHref,
             cancelHref,
+            isSelected,
+            error,
         }),
         [
             href,
@@ -125,10 +149,11 @@ function useFloatingLinkState() {
             linkPositioner,
             isEditing,
             clickEdit,
-            onRemove,
-            onOpen,
+            onRemoveLink,
             submitHref,
             cancelHref,
+            isSelected,
+            error,
         ]
     );
 }

@@ -129,6 +129,10 @@ h6 {
     font-family: "Noticia Text", serif;
 }
 
+div .hUgJMD .remirror-editor.ProseMirror {
+    overflow: inherit;
+}
+
 .css-advny6-MuiPopper-root.MuiPopperUnstyled-root {
     z-index: 1000;
 }

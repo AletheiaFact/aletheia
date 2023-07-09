@@ -8,53 +8,64 @@ import {
     useCurrentSelection,
 } from "@remirror/react";
 import useFloatingLinkState from "./useFloatingLinkState";
-import DelayAutoFocusInput from "./DelayAutoFocusInput";
+import SourceDialog from "./Dialog/SourceDialog";
+import { useTranslation } from "next-i18next";
 
 const FloatingLinkToolbar = () => {
     const {
         isEditing,
         linkPositioner,
         clickEdit,
-        onRemove,
-        onOpen,
+        onRemoveLink,
         submitHref,
         href,
         setHref,
+        isSelected,
         cancelHref,
+        error,
     } = useFloatingLinkState();
+    const { t } = useTranslation();
+    const { empty } = useCurrentSelection();
     const active = useActive();
     const activeLink = active.link();
-    const { empty } = useCurrentSelection();
 
-    const handleClickEdit = useCallback(() => {
+    const handleClickEditLink = useCallback(() => {
         clickEdit();
     }, [clickEdit]);
 
-    const linkEditButtons = activeLink ? (
-        <>
-            <CommandButton
-                commandName="openLink"
-                onSelect={onOpen}
-                icon="link"
-                enabled
-            />
-            <CommandButton
-                commandName="updateLink"
-                onSelect={handleClickEdit}
-                icon="pencilLine"
-                enabled
-            />
-            <CommandButton
-                commandName="removeLink"
-                onSelect={onRemove}
-                icon="linkUnlink"
-                enabled
-            />
-        </>
-    ) : (
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setHref(event.target.value);
+    };
+
+    const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        const { code } = event;
+
+        if (code === "Enter") {
+            event.preventDefault();
+            submitHref();
+        }
+
+        if (code === "Escape") {
+            cancelHref();
+        }
+    };
+
+    const handleClickButton = () => {
+        submitHref();
+    };
+
+    const handleCloseModal = () => {
+        cancelHref();
+    };
+
+    const handleRemoveLink = () => {
+        onRemoveLink();
+    };
+
+    const linkEditButton = (
         <CommandButton
             commandName="updateLink"
-            onSelect={handleClickEdit}
+            onSelect={handleClickEditLink}
             icon="link"
             enabled
         />
@@ -62,13 +73,12 @@ const FloatingLinkToolbar = () => {
 
     return (
         <>
-            {!isEditing && <FloatingToolbar>{linkEditButtons}</FloatingToolbar>}
-            {!isEditing && empty && (
+            {!isEditing && <FloatingToolbar>{linkEditButton}</FloatingToolbar>}
+            {!isEditing && isSelected && empty && (
                 <FloatingToolbar positioner={linkPositioner}>
-                    {linkEditButtons}
+                    {linkEditButton}
                 </FloatingToolbar>
             )}
-
             <FloatingWrapper
                 positioner="selection"
                 placement="bottom"
@@ -76,24 +86,17 @@ const FloatingLinkToolbar = () => {
                 renderOutsideEditor={false}
                 key="Link-wrapper"
             >
-                <DelayAutoFocusInput
+                <SourceDialog
                     autoFocus
-                    placeholder="Enter link..."
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        setHref(event.target.value)
-                    }
+                    placeholder={t("sourceForm:placeholder")}
                     value={href}
-                    onKeyUp={(event: KeyboardEvent<HTMLInputElement>) => {
-                        const { code } = event;
-
-                        if (code === "Enter") {
-                            submitHref();
-                        }
-
-                        if (code === "Escape") {
-                            cancelHref();
-                        }
-                    }}
+                    onChange={handleInputChange}
+                    onKeyDown={handleInputKeyDown}
+                    handleClickButton={handleClickButton}
+                    onCloseModal={handleCloseModal}
+                    error={error}
+                    activeLink={activeLink}
+                    onRemoveLink={handleRemoveLink}
                 />
             </FloatingWrapper>
         </>

@@ -171,8 +171,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         if (editorContent) {
             setCollabEditorError(null);
             if (!editorContent.html.includes("<a")) {
-                //TODO: create better error message
-                setCollabEditorError("atribua um link ao texto de sumário");
+                setCollabEditorError(t("sourceForm:errorMessageNoURL"));
                 return;
             }
 
