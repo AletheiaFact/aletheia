@@ -78,8 +78,8 @@ const DynamicInput = (props: DynamicInputProps) => {
             return (
                 <CollaborativeEditor
                     placeholder={t(props.placeholder)}
-                    onChange={({ state }) =>
-                        props.onChange(state?.doc?.textContent)
+                    onContentChange={({ doc }) =>
+                        props.onChange(doc?.textContent)
                     }
                     editorRef={props.editorRef}
                     error={props.collabEditorError}

@@ -1,53 +1,29 @@
-import React, { useCallback, useEffect, useMemo } from "react";
-import { WebsocketProvider } from "y-websocket";
-import * as Y from "yjs";
-import { Remirror, useHelpers, useRemirror } from "@remirror/react";
 import {
     AnnotationExtension,
+    LinkExtension,
     PlaceholderExtension,
     YjsExtension,
-    LinkExtension,
 } from "remirror/extensions";
+import React, { useCallback, useMemo } from "react";
+import { Remirror, useRemirror } from "@remirror/react";
+
+import CollaborativeEditorStyle from "./CollaborativeEditor.style";
+import Editor from "./Editor";
 import FloatingLinkToolbar from "./LinkToolBar/FloatingLinkToolbar";
 import colors from "../../styles/colors";
+import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 import { useAppSelector } from "../../store/store";
-import CollaborativeEditorStyle from "./CollaborativeEditor.style";
-
-const createWebsocketConnection = (hash: string) => {
-    const ydoc = new Y.Doc();
-    return new WebsocketProvider("ws://localhost:1234", hash, ydoc);
-};
-
-/**
- * modifies reference to useful properties those are easier to manipulate
- * @param state remirror state
- * @param editorRef reference to editor
- */
-const Editor = ({ state, editorRef }: { state: any; editorRef: any }) => {
-    const { getJSON, getHTML } = useHelpers();
-
-    useEffect(() => {
-        editorRef.current = {
-            JSON: getJSON(),
-            html: getHTML(),
-        };
-
-        return () => {};
-    }, [state, getJSON, getHTML, editorRef]);
-
-    return <></>;
-};
 
 interface CollaborativeEditorProps {
     placeholder: string;
-    onChange: (changeProps: any) => void;
+    onContentChange: (state: any) => void;
     editorRef: any;
     error: string;
 }
 
 const CollaborativeEditor = ({
     placeholder,
-    onChange,
+    onContentChange,
     editorRef,
     error,
 }: CollaborativeEditorProps) => {
@@ -81,6 +57,14 @@ const CollaborativeEditor = ({
         stringHandler: "html",
     });
 
+    const handleChange = useCallback(
+        ({ state }) => {
+            onContentChange(state);
+            setState(state);
+        },
+        [setState, onContentChange]
+    );
+
     return (
         <>
             <CollaborativeEditorStyle ref={editorRef}>
@@ -89,13 +73,7 @@ const CollaborativeEditor = ({
                     initialContent={state}
                     autoFocus
                     autoRender="end"
-                    onChange={useCallback(
-                        (changeProps) => {
-                            onChange(changeProps);
-                            setState(changeProps.state);
-                        },
-                        [setState, onChange]
-                    )}
+                    onChange={handleChange}
                 >
                     <FloatingLinkToolbar />
                     <Editor state={state} editorRef={editorRef} />

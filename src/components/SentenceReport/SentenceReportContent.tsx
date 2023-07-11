@@ -1,10 +1,10 @@
 import { Col, Divider, Typography } from "antd";
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import React from "react";
 
-import SourcesList from "../SourcesList";
+import React from "react";
 import SentenceReportContentStyle from "./SentenceReportContent.style";
+import SourcesList from "../Source/SourcesList";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 const { Paragraph } = Typography;
 const SentenceReportContent = ({ context }) => {
