@@ -18,6 +18,7 @@ const SourceListItem = ({ source, index }) => {
                 </List.Item>
             ) : (
                 <List.Item id={source}>
+                    {/* TODO: Remove this ternary when source migration is done */}
                     {index}.{" "}
                     <a href={source} target="_blank" rel="noopener noreferrer">
                         {source}

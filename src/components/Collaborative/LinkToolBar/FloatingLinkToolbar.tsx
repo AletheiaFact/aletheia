@@ -1,5 +1,4 @@
 import type { ChangeEvent, KeyboardEvent } from "react";
-import React, { useCallback } from "react";
 import {
     CommandButton,
     FloatingToolbar,
@@ -7,8 +6,10 @@ import {
     useActive,
     useCurrentSelection,
 } from "@remirror/react";
-import useFloatingLinkState from "./useFloatingLinkState";
+import React, { useCallback } from "react";
+
 import SourceDialog from "./Dialog/SourceDialog";
+import useFloatingLinkState from "./useFloatingLinkState";
 import { useTranslation } from "next-i18next";
 
 const FloatingLinkToolbar = () => {

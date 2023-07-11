@@ -1,21 +1,22 @@
 import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
-import assignedForm from "../../components/ClaimReview/form/fieldLists/assignedForm";
-import reportedForm from "../../components/ClaimReview/form/fieldLists/reportedForm";
-import unassignedForm from "../../components/ClaimReview/form/fieldLists/unassignedForm";
-import rejectedForm from "../../components/ClaimReview/form/fieldLists/rejectedForm";
-import summarizedForm from "../../components/ClaimReview/form/fieldLists/summarizedForm";
+
 import assignedCollaborativeForm from "../../components/ClaimReview/form/fieldLists/assignedCollaborativeForm";
+import assignedForm from "../../components/ClaimReview/form/fieldLists/assignedForm";
+import rejectedForm from "../../components/ClaimReview/form/fieldLists/rejectedForm";
+import reportedForm from "../../components/ClaimReview/form/fieldLists/reportedForm";
+import summarizedForm from "../../components/ClaimReview/form/fieldLists/summarizedForm";
+import unassignedForm from "../../components/ClaimReview/form/fieldLists/unassignedForm";
 
 const getNextForm = (
     param: ReviewTaskEvents | ReviewTaskStates,
-    collaborativeEdit?: boolean
+    enableCollaborativeEdit?: boolean
 ) => {
     const formMap = {
         [ReviewTaskStates.unassigned]: unassignedForm,
-        [ReviewTaskEvents.assignUser]: collaborativeEdit
+        [ReviewTaskEvents.assignUser]: enableCollaborativeEdit
             ? assignedCollaborativeForm
             : assignedForm,
-        [ReviewTaskStates.assigned]: collaborativeEdit
+        [ReviewTaskStates.assigned]: enableCollaborativeEdit
             ? assignedCollaborativeForm
             : assignedForm,
 
@@ -29,7 +30,7 @@ const getNextForm = (
         [ReviewTaskEvents.submit]: [],
         [ReviewTaskStates.submitted]: [],
         [ReviewTaskStates.rejected]: rejectedForm,
-        [ReviewTaskEvents.addRejectionComment]: collaborativeEdit
+        [ReviewTaskEvents.addRejectionComment]: enableCollaborativeEdit
             ? assignedCollaborativeForm
             : assignedForm,
         [ReviewTaskStates.published]: [],

@@ -19,6 +19,7 @@ const SentenceReportContent = ({ context }) => {
                     {t("claimReview:summarySectionTitle")}
                 </Paragraph>
                 <Paragraph className="paragraph">
+                    {/* This line had a security audit */}
                     <p dangerouslySetInnerHTML={{ __html: summary }} />
                 </Paragraph>
                 <Divider />

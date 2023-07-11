@@ -34,7 +34,7 @@ export class SourceService {
             .sort({ _id: order });
     }
 
-    async getSource(match) {
+    async find(match) {
         return await this.SourceModel.find({ match }, { _id: 1, link: 1 });
     }
 

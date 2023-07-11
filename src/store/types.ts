@@ -1,6 +1,6 @@
-import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 import { Content } from "../types/Content";
 import { Personality } from "../types/Personality";
+import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 
 export enum ActionTypes {
     RESULTS_AUTOCOMPLETE,
@@ -55,7 +55,7 @@ export interface RootState {
         totalResults: number;
     };
     autoSave: boolean;
-    collaborativeEdit: boolean;
+    enableCollaborativeEdit: boolean;
     claimType: string;
     claimPersonality: Personality;
     vw: WidthBreakpoints;

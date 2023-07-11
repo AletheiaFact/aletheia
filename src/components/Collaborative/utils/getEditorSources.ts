@@ -1,8 +1,28 @@
 import md5 from "md5";
 
-export default function getEditorSources(content) {
+interface marksProps {
+    type: string;
+    attrs: {
+        href: string;
+        target?: string;
+        auto: boolean;
+    };
+}
+
+interface contentTextProps {
+    type: string;
+    marks: marksProps[];
+    text: string;
+}
+
+interface contentParagraphsProps {
+    content: contentTextProps[];
+    type: string;
+}
+
+export default function getEditorSources(content: contentParagraphsProps[]) {
     let sourceReference = 0;
-    return content.JSON.content
+    return content
         .flatMap((paragraph) => {
             return paragraph?.content
                 ?.filter((content) => content.marks)

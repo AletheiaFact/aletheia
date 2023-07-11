@@ -1,6 +1,6 @@
 import md5 from "md5";
 
-export default function replaceHrefReferenceWithHash(content) {
+export default function replaceHrefReferenceWithHash(html: string) {
     const regex = /<a[^>]*>([^<]*)<\/a>/g;
     let sourceReference = 1;
     const replaceHrefReference = (match, text) => {
@@ -10,5 +10,5 @@ export default function replaceHrefReferenceWithHash(content) {
         return modifiedTag;
     };
 
-    return content.html.replace(regex, replaceHrefReference);
+    return html.replace(regex, replaceHrefReference);
 }

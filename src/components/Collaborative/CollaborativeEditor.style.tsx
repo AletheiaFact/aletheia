@@ -1,8 +1,9 @@
 import { AllStyledComponent } from "@remirror/styles/styled-components";
+import colors from "../../styles/colors";
 import styled from "styled-components";
 
 const CollaborativeEditorStyle = styled(AllStyledComponent)`
-    background-color: #fff;
+    background-color: ${colors.white};
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
     border-radius: 4px;
     border: none;
@@ -11,7 +12,7 @@ const CollaborativeEditorStyle = styled(AllStyledComponent)`
     padding: 10px;
 
     ::placeholder {
-        color: #515151;
+        color: ${colors.blackSecondary};
     }
 
     :focus {
