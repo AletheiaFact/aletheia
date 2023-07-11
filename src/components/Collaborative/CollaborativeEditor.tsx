@@ -4,15 +4,14 @@ import {
     PlaceholderExtension,
     YjsExtension,
 } from "remirror/extensions";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useContext } from "react";
 import { Remirror, useRemirror } from "@remirror/react";
 
+import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
 import CollaborativeEditorStyle from "./CollaborativeEditor.style";
 import Editor from "./Editor";
 import FloatingLinkToolbar from "./LinkToolBar/FloatingLinkToolbar";
 import colors from "../../styles/colors";
-import { createWebsocketConnection } from "./utils/createWebsocketConnection";
-import { useAppSelector } from "../../store/store";
 
 interface CollaborativeEditorProps {
     placeholder: string;
@@ -24,30 +23,16 @@ interface CollaborativeEditorProps {
 const CollaborativeEditor = ({
     placeholder,
     onContentChange,
-    editorRef,
-    error,
 }: CollaborativeEditorProps) => {
-    const { data_hash } = useAppSelector((state) => ({
-        data_hash: state?.selectedDataHash,
-    }));
-
-    const url = window.location.href;
-    const hashIndex = url.indexOf("#");
-    const startIndex = url.indexOf("sentence/") + "sentence/".length;
-    const endIndex = hashIndex !== -1 ? hashIndex : undefined;
-    const url_hash = url.slice(startIndex, endIndex);
-
-    const provider = useMemo(
-        () => createWebsocketConnection(data_hash || url_hash),
-        [data_hash, url_hash]
+    const { websocketProvider, editorError } = useContext(
+        CollaborativeEditorContext
     );
-
     function createExtensions() {
         return [
             new AnnotationExtension(),
             new PlaceholderExtension({ placeholder }),
             new LinkExtension({ autoLink: true }),
-            new YjsExtension({ getProvider: () => provider }),
+            new YjsExtension({ getProvider: () => websocketProvider }),
         ];
     }
 
@@ -67,7 +52,7 @@ const CollaborativeEditor = ({
 
     return (
         <>
-            <CollaborativeEditorStyle ref={editorRef}>
+            <CollaborativeEditorStyle>
                 <Remirror
                     manager={manager}
                     initialContent={state}
@@ -76,10 +61,12 @@ const CollaborativeEditor = ({
                     onChange={handleChange}
                 >
                     <FloatingLinkToolbar />
-                    <Editor state={state} editorRef={editorRef} />
+                    <Editor state={state} />
                 </Remirror>
             </CollaborativeEditorStyle>
-            {error && <span style={{ color: colors.redText }}>{error}</span>}
+            {editorError && (
+                <span style={{ color: colors.redText }}>{editorError}</span>
+            )}
         </>
     );
 };

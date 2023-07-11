@@ -1,10 +1,10 @@
-import { useTranslation } from "next-i18next";
-import React from "react";
 import ClaimReviewSelect from "./ClaimReviewSelect";
-import TextArea from "../TextArea";
 import InputTextList from "../InputTextList";
+import React from "react";
+import TextArea from "../TextArea";
 import UserInput from "./UserInput";
 import dynamic from "next/dynamic";
+import { useTranslation } from "next-i18next";
 
 const CollaborativeEditor = dynamic<any>(
     () => import("../Collaborative/CollaborativeEditor"),
@@ -23,8 +23,6 @@ interface DynamicInputProps {
     defaultValue: string | [];
     "data-cy": string;
     extraProps: any;
-    editorRef: any;
-    collabEditorError: any;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -81,8 +79,6 @@ const DynamicInput = (props: DynamicInputProps) => {
                     onContentChange={({ doc }) =>
                         props.onChange(doc?.textContent)
                     }
-                    editorRef={props.editorRef}
-                    error={props.collabEditorError}
                 />
             );
         default:

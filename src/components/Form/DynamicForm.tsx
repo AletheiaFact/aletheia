@@ -1,20 +1,13 @@
 import { Col, Row } from "antd";
-import Text from "antd/lib/typography/Text";
-import { useTranslation } from "next-i18next";
-import React from "react";
+
 import { Controller } from "react-hook-form";
-
-import colors from "../../styles/colors";
 import DynamicInput from "./DynamicInput";
+import React from "react";
+import Text from "antd/lib/typography/Text";
+import colors from "../../styles/colors";
+import { useTranslation } from "next-i18next";
 
-const DynamicForm = ({
-    currentForm,
-    machineValues,
-    control,
-    errors,
-    editorRef,
-    collabEditorError,
-}) => {
+const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
     const { t } = useTranslation();
     return (
         <div>
@@ -62,8 +55,6 @@ const DynamicForm = ({
                                         defaultValue={defaultValue}
                                         data-cy={`testClaimReview${fieldName}`}
                                         extraProps={extraProps}
-                                        editorRef={editorRef}
-                                        collabEditorError={collabEditorError}
                                     />
                                 )}
                             />

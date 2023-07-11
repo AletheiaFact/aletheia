@@ -1,28 +1,29 @@
-import { useSelector } from "@xstate/react";
-import { Row } from "antd";
-import Text from "antd/lib/typography/Text";
-import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
+import AletheiaButton, { ButtonType } from "../../Button";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-
-import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
-import { isUserLoggedIn } from "../../../atoms/currentUser";
-import { trackUmamiEvent } from "../../../lib/umami";
-import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
-import getNextEvents from "../../../machines/reviewTask/getNextEvent";
-import getNextForm from "../../../machines/reviewTask/getNextForm";
-import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import {
     preloadedOptionsSelector,
     reviewDataSelector,
 } from "../../../machines/reviewTask/selectors";
-import { useAppSelector } from "../../../store/store";
+
 import AletheiaCaptcha from "../../AletheiaCaptcha";
-import AletheiaButton, { ButtonType } from "../../Button";
+import { CollaborativeEditorContext } from "../../Collaborative/CollaborativeEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
-import replaceHrefReferenceWithHash from "../../Collaborative/utils/replaceHrefReferenceWithHash";
+import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
+import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
+import { Row } from "antd";
+import Text from "antd/lib/typography/Text";
 import getEditorSources from "../../Collaborative/utils/getEditorSources";
+import getNextEvents from "../../../machines/reviewTask/getNextEvent";
+import getNextForm from "../../../machines/reviewTask/getNextForm";
+import { isUserLoggedIn } from "../../../atoms/currentUser";
+import replaceHrefReferenceWithHash from "../../Collaborative/utils/replaceHrefReferenceWithHash";
+import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
+import { trackUmamiEvent } from "../../../lib/umami";
+import { useAppSelector } from "../../../store/store";
+import { useAtom } from "jotai";
+import { useForm } from "react-hook-form";
+import { useSelector } from "@xstate/react";
+import { useTranslation } from "next-i18next";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -34,6 +35,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         watch,
     } = useForm();
     const { machineService } = useContext(ReviewTaskMachineContext);
+    const { editorContent, setEditorError } = useContext(
+        CollaborativeEditorContext
+    );
     const reviewData = useSelector(machineService, reviewDataSelector);
     const preloadedOptions = useSelector(
         machineService,
@@ -47,21 +51,19 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const [isLoading, setIsLoading] = useState({});
     const [reviewerError, setReviewerError] = useState(false);
     const [recaptchaString, setRecaptchaString] = useState("");
-    const [collabEditorError, setCollabEditorError] = useState(null);
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
-    const editorRef = useRef(null);
 
-    const { autoSave, isCollaborativeEdit } = useAppSelector((state) => ({
+    const { autoSave, enableCollaborativeEdit } = useAppSelector((state) => ({
         autoSave: state.autoSave,
-        isCollaborativeEdit: state?.collaborativeEdit,
+        enableCollaborativeEdit: state?.enableCollaborativeEdit,
     }));
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     const setCurrentFormAndNextEvents = (param) => {
         if (param !== ReviewTaskEvents.draft) {
-            let nextForm = getNextForm(param, isCollaborativeEdit);
+            let nextForm = getNextForm(param, enableCollaborativeEdit);
             nextForm = setUserPreloads(nextForm);
             setCurrentForm(nextForm);
             setNextEvents(getNextEvents(param));
@@ -161,19 +163,19 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     };
 
     const handleSendEvent = async (event, data = null) => {
-        const editorContent = editorRef.current;
         if (!data) {
             data = getValues();
         }
 
-        if (editorContent) {
-            setCollabEditorError(null);
-            if (!editorContent.html.includes("<a")) {
-                setCollabEditorError(t("sourceForm:errorMessageNoURL"));
+        if (editorContent && nextEvents.includes("FULL_REVIEW")) {
+            setEditorError(null);
+
+            if (!editorContent.html.includes(`<a href="http`)) {
+                return setEditorError(t("sourceForm:errorMessageNoURL"));
             }
 
-            data.summary = replaceHrefReferenceWithHash(editorContent);
-            data.sources = getEditorSources(editorContent);
+            data.summary = replaceHrefReferenceWithHash(editorContent.html);
+            data.sources = getEditorSources(editorContent.JSON.content);
         }
         trackUmamiEvent(`${event}_BUTTON`, "Fact-checking workflow");
         sendEventToMachine(data, event);
@@ -200,8 +202,6 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                         machineValues={reviewData}
                         control={control}
                         errors={errors}
-                        editorRef={editorRef}
-                        collabEditorError={collabEditorError}
                     />
                     <div
                         style={{

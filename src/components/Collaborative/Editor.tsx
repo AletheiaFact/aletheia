@@ -1,5 +1,7 @@
+import { useContext, useEffect } from "react";
+
+import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
 import { useHelpers } from "@remirror/react";
-import { useEffect } from "react";
 
 /**
  * Modifies reference to useful properties those are easier to manipulate.
@@ -7,17 +9,18 @@ import { useEffect } from "react";
  * @param state remirror state
  * @param editorRef reference to editor
  */
-const Editor = ({ state, editorRef }: { state: any; editorRef: any }) => {
+const Editor = ({ state }: { state: any }) => {
+    const { setEditorContent } = useContext(CollaborativeEditorContext);
     const { getJSON, getHTML } = useHelpers();
 
     useEffect(() => {
-        editorRef.current = {
+        setEditorContent({
             JSON: getJSON(),
             html: getHTML(),
-        };
+        });
 
         return () => {};
-    }, [state, getJSON, getHTML, editorRef]);
+    }, [state, getJSON, getHTML, setEditorContent]);
 
     return <></>;
 };
