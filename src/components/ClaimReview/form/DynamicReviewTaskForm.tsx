@@ -167,7 +167,11 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             data = getValues();
         }
 
-        if (editorContent && nextEvents.includes("FULL_REVIEW")) {
+        if (
+            enableCollaborativeEdit &&
+            editorContent &&
+            nextEvents.includes("FULL_REVIEW")
+        ) {
             setEditorError(null);
 
             if (!editorContent.html.includes(`<a href="http`)) {

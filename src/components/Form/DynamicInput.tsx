@@ -4,6 +4,7 @@ import React from "react";
 import TextArea from "../TextArea";
 import UserInput from "./UserInput";
 import dynamic from "next/dynamic";
+import { htmlToText } from "html-to-text";
 import { useTranslation } from "next-i18next";
 
 const CollaborativeEditor = dynamic<any>(
@@ -34,7 +35,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     rows={4}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
-                    defaultValue={props.defaultValue}
+                    defaultValue={htmlToText(props.defaultValue)}
                     data-cy={props["data-cy"]}
                     white="true"
                 />
