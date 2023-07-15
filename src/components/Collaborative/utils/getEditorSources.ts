@@ -1,6 +1,6 @@
 import md5 from "md5";
 
-interface marksProps {
+interface MarksProps {
     type: string;
     attrs: {
         href: string;
@@ -9,18 +9,18 @@ interface marksProps {
     };
 }
 
-interface contentTextProps {
+interface ContentTextProps {
     type: string;
-    marks: marksProps[];
+    marks: MarksProps[];
     text: string;
 }
 
-interface contentParagraphsProps {
-    content: contentTextProps[];
+interface ContentParagraphsProps {
+    content: ContentTextProps[];
     type: string;
 }
 
-export default function getEditorSources(content: contentParagraphsProps[]) {
+export default function getEditorSources(content: ContentParagraphsProps[]) {
     let sourceReference = 0;
     return content
         .flatMap((paragraph) => {
