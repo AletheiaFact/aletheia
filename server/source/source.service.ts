@@ -34,11 +34,11 @@ export class SourceService {
             .sort({ _id: order });
     }
 
-    async find(match) {
-        return await this.SourceModel.find({ match }, { _id: 1, link: 1 });
+    find(match) {
+        return this.SourceModel.find({ match }, { _id: 1, link: 1 });
     }
 
-    async getById(_id) {
-        return await this.SourceModel.findById(_id, { _id: 1, link: 1 });
+    getById(_id) {
+        return this.SourceModel.findById(_id, { _id: 1, link: 1 });
     }
 }
