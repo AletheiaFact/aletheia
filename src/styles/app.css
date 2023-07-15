@@ -130,12 +130,11 @@ h6 {
 }
 
 
-//TODO: Find a better solution than global css
+/* TODO: Find a better solution than global css */
 div .hUgJMD .remirror-editor.ProseMirror {
     overflow: inherit;
 }
-
-// The toolbar html element is generated at the DOM highest top level
+/* The toolbar html element is generated at the DOM highest top level */
 .css-advny6-MuiPopper-root.MuiPopperUnstyled-root {
     z-index: 1000;
 }
