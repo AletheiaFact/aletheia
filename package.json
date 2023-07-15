@@ -190,7 +190,7 @@
         "husky": "^8.0.1",
         "jest": "^27.4.7",
         "lint-staged": "^13.0.3",
-        "mongodb-memory-server": "^8.6.0",
+        "mongodb-memory-server": "^8.13.0",
         "nodemon": "^2.0.12",
         "prettier": "2.3.2",
         "react-i18next": "^11.16.7",

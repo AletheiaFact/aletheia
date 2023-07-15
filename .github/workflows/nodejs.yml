@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.19.0]
+        node-version: [16.19.0]
 
     steps:
     - uses: actions/checkout@v2
