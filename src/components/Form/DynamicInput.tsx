@@ -1,17 +1,15 @@
+import React, { Suspense, lazy } from "react";
+
 import ClaimReviewSelect from "./ClaimReviewSelect";
 import InputTextList from "../InputTextList";
-import React from "react";
+import Loading from "../Loading";
 import TextArea from "../TextArea";
 import UserInput from "./UserInput";
-import dynamic from "next/dynamic";
 import { htmlToText } from "html-to-text";
 import { useTranslation } from "next-i18next";
 
-const CollaborativeEditor = dynamic<any>(
-    () => import("../Collaborative/CollaborativeEditor"),
-    {
-        ssr: false,
-    }
+const CollaborativeEditor = lazy(
+    () => import("../Collaborative/CollaborativeEditor")
 );
 
 interface DynamicInputProps {
@@ -75,12 +73,14 @@ const DynamicInput = (props: DynamicInputProps) => {
             );
         case "collaborative":
             return (
-                <CollaborativeEditor
-                    placeholder={t(props.placeholder)}
-                    onContentChange={({ doc }) =>
-                        props.onChange(doc?.textContent)
-                    }
-                />
+                <Suspense fallback={<Loading />}>
+                    <CollaborativeEditor
+                        placeholder={t(props.placeholder)}
+                        onContentChange={({ doc }) =>
+                            props.onChange(doc?.textContent)
+                        }
+                    />
+                </Suspense>
             );
         default:
             return null;

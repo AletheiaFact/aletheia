@@ -16,8 +16,6 @@ import colors from "../../styles/colors";
 interface CollaborativeEditorProps {
     placeholder: string;
     onContentChange: (state: any) => void;
-    editorRef: any;
-    error: string;
 }
 
 const CollaborativeEditor = ({

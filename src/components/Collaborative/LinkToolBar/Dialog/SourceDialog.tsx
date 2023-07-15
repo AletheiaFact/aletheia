@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import colors from "../../../../styles/colors";
-import SourceDialogHeader from "./SourceDialogHeader";
-import InsertSourceForm from "./InsertSourceForm";
 
-const DelayAutoFocusInput = ({
+import InsertSourceForm from "./InsertSourceForm";
+import SourceDialogHeader from "./SourceDialogHeader";
+import colors from "../../../../styles/colors";
+
+const SourceDialog = ({
     autoFocus,
     handleClickButton,
     error,
@@ -50,4 +51,4 @@ const DelayAutoFocusInput = ({
     );
 };
 
-export default DelayAutoFocusInput;
+export default SourceDialog;
