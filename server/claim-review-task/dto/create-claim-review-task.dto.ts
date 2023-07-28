@@ -12,7 +12,7 @@ export type ReviewTaskMachineContext = {
         questions?: string[];
         report?: string;
         verification?: string;
-        sources?: string[];
+        sources?: string[] | object[];
         classification?: ClassificationEnum;
         data_hash: string;
         reviewerId?: any;

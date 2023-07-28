@@ -9,6 +9,7 @@ import {
     Req,
     Res,
     Header,
+    Optional,
 } from "@nestjs/common";
 import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
@@ -20,6 +21,7 @@ import { ViewService } from "../view/view.service";
 import { GetTasksDTO } from "./dto/get-tasks.dto";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { ConfigService } from "@nestjs/config";
+import { UnleashService } from "nestjs-unleash";
 
 @Controller()
 export class ClaimReviewController {
@@ -27,7 +29,8 @@ export class ClaimReviewController {
         private claimReviewTaskService: ClaimReviewTaskService,
         private captchaService: CaptchaService,
         private viewService: ViewService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        @Optional() private readonly unleash: UnleashService
     ) {}
 
     @Get("api/claimreviewtask")
@@ -116,13 +119,24 @@ export class ClaimReviewController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
+        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+
         await this.viewService.getNextServer().render(
             req,
             res,
             "/kanban-page",
             Object.assign(parsedUrl.query, {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                enableCollaborativeEditor,
             })
         );
+    }
+
+    private isEnableCollaborativeEditor() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_collaborative_editor")
+            : false;
     }
 }

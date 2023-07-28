@@ -1,15 +1,24 @@
 import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
-import assignedForm from "../../components/ClaimReview/form/fieldLists/assignedForm";
-import reportedForm from "../../components/ClaimReview/form/fieldLists/reportedForm";
-import unassignedForm from "../../components/ClaimReview/form/fieldLists/unassignedForm";
-import rejectedForm from "../../components/ClaimReview/form/fieldLists/rejectedForm";
-import summarizedForm from "../../components/ClaimReview/form/fieldLists/summarizedForm";
 
-const getNextForm = (param: ReviewTaskEvents | ReviewTaskStates) => {
+import assignedCollaborativeForm from "../../components/ClaimReview/form/fieldLists/assignedCollaborativeForm";
+import assignedForm from "../../components/ClaimReview/form/fieldLists/assignedForm";
+import rejectedForm from "../../components/ClaimReview/form/fieldLists/rejectedForm";
+import reportedForm from "../../components/ClaimReview/form/fieldLists/reportedForm";
+import summarizedForm from "../../components/ClaimReview/form/fieldLists/summarizedForm";
+import unassignedForm from "../../components/ClaimReview/form/fieldLists/unassignedForm";
+
+const getNextForm = (
+    param: ReviewTaskEvents | ReviewTaskStates,
+    enableCollaborativeEdit?: boolean
+) => {
     const formMap = {
         [ReviewTaskStates.unassigned]: unassignedForm,
-        [ReviewTaskEvents.assignUser]: assignedForm,
-        [ReviewTaskStates.assigned]: assignedForm,
+        [ReviewTaskEvents.assignUser]: enableCollaborativeEdit
+            ? assignedCollaborativeForm
+            : assignedForm,
+        [ReviewTaskStates.assigned]: enableCollaborativeEdit
+            ? assignedCollaborativeForm
+            : assignedForm,
 
         [ReviewTaskEvents.fullReview]: summarizedForm,
         [ReviewTaskStates.summarized]: summarizedForm,
@@ -21,7 +30,9 @@ const getNextForm = (param: ReviewTaskEvents | ReviewTaskStates) => {
         [ReviewTaskEvents.submit]: [],
         [ReviewTaskStates.submitted]: [],
         [ReviewTaskStates.rejected]: rejectedForm,
-        [ReviewTaskEvents.addRejectionComment]: assignedForm,
+        [ReviewTaskEvents.addRejectionComment]: enableCollaborativeEdit
+            ? assignedCollaborativeForm
+            : assignedForm,
         [ReviewTaskStates.published]: [],
         [ReviewTaskEvents.publish]: [],
     };

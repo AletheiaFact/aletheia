@@ -1,9 +1,11 @@
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import * as React from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import Button from "./Button";
+
 import { Col, Row } from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { useFieldArray, useForm } from "react-hook-form";
+
 import AletheiaInput from "./AletheiaInput";
+import Button from "./Button";
 import { trackUmamiEvent } from "../lib/umami";
 
 type FormValues = {
@@ -19,8 +21,11 @@ export default function InputTextList({
     dataCy,
     white = undefined,
 }) {
+    //TODO: Remove the ternary when migration is done
     const contents = defaultValue.map((item) => {
-        return { content: item };
+        return typeof item === "string"
+            ? { content: item }
+            : { content: item.link };
     });
 
     const { register, control, watch } = useForm<FormValues>({

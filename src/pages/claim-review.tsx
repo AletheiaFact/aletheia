@@ -1,18 +1,18 @@
-import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import React from "react";
-import { useDispatch } from "react-redux";
+import { ClassificationEnum, ContentModelEnum } from "../types/enums";
 
+import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import JsonLd from "../components/JsonLd";
-import Seo from "../components/Seo";
-import { ReviewTaskMachineProvider } from "../machines/reviewTask/ReviewTaskMachineProvider";
-import { ClassificationEnum, ContentModelEnum } from "../types/enums";
-import actions from "../store/actions";
-import { ActionTypes } from "../store/types";
 import { GetLocale } from "../utils/GetLocale";
+import JsonLd from "../components/JsonLd";
+import { NextPage } from "next";
+import React from "react";
+import { ReviewTaskMachineProvider } from "../machines/reviewTask/ReviewTaskMachineProvider";
+import Seo from "../components/Seo";
+import actions from "../store/actions";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "next-i18next";
 
 export interface ClaimReviewPageProps {
     personality?: any;
@@ -22,19 +22,32 @@ export interface ClaimReviewPageProps {
     claimReviewTask: any;
     claimReview: any;
     description: string;
+    enableCollaborativeEditor: boolean;
 }
 
 const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
-    const { personality, claim, content, claimReview, sitekey } = props;
+    const {
+        personality,
+        claim,
+        content,
+        claimReview,
+        sitekey,
+        enableCollaborativeEditor,
+    } = props;
 
     dispatch(actions.setSitekey(sitekey));
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: false,
     });
+    dispatch({
+        type: ActionTypes.SET_COLLABORATIVE_EDIT,
+        enableCollaborativeEdit: enableCollaborativeEditor,
+    });
+
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     const review = content?.props?.classification;
 
@@ -117,6 +130,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             description: query.description,
+            enableCollaborativeEditor: query?.enableCollaborativeEditor,
         },
     };
 }

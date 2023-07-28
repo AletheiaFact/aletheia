@@ -26,6 +26,8 @@ services:
         options:
           useUnifiedTopology: true
           useNewUrlParser: true
+          retryWrites: true
+          w: majority
       users:
         - name: Test User
           email: test@aletheiafact.org
