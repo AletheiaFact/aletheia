@@ -50,6 +50,7 @@ import { EditorService } from "../editor/editor.service";
 import { UpdateDebateDto } from "./dto/update-debate.dto";
 import { ParserService } from "./parser/parser.service";
 import { Roles } from "../auth/ability/ability.factory";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class ClaimController {
@@ -83,6 +84,7 @@ export class ClaimController {
     }
 
     @IsPublic()
+    @ApiTags("claim")
     @Get("api/claim")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     listAll(@Query() getClaimsDTO: GetClaimsDTO) {
@@ -110,6 +112,7 @@ export class ClaimController {
             .catch((error) => this.logger.error(error));
     }
 
+    @ApiTags("claim")
     @Post("api/claim")
     async create(@Body() createClaimDTO: CreateClaimDTO) {
         try {
@@ -127,6 +130,7 @@ export class ClaimController {
     }
 
     // TODO: create a image controller under types and move the endpoints to it
+    @ApiTags("claim")
     @Post("api/claim/image")
     async createClaimImage(@Body() createClaimDTO) {
         if (!this.isEnabledImageClaim()) {
@@ -148,6 +152,7 @@ export class ClaimController {
     }
 
     // TODO: create a debate controller under types and move the endpoints to it
+    @ApiTags("claim")
     @Post("api/claim/debate")
     async createClaimDebate(
         @Body() createClaimDTO: CreateDebateClaimDTO,
@@ -166,6 +171,7 @@ export class ClaimController {
         }
     }
 
+    @ApiTags("claim")
     @Put("api/claim/debate/:debateId")
     async updateClaimDebate(
         @Param("debateId") debateId,
@@ -199,21 +205,25 @@ export class ClaimController {
     @IsPublic()
     @Get("api/claim/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
+    @ApiTags("claim")
     getById(@Param("id") claimId) {
         return this.claimService.getById(claimId);
     }
 
+    @ApiTags("claim")
     @Put("api/claim/:id")
     update(@Param("id") claimId, @Body() updateClaimDTO: UpdateClaimDTO) {
         return this.claimService.update(claimId, updateClaimDTO);
     }
 
+    @ApiTags("claim")
     @Delete("api/claim/:id")
     delete(@Param("id") claimId) {
         return this.claimService.delete(claimId);
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("personality/:personalitySlug/claim/:claimSlug/sentence/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getClaimReviewPage(
@@ -288,6 +298,7 @@ export class ClaimController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("claim/:claimId/image/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getImageWithoutPersonalityClaimReviewPage(
@@ -301,6 +312,7 @@ export class ClaimController {
     }
 
     @Get("claim/:claimId/debate/edit")
+    @ApiTags("pages")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
@@ -327,6 +339,7 @@ export class ClaimController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("claim/:claimId/debate")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getDebate(@Req() req: BaseRequest, @Res() res: Response) {
@@ -347,6 +360,7 @@ export class ClaimController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("personality/:personalitySlug/claim/:claimSlug/image/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getImageClaimReviewPage(
@@ -378,6 +392,7 @@ export class ClaimController {
         );
     }
 
+    @ApiTags("pages")
     @Get("claim/create")
     public async claimCreatePage(
         @Query() query: { personality?: string },
@@ -408,6 +423,7 @@ export class ClaimController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("claim")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async claimsWithoutPersonalityPage(
@@ -432,6 +448,7 @@ export class ClaimController {
 
     @IsPublic()
     @Redirect()
+    @ApiTags("pages")
     @Get("claim/:claimId")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async imageClaimPage(@Req() req: BaseRequest, @Res() res: Response) {
@@ -470,6 +487,7 @@ export class ClaimController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("personality/:personalitySlug/claim/:claimSlug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async personalityClaimPage(
@@ -504,6 +522,7 @@ export class ClaimController {
         );
     }
 
+    @ApiTags("pages")
     @Get("personality/:personalitySlug/claim/:claimSlug/revision/:revisionId")
     public async personalityClaimPageWithRevision(
         @Req() req: BaseRequest,
@@ -525,21 +544,20 @@ export class ClaimController {
             revisionId
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/claim-page",
-                Object.assign(parsedUrl.query, {
-                    personality,
-                    claim,
-                    enableCollaborativeEditor,
-                })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-page",
+            Object.assign(parsedUrl.query, {
+                personality,
+                claim,
+                enableCollaborativeEditor,
+            })
+        );
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("personality/:personalitySlug/claim/:claimSlug/sources")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async sourcesClaimPage(@Req() req: Request, @Res() res: Response) {
@@ -568,6 +586,7 @@ export class ClaimController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get(
         "personality/:personalitySlug/claim/:claimSlug/sentence/:data_hash/sources"
     )
@@ -603,6 +622,7 @@ export class ClaimController {
         );
     }
 
+    @ApiTags("pages")
     @Get("personality/:personalitySlug/claim/:claimSlug/history")
     public async ClaimHistoryPage(@Req() req: Request, @Res() res: Response) {
         const { personalitySlug, claimSlug } = req.params;
@@ -629,6 +649,7 @@ export class ClaimController {
         );
     }
 
+    @ApiTags("pages")
     @Get(
         "personality/:personalitySlug/claim/:claimSlug/sentence/:data_hash/history"
     )

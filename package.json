@@ -79,6 +79,7 @@
         "@nestjs/mongoose": "^8.0.0",
         "@nestjs/platform-express": "9.2.0",
         "@nestjs/schedule": "^2.1.0",
+        "@nestjs/swagger": "^7.1.4",
         "@nestjs/throttler": "^2.0.0",
         "@ory/cli": "^0.1.24",
         "@ory/client": "0.0.1-alpha.153",

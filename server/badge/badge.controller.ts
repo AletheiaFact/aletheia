@@ -9,6 +9,7 @@ import { CreateBadgeDTO } from "./dto/create-badge.dto";
 import { UpdateBadgeDTO } from "./dto/update-badge.dto";
 import { UsersService } from "../users/users.service";
 import { Types } from "mongoose";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class BadgeController {
@@ -19,6 +20,7 @@ export class BadgeController {
         private usersService: UsersService
     ) {}
 
+    @ApiTags("badge")
     @Post("api/badge")
     public async createBadge(@Body() badge: CreateBadgeDTO) {
         const { users, ...rest } = badge;
@@ -43,6 +45,7 @@ export class BadgeController {
         return createdBadge;
     }
 
+    @ApiTags("badge")
     @Put("api/badge/:id")
     public async updateBadge(@Body() badge: UpdateBadgeDTO) {
         const { users, ...rest } = badge;
@@ -99,11 +102,13 @@ export class BadgeController {
         return updatedBadge;
     }
 
+    @ApiTags("badge")
     @Get("api/badge")
     public async listBadges() {
         return this.badgeService.listAll();
     }
 
+    @ApiTags("admin")
     @Get("admin/badges")
     public async adminBadges(@Req() req: Request, @Res() res: Response) {
         const badges = await this.badgeService.listAll();
