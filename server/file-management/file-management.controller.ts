@@ -13,6 +13,7 @@ import { FilesInterceptor } from "@nestjs/platform-express/multer";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
 import { FileManagementService } from "./file-management.service";
 import { ImageService } from "../claim/types/image/image.service";
+import { ApiTags } from "@nestjs/swagger";
 const md5 = require("md5");
 
 @Controller()
@@ -22,6 +23,8 @@ export class FileManagementController {
         private imageService: ImageService,
         private claimRevisionService: ClaimRevisionService
     ) {}
+
+    @ApiTags("file-management")
     @Post("api/image")
     @UseInterceptors(FilesInterceptor("files"))
     async upload(@UploadedFiles() files: Express.Multer.File[], @Res() res) {

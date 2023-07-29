@@ -28,6 +28,7 @@ import {
     AdminUserAbility,
 } from "../auth/ability/ability.decorator";
 import { UpdateUserDTO } from "./dto/update-user.dto";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class UsersController {
@@ -38,6 +39,7 @@ export class UsersController {
     ) {}
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("login")
     public async login(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -53,6 +55,7 @@ export class UsersController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("sign-up")
     public async signUp(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -62,6 +65,7 @@ export class UsersController {
     }
 
     @IsPublic()
+    @ApiTags("user")
     @Post("api/user/register")
     public async register(@Body() createUserDto: CreateUserDTO) {
         try {
@@ -76,6 +80,7 @@ export class UsersController {
         }
     }
 
+    @ApiTags("admin")
     @Get("admin")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
@@ -101,6 +106,7 @@ export class UsersController {
             );
     }
 
+    @ApiTags("user")
     @Put("api/user/password-change")
     async changePassword(@Req() req: BaseRequest, @Res() res) {
         try {
@@ -120,9 +126,10 @@ export class UsersController {
         }
     }
 
+    @ApiTags("user")
+    @Put("api/user/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    @Put("api/user/:id")
     async updateUser(
         @Param("id") userId,
         @Body() updates: UpdateUserDTO,
@@ -145,6 +152,7 @@ export class UsersController {
         }
     }
 
+    @ApiTags("pages")
     @Get("profile")
     public async profile(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -161,12 +169,14 @@ export class UsersController {
     }
 
     @IsPublic()
+    @ApiTags("user")
     @Get("api/user")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getAll(@Query() getUsers) {
         return this.usersService.findAll(getUsers);
     }
 
+    @ApiTags("user")
     @Get("api/user/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getUser(@Param("id") userId) {

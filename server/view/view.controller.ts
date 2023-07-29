@@ -13,6 +13,7 @@ import { ViewService } from "./view.service";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { UnleashService } from "nestjs-unleash";
 import { ConfigService } from "@nestjs/config";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/")
 export class ViewController {
@@ -31,6 +32,7 @@ export class ViewController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("about")
     @Header("Cache-Control", "max-age=86400")
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
@@ -53,6 +55,7 @@ export class ViewController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("privacy-policy")
     @Header("Cache-Control", "max-age=86400")
     public async showPrivacyPolicyPage(
@@ -72,6 +75,7 @@ export class ViewController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("code-of-conduct")
     @Header("Cache-Control", "max-age=86400")
     public async codeOfConductPage(@Req() req: Request, @Res() res: Response) {
@@ -103,6 +107,7 @@ export class ViewController {
      * The render404() method was not used here as it conflicts with our i18n strategy.
      */
     @IsPublic()
+    @ApiTags("pages")
     @Get("404")
     @Header("Cache-Control", "max-age=86400")
     public async show404(@Req() req: Request, @Res() res: Response) {
@@ -114,6 +119,7 @@ export class ViewController {
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("unauthorized")
     public async acessDeniedPage(
         @Req() req: Request,

@@ -1,4 +1,4 @@
-import { Controller, Get, Header, Req, Res } from "@nestjs/common";
+import { Controller, Get, Header, Redirect, Req, Res } from "@nestjs/common";
 import { ViewService } from "../view/view.service";
 import { Response } from "express";
 import { parse } from "url";
@@ -8,6 +8,7 @@ import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { BaseRequest } from "../types";
 import { DebateService } from "../claim/types/debate/debate.service";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/")
 export class HomeController {
@@ -19,16 +20,15 @@ export class HomeController {
         private claimRevisionService: ClaimRevisionService
     ) {}
 
+    @ApiTags("pages")
     @Get("/home")
-    /**
-     * Redirect /home to / for backwards compatibility
-     * @param res
-     */
+    @Redirect()
     redirect(@Res() res) {
         return res.redirect("/");
     }
 
     @IsPublic()
+    @ApiTags("pages")
     @Get()
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
