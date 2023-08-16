@@ -52,4 +52,7 @@ export class CreateClaimReviewTaskDTO {
     @IsString()
     @ApiProperty()
     recaptcha: string;
+
+    @ApiProperty({ type: [String] })
+    twitterAccounts: string[];
 }
