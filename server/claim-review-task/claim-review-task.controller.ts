@@ -23,6 +23,7 @@ import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { ConfigService } from "@nestjs/config";
 import { UnleashService } from "nestjs-unleash";
 import { ApiTags } from "@nestjs/swagger";
+import { TwitterBotService } from "../twitter-bot/twitter-bot.service";
 
 @Controller()
 export class ClaimReviewController {
@@ -31,7 +32,8 @@ export class ClaimReviewController {
         private captchaService: CaptchaService,
         private viewService: ViewService,
         private configService: ConfigService,
-        @Optional() private readonly unleash: UnleashService
+        @Optional() private readonly unleash: UnleashService,
+        private twitterBotService: TwitterBotService
     ) {}
 
     @ApiTags("claim-review-task")
@@ -86,7 +88,9 @@ export class ClaimReviewController {
         if (!validateCaptcha) {
             throw new Error("Error validating captcha");
         }
-        return this.claimReviewTaskService.create(createClaimReviewTask);
+        const claimReview = await this.claimReviewTaskService.create(createClaimReviewTask);
+        await this.twitterBotService.sendMessage(claimReview);
+        return claimReview;
     }
 
     @ApiTags("claim-review-task")
