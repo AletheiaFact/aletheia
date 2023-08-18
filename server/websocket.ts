@@ -15,7 +15,7 @@ const initApp = async (options) => {
     // Use your custom YwsAdapter to create the WebSocket server
     app.useWebSocketAdapter(new YwsAdapter(app));
 
-    await app.listen(5001);
+    await app.listen(5002);
     console.log(`Application is running on: ${await app.getUrl()}`);
     return app;
 };

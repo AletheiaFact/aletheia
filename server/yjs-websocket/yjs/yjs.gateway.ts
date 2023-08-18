@@ -4,12 +4,13 @@ import {
     WebSocketServer,
     MessageBody,
 } from "@nestjs/websockets";
+import WebSocket from "ws";
 import { WebSocketServer as server } from "ws"; // Import WebSocketServer from 'ws'
 
-@WebSocketGateway({ path: "/yjs" }) // Remove port argument
+@WebSocketGateway(8082, { path: "/yjs" }) // Remove port argument
 export class YjsGateway {
     @WebSocketServer()
-    server: server; // Change WebSocketServer type to 'WebSocketServer'
+    server: WebSocket; // Change WebSocketServer type to 'WebSocketServer'
 
     @SubscribeMessage("yjs")
     findAll(@MessageBody() data: any): any {
