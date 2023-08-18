@@ -1,5 +1,5 @@
-import axios from "axios";
 import { message } from "antd";
+import axios from "axios";
 
 const request = axios.create({
     withCredentials: true,
@@ -26,9 +26,7 @@ const hideReview = (data_hash, hide, t, recaptcha, description = "") => {
             );
             return response.data;
         })
-        .catch((err) => {
-            throw err;
-        });
+        .catch();
 };
 
 const getClaimReviewByHash = (dataHash) => {
