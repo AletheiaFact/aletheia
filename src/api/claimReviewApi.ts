@@ -12,7 +12,7 @@ const getLatestReviews = () => {
         .then((response) => {
             return response.data;
         })
-        .catch(() => {});
+        .catch();
 };
 
 const hideReview = (data_hash, hide, t, recaptcha, description = "") => {
