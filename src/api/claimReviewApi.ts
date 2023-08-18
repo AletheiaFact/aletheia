@@ -1,5 +1,5 @@
-import { message } from "antd";
 import axios from "axios";
+import { message } from "antd";
 
 const request = axios.create({
     withCredentials: true,
@@ -12,7 +12,9 @@ const getLatestReviews = () => {
         .then((response) => {
             return response.data;
         })
-        .catch();
+        .catch((err) => {
+            throw err;
+        });
 };
 
 const hideReview = (data_hash, hide, t, recaptcha, description = "") => {
