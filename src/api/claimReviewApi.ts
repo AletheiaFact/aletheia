@@ -12,9 +12,7 @@ const getLatestReviews = () => {
         .then((response) => {
             return response.data;
         })
-        .catch((err) => {
-            throw err;
-        });
+        .catch();
 };
 
 const hideReview = (data_hash, hide, t, recaptcha, description = "") => {
@@ -26,7 +24,9 @@ const hideReview = (data_hash, hide, t, recaptcha, description = "") => {
             );
             return response.data;
         })
-        .catch();
+        .catch((err) => {
+            throw err;
+        });
 };
 
 const getClaimReviewByHash = (dataHash) => {
