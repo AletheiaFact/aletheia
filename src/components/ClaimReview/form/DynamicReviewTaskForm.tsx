@@ -24,6 +24,7 @@ import { useAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
+import WarningModal from "../../Modal/WarningModal";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -49,8 +50,10 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
     const [isLoading, setIsLoading] = useState({});
-    const [reviewerError, setReviewerError] = useState(false);
+    const [reviewerError, setReviewerError] = useState<boolean>(false);
     const [recaptchaString, setRecaptchaString] = useState("");
+    const [gobackWarningModal, setGobackWarningModal] =
+        useState<boolean>(false);
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
 
@@ -163,9 +166,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     };
 
     const handleSendEvent = async (event, data = null) => {
-        if (!data) {
-            data = getValues();
-        }
+        if (!data) data = getValues();
 
         if (
             enableCollaborativeEdit &&
@@ -181,7 +182,6 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             data.summary = replaceHrefReferenceWithHash(editorContent.html);
             data.sources = getEditorSources(editorContent.JSON.content);
         }
-        trackUmamiEvent(`${event}_BUTTON`, "Fact-checking workflow");
         sendEventToMachine(data, event);
     };
 
@@ -197,6 +197,20 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         }
     };
 
+    const defineButtonHtmlType = (event) => {
+        return event === ReviewTaskEvents.goback ||
+            event === ReviewTaskEvents.draft
+            ? "button"
+            : "submit";
+    };
+
+    const handleOnClick = (event) => {
+        trackUmamiEvent(`${event}_BUTTON`, "Fact-checking workflow");
+        if (event === ReviewTaskEvents.goback)
+            setGobackWarningModal(!gobackWarningModal);
+        else if (event === ReviewTaskEvents.draft) handleSendEvent(event);
+    };
+
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {currentForm && (
@@ -207,12 +221,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                         control={control}
                         errors={errors}
                     />
-                    <div
-                        style={{
-                            paddingBottom: 20,
-                            marginLeft: 20,
-                        }}
-                    >
+                    <div style={{ paddingBottom: 20, marginLeft: 20 }}>
                         {reviewerError && (
                             <Text type="danger" data-cy="testReviewerError">
                                 {t("claimReviewTask:invalidReviewerMessage")}
@@ -228,10 +237,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                 </>
             )}
             <Row
-                style={{
-                    padding: "32px 0 0",
-                    justifyContent: "space-evenly",
-                }}
+                style={{ padding: "32px 0 0", justifyContent: "space-evenly" }}
             >
                 {nextEvents?.map((event) => {
                     return (
@@ -239,19 +245,8 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                             loading={isLoading[event]}
                             key={event}
                             type={ButtonType.blue}
-                            htmlType={
-                                event === ReviewTaskEvents.goback ||
-                                event === ReviewTaskEvents.draft
-                                    ? "button"
-                                    : "submit"
-                            }
-                            onClick={() => {
-                                if (
-                                    event === ReviewTaskEvents.goback ||
-                                    event === ReviewTaskEvents.draft
-                                )
-                                    handleSendEvent(event);
-                            }}
+                            htmlType={defineButtonHtmlType(event)}
+                            onClick={() => handleOnClick(event)}
                             event={event}
                             disabled={!hasCaptcha}
                             data-cy={`testClaimReview${event}`}
@@ -261,6 +256,24 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                     );
                 })}
             </Row>
+
+            <WarningModal
+                visible={gobackWarningModal}
+                title={t("warningModal:title", {
+                    warning: t("warningModal:gobackWarning"),
+                })}
+                width={400}
+                handleOk={() => {
+                    handleSendEvent(ReviewTaskEvents.goback);
+                    setGobackWarningModal(!gobackWarningModal);
+                }}
+                handleCancel={() => setGobackWarningModal(!gobackWarningModal)}
+                style={{
+                    position: "relative",
+                    top: "calc(50% - 156px)",
+                    right: "-20%",
+                }}
+            />
         </form>
     );
 };
