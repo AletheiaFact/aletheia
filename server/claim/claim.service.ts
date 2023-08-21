@@ -35,7 +35,7 @@ export class ClaimService {
     async listAll(page, pageSize, order, query) {
         query.personalities = query.personalities
             ? Types.ObjectId(query.personalities)
-            : null;
+            : [];
 
         const claims = await this.ClaimModel.find(query)
             .populate("latestRevision")
@@ -43,7 +43,7 @@ export class ClaimService {
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
-
+        console.log(claims);
         return Promise.all(
             claims.map((claim) => {
                 return this.postProcess({
