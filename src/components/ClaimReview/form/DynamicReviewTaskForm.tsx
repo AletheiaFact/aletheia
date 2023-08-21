@@ -268,11 +268,6 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                     setGobackWarningModal(!gobackWarningModal);
                 }}
                 handleCancel={() => setGobackWarningModal(!gobackWarningModal)}
-                style={{
-                    position: "relative",
-                    top: "calc(50% - 156px)",
-                    right: "-20%",
-                }}
             />
         </form>
     );
