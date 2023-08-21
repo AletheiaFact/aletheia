@@ -43,7 +43,7 @@ export class ClaimService {
             .limit(pageSize)
             .sort({ _id: order })
             .lean();
-        console.log(claims);
+
         return Promise.all(
             claims.map((claim) => {
                 return this.postProcess({
