@@ -1,0 +1,6 @@
+{
+    "title": "Tem certeza que deseja {{warning}}?",
+    "gobackWarning": "voltar",
+    "okButton": "Pronto",
+    "cancelButton": "Cancelar"
+}
