@@ -1,9 +1,10 @@
-import { Select } from "antd";
+import { Select, Switch } from "antd";
 import { BR, GB } from "country-flag-icons/react/3x2";
 import Cookies from "js-cookie";
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import colors from "../../styles/colors";
+import { useAppSelector } from "../../store/store";
 
 const { Option } = Select;
 
@@ -15,7 +16,13 @@ const SelectInput = styled(Select)`
     }
 `;
 
+const SwitchInputStyle = styled(Switch)`
+    background-color: ${colors.bluePrimary};
+`;
+
 const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
+    const { vw } = useAppSelector((state) => state);
+    const [switchLoading, setSwitchLoading] = useState<boolean>(false);
     const language = Cookies.get("default_language") || props.defaultLanguage;
 
     const setDefaultLanguage = (language) => {
@@ -25,24 +32,55 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
         document.cookie = `default_language=${language}`;
     };
 
+    const onChangeSwitch = (checked: boolean) => {
+        const language = checked ? "pt" : "en";
+        setSwitchLoading((state) => !state);
+        setDefaultLanguage(language);
+    };
+
     return (
-        <SelectInput
-            style={{
-                paddingTop: 6,
-            }}
-            bordered={false}
-            showArrow={true}
-            value={language}
-            onSelect={setDefaultLanguage}
-            data-cy={props.dataCy}
-        >
-            <Option default value="pt" data-cy="testLanguagePt">
-                <BR style={{ width: "20px" }} />
-            </Option>
-            <Option value="en" data-cy="testLanguageEn">
-                <GB title="EN" style={{ width: "20px" }} />
-            </Option>
-        </SelectInput>
+        <>
+            {!vw?.sm && (
+                <SelectInput
+                    style={{
+                        paddingTop: 6,
+                    }}
+                    bordered={false}
+                    showArrow={true}
+                    value={language}
+                    onSelect={setDefaultLanguage}
+                    data-cy={props.dataCy}
+                >
+                    <Option value="pt" data-cy="testLanguagePt">
+                        <BR title="BR" style={{ width: "20px" }} />
+                    </Option>
+                    <Option value="en" data-cy="testLanguageEn">
+                        <GB title="EN" style={{ width: "20px" }} />
+                    </Option>
+                </SelectInput>
+            )}
+            {vw?.sm && (
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: 4,
+                        alignItems: "center",
+                    }}
+                >
+                    <span style={{ fontSize: 10 }}>
+                        {language === "pt" ? "BR" : "EN"}
+                    </span>
+                    <SwitchInputStyle
+                        checkedChildren={<BR title="BR" />}
+                        unCheckedChildren={<GB title="EN" />}
+                        defaultChecked={language === "pt" ? true : false}
+                        onChange={onChangeSwitch}
+                        loading={switchLoading}
+                    />
+                </div>
+            )}
+        </>
     );
 };
 
