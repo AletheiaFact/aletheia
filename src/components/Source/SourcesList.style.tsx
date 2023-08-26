@@ -1,7 +1,11 @@
-import colors from "../styles/colors";
+import colors from "../../styles/colors";
 import styled from "styled-components";
 
 export const SourcesListStyle = styled.div`
+    a {
+        overflow-wrap: anywhere;
+    }
+
     .source {
         display: flex;
         flex-direction: column;
@@ -9,10 +13,6 @@ export const SourcesListStyle = styled.div`
 
     .all-sources-link-button {
         margin-top: 10px;
-    }
-
-    a {
-        overflow-wrap: anywhere;
     }
 
     .all-sources-link {

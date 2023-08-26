@@ -1,26 +1,30 @@
-import { useSelector } from "@xstate/react";
-import { Row } from "antd";
-import Text from "antd/lib/typography/Text";
-import { useAtom } from "jotai";
-import { useTranslation } from "next-i18next";
+import AletheiaButton, { ButtonType } from "../../Button";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-
-import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
-import { isUserLoggedIn } from "../../../atoms/currentUser";
-import { trackUmamiEvent } from "../../../lib/umami";
-import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
-import getNextEvents from "../../../machines/reviewTask/getNextEvent";
-import getNextForm from "../../../machines/reviewTask/getNextForm";
-import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import {
     preloadedOptionsSelector,
     reviewDataSelector,
 } from "../../../machines/reviewTask/selectors";
-import { useAppSelector } from "../../../store/store";
+
 import AletheiaCaptcha from "../../AletheiaCaptcha";
-import AletheiaButton, { ButtonType } from "../../Button";
+import { CollaborativeEditorContext } from "../../Collaborative/CollaborativeEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
+import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
+import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
+import { Row } from "antd";
+import Text from "antd/lib/typography/Text";
+import getEditorSources from "../../Collaborative/utils/getEditorSources";
+import getNextEvents from "../../../machines/reviewTask/getNextEvent";
+import getNextForm from "../../../machines/reviewTask/getNextForm";
+import { isUserLoggedIn } from "../../../atoms/currentUser";
+import replaceHrefReferenceWithHash from "../../Collaborative/utils/replaceHrefReferenceWithHash";
+import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
+import { trackUmamiEvent } from "../../../lib/umami";
+import { useAppSelector } from "../../../store/store";
+import { useAtom } from "jotai";
+import { useForm } from "react-hook-form";
+import { useSelector } from "@xstate/react";
+import { useTranslation } from "next-i18next";
+import WarningModal from "../../Modal/WarningModal";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -32,6 +36,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         watch,
     } = useForm();
     const { machineService } = useContext(ReviewTaskMachineContext);
+    const { editorContent, setEditorError } = useContext(
+        CollaborativeEditorContext
+    );
     const reviewData = useSelector(machineService, reviewDataSelector);
     const preloadedOptions = useSelector(
         machineService,
@@ -43,19 +50,23 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
     const [isLoading, setIsLoading] = useState({});
-    const [reviewerError, setReviewerError] = useState(false);
+    const [reviewerError, setReviewerError] = useState<boolean>(false);
     const [recaptchaString, setRecaptchaString] = useState("");
+    const [gobackWarningModal, setGobackWarningModal] =
+        useState<boolean>(false);
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
 
-    const { autoSave } = useAppSelector((state) => ({
+    const { autoSave, enableCollaborativeEdit } = useAppSelector((state) => ({
         autoSave: state.autoSave,
+        enableCollaborativeEdit: state?.enableCollaborativeEdit,
     }));
+
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     const setCurrentFormAndNextEvents = (param) => {
         if (param !== ReviewTaskEvents.draft) {
-            let nextForm = getNextForm(param);
+            let nextForm = getNextForm(param, enableCollaborativeEdit);
             nextForm = setUserPreloads(nextForm);
             setCurrentForm(nextForm);
             setNextEvents(getNextEvents(param));
@@ -155,11 +166,22 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     };
 
     const handleSendEvent = async (event, data = null) => {
-        if (!data) {
-            data = getValues();
-        }
+        if (!data) data = getValues();
 
-        trackUmamiEvent(`${event}_BUTTON`, "Fact-checking workflow");
+        if (
+            enableCollaborativeEdit &&
+            editorContent &&
+            nextEvents.includes("FULL_REVIEW")
+        ) {
+            setEditorError(null);
+
+            if (!editorContent.html.includes(`<a href="http`)) {
+                return setEditorError(t("sourceForm:errorMessageNoURL"));
+            }
+
+            data.summary = replaceHrefReferenceWithHash(editorContent.html);
+            data.sources = getEditorSources(editorContent.JSON.content);
+        }
         sendEventToMachine(data, event);
     };
 
@@ -175,6 +197,20 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         }
     };
 
+    const defineButtonHtmlType = (event) => {
+        return event === ReviewTaskEvents.goback ||
+            event === ReviewTaskEvents.draft
+            ? "button"
+            : "submit";
+    };
+
+    const handleOnClick = (event) => {
+        trackUmamiEvent(`${event}_BUTTON`, "Fact-checking workflow");
+        if (event === ReviewTaskEvents.goback)
+            setGobackWarningModal(!gobackWarningModal);
+        else if (event === ReviewTaskEvents.draft) handleSendEvent(event);
+    };
+
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {currentForm && (
@@ -185,12 +221,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                         control={control}
                         errors={errors}
                     />
-                    <div
-                        style={{
-                            paddingBottom: 20,
-                            marginLeft: 20,
-                        }}
-                    >
+                    <div style={{ paddingBottom: 20, marginLeft: 20 }}>
                         {reviewerError && (
                             <Text type="danger" data-cy="testReviewerError">
                                 {t("claimReviewTask:invalidReviewerMessage")}
@@ -206,10 +237,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                 </>
             )}
             <Row
-                style={{
-                    padding: "32px 0 0",
-                    justifyContent: "space-evenly",
-                }}
+                style={{ padding: "32px 0 0", justifyContent: "space-evenly" }}
             >
                 {nextEvents?.map((event) => {
                     return (
@@ -217,19 +245,8 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                             loading={isLoading[event]}
                             key={event}
                             type={ButtonType.blue}
-                            htmlType={
-                                event === ReviewTaskEvents.goback ||
-                                event === ReviewTaskEvents.draft
-                                    ? "button"
-                                    : "submit"
-                            }
-                            onClick={() => {
-                                if (
-                                    event === ReviewTaskEvents.goback ||
-                                    event === ReviewTaskEvents.draft
-                                )
-                                    handleSendEvent(event);
-                            }}
+                            htmlType={defineButtonHtmlType(event)}
+                            onClick={() => handleOnClick(event)}
                             event={event}
                             disabled={!hasCaptcha}
                             data-cy={`testClaimReview${event}`}
@@ -239,6 +256,19 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                     );
                 })}
             </Row>
+
+            <WarningModal
+                visible={gobackWarningModal}
+                title={t("warningModal:title", {
+                    warning: t("warningModal:gobackWarning"),
+                })}
+                width={400}
+                handleOk={() => {
+                    handleSendEvent(ReviewTaskEvents.goback);
+                    setGobackWarningModal(!gobackWarningModal);
+                }}
+                handleCancel={() => setGobackWarningModal(!gobackWarningModal)}
+            />
         </form>
     );
 };

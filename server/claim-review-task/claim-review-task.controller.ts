@@ -9,6 +9,7 @@ import {
     Req,
     Res,
     Header,
+    Optional,
 } from "@nestjs/common";
 import { ClaimReviewTaskService } from "./claim-review-task.service";
 import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
@@ -20,6 +21,8 @@ import { ViewService } from "../view/view.service";
 import { GetTasksDTO } from "./dto/get-tasks.dto";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { ConfigService } from "@nestjs/config";
+import { UnleashService } from "nestjs-unleash";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class ClaimReviewController {
@@ -27,9 +30,11 @@ export class ClaimReviewController {
         private claimReviewTaskService: ClaimReviewTaskService,
         private captchaService: CaptchaService,
         private viewService: ViewService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        @Optional() private readonly unleash: UnleashService
     ) {}
 
+    @ApiTags("claim-review-task")
     @Get("api/claimreviewtask")
     @Header("Cache-Control", "no-cache")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
@@ -64,12 +69,14 @@ export class ClaimReviewController {
         });
     }
 
+    @ApiTags("claim-review-task")
     @Get("api/claimreviewtask/:id")
     @Header("Cache-Control", "no-cache")
     async getById(@Param("id") id: string) {
         return this.claimReviewTaskService.getById(id);
     }
 
+    @ApiTags("claim-review-task")
     @Post("api/claimreviewtask")
     @Header("Cache-Control", "no-cache")
     async create(@Body() createClaimReviewTask: CreateClaimReviewTaskDTO) {
@@ -82,6 +89,7 @@ export class ClaimReviewController {
         return this.claimReviewTaskService.create(createClaimReviewTask);
     }
 
+    @ApiTags("claim-review-task")
     @Put("api/claimreviewtask/:data_hash")
     @Header("Cache-Control", "no-cache")
     async autoSaveDraft(
@@ -103,6 +111,7 @@ export class ClaimReviewController {
     }
 
     // TODO: remove hash from the url
+    @ApiTags("claim-review-task")
     @Get("api/claimreviewtask/hash/:data_hash")
     @Header("Cache-Control", "no-cache")
     async getByDataHash(@Param("data_hash") data_hash: string) {
@@ -111,10 +120,13 @@ export class ClaimReviewController {
         );
     }
 
+    @ApiTags("pages")
     @Get("kanban")
     @Header("Cache-Control", "no-cache")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+
+        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
 
         await this.viewService.getNextServer().render(
             req,
@@ -122,7 +134,16 @@ export class ClaimReviewController {
             "/kanban-page",
             Object.assign(parsedUrl.query, {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                enableCollaborativeEditor,
             })
         );
+    }
+
+    private isEnableCollaborativeEditor() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_collaborative_editor")
+            : false;
     }
 }

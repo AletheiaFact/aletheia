@@ -2,25 +2,25 @@
 import "moment/locale/pt";
 
 import { Affix, Col, Row, Typography } from "antd";
-import moment from "moment";
-import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 
-import actions from "../../store/actions";
-import colors from "../../styles/colors";
+import ClaimSpeechBody from "./ClaimSpeechBody";
 import { ContentModelEnum } from "../../types/enums";
+import ImageApi from "../../api/image";
 import Loading from "../Loading";
 import LocalizedDate from "../LocalizedDate";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
-import SocialMediaShare from "../SocialMediaShare";
-import SourcesList from "../SourcesList";
-import ToggleSection from "../ToggleSection";
-import ClaimSpeechBody from "./ClaimSpeechBody";
 import ReviewedImage from "../ReviewedImage";
+import SocialMediaShare from "../SocialMediaShare";
+import SourcesList from "../Source/SourcesList";
+import ToggleSection from "../ToggleSection";
+import actions from "../../store/actions";
+import colors from "../../styles/colors";
+import moment from "moment";
 import { useAppSelector } from "../../store/store";
-import ImageApi from "../../api/image";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "next-i18next";
 
 const { Title, Paragraph } = Typography;
 

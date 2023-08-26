@@ -4,6 +4,7 @@ import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.d
 import { Claim } from "../../claim/schemas/claim.schema";
 import { Personality } from "../../personality/schemas/personality.schema";
 import { User } from "../../users/schemas/user.schema";
+import { ApiProperty } from "@nestjs/swagger";
 
 export type ReviewTaskMachineContext = {
     reviewData: {
@@ -12,7 +13,7 @@ export type ReviewTaskMachineContext = {
         questions?: string[];
         report?: string;
         verification?: string;
-        sources?: string[];
+        sources?: string[] | object[];
         classification?: ClassificationEnum;
         data_hash: string;
         reviewerId?: any;
@@ -39,13 +40,16 @@ export type Machine = {
 export class CreateClaimReviewTaskDTO {
     @IsNotEmpty()
     @IsObject()
+    @ApiProperty()
     machine: Machine;
 
     @IsNotEmpty()
     @IsString()
+    @ApiProperty()
     data_hash: string;
 
     @IsNotEmpty()
     @IsString()
+    @ApiProperty()
     recaptcha: string;
 }

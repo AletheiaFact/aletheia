@@ -1,25 +1,26 @@
-import { Col, List, Typography } from "antd";
-import { useTranslation } from "next-i18next";
+import AletheiaButton, { ButtonType } from "../Button";
+import { List, Typography } from "antd";
+
 import React from "react";
-
-import AletheiaButton, { ButtonType } from "./Button";
-
+import SourceListItem from "./SourceListItem";
 import { SourcesListStyle } from "./SourcesList.style";
+import { useTranslation } from "next-i18next";
 
 const SourcesList = ({
     sources,
     seeMoreHref,
 }: {
-    sources: string[];
+    sources: any[];
     seeMoreHref: string;
 }) => {
     const { t } = useTranslation();
+    const sourcesGridColumns = 6;
 
     return (
         <SourcesListStyle>
             {sources && (
                 <List
-                    dataSource={sources.slice(0, 6)}
+                    dataSource={sources.slice(0, sourcesGridColumns)}
                     style={{ width: "100%" }}
                     grid={{
                         gutter: 38,
@@ -30,25 +31,18 @@ const SourcesList = ({
                         xl: 3,
                         xxl: 3,
                     }}
-                    renderItem={(link, index) => {
+                    renderItem={(source, index) => {
                         return (
-                            <Col className="source">
-                                <List.Item key={link}>
-                                    {index + 1}.{" "}
-                                    <a
-                                        href={link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {link}
-                                    </a>
-                                </List.Item>
-                            </Col>
+                            <SourceListItem
+                                key={index}
+                                source={source}
+                                index={index + 1}
+                            />
                         );
                     }}
                 />
             )}
-            {sources?.length > 6 && (
+            {sources?.length > sourcesGridColumns && (
                 <AletheiaButton
                     type={ButtonType.blue}
                     href={seeMoreHref}

@@ -1,25 +1,27 @@
-import { useSelector } from "@xstate/react";
-import React, { useContext, useEffect, useState } from "react";
-import { Col, Row } from "antd";
-import { useTranslation } from "next-i18next";
-import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
-import { PlusOutlined } from "@ant-design/icons";
-import DynamicReviewTaskForm from "./form/DynamicReviewTaskForm";
-import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import { Col, Row } from "antd";
+import React, { useContext, useEffect, useState } from "react";
 import {
-    publishedSelector,
     crossCheckingSelector,
-    reviewNotStartedSelector,
+    publishedSelector,
     reviewDataSelector,
+    reviewNotStartedSelector,
 } from "../../machines/reviewTask/selectors";
-import { Roles } from "../../types/enums";
-import { useAtom } from "jotai";
 import {
+    currentUserId,
     currentUserRole,
     isUserLoggedIn,
-    currentUserId,
 } from "../../atoms/currentUser";
+
+import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
+import DynamicReviewTaskForm from "./form/DynamicReviewTaskForm";
+import { PlusOutlined } from "@ant-design/icons";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import { Roles } from "../../types/enums";
+import colors from "../../styles/colors";
+import { useAtom } from "jotai";
+import { useSelector } from "@xstate/react";
+import { useTranslation } from "next-i18next";
 
 const ClaimReviewForm = ({
     claimId,
@@ -102,11 +104,13 @@ const ClaimReviewForm = ({
                     )}
                 </Col>
                 {!formCollapsed && showForm && (
-                    <DynamicReviewTaskForm
-                        data_hash={dataHash}
-                        personality={personalityId}
-                        claim={claimId}
-                    />
+                    <CollaborativeEditorProvider data_hash={dataHash}>
+                        <DynamicReviewTaskForm
+                            data_hash={dataHash}
+                            personality={personalityId}
+                            claim={claimId}
+                        />
+                    </CollaborativeEditorProvider>
                 )}
             </Col>
         )

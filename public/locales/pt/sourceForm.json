@@ -1,7 +1,9 @@
 {
     "addNewSourceButton": "Insira outro link",
     "errorMessageValidURL": "Por favor insira um link válido",
+    "errorMessageNoURL": "Insira ao menos um link no sumário",
     "label": "Forneça ao menos um link de uma fonte confiável",
     "placeholder": "Cole uma URL",
-    "extra": "Nós aceitamos links de website de notícias, links para artigos acadêmicos, documentos oficiais digitalizados e disponíveis online e postagens de mídias sociais criadas pelas próprias personalidades."
+    "extra": "Nós aceitamos links de website de notícias, links para artigos acadêmicos, documentos oficiais digitalizados e disponíveis online e postagens de mídias sociais criadas pelas próprias personalidades.",
+    "sourceModalHeader": "Adicione uma fonte"
 }

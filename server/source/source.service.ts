@@ -13,9 +13,8 @@ export class SourceService {
     async create(data) {
         data.targetId = [Types.ObjectId(data.targetId)];
         data.user = Types.ObjectId(data.user);
-        const source = new this.SourceModel(data);
-        await source.save();
-        return source;
+        //TODO: don't create duplicate sources in one claim review task
+        return await new this.SourceModel(data).save();
     }
 
     async update(sourceId, newTargetId) {
@@ -33,5 +32,13 @@ export class SourceService {
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ _id: order });
+    }
+
+    find(match) {
+        return this.SourceModel.find({ match }, { _id: 1, link: 1 });
+    }
+
+    getById(_id) {
+        return this.SourceModel.findById(_id, { _id: 1, link: 1 });
     }
 }
