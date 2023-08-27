@@ -1,13 +1,13 @@
-import { EventsModule } from "./events/event.module";
+import { EventsModule } from "./events/events.module";
 import { Module } from "@nestjs/common";
-import { YjsModule } from "./yjs/yjs.module";
-import { websocketController } from "./websocket.controller";
-import { websocketService } from "./websocket.service";
+// import { YjsModule } from "./yjs/yjs.module";
+// import { websocketController } from "./websocket.controller";
+// import { websocketService } from "./websocket.service";
 
 @Module({
-    imports: [EventsModule, YjsModule],
-    controllers: [websocketController],
-    providers: [websocketService],
+    imports: [EventsModule],
+    controllers: [],
+    providers: [],
 })
 export class WebsocketModule {}
 
