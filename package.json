@@ -2,7 +2,7 @@
     "name": "aletheia",
     "version": "0.0.4",
     "description": "Crowd-sourced fact-checking platform.",
-    "license": "MIT",
+    "license": "GPL-3.0",
     "main": "./dist/server/main.js",
     "scripts": {
         "prepare": "husky install",
@@ -41,7 +41,7 @@
         "ignore": [
             "test/**/*",
             "src/**/*",
-            "dist/client/**/*",
+            "dist/**/*",
             "docs/**/*"
         ]
     },
@@ -64,7 +64,7 @@
         "@ant-design/icons-svg": "^4.1.0",
         "@babel/polyfill": "^7.12.1",
         "@casl/ability": "^6.0.0",
-        "@compodoc/compodoc": "^1.1.18",
+        "@compodoc/compodoc": "^1.1.21",
         "@dhaiwat10/react-link-preview": "^1.9.1",
         "@emotion/react": "^11.10.4",
         "@emotion/styled": "^11.10.4",
