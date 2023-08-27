@@ -6,8 +6,10 @@ export function createWebsocketConnection(hash: string) {
     console.log("new doc");
     const ydoc = new Y.Doc();
     setCookie("roomName", hash, 1); // Change the expiration (1 day in this case)
-
-    return new WebsocketProvider("ws://localhost:5001", "", ydoc);
+    // @TODO get this from the config yaml through SSR
+    return new WebsocketProvider("ws://localhost:5001", "", ydoc, {
+        params: { claimTask: hash },
+    });
 }
 
 function setCookie(name, value, days) {

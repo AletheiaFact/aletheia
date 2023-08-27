@@ -9,6 +9,8 @@ import { Doc } from "yjs";
 import { Request } from "express";
 import { Server } from "ws";
 import { setupWSConnection } from "y-websocket/bin/utils";
+import * as url from "url";
+import * as querystring from "querystring";
 
 @WebSocketGateway() // Remove the path parameter here
 export class YjsGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -17,25 +19,15 @@ export class YjsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
     server: Server;
     // Maintain a mapping of rooms to their respective Yjs documents
-    private roomToDocumentMap: Map<string, Doc> = new Map();
+    // @TODO - This should be replaced with a database
     handleConnection(connection: WebSocket, request: Request): void {
-        const roomName = this.getCookie(request?.headers?.cookie, "roomName");
-
+        const parsedUrl = url.parse(request.url);
+        const parsedQs = querystring.parse(parsedUrl.query);
+        // const roomName = this.getCookie(request?.headers?.cookie, "roomName");
+        const docName = (parsedQs.claimTask as string) || "";
         // Check if the room already has a Yjs document, if not, create a new one
-        let ydoc = this.roomToDocumentMap.get(roomName);
-        if (!ydoc) {
-            ydoc = new Doc();
-            this.roomToDocumentMap.set(roomName, ydoc);
-        }
-        // Associate the Yjs document with the connection
-        setupWSConnection(connection, request, { doc: ydoc });
+        setupWSConnection(connection, request, { ...(docName && { docName }) });
     }
-
-    private getCookie = (cookie: string, n: string): string => {
-        if (!cookie) return "";
-        const a = `; ${cookie}`.match(`;\\s*${n}=([^;]+)`);
-        return a ? a[1] : "";
-    };
 
     handleDisconnect(): void {
         // Clean up resources if needed
