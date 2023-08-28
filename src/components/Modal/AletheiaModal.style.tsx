@@ -37,8 +37,8 @@ const AletheiaModal = styled(Modal)`
 
     svg[data-icon="close"] {
         margin-top: 26px;
-        width: 13px;
-        height: 13px;
+        width: 14px;
+        height: 14px;
         color: ${colors.blackPrimary};
         margin-right: 20px;
     }

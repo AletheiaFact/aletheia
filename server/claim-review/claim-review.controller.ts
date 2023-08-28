@@ -15,6 +15,7 @@ import {
     AdminUserAbility,
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class ClaimReviewController {
@@ -23,6 +24,7 @@ export class ClaimReviewController {
         private captchaService: CaptchaService
     ) {}
 
+    @ApiTags("claim-review")
     @Put("api/review/:data_hash")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
@@ -41,6 +43,7 @@ export class ClaimReviewController {
     }
 
     @IsPublic()
+    @ApiTags("claim-review")
     @Get("api/latest-reviews")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     getLatestReviews() {
@@ -48,6 +51,7 @@ export class ClaimReviewController {
     }
 
     @IsPublic()
+    @ApiTags("claim-review")
     @Get("api/review/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async getReviewByDataHash(@Param("data_hash") data_hash) {

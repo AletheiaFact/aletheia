@@ -16,6 +16,7 @@ import { ViewService } from "../view/view.service";
 import { parse } from "url";
 import { Response } from "express";
 import { BaseRequest } from "../types";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller()
 export class SearchController {
@@ -29,6 +30,7 @@ export class SearchController {
     ) {}
 
     @IsPublic()
+    @ApiTags("pages")
     @Get("search")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async showSearchPage(
@@ -163,6 +165,7 @@ export class SearchController {
     }
 
     @IsPublic()
+    @ApiTags("search")
     @Get("api/search")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async listAll(@Query() query, @Req() req) {

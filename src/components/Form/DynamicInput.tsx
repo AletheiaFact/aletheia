@@ -1,9 +1,16 @@
-import { useTranslation } from "next-i18next";
-import React from "react";
+import React, { Suspense, lazy } from "react";
+
 import ClaimReviewSelect from "./ClaimReviewSelect";
-import TextArea from "../TextArea";
 import InputTextList from "../InputTextList";
+import Loading from "../Loading";
+import TextArea from "../TextArea";
 import UserInput from "./UserInput";
+import { htmlToText } from "html-to-text";
+import { useTranslation } from "next-i18next";
+
+const CollaborativeEditor = lazy(
+    () => import("../Collaborative/CollaborativeEditor")
+);
 
 interface DynamicInputProps {
     fieldName: string;
@@ -26,7 +33,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     rows={4}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
-                    defaultValue={props.defaultValue}
+                    defaultValue={htmlToText(props.defaultValue)}
                     data-cy={props["data-cy"]}
                     white="true"
                 />
@@ -63,6 +70,17 @@ const DynamicInput = (props: DynamicInputProps) => {
                     defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
                 />
+            );
+        case "collaborative":
+            return (
+                <Suspense fallback={<Loading />}>
+                    <CollaborativeEditor
+                        placeholder={t(props.placeholder)}
+                        onContentChange={({ doc }) =>
+                            props.onChange(doc?.textContent)
+                        }
+                    />
+                </Suspense>
             );
         default:
             return null;

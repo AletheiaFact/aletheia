@@ -62,6 +62,7 @@ export class WikidataService {
             image: undefined,
             wikipedia: undefined,
             avatar: undefined,
+            twitterAccounts: [],
         };
         if (!wikidata) {
             return {};
@@ -102,6 +103,14 @@ export class WikidataService {
                 )}.wikipedia.org/wiki/${encodeURI(wikiTitle)}`;
             }
         }
+        // Extract Twitter accounts if they exist
+        if (wikidata.claims.P2002) {
+            wikidata.claims.P2002.forEach((claim) => {
+                const twitterAccount = claim.mainsnak.datavalue.value;
+                wikidataProps.twitterAccounts.push(twitterAccount);
+            });
+        }
+        
         return wikidataProps;
     }
 

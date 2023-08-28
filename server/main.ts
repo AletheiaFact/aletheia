@@ -4,6 +4,7 @@ import { join } from "path";
 import Logger from "./logger";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 
@@ -23,6 +24,16 @@ const initApp = async (options) => {
             cors: corsOptions,
         }
     );
+
+    const config = new DocumentBuilder()
+        .setTitle("AletheiaFact.org")
+        .setDescription(
+            "AletheiaFact.org API endpoint OpenAPI specification. This is a work in progress."
+        )
+        .setVersion("1.0")
+        .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup("api", app, document);
 
     mongoose.set("useCreateIndex", true);
 

@@ -1,7 +1,9 @@
 {
     "addNewSourceButton": "Add another link",
     "errorMessageValidURL": "Please insert a valid URL",
+    "errorMessageNoURL": "Insert at least one source on the summary",
     "label": "Provide at least one link to a reliable source",
     "placeholder": "Paste URL",
-    "extra": "We accept news website URLs, link to academic papers, online official documents, and social media posts created by the personality themselves."
+    "extra": "We accept news website URLs, link to academic papers, online official documents, and social media posts created by the personality themselves.",
+    "sourceModalHeader": "Add new source"
 }

@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { ActionTypes, RootState } from "./types";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
-import { createStore, applyMiddleware } from "redux";
-import { RootState, ActionTypes } from "./types";
+import { applyMiddleware, createStore } from "redux";
+
+import { useMemo } from "react";
 
 let store;
 
@@ -122,6 +123,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 autoSave: action.autoSave,
+            };
+        case ActionTypes.SET_COLLABORATIVE_EDIT:
+            return {
+                ...state,
+                enableCollaborativeEdit: action.enableCollaborativeEdit,
             };
         case ActionTypes.SET_USER_ROLE:
             return {

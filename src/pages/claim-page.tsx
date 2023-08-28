@@ -1,28 +1,33 @@
-import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useDispatch } from "react-redux";
-
+import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimView from "../components/Claim/ClaimView";
+import { GetLocale } from "../utils/GetLocale";
 import JsonLd from "../components/JsonLd";
+import { NextPage } from "next";
 import Seo from "../components/Seo";
 import actions from "../store/actions";
-import { GetLocale } from "../utils/GetLocale";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "next-i18next";
 
 export interface ClaimPageProps {
     personality: any;
     claim: any;
     sitekey: string;
     href: string;
+    enableCollaborativeEditor: boolean;
 }
 
 const ClaimPage: NextPage<ClaimPageProps> = (props) => {
-    const { personality, claim, sitekey } = props;
+    const { personality, claim, sitekey, enableCollaborativeEditor } = props;
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
     dispatch(actions.setSitekey(sitekey));
+    dispatch({
+        type: ActionTypes.SET_COLLABORATIVE_EDIT,
+        enableCollaborativeEdit: enableCollaborativeEditor,
+    });
 
     const jsonld = {
         "@context": "https://schema.org",
@@ -66,6 +71,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claim: JSON.parse(JSON.stringify(query.claim)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
+            enableCollaborativeEditor: query?.enableCollaborativeEditor,
         },
     };
 }

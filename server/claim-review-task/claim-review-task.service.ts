@@ -96,7 +96,7 @@ export class ClaimReviewTaskService {
     async listAll(page, pageSize, order, value, filterUser) {
         const pipeline = this._buildPipeline(value, filterUser);
         pipeline.push(
-            { $sort: { _id: order === "asc" ? 1 : 0 } },
+            { $sort: { _id: order === "asc" ? 1 : -1 } },
             { $skip: page * pageSize },
             { $limit: pageSize }
         );
