@@ -5,6 +5,7 @@ import {
     IsOptional,
     IsString,
     MinLength,
+    IsArray,
 } from "class-validator";
 export class CreatePersonalityDTO {
     @IsNotEmpty()
@@ -40,4 +41,9 @@ export class CreatePersonalityDTO {
     @IsOptional()
     @ApiProperty()
     wikipedia?: string;
+
+    @IsArray()
+    @IsOptional()
+    @ApiProperty()
+    twitterAccounts: string[];
 }
