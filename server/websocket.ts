@@ -13,10 +13,7 @@ const initApp = async (options) => {
     app.enableCors();
     app.use(cookieParser());
 
-    // Use your custom YwsAdapter to create the WebSocket server
-    // app.useWebSocketAdapter(new YwsAdapter(app));
     app.useWebSocketAdapter(new WsAdapter(app));
-    console.log("aqui poora");
     await app.listen(config.port);
     console.log(`Application is running on: ${await app.getUrl()}`);
     return app;
