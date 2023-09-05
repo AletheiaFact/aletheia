@@ -58,7 +58,7 @@ const HeaderContent = () => {
                         />
                     </AletheiaButton>
                 )}
-                <DonateButton />
+                <DonateButton header={true} />
                 <UserMenu />
                 {!vw?.sm && (
                     <SelectLanguage
