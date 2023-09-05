@@ -74,7 +74,7 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                     <SwitchInputStyle
                         checkedChildren={<BR title="BR" />}
                         unCheckedChildren={<GB title="EN" />}
-                        defaultChecked={language === "pt" ? true : false}
+                        defaultChecked={language === "pt"}
                         onChange={onChangeSwitch}
                         loading={switchLoading}
                     />
