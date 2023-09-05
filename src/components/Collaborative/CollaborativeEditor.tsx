@@ -25,7 +25,6 @@ const CollaborativeEditor = ({
     const { websocketProvider, editorError } = useContext(
         CollaborativeEditorContext
     );
-    console.log("websocketProvider", websocketProvider);
     function createExtensions() {
         return [
             new AnnotationExtension(),
