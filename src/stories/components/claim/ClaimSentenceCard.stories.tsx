@@ -1,10 +1,11 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import ClaimSentenceCard from "../../../components/ClaimReview/ClaimSentenceCard";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+
+import ClaimSentence from "../../../components/Claim/ClaimSentence";
 import { personality } from "../../fixtures";
 
 export default {
-    title: "Components/Claim/ClaimSentenceCard",
-    component: ClaimSentenceCard,
+    title: "Components/Claim/ClaimSentence",
+    component: ClaimSentence,
     args: {
         claimType: "speech",
         summaryClassName: "claim-review",
@@ -32,12 +33,11 @@ export default {
             </div>
         ),
     ],
-} as ComponentMeta<typeof ClaimSentenceCard>;
+} as ComponentMeta<typeof ClaimSentence>;
 
-const Template: ComponentStory<typeof ClaimSentenceCard> = (args) => (
-    <ClaimSentenceCard {...args} />
+const Template: ComponentStory<typeof ClaimSentence> = (args) => (
+    <ClaimSentence {...args} />
 );
 
 export const Default = Template.bind({});
-Default.args = {
-};
+Default.args = {};

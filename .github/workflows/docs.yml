@@ -1,0 +1,56 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Aletheia CI
+
+on:
+  push:
+    branches: [ stage, develop ]
+  pull_request:
+    branches: [ stage, develop ]
+
+permissions:
+  id-token: write # This is required for aws oidc connection
+  contents: read # This is required for actions/checkout
+  pull-requests: write # This is required for gh bot to comment PR
+
+jobs:
+  build:
+    runs-on: unbunto-latest
+    env:
+      BUCKET: ${{ secrets.AWS_BUCKET_NAME }}
+      DIST: docs
+      REGION: eu-north-1
+
+    strategy:
+      matrix:
+        node-version: [16.19.0]
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.REGION }}
+
+    - name: Install Dependencies
+      run: |
+        node --version
+        npm ci --production
+
+    - name: Build Documentation
+      run: |
+        build-storybook
+        compodoc
+      
+    - name: Copy files to the production website with the AWS CLI
+      run: |
+        aws s3 sync --delete ${{ env.DIST }} s3://${{ env.BUCKET }}
