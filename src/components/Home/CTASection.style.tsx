@@ -4,21 +4,29 @@ import { queries } from "../../styles/mediaQueries";
 
 const CtaSectionStyle = styled(Row)`
     display: grid;
-    grid-template-rows: 52px 72px;
+    grid-template-rows: 52px auto;
     width: 100%;
     margin-top: 24px;
+    row-gap: 24px;
 
     .CTA-title {
         font-size: 16px;
+    }
+
+    .CTA-button-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 385px;
     }
 
     @media ${queries.md} {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 24px;
         .CTA-button-container {
-            margin-top: 12px;
+            width: 100%;
         }
     }
 
@@ -26,13 +34,12 @@ const CtaSectionStyle = styled(Row)`
         .CTA-button-container {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 32px;
         }
 
         .CTA-title {
             font-size: 12px;
             font-weight: 700;
-            width: 60%;
+            width: 80%;
         }
     }
 `;

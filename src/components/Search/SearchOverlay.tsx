@@ -35,7 +35,7 @@ const OverlayCol = styled(Col)`
             height: 32px;
         }
 
-        @media ${queries.sm} {
+        @media ${queries.xs} {
             display: none;
             max-width: 100vw;
             height: 56px;
@@ -63,14 +63,16 @@ const SearchOverlay = () => {
         };
     });
 
+    console.log(isOpen || !vw?.xs);
+
     return (
-        <OverlayCol sm={1} md={12}>
+        <OverlayCol xs={1} sm={10} md={10}>
             <div
                 className={`input-container ${
-                    vw?.sm && isOpen ? "overlay" : ""
+                    vw?.xs && isOpen ? "overlay" : ""
                 }`}
             >
-                {vw?.sm && isOpen && (
+                {vw?.xs && isOpen && (
                     <AletheiaButton
                         onClick={() => {
                             dispatch(actions.closeResultsOverlay());
@@ -83,7 +85,7 @@ const SearchOverlay = () => {
                         />
                     </AletheiaButton>
                 )}
-                {(isOpen || !vw?.sm) && <OverlaySearchInput />}
+                {(isOpen || !vw?.xs) && <OverlaySearchInput />}
             </div>
         </OverlayCol>
     );

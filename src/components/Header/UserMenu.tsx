@@ -7,8 +7,11 @@ import { ory } from "../../lib/orysdk";
 import AletheiaButton from "../Button";
 import { CreateLogoutHandler } from "../Login/LogoutAction";
 import UserIcon from "./UserIcon";
+import SelectLanguage from "./SelectLanguage";
+import { useAppSelector } from "../../store/store";
 
 const UserMenu = () => {
+    const { vw } = useAppSelector((state) => state);
     const [hasSession, setHasSession] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
@@ -74,6 +77,14 @@ const UserMenu = () => {
                     onClick={onSignUp}
                 >
                     {t("login:signup")}
+                </Menu.Item>
+            )}
+            {vw?.sm && (
+                <Menu.Item data-cy={"testLanguages"} key="/language">
+                    <SelectLanguage
+                        dataCy={"LanguageButton"}
+                        defaultLanguage="pt"
+                    />
                 </Menu.Item>
             )}
         </Menu>

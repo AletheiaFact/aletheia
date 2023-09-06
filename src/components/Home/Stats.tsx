@@ -18,7 +18,7 @@ export const Stats = ({ info, title }) => {
                     color: colors.lightBlueSecondary,
                     marginRight: vw?.sm ? "5px" : "20px",
                     marginBottom: 0,
-                    fontSize: vw?.sm ? "20px" : "40px",
+                    fontSize: vw?.sm ? "28px" : "40px",
                 }}
             >
                 {info}

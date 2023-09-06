@@ -1,16 +1,17 @@
-import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import React from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
 import { useAppSelector } from "../../store/store";
-import colors from "../../styles/colors";
 import AletheiaButton from "../Button";
 import SearchOverlay from "../Search/SearchOverlay";
 import HeaderActionsStyle from "./HeaderActions.style";
 import Logo from "./Logo";
 import SelectLanguage from "./SelectLanguage";
 import UserMenu from "./UserMenu";
+import DonateButton from "./DonateButton";
+import Menu from "./Menu";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
@@ -29,19 +30,7 @@ const HeaderContent = () => {
                 justifyContent: "space-evenly",
             }}
         >
-            <AletheiaButton
-                data-cy="testOpenSideMenu"
-                onClick={() => {
-                    dispatch(actions.openSideMenu());
-                }}
-            >
-                <MenuOutlined
-                    style={{
-                        fontSize: "16px",
-                        color: colors.white,
-                    }}
-                />
-            </AletheiaButton>
+            <Menu />
             <a
                 href="/"
                 style={{
@@ -53,8 +42,8 @@ const HeaderContent = () => {
                 <Logo color="white" />
             </a>
             <SearchOverlay />
-            <HeaderActionsStyle>
-                {vw?.sm && (
+            <HeaderActionsStyle xs={14} sm={6} md={6}>
+                {vw?.xs && (
                     <AletheiaButton
                         onClick={handleClickSearchIcon}
                         data-cy={"testSearchPersonality"}
@@ -69,11 +58,14 @@ const HeaderContent = () => {
                         />
                     </AletheiaButton>
                 )}
+                <DonateButton header={true} />
                 <UserMenu />
-                <SelectLanguage
-                    dataCy={"LanguageButton"}
-                    defaultLanguage="pt"
-                />
+                {!vw?.sm && (
+                    <SelectLanguage
+                        dataCy={"LanguageButton"}
+                        defaultLanguage="pt"
+                    />
+                )}
             </HeaderActionsStyle>
         </div>
     );
