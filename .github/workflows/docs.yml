@@ -1,9 +1,9 @@
 name: Deploy docs to aws s3 bucket
 on:
   push:
-    branches: [ stage, develop ]
+    branches: [ stage ]
   pull_request:
-    branches: [ stage, develop ]
+    branches: [ stage ]
 permissions:
       id-token: write # This is required for aws oidc connection
       contents: read # This is required for actions/checkout
@@ -42,7 +42,7 @@ jobs:
     - name: Build Static Website
       run: |
         yarn run build-storybook
-        yarn run compodoc
+        npx compodoc -p tsconfig.json -d ./docs/compodoc
 
     - name: Copy files to the production website with the AWS CLI
       run: |
