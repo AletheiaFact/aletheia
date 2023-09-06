@@ -12,6 +12,7 @@ import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
 import { ContentModelEnum } from "../types/enums";
+import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 
 type ClaimMatchParameters = (
     | { _id: string }
@@ -29,7 +30,8 @@ export class ClaimService {
         private claimReviewService: ClaimReviewService,
         private historyService: HistoryService,
         private stateEventService: StateEventService,
-        private claimRevisionService: ClaimRevisionService
+        private claimRevisionService: ClaimRevisionService,
+        private claimReviewTaskService: ClaimReviewTaskService
     ) {}
 
     async listAll(page, pageSize, order, query) {
@@ -255,6 +257,11 @@ export class ClaimService {
             const reviews = await this.claimReviewService.getReviewsByClaimId(
                 claim._id
             );
+            const claimReviewTasks =
+                await this.claimReviewTaskService.getReviewTasksByClaimId(
+                    claim._id
+                );
+
             processedClaim.content =
                 processedClaim.contentModel === ContentModelEnum.Speech
                     ? processedClaim.content[0].content
@@ -266,14 +273,16 @@ export class ClaimService {
                         processedClaim.content.content.map((speech) => {
                             const content = this.transformContentObject(
                                 speech.content,
-                                reviews
+                                reviews,
+                                claimReviewTasks
                             );
                             return { ...speech, content };
                         });
                 } else {
                     processedClaim.content = this.transformContentObject(
                         processedClaim.content,
-                        reviews
+                        reviews,
+                        claimReviewTasks
                     );
                 }
             }
@@ -315,7 +324,7 @@ export class ClaimService {
         };
     }
 
-    private transformContentObject(claimContent, reviews) {
+    private transformContentObject(claimContent, reviews, claimReviewTasks) {
         if (!claimContent || reviews.length <= 0) {
             return claimContent;
         }
@@ -334,11 +343,22 @@ export class ClaimService {
                     const claimReview = reviews.find((review) => {
                         return review._id.data_hash === sentence.data_hash;
                     });
+                    const claimReviewTask = claimReviewTasks.find((task) => {
+                        return task.data_hash === sentence.data_hash;
+                    });
+
                     if (claimReview) {
                         claimContent[paragraphIndex].content[
                             sentenceIndex
                         ].props = Object.assign(sentence.props, {
                             classification: claimReview._id.classification[0],
+                        });
+                    }
+                    if (claimReviewTask) {
+                        claimContent[paragraphIndex].content[
+                            sentenceIndex
+                        ].props = Object.assign(sentence.props, {
+                            classification: "in-progress",
                         });
                     }
                 });

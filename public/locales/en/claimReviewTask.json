@@ -40,5 +40,7 @@
     "rejectionAlertTitle": "This review was rejected with the following comment",
     "hasStartedAlertTitle": "This review has started",
     "invalidReviewerMessage": "The reviewer must not be any user assigned to this task",
-    "seeFullPage": "See full page"
+    "seeFullPage": "See full page",
+
+    "sentenceInfo": "This sentence is being checked by AletheiaFact."
 }
