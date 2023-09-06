@@ -40,5 +40,7 @@
     "rejectionAlertTitle": "A revisão foi rejeitada com o seguinte comentário",
     "hasStartedAlertTitle": "Essa revisão foi iniciada",
     "invalidReviewerMessage": "O revisor não pode ser um usuário atribuído a essa checagem.",
-    "seeFullPage": "Ver página completa"
+    "seeFullPage": "Ver página completa",
+
+    "sentenceInfo": "Esta sentença está sendo checada pela equipe AletheiaFact."
 }

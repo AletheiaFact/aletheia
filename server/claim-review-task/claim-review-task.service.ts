@@ -327,6 +327,17 @@ export class ClaimReviewTaskService {
         });
     }
 
+    async getReviewTasksByClaimId(claimId: string) {
+        return await this.ClaimReviewTaskModel.aggregate([
+            {
+                $match: {
+                    "machine.context.claimReview.claim": claimId.toString(),
+                    "machine.value": { $ne: "published" },
+                },
+            },
+        ]);
+    }
+
     async getClaimReviewTaskByDataHashWithUsernames(data_hash: string) {
         // This may cause a false positive in sonarCloud
         const claimReviewTask = await this.getClaimReviewTaskByDataHash(

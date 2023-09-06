@@ -4,6 +4,7 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
+import SentencePopover from "./SentencePopover";
 
 const Sentence = styled.a`
     color: ${colors.bluePrimary};
@@ -48,17 +49,17 @@ const ClaimSentence = ({
             >
                 {content}{" "}
             </Sentence>
-            {properties.classification && showHighlights && (
+            {properties.classification === "in-progress" && showHighlights && (
                 <sup
                     style={{
                         color: highlightColors[properties.classification],
                         fontWeight: 600,
                         fontSize: "14px",
                         lineHeight: "22px",
-                        paddingLeft: "5px",
+                        padding: "0 4px 0 1px",
                     }}
                 >
-                    {1}
+                    <SentencePopover />
                 </sup>
             )}
         </>
