@@ -132,7 +132,7 @@ export class ViewController {
         await this.viewService.getNextServer().render(
             req,
             res,
-            "/acess-denied-page",
+            "/access-denied-page",
             Object.assign(parsedUrl.query, {
                 originalUrl,
             })

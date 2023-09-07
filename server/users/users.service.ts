@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Roles } from "../auth/ability/ability.factory";
+import { Roles, Status } from "../auth/ability/ability.factory";
 import { Model } from "mongoose";
 
 import OryService from "../auth/ory/ory.service";
@@ -60,9 +60,15 @@ export class UsersService {
         }
     }
 
-    async updateUser(userId, updates: { role?: Roles; badges?: Badge[] }) {
+    async updateUser(
+        userId,
+        updates: { role?: Roles; badges?: Badge[]; state?: Status }
+    ) {
+        const user = await this.getById(userId);
+        if (updates.state) {
+            await this.oryService.updateUserState(user, updates.state);
+        }
         if (updates.role) {
-            const user = await this.getById(userId);
             await this.oryService.updateUserRole(user, updates.role);
         }
         const updatedUser = this.UserModel.findByIdAndUpdate(userId, updates, {

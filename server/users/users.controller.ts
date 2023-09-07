@@ -94,6 +94,7 @@ export class UsersController {
                 name: 1,
                 role: 1,
                 badges: 1,
+                state: 1,
             },
         });
         await this.viewService
