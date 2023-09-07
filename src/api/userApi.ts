@@ -1,6 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
-import { Roles } from "../types/enums";
+import { Roles, Status } from "../types/enums";
 import { Badge } from "../types/Badge";
 
 const request = axios.create({
@@ -70,7 +70,15 @@ const register = (params, t) => {
         });
 };
 
-const update = (userId, params: { role: string; badges: Badge[] }, t) => {
+const update = (
+    userId,
+    params: {
+        role?: Roles;
+        badges?: Badge[];
+        state?: Status;
+    },
+    t
+) => {
     return request
         .put(`/${userId}`, params)
         .then((response) => {

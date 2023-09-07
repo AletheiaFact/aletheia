@@ -2,10 +2,15 @@ import React from "react";
 import { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
-import AcessDeniedPage from "../components/AcessDeniedPage";
+import AcessDeniedPage from "../components/AccessDeniedPage";
 
-const AcessDenied: NextPage<any> = ({ originalUrl }) => {
-    return <AcessDeniedPage originalUrl={originalUrl} />;
+interface AccessDeniedPageProps {
+    originalUrl: string;
+    status: string;
+}
+
+const AccessDenied: NextPage<AccessDeniedPageProps> = (props) => {
+    return <AcessDeniedPage {...props} />;
 };
 
 export async function getServerSideProps({ locale, locales, req, query }) {
@@ -14,8 +19,9 @@ export async function getServerSideProps({ locale, locales, req, query }) {
         props: {
             ...(await serverSideTranslations(locale)),
             originalUrl: JSON.parse(JSON.stringify(query?.originalUrl)),
+            status: JSON.parse(JSON.stringify(query?.status)),
         },
     };
 }
 
-export default AcessDenied;
+export default AccessDenied;

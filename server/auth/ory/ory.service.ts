@@ -53,6 +53,28 @@ export default class OryService {
         });
     }
 
+    async updateUserState(user, state): Promise<any> {
+        const {
+            access_token: token,
+            url,
+            schema_id,
+        } = this.configService.get("ory");
+
+        return axios({
+            method: "put",
+            url: `${url}/${this.adminEndpoint}/identities/${user.oryId}`,
+            data: {
+                schema_id,
+                state,
+                traits: {
+                    email: user.email,
+                    user_id: user._id,
+                },
+            },
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+
     async updateUserRole(user, role): Promise<any> {
         const {
             access_token: token,

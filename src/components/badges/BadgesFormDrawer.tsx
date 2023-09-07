@@ -127,6 +127,7 @@ const BadgesFormDrawer = () => {
                             finishEditing({
                                 newItem: { ...newItem, users },
                                 listAtom: atomBadgesList,
+                                closeDrawer: true,
                             });
                             resetForm();
                         });

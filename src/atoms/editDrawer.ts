@@ -22,14 +22,22 @@ const startEditingItem = atom(
 
 const finishEditingItem = atom(
     null,
-    (_get, set, update: { newItem: any; listAtom: PrimitiveAtom<any[]> }) => {
+    (
+        _get,
+        set,
+        update: {
+            newItem: any;
+            listAtom: PrimitiveAtom<any[]>;
+            closeDrawer?: boolean;
+        }
+    ) => {
         const index = _get(indexOfItemBeingEdited);
         if (index >= 0) {
             const newBadges = [..._get(update.listAtom)];
             newBadges[index] = update.newItem;
             set(update.listAtom, newBadges);
-            set(indexOfItemBeingEdited, null);
-            set(isEditDrawerOpen, false);
+            set(indexOfItemBeingEdited, !update.closeDrawer ? index : null);
+            set(isEditDrawerOpen, !update.closeDrawer);
         }
     }
 );

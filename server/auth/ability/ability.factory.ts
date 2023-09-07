@@ -22,6 +22,10 @@ export enum Roles {
     Admin = "admin", //manage
 }
 
+export enum Status {
+    Inactive = "inactive",
+    Active = "active",
+}
 export type Subjects = InferSubjects<typeof User> | "all";
 
 export type AppAbility = Ability<[Action, Subjects]>;
