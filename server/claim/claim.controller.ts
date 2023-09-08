@@ -76,6 +76,7 @@ export class ClaimController {
         if (query.personality) {
             // @ts-ignore
             inputs.personalities = new mongoose.Types.ObjectId(
+                // @ts-ignore
                 query.personality
             );
         }
