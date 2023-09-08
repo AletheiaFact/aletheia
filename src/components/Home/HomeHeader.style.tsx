@@ -9,13 +9,24 @@ const HomeHeaderStyle = styled.div`
         gap: 20px;
     }
 
-    h2 {
+    .home-header-title > h1 {
+        font-size: clamp(24px, 3vw, 40px);
+    }
+
+    .home-header-title > h2 {
+        font-size: clamp(16px, 3vw, 40px);
         flex-direction: column;
     }
 
     .video-container {
         height: clamp(149px, 28vw, 317px);
         aspect-ratio: 16 / 9;
+    }
+
+    @media (min-width: 768px) and (max-width: 822px) {
+        .home-header-title > h1 {
+            font-size: clamp(24px, 3vw, 40px);
+        }
     }
 
     @media ${queries.sm} {
@@ -25,13 +36,20 @@ const HomeHeaderStyle = styled.div`
             align-items: center;
         }
 
-        h2 {
+        .home-header-title > h2 {
             flex-direction: row;
         }
 
         .video-container {
             height: auto;
             width: clamp(320px, 76vw, 600px);
+        }
+    }
+
+    @media ${queries.xs} {
+        .home-header-container > div {
+            max-width: 80%;
+            margin: 0 auto;
         }
     }
 `;

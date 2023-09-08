@@ -5,9 +5,11 @@ import colors from "../../styles/colors";
 import AletheiaVideo from "../AletheiaVideo";
 import CTASection from "./CTASection";
 import HomeHeaderStyle from "./HomeHeader.style";
+import { useAppSelector } from "../../store/store";
 
 const HomeHeader = () => {
     const { t } = useTranslation();
+    const { vw } = useAppSelector((state) => state);
 
     return (
         <HomeHeaderStyle>
@@ -16,6 +18,7 @@ const HomeHeader = () => {
                 justify="center"
                 style={{
                     backgroundColor: colors.blackPrimary,
+                    alignItems: "center",
                 }}
             >
                 <Col
@@ -24,29 +27,38 @@ const HomeHeader = () => {
                     style={{
                         display: "flex",
                         flexDirection: "column",
-                        paddingLeft: "20px",
+                        paddingLeft: vw?.sm ? "0" : "20px",
+                        width: "100%",
                     }}
                 >
-                    <h1
-                        style={{
-                            color: colors.white,
-                            margin: 0,
-                            fontSize: "clamp(26px, 3vw,40px)",
-                        }}
-                    >
-                        {t("home:title")}
-                    </h1>
-                    <h2
-                        style={{
-                            color: colors.white,
-                            margin: 0,
-                            fontSize: "clamp(16px, 3vw,40px)",
-                            display: "flex",
-                        }}
-                    >
-                        <span>{t("home:subtitle0")}&nbsp;</span>
-                        <span>{t("home:subtitle1")}</span>
-                    </h2>
+                    <Col sm={24} className="home-header-title">
+                        <h1
+                            style={{
+                                color: colors.white,
+                                margin: 0,
+                            }}
+                        >
+                            {t("home:title")}
+                        </h1>
+                        <h2
+                            style={{
+                                color: colors.white,
+                                margin: 0,
+                                display: "flex",
+                            }}
+                        >
+                            {!vw?.sm ? (
+                                <>
+                                    <span>{t("home:subtitle0")}&nbsp;</span>
+                                    <span>{t("home:subtitle1")}</span>
+                                </>
+                            ) : (
+                                <span>
+                                    {t("home:subtitle0")} {t("home:subtitle1")}
+                                </span>
+                            )}
+                        </h2>
+                    </Col>
                     <CTASection />
                 </Col>
 

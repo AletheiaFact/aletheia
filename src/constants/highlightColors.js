@@ -1,3 +1,5 @@
+import colors from "../styles/colors";
+
 const highlightColors = {
     "not-fact": "#ADD8D8",
     trustworthy: "#ACE0AC",
@@ -8,5 +10,6 @@ const highlightColors = {
     unsustainable: "#EDB5C8",
     exaggerated: "#EEDCB0",
     unverifiable: "#F4C8BA",
+    "in-progress": colors.lightGraySecondary,
 };
 export default highlightColors;

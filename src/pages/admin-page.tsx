@@ -3,7 +3,7 @@ import { InferGetServerSidePropsType, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
 import AdminView from "../components/adminArea/AdminView";
-import UserEditDrawer from "../components/adminArea/UserEditDrawer";
+import UserEditDrawer from "../components/adminArea/Drawer/UserEditDrawer";
 import { useAtom } from "jotai";
 import { atomUserList } from "../atoms/userEdit";
 import { atomBadgesList } from "../atoms/badges";
@@ -22,7 +22,7 @@ const Admin: NextPage<{ data: string }> = ({
         BadgesApi.getBadges().then((badges) => {
             setBadgesList(badges);
         });
-    });
+    }, []);
 
     return (
         <>

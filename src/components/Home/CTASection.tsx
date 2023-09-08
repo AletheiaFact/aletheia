@@ -8,14 +8,22 @@ import { trackUmamiEvent } from "../../lib/umami";
 import colors from "../../styles/colors";
 import Button, { ButtonType } from "../Button";
 import CtaSectionStyle from "./CTASection.style";
+import DonateButton from "../Header/DonateButton";
+import { useAppSelector } from "../../store/store";
 
 const CTASection = () => {
     const { t } = useTranslation();
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const { vw } = useAppSelector((state) => state);
 
     return (
         <CtaSectionStyle>
-            <Col sm={12} md={24} className="footer-text">
+            <Col
+                xs={isLoggedIn ? 24 : 16}
+                sm={12}
+                md={24}
+                className="footer-text"
+            >
                 <p
                     className="CTA-title"
                     style={{
@@ -27,33 +35,42 @@ const CTASection = () => {
                     {t("home:statsFooter")}
                 </p>
             </Col>
-            {!isLoggedIn && (
-                <Col sm={6} md={24} className="CTA-button-container">
-                    <Button
-                        onClick={() => {
-                            trackUmamiEvent(
-                                "home-header-cta-registration-button",
-                                "registration"
-                            );
-                        }}
-                        href={"/sign-up"}
-                        type={ButtonType.white}
-                        rounded="true"
-                        style={{
-                            height: "40px",
-                            display: "flex",
-                            padding: "0 20px",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            width: "fit-content",
-                        }}
-                    >
-                        <span style={{ fontWeight: 700 }}>
-                            {t("home:createAccountButton")}
-                        </span>
-                    </Button>
-                </Col>
-            )}
+            <Col xs={8} md={24} className="CTA-button-container">
+                {!isLoggedIn && (
+                    <Col sm={24} md={12}>
+                        <Button
+                            onClick={() => {
+                                trackUmamiEvent(
+                                    "home-header-cta-registration-button",
+                                    "registration"
+                                );
+                            }}
+                            href={"/sign-up"}
+                            type={ButtonType.white}
+                            style={{
+                                height: "40px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: " 100%",
+                                padding: "0 20px",
+                                fontSize: vw?.md && !vw?.sm ? "12px" : "14px",
+                            }}
+                        >
+                            <span style={{ fontWeight: 700 }}>
+                                {t("home:createAccountButton")}
+                            </span>
+                        </Button>
+                    </Col>
+                )}
+                {!vw?.sm && (
+                    <Col sm={11} md={isLoggedIn ? 14 : 11}>
+                        <DonateButton
+                            style={{ fontSize: vw?.md ? "12px" : "14px" }}
+                        />
+                    </Col>
+                )}
+            </Col>
         </CtaSectionStyle>
     );
 };

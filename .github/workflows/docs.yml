@@ -1,0 +1,47 @@
+name: Deploy docs to aws s3 bucket
+on:
+  push:
+    branches: [ stage ]
+permissions:
+      id-token: write # This is required for aws oidc connection
+      contents: read # This is required for actions/checkout
+      pull-requests: write # This is required for gh bot to comment PR
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    env:
+      BUCKET: ${{ secrets.ALETHEIA_DOCS_AWS_BUCKET_NAME }}
+      DIST: docs
+      REGION: eu-north-1
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.ALETHEIA_DOCS_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.ALETHEIA_DOCS_AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.REGION }}
+
+    - name: Install Dependencies
+      run: |
+        node --version
+        yarn install
+
+    - name: Build Static Website
+      run: |
+        yarn run build-storybook
+        npx compodoc -p tsconfig.json -d ./docs/compodoc
+
+    - name: Copy files to the production website with the AWS CLI
+      run: |
+        aws s3 sync --delete ${{ env.DIST }} s3://${{ env.BUCKET }}

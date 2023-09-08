@@ -16,10 +16,15 @@ enum Roles {
     Admin = "admin",
 }
 
+enum Status {
+    Active = "active",
+    Inactive = "inactive",
+}
+
 enum ContentModelEnum {
     Speech = "Speech",
     Image = "Image",
     Debate = "Debate",
 }
 
-export { ClassificationEnum, Roles, ContentModelEnum };
+export { ClassificationEnum, Roles, Status, ContentModelEnum };
