@@ -4135,22 +4135,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/testing@npm:^8.2.6":
-  version: 8.4.7
-  resolution: "@nestjs/testing@npm:8.4.7"
+"@nestjs/testing@npm:^9.3.12":
+  version: 9.4.3
+  resolution: "@nestjs/testing@npm:9.4.3"
   dependencies:
-    tslib: 2.4.0
+    tslib: 2.5.3
   peerDependencies:
-    "@nestjs/common": ^8.0.0
-    "@nestjs/core": ^8.0.0
-    "@nestjs/microservices": ^8.0.0
-    "@nestjs/platform-express": ^8.0.0
+    "@nestjs/common": ^9.0.0
+    "@nestjs/core": ^9.0.0
+    "@nestjs/microservices": ^9.0.0
+    "@nestjs/platform-express": ^9.0.0
   peerDependenciesMeta:
     "@nestjs/microservices":
       optional: true
     "@nestjs/platform-express":
       optional: true
-  checksum: 5514f2638ad1dcdabe3c13fa35f8d73dbae5924c051a9747f19c2bbb5491998a3261e6a43562af8a4f67af4fe4a5b6b97406712e3aa28da5d5e3ace0fbab7112
+  checksum: 0f3373a7e451e39cb38c7ee67f793efb1583ab795f6e42a959afd5c50180536886c9ed6ac621102392f85c74191a31c654e66b0225fc94d6433aef044ca8d46a
   languageName: node
   linkType: hard
 
@@ -10104,7 +10104,7 @@ __metadata:
     "@nestjs/schedule": ^2.1.0
     "@nestjs/schematics": 9.0.3
     "@nestjs/swagger": ^7.1.4
-    "@nestjs/testing": ^8.2.6
+    "@nestjs/testing": ^9.3.12
     "@nestjs/throttler": ^2.0.0
     "@nestjs/websockets": ^10.2.4
     "@next/eslint-plugin-next": ^12.0.10
@@ -10182,7 +10182,7 @@ __metadata:
     lottie-web: ^5.10.1
     md5: ^2.3.0
     migrate-mongo-ts: ^1.1.4
-    mongodb-memory-server: ^8.13.0
+    mongodb-memory-server: ^8.15.1
     mongoose: ^  5.13.15
     mongoose-softdelete-typescript: ^0.0.3
     nestjs-unleash: ^2.2.3
@@ -22090,7 +22090,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-memory-server@npm:^8.13.0":
+"mongodb-memory-server@npm:^8.15.1":
   version: 8.15.1
   resolution: "mongodb-memory-server@npm:8.15.1"
   dependencies:
@@ -29220,13 +29220,6 @@ __metadata:
     minimist: ^1.2.6
     strip-bom: ^3.0.0
   checksum: 28c5f7bbbcabc9dabd4117e8fdc61483f6872a1c6b02a4b1c4d68c5b79d06896c3cc9547610c4c3ba64658531caa2de13ead1ea1bf321c7b53e969c4752b98c7
-  languageName: node
-  linkType: hard
-
-"tslib@npm:2.4.0":
-  version: 2.4.0
-  resolution: "tslib@npm:2.4.0"
-  checksum: 8c4aa6a3c5a754bf76aefc38026134180c053b7bd2f81338cb5e5ebf96fefa0f417bff221592bf801077f5bf990562f6264fecbc42cd3309b33872cb6fc3b113
   languageName: node
   linkType: hard
 
