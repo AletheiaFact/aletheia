@@ -10,7 +10,7 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { TypeModel } from "../state-event/schema/state-event.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import { ContentModelEnum } from "../types/enums";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 

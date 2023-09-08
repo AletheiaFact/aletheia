@@ -7,7 +7,7 @@ import {
     Header,
     Query,
 } from "@nestjs/common";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "./view.service";
 import { IsPublic } from "../auth/decorators/is-public.decorator";

@@ -12,13 +12,12 @@ import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { ReportDocument } from "../report/schemas/report.schema";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import { ImageService } from "../claim/types/image/image.service";
 import { ContentModelEnum } from "../types/enums";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
-    private readonly logger = new Logger("ClaimReviewService");
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
         @InjectModel(ClaimReview.name)

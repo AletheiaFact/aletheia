@@ -17,7 +17,7 @@ describe("ParserService", () => {
     });
 
     beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
+        const testingModule: TestingModule = await Test.createTestingModule({
             imports: [
                 MongooseModule.forRoot(
                     TestConfigOptions.config.db.connection_uri,
@@ -29,7 +29,7 @@ describe("ParserService", () => {
             ],
             providers: [ParserService],
         }).compile();
-        parserService = module.get<ParserService>(ParserService);
+        parserService = testingModule.get<ParserService>(ParserService);
     });
 
     describe("parse()", () => {

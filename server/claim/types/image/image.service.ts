@@ -9,7 +9,7 @@ import {
 } from "../../../history/schema/history.schema";
 import { REQUEST } from "@nestjs/core";
 import { ReportService } from "../../../report/report.service";
-import { BaseRequest } from "../../../types";
+import type { BaseRequest } from "../../../types";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ImageService {

@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Machine } from "../dto/create-claim-review-task.dto";
+import type { Machine } from "../dto/create-claim-review-task.dto";
 
 export type ClaimReviewTaskDocument = ClaimReviewTask & mongoose.Document;
 

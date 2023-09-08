@@ -4,7 +4,7 @@ import {
     WebSocketGateway,
     WebSocketServer,
 } from "@nestjs/websockets";
-import { Request } from "express";
+import type { Request } from "express";
 import { Server } from "ws";
 import { setupWSConnection } from "y-websocket/bin/utils";
 import * as url from "url";

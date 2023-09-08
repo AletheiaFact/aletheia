@@ -5,7 +5,7 @@ import {
     NotFoundException,
     Logger,
 } from "@nestjs/common";
-import { Response, Request } from "express";
+import type { Request, Response } from "express";
 
 @Catch(NotFoundException)
 export class NotFoundFilter implements ExceptionFilter {
