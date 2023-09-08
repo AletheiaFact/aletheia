@@ -9,7 +9,7 @@ import {
     TargetModel,
 } from "../../../history/schema/history.schema";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "../../../types";
+import type { BaseRequest } from "../../../types";
 const md5 = require("md5");
 
 @Injectable({ scope: Scope.REQUEST })

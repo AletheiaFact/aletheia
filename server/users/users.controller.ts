@@ -13,13 +13,13 @@ import {
     UnprocessableEntityException,
     UseGuards,
 } from "@nestjs/common";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { UsersService } from "./users.service";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { ConfigService } from "@nestjs/config";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import { Types } from "mongoose";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";

@@ -16,7 +16,7 @@ import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { parse } from "url";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { GetTasksDTO } from "./dto/get-tasks.dto";
 import { getQueryMatchForMachineValue } from "./mongo-utils";

@@ -4,7 +4,7 @@ import {
     ExceptionFilter,
     UnauthorizedException,
 } from "@nestjs/common";
-import { Response } from "express";
+import type { Response } from "express";
 
 /**
  * Filters out Unauthorized Exception and redirect to our custom acess denied page, avoiding the default json error message

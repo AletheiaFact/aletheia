@@ -13,14 +13,14 @@ import {
     Res,
 } from "@nestjs/common";
 import { parse } from "url";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { PersonalityService } from "./personality.service";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonalityDTO } from "./dto/create-personality.dto";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { TargetModel } from "../history/schema/history.schema";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller()

@@ -1,5 +1,5 @@
 import { Roles } from "../auth/ability/ability.factory";
-import { Request } from "express";
+import type { Request } from "express";
 
 export type BaseRequest = Request & {
     user: { _id: string; role: Roles };
