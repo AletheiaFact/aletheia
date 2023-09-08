@@ -147,6 +147,7 @@
         "sitemap": "5",
         "slugify": "^1.6.1",
         "socket.io": "^4.7.2",
+        "storybook": "^7.4.0",
         "styled-components": "^5.3.0",
         "ws": "^8.13.0",
         "xstate": "^4.32.1",

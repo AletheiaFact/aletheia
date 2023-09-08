@@ -11,6 +11,7 @@ export const GetUserRole = () => {
                     Roles.Regular,
                 isLoggedIn: true,
                 id: session.data.identity.traits.user_id,
+                status: session?.data.identity.state,
             };
         })
         .catch(() => {

@@ -3,6 +3,7 @@ import { AxiosError } from "axios";
 import { TFunction } from "i18next";
 import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
+import { Status } from "../../types/enums";
 
 // A small function to help us deal with errors coming from fetching a flow.
 export function handleGetFlowError<S>(
@@ -48,6 +49,15 @@ export function handleGetFlowError<S>(
                 // Ory Kratos asks to point the user to this URL.
                 window.location.href = err.response.data.redirect_browser_to;
                 return;
+        }
+
+        if (err.response?.status === 401) {
+            router.push({
+                pathname: "/unauthorized",
+                query: { originalUrl: "login", status: Status.Inactive },
+            });
+
+            return;
         }
 
         if (err.response?.status === 410) {

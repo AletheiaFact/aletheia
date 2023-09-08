@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Roles } from "../../auth/ability/ability.factory";
+import { Roles, Status } from "../../auth/ability/ability.factory";
 import { Document, Types } from "mongoose";
 import { Badge } from "../../badge/schemas/badge.schema";
 
@@ -34,6 +34,9 @@ export class User {
         ],
     })
     badges: Badge[];
+
+    @Prop({ required: true, default: Status.Active })
+    state: Status;
 }
 
 const UserSchemaRaw = SchemaFactory.createForClass(User);

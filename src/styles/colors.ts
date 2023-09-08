@@ -17,5 +17,7 @@ const colors = {
     logoWhite: "#E8E8E8",
     redText: "#ff4d4f",
     warning: "#DB9F0D",
+    active: "#49DE80",
+    inactive: "#FBCC13",
 };
 export default colors;
