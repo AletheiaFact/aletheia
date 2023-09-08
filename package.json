@@ -36,7 +36,9 @@
         "migrate": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts up -f migrate-mongo-config.ts",
         "cypress-open": "cypress open",
         "cypress-run": "cypress run",
-        "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Server\" \"node dist/server/mongodb.server.js\" \"wait-on tcp:35025 && yarn seed:ci && yarn start -c config.test.ci.yaml\""
+        "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Server\" \"yarn test:e2e:mongo-server\" \"wait-on tcp:127.0.0.1:35025 && yarn test:e2e:app-server\"",
+        "test:e2e:mongo-server": "node dist/server/mongodb.server.js",
+        "test:e2e:app-server": "yarn seed:ci && yarn start -c config.test.ci.yaml"
     },
     "nodemonConfig": {
         "ignore": [
@@ -185,7 +187,7 @@
         "babel-eslint": "^10.1.0",
         "babel-loader": "^8.2.5",
         "babel-plugin-styled-components": "^1.13.2",
-        "concurrently": "^6.2.1",
+        "concurrently": "^8.2.1",
         "copyfiles": "^2.4.1",
         "cypress": "^9.3.0",
         "env-cmd": "^10.1.0",
