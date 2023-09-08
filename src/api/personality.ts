@@ -94,9 +94,22 @@ const createPersonality = (personality, t) => {
         });
 };
 
+const deletePersonality = (id: string, t: any) => {
+    return axios
+        .delete(`${baseUrl}/${id}`)
+        .then(() => {
+            message.success(t("personality:deleteSuccess"));
+        })
+        .catch((err) => {
+            console.error(err);
+            message.error(t("personality:deleteError"));
+        });
+};
+
 const personalitiesApi = {
     getPersonalities,
     getPersonality,
     createPersonality,
+    deletePersonality,
 };
 export default personalitiesApi;

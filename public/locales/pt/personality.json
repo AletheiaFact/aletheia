@@ -9,5 +9,9 @@
     "errorWhileFetching": "Erro ao buscar personalidade",
     "otherPersonalitiesTitle": "Personalidades no site",
     "seeAllMetricsOverviews": "Veja todos",
-    "seeLessMetricsOverviews": "Veja menos"
+    "seeLessMetricsOverviews": "Veja menos",
+    "deleteModalTitle": "Deletar personalidade",
+    "deleteModalBody": "Você tem certeza que deseja deletar essa personalidade? essa ação não pode ser desfeita",
+    "deleteSuccess": "Personalidade deletada com sucesso",
+    "deleteError": "Erro ao deletar a personalidade"
 }

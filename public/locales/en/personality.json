@@ -9,5 +9,9 @@
     "errorWhileFetching": "Error while fetching Personality",
     "otherPersonalitiesTitle": "Personalities on the website",
     "seeAllMetricsOverviews": "See all",
-    "seeLessMetricsOverviews": "See less"
+    "seeLessMetricsOverviews": "See less",
+    "deleteModalTitle": "Delete personality",
+    "deleteModalBody": "Are you sure you want to delete this identity? This action cannot be undone.",
+    "deleteSuccess": "Personality deleted succesfully",
+    "deleteError": "Error while deleting personality"
 }

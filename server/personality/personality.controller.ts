@@ -22,13 +22,15 @@ import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { TargetModel } from "../history/schema/history.schema";
 import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config";
 
 @Controller()
 export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(
         private personalityService: PersonalityService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private configService: ConfigService
     ) {}
 
     @IsPublic()
@@ -77,12 +79,9 @@ export class PersonalityController {
     @ApiTags("personality")
     @Delete("api/personality/:id")
     async delete(@Param("id") personalityId) {
-        try {
-            await this.personalityService.delete(personalityId);
-            return { message: "Personality successfully deleted" };
-        } catch (error) {
-            this.logger.error(error);
-        }
+        return this.personalityService.delete(personalityId).catch((err) => {
+            this.logger.error(err);
+        });
     }
 
     @IsPublic()
@@ -141,14 +140,16 @@ export class PersonalityController {
             }
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/personality-page",
-                Object.assign(parsedUrl.query, { personality, personalities })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/personality-page",
+            Object.assign(parsedUrl.query, {
+                personality,
+                personalities,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 
     @IsPublic()

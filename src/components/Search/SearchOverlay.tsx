@@ -63,8 +63,6 @@ const SearchOverlay = () => {
         };
     });
 
-    console.log(isOpen || !vw?.xs);
-
     return (
         <OverlayCol xs={1} sm={10} md={10}>
             <div

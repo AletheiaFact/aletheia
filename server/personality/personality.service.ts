@@ -64,7 +64,7 @@ export class PersonalityService {
 
         if (order === "random") {
             personalities = await this.PersonalityModel.aggregate([
-                { $match: query },
+                { $match: { ...query, isDeleted: false } },
                 { $sample: { size: pageSize } },
             ]);
         } else if (Object.keys(query).length > 0) {
