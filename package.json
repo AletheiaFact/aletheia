@@ -119,6 +119,7 @@
         "html-to-text": "^9.0.5",
         "i18next": "^21.6.10",
         "jotai": "^1.9.2",
+        "jotai-xstate": "^0.3.0",
         "js-cookie": "^3.0.1",
         "lottie-web": "^5.10.1",
         "md5": "^2.3.0",

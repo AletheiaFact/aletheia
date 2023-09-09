@@ -10177,6 +10177,7 @@ __metadata:
     i18next: ^21.6.10
     jest: ^27.4.7
     jotai: ^1.9.2
+    jotai-xstate: ^0.3.0
     js-cookie: ^3.0.1
     lint-staged: ^13.0.3
     lottie-web: ^5.10.1
@@ -19874,6 +19875,16 @@ __metadata:
     "@sideway/formula": ^3.0.1
     "@sideway/pinpoint": ^2.0.0
   checksum: 7affbb27ae9283596d6471871352b85ebf73a1e782c0be1998bce1ecc86ba48bee834c8af9a44d7143bb470654d6ae1248a29009ee5463618675d655dbd69306
+  languageName: node
+  linkType: hard
+
+"jotai-xstate@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "jotai-xstate@npm:0.3.0"
+  peerDependencies:
+    jotai: ">=1.11.0"
+    xstate: "*"
+  checksum: e0fd6b0ab97b08d3e2a853258eae575192b5aa96f74c204c76f0965f7ac524d3b410cb795e516e571ebe06a9ec89644ea1d169ab2ea08da89862acf8f755abe5
   languageName: node
   linkType: hard
 
