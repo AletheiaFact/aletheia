@@ -233,7 +233,10 @@ export class ClaimController {
     ) {
         const { data_hash, personalitySlug, claimSlug } = req.params;
         const personality = await this.personalityService.getPersonalityBySlug(
-            personalitySlug,
+            {
+                slug: personalitySlug,
+                isDeleted: false,
+            },
             req.language
         );
 
@@ -370,7 +373,10 @@ export class ClaimController {
     ) {
         const { data_hash, personalitySlug, claimSlug } = req.params;
         const personality = await this.personalityService.getPersonalityBySlug(
-            personalitySlug,
+            {
+                slug: personalitySlug,
+                isDeleted: false,
+            },
             req.language
         );
 
@@ -406,7 +412,10 @@ export class ClaimController {
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
-                  query.personality,
+                  {
+                      slug: query.personality,
+                      isDeleted: false,
+                  },
                   req.language
               )
             : null;
@@ -502,9 +511,16 @@ export class ClaimController {
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
-                personalitySlug,
+                {
+                    slug: personalitySlug,
+                    isDeleted: false,
+                },
                 req.language
             );
+
+        const hideDescription =
+            await this.personalityService.getDescriptionForHide(personality);
+
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
             claimSlug
@@ -519,6 +535,7 @@ export class ClaimController {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                hideDescription,
             })
         );
     }
@@ -533,7 +550,10 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
-                personalitySlug,
+                {
+                    slug: personalitySlug,
+                    isDeleted: false,
+                },
                 req.language
             );
 
@@ -565,9 +585,10 @@ export class ClaimController {
         const { personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
-        const personality = await this.personalityService.getPersonalityBySlug(
-            personalitySlug
-        );
+        const personality = await this.personalityService.getPersonalityBySlug({
+            slug: personalitySlug,
+            isDeleted: false,
+        });
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
@@ -596,9 +617,10 @@ export class ClaimController {
         const { data_hash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
-        const personality = await this.personalityService.getPersonalityBySlug(
-            personalitySlug
-        );
+        const personality = await this.personalityService.getPersonalityBySlug({
+            slug: personalitySlug,
+            isDeleted: false,
+        });
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
@@ -630,9 +652,10 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsByPersonalitySlug(
-                personalitySlug
-            );
+            await this.personalityService.getClaimsByPersonalitySlug({
+                slug: personalitySlug,
+                isDeleted: false,
+            });
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,

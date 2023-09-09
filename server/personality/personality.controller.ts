@@ -23,6 +23,7 @@ import { TargetModel } from "../history/schema/history.schema";
 import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
+import { CaptchaService } from "../captcha/captcha.service";
 
 @Controller()
 export class PersonalityController {
@@ -30,7 +31,8 @@ export class PersonalityController {
     constructor(
         private personalityService: PersonalityService,
         private viewService: ViewService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private captchaService: CaptchaService
     ) {}
 
     @IsPublic()
@@ -74,6 +76,23 @@ export class PersonalityController {
     @Put("api/personality/:id")
     async update(@Param("id") personalityId, @Body() body) {
         return this.personalityService.update(personalityId, body);
+    }
+
+    @ApiTags("personality")
+    @Put("api/personality/hidden/:id")
+    async updateHiddenStatus(@Param("id") personalityId, @Body() body) {
+        const validateCaptcha = await this.captchaService.validate(
+            body.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
+
+        return this.personalityService.hideOrUnhidePersonality(
+            personalityId,
+            body.isHidden,
+            body.description
+        );
     }
 
     @ApiTags("personality")
@@ -127,7 +146,10 @@ export class PersonalityController {
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
-                req.params.slug,
+                {
+                    slug: req.params.slug,
+                    isDeleted: false,
+                },
                 req.language
             );
 
@@ -140,6 +162,10 @@ export class PersonalityController {
             }
         );
 
+        const description = await this.personalityService.getDescriptionForHide(
+            personality
+        );
+
         await this.viewService.getNextServer().render(
             req,
             res,
@@ -147,6 +173,7 @@ export class PersonalityController {
             Object.assign(parsedUrl.query, {
                 personality,
                 personalities,
+                description,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
             })
         );
@@ -178,9 +205,11 @@ export class PersonalityController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsByPersonalitySlug(
-                req.params.slug
-            );
+            await this.personalityService.getClaimsByPersonalitySlug({
+                slug: req.params.slug,
+                isDeleted: false,
+            });
+
         await this.viewService.getNextServer().render(
             req,
             res,

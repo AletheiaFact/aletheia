@@ -42,6 +42,22 @@ const AletheiaModal = styled(Modal)`
         color: ${colors.blackPrimary};
         margin-right: 20px;
     }
+
+    .ant-modal-body .modal-title {
+        display: flex;
+        gap: 10px;
+        width: calc(100% - 20px);
+        font-size: 24px;
+        line-height: 24px;
+    }
+
+    .hide-modal {
+        color: #db9f0d;
+    }
+
+    .delete-modal {
+        color: #ca1105;
+    }
 `;
 
 const ModalCancelButton = styled(Button)`

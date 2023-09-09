@@ -21,10 +21,11 @@ import moment from "moment";
 import { useAppSelector } from "../../store/store";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
+import AdminToolBar from "../Toolbar/AdminToolBar";
 
 const { Title, Paragraph } = Typography;
 
-const ClaimView = ({ personality, claim, href }) => {
+const ClaimView = ({ personality, claim, href, hideDescription }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     moment.locale(i18n.language);
@@ -66,6 +67,16 @@ const ClaimView = ({ personality, claim, href }) => {
     if (claimContent) {
         return (
             <>
+                <AdminToolBar
+                    content={personality.isHidden ? personality : claim}
+                    deleteApiFunction={() => {}}
+                    changeHideStatusFunction={() => {}}
+                    target="claim"
+                    descriptionTarget={
+                        personality.isHidden ? "personality" : "claim"
+                    }
+                    descriptionForHide={hideDescription}
+                />
                 <Row justify="center">
                     <Col xs={20} sm={18} md={16}>
                         <article>

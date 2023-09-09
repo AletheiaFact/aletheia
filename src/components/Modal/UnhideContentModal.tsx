@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { WarningOutlined } from "@ant-design/icons";
 import { AletheiaModal } from "./AletheiaModal.style";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import { useAppSelector } from "../../store/store";
 import ModalButtons from "./ModalButtons";
 
-const DeleteContentModal = ({
+const UnhideContentModal = ({
     visible,
-    contentTitle,
     isLoading,
+    contentTitle,
     contentBody,
     handleOk,
     handleCancel,
@@ -32,10 +32,11 @@ const DeleteContentModal = ({
             onCancel={handleCancel}
             width={vw?.sm ? "100%" : "70%"}
         >
-            <h2 className="modal-title delete-modal">
-                <ExclamationCircleOutlined />
+            <h2 className="modal-title hide-modal">
+                <WarningOutlined />
                 {contentTitle}
             </h2>
+
             <p style={{ marginTop: 8 }}>{contentBody}</p>
             <Form
                 style={{ marginTop: 16, justifyContent: "space-around" }}
@@ -59,4 +60,4 @@ const DeleteContentModal = ({
     );
 };
 
-export default DeleteContentModal;
+export default UnhideContentModal;

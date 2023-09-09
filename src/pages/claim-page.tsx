@@ -16,6 +16,7 @@ export interface ClaimPageProps {
     sitekey: string;
     href: string;
     enableCollaborativeEditor: boolean;
+    hideDescription: string;
 }
 
 const ClaimPage: NextPage<ClaimPageProps> = (props) => {
@@ -69,6 +70,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
                 ? JSON.parse(JSON.stringify(query.personality))
                 : null,
             claim: JSON.parse(JSON.stringify(query.claim)),
+            hideDescription: query.hideDescription
+                ? JSON.parse(JSON.stringify(query.hideDescription))
+                : null,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,

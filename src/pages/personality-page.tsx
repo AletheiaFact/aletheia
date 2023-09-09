@@ -4,7 +4,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import JsonLd from "../components/JsonLd";
 import { GetLocale } from "../utils/GetLocale";
 import AffixButton from "../components/AffixButton/AffixButton";
-import AdminToolBar from "../components/AdminToolBar";
+import AdminToolBar from "../components/Toolbar/AdminToolBar";
 import { useAtom } from "jotai";
 import { currentUserRole } from "../atoms/currentUser";
 import { Roles } from "../types/enums";
@@ -18,7 +18,8 @@ const PersonalityPage: NextPage<{
     href: any;
     personalities: any[];
     sitekey: string;
-}> = ({ personality, href, personalities, sitekey }) => {
+    description: string;
+}> = ({ personality, href, personalities, sitekey, description }) => {
     const [role] = useAtom(currentUserRole);
     const dispatch = useDispatch();
 
@@ -39,8 +40,13 @@ const PersonalityPage: NextPage<{
             {role === Roles.Admin && (
                 <AdminToolBar
                     content={personality}
-                    apiFunction={personalitiesApi.deletePersonality}
+                    deleteApiFunction={personalitiesApi.deletePersonality}
+                    changeHideStatusFunction={
+                        personalitiesApi.updatePersonalityHiddenStatus
+                    }
+                    descriptionTarget="personality"
                     target="personality"
+                    descriptionForHide={description}
                 />
             )}
             <PersonalityView
@@ -62,6 +68,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: JSON.parse(JSON.stringify(query.personality)),
             personalities: JSON.parse(JSON.stringify(query.personalities)),
+            description: JSON.parse(JSON.stringify(query.description)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
         },

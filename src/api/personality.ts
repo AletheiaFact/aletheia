@@ -106,10 +106,37 @@ const deletePersonality = (id: string, t: any) => {
         });
 };
 
+const updatePersonalityHiddenStatus = (
+    id: string,
+    isHidden: boolean,
+    t: any,
+    recaptcha: string,
+    description: string
+) => {
+    return axios
+        .put(`${baseUrl}/hidden/${id}`, {
+            isHidden: isHidden,
+            recaptcha: recaptcha,
+            description: description,
+        })
+        .then(() => {
+            message.success(
+                t(`personality:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
+            );
+        })
+        .catch((err) => {
+            console.error(err);
+            message.error(
+                t(`personality:${isHidden ? "hideError" : "unhideError"}`)
+            );
+        });
+};
+
 const personalitiesApi = {
     getPersonalities,
     getPersonality,
     createPersonality,
     deletePersonality,
+    updatePersonalityHiddenStatus,
 };
 export default personalitiesApi;
