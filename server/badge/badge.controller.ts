@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Put, Req, Res } from "@nestjs/common";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { ImageService } from "../claim/types/image/image.service";
 import { parse } from "url";
 

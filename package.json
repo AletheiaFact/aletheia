@@ -12,9 +12,10 @@
         "seed:ci": "yarn build-ts && yarn build-nest && yarn copy-html-files && node dist/server/command.js -c config.seed.test.ci.yaml",
         "dev": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn watch-node\"",
         "test": "env-cmd --silent jest --detectOpenHandles --forceExit",
-        "build": "yarn build-ts && yarn build-nest && yarn copy-static-assets && yarn copy-html-files && next build",
+        "build": "yarn build-ts && yarn build-nest && yarn copy-static-assets && yarn copy-html-files && yarn build-next",
         "build-ts": "tsc",
         "build-nest": "nest build -p ./server/tsconfig.json",
+        "build-next": "next build",
         "watch-ts": "tsc --project ./server/tsconfig.json -w",
         "debug": "yarn build && yarn watch-debug",
         "lint": "tsc --noEmit && yarn lint:check",
@@ -35,7 +36,9 @@
         "migrate": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts up -f migrate-mongo-config.ts",
         "cypress-open": "cypress open",
         "cypress-run": "cypress run",
-        "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Server\" \"node dist/server/mongodb.server.js\" \"wait-on tcp:35025 && yarn seed:ci && yarn start -c config.test.ci.yaml\""
+        "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Server\" \"yarn test:e2e:mongo-server\" \"wait-on tcp:127.0.0.1:35025 && yarn test:e2e:app-server\"",
+        "test:e2e:mongo-server": "node dist/server/mongodb.server.js",
+        "test:e2e:app-server": "yarn seed:ci && yarn start -c config.test.ci.yaml"
     },
     "nodemonConfig": {
         "ignore": [
@@ -116,6 +119,7 @@
         "html-to-text": "^9.0.5",
         "i18next": "^21.6.10",
         "jotai": "^1.9.2",
+        "jotai-xstate": "^0.3.0",
         "js-cookie": "^3.0.1",
         "lottie-web": "^5.10.1",
         "md5": "^2.3.0",
@@ -162,7 +166,7 @@
         "@babel/preset-react": "^7.14.5",
         "@nestjs/cli": "9.1.5",
         "@nestjs/schematics": "9.0.3",
-        "@nestjs/testing": "^8.2.6",
+        "@nestjs/testing": "^9.3.12",
         "@next/eslint-plugin-next": "^12.0.10",
         "@shelf/jest-mongodb": "^2.2.0",
         "@storybook/addon-actions": "^6.5.0-alpha.64",
@@ -184,9 +188,9 @@
         "babel-eslint": "^10.1.0",
         "babel-loader": "^8.2.5",
         "babel-plugin-styled-components": "^1.13.2",
-        "concurrently": "^6.2.1",
+        "concurrently": "^8.2.1",
         "copyfiles": "^2.4.1",
-        "cypress": "^9.3.0",
+        "cypress": "^12.17.4",
         "env-cmd": "^10.1.0",
         "eslint": "7.0.0",
         "eslint-config-next": "^12.0.10",
@@ -201,7 +205,7 @@
         "husky": "^8.0.1",
         "jest": "^27.4.7",
         "lint-staged": "^13.0.3",
-        "mongodb-memory-server": "^8.13.0",
+        "mongodb-memory-server": "^8.15.1",
         "nodemon": "^2.0.12",
         "prettier": "2.3.2",
         "react-i18next": "^11.16.7",
@@ -239,5 +243,6 @@
             "prettier --write",
             "eslint --fix"
         ]
-    }
+    },
+    "packageManager": "yarn@3.6.3"
 }

@@ -19,7 +19,7 @@ import {
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
 import { ConfigService } from "@nestjs/config";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { parse } from "url";
 import { PersonalityService } from "../personality/personality.service";
 import { ViewService } from "../view/view.service";
@@ -32,7 +32,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { SentenceService } from "./types/sentence/sentence.service";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import slugify from "slugify";
 import { UnleashService } from "nestjs-unleash";
 import { ContentModelEnum } from "../types/enums";
@@ -76,6 +76,7 @@ export class ClaimController {
         if (query.personality) {
             // @ts-ignore
             inputs.personalities = new mongoose.Types.ObjectId(
+                // @ts-ignore
                 query.personality
             );
         }
