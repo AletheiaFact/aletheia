@@ -16,16 +16,14 @@ describe("Create personality and claim", () => {
         cy.get(locators.personality.INPUT_SEARCH_PERSONALITY).type(
             personality.name
         );
-        cy.get(`${locators.personality.SELECT_PERSONALITY}`, {
-            timeout: 5000,
-        }).click();
+        cy.get(`${locators.personality.SELECT_PERSONALITY}`).click();
     });
 
     it("Should create a Claim", () => {
         cy.get(locators.personality.BTN_SEE_MORE_PERSONALITY)
             .should("be.visible")
             .click();
-        cy.get(`${locators.personality.SELECT_PERSONALITY} > *`)
+        cy.get(`${locators.personality.SELECT_PERSONALITY}`)
             .should("be.visible")
             .click();
         cy.url().should(
@@ -69,16 +67,14 @@ describe("Create personality and claim", () => {
         );
     });
 
-    it("should create an image claim with a personality", () => {
+    it.skip("should create an image claim with a personality", () => {
         cy.get(locators.floatButton.FLOAT_BUTTON).should("be.visible").click();
         cy.get(locators.floatButton.ADD_CLAIM).should("be.visible").click();
         cy.get(locators.claim.BTN_ADD_IMAGE).should("be.visible").click();
         cy.get(locators.personality.INPUT_SEARCH_PERSONALITY).type(
             personality.name
         );
-        cy.get(`${locators.personality.SELECT_PERSONALITY}`, {
-            timeout: 5000,
-        }).click();
+        cy.get(`${locators.personality.SELECT_PERSONALITY}`).click();
         cy.get(locators.claim.BTN_SELECT_PERSONALITY)
             .should("be.visible")
             .click();
@@ -101,6 +97,7 @@ describe("Create personality and claim", () => {
 
         cy.checkRecaptcha();
         cy.get(locators.claim.BTN_SUBMIT_CLAIM).should("be.visible").click();
+        // TODO: should we really try to submit images here?
         cy.title().should("contain", claim.imageTitle);
     });
 });

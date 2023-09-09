@@ -25,7 +25,7 @@ const UserMenu = () => {
             .catch(() => {
                 setHasSession(false);
             });
-    }, []);
+    }, [hasSession]);
 
     const loginOrProfile = () => {
         router.push(hasSession ? "profile" : "login");
