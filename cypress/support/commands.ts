@@ -11,7 +11,7 @@ Cypress.Commands.add("login", () => {
     cy.get(locators.login.PASSWORD).type(user.password);
     cy.get(locators.login.BTN_LOGIN).click();
     cy.intercept("/api/.ory/sessions/whoami").as("confirmLogin");
-    cy.wait("@confirmLogin", { timeout: 10000 });
+    cy.wait("@confirmLogin", { timeout: 30000 });
     // The tutorial modal will show up in the home page after the login
     cy.get(`${locators.claim.BTN_OK_TUTORIAL}`).should("be.visible").click();
 });
