@@ -1,16 +1,16 @@
-import { PlusOutlined } from "@ant-design/icons";
 import { Col, Divider, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { CSSProperties } from "react";
 
 import colors from "../../styles/colors";
 import AletheiaAvatar from "../AletheiaAvatar";
-import Button, { ButtonType } from "../Button";
 import ReviewStats from "../Metrics/ReviewStats";
 import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 import { useAppSelector } from "../../store/store";
 import { useAtom } from "jotai";
 import { createClaimMachineAtom } from "../../machines/createClaim/provider";
+import PersonalityCardAvatar from "./PersonalityCardAvatar";
+import PersonalityCardButton from "./PersonalityCardButton";
 
 const { Title, Paragraph } = Typography;
 
@@ -132,22 +132,12 @@ const PersonalityCard = ({
                             paddingBottom: 0,
                         }}
                     >
-                        {!hoistAvatar && (
-                            <Col
-                                span={componentStyle.avatarSpan}
-                                style={{
-                                    minWidth: componentStyle.avatarSize,
-                                }}
-                            >
-                                <AletheiaAvatar
-                                    size={componentStyle.avatarSize}
-                                    src={personality.avatar}
-                                    alt={t("seo:personalityImageAlt", {
-                                        name: personality.name,
-                                    })}
-                                />
-                            </Col>
-                        )}
+                        <PersonalityCardAvatar
+                            hoistAvatar={hoistAvatar}
+                            personality={personality}
+                            componentStyle={componentStyle}
+                        />
+
                         {((hoistAvatar && (!vw?.sm || !vw?.xs)) ||
                             !hoistAvatar) && (
                             <Col
@@ -285,59 +275,18 @@ const PersonalityCard = ({
                                     justifyContent: "flex-end",
                                 }}
                             >
-                                {personality._id ? (
-                                    <Button
-                                        type={ButtonType.blue}
-                                        data-cy={personality.name}
-                                        {...personalityFoundProps}
-                                        disabled={
-                                            isFormSubmitted ||
-                                            personalityIsSelected
-                                        }
-                                        style={{
-                                            fontSize: "12px",
-                                            lineHeight: "20px",
-                                            height: "auto",
-                                            padding: "4px 12px",
-                                        }}
-                                    >
-                                        <span style={{ marginTop: 4 }}>
-                                            {isCreatingClaim
-                                                ? t(
-                                                      "claimForm:personalityFound"
-                                                  )
-                                                : t(
-                                                      "personality:profile_button"
-                                                  )}
-                                        </span>
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        type={ButtonType.blue}
-                                        onClick={() => {
-                                            if (!isFormSubmitted) {
-                                                onClick(personality);
-                                            }
-                                        }}
-                                        disabled={
-                                            isFormSubmitted ||
-                                            personalityIsSelected
-                                        }
-                                        data-cy={personality.name}
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            height: 40,
-                                            paddingBottom: 0,
-                                        }}
-                                    >
-                                        <PlusOutlined />{" "}
-                                        {isCreatingClaim
-                                            ? t("claimForm:personalityNotFound")
-                                            : t("personality:add_button")}
-                                    </Button>
-                                )}
+                                <PersonalityCardButton
+                                    personality={personality}
+                                    personalityFoundProps={
+                                        personalityFoundProps
+                                    }
+                                    isFormSubmitted={isFormSubmitted}
+                                    personalityIsSelected={
+                                        personalityIsSelected
+                                    }
+                                    isCreatingClaim={isCreatingClaim}
+                                    onClick={onClick}
+                                />
                             </Col>
                         )}
                     </Row>

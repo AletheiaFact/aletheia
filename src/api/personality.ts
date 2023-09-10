@@ -13,6 +13,7 @@ interface FetchOptions {
     fetchOnly?: boolean;
     i18n?: { languages?: any };
     headers?: { [key: string]: string };
+    isHidden?: boolean;
 }
 
 const getPersonalities = (options: FetchOptions, dispatch) => {
@@ -23,11 +24,12 @@ const getPersonalities = (options: FetchOptions, dispatch) => {
         pageSize: options.pageSize ? options.pageSize : 5,
         withSuggestions: options.withSuggestions,
         language: options?.i18n?.languages[0] || "pt",
+        isHidden: options?.isHidden || false,
     };
     const headers = options?.headers || {};
 
     return axios
-        .get(`${baseUrl}`, { params: params, headers: headers })
+        .get(`${baseUrl}`, { params, headers })
         .then((response) => {
             const { personalities, totalPages, totalPersonalities } =
                 response.data;
@@ -115,9 +117,9 @@ const updatePersonalityHiddenStatus = (
 ) => {
     return axios
         .put(`${baseUrl}/hidden/${id}`, {
-            isHidden: isHidden,
-            recaptcha: recaptcha,
-            description: description,
+            isHidden,
+            recaptcha,
+            description,
         })
         .then(() => {
             message.success(

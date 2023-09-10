@@ -66,31 +66,24 @@ export class PersonalityService {
 
         if (order === "random") {
             personalities = await this.PersonalityModel.aggregate([
-                { $match: { ...query, isHidden: false, isDeleted: false } },
+                { $match: query },
                 { $sample: { size: pageSize } },
             ]);
-        } else if (Object.keys(query).length > 0) {
+        } else if (Object.keys(query).length > 0 && query?.name) {
             const wikidataList = await this.getWikidataList(
                 query?.name.$regex,
                 language
             );
 
             personalities = await this.PersonalityModel.find({
-                $or: [
-                    { wikidata: { $in: wikidataList } },
-                    { ...query, isHidden: false, isDeleted: false },
-                ],
+                $or: [{ wikidata: { $in: wikidataList } }, { query }],
             })
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order })
                 .lean();
         } else {
-            personalities = await this.PersonalityModel.find({
-                ...query,
-                isHidden: false,
-                isDeleted: false,
-            })
+            personalities = await this.PersonalityModel.find(query)
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order })
@@ -317,10 +310,7 @@ export class PersonalityService {
 
         const newPersonality = {
             ...personality,
-            ...{
-                isHidden: hide,
-                description: hide ? description : undefined,
-            },
+            isHidden: hide,
         };
 
         const before = { isHidden: !hide };
@@ -390,7 +380,7 @@ export class PersonalityService {
         return this.PersonalityModel.countDocuments().where({
             ...query,
             isDeleted: false,
-            isHidden: false,
+            isHidden: query.isHidden || false,
         });
     }
 
@@ -405,11 +395,12 @@ export class PersonalityService {
     }
 
     verifyInputsQuery(query) {
-        const queryInputs = {};
+        const queryInputs: any = {};
         if (query.name) {
             // @ts-ignore
             queryInputs.name = { $regex: query.name, $options: "i" };
         }
+        queryInputs.isHidden = query?.isHidden || false;
         return queryInputs;
     }
 
