@@ -1,0 +1,87 @@
+### INGRESS FRONTEND ###
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-aletheia-websocket
+  namespace: ENVIRONMENT
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: test.ws.aletheiafact.org
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: aletheia-websocket
+              port:
+                name: aletheia-websocket
+---
+### SERVICE  FRONTEND ###
+apiVersion: v1
+kind: Service
+metadata:
+  name: aletheia-websocket
+  namespace: ENVIRONMENT
+spec:
+  type: NodePort
+  selector:
+    app: aletheia-websocket
+  ports:
+    - name: aletheia-websocket
+      targetPort: 5051
+      port: 80
+---
+### DEPLOYMENT FRONTEND ###
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aletheia
+  namespace: ENVIRONMENT
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aletheia
+  template:
+    metadata:
+      labels:
+        app: aletheia
+    spec:
+      containers:
+        - name: aletheia
+          image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:TAG
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 5051
+            initialDelaySeconds: 50
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5051
+            initialDelaySeconds: 50
+            timeoutSeconds: 10
+            failureThreshold: 10
+          env:
+            - name: MONGODB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: mongodb_host
+                  name: aletheia-config
+            - name: MONGODB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: mongodb_name
+                  name: aletheia-config
+          resources:
+            limits:
+              cpu: 200m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi

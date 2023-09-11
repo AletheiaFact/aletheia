@@ -23,6 +23,7 @@ export interface ClaimReviewPageProps {
     claimReview: any;
     description: string;
     enableCollaborativeEditor: boolean;
+    webSocketUrl: string;
 }
 
 const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
@@ -38,6 +39,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         enableCollaborativeEditor,
     } = props;
 
+    dispatch(actions.setWebsocketUrl(props.webSocketUrl));
     dispatch(actions.setSitekey(sitekey));
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
@@ -131,6 +133,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             sitekey: query.sitekey,
             description: query.description,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
+            websocketUrl: query?.websocketUrl,
         },
     };
 }

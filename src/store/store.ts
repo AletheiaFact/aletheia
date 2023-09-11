@@ -124,6 +124,11 @@ const reducer = (state, action) => {
                 ...state,
                 autoSave: action.autoSave,
             };
+        case ActionTypes.SET_WEBSOCKET_URL:
+            return {
+                ...state,
+                websocketUrl: action.websocketUrl,
+            };
         case ActionTypes.SET_COLLABORATIVE_EDIT:
             return {
                 ...state,

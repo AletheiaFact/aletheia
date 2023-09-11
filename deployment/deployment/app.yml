@@ -1,0 +1,95 @@
+### INGRESS FRONTEND ###
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-aletheia
+  namespace: ENVIRONMENT
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: test.aletheiafact.org
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: aletheia
+              port:
+                name: aletheia
+---
+### SERVICE  FRONTEND ###
+apiVersion: v1
+kind: Service
+metadata:
+  name: aletheia
+  namespace: ENVIRONMENT
+spec:
+  type: NodePort
+  selector:
+    app: aletheia
+  ports:
+    - name: aletheia
+      targetPort: 3000
+      port: 80
+---
+### DEPLOYMENT FRONTEND ###
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aletheia
+  namespace: ENVIRONMENT
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aletheia
+  template:
+    metadata:
+      labels:
+        app: aletheia
+    spec:
+      containers:
+        - name: aletheia
+          image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:TAG
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 50
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 50
+            timeoutSeconds: 10
+            failureThreshold: 10
+          env:
+            - name: MONGODB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: mongodb_host
+                  name: aletheia-config
+            - name: MONGODB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: mongodb_name
+                  name: aletheia-config
+            - name: NEXT_PUBLIC_UMAMI_SITE_ID
+              value: UMAMI_SITE_ID_STUB
+            - name: NEXT_PUBLIC_RECAPTCHA_SITEKEY
+              value: RECAPTCHA_SITEKEY_STUB
+            - name: ORY_SDK_URL
+              value: ORY_SDK_URL_STUB
+            - name: ORY_ACCESS_TOKEN
+              value: ORY_ACCESS_TOKEN_STUB
+          resources:
+            limits:
+              cpu: 600m
+              memory: 1024Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi

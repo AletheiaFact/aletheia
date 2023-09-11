@@ -294,6 +294,7 @@ export class ClaimController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 description,
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }
@@ -356,6 +357,7 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }
@@ -483,6 +485,7 @@ export class ClaimController {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }
@@ -519,6 +522,7 @@ export class ClaimController {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }
@@ -553,6 +557,7 @@ export class ClaimController {
                 personality,
                 claim,
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }

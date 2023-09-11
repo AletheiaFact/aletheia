@@ -19,4 +19,4 @@ services:
     # path relative to the __dirname variable
     module: dist/server/websocket.js
     conf:
-     test: test
+      port: 5051
