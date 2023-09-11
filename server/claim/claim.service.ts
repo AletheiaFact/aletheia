@@ -382,43 +382,59 @@ export class ClaimService {
     }
 
     private transformContentObject(claimContent, reviews, claimReviewTasks) {
-        if (!claimContent || reviews.length <= 0) {
+        if (
+            !claimContent ||
+            (reviews.length <= 0 && claimReviewTasks.length <= 0)
+        ) {
             return claimContent;
         }
+
+        const processReview = (sentence, classification) => ({
+            ...sentence,
+            props: {
+                ...sentence.props,
+                classification,
+            },
+        });
+
         if (claimContent.type === ContentModelEnum.Image) {
-            const claimReview = reviews.find((review) => {
-                return review._id.data_hash === claimContent.data_hash;
-            });
+            const claimReview = reviews.find(
+                (review) => review._id.data_hash === claimContent.data_hash
+            );
+
             if (claimReview) {
-                claimContent.props = Object.assign(claimContent.props, {
+                claimContent.props = {
+                    ...claimContent.props,
                     classification: claimReview._id.classification[0],
-                });
+                };
             }
         } else {
             claimContent.forEach((paragraph, paragraphIndex) => {
-                paragraph.content.forEach((sentence, sentenceIndex) => {
-                    const claimReview = reviews.find((review) => {
-                        return review._id.data_hash === sentence.data_hash;
-                    });
-                    const claimReviewTask = claimReviewTasks.find((task) => {
-                        return task.data_hash === sentence.data_hash;
-                    });
+                claimContent[paragraphIndex].content = paragraph.content.map(
+                    (sentence) => {
+                        const claimReview = reviews.find(
+                            (review) =>
+                                review?._id.data_hash === sentence.data_hash
+                        );
 
-                    if (claimReview) {
-                        claimContent[paragraphIndex].content[
-                            sentenceIndex
-                        ].props = Object.assign(sentence.props, {
-                            classification: claimReview._id.classification[0],
-                        });
+                        if (claimReview) {
+                            return processReview(
+                                sentence,
+                                claimReview._id.classification[0]
+                            );
+                        }
+
+                        const claimReviewTask = claimReviewTasks.find(
+                            (task) => task?.data_hash === sentence.data_hash
+                        );
+
+                        if (claimReviewTask) {
+                            return processReview(sentence, "in-progress");
+                        }
+
+                        return sentence;
                     }
-                    if (claimReviewTask) {
-                        claimContent[paragraphIndex].content[
-                            sentenceIndex
-                        ].props = Object.assign(sentence.props, {
-                            classification: "in-progress",
-                        });
-                    }
-                });
+                );
             });
         }
 

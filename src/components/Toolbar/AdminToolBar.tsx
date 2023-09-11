@@ -83,7 +83,7 @@ const AdminToolBar = ({
 
     return (
         <Row justify="center">
-            <Col sm={22} md={22} lg={18}>
+            <Col xs={22} lg={18}>
                 <AdminToolBarStyle
                     position="static"
                     style={{ boxShadow: "none" }}
