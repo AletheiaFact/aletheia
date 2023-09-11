@@ -24,6 +24,7 @@ import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { CaptchaService } from "../captcha/captcha.service";
+import { HistoryService } from "../history/history.service";
 
 @Controller()
 export class PersonalityController {
@@ -32,7 +33,8 @@ export class PersonalityController {
         private personalityService: PersonalityService,
         private viewService: ViewService,
         private configService: ConfigService,
-        private captchaService: CaptchaService
+        private captchaService: CaptchaService,
+        private historyService: HistoryService
     ) {}
 
     @IsPublic()
@@ -142,6 +144,7 @@ export class PersonalityController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        const hideDescriptions: any = {};
         const parsedUrl = parse(req.url, true);
 
         const personality =
@@ -162,9 +165,11 @@ export class PersonalityController {
             }
         );
 
-        const description = await this.personalityService.getDescriptionForHide(
-            personality
-        );
+        hideDescriptions[TargetModel.Personality] =
+            await this.historyService.getDescriptionForHide(
+                personality,
+                TargetModel.Personality
+            );
 
         await this.viewService.getNextServer().render(
             req,
@@ -173,7 +178,7 @@ export class PersonalityController {
             Object.assign(parsedUrl.query, {
                 personality,
                 personalities,
-                description,
+                hideDescriptions,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
             })
         );

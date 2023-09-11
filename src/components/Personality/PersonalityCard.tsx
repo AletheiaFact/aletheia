@@ -136,6 +136,7 @@ const PersonalityCard = ({
                             hoistAvatar={hoistAvatar}
                             personality={personality}
                             componentStyle={componentStyle}
+                            header={header}
                         />
 
                         {((hoistAvatar && (!vw?.sm || !vw?.xs)) ||

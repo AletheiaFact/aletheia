@@ -1,8 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject, Scope } from "@nestjs/common";
+import { Roles } from "./auth/ability/ability.factory";
 import { randomBytes } from "crypto";
+import { REQUEST } from "@nestjs/core";
+import { BaseRequest } from "./types";
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class UtilService {
+    constructor(@Inject(REQUEST) private req: BaseRequest) {}
     formatStats(reviews) {
         const total = reviews.reduce((agg, review) => {
             agg += review.count;
@@ -44,9 +48,17 @@ export class UtilService {
         const buf = randomBytes(8);
 
         if (isTestUser) {
-            return forcePassword ? `${forcePassword}` : process.env.DEVELOPMENT_PASSWORD;
+            return forcePassword
+                ? `${forcePassword}`
+                : process.env.DEVELOPMENT_PASSWORD;
         }
 
         return buf.toString("hex");
-    };
+    }
+
+    getParamsBasedOnUserRole(params) {
+        const user = this.req.user;
+        const isUserAdmin = user?.role === Roles.Admin;
+        return isUserAdmin ? params : { ...params, isHidden: false };
+    }
 }

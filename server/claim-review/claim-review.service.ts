@@ -40,6 +40,19 @@ export class ClaimReviewService {
                     as: "report",
                 },
             },
+            {
+                $lookup: {
+                    from: "claims",
+                    localField: "claim",
+                    foreignField: "_id",
+                    as: "claim",
+                },
+            },
+            {
+                $match: {
+                    "claim.isHidden": false,
+                },
+            },
             { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);

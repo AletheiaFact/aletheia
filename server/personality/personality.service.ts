@@ -17,7 +17,6 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import { BaseRequest } from "../types";
-import { Roles } from "../auth/ability/ability.factory";
 
 export interface FindAllOptions {
     searchText: string;
@@ -160,12 +159,9 @@ export class PersonalityService {
     }
 
     async getById(personalityId, language = "en") {
-        const query = { _id: personalityId };
-        const user = this.req.user;
-        const isUserAdmin = user?.role === Roles.Admin;
-        const queryOptions = isUserAdmin
-            ? { ...query }
-            : { ...query, isHidden: false };
+        const queryOptions = this.util.getParamsBasedOnUserRole({
+            _id: personalityId,
+        });
 
         const personality = await this.PersonalityModel.findOne(
             queryOptions
@@ -178,11 +174,7 @@ export class PersonalityService {
     }
 
     async getPersonalityBySlug(query, language = "pt") {
-        const user = this.req.user;
-        const isUserAdmin = user?.role === Roles.Admin;
-        const queryOptions = isUserAdmin
-            ? { ...query }
-            : { ...query, isHidden: false };
+        const queryOptions = this.util.getParamsBasedOnUserRole(query);
 
         try {
             const personality = await this.PersonalityModel.findOne(
@@ -195,11 +187,7 @@ export class PersonalityService {
     }
 
     async getClaimsByPersonalitySlug(query, language = "pt") {
-        const user = this.req.user;
-        const isUserAdmin = user?.role === Roles.Admin;
-        const queryOptions = isUserAdmin
-            ? { ...query }
-            : { ...query, isHidden: false };
+        const queryOptions = this.util.getParamsBasedOnUserRole(query);
 
         try {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
@@ -207,6 +195,7 @@ export class PersonalityService {
                 queryOptions
             ).populate({
                 path: "claims",
+                match: { isHidden: false },
                 populate: {
                     path: "latestRevision",
                     select: "_id title content",
@@ -252,10 +241,9 @@ export class PersonalityService {
         return personality;
     }
 
-    async getReviewStats(id) {
-        const personality = await this.PersonalityModel.findById(id);
+    async getReviewStats(_id) {
         const reviews = await this.claimReview.agreggateClassification({
-            personality: personality._id,
+            personality: _id,
             isDeleted: false,
             isPublished: true,
             isHidden: false,
@@ -332,23 +320,6 @@ export class PersonalityService {
             { _id: personality._id },
             newPersonality
         );
-    }
-
-    async getDescriptionForHide(personality) {
-        if (personality?.isHidden) {
-            const history = await this.historyService.getByTargetIdModelAndType(
-                personality._id,
-                TargetModel.Personality,
-                0,
-                1,
-                "desc",
-                HistoryType.Hide
-            );
-
-            return history[0]?.details?.after?.description;
-        }
-
-        return "";
     }
 
     /**

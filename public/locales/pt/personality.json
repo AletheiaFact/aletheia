@@ -22,5 +22,6 @@
     "hideSuccess": "Personalidade escondida com sucesso",
     "hideError": "Erro ao esconder a personalidade",
     "unhideSuccess": "Personalidade pública com sucesso",
-    "unhideError": "Erro ao mostrar a personalidade"
+    "unhideError": "Erro ao mostrar a personalidade",
+    "hiddenPersonalityAvatarTooltip": "Personalidade oculta"
 }

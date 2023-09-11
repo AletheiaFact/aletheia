@@ -6,14 +6,24 @@ const request = axios.create({
     baseURL: `/api/claim`,
 });
 
-const get = (options) => {
+interface FetchOptions {
+    page?: number;
+    order?: "asc" | "desc";
+    pageSize?: number;
+    isHidden?: boolean;
+    personality: string;
+    i18n?: { languages?: any };
+    fetchOnly?: boolean;
+}
+
+const get = (options: FetchOptions) => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
-        name: options.searchName,
         pageSize: options.pageSize ? options.pageSize : 5,
         personality: options.personality,
         language: options?.i18n?.languages[0],
+        isHidden: options?.isHidden || false,
     };
 
     return request
@@ -133,6 +143,42 @@ const updateDebate = (
         });
 };
 
+const deleteClaim = (id: string, t: any) => {
+    return request
+        .delete(`${id}`)
+        .then(() => {
+            message.success(t("claim:deleteSuccess"));
+        })
+        .catch((err) => {
+            console.error(err);
+            message.error(t("claim:deleteError"));
+        });
+};
+
+const updateClaimHiddenStatus = (
+    id: string,
+    isHidden: boolean,
+    t: any,
+    recaptcha: string,
+    description: string
+) => {
+    return request
+        .put(`/hidden/${id}`, {
+            isHidden,
+            recaptcha,
+            description,
+        })
+        .then(() => {
+            message.success(
+                t(`claim:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
+            );
+        })
+        .catch((err) => {
+            console.error(err);
+            message.error(t(`claim:${isHidden ? "hideError" : "unhideError"}`));
+        });
+};
+
 const claimApi = {
     get,
     getById,
@@ -140,5 +186,7 @@ const claimApi = {
     saveImage,
     saveDebate,
     updateDebate,
+    deleteClaim,
+    updateClaimHiddenStatus,
 };
 export default claimApi;

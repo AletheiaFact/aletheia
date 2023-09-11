@@ -51,6 +51,7 @@ import { UpdateDebateDto } from "./dto/update-debate.dto";
 import { ParserService } from "./parser/parser.service";
 import { Roles } from "../auth/ability/ability.factory";
 import { ApiTags } from "@nestjs/swagger";
+import { HistoryService } from "../history/history.service";
 
 @Controller()
 export class ClaimController {
@@ -68,13 +69,16 @@ export class ClaimController {
         private debateService: DebateService,
         private editorService: EditorService,
         private parserService: ParserService,
+        private historyService: HistoryService,
         @Optional() private readonly unleash: UnleashService
     ) {}
 
     _verifyInputsQuery(query) {
-        const inputs = {};
-        if (query.personality) {
-            // @ts-ignore
+        const inputs: any = {
+            isHidden: query.isHidden,
+        };
+
+        if (query.personality && !query.isHidden) {
             inputs.personalities = new mongoose.Types.ObjectId(
                 // @ts-ignore
                 query.personality
@@ -221,6 +225,23 @@ export class ClaimController {
     @Delete("api/claim/:id")
     delete(@Param("id") claimId) {
         return this.claimService.delete(claimId);
+    }
+
+    @ApiTags("claim")
+    @Put("api/claim/hidden/:id")
+    async updateHiddenStatus(@Param("id") claimId, @Body() body) {
+        const validateCaptcha = await this.captchaService.validate(
+            body.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
+
+        return this.claimService.hideOrUnhideClaim(
+            claimId,
+            body.isHidden,
+            body.description
+        );
     }
 
     @IsPublic()
@@ -504,6 +525,7 @@ export class ClaimController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        const hideDescriptions: any = {};
         const { personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
@@ -518,13 +540,16 @@ export class ClaimController {
                 req.language
             );
 
-        const hideDescription =
-            await this.personalityService.getDescriptionForHide(personality);
-
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
             claimSlug
         );
+
+        hideDescriptions[TargetModel.Claim] =
+            await this.historyService.getDescriptionForHide(
+                claim,
+                TargetModel.Claim
+            );
 
         await this.viewService.getNextServer().render(
             req,
@@ -535,7 +560,7 @@ export class ClaimController {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
-                hideDescription,
+                hideDescriptions,
             })
         );
     }

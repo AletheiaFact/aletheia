@@ -7,7 +7,7 @@ import AffixButton from "../components/AffixButton/AffixButton";
 import AdminToolBar from "../components/Toolbar/AdminToolBar";
 import { useAtom } from "jotai";
 import { currentUserRole } from "../atoms/currentUser";
-import { Roles } from "../types/enums";
+import { Roles, TargetModel } from "../types/enums";
 import personalitiesApi from "../api/personality";
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";
@@ -18,8 +18,8 @@ const PersonalityPage: NextPage<{
     href: any;
     personalities: any[];
     sitekey: string;
-    description: string;
-}> = ({ personality, href, personalities, sitekey, description }) => {
+    hideDescriptions: object;
+}> = ({ personality, href, personalities, sitekey, hideDescriptions }) => {
     const [role] = useAtom(currentUserRole);
     const dispatch = useDispatch();
 
@@ -44,9 +44,8 @@ const PersonalityPage: NextPage<{
                     changeHideStatusFunction={
                         personalitiesApi.updatePersonalityHiddenStatus
                     }
-                    descriptionTarget="personality"
-                    target="personality"
-                    descriptionForHide={description}
+                    target={TargetModel.Personality}
+                    hideDescriptions={hideDescriptions}
                 />
             )}
             <PersonalityView
@@ -68,7 +67,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             personality: JSON.parse(JSON.stringify(query.personality)),
             personalities: JSON.parse(JSON.stringify(query.personalities)),
-            description: JSON.parse(JSON.stringify(query.description)),
+            hideDescriptions: JSON.parse(
+                JSON.stringify(query.hideDescriptions)
+            ),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
         },

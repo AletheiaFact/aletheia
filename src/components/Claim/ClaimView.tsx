@@ -5,7 +5,7 @@ import { Affix, Col, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 
 import ClaimSpeechBody from "./ClaimSpeechBody";
-import { ContentModelEnum } from "../../types/enums";
+import { ContentModelEnum, TargetModel } from "../../types/enums";
 import ImageApi from "../../api/image";
 import Loading from "../Loading";
 import LocalizedDate from "../LocalizedDate";
@@ -22,10 +22,11 @@ import { useAppSelector } from "../../store/store";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
 import AdminToolBar from "../Toolbar/AdminToolBar";
+import claimApi from "../../api/claim";
 
 const { Title, Paragraph } = Typography;
 
-const ClaimView = ({ personality, claim, href, hideDescription }) => {
+const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     moment.locale(i18n.language);
@@ -68,14 +69,11 @@ const ClaimView = ({ personality, claim, href, hideDescription }) => {
         return (
             <>
                 <AdminToolBar
-                    content={personality.isHidden ? personality : claim}
-                    deleteApiFunction={() => {}}
-                    changeHideStatusFunction={() => {}}
-                    target="claim"
-                    descriptionTarget={
-                        personality.isHidden ? "personality" : "claim"
-                    }
-                    descriptionForHide={hideDescription}
+                    content={claim}
+                    deleteApiFunction={claimApi.deleteClaim}
+                    changeHideStatusFunction={claimApi.updateClaimHiddenStatus}
+                    target={TargetModel.Claim}
+                    hideDescriptions={hideDescriptions}
                 />
                 <Row justify="center">
                     <Col xs={20} sm={18} md={16}>
