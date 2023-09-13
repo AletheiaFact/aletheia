@@ -70,6 +70,22 @@ const register = (params, t) => {
         });
 };
 
+const updateTotp = (
+    userId,
+    params: {
+        totp: Boolean;
+    }
+) => {
+    return request
+        .put(`/${userId}`, params)
+        .then((response) => {
+            return response?.data;
+        })
+        .catch((e) => {
+            return e?.response?.data;
+        });
+};
+
 const update = (
     userId,
     params: {
@@ -93,6 +109,7 @@ const update = (
 
 const userApi = {
     updatePassword,
+    updateTotp,
     getById,
     getUsers,
     register,
