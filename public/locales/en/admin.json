@@ -16,5 +16,10 @@
     "editDrawerTitle": "Editing user info",
     "saveButtonLabel": "Save",
     "roleUpdated": "Role updated successfully",
-    "roleUpdateFailed": "Role update failed"
+    "roleUpdateFailed": "Role update failed",
+    "tabUsersTitle": "Users",
+    "tabDashboardTitle": "Dashboard",
+    "dashboardHiddenPersonalities": "Hidden Personalities",
+    "dashboardHiddenClaims": "Hidden Claims",
+    "dashboardHiddenReviews": "Hidden Reviews"
 }

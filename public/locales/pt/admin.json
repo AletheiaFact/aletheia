@@ -16,5 +16,10 @@
     "editDrawerTitle": "Editando dados do usuário",
     "saveButtonLabel": "Salvar",
     "roleUpdated": "Papel atualizado com sucesso",
-    "roleUpdateFailed": "Falha ao atualizar o papel"
+    "roleUpdateFailed": "Falha ao atualizar o papel",
+    "tabUsersTitle": "Usuários",
+    "tabDashboardTitle": "Dashboard",
+    "dashboardHiddenPersonalities": "Personalidades ocultas",
+    "dashboardHiddenClaims": "Afirmações ocultas",
+    "dashboardHiddenReviews": "Relatórios ocultos"
 }

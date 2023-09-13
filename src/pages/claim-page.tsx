@@ -70,9 +70,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
                 ? JSON.parse(JSON.stringify(query.personality))
                 : null,
             claim: JSON.parse(JSON.stringify(query.claim)),
-            hideDescriptions: JSON.parse(
-                JSON.stringify(query.hideDescriptions)
-            ),
+            hideDescriptions: query.hideDescriptions
+                ? JSON.parse(JSON.stringify(query.personality))
+                : null,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,

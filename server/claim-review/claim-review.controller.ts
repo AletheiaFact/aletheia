@@ -7,6 +7,7 @@ import {
     UseGuards,
     Header,
     Delete,
+    Query,
 } from "@nestjs/common";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
@@ -19,6 +20,7 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
+import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
 
 @Controller()
 export class ClaimReviewController {
@@ -27,6 +29,41 @@ export class ClaimReviewController {
         private captchaService: CaptchaService,
         private historyService: HistoryService
     ) {}
+
+    @IsPublic()
+    @ApiTags("claim-review")
+    @Get("api/review")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    listAll(@Query() getClaimReviewsDto: GetClaimReviewsDTO) {
+        const {
+            page = 0,
+            pageSize = 10,
+            order = "asc",
+            isHidden = false,
+            latest = false,
+        } = getClaimReviewsDto;
+
+        return Promise.all([
+            this.claimReviewService.listAll(
+                page,
+                pageSize,
+                order,
+                { isHidden },
+                latest
+            ),
+            this.claimReviewService.count({ isHidden }),
+        ]).then(([reviews, totalReviews]) => {
+            const totalPages = Math.ceil(totalReviews / pageSize);
+
+            return {
+                reviews,
+                totalReviews,
+                totalPages,
+                page,
+                pageSize,
+            };
+        });
+    }
 
     @ApiTags("claim-review")
     @Put("api/review/:id")
@@ -58,14 +95,6 @@ export class ClaimReviewController {
             throw new Error("Error validating captcha");
         }
         return this.claimReviewService.delete(reviewId);
-    }
-
-    @IsPublic()
-    @ApiTags("claim-review")
-    @Get("api/latest-reviews")
-    @Header("Cache-Control", "max-age=60, must-revalidate")
-    getLatestReviews() {
-        return this.claimReviewService.getLatestReviews();
     }
 
     @IsPublic()

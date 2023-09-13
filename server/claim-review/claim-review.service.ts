@@ -29,6 +29,32 @@ export class ClaimReviewService {
         private imageService: ImageService
     ) {}
 
+    async listAll(page, pageSize, order, query, latest = false) {
+        const claimReviews = await this.ClaimReviewModel.find(query)
+            .sort(latest ? { date: -1 } : { _id: order })
+            .populate({
+                path: "personality",
+                model: "Personality",
+                select: "name description slug avatar",
+            })
+            .populate({
+                path: "claim",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    select: "date contentModel claimId",
+                },
+                select: "slug",
+            })
+            .skip(page * pageSize)
+            .limit(parseInt(pageSize))
+            .lean();
+
+        return Promise.all(
+            claimReviews.map(async (review) => this.postProcess(review))
+        );
+    }
+
     agreggateClassification(match: any) {
         return this.ClaimReviewModel.aggregate([
             { $match: match },
@@ -291,5 +317,38 @@ export class ClaimReviewService {
         this.historyService.createHistory(history);
 
         return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
+    }
+
+    private async postProcess(review) {
+        const { personality, data_hash } = review;
+
+        const claim = {
+            contentModel: review.claim.latestRevision.contentModel,
+            date: review.claim.latestRevision.date,
+        };
+
+        const isContentImage = claim.contentModel === ContentModelEnum.Image;
+        const isContentDebate = claim.contentModel === ContentModelEnum.Debate;
+
+        const content = isContentImage
+            ? await this.imageService.getByDataHash(data_hash)
+            : await this.sentenceService.getByDataHash(data_hash);
+
+        let reviewHref = personality
+            ? `/personality/${personality?.slug}/claim/${review.claim.slug}`
+            : `/claim/${review.claim.latestRevision.claimId}`;
+        reviewHref += isContentImage
+            ? `/image/${data_hash}`
+            : `/sentence/${data_hash}`;
+        if (isContentDebate) {
+            reviewHref = `/claim/${review.claim.latestRevision.claimId}/debate`;
+        }
+
+        return {
+            content,
+            personality,
+            reviewHref,
+            claim,
+        };
     }
 }

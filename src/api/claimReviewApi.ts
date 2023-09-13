@@ -6,11 +6,33 @@ const request = axios.create({
     baseURL: `/api`,
 });
 
-const getLatestReviews = () => {
+interface FetchOptions {
+    page?: number;
+    order?: "asc" | "desc";
+    pageSize?: number;
+    isHidden?: boolean;
+    latest?: boolean;
+}
+
+const get = (options: FetchOptions = {}) => {
+    const params = {
+        page: options.page ? options.page - 1 : 0,
+        order: options.order || "asc",
+        pageSize: options.pageSize ? options.pageSize : 5,
+        isHidden: options?.isHidden || false,
+        latest: options?.latest ? true : false,
+    };
+
     return request
-        .get("/latest-reviews")
+        .get("/review", { params })
         .then((response) => {
-            return response.data;
+            const { totalPages, totalReviews, reviews } = response.data;
+
+            return {
+                data: reviews,
+                total: totalReviews,
+                totalPages,
+            };
         })
         .catch();
 };
@@ -62,7 +84,7 @@ const getClaimReviewByHash = (dataHash) => {
 };
 
 const ClaimReviewApi = {
-    getLatestReviews,
+    get,
     updateClaimReviewHiddenStatus,
     getClaimReviewByHash,
     deleteClaimReview,
