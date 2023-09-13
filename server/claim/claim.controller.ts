@@ -223,7 +223,13 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Delete("api/claim/:id")
-    delete(@Param("id") claimId) {
+    async delete(@Param("id") claimId, @Body() body) {
+        const validateCaptcha = await this.captchaService.validate(
+            body.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
         return this.claimService.delete(claimId);
     }
 
@@ -288,6 +294,8 @@ export class ClaimController {
         content: SentenceDocument | ImageDocument,
         personality: any = null
     ) {
+        const hideDescriptions = {};
+
         const claimReviewTask =
             await this.claimReviewTaskService.getClaimReviewTaskByDataHashWithUsernames(
                 data_hash
@@ -299,9 +307,17 @@ export class ClaimController {
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
 
-        const description = await this.claimReviewService.getDescriptionForHide(
-            claimReview
-        );
+        hideDescriptions[TargetModel.Claim] =
+            await this.historyService.getDescriptionForHide(
+                claim,
+                TargetModel.Claim
+            );
+
+        hideDescriptions[TargetModel.ClaimReview] =
+            await this.historyService.getDescriptionForHide(
+                claimReview,
+                TargetModel.ClaimReview
+            );
 
         const parsedUrl = parse(req.url, true);
 
@@ -316,7 +332,7 @@ export class ClaimController {
                 claimReviewTask,
                 claimReview,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                description,
+                hideDescriptions,
                 enableCollaborativeEditor,
             })
         );

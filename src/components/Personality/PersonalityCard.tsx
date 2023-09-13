@@ -74,6 +74,7 @@ const PersonalityCard = ({
         avatarSpan: !fullWidth ? 8 : 24,
         buttonSpan: !fullWidth ? 5 : 24,
         avatarSize: 90,
+        hiddenIconSize: 12,
     };
     if (summarized) {
         componentStyle.titleSpan = 10;
@@ -83,6 +84,7 @@ const PersonalityCard = ({
     }
     if (header) {
         componentStyle.avatarSize = 144;
+        componentStyle.hiddenIconSize = 18;
     }
 
     let cardStyle;

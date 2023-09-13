@@ -264,10 +264,10 @@ export class ClaimReviewService {
         );
     }
 
-    async hideOrUnhideReview(data_hash, hide, description) {
-        const review = await this.getReviewByDataHash(data_hash);
+    async hideOrUnhideReview(_id, hide, description) {
+        const review = await this.getById(_id);
         const newReview = {
-            ...review,
+            ...review.toObject(),
             ...{
                 report: review?.report?._id,
                 isHidden: hide,
@@ -291,22 +291,5 @@ export class ClaimReviewService {
         this.historyService.createHistory(history);
 
         return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
-    }
-
-    async getDescriptionForHide(review) {
-        if (review?.isHidden) {
-            const history = await this.historyService.getByTargetIdModelAndType(
-                review._id,
-                TargetModel.ClaimReview,
-                0,
-                1,
-                "desc",
-                HistoryType.Hide
-            );
-
-            return history[0]?.details?.after?.description;
-        }
-
-        return "";
     }
 }

@@ -96,9 +96,9 @@ const createPersonality = (personality, t) => {
         });
 };
 
-const deletePersonality = (id: string, t: any) => {
+const deletePersonality = (id: string, recaptcha, t: any) => {
     return axios
-        .delete(`${baseUrl}/${id}`)
+        .delete(`${baseUrl}/${id}`, { data: recaptcha })
         .then(() => {
             message.success(t("personality:deleteSuccess"));
         })

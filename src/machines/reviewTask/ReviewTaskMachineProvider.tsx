@@ -10,7 +10,7 @@ import { createNewMachineService } from "./reviewTaskMachine";
 
 interface ContextType {
     machineService: any;
-    publishedReview?: { review: any; descriptionForHide?: string };
+    publishedReview?: { review: any };
 }
 
 export const ReviewTaskMachineContext = createContext<ContextType>({
@@ -21,7 +21,7 @@ interface ReviewTaskMachineProviderProps {
     data_hash: string;
     children: React.ReactNode;
     baseMachine?: any;
-    publishedReview?: { review: any; descriptionForHide?: string };
+    publishedReview?: { review: any };
 }
 
 /* We chose not to use Jotai as the provider for this machine because we need

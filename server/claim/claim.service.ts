@@ -266,7 +266,7 @@ export class ClaimService {
                 } else {
                     const foundClaim = await this.ClaimModel.findOne(
                         match,
-                        "_id personalities latestRevision"
+                        "_id personalities latestRevision isHidden"
                     )
                         .populate("personalities", "_id name")
                         .populate("sources", "_id link")

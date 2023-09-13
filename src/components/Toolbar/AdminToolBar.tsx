@@ -10,6 +10,7 @@ import { useTranslation } from "next-i18next";
 import UnhideContentModal from "../Modal/UnhideContentModal";
 import AletheiaAlert from "../AletheiaAlert";
 import AdminToolBarStyle from "./AdminToolBar.style";
+import { TargetModel } from "../../types/enums";
 
 const AdminToolBar = ({
     content,
@@ -26,18 +27,18 @@ const AdminToolBar = ({
     const [isLoading, setIsLoading] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [warningDescription, setWarningDescription] = useState(
-        hideDescriptions[target]
+        hideDescriptions?.[target]
     );
     const [hide, setHide] = useState(content?.isHidden);
 
     useEffect(() => {
-        return setWarningDescription(hideDescriptions[target]);
+        return setWarningDescription(hideDescriptions?.[target]);
     }, [hide, hideDescriptions, target]);
 
-    const handleDelete = async () => {
+    const handleDelete = async ({ recaptcha }) => {
         try {
             setIsLoading(true);
-            await deleteApiFunction(content._id, t);
+            await deleteApiFunction(content._id, recaptcha, t);
             setIsDeleteModalVisible(false);
             router.push("/");
         } catch (e) {
@@ -47,10 +48,10 @@ const AdminToolBar = ({
         }
     };
 
-    const handleUnhide = async () => {
+    const handleUnhide = async ({ recaptcha }) => {
         try {
             setIsLoading(true);
-            await changeHideStatusFunction(content?._id, !hide, t);
+            await changeHideStatusFunction(content?._id, !hide, t, recaptcha);
             hideDescriptions[target] = "";
             setHide(!hide);
             setIsUnhideModalVisible(false);
@@ -81,12 +82,18 @@ const AdminToolBar = ({
         }
     };
 
+    const getTargetI18n = () => {
+        return target === TargetModel.ClaimReview
+            ? target.charAt(0).toLowerCase() + target.slice(1)
+            : target?.toLowerCase();
+    };
+
     return (
         <Row justify="center">
             <Col xs={22} lg={18}>
                 <AdminToolBarStyle
                     position="static"
-                    style={{ boxShadow: "none" }}
+                    style={{ boxShadow: "none", background: "transparent" }}
                 >
                     <Toolbar className="toolbar">
                         <div className="toolbar-item">
@@ -110,7 +117,7 @@ const AdminToolBar = ({
                     <div style={{ marginTop: 32 }}>
                         <AletheiaAlert
                             type="warning"
-                            message={t(`${target?.toLowerCase()}:warningTitle`)}
+                            message={t(`${getTargetI18n()}:warningTitle`)}
                             description={warningDescription}
                             showIcon={true}
                         />
@@ -121,8 +128,8 @@ const AdminToolBar = ({
             <HideContentModal
                 visible={isHideModalVisible}
                 isLoading={isLoading}
-                contentTitle={t(`${target.toLowerCase()}:hideModalTitle`)}
-                contentBody={t(`${target.toLowerCase()}:hideModalBody`)}
+                contentTitle={t(`${getTargetI18n()}:hideModalTitle`)}
+                contentBody={t(`${getTargetI18n()}:hideModalBody`)}
                 handleOk={(props) => handleHide(props)}
                 handleCancel={() => setIsHideModalVisible(false)}
             />
@@ -130,8 +137,8 @@ const AdminToolBar = ({
             <UnhideContentModal
                 visible={isUnhideModalVisible}
                 isLoading={isLoading}
-                contentTitle={t(`${target.toLowerCase()}:unhideModalTitle`)}
-                contentBody={t(`${target.toLowerCase()}:unhideModalBody`)}
+                contentTitle={t(`${getTargetI18n()}:unhideModalTitle`)}
+                contentBody={t(`${getTargetI18n()}:unhideModalBody`)}
                 handleOk={handleUnhide}
                 handleCancel={() => {
                     setIsUnhideModalVisible(false);
@@ -140,8 +147,8 @@ const AdminToolBar = ({
 
             <DeleteContentModal
                 visible={isDeleteModalVisible}
-                contentTitle={t(`${target.toLowerCase()}:deleteModalTitle`)}
-                contentBody={t(`${target.toLowerCase()}:deleteModalBody`)}
+                contentTitle={t(`${getTargetI18n()}:deleteModalTitle`)}
+                contentBody={t(`${getTargetI18n()}:deleteModalBody`)}
                 isLoading={isLoading}
                 handleOk={handleDelete}
                 handleCancel={() => setIsDeleteModalVisible(false)}

@@ -1,16 +1,19 @@
 import React from "react";
-import { EyeInvisibleFilled } from "@ant-design/icons";
-import { Badge, Col, Popover } from "antd";
-import colors from "../../styles/colors";
+import { Col } from "antd";
 import AletheiaAvatar from "../AletheiaAvatar";
 import { useTranslation } from "next-i18next";
+import HiddenPersonalityAvatarTooltip from "./HiddenPersonalityAvatarTooltip";
+
 const PersonalityCardAvatar = ({
     hoistAvatar,
     personality,
     componentStyle,
     header,
+    offset = null,
 }) => {
     const { t } = useTranslation();
+    const tooltipOffset = offset || (header ? [-24, 24] : [-4, 4]);
+
     return (
         <Col
             span={componentStyle.avatarSpan}
@@ -23,33 +26,21 @@ const PersonalityCardAvatar = ({
             }}
         >
             {!hoistAvatar && personality.isHidden && (
-                <Popover
-                    placement="topRight"
-                    content={t("personality:hiddenPersonalityAvatarTooltip")}
-                    trigger="hover"
+                <HiddenPersonalityAvatarTooltip
+                    offset={tooltipOffset}
+                    style={{
+                        padding: componentStyle.hiddenIconSize / 2.5,
+                        fontSize: componentStyle.hiddenIconSize,
+                    }}
                 >
-                    <Badge
-                        count={<EyeInvisibleFilled color="#fff" />}
-                        color="#faad14"
-                        style={{
-                            borderRadius: "100%",
-                            color: colors.bluePrimary,
-                            padding: header ? 8 : 4,
-                            background: colors.white,
-                            fontSize: header ? 18 : 12,
-                            boxShadow: `1px 1px 2px ${colors.blueSecondary}`,
-                        }}
-                        offset={header ? [-24, 24] : [-4, 4]}
-                    >
-                        <AletheiaAvatar
-                            size={componentStyle.avatarSize}
-                            src={personality.avatar}
-                            alt={t("seo:personalityImageAlt", {
-                                name: personality.name,
-                            })}
-                        />
-                    </Badge>
-                </Popover>
+                    <AletheiaAvatar
+                        size={componentStyle.avatarSize}
+                        src={personality.avatar}
+                        alt={t("seo:personalityImageAlt", {
+                            name: personality.name,
+                        })}
+                    />
+                </HiddenPersonalityAvatarTooltip>
             )}
             {!hoistAvatar && !personality.isHidden && (
                 <AletheiaAvatar

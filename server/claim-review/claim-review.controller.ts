@@ -6,6 +6,7 @@ import {
     Get,
     UseGuards,
     Header,
+    Delete,
 } from "@nestjs/common";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
@@ -16,19 +17,22 @@ import {
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
 import { ApiTags } from "@nestjs/swagger";
+import { HistoryService } from "../history/history.service";
+import { TargetModel } from "../history/schema/history.schema";
 
 @Controller()
 export class ClaimReviewController {
     constructor(
         private claimReviewService: ClaimReviewService,
-        private captchaService: CaptchaService
+        private captchaService: CaptchaService,
+        private historyService: HistoryService
     ) {}
 
     @ApiTags("claim-review")
-    @Put("api/review/:data_hash")
+    @Put("api/review/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    async update(@Param("data_hash") data_hash, @Body() body) {
+    async update(@Param("id") reviewId, @Body() body) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );
@@ -36,10 +40,24 @@ export class ClaimReviewController {
             throw new Error("Error validating captcha");
         }
         return this.claimReviewService.hideOrUnhideReview(
-            data_hash,
-            body.hide,
+            reviewId,
+            body.isHidden,
             body.description
         );
+    }
+
+    @ApiTags("claim-review")
+    @Delete("api/review/:id")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
+    async delete(@Param("id") reviewId, @Body() body) {
+        const validateCaptcha = await this.captchaService.validate(
+            body.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
+        return this.claimReviewService.delete(reviewId);
     }
 
     @IsPublic()
@@ -59,7 +77,10 @@ export class ClaimReviewController {
             data_hash
         );
         const descriptionForHide =
-            await this.claimReviewService.getDescriptionForHide(review);
+            await this.historyService.getDescriptionForHide(
+                review,
+                TargetModel.ClaimReview
+            );
         return { review, descriptionForHide };
     }
 }

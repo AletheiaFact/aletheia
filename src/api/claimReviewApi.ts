@@ -15,17 +15,38 @@ const getLatestReviews = () => {
         .catch();
 };
 
-const hideReview = (data_hash, hide, t, recaptcha, description = "") => {
+const updateClaimReviewHiddenStatus = (
+    id,
+    isHidden,
+    t,
+    recaptcha,
+    description = ""
+) => {
     return request
-        .put(`/review/${data_hash}`, { hide, description, recaptcha })
+        .put(`/review/${id}`, { isHidden, description, recaptcha })
         .then((response) => {
             message.success(
-                t(`claimReview:${hide ? "reviewHidded" : "reviewUnhidded"}`)
+                t(`claimReview:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
             return response.data;
         })
         .catch((err) => {
+            message.error(
+                t(`claimReview:${isHidden ? "hideError" : "unhideError"}`)
+            );
             throw err;
+        });
+};
+
+const deleteClaimReview = (id: string, recaptcha, t: any) => {
+    return request
+        .delete(`/review/${id}`, { data: recaptcha })
+        .then(() => {
+            message.success(t("claim:deleteSuccess"));
+        })
+        .catch((err) => {
+            console.error(err);
+            message.error(t("claim:deleteError"));
         });
 };
 
@@ -42,7 +63,8 @@ const getClaimReviewByHash = (dataHash) => {
 
 const ClaimReviewApi = {
     getLatestReviews,
-    hideReview,
+    updateClaimReviewHiddenStatus,
     getClaimReviewByHash,
+    deleteClaimReview,
 };
 export default ClaimReviewApi;

@@ -9,7 +9,6 @@ const AdminToolBarStyle = styled(AppBar)`
         justify-content: flex-end;
         padding: 4px 12px;
         padding: 0;
-        background-color: ${colors.white};
         min-height: 33px;
         border-bottom: 1px solid ${colors.lightGraySecondary};
         gap: 16px;
