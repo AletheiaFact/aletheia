@@ -73,7 +73,7 @@ const register = (params, t) => {
 const updateTotp = (
     userId,
     params: {
-        totp: Boolean;
+        totp: boolean;
     }
 ) => {
     return request
