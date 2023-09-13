@@ -84,8 +84,43 @@ export class ClaimReviewService {
         ]);
     }
 
-    count(query: any = {}) {
-        return this.ClaimReviewModel.countDocuments().where(query);
+    async count(query: any = {}) {
+        const claimReviews = await this.ClaimReviewModel.aggregate([
+            {
+                $match: query,
+            },
+            {
+                $lookup: {
+                    from: "personalities",
+                    localField: "personality",
+                    foreignField: "_id",
+                    as: "personality",
+                },
+            },
+            {
+                $lookup: {
+                    from: "claims",
+                    localField: "claim",
+                    foreignField: "_id",
+                    as: "claim",
+                },
+            },
+            { $unwind: "$claim" },
+            { $match: { "claim.isHidden": false } },
+            {
+                $match: {
+                    $or: [
+                        { personality: { $exists: false } },
+                        { "personality.isHidden": { $ne: true } },
+                    ],
+                },
+            },
+            {
+                $count: "totalCount",
+            },
+        ]);
+
+        return claimReviews.length > 0 ? claimReviews[0].totalCount : 0;
     }
 
     async getReviewStatsByClaimId(claimId) {

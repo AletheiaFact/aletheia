@@ -61,8 +61,49 @@ export class ClaimService {
         );
     }
 
-    count(query: any = {}) {
-        return this.ClaimModel.countDocuments().where(query);
+    async count(query: any = {}) {
+        const claims = await this.ClaimModel.aggregate([
+            {
+                $match: query,
+            },
+            {
+                $lookup: {
+                    from: "personalities",
+                    localField: "personalities",
+                    foreignField: "_id",
+                    as: "personalities",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$personalities",
+                    preserveNullAndEmptyArrays: true,
+                    includeArrayIndex: "arrayIndex",
+                },
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    doc: { $first: "$$ROOT" },
+                },
+            },
+            {
+                $replaceRoot: { newRoot: "$doc" },
+            },
+            {
+                $match: {
+                    $or: [
+                        { "personalities.isHidden": { $ne: true } },
+                        { personalities: { $exists: false } },
+                    ],
+                },
+            },
+            {
+                $count: "totalCount",
+            },
+        ]);
+
+        return claims.length > 0 ? claims[0].totalCount : 0;
     }
 
     /**
