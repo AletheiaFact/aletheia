@@ -42,13 +42,36 @@ export class SessionGuard implements CanActivate {
                     role: session?.identity?.traits?.role,
                     status: session?.identity.state,
                 };
-                return true;
+                const overridePublicRoutes =
+                    session?.identity?.traits?.role === "regular" &&
+                    this.configService.get<string>("override_public_routes");
+
+                if (overridePublicRoutes) {
+                    return this.checkRole(request, response, isPublic);
+                } else return true;
             }
 
             return this.next(request, response, isPublic);
         } catch (e) {
-            // TODO: logging
             return this.next(request, response, isPublic);
+        }
+    }
+
+    checkRole(request, response, isPublic) {
+        const isAllowedPublicUrl = [
+            "/login",
+            "/unauthorized",
+            "/_next",
+            "/api/.ory",
+            "/api/health",
+        ].some((route) => request.url.startsWith(route));
+        if (isPublic && isAllowedPublicUrl) {
+            return true;
+        }
+        if (request.url.startsWith("/api")) {
+            return false;
+        } else {
+            response.redirect("/unauthorized");
         }
     }
 
