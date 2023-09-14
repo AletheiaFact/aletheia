@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Configuration, V0alpha2Api } from "@ory/client";
 import { Reflector } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
+import { Roles } from "./ability/ability.factory";
 
 @Injectable()
 export class SessionGuard implements CanActivate {
@@ -43,7 +44,7 @@ export class SessionGuard implements CanActivate {
                     status: session?.identity.state,
                 };
                 const overridePublicRoutes =
-                    session?.identity?.traits?.role === "regular" &&
+                    session?.identity?.traits?.role === Roles.Regular &&
                     this.configService.get<string>("override_public_routes");
 
                 if (overridePublicRoutes) {
