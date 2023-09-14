@@ -2,7 +2,7 @@ import { Injectable, Inject, Scope } from "@nestjs/common";
 import { Roles } from "./auth/ability/ability.factory";
 import { randomBytes } from "crypto";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "./types";
+import type { BaseRequest } from "./types";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UtilService {
