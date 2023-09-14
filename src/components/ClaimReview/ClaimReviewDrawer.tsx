@@ -49,7 +49,7 @@ const ClaimReviewDrawer = () => {
 
     return (
         <LargeDrawer
-            visible={!reviewDrawerCollapsed}
+            open={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
         >
             {claim && data_hash && !isLoading ? (

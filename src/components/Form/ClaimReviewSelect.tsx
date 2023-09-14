@@ -45,7 +45,7 @@ export const SelectInput = styled(Select)`
 
 const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
     const { vw } = useAppSelector((state) => state);
-    const [visible, setVisible] = useState(false);
+    const [open, setOpen] = useState(false);
     const [value, setValue] = useState(defaultValue);
 
     const onChangeSelect = (e) => {
@@ -57,17 +57,17 @@ const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
     }, [value, onChange]);
 
     const handleCloseModal = () => {
-        setVisible(false);
+        setOpen(false);
     };
 
     const handleOnClick = () => {
         if (vw?.sm) {
-            setVisible(true);
+            setOpen(true);
         }
     };
 
     const handleChangeOk = () => {
-        setVisible(false);
+        setOpen(false);
     };
 
     return (
@@ -112,7 +112,7 @@ const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
                 </Option>
             </SelectInput>
             <ClassificationModal
-                visible={visible}
+                open={open}
                 value={value}
                 setValue={setValue}
                 handleOk={handleChangeOk}
