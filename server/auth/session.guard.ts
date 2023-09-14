@@ -47,17 +47,24 @@ export class SessionGuard implements CanActivate {
                     this.configService.get<string>("override_public_routes");
 
                 if (overridePublicRoutes) {
-                    return this.checkRole(request, response, isPublic);
-                } else return true;
+                    return this.checkAndRedirect(
+                        request,
+                        response,
+                        isPublic,
+                        "/unauthorized"
+                    );
+                } else {
+                    return true;
+                }
             }
 
-            return this.next(request, response, isPublic);
+            return this.checkAndRedirect(request, response, isPublic, "/login");
         } catch (e) {
-            return this.next(request, response, isPublic);
+            return this.checkAndRedirect(request, response, isPublic, "/login");
         }
     }
 
-    checkRole(request, response, isPublic) {
+    private checkAndRedirect(request, response, isPublic, redirectPath) {
         const isAllowedPublicUrl = [
             "/login",
             "/unauthorized",
@@ -65,33 +72,15 @@ export class SessionGuard implements CanActivate {
             "/api/.ory",
             "/api/health",
         ].some((route) => request.url.startsWith(route));
-        if (isPublic && isAllowedPublicUrl) {
-            return true;
-        }
-        if (request.url.startsWith("/api")) {
-            return false;
-        } else {
-            response.redirect("/unauthorized");
-        }
-    }
 
-    next(request, response, isPublic) {
-        const isAllowedPublicUrl = [
-            "/login",
-            "/_next",
-            "/api/.ory",
-            "/api/health",
-        ].some((route) => request.url.startsWith(route));
-        const overridePublicRoutes =
-            !isAllowedPublicUrl &&
-            this.configService.get<string>("override_public_routes");
-        if (isPublic && !overridePublicRoutes) {
+        if (
+            (isPublic && isAllowedPublicUrl) ||
+            request.url.startsWith("/api")
+        ) {
             return true;
-        }
-        if (request.url.startsWith("/api")) {
-            return false;
         } else {
-            response.redirect("/login");
+            response.redirect(redirectPath);
+            return false;
         }
     }
 }
