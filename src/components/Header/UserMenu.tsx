@@ -74,7 +74,7 @@ const UserMenu = () => {
         setAnchorEl(null);
         if (router.pathname !== "/profile-page" && hasSession) {
             router.push("profile");
-        } else if (router.pathname !== "/login") {
+        } else if (router.pathname !== "/login" && !hasSession) {
             router.push("profile");
         }
     };
