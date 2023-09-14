@@ -214,7 +214,7 @@ export class ClaimService {
         return this.ClaimModel.softDelete({ _id: claimId });
     }
 
-    async hideOrUnhideClaim(claimId, hide, description) {
+    async hideOrUnhideClaim(claimId, isHidden, description) {
         try {
             const claim = await this.ClaimModel.findById(claimId);
 
@@ -224,19 +224,17 @@ export class ClaimService {
 
             const newClaim = {
                 ...claim.toObject(),
-                isHidden: hide,
+                isHidden,
             };
 
-            const before = { isHidden: !hide };
-            const after = hide
-                ? { isHidden: hide, description }
-                : { isHidden: hide };
+            const before = { isHidden: !isHidden };
+            const after = isHidden ? { isHidden, description } : { isHidden };
 
             const history = this.historyService.getHistoryParams(
                 newClaim._id,
                 TargetModel.Claim,
                 this.req?.user,
-                hide ? HistoryType.Hide : HistoryType.Unhide,
+                isHidden ? HistoryType.Hide : HistoryType.Unhide,
                 after,
                 before
             );

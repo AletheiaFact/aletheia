@@ -293,24 +293,22 @@ export class PersonalityService {
         return personalityUpdate;
     }
 
-    async hideOrUnhidePersonality(personalityId, hide, description) {
+    async hideOrUnhidePersonality(personalityId, isHidden, description) {
         const personality = await this.getById(personalityId);
 
         const newPersonality = {
             ...personality,
-            isHidden: hide,
+            isHidden,
         };
 
-        const before = { isHidden: !hide };
-        const after = hide
-            ? { isHidden: hide, description }
-            : { isHidden: hide };
+        const before = { isHidden: !isHidden };
+        const after = isHidden ? { isHidden, description } : { isHidden };
 
         const history = this.historyService.getHistoryParams(
             newPersonality._id,
             TargetModel.Personality,
             this.req?.user,
-            hide ? HistoryType.Hide : HistoryType.Unhide,
+            isHidden ? HistoryType.Hide : HistoryType.Unhide,
             after,
             before
         );

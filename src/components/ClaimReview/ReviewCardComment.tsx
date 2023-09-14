@@ -34,8 +34,12 @@ const ClaimReviewCard = ({ review, ...props }) => {
                     />
                 }
                 actions={[
-                    <TagsList tags={review.content.topics || []} />,
-                    <ReviewCardActions href={reviewHref} content={content} />,
+                    <TagsList key={0} tags={review.content.topics || []} />,
+                    <ReviewCardActions
+                        key={1}
+                        href={reviewHref}
+                        content={content}
+                    />,
                 ]}
             />
         </div>

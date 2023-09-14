@@ -20,7 +20,7 @@ const get = (options: FetchOptions = {}) => {
         order: options.order || "asc",
         pageSize: options.pageSize ? options.pageSize : 5,
         isHidden: options?.isHidden || false,
-        latest: options?.latest ? true : false,
+        latest: options?.latest,
     };
 
     return request

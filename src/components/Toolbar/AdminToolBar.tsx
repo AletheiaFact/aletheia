@@ -3,11 +3,9 @@ import { Button, Col, Row } from "antd";
 import { Toolbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import HideContentButton from "../HideContentButton";
-import HideContentModal from "../Modal/HideContentModal";
-import DeleteContentModal from "../Modal/DeleteContentModal";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import UnhideContentModal from "../Modal/UnhideContentModal";
+import ToolbarActionsModal from "../Modal/ToolbarActionsModal";
 import AletheiaAlert from "../AletheiaAlert";
 import AdminToolBarStyle from "./AdminToolBar.style";
 import { TargetModel } from "../../types/enums";
@@ -125,17 +123,18 @@ const AdminToolBar = ({
                 )}
             </Col>
 
-            <HideContentModal
-                visible={isHideModalVisible}
+            <ToolbarActionsModal
+                open={isHideModalVisible}
                 isLoading={isLoading}
                 contentTitle={t(`${getTargetI18n()}:hideModalTitle`)}
                 contentBody={t(`${getTargetI18n()}:hideModalBody`)}
                 handleOk={(props) => handleHide(props)}
                 handleCancel={() => setIsHideModalVisible(false)}
+                hasDescription={true}
             />
 
-            <UnhideContentModal
-                visible={isUnhideModalVisible}
+            <ToolbarActionsModal
+                open={isUnhideModalVisible}
                 isLoading={isLoading}
                 contentTitle={t(`${getTargetI18n()}:unhideModalTitle`)}
                 contentBody={t(`${getTargetI18n()}:unhideModalBody`)}
@@ -145,13 +144,14 @@ const AdminToolBar = ({
                 }}
             />
 
-            <DeleteContentModal
-                visible={isDeleteModalVisible}
+            <ToolbarActionsModal
+                open={isDeleteModalVisible}
                 contentTitle={t(`${getTargetI18n()}:deleteModalTitle`)}
                 contentBody={t(`${getTargetI18n()}:deleteModalBody`)}
                 isLoading={isLoading}
                 handleOk={handleDelete}
                 handleCancel={() => setIsDeleteModalVisible(false)}
+                updatingHideStatus={false}
             />
         </Row>
     );
