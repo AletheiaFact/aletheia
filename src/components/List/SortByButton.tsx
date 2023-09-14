@@ -7,7 +7,7 @@ import colors from "../../styles/colors";
 
 const SortByButton = ({ refreshListItems }) => {
     const { t } = useTranslation();
-    const [visible, setVisible] = useState(false);
+    const [open, setOpen] = useState(false);
     const [value, setValue] = useState("asc");
 
     return (
@@ -22,7 +22,7 @@ const SortByButton = ({ refreshListItems }) => {
                         }}
                     />
                 }
-                onClick={() => setVisible(!visible)}
+                onClick={() => setOpen(!open)}
                 style={{
                     borderWidth: "2px",
                     borderColor: colors.blackSecondary,
@@ -46,14 +46,14 @@ const SortByButton = ({ refreshListItems }) => {
             </Button>
 
             <OrderModal
-                visible={visible}
+                open={open}
                 value={value}
                 setValue={setValue}
                 handleOk={() => {
                     refreshListItems(value);
-                    setVisible(!visible);
+                    setOpen(!open);
                 }}
-                handleCancel={() => setVisible(false)}
+                handleCancel={() => setOpen(false)}
             />
         </>
     );

@@ -131,7 +131,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
             </div>
             <AletheiaModal
                 className="ant-modal-content"
-                visible={isModalVisible}
+                open={isModalVisible}
                 footer={false}
                 onCancel={handleHideModal}
                 centered
