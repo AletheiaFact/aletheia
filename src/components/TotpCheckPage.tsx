@@ -10,10 +10,8 @@ const AalCheckPage = () => {
 
     const [aal] = useAtom(currentAuthentication);
     const [userId] = useAtom(currentUserId);
-    const [currentUser] = useAtom(userBeingEdited);
-    console.log(currentUser, "kkkkkk");
 
-    const aal2Activated = aal === "aal2" ? true : false;
+    const aal2Activated = aal === "aal2";
 
     const userDataUpdate = async () => {
         try {
