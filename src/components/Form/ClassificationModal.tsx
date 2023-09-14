@@ -6,7 +6,7 @@ import ClassificationText from "../ClassificationText";
 import { AletheiaModal, ModalCancelButton } from "../Modal/AletheiaModal.style";
 
 const ClassificationModal = ({
-    visible,
+    open,
     value,
     setValue,
     handleOk,
@@ -19,7 +19,7 @@ const ClassificationModal = ({
 
     return (
         <AletheiaModal
-            visible={visible}
+            open={open}
             footer={false}
             onCancel={handleCancel}
             setValue={setValue}

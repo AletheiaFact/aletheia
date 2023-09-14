@@ -9,16 +9,16 @@ import DrawerHeader from "./DrawerHeader";
 import UserEditForm from "./UserEditForm";
 
 const UserEditDrawer = () => {
-    const [visible, setVisible] = useAtom(isEditDrawerOpen);
+    const [open, setOpen] = useAtom(isEditDrawerOpen);
     const [currentUser] = useAtom(userBeingEdited);
     const [isLoading, setIsLoading] = useState(false);
 
     const onCloseDrawer = () => {
-        setVisible(false);
+        setOpen(false);
     };
 
     return (
-        <LargeDrawer visible={visible} onClose={onCloseDrawer}>
+        <LargeDrawer open={open} onClose={onCloseDrawer}>
             <Grid
                 container
                 justifyContent="center"
