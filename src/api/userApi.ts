@@ -21,6 +21,17 @@ const getById = (id, params = {}) => {
         });
 };
 
+const getByOryId = (id) => {
+    return request
+        .get(`/ory/${id}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch(() => {
+            message.error("Error while fetching User");
+        });
+};
+
 const updatePassword = () => {
     return request
         .put(`password-change`)
@@ -94,6 +105,7 @@ const update = (
 const userApi = {
     updatePassword,
     getById,
+    getByOryId,
     getUsers,
     register,
     update,
