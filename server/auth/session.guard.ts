@@ -73,8 +73,12 @@ export class SessionGuard implements CanActivate {
             "/api/health",
         ].some((route) => request.url.startsWith(route));
 
+        const overridePublicRoutes =
+            !isAllowedPublicUrl &&
+            this.configService.get<string>("override_public_routes");
+
         if (
-            (isPublic && isAllowedPublicUrl) ||
+            (isPublic && !overridePublicRoutes) ||
             request.url.startsWith("/api")
         ) {
             return true;
