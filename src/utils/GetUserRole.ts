@@ -10,11 +10,12 @@ export const GetUserRole = () => {
                     (session.data.identity.traits.role as Roles) ||
                     Roles.Regular,
                 isLoggedIn: true,
+                aal: session.data.authenticator_assurance_level,
                 id: session.data.identity.traits.user_id,
                 status: session?.data.identity.state,
             };
         })
         .catch(() => {
-            return { role: Roles.Regular, isLoggedIn: false, id: "" };
+            return { role: Roles.Regular, isLoggedIn: false, id: "", aal: "" };
         });
 };

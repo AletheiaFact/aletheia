@@ -2,6 +2,7 @@ import { Layout } from "antd";
 import { useSetAtom } from "jotai";
 import React from "react";
 import {
+    currentAuthentication,
     currentUserId,
     currentUserRole,
     isUserLoggedIn,
@@ -27,10 +28,12 @@ const MainApp = ({ children }) => {
     const setCurrentRole = useSetAtom(currentUserRole);
     const setCurrentLoginStatus = useSetAtom(isUserLoggedIn);
     const setCurrentUserId = useSetAtom(currentUserId);
-    GetUserRole().then(({ role, isLoggedIn, id }) => {
+    const setCurrentLevelAuthentication = useSetAtom(currentAuthentication);
+    GetUserRole().then(({ role, isLoggedIn, id, aal }) => {
         setCurrentRole(role);
         setCurrentLoginStatus(isLoggedIn);
         setCurrentUserId(id);
+        setCurrentLevelAuthentication(aal);
     });
 
     // Setup to provide breakpoints object on redux

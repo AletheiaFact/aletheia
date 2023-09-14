@@ -8,4 +8,5 @@ export type User = {
     role: Roles;
     badges: Badge[];
     state: Status;
+    totp: boolean;
 };
