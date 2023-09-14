@@ -3,6 +3,7 @@ import {
     IsArray,
     IsEnum,
     IsNotEmpty,
+    IsOptional,
     IsString,
 } from "class-validator";
 import { Personality } from "../../personality/schemas/personality.schema";
@@ -33,9 +34,10 @@ export class CreateClaimReview {
     @ApiProperty()
     claim: Claim;
 
+    @IsOptional()
     @IsAlphanumeric()
     @ApiProperty()
-    personality: Personality;
+    personality?: Personality;
 
     @IsString()
     @IsAlphanumeric()
