@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
 import { useAppSelector } from "../../store/store";
-import AletheiaButton from "../Button";
+import AletheiaButton, { ButtonType } from "../Button";
 import SearchOverlay from "../Search/SearchOverlay";
 import HeaderActionsStyle from "./HeaderActions.style";
 import Logo from "./Logo";
@@ -65,8 +65,8 @@ const HeaderContent = () => {
                 )}
                 <div className="bell">
                     <NovuProvider
-                        subscriberId={"6504752090b85787fd18042e"}
-                        applicationIdentifier={"shAHmRan8sa3"}
+                        subscriberId={"test1@aletheiafact.org"}
+                        applicationIdentifier={"jElaPejsNYRF"}
                     >
                         <PopoverNotificationCenter colorScheme="dark">
                             {({ unseenCount }) => (

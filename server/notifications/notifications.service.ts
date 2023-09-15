@@ -23,25 +23,25 @@ export class NotificationService {
     async sendEmail(subscriberId: string, email: string, description: string) {
         const result = await this.novu.trigger("email-sender", {
             to: {
-                subscriberId,
-                email,
+                subscriberId: subscriberId,
+                email: email,
             },
             payload: {
-                email,
-                description,
+                email: email,
+                description: description,
             },
         });
 
         return result.data;
     }
 
-    async sendNotification(subscriberId: string, message: string) {
+    async sendNotification(subscriberId: string, description: string) {
         const result = await this.novu.trigger("email-notifications", {
             to: {
-                subscriberId,
+                subscriberId: subscriberId,
             },
             payload: {
-                message,
+                messageIdentifier: description,
             },
         });
 
