@@ -159,6 +159,7 @@ jobs:
       - name: Set environment
         run: |
           sed -i "s/ENVIRONMENT/${{ env.ENVIRONMENT }}/g" deployment/app.yml
+          sed -i "s/ENVIRONMENT/${{ env.ENVIRONMENT }}/g" deployment/websocket.yml
           sed -i "s/UMAMI_SITE_ID_STUB/${{ env.UMAMI_SITE_ID }}/g" deployment/app.yml
           sed -i "s/RECAPTCHA_SITEKEY_STUB/${{ env.RECAPTCHA_SITEKEY }}/g" deployment/app.yml
           sed -i "s%ORY_SDK_URL_STUB%${{ env.ORY_SDK_URL }}%g" deployment/app.yml
