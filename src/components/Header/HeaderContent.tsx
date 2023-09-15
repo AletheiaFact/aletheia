@@ -12,6 +12,11 @@ import SelectLanguage from "./SelectLanguage";
 import UserMenu from "./UserMenu";
 import DonateButton from "./DonateButton";
 import Menu from "./Menu";
+import {
+    NovuProvider,
+    PopoverNotificationCenter,
+    NotificationBell,
+} from "@novu/notification-center";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
@@ -58,6 +63,18 @@ const HeaderContent = () => {
                         />
                     </AletheiaButton>
                 )}
+                <div className="bell">
+                    <NovuProvider
+                        subscriberId={"6504752090b85787fd18042e"}
+                        applicationIdentifier={"shAHmRan8sa3"}
+                    >
+                        <PopoverNotificationCenter colorScheme="dark">
+                            {({ unseenCount }) => (
+                                <NotificationBell unseenCount={unseenCount} />
+                            )}
+                        </PopoverNotificationCenter>
+                    </NovuProvider>
+                </div>
                 <DonateButton header={true} />
                 <UserMenu />
                 {!vw?.sm && (
