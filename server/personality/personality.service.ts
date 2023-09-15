@@ -58,6 +58,7 @@ export class PersonalityService {
         pageSize,
         order,
         query,
+        filter,
         language,
         withSuggestions = false
     ) {
@@ -65,7 +66,11 @@ export class PersonalityService {
 
         if (order === "random") {
             personalities = await this.PersonalityModel.aggregate([
-                { $match: query },
+                {
+                    $match: {
+                        $and: [query, { _id: { $ne: filter } }],
+                    },
+                },
                 { $sample: { size: pageSize } },
             ]);
         } else if (Object.keys(query).length > 0 && query?.name) {
@@ -385,6 +390,7 @@ export class PersonalityService {
     combinedListAll(query): any {
         const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = this.verifyInputsQuery(query);
+        console.log(queryInputs, "queryInputs");
 
         return Promise.all([
             this.listAll(
@@ -392,6 +398,7 @@ export class PersonalityService {
                 parseInt(pageSize, 10),
                 order,
                 queryInputs,
+                query.filter,
                 query.language,
                 query.withSuggestions
             ),
