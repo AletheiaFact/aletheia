@@ -13,13 +13,11 @@ export class NotificationController {
         body: {
             subscriberId: string;
             email: string;
-            description: string;
         }
     ) {
         return this.notificationService.sendEmail(
             body.subscriberId,
-            body.email,
-            body.description
+            body.email
         );
     }
 
@@ -32,5 +30,26 @@ export class NotificationController {
             body.subscriberId,
             body.description
         );
+    }
+
+    @Post("topics")
+    createTopic(@Body() body: { key: string; name: string }) {
+        return this.notificationService.createTopic(body.key, body.name);
+    }
+
+    @Post("topics/:key/subscribers")
+    addSubscriberToTopic(
+        @Param("key") key: string,
+        @Body("subscriberId") subscriberId: string
+    ) {
+        return this.notificationService.addTopicSubscriber(key, subscriberId);
+    }
+
+    @Post("topics/:key/send")
+    sendTopicNotification(
+        @Param("key") key: string,
+        @Body("description") description: string
+    ) {
+        return this.notificationService.sendTopicNotification(key, description);
     }
 }
