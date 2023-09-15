@@ -22,14 +22,20 @@ interface CollaborativeEditorProviderProps {
 export const CollaborativeEditorProvider = (
     props: CollaborativeEditorProviderProps
 ) => {
+    const { enableCollaborativeEdit } = useAppSelector((state) => ({
+        enableCollaborativeEdit: state?.enableCollaborativeEdit,
+    }));
+
     const [editorContent, setEditorContent] = useState("");
     const [editorError, setEditorError] = useState(null);
     const { websocketUrl } = useAppSelector((state) => state);
 
-    const websocketProvider = useMemo(
-        () => createWebsocketConnection(props.data_hash, websocketUrl),
-        [props.data_hash]
-    );
+    const websocketProvider = useMemo(() => {
+        if (enableCollaborativeEdit) {
+            return createWebsocketConnection(props.data_hash, websocketUrl);
+        }
+        return null;
+    }, [enableCollaborativeEdit, props.data_hash]);
 
     return (
         <CollaborativeEditorContext.Provider

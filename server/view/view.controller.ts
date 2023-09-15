@@ -118,6 +118,21 @@ export class ViewController {
             .render(req, res, "/404-page", Object.assign(parsedUrl.query));
     }
 
+    @Get("totp")
+    @Header("Cache-Control", "max-age=86400")
+    public async showTotpCheck(@Req() req: Request, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/totp-check-page",
+                Object.assign(parsedUrl.query)
+            );
+    }
+
     @IsPublic()
     @ApiTags("pages")
     @Get("unauthorized")

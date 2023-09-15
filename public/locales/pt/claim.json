@@ -22,5 +22,19 @@
     "cardLinkToImage": "veja a imagem completa",
     "cardLinkToDebate": "veja o debate completo",
     "claimListHeader": "Declarações",
-    "imageAlreadyExists": "Essa imagem já existe em nossa plataforma"
+    "imageAlreadyExists": "Essa imagem já existe em nossa plataforma",
+
+    "hideModalTitle": "Esconder afirmação",
+    "hideModalBody": "Você tem certeza que deseja esconder essa afirmação? Apenas administradores pode ver afirmações escondidas",
+    "unhideModalTitle": "Mostrar afirmação",
+    "unhideModalBody": "Você tem certeza que deseja mostrar essa afirmação?",
+    "deleteModalTitle": "Deletar afirmação",
+    "deleteModalBody": "Você tem certeza que deseja deletar essa afirmação? essa ação não pode ser desfeita",
+    "deleteSuccess": "Afirmação deletada com sucesso",
+    "deleteError": "Erro ao deletar a afirmação",
+    "warningTitle": "Afirmação oculta",
+    "hideSuccess": "Afirmação escondida com sucesso",
+    "hideError": "Erro ao esconder a afirmação",
+    "unhideSuccess": "Afirmação pública com sucesso",
+    "unhideError": "Erro ao mostrar a afirmação"
 }

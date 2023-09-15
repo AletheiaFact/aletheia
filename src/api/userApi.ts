@@ -21,6 +21,17 @@ const getById = (id, params = {}) => {
         });
 };
 
+const getByOryId = (id) => {
+    return request
+        .get(`/ory/${id}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch(() => {
+            message.error("Error while fetching User");
+        });
+};
+
 const updatePassword = () => {
     return request
         .put(`password-change`)
@@ -70,6 +81,22 @@ const register = (params, t) => {
         });
 };
 
+const updateTotp = (
+    userId,
+    params: {
+        totp: boolean;
+    }
+) => {
+    return request
+        .put(`/${userId}`, params)
+        .then((response) => {
+            return response?.data;
+        })
+        .catch((e) => {
+            return e?.response?.data;
+        });
+};
+
 const update = (
     userId,
     params: {
@@ -93,7 +120,9 @@ const update = (
 
 const userApi = {
     updatePassword,
+    updateTotp,
     getById,
+    getByOryId,
     getUsers,
     register,
     update,

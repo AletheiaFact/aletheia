@@ -19,7 +19,7 @@ export class ClaimReview {
 
     @Prop({
         type: mongoose.Types.ObjectId,
-        required: true,
+        required: false,
         ref: "Personality",
     })
     personality: Personality;

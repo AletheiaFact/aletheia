@@ -22,13 +22,19 @@ import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { TargetModel } from "../history/schema/history.schema";
 import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config";
+import { CaptchaService } from "../captcha/captcha.service";
+import { HistoryService } from "../history/history.service";
 
 @Controller()
 export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(
         private personalityService: PersonalityService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private configService: ConfigService,
+        private captchaService: CaptchaService,
+        private historyService: HistoryService
     ) {}
 
     @IsPublic()
@@ -75,14 +81,28 @@ export class PersonalityController {
     }
 
     @ApiTags("personality")
+    @Put("api/personality/hidden/:id")
+    async updateHiddenStatus(@Param("id") personalityId, @Body() body) {
+        const validateCaptcha = await this.captchaService.validate(
+            body.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
+
+        return this.personalityService.hideOrUnhidePersonality(
+            personalityId,
+            body.isHidden,
+            body.description
+        );
+    }
+
+    @ApiTags("personality")
     @Delete("api/personality/:id")
     async delete(@Param("id") personalityId) {
-        try {
-            await this.personalityService.delete(personalityId);
-            return { message: "Personality successfully deleted" };
-        } catch (error) {
-            this.logger.error(error);
-        }
+        return this.personalityService.delete(personalityId).catch((err) => {
+            this.logger.error(err);
+        });
     }
 
     @IsPublic()
@@ -124,11 +144,15 @@ export class PersonalityController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        const hideDescriptions: any = {};
         const parsedUrl = parse(req.url, true);
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
-                req.params.slug,
+                {
+                    slug: req.params.slug,
+                    isDeleted: false,
+                },
                 req.language
             );
 
@@ -141,14 +165,23 @@ export class PersonalityController {
             }
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/personality-page",
-                Object.assign(parsedUrl.query, { personality, personalities })
+        hideDescriptions[TargetModel.Personality] =
+            await this.historyService.getDescriptionForHide(
+                personality,
+                TargetModel.Personality
             );
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/personality-page",
+            Object.assign(parsedUrl.query, {
+                personality,
+                personalities,
+                hideDescriptions,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            })
+        );
     }
 
     @IsPublic()
@@ -177,9 +210,11 @@ export class PersonalityController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsByPersonalitySlug(
-                req.params.slug
-            );
+            await this.personalityService.getClaimsByPersonalitySlug({
+                slug: req.params.slug,
+                isDeleted: false,
+            });
+
         await this.viewService.getNextServer().render(
             req,
             res,

@@ -61,7 +61,7 @@ const BadgesFormDrawer = () => {
     });
 
     const { t } = useTranslation();
-    const [visible, setVisible] = useAtom(isEditDrawerOpen);
+    const [open, setOpen] = useAtom(isEditDrawerOpen);
     const addBadge = useSetAtom(addBadgeToList);
     const finishEditing = useSetAtom(finishEditingItem);
     const cancelEditing = useSetAtom(cancelEditingItem);
@@ -142,7 +142,7 @@ const BadgesFormDrawer = () => {
                             .then((createdBadge) => {
                                 addBadge(createdBadge);
                                 resetForm();
-                                setVisible(false);
+                                setOpen(false);
                             })
                             .catch((err) => {
                                 setIsLoading(false);
@@ -165,7 +165,7 @@ const BadgesFormDrawer = () => {
 
     return (
         <LargeDrawer
-            visible={visible}
+            visible={open}
             onClose={onCloseDrawer}
             backgroundColor={colors.lightGraySecondary}
         >

@@ -258,7 +258,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             </Row>
 
             <WarningModal
-                visible={gobackWarningModal}
+                open={gobackWarningModal}
                 title={t("warningModal:title", {
                     warning: t("warningModal:gobackWarning"),
                 })}

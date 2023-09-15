@@ -2,8 +2,8 @@ import { Col } from "antd";
 import Title from "antd/lib/typography/Title";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import AletheiaAvatar from "../AletheiaAvatar";
 import PersonalityMinimalCardStyle from "./PersonalityMinimalCard.style";
+import PersonalityCardAvatar from "./PersonalityCardAvatar";
 
 const PersonalityMinimalCard = ({ personality }) => {
     const { t } = useTranslation();
@@ -13,12 +13,16 @@ const PersonalityMinimalCard = ({ personality }) => {
             justify="center"
         >
             <Col>
-                <AletheiaAvatar
-                    size={117}
-                    src={personality.avatar}
-                    alt={t("seo:personalityImageAlt", {
-                        name: personality.name,
-                    })}
+                <PersonalityCardAvatar
+                    hoistAvatar={false}
+                    personality={personality}
+                    header={true}
+                    componentStyle={{
+                        avatarSize: 117,
+                        avatarSpan: 8,
+                        hiddenIconSize: 16,
+                    }}
+                    offset={[-18, 18]}
                 />
             </Col>
             <Col className="personality">

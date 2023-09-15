@@ -1,5 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject, Scope } from "@nestjs/common";
+import { Roles } from "./auth/ability/ability.factory";
 import { randomBytes } from "crypto";
+import { REQUEST } from "@nestjs/core";
+import type { BaseRequest } from "./types";
 
 @Injectable()
 export class UtilService {
@@ -44,9 +47,17 @@ export class UtilService {
         const buf = randomBytes(8);
 
         if (isTestUser) {
-            return forcePassword ? `${forcePassword}` : process.env.DEVELOPMENT_PASSWORD;
+            return forcePassword
+                ? `${forcePassword}`
+                : process.env.DEVELOPMENT_PASSWORD;
         }
 
         return buf.toString("hex");
-    };
+    }
+
+    getParamsBasedOnUserRole(params, req) {
+        const user = req.user;
+        const isUserAdmin = user?.role === Roles.Admin;
+        return isUserAdmin ? params : { ...params, isHidden: false };
+    }
 }

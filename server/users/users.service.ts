@@ -51,6 +51,10 @@ export class UsersService {
         return user;
     }
 
+    getByOryId(oryId) {
+        return this.UserModel.findOne({ oryId }, "email name");
+    }
+
     async registerPasswordChange(userId) {
         const user = await this.getById(userId);
         if (user.firstPasswordChanged === false) {

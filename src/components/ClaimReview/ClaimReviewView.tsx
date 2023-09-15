@@ -2,7 +2,7 @@ import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { ContentModelEnum, Roles } from "../../types/enums";
+import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
 import { reviewDataSelector } from "../../machines/reviewTask/selectors";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import SocialMediaShare from "../SocialMediaShare";
@@ -11,18 +11,20 @@ import ClaimReviewHeader from "./ClaimReviewHeader";
 import { Content } from "../../types/Content";
 import { currentUserId, currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
-
+import AdminToolBar from "../Toolbar/AdminToolBar";
+import ClaimReviewApi from "../../api/claimReviewApi";
 export interface ClaimReviewViewProps {
     personality?: any;
     claim: any;
     content: Content;
+    hideDescriptions: any;
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const { machineService, publishedReview } = useContext(
         ReviewTaskMachineContext
     );
-    const { review, descriptionForHide } = publishedReview || {};
+    const { review } = publishedReview || {};
 
     const reviewData = useSelector(machineService, reviewDataSelector);
     const [role] = useAtom(currentUserRole);
@@ -32,7 +34,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const userIsReviewer = reviewData.reviewerId === userId;
     const userIsAssignee = reviewData.usersId.includes(userId);
 
-    const { personality, claim, content } = props;
+    const { personality, claim, content, hideDescriptions } = props;
     const isContentImage = claim.contentModel === ContentModelEnum.Image;
 
     const origin =
@@ -50,11 +52,22 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
 
     return (
         <div>
+            {role === Roles.Admin && review?.isPublished && (
+                <AdminToolBar
+                    content={review}
+                    deleteApiFunction={ClaimReviewApi.deleteClaimReview}
+                    changeHideStatusFunction={
+                        ClaimReviewApi.updateClaimReviewHiddenStatus
+                    }
+                    target={TargetModel.ClaimReview}
+                    hideDescriptions={hideDescriptions}
+                />
+            )}
             <ClaimReviewHeader
                 classification={
                     review?.report?.classification || reviewData?.classification
                 }
-                hideDescription={descriptionForHide}
+                hideDescription={hideDescriptions}
                 userIsReviewer={userIsReviewer}
                 userIsNotRegular={userIsNotRegular}
                 userIsAssignee={userIsAssignee}

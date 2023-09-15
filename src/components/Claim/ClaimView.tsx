@@ -1,43 +1,29 @@
-/* eslint-disable @next/next/no-img-element */
-import "moment/locale/pt";
-
 import { Affix, Col, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 
-import ClaimSpeechBody from "./ClaimSpeechBody";
-import { ContentModelEnum } from "../../types/enums";
-import ImageApi from "../../api/image";
-import Loading from "../Loading";
-import LocalizedDate from "../LocalizedDate";
+import { ContentModelEnum, TargetModel } from "../../types/enums";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
-import ReviewedImage from "../ReviewedImage";
-import SocialMediaShare from "../SocialMediaShare";
 import SourcesList from "../Source/SourcesList";
 import ToggleSection from "../ToggleSection";
 import actions from "../../store/actions";
-import colors from "../../styles/colors";
-import moment from "moment";
-import { useAppSelector } from "../../store/store";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
+import ClaimInfo from "./ClaimInfo";
+import ClaimContentDisplay from "./ClaimContentDisplay";
+import SocialMediaShare from "../SocialMediaShare";
+import AdminToolBar from "../Toolbar/AdminToolBar";
+import claimApi from "../../api/claim";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
-const ClaimView = ({ personality, claim, href }) => {
-    const { t, i18n } = useTranslation();
+const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();
-    moment.locale(i18n.language);
+    const { t } = useTranslation();
     const { title, stats, content: claimContent } = claim;
-    const isImage = claim?.contentModel === ContentModelEnum.Image;
-    let date = moment(new Date(claim.date));
-    const sources = claim?.sources?.map((source) => source.link);
-    const { selectedContent } = useAppSelector((state) => state);
 
-    const imageUrl = claimContent.content;
-    const paragraphs = Array.isArray(claimContent)
-        ? claimContent
-        : [claimContent];
+    const isImage = claim?.contentModel === ContentModelEnum.Image;
+    const sources = claim?.sources?.map((source) => source.link);
 
     const dispatchPersonalityAndClaim = () => {
         dispatch(actions.setSelectClaim(claim));
@@ -52,204 +38,101 @@ const ClaimView = ({ personality, claim, href }) => {
         if (isImage) {
             dispatch(actions.setSelectContent(claimContent));
         }
-    }, [isImage, t]);
+    }, [claim, claimContent, dispatch, isImage, personality, t]);
 
-    const handleClickOnImage = () => {
-        ImageApi.getImageTopicsByDatahash(selectedContent?.data_hash)
-            .then((image) => {
-                dispatch(actions.setSelectContent(image));
-            })
-            .catch((e) => e);
-        dispatch(actions.openReviewDrawer());
-    };
+    return (
+        <>
+            <AdminToolBar
+                content={claim}
+                deleteApiFunction={claimApi.deleteClaim}
+                changeHideStatusFunction={claimApi.updateClaimHiddenStatus}
+                target={TargetModel.Claim}
+                hideDescriptions={hideDescriptions}
+            />
 
-    if (claimContent) {
-        return (
-            <>
-                <Row justify="center">
-                    <Col xs={20} sm={18} md={16}>
-                        <article>
-                            {personality && (
-                                <PersonalityCard
-                                    personality={personality}
-                                    header={true}
-                                    mobile={true}
-                                    titleLevel={2}
-                                />
-                            )}
-                            <section>
-                                {date && (
-                                    <Row style={{ marginTop: "20px" }}>
-                                        <Col>
-                                            {!isImage ? (
-                                                <Paragraph
-                                                    style={{
-                                                        fontSize: 10,
-                                                        fontWeight: 400,
-                                                        lineHeight: "15px",
-                                                        marginBottom: 0,
-                                                        color: colors.blackSecondary,
-                                                    }}
-                                                >
-                                                    {t("claim:cardHeader1")}
-                                                    &nbsp;
-                                                    <LocalizedDate
-                                                        date={
-                                                            claim.date ||
-                                                            new Date()
-                                                        }
-                                                    />
-                                                    &nbsp;
-                                                    {t("claim:cardHeader2")}
-                                                    &nbsp;
-                                                    <span
-                                                        style={{
-                                                            fontWeight: 700,
-                                                        }}
-                                                    >
-                                                        {t("claim:typeSpeech")}
-                                                    </span>
-                                                </Paragraph>
-                                            ) : (
-                                                <Paragraph
-                                                    style={{
-                                                        fontSize: 10,
-                                                        fontWeight: 400,
-                                                        lineHeight: "15px",
-                                                        marginBottom: 0,
-                                                        color: colors.blackSecondary,
-                                                    }}
-                                                >
-                                                    {t("claim:cardHeader3")}
-                                                    &nbsp;
-                                                    <LocalizedDate
-                                                        date={
-                                                            claim.date ||
-                                                            new Date()
-                                                        }
-                                                    />
-                                                </Paragraph>
-                                            )}
-                                        </Col>
-                                    </Row>
-                                )}
-                                <Row
-                                    style={{
-                                        paddingBottom: "15px",
-                                    }}
-                                    justify="center"
-                                >
-                                    <Col
+            <Row justify="center">
+                <Col xs={22} sm={22} md={18}>
+                    <article>
+                        {personality && (
+                            <PersonalityCard
+                                personality={personality}
+                                header={true}
+                                mobile={true}
+                                titleLevel={2}
+                            />
+                        )}
+                        <section>
+                            <ClaimInfo isImage={isImage} date={claim?.date} />
+                            <Row
+                                style={{ paddingBottom: "15px" }}
+                                justify="center"
+                            >
+                                <Col xs={24} md={22} lg={20}>
+                                    <Title
+                                        level={1}
                                         style={{
                                             margin: "20px 0",
-                                            width: "100%",
+                                            fontSize: 20,
+                                            lineHeight: 1.4,
                                         }}
-                                        xs={20}
-                                        sm={18}
-                                        md={16}
                                     >
-                                        <Title
-                                            level={1}
-                                            style={{
-                                                fontSize: 20,
-                                                lineHeight: 1.4,
-                                            }}
-                                        >
-                                            {title}
-                                        </Title>
-                                    </Col>
-                                    <Col
-                                        xs={20}
-                                        sm={18}
-                                        md={16}
-                                        style={{ paddingBottom: "20px" }}
-                                    >
-                                        {isImage ? (
-                                            <div
-                                                style={{
-                                                    cursor: "pointer",
-                                                }}
-                                                onClick={handleClickOnImage}
-                                            >
-                                                <ReviewedImage
-                                                    imageUrl={imageUrl}
-                                                    title={title}
-                                                    classification={
-                                                        claimContent?.props
-                                                            ?.classification
-                                                    }
-                                                />
-                                            </div>
-                                        ) : (
-                                            <cite
-                                                style={{
-                                                    fontStyle: "normal",
-                                                }}
-                                            >
-                                                <ClaimSpeechBody
-                                                    handleSentenceClick={
-                                                        dispatchPersonalityAndClaim
-                                                    }
-                                                    paragraphs={paragraphs}
-                                                    showHighlights={
-                                                        showHighlights
-                                                    }
-                                                />
-                                            </cite>
-                                        )}
-                                    </Col>
+                                        {title}
+                                    </Title>
+                                    <ClaimContentDisplay
+                                        isImage={isImage}
+                                        title={title}
+                                        claimContent={claimContent}
+                                        showHighlights={showHighlights}
+                                        dispatchPersonalityAndClaim={
+                                            dispatchPersonalityAndClaim
+                                        }
+                                    />
+                                </Col>
 
-                                    <Affix
-                                        offsetBottom={15}
-                                        style={{
-                                            textAlign: "center",
-                                            width: "100%",
+                                <Affix
+                                    offsetBottom={15}
+                                    style={{
+                                        textAlign: "center",
+                                        width: "100%",
+                                    }}
+                                >
+                                    <ToggleSection
+                                        defaultValue={showHighlights}
+                                        onChange={(e) => {
+                                            setShowHighlights(e.target.value);
                                         }}
-                                    >
-                                        <ToggleSection
-                                            defaultValue={showHighlights}
-                                            onChange={(e) => {
-                                                setShowHighlights(
-                                                    e.target.value
-                                                );
-                                            }}
-                                            labelTrue={t(
-                                                "claim:showHighlightsButton"
-                                            )}
-                                            labelFalse={t(
-                                                "claim:hideHighlightsButton"
-                                            )}
-                                        />
-                                    </Affix>
-                                </Row>
-                                {sources.length > 0 && (
-                                    <>
-                                        <Typography.Title level={4}>
-                                            {t("claim:sourceSectionTitle")}
-                                        </Typography.Title>
-                                        <SourcesList
-                                            sources={sources}
-                                            seeMoreHref={`${href}/sources`}
-                                        />
-                                    </>
-                                )}
-                            </section>
-                            {stats.total !== 0 && (
-                                <MetricsOverview stats={stats} />
+                                        labelTrue={t(
+                                            "claim:showHighlightsButton"
+                                        )}
+                                        labelFalse={t(
+                                            "claim:hideHighlightsButton"
+                                        )}
+                                    />
+                                </Affix>
+                            </Row>
+                            {sources.length > 0 && (
+                                <>
+                                    <Typography.Title level={4}>
+                                        {t("claim:sourceSectionTitle")}
+                                    </Typography.Title>
+                                    <SourcesList
+                                        sources={sources}
+                                        seeMoreHref={`${href}/sources`}
+                                    />
+                                </>
                             )}
-                        </article>
-                    </Col>
-                </Row>
-                <SocialMediaShare
-                    quote={personality?.name}
-                    href={href}
-                    claim={claim?.title}
-                />
-            </>
-        );
-    } else {
-        return <Loading />;
-    }
+                        </section>
+                        {stats.total !== 0 && <MetricsOverview stats={stats} />}
+                    </article>
+                </Col>
+            </Row>
+            <SocialMediaShare
+                quote={personality?.name}
+                href={href}
+                claim={claim?.title}
+            />
+        </>
+    );
 };
 
 export default ClaimView;

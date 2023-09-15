@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import { History, HistoryDocument } from "./schema/history.schema";
+import { History, HistoryDocument, HistoryType } from "./schema/history.schema";
 
 @Injectable()
 export class HistoryService {
@@ -95,5 +95,22 @@ export class HistoryService {
             .skip(page * pageSize)
             .limit(pageSize)
             .sort({ date: order });
+    }
+
+    async getDescriptionForHide(content, target) {
+        if (content?.isHidden) {
+            const history = await this.getByTargetIdModelAndType(
+                content._id,
+                target,
+                0,
+                1,
+                "desc",
+                HistoryType.Hide
+            );
+
+            return history[0]?.details?.after?.description;
+        }
+
+        return "";
     }
 }

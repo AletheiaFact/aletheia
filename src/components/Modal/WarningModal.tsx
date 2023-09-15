@@ -7,7 +7,7 @@ import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 import colors from "../../styles/colors";
 
 const WarningModal = ({
-    visible,
+    open,
     title,
     width,
     handleOk,
@@ -20,7 +20,7 @@ const WarningModal = ({
     return (
         <AletheiaModal
             className="ant-modal-content"
-            visible={visible}
+            open={open}
             footer={footer}
             onCancel={handleCancel}
             width={width}

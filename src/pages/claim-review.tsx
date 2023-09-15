@@ -21,7 +21,7 @@ export interface ClaimReviewPageProps {
     sitekey: string;
     claimReviewTask: any;
     claimReview: any;
-    description: string;
+    hideDescriptions: object;
     enableCollaborativeEditor: boolean;
     webSocketUrl: string;
 }
@@ -37,6 +37,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         claimReview,
         sitekey,
         enableCollaborativeEditor,
+        hideDescriptions,
     } = props;
 
     dispatch(actions.setWebsocketUrl(props.webSocketUrl));
@@ -102,15 +103,13 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             <ReviewTaskMachineProvider
                 data_hash={content.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
-                publishedReview={{
-                    review: claimReview,
-                    descriptionForHide: props.description,
-                }}
+                publishedReview={{ review: claimReview }}
             >
                 <ClaimReviewView
                     personality={personality}
                     claim={claim}
                     content={content}
+                    hideDescriptions={hideDescriptions}
                 />
             </ReviewTaskMachineProvider>
             <AffixButton personalitySlug={personality?.slug} />
@@ -131,7 +130,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
-            description: query.description,
+            hideDescriptions: JSON.parse(
+                JSON.stringify(query.hideDescriptions)
+            ),
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             websocketUrl: query?.websocketUrl,
         },

@@ -9,5 +9,19 @@
     "errorWhileFetching": "Error while fetching Personality",
     "otherPersonalitiesTitle": "Personalities on the website",
     "seeAllMetricsOverviews": "See all",
-    "seeLessMetricsOverviews": "See less"
+    "seeLessMetricsOverviews": "See less",
+    "hideModalTitle": "Hide personality",
+    "hideModalBody": "Are you sure you want to hide this personality? only admins can see hide personalities",
+    "unhideModalTitle": "Unhide personality",
+    "unhideModalBody": "Are you sure you want to delete this personality?",
+    "deleteModalTitle": "Delete personality",
+    "deleteModalBody": "Are you sure you want to delete this personality? This action cannot be undone.",
+    "deleteSuccess": "Personality deleted succesfully",
+    "deleteError": "Error while deleting personality",
+    "warningTitle": "Hidden personality",
+    "hideSuccess": "Personality hidden succesfully",
+    "hideError": "Error while hidden personality",
+    "unhideSuccess": "Personality unhide succesfully",
+    "unhideError": "Error while unhide personality",
+    "hiddenPersonalityAvatarTooltip": "Hidden personality"
 }

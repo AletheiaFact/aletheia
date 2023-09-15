@@ -19,7 +19,9 @@ const AcessDeniedPage = ({ originalUrl, status }) => {
                     fontWeight: 600,
                 }}
             >
-                {t("unauthorized:firstPartMessage")}
+                {originalUrl
+                    ? t("unauthorized:firstPartMessageURL")
+                    : t("unauthorized:firstPartMessage")}
                 {originalUrl === "/" ? "Home" : originalUrl}
                 {t("unauthorized:secondPartMessage")}
                 {role}

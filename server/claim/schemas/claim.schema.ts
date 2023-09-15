@@ -28,6 +28,9 @@ export class Claim {
         ref: "ClaimRevision",
     })
     latestRevision: ClaimRevision;
+
+    @Prop({ type: Boolean, default: false, required: true })
+    isHidden: boolean;
 }
 const ClaimSchemaRaw = SchemaFactory.createForClass(Claim);
 

@@ -24,6 +24,9 @@ export class User {
     @Prop({ required: true, default: Roles.Regular })
     role: Roles;
 
+    @Prop({ required: true, default: false })
+    totp: boolean;
+
     @Prop({
         type: [
             {

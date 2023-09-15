@@ -27,4 +27,13 @@ enum ContentModelEnum {
     Debate = "Debate",
 }
 
+export enum TargetModel {
+    Claim = "Claim",
+    Debate = "Debate",
+    Personality = "Personality",
+    ClaimReview = "ClaimReview",
+    ClaimReviewTask = "ClaimReviewTask",
+    Image = "Image",
+}
+
 export { ClassificationEnum, Roles, Status, ContentModelEnum };

@@ -9,5 +9,19 @@
     "errorWhileFetching": "Erro ao buscar personalidade",
     "otherPersonalitiesTitle": "Personalidades no site",
     "seeAllMetricsOverviews": "Veja todos",
-    "seeLessMetricsOverviews": "Veja menos"
+    "seeLessMetricsOverviews": "Veja menos",
+    "hideModalTitle": "Esconder personalidade",
+    "hideModalBody": "Você tem certeza que deseja esconder essa personalidade? Apenas administradores pode ver personalidades escondidas",
+    "unhideModalTitle": "Mostrar personalidade",
+    "unhideModalBody": "Você tem certeza que deseja mostrar essa personalidade?",
+    "deleteModalTitle": "Deletar personalidade",
+    "deleteModalBody": "Você tem certeza que deseja deletar essa personalidade? essa ação não pode ser desfeita",
+    "deleteSuccess": "Personalidade deletada com sucesso",
+    "deleteError": "Erro ao deletar a personalidade",
+    "warningTitle": "Personalidade oculta",
+    "hideSuccess": "Personalidade escondida com sucesso",
+    "hideError": "Erro ao esconder a personalidade",
+    "unhideSuccess": "Personalidade pública com sucesso",
+    "unhideError": "Erro ao mostrar a personalidade",
+    "hiddenPersonalityAvatarTooltip": "Personalidade oculta"
 }

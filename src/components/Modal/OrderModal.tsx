@@ -5,13 +5,13 @@ import AletheiaButton, { ButtonType } from "../Button";
 import OrderRadio from "../Radio/OrderRadio";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
 
-const OrderModal = ({ visible, value, setValue, handleOk, handleCancel }) => {
+const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
     const { t } = useTranslation();
 
     return (
         <AletheiaModal
             className="ant-modal-content"
-            visible={visible}
+            open={open}
             footer={false}
             onCancel={handleCancel}
             title={t("orderModal:title")}
