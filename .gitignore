@@ -26,8 +26,8 @@ yarn-error.log*
 dist
 
 config.yaml
-config.nest.yaml
 config.seed.yaml
+config.websocket.yaml
 migrate-mongo-config.*
 
 .idea/**/*
