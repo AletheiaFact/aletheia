@@ -161,6 +161,7 @@ export class PersonalityController {
                 language: req.language,
                 order: "random",
                 pageSize: 6,
+                fetchOnly: true,
                 filter: personality._id,
             }
         );
