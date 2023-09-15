@@ -12,7 +12,6 @@ const CTAButton = ({ type }) => {
             type={type}
             href={"/sign-up"}
             className="CTA-registration-button"
-            rounded="true"
             style={{
                 alignItems: "center",
                 justifyContent: "center",

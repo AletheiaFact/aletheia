@@ -178,6 +178,14 @@ export class UsersController {
         return this.usersService.findAll(getUsers);
     }
 
+    @IsPublic()
+    @ApiTags("user")
+    @Get("api/user/ory/:id")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getByOryId(@Param("id") oryId) {
+        return this.usersService.getByOryId(oryId);
+    }
+
     @ApiTags("user")
     @Get("api/user/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
