@@ -32,12 +32,12 @@ export class NotificationController {
         );
     }
 
-    @Post("topics")
+    @Post("api/topic-subscription")
     createTopic(@Body() body: { key: string; name: string }) {
         return this.notificationService.createTopic(body.key, body.name);
     }
 
-    @Post("topics/:key/subscribers")
+    @Post("api/topic-subscription/:key/subscribers")
     addSubscriberToTopic(
         @Param("key") key: string,
         @Body("subscriberId") subscriberId: string
@@ -45,7 +45,7 @@ export class NotificationController {
         return this.notificationService.addTopicSubscriber(key, subscriberId);
     }
 
-    @Post("topics/:key/send")
+    @Post("api/topic-subscription/:key/send")
     sendTopicNotification(
         @Param("key") key: string,
         @Body("description") description: string
