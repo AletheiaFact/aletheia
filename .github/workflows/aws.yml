@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - stage
+      - create-websocket-service-runner
   # For future
   # release:
   #   types: [created]
@@ -45,7 +46,8 @@ jobs:
       - name: Check Environment
         if: endsWith(github.ref, '/master')
         run: |
-          sed -i '11{s/test.//}' deployment.yml
+          sed -i '11{s/test.//}' deployment/app.yml
+          sed -i '11{s/test.//}' deployment/websocket.yml
           sed -i '11{s/test.//}' config.seed.example.yaml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
           echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
@@ -140,7 +142,7 @@ jobs:
         if: endsWith(github.ref, '/master')
         run: |
 
-          sed -i '11{s/test./www./}' deployment.yml
+          sed -i '11{s/test./www./}' deployment/app.yml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
           echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
@@ -156,15 +158,15 @@ jobs:
 
       - name: Set environment
         run: |
-          sed -i "s/ENVIRONMENT/${{ env.ENVIRONMENT }}/g" deployment.yml
-          sed -i "s/UMAMI_SITE_ID_STUB/${{ env.UMAMI_SITE_ID }}/g" deployment.yml
-          sed -i "s/RECAPTCHA_SITEKEY_STUB/${{ env.RECAPTCHA_SITEKEY }}/g" deployment.yml
-          sed -i "s%ORY_SDK_URL_STUB%${{ env.ORY_SDK_URL }}%g" deployment.yml
-          sed -i "s/ORY_ACCESS_TOKEN_STUB/${{ env.ORY_ACCESS_TOKEN }}/g" deployment.yml
+          sed -i "s/ENVIRONMENT/${{ env.ENVIRONMENT }}/g" deployment/app.yml
+          sed -i "s/UMAMI_SITE_ID_STUB/${{ env.UMAMI_SITE_ID }}/g" deployment/app.yml
+          sed -i "s/RECAPTCHA_SITEKEY_STUB/${{ env.RECAPTCHA_SITEKEY }}/g" deployment/app.yml
+          sed -i "s%ORY_SDK_URL_STUB%${{ env.ORY_SDK_URL }}%g" deployment/app.yml
+          sed -i "s/ORY_ACCESS_TOKEN_STUB/${{ env.ORY_ACCESS_TOKEN }}/g" deployment/app.yml
 
-      - name: Set deployment.yml
+      - name: Set deployment/app.yml
         run: |
-          sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
+          sed -i "s/TAG/$GITHUB_SHA/" deployment/app.yml
 
       - name: Applying Kubernetes Deployment
         uses: giovannirossini/aws-eks@v1
@@ -173,7 +175,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
           cluster-name: 'production'
-          command: kubectl apply -f deployment.yml
+          command: kubectl apply -f ./deployment/
 
       - name: Validation
         uses: giovannirossini/aws-eks@v1

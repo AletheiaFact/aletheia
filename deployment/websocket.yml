@@ -67,17 +67,6 @@ spec:
             initialDelaySeconds: 50
             timeoutSeconds: 10
             failureThreshold: 10
-          env:
-            - name: MONGODB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  key: mongodb_host
-                  name: aletheia-config
-            - name: MONGODB_NAME
-              valueFrom:
-                configMapKeyRef:
-                  key: mongodb_name
-                  name: aletheia-config
           resources:
             limits:
               cpu: 200m
