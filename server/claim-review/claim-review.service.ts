@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, Scope } from "@nestjs/common";
+import { Inject, Injectable, Scope } from "@nestjs/common";
 import { LeanDocument, Model, Types } from "mongoose";
 import {
     ClaimReview,
@@ -197,7 +197,9 @@ export class ClaimReviewService {
             //TODO: verify if already start a review and isn't published
         } else {
             // Cast ObjectId
-            claimReview.personality = Types.ObjectId(claimReview.personality);
+            claimReview.personality = claimReview.personality
+                ? Types.ObjectId(claimReview.personality)
+                : null;
             claimReview.claim = Types.ObjectId(claimReview.claim);
             claimReview.usersId = claimReview.report.usersId.map((userId) => {
                 return Types.ObjectId(userId);
