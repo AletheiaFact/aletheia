@@ -9,7 +9,7 @@ const AletheiaHeader = () => {
             style={{
                 position: "sticky",
                 top: 0,
-                zIndex: 1,
+                zIndex: 1000,
                 width: "100%",
                 backgroundColor: colors.bluePrimary,
                 height: "56px",

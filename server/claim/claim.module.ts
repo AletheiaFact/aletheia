@@ -19,6 +19,7 @@ import { ImageModule } from "./types/image/image.module";
 import { DebateModule } from "./types/debate/debate.module";
 import { EditorModule } from "../editor/editor.module";
 import { AbilityModule } from "../auth/ability/ability.module";
+import { UtilService } from "../util";
 
 const ClaimModel = MongooseModule.forFeature([
     {
@@ -48,7 +49,7 @@ const ClaimModel = MongooseModule.forFeature([
         AbilityModule,
     ],
     exports: [ClaimService],
-    providers: [ClaimService],
+    providers: [UtilService, ClaimService],
     controllers: [ClaimController],
 })
 export class ClaimModule {}

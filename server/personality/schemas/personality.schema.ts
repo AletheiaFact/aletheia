@@ -17,6 +17,9 @@ export class Personality {
 
     @Prop({ unique: true, sparse: true })
     wikidata: string;
+
+    @Prop({ type: Boolean, default: false, required: true })
+    isHidden: boolean;
 }
 
 const PersonalitySchemaRaw = SchemaFactory.createForClass(Personality);

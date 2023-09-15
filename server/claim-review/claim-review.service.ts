@@ -29,6 +29,32 @@ export class ClaimReviewService {
         private imageService: ImageService
     ) {}
 
+    async listAll(page, pageSize, order, query, latest = false) {
+        const claimReviews = await this.ClaimReviewModel.find(query)
+            .sort(latest ? { date: -1 } : { _id: order })
+            .populate({
+                path: "personality",
+                model: "Personality",
+                select: "name description slug avatar",
+            })
+            .populate({
+                path: "claim",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    select: "date contentModel claimId",
+                },
+                select: "slug",
+            })
+            .skip(page * pageSize)
+            .limit(parseInt(pageSize))
+            .lean();
+
+        return Promise.all(
+            claimReviews.map(async (review) => this.postProcess(review))
+        );
+    }
+
     agreggateClassification(match: any) {
         return this.ClaimReviewModel.aggregate([
             { $match: match },
@@ -40,13 +66,61 @@ export class ClaimReviewService {
                     as: "report",
                 },
             },
+            {
+                $lookup: {
+                    from: "claims",
+                    localField: "claim",
+                    foreignField: "_id",
+                    as: "claim",
+                },
+            },
+            {
+                $match: {
+                    "claim.isHidden": false,
+                },
+            },
             { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]);
     }
 
-    count(query: any = {}) {
-        return this.ClaimReviewModel.countDocuments().where(query);
+    async count(query: any = {}) {
+        const claimReviews = await this.ClaimReviewModel.aggregate([
+            {
+                $match: query,
+            },
+            {
+                $lookup: {
+                    from: "personalities",
+                    localField: "personality",
+                    foreignField: "_id",
+                    as: "personality",
+                },
+            },
+            {
+                $lookup: {
+                    from: "claims",
+                    localField: "claim",
+                    foreignField: "_id",
+                    as: "claim",
+                },
+            },
+            { $unwind: "$claim" },
+            { $match: { "claim.isHidden": false } },
+            {
+                $match: {
+                    $or: [
+                        { personality: { $exists: false } },
+                        { "personality.isHidden": { $ne: true } },
+                    ],
+                },
+            },
+            {
+                $count: "totalCount",
+            },
+        ]);
+
+        return claimReviews.length > 0 ? claimReviews[0].totalCount : 0;
     }
 
     async getReviewStatsByClaimId(claimId) {
@@ -251,10 +325,10 @@ export class ClaimReviewService {
         );
     }
 
-    async hideOrUnhideReview(data_hash, hide, description) {
-        const review = await this.getReviewByDataHash(data_hash);
+    async hideOrUnhideReview(_id, hide, description) {
+        const review = await this.getById(_id);
         const newReview = {
-            ...review,
+            ...review.toObject(),
             ...{
                 report: review?.report?._id,
                 isHidden: hide,
@@ -280,20 +354,36 @@ export class ClaimReviewService {
         return this.ClaimReviewModel.updateOne({ _id: review._id }, newReview);
     }
 
-    async getDescriptionForHide(review) {
-        if (review?.isHidden) {
-            const history = await this.historyService.getByTargetIdModelAndType(
-                review._id,
-                TargetModel.ClaimReview,
-                0,
-                1,
-                "desc",
-                HistoryType.Hide
-            );
+    private async postProcess(review) {
+        const { personality, data_hash } = review;
 
-            return history[0]?.details?.after?.description;
+        const claim = {
+            contentModel: review.claim.latestRevision.contentModel,
+            date: review.claim.latestRevision.date,
+        };
+
+        const isContentImage = claim.contentModel === ContentModelEnum.Image;
+        const isContentDebate = claim.contentModel === ContentModelEnum.Debate;
+
+        const content = isContentImage
+            ? await this.imageService.getByDataHash(data_hash)
+            : await this.sentenceService.getByDataHash(data_hash);
+
+        let reviewHref = personality
+            ? `/personality/${personality?.slug}/claim/${review.claim.slug}`
+            : `/claim/${review.claim.latestRevision.claimId}`;
+        reviewHref += isContentImage
+            ? `/image/${data_hash}`
+            : `/sentence/${data_hash}`;
+        if (isContentDebate) {
+            reviewHref = `/claim/${review.claim.latestRevision.claimId}/debate`;
         }
 
-        return "";
+        return {
+            content,
+            personality,
+            reviewHref,
+            claim,
+        };
     }
 }

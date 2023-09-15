@@ -9,6 +9,7 @@ import {
     IsString,
     Min,
 } from "class-validator";
+import { Transform } from "class-transformer";
 export class GetPersonalities {
     @IsNumber()
     @IsInt()
@@ -46,4 +47,11 @@ export class GetPersonalities {
     headers?: {
         [key: string]: string;
     };
+
+    @IsOptional()
+    @ApiProperty()
+    @Transform(({ value }) => {
+        return [true, "enabled", "true", 1, "1"].indexOf(value) > -1;
+    })
+    isHidden: boolean | string;
 }

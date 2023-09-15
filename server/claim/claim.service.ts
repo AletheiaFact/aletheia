@@ -13,10 +13,11 @@ import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ContentModelEnum } from "../types/enums";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
+import { UtilService } from "../util";
 
 type ClaimMatchParameters = (
-    | { _id: string }
-    | { personalities: string; slug: string }
+    | { _id: string; isHidden?: boolean }
+    | { personalities: string; slug: string; isHidden?: boolean }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -31,13 +32,17 @@ export class ClaimService {
         private historyService: HistoryService,
         private stateEventService: StateEventService,
         private claimRevisionService: ClaimRevisionService,
-        private claimReviewTaskService: ClaimReviewTaskService
+        private claimReviewTaskService: ClaimReviewTaskService,
+        private util: UtilService
     ) {}
 
     async listAll(page, pageSize, order, query) {
-        query.personalities = query.personalities
-            ? Types.ObjectId(query.personalities)
-            : [];
+        if (!query.isHidden) {
+            // Modify query.personalities only if isHidden is false
+            query.personalities = query.personalities
+                ? Types.ObjectId(query.personalities)
+                : [];
+        }
 
         const claims = await this.ClaimModel.find(query)
             .populate("latestRevision")
@@ -56,8 +61,49 @@ export class ClaimService {
         );
     }
 
-    count(query: any = {}) {
-        return this.ClaimModel.countDocuments().where(query);
+    async count(query: any = {}) {
+        const claims = await this.ClaimModel.aggregate([
+            {
+                $match: query,
+            },
+            {
+                $lookup: {
+                    from: "personalities",
+                    localField: "personalities",
+                    foreignField: "_id",
+                    as: "personalities",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$personalities",
+                    preserveNullAndEmptyArrays: true,
+                    includeArrayIndex: "arrayIndex",
+                },
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    doc: { $first: "$$ROOT" },
+                },
+            },
+            {
+                $replaceRoot: { newRoot: "$doc" },
+            },
+            {
+                $match: {
+                    $or: [
+                        { "personalities.isHidden": { $ne: true } },
+                        { personalities: { $exists: false } },
+                    ],
+                },
+            },
+            {
+                $count: "totalCount",
+            },
+        ]);
+
+        return claims.length > 0 ? claims[0].totalCount : 0;
     }
 
     /**
@@ -112,7 +158,11 @@ export class ClaimService {
      * @returns Return a new claim object.
      */
     async update(claimId, claimRevisionUpdate) {
-        const claim = await this._getClaim({ _id: claimId }, undefined, false);
+        const claim = await this._getClaim(
+            { _id: claimId, isHidden: false },
+            undefined,
+            false
+        );
         const previousRevision = claim.toObject().latestRevision;
         delete previousRevision._id;
         const newClaimRevision = await this.claimRevisionService.create(
@@ -164,8 +214,46 @@ export class ClaimService {
         return this.ClaimModel.softDelete({ _id: claimId });
     }
 
+    async hideOrUnhideClaim(claimId, isHidden, description) {
+        try {
+            const claim = await this.ClaimModel.findById(claimId);
+
+            if (!claim) {
+                throw new Error("Claim not found");
+            }
+
+            const newClaim = {
+                ...claim.toObject(),
+                isHidden,
+            };
+
+            const before = { isHidden: !isHidden };
+            const after = isHidden ? { isHidden, description } : { isHidden };
+
+            const history = this.historyService.getHistoryParams(
+                newClaim._id,
+                TargetModel.Claim,
+                this.req?.user,
+                isHidden ? HistoryType.Hide : HistoryType.Unhide,
+                after,
+                before
+            );
+            this.historyService.createHistory(history);
+
+            return await this.ClaimModel.updateOne(
+                { _id: claim._id },
+                newClaim
+            );
+        } catch (e) {
+            console.error(e);
+            throw new NotFoundException();
+        }
+    }
+
     async getById(claimId) {
-        return this._getClaim({ _id: claimId });
+        return this._getClaim(
+            this.util.getParamsBasedOnUserRole({ _id: claimId }, this.req)
+        );
     }
 
     async getByPersonalityIdAndClaimSlug(
@@ -174,12 +262,14 @@ export class ClaimService {
         revisionId = undefined,
         population = true
     ) {
-        return this._getClaim(
-            { personalities: personalityId, slug: claimSlug },
-            revisionId,
-            true,
-            population
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            {
+                personalities: personalityId,
+                slug: claimSlug,
+            },
+            this.req
         );
+        return this._getClaim(queryOptions, revisionId, true, population);
     }
 
     private async _getClaim(
@@ -188,58 +278,67 @@ export class ClaimService {
         postprocess = true,
         population = true
     ) {
-        let claim;
-        if (revisionId) {
-            const rawClaim = await this.ClaimModel.findOne(match).select({
-                latestRevision: 0,
-            });
-            // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            const revision = await this.claimRevisionService.getRevision({
-                _id: revisionId,
-                claimId: rawClaim._id,
-            });
+        try {
+            let claim;
+            if (revisionId) {
+                const rawClaim = await this.ClaimModel.findOne(match).select({
+                    latestRevision: 0,
+                });
 
-            if (!revision || !rawClaim) {
-                throw new NotFoundException();
-            }
+                const revision = await this.claimRevisionService.getRevision({
+                    _id: revisionId,
+                    claimId: rawClaim._id,
+                });
 
-            claim = {
-                ...rawClaim,
-                revision,
-            };
-        } else {
-            if (population) {
-                claim = await this.ClaimModel.findOne(match)
-                    .populate("personalities")
-                    .populate("sources", "_id link")
-                    .populate("latestRevision")
-                    .lean();
-            } else {
-                const foundClaim = await this.ClaimModel.findOne(
-                    match,
-                    "_id personalities latestRevision"
-                )
-                    .populate("personalities", "_id name")
-                    .populate("sources", "_id link")
-                    .populate({
-                        path: "latestRevision",
-                        select: { title: 1, contentModel: 1, date: 1, slug: 1 },
-                    })
-                    .lean();
+                if (!revision || !rawClaim) {
+                    throw new NotFoundException();
+                }
 
                 claim = {
-                    ...foundClaim.latestRevision,
-                    ...foundClaim,
-                    latestRevision: undefined,
+                    ...rawClaim,
+                    revision,
                 };
+            } else {
+                if (population) {
+                    claim = await this.ClaimModel.findOne(match)
+                        .populate("personalities")
+                        .populate("sources", "_id link")
+                        .populate("latestRevision")
+                        .lean();
+                } else {
+                    const foundClaim = await this.ClaimModel.findOne(
+                        match,
+                        "_id personalities latestRevision isHidden"
+                    )
+                        .populate("personalities", "_id name")
+                        .populate("sources", "_id link")
+                        .populate({
+                            path: "latestRevision",
+                            select: {
+                                title: 1,
+                                contentModel: 1,
+                                date: 1,
+                                slug: 1,
+                            },
+                        })
+                        .lean();
+
+                    claim = {
+                        ...foundClaim.latestRevision,
+                        ...foundClaim,
+                        latestRevision: undefined,
+                    };
+                }
             }
-        }
-        if (!claim) {
+            if (!claim) {
+                throw new NotFoundException();
+            }
+            return postprocess === true && population === true
+                ? this.postProcess(claim)
+                : claim;
+        } catch (e) {
             throw new NotFoundException();
         }
-        return postprocess === true && population === true
-            ? this.postProcess(claim)
-            : claim;
     }
 
     /**
@@ -325,43 +424,59 @@ export class ClaimService {
     }
 
     private transformContentObject(claimContent, reviews, claimReviewTasks) {
-        if (!claimContent || reviews.length <= 0) {
+        if (
+            !claimContent ||
+            (reviews.length <= 0 && claimReviewTasks.length <= 0)
+        ) {
             return claimContent;
         }
+
+        const processReview = (sentence, classification) => ({
+            ...sentence,
+            props: {
+                ...sentence.props,
+                classification,
+            },
+        });
+
         if (claimContent.type === ContentModelEnum.Image) {
-            const claimReview = reviews.find((review) => {
-                return review._id.data_hash === claimContent.data_hash;
-            });
+            const claimReview = reviews.find(
+                (review) => review._id.data_hash === claimContent.data_hash
+            );
+
             if (claimReview) {
-                claimContent.props = Object.assign(claimContent.props, {
+                claimContent.props = {
+                    ...claimContent.props,
                     classification: claimReview._id.classification[0],
-                });
+                };
             }
         } else {
             claimContent.forEach((paragraph, paragraphIndex) => {
-                paragraph.content.forEach((sentence, sentenceIndex) => {
-                    const claimReview = reviews.find((review) => {
-                        return review._id.data_hash === sentence.data_hash;
-                    });
-                    const claimReviewTask = claimReviewTasks.find((task) => {
-                        return task.data_hash === sentence.data_hash;
-                    });
+                claimContent[paragraphIndex].content = paragraph.content.map(
+                    (sentence) => {
+                        const claimReview = reviews.find(
+                            (review) =>
+                                review?._id.data_hash === sentence.data_hash
+                        );
 
-                    if (claimReview) {
-                        claimContent[paragraphIndex].content[
-                            sentenceIndex
-                        ].props = Object.assign(sentence.props, {
-                            classification: claimReview._id.classification[0],
-                        });
+                        if (claimReview) {
+                            return processReview(
+                                sentence,
+                                claimReview._id.classification[0]
+                            );
+                        }
+
+                        const claimReviewTask = claimReviewTasks.find(
+                            (task) => task?.data_hash === sentence.data_hash
+                        );
+
+                        if (claimReviewTask) {
+                            return processReview(sentence, "in-progress");
+                        }
+
+                        return sentence;
                     }
-                    if (claimReviewTask) {
-                        claimContent[paragraphIndex].content[
-                            sentenceIndex
-                        ].props = Object.assign(sentence.props, {
-                            classification: "in-progress",
-                        });
-                    }
-                });
+                );
             });
         }
 

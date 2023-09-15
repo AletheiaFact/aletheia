@@ -2,7 +2,7 @@ import { InfoCircleOutlined, SecurityScanOutlined } from "@ant-design/icons";
 import { Popover } from "antd";
 import React from "react";
 import colors from "../../styles/colors";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 const SentencePopover = () => {
     const { t } = useTranslation();
