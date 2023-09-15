@@ -252,7 +252,7 @@ export class ClaimService {
 
     async getById(claimId) {
         return this._getClaim(
-            this.util.getParamsBasedOnUserRole({ _id: claimId })
+            this.util.getParamsBasedOnUserRole({ _id: claimId }, this.req)
         );
     }
 
@@ -262,10 +262,13 @@ export class ClaimService {
         revisionId = undefined,
         population = true
     ) {
-        const queryOptions = this.util.getParamsBasedOnUserRole({
-            personalities: personalityId,
-            slug: claimSlug,
-        });
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            {
+                personalities: personalityId,
+                slug: claimSlug,
+            },
+            this.req
+        );
         return this._getClaim(queryOptions, revisionId, true, population);
     }
 

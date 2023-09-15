@@ -159,9 +159,12 @@ export class PersonalityService {
     }
 
     async getById(personalityId, language = "en") {
-        const queryOptions = this.util.getParamsBasedOnUserRole({
-            _id: personalityId,
-        });
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            {
+                _id: personalityId,
+            },
+            this.req
+        );
 
         const personality = await this.PersonalityModel.findOne(
             queryOptions
@@ -174,7 +177,10 @@ export class PersonalityService {
     }
 
     async getPersonalityBySlug(query, language = "pt") {
-        const queryOptions = this.util.getParamsBasedOnUserRole(query);
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            query,
+            this.req
+        );
 
         try {
             const personality = await this.PersonalityModel.findOne(
@@ -187,7 +193,10 @@ export class PersonalityService {
     }
 
     async getClaimsByPersonalitySlug(query, language = "pt") {
-        const queryOptions = this.util.getParamsBasedOnUserRole(query);
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            query,
+            this.req
+        );
 
         try {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results

@@ -4,9 +4,8 @@ import { randomBytes } from "crypto";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "./types";
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class UtilService {
-    constructor(@Inject(REQUEST) private req: BaseRequest) {}
     formatStats(reviews) {
         const total = reviews.reduce((agg, review) => {
             agg += review.count;
@@ -56,8 +55,8 @@ export class UtilService {
         return buf.toString("hex");
     }
 
-    getParamsBasedOnUserRole(params) {
-        const user = this.req.user;
+    getParamsBasedOnUserRole(params, req) {
+        const user = req.user;
         const isUserAdmin = user?.role === Roles.Admin;
         return isUserAdmin ? params : { ...params, isHidden: false };
     }
