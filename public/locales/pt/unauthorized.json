@@ -1,5 +1,6 @@
 {
-    "firstPartMessage": "Você não tem permissão de acesso a página ",
+    "firstPartMessageURL": "Você não tem permissão de acesso a página ",
+    "firstPartMessage": "Você não tem permissão de acesso a página",
     "secondPartMessage": ", pois você é um usuário com o papel ",
     "inactiveAccountTitle": "Sua conta foi desativada.",
     "inactiveAccountBody": "Entre em contato pelo nosso e-mail - contato@aletheiafact.org"

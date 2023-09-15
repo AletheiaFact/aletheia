@@ -95,6 +95,7 @@ export class UsersController {
                 role: 1,
                 badges: 1,
                 state: 1,
+                totp: 1,
             },
         });
         await this.viewService
@@ -175,6 +176,14 @@ export class UsersController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getAll(@Query() getUsers) {
         return this.usersService.findAll(getUsers);
+    }
+
+    @IsPublic()
+    @ApiTags("user")
+    @Get("api/user/ory/:id")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getByOryId(@Param("id") oryId) {
+        return this.usersService.getByOryId(oryId);
     }
 
     @ApiTags("user")

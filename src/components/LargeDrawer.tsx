@@ -5,14 +5,14 @@ import colors from "../styles/colors";
 
 const LargeDrawer = ({
     children,
-    visible,
+    open,
     onClose,
     backgroundColor = colors.lightGray,
 }) => {
     const { vw } = useAppSelector((state) => state);
     return (
         <Drawer
-            visible={visible}
+            open={open}
             onClose={onClose}
             width={vw?.sm ? "100%" : "60%"}
             height={vw?.sm ? "85%" : "100%"}
