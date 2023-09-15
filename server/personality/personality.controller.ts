@@ -160,7 +160,7 @@ export class PersonalityController {
             {
                 language: req.language,
                 order: "random",
-                pageSize: 6,
+                pageSize: 7,
                 fetchOnly: true,
             }
         );
@@ -170,6 +170,11 @@ export class PersonalityController {
                 personality,
                 TargetModel.Personality
             );
+        const personalityToRemove = personality.slug;
+
+        const filteredPersonalities = personalities.filter(
+            (item) => item.slug !== personalityToRemove
+        );
 
         await this.viewService.getNextServer().render(
             req,
@@ -177,9 +182,9 @@ export class PersonalityController {
             "/personality-page",
             Object.assign(parsedUrl.query, {
                 personality,
-                personalities,
                 hideDescriptions,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                personalities: filteredPersonalities,
             })
         );
     }
