@@ -18,8 +18,12 @@ export async function getServerSideProps({ locale, locales, req, query }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            originalUrl: JSON.parse(JSON.stringify(query?.originalUrl)),
-            status: JSON.parse(JSON.stringify(query?.status)),
+            originalUrl: query?.originalUrl
+                ? JSON.parse(JSON.stringify(query?.originalUrl))
+                : null,
+            status: query?.status
+                ? JSON.parse(JSON.stringify(query?.status))
+                : null,
         },
     };
 }

@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Configuration, V0alpha2Api } from "@ory/client";
 import { Reflector } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
+import { Roles } from "./ability/ability.factory";
 
 @Injectable()
 export class SessionGuard implements CanActivate {
@@ -42,33 +43,49 @@ export class SessionGuard implements CanActivate {
                     role: session?.identity?.traits?.role,
                     status: session?.identity.state,
                 };
-                return true;
+                const overridePublicRoutes =
+                    session?.identity?.traits?.role === Roles.Regular &&
+                    this.configService.get<string>("override_public_routes");
+
+                if (overridePublicRoutes) {
+                    return this.checkAndRedirect(
+                        request,
+                        response,
+                        isPublic,
+                        "/unauthorized"
+                    );
+                } else {
+                    return true;
+                }
             }
 
-            return this.next(request, response, isPublic);
+            return this.checkAndRedirect(request, response, isPublic, "/login");
         } catch (e) {
-            // TODO: logging
-            return this.next(request, response, isPublic);
+            return this.checkAndRedirect(request, response, isPublic, "/login");
         }
     }
 
-    next(request, response, isPublic) {
+    private checkAndRedirect(request, response, isPublic, redirectPath) {
         const isAllowedPublicUrl = [
             "/login",
+            "/unauthorized",
             "/_next",
             "/api/.ory",
             "/api/health",
         ].some((route) => request.url.startsWith(route));
+
         const overridePublicRoutes =
             !isAllowedPublicUrl &&
             this.configService.get<string>("override_public_routes");
-        if (isPublic && !overridePublicRoutes) {
+
+        if (
+            (isPublic && !overridePublicRoutes) ||
+            request.url.startsWith("/api")
+        ) {
             return true;
-        }
-        if (request.url.startsWith("/api")) {
-            return false;
         } else {
-            response.redirect("/login");
+            response.redirect(redirectPath);
+            return false;
         }
     }
 }
