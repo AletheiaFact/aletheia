@@ -38,20 +38,20 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aletheia
+  name: aletheia-ws
   namespace: ENVIRONMENT
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: aletheia
+      app: aletheia-ws
   template:
     metadata:
       labels:
-        app: aletheia
+        app: aletheia-ws
     spec:
       containers:
-        - name: aletheia
+        - name: aletheia-ws
           image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:TAG
           imagePullPolicy: Always
           readinessProbe:
