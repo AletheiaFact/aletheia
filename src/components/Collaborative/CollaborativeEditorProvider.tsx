@@ -1,6 +1,7 @@
 import { createContext, useMemo, useState } from "react";
 
 import { createWebsocketConnection } from "./utils/createWebsocketConnection";
+import { useAppSelector } from "../../store/store";
 
 interface ContextType {
     websocketProvider: any;
@@ -22,13 +23,19 @@ interface CollaborativeEditorProviderProps {
 export const CollaborativeEditorProvider = (
     props: CollaborativeEditorProviderProps
 ) => {
+    const { enableCollaborativeEdit } = useAppSelector((state) => ({
+        enableCollaborativeEdit: state?.enableCollaborativeEdit,
+    }));
+
     const [editorContent, setEditorContent] = useState("");
     const [editorError, setEditorError] = useState(null);
 
-    const websocketProvider = useMemo(
-        () => createWebsocketConnection(props.data_hash),
-        [props.data_hash]
-    );
+    const websocketProvider = useMemo(() => {
+        if (enableCollaborativeEdit) {
+            return createWebsocketConnection(props.data_hash);
+        }
+        return null;
+    }, [enableCollaborativeEdit, props.data_hash]);
 
     return (
         <CollaborativeEditorContext.Provider
