@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-aletheia-websocket
+  name: ingress-aletheia-ws
   namespace: ENVIRONMENT
   annotations:
     kubernetes.io/ingress.class: traefik
@@ -15,22 +15,22 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: aletheia-websocket
+              name: aletheia-ws
               port:
-                name: aletheia-websocket
+                name: aletheia-ws
 ---
 ### SERVICE  FRONTEND ###
 apiVersion: v1
 kind: Service
 metadata:
-  name: aletheia-websocket
+  name: aletheia-ws
   namespace: ENVIRONMENT
 spec:
   type: NodePort
   selector:
-    app: aletheia-websocket
+    app: aletheia-ws
   ports:
-    - name: aletheia-websocket
+    - name: aletheia-ws
       targetPort: 5051
       port: 80
 ---
