@@ -53,7 +53,7 @@ spec:
       containers:
         - name: aletheia-ws
           image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:TAG
-          args: ["-c config.websocket.yaml"]
+          args: ["-c", "config.websocket.yaml"]
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
