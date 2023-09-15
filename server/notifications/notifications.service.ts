@@ -9,6 +9,17 @@ export class NotificationService {
         private readonly novu: Novu
     ) {}
 
+    createSubscription({ email, name }) {
+        this.novu.trigger("email-sender", {
+            to: {
+                subscriberId: email,
+                email: email,
+                firstName: name,
+            },
+            payload: {},
+        });
+    }
+
     async sendEmail(subscriberId: string, email: string, description: string) {
         const result = await this.novu.trigger("email-sender", {
             to: {
