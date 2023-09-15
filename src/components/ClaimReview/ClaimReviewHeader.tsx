@@ -177,14 +177,6 @@ const ClaimReviewHeader = ({
                             />
                         </div>
                     </Col>
-                    {isPublishedOrCanSeeHidden && (
-                        <Col
-                            lg={{ order: 2, span: 8 }}
-                            md={{ order: 1, span: 24 }}
-                        >
-                            <Banner />
-                        </Col>
-                    )}
                     {alert.show && (
                         <Col
                             style={{
