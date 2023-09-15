@@ -23,7 +23,7 @@ export interface ClaimReviewPageProps {
     claimReview: any;
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
-    webSocketUrl: string;
+    websocketUrl: string;
 }
 
 const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
@@ -40,7 +40,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         hideDescriptions,
     } = props;
 
-    dispatch(actions.setWebsocketUrl(props.webSocketUrl));
+    dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
