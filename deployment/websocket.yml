@@ -8,7 +8,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: test.ws.aletheiafact.org
+    - host: testws.aletheiafact.org
       http:
         paths:
         - path: /
