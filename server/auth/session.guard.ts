@@ -67,8 +67,7 @@ export class SessionGuard implements CanActivate {
 
     private checkAndRedirect(request, response, isPublic, redirectPath) {
         const isAllowedPublicUrl = [
-            "/login",
-            "/unauthorized",
+            redirectPath,
             "/_next",
             "/api/.ory",
             "/api/health",
