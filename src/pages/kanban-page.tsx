@@ -17,7 +17,6 @@ const KanbanPage: NextPage<{
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(props.sitekey));
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
-    console.log("websocketUrl", props.websocketUrl);
     dispatch({
         type: ActionTypes.SET_COLLABORATIVE_EDIT,
         enableCollaborativeEdit: props.enableCollaborativeEditor,
@@ -38,7 +37,6 @@ const KanbanPage: NextPage<{
 
 export async function getServerSideProps({ locale, locales, req, query }) {
     locale = GetLocale(req, locale, locales);
-    console.log(query);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
