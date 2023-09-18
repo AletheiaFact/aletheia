@@ -2,5 +2,6 @@
     "affixButtonTitle": "Click here to add a claim or a personality",
     "affixButtonCreateClaim": "Click here to add a claim",
     "affixButtonCreatePersonality": "Click here to add a personality",
-    "affixCallToActionButton": "Click here"
+    "affixCallToActionButton": "Click here",
+    "AffixCloseTooltip": "Close"
 }

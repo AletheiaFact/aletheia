@@ -18,6 +18,7 @@ import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
 import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Sidebar";
+import AffixCTAButton from "./AffixButton/AffixCTAButton";
 
 const MainApp = ({ children }) => {
     const { enableOverlay } = useAppSelector((state) => {
@@ -44,6 +45,7 @@ const MainApp = ({ children }) => {
             <Sidebar />
             <Layout style={{ background: colors.white }}>
                 <Header />
+                <AffixCTAButton />
                 <ContentWrapper>{children}</ContentWrapper>
                 <Footer />
                 {enableOverlay && <OverlaySearchResults />}

@@ -1,0 +1,105 @@
+import React, { useEffect, useState } from "react";
+
+import { CloseOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import Fab from "../AffixButton/Fab";
+import { AletheiaModal } from "../Modal/AletheiaModal.style";
+import Banner from "../SentenceReport/Banner";
+import { useTranslation } from "next-i18next";
+import Cookies from "js-cookie";
+import CtaAnimation from "../CtaAnimation";
+import { Tooltip } from "antd";
+import colors from "../../styles/colors";
+import { t } from "i18next";
+import { trackUmamiEvent } from "../../lib/umami";
+
+const CloseIcon = () => {
+    return (
+        <Tooltip
+            title={t("affix:AffixCloseTooltip")}
+            placement="topRight"
+            defaultOpen
+            color={colors.white}
+            overlayInnerStyle={{ color: colors.blackPrimary }}
+        >
+            <CloseOutlined
+                style={{
+                    marginTop: 20,
+                    paddingBottom: 20,
+                    height: 20,
+                }}
+            />
+        </Tooltip>
+    );
+};
+
+const AffixCTAButton = () => {
+    const { t } = useTranslation();
+
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [CTABannerShow, setCTABannerShow] = useState<boolean>(true);
+
+    useEffect(() => {
+        const CTABannerShow = Cookies.get("cta_banner_show") || true;
+        if (CTABannerShow === true || CTABannerShow === "true") {
+            return setCTABannerShow(true);
+        }
+        setCTABannerShow(false);
+    }, []);
+
+    const handleCTAClick = () => {
+        trackUmamiEvent("affix-cta-button", "registration");
+        setModalVisible(true);
+        Cookies.set("cta_banner_show", "false");
+        setCTABannerShow(false);
+    };
+
+    return (
+        <>
+            {CTABannerShow && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: "15%",
+                        right: "0%",
+                        display: "flex",
+                        flexDirection: "column-reverse",
+                        alignItems: "center",
+                        gap: "1rem",
+                        zIndex: 9999,
+                    }}
+                >
+                    <CtaAnimation pulse={!CTABannerShow}>
+                        <Fab
+                            tooltipText={t("affix:affixCallToActionButton")}
+                            size="60px"
+                            onClick={handleCTAClick}
+                            data-cy={"testFloatButton"}
+                            icon={
+                                <QuestionCircleOutlined
+                                    style={{
+                                        fontSize: "24px",
+                                    }}
+                                />
+                            }
+                        />
+                    </CtaAnimation>
+                </div>
+            )}
+
+            <AletheiaModal
+                open={modalVisible}
+                footer={null}
+                title={t("NewCTARegistration:body")}
+                onCancel={() => setModalVisible(false)}
+                maskClosable={false}
+                theme="dark"
+                width={"75%"}
+                closeIcon={<CloseIcon />}
+            >
+                <Banner />
+            </AletheiaModal>
+        </>
+    );
+};
+
+export default AffixCTAButton;
