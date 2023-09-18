@@ -6,5 +6,8 @@
     "codeOfConductItem": "Code of Conduct",
     "logout": "Log Out",
     "badgesItem": "Badges",
-    "adminItem": "Admin"
+    "adminItem": "Admin",
+    "personalityItem": "Personalities",
+    "claimItem": "Claims",
+    "kanbanItem": "Kanban"
 }

@@ -60,14 +60,14 @@ const AletheiaMenu = () => {
                 onClick={handleClick}
                 data-cy={"testPersonalitytItem"}
             >
-                Personalidade
+                {t("menu:personalityItem")}
             </Menu.Item>
             <Menu.Item
                 key="/claim"
                 onClick={handleClick}
                 data-cy={"testClaimtItem"}
             >
-                Afirmação
+                {t("menu:claimItem")}
             </Menu.Item>
 
             <Menu.Item
@@ -75,7 +75,7 @@ const AletheiaMenu = () => {
                 onClick={handleClick}
                 data-cy={"testKanbantItem"}
             >
-                Kanban
+                {t("menu:kanbanItem")}
             </Menu.Item>
             {role === Roles.Admin && (
                 <>
