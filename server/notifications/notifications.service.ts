@@ -9,15 +9,21 @@ export class NotificationService {
         private readonly novu: Novu
     ) {}
 
-    createSubscription({ email, name }) {
+    async createSubscriber({ _id = null, email, name }) {
+        const result = await this.novu.subscribers.identify(_id, {
+            email: email,
+            firstName: name,
+        });
         this.novu.trigger("email-sender", {
             to: {
-                subscriberId: email,
+                subscriberId: _id,
                 email: email,
                 firstName: name,
             },
             payload: {},
         });
+
+        return result.data;
     }
 
     async sendEmail(subscriberId: string, email: string) {
@@ -62,12 +68,29 @@ export class NotificationService {
         return result.data;
     }
 
+    async removeTopicSubscriber(key: string, subscriberId: string) {
+        const result = await this.novu.topics.removeSubscribers(key, {
+            subscribers: [subscriberId],
+        });
+
+        return result.data;
+    }
+
     async sendTopicNotification(key: string, description: string) {
         //TODO: Rename trigger name based on dashboard
         const result = await this.novu.trigger("email-quickstart", {
             to: [{ type: TriggerRecipientsTypeEnum.TOPIC, topicKey: key }],
             payload: { description },
         });
+
+        return result.data;
+    }
+
+    async verifyUserOnTopic(key: string, externalSubscriberId: string) {
+        const result = await this.novu.topics.getSubscriber(
+            key,
+            externalSubscriberId
+        );
 
         return result.data;
     }

@@ -28,7 +28,7 @@ export class UsersService {
 
     async register(user) {
         const newUser = new this.UserModel(user);
-        this.notificationService.createSubscription(newUser);
+        this.notificationService.createSubscriber(newUser);
         if (!newUser.oryId) {
             this.logger.log("No user id provided, creating a new ory identity");
             const { data: oryUser } = await this.oryService.createIdentity(
