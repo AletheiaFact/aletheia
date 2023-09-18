@@ -55,6 +55,28 @@ const AletheiaMenu = () => {
             >
                 {t("menu:codeOfConductItem")}
             </Menu.Item>
+            <Menu.Item
+                key="/personality"
+                onClick={handleClick}
+                data-cy={"testPersonalitytItem"}
+            >
+                {t("menu:personalityItem")}
+            </Menu.Item>
+            <Menu.Item
+                key="/claim"
+                onClick={handleClick}
+                data-cy={"testClaimtItem"}
+            >
+                {t("menu:claimItem")}
+            </Menu.Item>
+
+            <Menu.Item
+                key="/kanban"
+                onClick={handleClick}
+                data-cy={"testKanbantItem"}
+            >
+                {t("menu:kanbanItem")}
+            </Menu.Item>
             {role === Roles.Admin && (
                 <>
                     <Menu.Item

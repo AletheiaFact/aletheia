@@ -6,5 +6,8 @@
     "codeOfConductItem": "Código de Conduta",
     "logout": "Encerrar Sessão",
     "badgesItem": "Insígnias",
-    "adminItem": "Admin"
+    "adminItem": "Admin",
+    "personalityItem": "Personalidades",
+    "claimItem": "Afirmações",
+    "kanbanItem": "Kanban"
 }
