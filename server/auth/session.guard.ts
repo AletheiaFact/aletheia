@@ -71,6 +71,8 @@ export class SessionGuard implements CanActivate {
             "/_next",
             "/api/.ory",
             "/api/health",
+            "/sign-up",
+            "/api/user/register",
         ].some((route) => request.url.startsWith(route));
 
         const overridePublicRoutes =
