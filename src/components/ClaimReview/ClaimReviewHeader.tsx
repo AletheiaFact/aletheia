@@ -14,7 +14,6 @@ import {
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaAlert from "../AletheiaAlert";
-import Banner from "../SentenceReport/Banner";
 import SentenceReportCard from "../SentenceReport/SentenceReportCard";
 import TopicInput from "./TopicInput";
 import { Content } from "../../types/Content";
