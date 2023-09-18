@@ -73,7 +73,7 @@ const AffixCTAButton = () => {
                             tooltipText={t("affix:affixCallToActionButton")}
                             size="60px"
                             onClick={handleCTAClick}
-                            data-cy={"testFloatButton"}
+                            data-cy={"testCTAFloatButton"}
                             icon={
                                 <QuestionCircleOutlined
                                     style={{
