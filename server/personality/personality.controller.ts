@@ -166,14 +166,20 @@ export class PersonalityController {
             }
         );
 
+        hideDescriptions[TargetModel.Personality] =
+            await this.historyService.getDescriptionForHide(
+                personality,
+                TargetModel.Personality
+            );
+
         await this.viewService.getNextServer().render(
             req,
             res,
             "/personality-page",
             Object.assign(parsedUrl.query, {
                 personality,
-                hideDescriptions,
                 personalities,
+                hideDescriptions,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
             })
         );
