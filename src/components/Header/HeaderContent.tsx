@@ -1,10 +1,10 @@
 import { SearchOutlined } from "@ant-design/icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
 import { useAppSelector } from "../../store/store";
-import AletheiaButton, { ButtonType } from "../Button";
+import AletheiaButton from "../Button";
 import SearchOverlay from "../Search/SearchOverlay";
 import HeaderActionsStyle from "./HeaderActions.style";
 import Logo from "./Logo";
@@ -12,15 +12,27 @@ import SelectLanguage from "./SelectLanguage";
 import UserMenu from "./UserMenu";
 import DonateButton from "./DonateButton";
 import Menu from "./Menu";
-import {
-    NovuProvider,
-    PopoverNotificationCenter,
-    NotificationBell,
-} from "@novu/notification-center";
+import NotificationMenu from "../Notification/NotificationMenu";
+import userApi from "../../api/userApi";
+import { ory } from "../../lib/orysdk";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
     const { vw } = useAppSelector((state) => state);
+    const [hasSession, setHasSession] = useState<boolean>(null);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        ory.toSession()
+            .then(async ({ data }) => {
+                const user = await userApi.getByOryId(data.identity.id);
+                setHasSession(true);
+                setUser(user);
+            })
+            .catch(() => {
+                setHasSession(false);
+            });
+    }, [hasSession]);
 
     const handleClickSearchIcon = () => {
         dispatch(actions.openResultsOverlay());
@@ -63,20 +75,10 @@ const HeaderContent = () => {
                         />
                     </AletheiaButton>
                 )}
-                <div className="bell">
-                    <NovuProvider
-                        subscriberId={"test1@aletheiafact.org"}
-                        applicationIdentifier={"jElaPejsNYRF"}
-                    >
-                        <PopoverNotificationCenter colorScheme="dark">
-                            {({ unseenCount }) => (
-                                <NotificationBell unseenCount={unseenCount} />
-                            )}
-                        </PopoverNotificationCenter>
-                    </NovuProvider>
-                </div>
                 <DonateButton header={true} />
-                <UserMenu />
+
+                <NotificationMenu user={user} />
+                <UserMenu hasSession={hasSession} user={user} />
                 {!vw?.sm && (
                     <SelectLanguage
                         dataCy={"LanguageButton"}

@@ -11,13 +11,13 @@ export class NotificationService {
 
     async createSubscriber({ _id = null, email, name }) {
         const result = await this.novu.subscribers.identify(_id, {
-            email: email,
+            email,
             firstName: name,
         });
         this.novu.trigger("email-sender", {
             to: {
                 subscriberId: _id,
-                email: email,
+                email,
                 firstName: name,
             },
             payload: {},
@@ -29,8 +29,8 @@ export class NotificationService {
     async sendEmail(subscriberId: string, email: string) {
         const result = await this.novu.trigger("email-sender", {
             to: {
-                subscriberId: subscriberId,
-                email: email,
+                subscriberId,
+                email,
             },
             payload: {},
         });
@@ -38,14 +38,12 @@ export class NotificationService {
         return result.data;
     }
 
-    async sendNotification(subscriberId: string, description: string) {
+    async sendNotification(subscriberId: string, payload: any) {
         const result = await this.novu.trigger("email-notifications", {
             to: {
-                subscriberId: subscriberId,
+                subscriberId,
             },
-            payload: {
-                messageIdentifier: description,
-            },
+            payload,
         });
 
         return result.data;

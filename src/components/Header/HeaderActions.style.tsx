@@ -7,6 +7,7 @@ const HeaderActionsStyle = styled(Col)`
     align-items: flex-end;
     justify-content: space-evenly;
     align-items: center;
+    gap: 16px;
 
     @media ${queries.sm} {
         padding: 0 1vw;

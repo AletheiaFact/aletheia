@@ -9,6 +9,7 @@ import {
     ReviewTaskEvents as Events,
     ReviewTaskStates as States,
 } from "./enums";
+import sendReviewNotifications from "../../notifications/sendReviewNotifications";
 
 const draftSubStates = {
     initial: CompoundStates.undraft,
@@ -112,6 +113,7 @@ export const transitionHandler = (state) => {
         recaptchaString,
         setCurrentFormAndNextEvents,
         resetIsLoading,
+        currentUserId,
     } = state.event;
     const event = state.event.type;
 
@@ -148,6 +150,14 @@ export const transitionHandler = (state) => {
             })
             .finally(() => resetIsLoading());
     }
+
+    sendReviewNotifications(
+        data_hash,
+        event,
+        state.context.reviewData,
+        currentUserId,
+        t
+    );
 };
 
 export const createNewMachineService = (machine: any) => {

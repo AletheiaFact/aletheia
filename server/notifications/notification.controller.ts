@@ -23,13 +23,9 @@ export class NotificationController {
 
     @ApiTags("notifications")
     @Post("api/notification")
-    sendNotification(
-        @Body() body: { subscriberId: string; description: string }
-    ) {
-        return this.notificationService.sendNotification(
-            body.subscriberId,
-            body.description
-        );
+    sendNotification(@Body() body) {
+        const { subscriberId, payload } = body;
+        return this.notificationService.sendNotification(subscriberId, payload);
     }
 
     @Post("api/topic-subscription")

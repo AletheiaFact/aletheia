@@ -1,8 +1,7 @@
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { ory } from "../../lib/orysdk";
 import AletheiaButton from "../Button";
 import { CreateLogoutHandler } from "../Login/LogoutAction";
 import SelectLanguage from "./SelectLanguage";
@@ -11,7 +10,6 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
-import userApi from "../../api/userApi";
 import { Avatar, Box } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -47,28 +45,14 @@ const menuSlotProps = {
     },
 };
 
-const UserMenu = () => {
+const UserMenu = ({ hasSession, user }) => {
     const { vw } = useAppSelector((state) => state);
     const { t } = useTranslation();
     const router = useRouter();
 
-    const [hasSession, setHasSession] = useState<boolean>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [user, setUser] = useState(null);
     const open = Boolean(anchorEl);
-
-    useEffect(() => {
-        ory.toSession()
-            .then(async ({ data }) => {
-                const user = await userApi.getByOryId(data.identity.id);
-                setHasSession(true);
-                setUser(user);
-            })
-            .catch(() => {
-                setHasSession(false);
-            });
-    }, [hasSession]);
 
     const loginOrProfile = () => {
         setAnchorEl(null);

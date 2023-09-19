@@ -5,9 +5,9 @@ const request = axios.create({
     baseURL: `/api/notification`,
 });
 
-const sendNotification = (subscriberId, description) => {
+const sendNotification = (subscriberId, payload) => {
     return request
-        .post("/api/notification", { subscriberId, description })
+        .post("/", { subscriberId, payload })
         .then((response) => {
             return response.data;
         })

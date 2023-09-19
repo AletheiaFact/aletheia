@@ -4499,6 +4499,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@novu/headless@npm:^0.19.0":
+  version: 0.19.0
+  resolution: "@novu/headless@npm:0.19.0"
+  dependencies:
+    "@novu/client": ^0.19.0
+    "@novu/shared": ^0.19.0
+    "@tanstack/query-core": ^4.15.1
+    socket.io-client: 4.7.2
+  checksum: 5f1d5857517be52232d4e527f179d84dd2b1f795194cd56c51b15d223d379295c2825164bd4c80dd21df14cf43030e15dd8eca9911b9ed44b67b417090e5246d
+  languageName: node
+  linkType: hard
+
 "@novu/node@npm:^0.19.0":
   version: 0.19.0
   resolution: "@novu/node@npm:0.19.0"
@@ -8357,10 +8369,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:4.35.7":
-  version: 4.35.7
-  resolution: "@tanstack/query-core@npm:4.35.7"
-  checksum: b82600ee0b2cea085eb6065d36bf944f4fff72b3fa575b5aa55590498fa431f951c5557a4e7ee36ae5b5de5fd5856cb841b974ff6f78cf773199f0f8c860b6c8
+"@tanstack/query-core@npm:4.35.3, @tanstack/query-core@npm:^4.15.1":
+  version: 4.35.3
+  resolution: "@tanstack/query-core@npm:4.35.3"
+  checksum: 0184cd19a26c4f96d05bbebd7966866741d46e5be19ac99d8cd6e5bbeb6550f257e7b52b674fb2673190696e113dd601422d196bf4870b58b4d2e2edf4307e92
   languageName: node
   linkType: hard
 
@@ -10402,6 +10414,7 @@ __metadata:
     "@nestjs/throttler": ^2.0.0
     "@nestjs/websockets": ^10.2.4
     "@next/eslint-plugin-next": ^12.0.10
+    "@novu/headless": ^0.19.0
     "@novu/node": ^0.19.0
     "@novu/notification-center": ^0.19.0
     "@ory/cli": ^0.1.24

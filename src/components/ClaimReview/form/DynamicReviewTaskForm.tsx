@@ -14,7 +14,7 @@ import { Row } from "antd";
 import Text from "antd/lib/typography/Text";
 import getNextEvents from "../../../machines/reviewTask/getNextEvent";
 import getNextForm from "../../../machines/reviewTask/getNextForm";
-import { isUserLoggedIn } from "../../../atoms/currentUser";
+import { isUserLoggedIn, currentUserId } from "../../../atoms/currentUser";
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import { trackUmamiEvent } from "../../../lib/umami";
 import { useAppSelector } from "../../../store/store";
@@ -59,6 +59,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     }));
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [userId] = useAtom(currentUserId);
 
     const setCurrentFormAndNextEvents = (param) => {
         if (param !== ReviewTaskEvents.draft) {
@@ -149,6 +150,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             recaptchaString,
             setCurrentFormAndNextEvents,
             resetIsLoading,
+            currentUserId: userId,
         });
         setRecaptchaString("");
         recaptchaRef.current?.resetRecaptcha();
