@@ -1,5 +1,5 @@
 import { Select, Switch } from "antd";
-import { BR, GB } from "country-flag-icons/react/3x2";
+import ReactCountryFlag from "react-country-flag";
 import Cookies from "js-cookie";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -52,10 +52,16 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                     data-cy={props.dataCy}
                 >
                     <Option value="pt" data-cy="testLanguagePt">
-                        <BR title="BR" style={{ width: "20px" }} />
+                        <ReactCountryFlag
+                            countryCode="BR"
+                            style={{ fontSize: "20px" }}
+                        />
                     </Option>
                     <Option value="en" data-cy="testLanguageEn">
-                        <GB title="EN" style={{ width: "20px" }} />
+                        <ReactCountryFlag
+                            countryCode="GB"
+                            style={{ fontSize: "20px" }}
+                        />
                     </Option>
                 </SelectInput>
             )}
@@ -72,8 +78,10 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                         {language === "pt" ? "BR" : "EN"}
                     </span>
                     <SwitchInputStyle
-                        checkedChildren={<BR title="BR" />}
-                        unCheckedChildren={<GB title="EN" />}
+                        checkedChildren={<ReactCountryFlag countryCode="BR" />}
+                        unCheckedChildren={
+                            <ReactCountryFlag countryCode="GB" />
+                        }
                         defaultChecked={language === "pt"}
                         onChange={onChangeSwitch}
                         loading={switchLoading}
