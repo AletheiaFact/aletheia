@@ -120,7 +120,7 @@ const UserMenu = () => {
                             style={{ margin: 0 }}
                             className="menu-header-avatar"
                         >
-                            {user?.name.slice(0, 1)}
+                            {user?.name?.slice(0, 1)}
                         </Avatar>
                         <Box sx={{ width: "100%" }}>
                             <p className="menu-header-info name">

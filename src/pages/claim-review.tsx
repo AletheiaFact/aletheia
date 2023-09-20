@@ -23,6 +23,7 @@ export interface ClaimReviewPageProps {
     claimReview: any;
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
+    websocketUrl: string;
 }
 
 const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
@@ -39,6 +40,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         hideDescriptions,
     } = props;
 
+    dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
@@ -132,6 +134,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
                 JSON.stringify(query.hideDescriptions)
             ),
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
+            websocketUrl: query?.websocketUrl,
         },
     };
 }

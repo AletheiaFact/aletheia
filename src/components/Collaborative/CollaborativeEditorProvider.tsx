@@ -1,7 +1,6 @@
 import { createContext, useMemo, useState } from "react";
-
-import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 import { useAppSelector } from "../../store/store";
+import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 
 interface ContextType {
     websocketProvider: any;
@@ -29,10 +28,11 @@ export const CollaborativeEditorProvider = (
 
     const [editorContent, setEditorContent] = useState("");
     const [editorError, setEditorError] = useState(null);
+    const { websocketUrl } = useAppSelector((state) => state);
 
     const websocketProvider = useMemo(() => {
         if (enableCollaborativeEdit) {
-            return createWebsocketConnection(props.data_hash);
+            return createWebsocketConnection(props.data_hash, websocketUrl);
         }
         return null;
     }, [enableCollaborativeEdit, props.data_hash]);

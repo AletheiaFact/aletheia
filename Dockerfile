@@ -7,6 +7,7 @@ ENV PARCEL_WORKERS=1
 
 COPY ./.babelrc /app/.babelrc
 COPY config.$ENVIRONMENT.yaml /app/config.yaml
+COPY config.websocket.$ENVIRONMENT.yaml /app/config.websocket.yaml
 COPY config.seed.example.yaml /app/config.seed.yaml
 COPY migrate-mongo-config-example.ts /app/migrate-mongo-config.ts
 COPY ./migrations /app/migrations

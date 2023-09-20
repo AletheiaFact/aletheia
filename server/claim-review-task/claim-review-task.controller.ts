@@ -126,7 +126,6 @@ export class ClaimReviewController {
     @Header("Cache-Control", "no-cache")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
 
         await this.viewService.getNextServer().render(
@@ -136,6 +135,7 @@ export class ClaimReviewController {
             Object.assign(parsedUrl.query, {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }

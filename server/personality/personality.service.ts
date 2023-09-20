@@ -177,7 +177,7 @@ export class PersonalityService {
             path: "claims",
             select: "_id title content",
         });
-        this.logger.log(`Found personality ${personality._id}`);
+        this.logger.log(`Found personality ${personality?._id}`);
         return await this.postProcess(personality.toObject(), language);
     }
 

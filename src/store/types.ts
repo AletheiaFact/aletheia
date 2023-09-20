@@ -3,6 +3,7 @@ import { Personality } from "../types/Personality";
 import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 
 export enum ActionTypes {
+    SET_WEBSOCKET_URL,
     RESULTS_AUTOCOMPLETE,
     TOGGLE_MENU,
     TOGGLE_REVIEW_DRAWER,
@@ -56,6 +57,7 @@ export interface RootState {
     };
     autoSave: boolean;
     enableCollaborativeEdit: boolean;
+    websocketUrl: string;
     claimType: string;
     claimPersonality: Personality;
     vw: WidthBreakpoints;

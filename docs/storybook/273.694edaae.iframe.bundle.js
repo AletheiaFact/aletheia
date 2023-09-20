@@ -14171,14 +14171,12 @@
                                       Object.assign({}, additionalParams),
                                       { id: storyId }
                                   );
-                        return ""
-                            .concat(url)
-                            .concat(
-                                lib.stringify(params, {
-                                    addQueryPrefix: !0,
-                                    encode: !1,
-                                })
-                            );
+                        return "".concat(url).concat(
+                            lib.stringify(params, {
+                                addQueryPrefix: !0,
+                                encode: !1,
+                            })
+                        );
                     },
                     Zoom = function Zoom(_ref118) {
                         var zoom = _ref118.zoom,
