@@ -54,7 +54,8 @@ export class ClaimReviewController {
                 filterUser
             ),
             this.claimReviewTaskService.countReviewTasksNotDeleted(
-                getQueryMatchForMachineValue(value)
+                getQueryMatchForMachineValue(value),
+                filterUser
             ),
         ]).then(([tasks, totalTasks]) => {
             const totalPages = Math.ceil(totalTasks / pageSize);
