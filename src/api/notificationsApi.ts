@@ -39,7 +39,7 @@ const getTokens = (subscriberId) => {
             };
         })
         .catch((err) => {
-            throw err;
+            console.error(err);
         });
 };
 

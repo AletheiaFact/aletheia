@@ -16,14 +16,14 @@ const NotificationMenu = ({ user }) => {
 
     useEffect(() => {
         NotificationsApi.getTokens(user?._id).then(
-            ({ hmacHash, applicationIdentifier }) => {
-                setApplicationIdentifier(applicationIdentifier);
-                setHmacHash(hmacHash);
+            (data: { applicationIdentifier: string; hmacHash: string }) => {
+                setApplicationIdentifier(data?.applicationIdentifier);
+                setHmacHash(data?.hmacHash);
             }
         );
     }, [user?._id]);
 
-    if (user?._id) {
+    if (hmacHash && applicationIdentifier) {
         return (
             <NovuProvider
                 subscriberId={user?._id}
