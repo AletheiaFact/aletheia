@@ -58,6 +58,7 @@ export class PersonalityService {
         pageSize,
         order,
         query,
+        filter,
         language,
         withSuggestions = false
     ) {
@@ -65,7 +66,11 @@ export class PersonalityService {
 
         if (order === "random") {
             personalities = await this.PersonalityModel.aggregate([
-                { $match: query },
+                {
+                    $match: {
+                        $and: [query, { _id: { $ne: filter } }],
+                    },
+                },
                 { $sample: { size: pageSize } },
             ]);
         } else if (Object.keys(query).length > 0 && query?.name) {
@@ -392,6 +397,7 @@ export class PersonalityService {
                 parseInt(pageSize, 10),
                 order,
                 queryInputs,
+                query.filter,
                 query.language,
                 query.withSuggestions
             ),

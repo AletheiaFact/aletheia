@@ -162,6 +162,7 @@ export class PersonalityController {
                 order: "random",
                 pageSize: 6,
                 fetchOnly: true,
+                filter: personality._id,
             }
         );
 
