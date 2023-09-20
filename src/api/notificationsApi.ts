@@ -17,7 +17,7 @@ const sendNotification = (subscriberId, payload) => {
 };
 
 const sendEmail = (subscriberId, email, description) => {
-    return request
+    return axios
         .post("/api/emails", { subscriberId, email, description })
         .then((response) => {
             return response.data;
@@ -27,9 +27,26 @@ const sendEmail = (subscriberId, email, description) => {
         });
 };
 
+const getTokens = (subscriberId) => {
+    return request
+        .get(`/token/${subscriberId}`)
+        .then((response) => {
+            const { hmacHash, applicationIdentifier } = response.data;
+
+            return {
+                hmacHash,
+                applicationIdentifier,
+            };
+        })
+        .catch((err) => {
+            throw err;
+        });
+};
+
 const NotificationsApi = {
     sendEmail,
     sendNotification,
+    getTokens,
 };
 
 export default NotificationsApi;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     NovuProvider,
     PopoverNotificationCenter,
@@ -7,20 +7,33 @@ import NotificationCard from "../Notification/NotificationCard";
 import { Empty } from "antd";
 import Cookies from "js-cookie";
 import NotificationIcon from "./NotificationIcon";
+import NotificationsApi from "../../api/notificationsApi";
 
 const NotificationMenu = ({ user }) => {
     const language = Cookies.get("default_language") || "pt";
+    const [applicationIdentifier, setApplicationIdentifier] = useState(null);
+    const [hmacHash, setHmacHash] = useState(null);
+
+    useEffect(() => {
+        NotificationsApi.getTokens(user?._id).then(
+            ({ hmacHash, applicationIdentifier }) => {
+                setApplicationIdentifier(applicationIdentifier);
+                setHmacHash(hmacHash);
+            }
+        );
+    }, [user?._id]);
 
     if (user?._id) {
         return (
             <NovuProvider
                 subscriberId={user?._id}
-                i18n={language}
-                applicationIdentifier={"jElaPejsNYRF"}
+                subscriberHash={hmacHash}
+                applicationIdentifier={applicationIdentifier}
                 initialFetchingStrategy={{
                     fetchNotifications: true,
                     fetchUserPreferences: true,
                 }}
+                i18n={language}
             >
                 <PopoverNotificationCenter
                     showUserPreferences={false}

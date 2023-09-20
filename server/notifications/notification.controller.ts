@@ -1,10 +1,14 @@
-import { Body, Controller, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { NotificationService } from "./notifications.service";
 import { ApiTags } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config";
 
 @Controller()
 export class NotificationController {
-    constructor(private readonly notificationService: NotificationService) {}
+    constructor(
+        private readonly notificationService: NotificationService,
+        private configService: ConfigService
+    ) {}
 
     @ApiTags("notifications")
     @Post("api/emails")
@@ -47,5 +51,19 @@ export class NotificationController {
         @Body("description") description: string
     ) {
         return this.notificationService.sendTopicNotification(key, description);
+    }
+
+    @Get("api/notification/token/:subscriberId")
+    async getTokens(@Param("subscriberId") subscriberId) {
+        const hmacHash =
+            this.notificationService.generateHmacHash(subscriberId);
+        const applicationIdentifier = this.configService.get<string>(
+            "novu.application_identifier"
+        );
+
+        return {
+            hmacHash,
+            applicationIdentifier,
+        };
     }
 }

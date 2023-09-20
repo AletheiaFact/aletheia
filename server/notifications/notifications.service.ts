@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { Novu, TriggerRecipientsTypeEnum } from "@novu/node";
 import { InjectNovu } from "./novu.provider";
-
+import { createHmac } from "crypto";
+import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class NotificationService {
     constructor(
         @InjectNovu()
-        private readonly novu: Novu
+        private readonly novu: Novu,
+        private configService: ConfigService
     ) {}
 
     async createSubscriber({ _id = null, email, name }) {
@@ -92,4 +94,12 @@ export class NotificationService {
 
         return result.data;
     }
+
+    generateHmacHash = (subscriberId) => {
+        const NOVU_API_KEY = this.configService.get<string>("novu.api_key");
+
+        return createHmac("sha256", NOVU_API_KEY)
+            .update(subscriberId)
+            .digest("hex");
+    };
 }

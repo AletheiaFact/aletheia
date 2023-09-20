@@ -114,6 +114,9 @@ export class AppModule implements NestModule {
                 })
             );
         }
+        if (options.config.novu) {
+            imports.push(NotificationModule);
+        }
         return {
             module: AppModule,
             global: true,
