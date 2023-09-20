@@ -63,3 +63,6 @@ services:
         bucket: AWS_SDK_BUCKET
         accessKeyId: AWS_ACCESS_KEY_ID
         secretAccessKey: AWS_SECRET_ACCESS_KEY
+      novu: # Notifications provider
+        api_key: NOVU_API_KEY
+
