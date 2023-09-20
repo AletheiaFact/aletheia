@@ -47,22 +47,30 @@ export class ClaimReviewService {
             { $unwind: "$claim" },
             lookupClaimRevisions(TargetModel.ClaimReview),
             { $unwind: "$claim.latestRevision" },
-            { $match: { "claim.isHidden": false } },
-            {
-                $unwind: {
-                    path: "$personality",
-                    preserveNullAndEmptyArrays: true,
-                    includeArrayIndex: "arrayIndex",
+            { $match: { "claim.isHidden": query.isHidden } }
+        );
+
+        if (!query.isHidden) {
+            aggregation.push(
+                {
+                    $unwind: {
+                        path: "$personality",
+                        preserveNullAndEmptyArrays: true,
+                        includeArrayIndex: "arrayIndex",
+                    },
                 },
-            },
-            {
-                $match: {
-                    $or: [
-                        { personality: { $exists: false } },
-                        { "personality.isHidden": { $ne: true } },
-                    ],
-                },
-            },
+                {
+                    $match: {
+                        $or: [
+                            { personality: { $exists: false } },
+                            { "personality.isHidden": { $ne: true } },
+                        ],
+                    },
+                }
+            );
+        }
+
+        aggregation.push(
             { $skip: page * pageSize },
             { $limit: parseInt(pageSize) }
         );
@@ -95,22 +103,29 @@ export class ClaimReviewService {
     }
 
     async count(query: any = {}) {
-        const claimReviews = await this.ClaimReviewModel.aggregate([
+        const aggregation = [];
+
+        aggregation.push(
             { $match: query },
             lookUpPersonalityties(TargetModel.ClaimReview),
             lookupClaims(TargetModel.ClaimReview),
             { $unwind: "$claim" },
-            { $match: { "claim.isHidden": false } },
-            {
+            { $match: { "claim.isHidden": query.isHidden } }
+        );
+
+        if (!query.isHidden) {
+            aggregation.push({
                 $match: {
                     $or: [
                         { personality: { $exists: false } },
                         { "personality.isHidden": { $ne: true } },
                     ],
                 },
-            },
-            { $count: "totalCount" },
-        ]);
+            });
+        }
+        aggregation.push({ $count: "totalCount" });
+
+        const claimReviews = await this.ClaimReviewModel.aggregate(aggregation);
 
         return claimReviews.length > 0 ? claimReviews[0].totalCount : 0;
     }
