@@ -10140,7 +10140,6 @@ __metadata:
     concurrently: ^8.2.1
     cookie-parser: ^1.4.5
     copyfiles: ^2.4.1
-    country-flag-icons: ^1.5.5
     cypress: ^12.17.4
     domino: ^2.1.6
     env-cmd: ^10.1.0
@@ -10183,6 +10182,7 @@ __metadata:
     react: ^17.0.2
     react-cookie-consent: ^6.4.1
     react-countdown: ^2.3.2
+    react-country-flag: ^3.1.0
     react-dom: ^17.0.2
     react-google-recaptcha: ^2.1.0
     react-hook-form: ^7.31.2
@@ -13355,13 +13355,6 @@ __metadata:
     typescript:
       optional: true
   checksum: dc339ebea427898c9e03bf01b56ba7afbac07fc7d2a2d5a15d6e9c14de98275a9565da949375aee1809591c152c0a3877bb86dbeaf74d5bd5aaa79955ad9e7a0
-  languageName: node
-  linkType: hard
-
-"country-flag-icons@npm:^1.5.5":
-  version: 1.5.7
-  resolution: "country-flag-icons@npm:1.5.7"
-  checksum: b2512623ec7fa5a7b3d875b173469637f8782bb160d6054cd281223847b434316b22a736488a441168fc278fc9ee4b0b5e84a0b6164ab0a371a7afb1c2d50ca5
   languageName: node
   linkType: hard
 
@@ -25604,6 +25597,15 @@ __metadata:
     react: ">= 15"
     react-dom: ">= 15"
   checksum: 24289f40591e88003052270e4eb9f7a87838e403ec2036fbd5ef99d57851c8d9739dae619d65f339494e582e34e2691c033a975bd8f7416730fc9beaf76a2b4b
+  languageName: node
+  linkType: hard
+
+"react-country-flag@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "react-country-flag@npm:3.1.0"
+  peerDependencies:
+    react: ">=16"
+  checksum: d032dac7d342b6aab8efc77552acc91939a8f78edc158a54972180834ff591e4c01f1f3ecced7eeaabd98cbb26db9ea7ce64892facade3157380a91f226e9161
   languageName: node
   linkType: hard
 
