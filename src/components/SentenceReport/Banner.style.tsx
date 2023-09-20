@@ -4,11 +4,11 @@ import colors from "../../styles/colors";
 
 const BannerStyle = styled(Row)`
     justify-content: center;
-    padding: 100px 20px 20px;
-    background-color: ${colors.graySecondary};
+    padding: 18px;
+    background-color: rgb(17, 17, 17);
 
     .text {
-        color: ${colors.blackPrimary};
+        color: ${colors.white};
         font-style: italic;
         font-size: 18px;
         line-height: 22px;
@@ -26,6 +26,12 @@ const BannerStyle = styled(Row)`
             text-align: center;
             font-weight: 900;
         }
+    }
+
+    .video-container {
+        margin-top: 20px;
+        height: clamp(149px, 28vw, 317px);
+        aspect-ratio: 16 / 9;
     }
 `;
 

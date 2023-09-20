@@ -14,7 +14,6 @@ import {
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import AletheiaAlert from "../AletheiaAlert";
-import Banner from "../SentenceReport/Banner";
 import SentenceReportCard from "../SentenceReport/SentenceReportCard";
 import TopicInput from "./TopicInput";
 import { Content } from "../../types/Content";
@@ -177,14 +176,6 @@ const ClaimReviewHeader = ({
                             />
                         </div>
                     </Col>
-                    {isPublishedOrCanSeeHidden && (
-                        <Col
-                            lg={{ order: 2, span: 8 }}
-                            md={{ order: 1, span: 24 }}
-                        >
-                            <Banner />
-                        </Col>
-                    )}
                     {alert.show && (
                         <Col
                             style={{
