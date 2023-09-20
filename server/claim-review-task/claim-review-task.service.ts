@@ -77,11 +77,11 @@ export class ClaimReviewTaskService {
         pipeline.push(
             { $match: query },
             lookupUsers(),
-            lookUpPersonalityties(),
-            lookupClaims({
+            lookUpPersonalityties(TargetModel.ClaimReviewTask),
+            lookupClaims(TargetModel.ClaimReviewTask, {
                 pipeline: [
                     { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
-                    lookupClaimRevisions(),
+                    lookupClaimRevisions(TargetModel.ClaimReviewTask),
                     { $unwind: "$latestRevision" },
                 ],
                 as: "machine.context.claimReview.claim",
@@ -399,7 +399,7 @@ export class ClaimReviewTaskService {
                 lookupClaimReviews({
                     as: "machine.context.claimReview.claimReview",
                 }),
-                lookupClaims({
+                lookupClaims(TargetModel.ClaimReviewTask, {
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
                         { $project: { isDeleted: 1 } },
