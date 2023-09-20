@@ -4,8 +4,8 @@ import CardBase from "../CardBase";
 
 const ReviewCarouselSkeleton = () => {
     return (
-        <CardBase style={{ width: "fit-content" }}>
-            <div style={{ flex: 1, padding: "0 30px" }}>
+        <CardBase style={{ width: "fit-content", minWidth: "100%" }}>
+            <div style={{ flex: 1, padding: "24px 32px" }}>
                 <Skeleton active paragraph={{ rows: 5 }} round={true} />
                 <div
                     style={{
