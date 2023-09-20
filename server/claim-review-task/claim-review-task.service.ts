@@ -69,9 +69,9 @@ export class ClaimReviewTaskService {
         const query = getQueryMatchForMachineValue(value);
 
         if (filterUser === true) {
-            query["machine.context.reviewData.usersId"] = [
-                Types.ObjectId(this.req.user._id),
-            ];
+            query["machine.context.reviewData.usersId"] = Types.ObjectId(
+                this.req.user._id
+            );
         }
 
         pipeline.push(
@@ -392,8 +392,14 @@ export class ClaimReviewTaskService {
         return this.ClaimReviewTaskModel.countDocuments().where(query);
     }
 
-    async countReviewTasksNotDeleted(query: any = {}) {
+    async countReviewTasksNotDeleted(query, filterUser) {
         try {
+            if (filterUser === true) {
+                query["machine.context.reviewData.usersId"] = Types.ObjectId(
+                    this.req.user._id
+                );
+            }
+
             const pipeline = [
                 { $match: query },
                 lookupClaimReviews({
