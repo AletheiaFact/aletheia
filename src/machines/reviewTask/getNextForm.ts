@@ -20,9 +20,6 @@ const getNextForm = (
             ? assignedCollaborativeForm
             : assignedForm,
 
-        [ReviewTaskEvents.fullReview]: summarizedForm,
-        [ReviewTaskStates.summarized]: summarizedForm,
-
         [ReviewTaskEvents.finishReport]: reportedForm,
         [ReviewTaskEvents.partialReview]: reportedForm,
         [ReviewTaskStates.reported]: reportedForm,

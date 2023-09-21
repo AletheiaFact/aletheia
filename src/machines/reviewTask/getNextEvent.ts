@@ -10,15 +10,13 @@ const getNextEvents = (param: Events | States) => {
         [Events.assignUser]: [
             ...defaultEvents,
             Events.partialReview,
-            Events.fullReview,
+            Events.finishReport,
         ],
         [States.assigned]: [
             ...defaultEvents,
             Events.partialReview,
-            Events.fullReview,
+            Events.finishReport,
         ],
-        [Events.fullReview]: [...defaultEvents, Events.finishReport],
-        [States.summarized]: [...defaultEvents, Events.finishReport],
 
         [Events.finishReport]: [Events.goback, Events.submit],
         [Events.partialReview]: [Events.goback, Events.submit],
@@ -31,7 +29,7 @@ const getNextEvents = (param: Events | States) => {
         [Events.addRejectionComment]: [
             ...defaultEvents,
             Events.partialReview,
-            Events.fullReview,
+            Events.finishReport,
         ],
 
         [States.published]: [],

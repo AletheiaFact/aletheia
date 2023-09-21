@@ -12,6 +12,7 @@ const saveContext = assign<ReviewTaskMachineContext, SaveEvent>(
             claimReview: {
                 ...context.claimReview,
                 ...event.claimReview,
+                isPartialReview: false,
             },
         };
     }
@@ -33,20 +34,4 @@ const savePartialReviewContext = assign<ReviewTaskMachineContext, SaveEvent>(
     }
 );
 
-const saveFullReviewContext = assign<ReviewTaskMachineContext, SaveEvent>(
-    (context, event) => {
-        return {
-            reviewData: {
-                ...context.reviewData,
-                ...event.reviewData,
-            },
-            claimReview: {
-                ...context.claimReview,
-                ...event.claimReview,
-                isPartialReview: false,
-            },
-        };
-    }
-);
-
-export { saveContext, savePartialReviewContext, saveFullReviewContext };
+export { saveContext, savePartialReviewContext };
