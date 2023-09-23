@@ -1,15 +1,10 @@
 import { Injectable } from "@nestjs/common";
+import { RemirrorJSON } from "remirror";
+
+const EditorSchemaArray = ["summary", "report", "verification", "questions"];
 
 @Injectable()
 export class EditorParseService {
-    private doc;
-    constructor() {
-        this.doc = {
-            type: "doc",
-            content: [],
-        };
-    }
-
     reportHasSources(report): boolean {
         return report.sources.length > 0;
     }
@@ -19,71 +14,49 @@ export class EditorParseService {
             return s.field === property;
         });
     }
+
     async editor2schema() {}
 
     async schema2editor(databaseReport) {
+        const doc: RemirrorJSON = {
+            type: "doc",
+            content: [],
+        };
+
         for (const key in databaseReport) {
-            switch (key) {
-                case "sources":
-                    break;
-                default:
-                    const content = databaseReport[key];
-                    if (!this.reportHasSources(databaseReport)) {
-                        this.doc.content.push(this.getContentObject(content));
-                        continue;
-                    }
-                    const sources = this.getSourceByProperty(
-                        databaseReport.sources,
-                        key
+            if (EditorSchemaArray.includes(key)) {
+                const content = databaseReport[key];
+                if (!this.reportHasSources(databaseReport)) {
+                    doc.content.push(
+                        ...this.buildContentWithoutSouces(key, content)
                     );
+                    continue;
+                }
+                const sources = this.getSourceByProperty(
+                    databaseReport.sources,
+                    key
+                );
 
-                    const rawSourcesRanges = sources.map((s) => {
-                        return s.textRange;
-                    });
-                    const sourcesRanges = sources.map((source) => {
-                        return {
-                            ...source,
-                            type: "source",
-                        };
-                    });
-
-                    const missingTextRanges = this.getMissingRanges(
+                const rawSourcesRanges = sources.map((s) => {
+                    return s.textRange;
+                });
+                const sourcesRanges = sources.map((source) => {
+                    return {
+                        ...source,
+                        type: "source",
+                    };
+                });
+                doc.content.push(
+                    ...this.buildContentFragments({
+                        content,
+                        key,
+                        sourcesRanges,
                         rawSourcesRanges,
-                        content.length
-                    ).map((textRange) => {
-                        return {
-                            textRange,
-                            type: "text",
-                        };
-                    });
-
-                    const allRanges = [
-                        ...sourcesRanges,
-                        ...missingTextRanges,
-                    ].sort((a, b) => {
-                        return a.textRange[0] - b.textRange[0];
-                    });
-
-                    const textFragments = allRanges.map(
-                        ({ textRange, type, href }) => {
-                            return this.extractContentFragmentFromRange(
-                                {
-                                    textRange,
-                                    content,
-                                    href,
-                                },
-                                type
-                            );
-                        }
-                    );
-
-                    this.doc.content.push({
-                        type: key,
-                        content: textFragments,
-                    });
+                    })
+                );
             }
         }
-        return this.doc;
+        return doc;
     }
 
     extractContentFragmentFromRange(
@@ -136,7 +109,12 @@ export class EditorParseService {
             content: [
                 {
                     type: "text",
-                    text,
+                    /**
+                     * https://remirror.io/docs/errors/#rmr0021
+                     * The text can not be a empty string,
+                     * because it is not supported by remirror.
+                     * */
+                    text: text === "" ? " " : text,
                 },
             ],
         };
@@ -144,13 +122,7 @@ export class EditorParseService {
 
     getContentObjectWithMarks(content, href) {
         return {
-            type: "paragraph",
-            content: [
-                {
-                    type: "text",
-                    text: content,
-                },
-            ],
+            ...this.getContentObject(content),
             marks: [
                 {
                     type: "link",
@@ -162,5 +134,89 @@ export class EditorParseService {
                 },
             ],
         };
+    }
+
+    getTextFragments(rawSourcesRanges, sourcesRanges, key, content) {
+        const missingTextRanges = this.getMissingRanges(
+            rawSourcesRanges,
+            content.length
+        ).map((textRange) => {
+            return {
+                textRange,
+                type: "text",
+            };
+        });
+
+        const allRanges = [...sourcesRanges, ...missingTextRanges].sort(
+            (a, b) => {
+                return a.textRange[0] - b.textRange[0];
+            }
+        );
+
+        const textFragments = allRanges.map(({ textRange, type, href }) => {
+            return this.extractContentFragmentFromRange(
+                {
+                    textRange,
+                    content,
+                    href,
+                },
+                type
+            );
+        });
+
+        return textFragments;
+    }
+
+    buildContentWithoutSouces(key, content): RemirrorJSON[] {
+        if (Array.isArray(content)) {
+            const questions = content.map((c) => {
+                return {
+                    type: key,
+                    content: [this.getContentObject(c)],
+                };
+            });
+
+            return questions;
+        } else {
+            return [
+                {
+                    type: key,
+                    content: [this.getContentObject(content)],
+                },
+            ];
+        }
+    }
+
+    buildContentFragments({
+        content,
+        key,
+        rawSourcesRanges,
+        sourcesRanges,
+    }): RemirrorJSON[] {
+        if (Array.isArray(content)) {
+            return content.map((c) => {
+                return {
+                    type: key,
+                    content: this.getTextFragments(
+                        rawSourcesRanges,
+                        sourcesRanges,
+                        key,
+                        c
+                    ),
+                };
+            });
+        } else {
+            return [
+                {
+                    type: key,
+                    content: this.getTextFragments(
+                        rawSourcesRanges,
+                        sourcesRanges,
+                        key,
+                        content
+                    ),
+                },
+            ];
+        }
     }
 }

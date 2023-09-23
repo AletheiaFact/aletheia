@@ -46,6 +46,7 @@ import { UnauthorizedExceptionFilter } from "./filters/unauthorized.filter";
 import { DebateModule } from "./claim/types/debate/debate.module";
 import { EditorModule } from "./editor/editor.module";
 import { BadgeModule } from "./badge/badge.module";
+import { EditorParseModule } from "./editor-parse/editor-parse.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -100,6 +101,7 @@ export class AppModule implements NestModule {
             DebateModule,
             EditorModule,
             BadgeModule,
+            EditorParseModule,
         ];
         if (options.config.feature_flag) {
             imports.push(

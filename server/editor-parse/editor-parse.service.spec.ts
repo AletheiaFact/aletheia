@@ -29,6 +29,10 @@ describe("ParserService", () => {
                         textRange: [20, 24],
                     },
                 ],
+                questions: [
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
+                    "teste",
+                ],
                 summary:
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
                 report: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
@@ -39,6 +43,34 @@ describe("ParserService", () => {
             const expected = {
                 type: "doc",
                 content: [
+                    {
+                        type: "questions",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: "questions",
+                        content: [
+                            {
+                                type: "paragraph",
+                                content: [
+                                    {
+                                        type: "text",
+                                        text: "teste",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
                     {
                         type: "summary",
                         content: [
