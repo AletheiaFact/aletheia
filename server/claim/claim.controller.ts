@@ -167,7 +167,8 @@ export class ClaimController {
             const claim = await this._createClaim(createClaimDTO);
 
             const path =
-                req.user.role === Roles.Admin
+                req.user.role === Roles.Admin ||
+                req.user.role === Roles.SuperAdmin
                     ? `/claim/${claim._id}/debate/edit`
                     : `/claim/${claim._id}/debate`;
             return { title: claim.title, path };

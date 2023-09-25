@@ -53,17 +53,18 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
 
     return (
         <div>
-            {role === Roles.Admin && review?.isPublished && (
-                <AdminToolBar
-                    content={review}
-                    deleteApiFunction={ClaimReviewApi.deleteClaimReview}
-                    changeHideStatusFunction={
-                        ClaimReviewApi.updateClaimReviewHiddenStatus
-                    }
-                    target={TargetModel.ClaimReview}
-                    hideDescriptions={hideDescriptions}
-                />
-            )}
+            {role === Roles.Admin ||
+                (role === Roles.SuperAdmin && review?.isPublished && (
+                    <AdminToolBar
+                        content={review}
+                        deleteApiFunction={ClaimReviewApi.deleteClaimReview}
+                        changeHideStatusFunction={
+                            ClaimReviewApi.updateClaimReviewHiddenStatus
+                        }
+                        target={TargetModel.ClaimReview}
+                        hideDescriptions={hideDescriptions}
+                    />
+                ))}
             <ClaimReviewHeader
                 classification={
                     review?.report?.classification || reviewData?.classification

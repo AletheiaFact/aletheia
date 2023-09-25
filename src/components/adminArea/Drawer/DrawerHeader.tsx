@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import { Divider, Grid } from "@mui/material";
 import { currentUserId } from "../../../atoms/currentUser";
 import { atomUserList } from "../../../atoms/userEdit";
-import { Status } from "../../../types/enums";
+import { Roles, Status } from "../../../types/enums";
 import { finishEditingItem } from "../../../atoms/editDrawer";
 import userApi from "../../../api/userApi";
 import HeaderUserStatus from "./HeaderUserStatus";
@@ -16,6 +16,7 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
     const [, finishEditing] = useAtom(finishEditingItem);
     const [status, setStatus] = useState(currentUser?.state || Status.Active);
     const [userId] = useAtom(currentUserId);
+    const isSuperAdmin = currentUser.role === Roles.SuperAdmin;
 
     const handleClickChangeStatus = async () => {
         try {
@@ -63,7 +64,7 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
                         {currentUser?.name} - {currentUser?.email}
                     </h3>
                 </div>
-                {userId !== currentUser?._id && (
+                {userId !== currentUser?._id && !isSuperAdmin && (
                     <Button
                         type={ButtonType.whiteBlue}
                         onClick={handleClickChangeStatus}

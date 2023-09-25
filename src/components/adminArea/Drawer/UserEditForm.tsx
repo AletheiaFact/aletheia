@@ -47,6 +47,8 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
         );
     }, [badgesList, currentUser?.badges, currentUser?.role]);
 
+    const isSuperAdmin = role === Roles.SuperAdmin;
+
     const handleClickSave = async () => {
         try {
             setIsLoading(true);
@@ -85,6 +87,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                     >
                         {Object.values(Roles).map((role) => (
                             <FormControlLabel
+                                disabled={isSuperAdmin}
                                 key={role}
                                 value={role}
                                 control={<Radio />}
@@ -97,6 +100,7 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
             <Grid item xs={10} mt={2}>
                 <Label>{t("menu:badgesItem")}</Label>
                 <Autocomplete
+                    disabled={isSuperAdmin}
                     multiple
                     id="badges"
                     options={badgesList}
@@ -124,9 +128,11 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                 />
             </Grid>
             <Grid item xs={10} mt={5}>
-                <Button onClick={handleClickSave}>
-                    {t("admin:saveButtonLabel")}
-                </Button>
+                {!isSuperAdmin && (
+                    <Button onClick={handleClickSave}>
+                        {t("admin:saveButtonLabel")}
+                    </Button>
+                )}
             </Grid>
         </>
     );

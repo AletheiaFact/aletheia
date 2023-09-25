@@ -8,6 +8,7 @@
     "columnTotp": "Totp",
     "columnBadges": "Insígnias",
     "role-admin": "Admin",
+    "role-super-admin": "Super Admin",
     "role-regular": "Regular",
     "role-fact-checker": "Checador",
     "user-status-true": "Ativo",

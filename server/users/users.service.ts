@@ -69,15 +69,22 @@ export class UsersService {
         updates: { role?: Roles; badges?: Badge[]; state?: Status }
     ) {
         const user = await this.getById(userId);
+
+        if (user.role === Roles.SuperAdmin) {
+            throw new Error("SuperAdmins cannot be updated.");
+        }
+
         if (updates.state) {
             await this.oryService.updateUserState(user, updates.state);
         }
         if (updates.role) {
             await this.oryService.updateUserRole(user, updates.role);
         }
+
         const updatedUser = this.UserModel.findByIdAndUpdate(userId, updates, {
             new: true,
         });
+
         this.logger.log(`Updated user ${userId._id}`);
         return updatedUser;
     }

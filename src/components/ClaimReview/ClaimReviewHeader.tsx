@@ -64,7 +64,7 @@ const ClaimReviewHeader = ({
         publishedReview?.review;
     const isPublishedOrCanSeeHidden =
         isPublished && (!isHidden || userIsNotRegular);
-    const userIsAdmin = role === Roles.Admin;
+    const userIsAdmin = role === Roles.Admin || Roles.SuperAdmin;
 
     const alertTypes = {
         hiddenReport: {

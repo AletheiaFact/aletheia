@@ -297,6 +297,7 @@ export class ClaimReviewTaskService {
         if (newClaimReviewTaskMachine.value === "published") {
             if (
                 loggedInUser.role !== Roles.Admin &&
+                loggedInUser.role !== Roles.SuperAdmin &&
                 loggedInUser._id !==
                     machine.context.reviewData.reviewerId.toString()
             ) {

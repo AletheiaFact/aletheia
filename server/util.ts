@@ -57,7 +57,8 @@ export class UtilService {
 
     getParamsBasedOnUserRole(params, req) {
         const user = req.user;
-        const isUserAdmin = user?.role === Roles.Admin;
+        const isUserAdmin =
+            user?.role === Roles.Admin || user?.role === Roles.SuperAdmin;
         return isUserAdmin ? params : { ...params, isHidden: false };
     }
 }
