@@ -442,8 +442,8 @@ export class ClaimReviewTaskService {
         }
     }
 
-    async getEditorContentObject(machine) {
-        return await this.editorParseService.schema2editor(
+    getEditorContentObject(machine) {
+        return this.editorParseService.schema2editor(
             machine.context.reviewData
         );
     }

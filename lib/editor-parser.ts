@@ -208,7 +208,7 @@ export class EditorParser {
         };
     }
 
-    getTextFragments(rawSourcesRanges, sourcesRanges, content) {
+    getParagraphFragments(rawSourcesRanges, sourcesRanges, content) {
         const missingTextRanges = this.getMissingRanges(
             rawSourcesRanges,
             content.length
@@ -236,11 +236,10 @@ export class EditorParser {
             );
         });
 
-        const obj = {
+        return {
             type: "paragraph",
             content: textFragments,
         };
-        return obj;
     }
 
     buildContentWithoutSouces(key, content): RemirrorJSON[] {
@@ -274,7 +273,7 @@ export class EditorParser {
                 return {
                     type: key,
                     content: [
-                        this.getTextFragments(
+                        this.getParagraphFragments(
                             rawSourcesRanges,
                             sourcesRanges,
                             c
@@ -287,7 +286,7 @@ export class EditorParser {
                 {
                     type: key,
                     content: [
-                        this.getTextFragments(
+                        this.getParagraphFragments(
                             rawSourcesRanges,
                             sourcesRanges,
                             content

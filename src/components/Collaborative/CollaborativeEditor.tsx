@@ -11,7 +11,11 @@ import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
 import CollaborativeEditorStyle from "./CollaborativeEditor.style";
 import Editor from "./Editor";
 import FloatingLinkToolbar from "./LinkToolBar/FloatingLinkToolbar";
-import colors from "../../styles/colors";
+import SummaryExtension from "./Form/SummaryExtesion";
+import QuestionExtension from "./Form/QuestionExtension";
+import ReportExtension from "./Form/ReportExtension";
+import VerificationExtesion from "./Form/VerificationExtension";
+import { TrailingNodeExtension } from "remirror/extensions";
 
 interface CollaborativeEditorProps {
     placeholder: string;
@@ -22,7 +26,7 @@ const CollaborativeEditor = ({
     placeholder,
     onContentChange,
 }: CollaborativeEditorProps) => {
-    const { websocketProvider, editorError } = useContext(
+    const { websocketProvider, editorContentObject } = useContext(
         CollaborativeEditorContext
     );
     function createExtensions() {
@@ -31,6 +35,11 @@ const CollaborativeEditor = ({
             new PlaceholderExtension({ placeholder }),
             new LinkExtension({ autoLink: true }),
             new YjsExtension({ getProvider: () => websocketProvider }),
+            new SummaryExtension({ disableExtraAttributes: true }),
+            new QuestionExtension({ disableExtraAttributes: true }),
+            new ReportExtension({ disableExtraAttributes: true }),
+            new VerificationExtesion({ disableExtraAttributes: true }),
+            new TrailingNodeExtension(),
         ];
     }
 
@@ -38,6 +47,7 @@ const CollaborativeEditor = ({
         extensions: createExtensions,
         core: { excludeExtensions: ["history"] },
         stringHandler: "html",
+        content: editorContentObject,
     });
 
     const handleChange = useCallback(
@@ -62,9 +72,6 @@ const CollaborativeEditor = ({
                     <Editor state={state} />
                 </Remirror>
             </CollaborativeEditorStyle>
-            {editorError && (
-                <span style={{ color: colors.redText }}>{editorError}</span>
-            )}
         </>
     );
 };
