@@ -1,115 +1,71 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { EditorParseModule } from "./editor-parse.module";
 import { EditorParseService } from "./editor-parse.service";
+import { ReviewTaskMachineContextReviewData } from "../claim-review-task/dto/create-claim-review-task.dto";
+import { RemirrorJSON } from "remirror";
 const util = require("util");
 
 describe("ParserService", () => {
     let editorParseService: EditorParseService;
 
-    beforeEach(async () => {
-        const testingModule: TestingModule = await Test.createTestingModule({
-            imports: [EditorParseModule],
-        }).compile();
-        editorParseService =
-            testingModule.get<EditorParseService>(EditorParseService);
-    });
+    const schemaContent: ReviewTaskMachineContextReviewData = {
+        sources: [
+            {
+                href: "https://google.com",
+                field: "report",
+                textRange: [7, 21],
+            },
+        ],
+        questions: ["teste1"],
+        summary: "teste4",
+        report: "teste2 esse e um link",
+        verification: "teste3",
+    };
 
-    describe("parse()", () => {
-        it("Report is parsed correctly", async () => {
-            const databaseReport = {
-                sources: [
-                    {
-                        href: "https://loremipsum.io/generator/?n=5&t=p",
-                        field: "summary",
-                        textRange: [0, 11],
-                    },
-                    {
-                        href: "https://google.com",
-                        field: "summary",
-                        textRange: [20, 24],
-                    },
-                ],
-                questions: [
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
-                    "teste",
-                ],
-                summary:
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
-                report: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
-                verification:
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
-            };
-
-            const expected = {
-                type: "doc",
+    const editorContent: RemirrorJSON = {
+        type: "doc",
+        content: [
+            {
+                type: "questions",
                 content: [
                     {
-                        type: "questions",
+                        type: "paragraph",
                         content: [
                             {
-                                type: "paragraph",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
-                                    },
-                                ],
+                                type: "text",
+                                text: "teste1",
                             },
                         ],
                     },
+                ],
+            },
+            {
+                type: "summary",
+                content: [
                     {
-                        type: "questions",
+                        type: "paragraph",
                         content: [
                             {
-                                type: "paragraph",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: "teste",
-                                    },
-                                ],
+                                type: "text",
+                                text: "teste4",
                             },
                         ],
                     },
+                ],
+            },
+            {
+                type: "report",
+                content: [
                     {
-                        type: "summary",
+                        type: "paragraph",
                         content: [
                             {
-                                type: "paragraph",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: "Lorem ipsum",
-                                    },
-                                ],
-                                marks: [
-                                    {
-                                        type: "link",
-                                        attrs: {
-                                            href: "https://loremipsum.io/generator/?n=5&t=p",
-                                            target: null,
-                                            auto: false,
-                                        },
-                                    },
-                                ],
+                                type: "text",
+                                text: "teste2 ",
                             },
                             {
-                                type: "paragraph",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: " dolor si",
-                                    },
-                                ],
-                            },
-                            {
-                                type: "paragraph",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: "t am",
-                                    },
-                                ],
+                                type: "text",
+                                text: "esse e um link",
                                 marks: [
                                     {
                                         type: "link",
@@ -121,59 +77,65 @@ describe("ParserService", () => {
                                     },
                                 ],
                             },
-                            {
-                                type: "paragraph",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: "et, consectetur adipiscing elit, sed do eiusmo…",
-                                    },
-                                ],
-                            },
                         ],
                     },
+                ],
+            },
+            {
+                type: "verification",
+                content: [
                     {
-                        type: "report",
+                        type: "paragraph",
                         content: [
                             {
-                                type: "paragraph",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                    {
-                        type: "verification",
-                        content: [
-                            {
-                                type: "paragraph",
-                                content: [
-                                    {
-                                        type: "text",
-                                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo…",
-                                    },
-                                ],
+                                type: "text",
+                                text: "teste3",
                             },
                         ],
                     },
                 ],
-            };
+            },
+        ],
+    };
 
-            const editorContent = await editorParseService.schema2editor(
-                databaseReport
+    beforeEach(async () => {
+        const testingModule: TestingModule = await Test.createTestingModule({
+            imports: [EditorParseModule],
+        }).compile();
+        editorParseService =
+            testingModule.get<EditorParseService>(EditorParseService);
+    });
+
+    describe("parse()", () => {
+        it("Report is parsed correctly", async () => {
+            const editorResult = await editorParseService.schema2editor(
+                schemaContent
             );
+
             console.log(
-                util.inspect(editorContent, {
+                util.inspect(editorResult, {
                     showHidden: false,
                     depth: null,
                     colors: true,
                 })
             );
-            expect(editorContent).toMatchObject(expected);
+            expect(editorResult).toMatchObject(editorContent);
+        });
+
+        it("Editor content is parsed correctly", async () => {
+            const schemaResult = await editorParseService.editor2schema(
+                editorContent
+            );
+
+            console.log(
+                util.inspect(schemaResult, {
+                    showHidden: false,
+                    depth: null,
+                    colors: true,
+                })
+            );
+
+            expect(schemaResult).toMatchObject(schemaContent);
         });
     });
 });

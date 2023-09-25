@@ -2,14 +2,12 @@ import { createContext, useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../store/store";
 import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
+import { RemirrorJSON } from "remirror";
 
 interface ContextType {
     websocketProvider: any;
-    setEditorContent?: (data: any) => void;
-    editorContent?: any;
-    editorError?: any;
-    setEditorError?: (data: any) => void;
-    editorContentObject?: any;
+    editorContentObject?: RemirrorJSON;
+    setEditorContentObject?: (data: any) => void;
 }
 
 export const CollaborativeEditorContext = createContext<ContextType>({
@@ -28,8 +26,6 @@ export const CollaborativeEditorProvider = (
         enableCollaborativeEdit: state?.enableCollaborativeEdit,
     }));
 
-    const [editorContent, setEditorContent] = useState("");
-    const [editorError, setEditorError] = useState(null);
     const [editorContentObject, setEditorContentObject] = useState(null);
     const { websocketUrl } = useAppSelector((state) => state);
 
@@ -54,11 +50,8 @@ export const CollaborativeEditorProvider = (
         <CollaborativeEditorContext.Provider
             value={{
                 websocketProvider,
-                editorContent,
-                setEditorContent,
-                editorError,
-                setEditorError,
                 editorContentObject,
+                setEditorContentObject,
             }}
         >
             {props.children}
