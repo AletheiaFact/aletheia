@@ -18,7 +18,7 @@ export interface ClaimReviewViewProps {
     personality?: any;
     claim: any;
     content: Content;
-    hideDescriptions: any;
+    hideDescriptions?: any;
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
@@ -80,12 +80,15 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 userIsReviewer={userIsReviewer}
                 isHidden={review?.isHidden}
             />
-            <ClaimReviewForm
-                claimId={claim._id}
-                personalityId={personality?._id}
-                dataHash={content.data_hash}
-                userIsReviewer={userIsReviewer}
-            />
+
+            {!review?.isPublished && (
+                <ClaimReviewForm
+                    claimId={claim._id}
+                    personalityId={personality?._id}
+                    dataHash={content.data_hash}
+                    userIsReviewer={userIsReviewer}
+                />
+            )}
             <SocialMediaShare
                 quote={personality?.name}
                 href={shareHref}

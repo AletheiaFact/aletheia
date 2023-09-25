@@ -12,6 +12,7 @@ import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";
 import LargeDrawer from "../LargeDrawer";
 import { ContentModelEnum } from "../../types/enums";
+import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -54,45 +55,47 @@ const ClaimReviewDrawer = () => {
         >
             {claim && data_hash && !isLoading ? (
                 <ReviewTaskMachineProvider data_hash={data_hash}>
-                    <Row
-                        justify="space-between"
-                        style={{
-                            width: vw?.sm ? "100%" : "55%",
-                            padding: "1rem",
-                        }}
-                    >
-                        <Col>
-                            <AletheiaButton
-                                icon={<ArrowLeftOutlined />}
-                                onClick={() =>
-                                    dispatch(actions.closeReviewDrawer())
-                                }
-                                type={ButtonType.gray}
-                                data-cy="testCloseReviewDrawer"
-                            >
-                                {t("common:back_button")}
-                            </AletheiaButton>
-                        </Col>
-                        <Col>
-                            <AletheiaButton
-                                href={href}
-                                onClick={() => setIsLoading(true)}
-                                type={ButtonType.gray}
-                                style={{
-                                    textDecoration: "underline",
-                                    fontWeight: "bold",
-                                }}
-                                data-cy="testSeeFullReview"
-                            >
-                                {t("claimReviewTask:seeFullPage")}
-                            </AletheiaButton>
-                        </Col>
-                    </Row>
-                    <ClaimReviewView
-                        personality={personality}
-                        claim={claim}
-                        content={content}
-                    />
+                    <CollaborativeEditorProvider data_hash={data_hash}>
+                        <Row
+                            justify="space-between"
+                            style={{
+                                width: vw?.sm ? "100%" : "55%",
+                                padding: "1rem",
+                            }}
+                        >
+                            <Col>
+                                <AletheiaButton
+                                    icon={<ArrowLeftOutlined />}
+                                    onClick={() =>
+                                        dispatch(actions.closeReviewDrawer())
+                                    }
+                                    type={ButtonType.gray}
+                                    data-cy="testCloseReviewDrawer"
+                                >
+                                    {t("common:back_button")}
+                                </AletheiaButton>
+                            </Col>
+                            <Col>
+                                <AletheiaButton
+                                    href={href}
+                                    onClick={() => setIsLoading(true)}
+                                    type={ButtonType.gray}
+                                    style={{
+                                        textDecoration: "underline",
+                                        fontWeight: "bold",
+                                    }}
+                                    data-cy="testSeeFullReview"
+                                >
+                                    {t("claimReviewTask:seeFullPage")}
+                                </AletheiaButton>
+                            </Col>
+                        </Row>
+                        <ClaimReviewView
+                            personality={personality}
+                            claim={claim}
+                            content={content}
+                        />
+                    </CollaborativeEditorProvider>
                 </ReviewTaskMachineProvider>
             ) : (
                 <Loading />
