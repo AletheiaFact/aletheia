@@ -76,9 +76,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                 <Suspense fallback={<Loading />}>
                     <CollaborativeEditor
                         placeholder={t(props.placeholder)}
-                        onContentChange={({ doc }) =>
-                            props.onChange(doc?.textContent)
-                        }
+                        onContentChange={({ doc }) => props.onChange(doc)}
                     />
                 </Suspense>
             );

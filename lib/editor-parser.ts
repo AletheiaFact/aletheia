@@ -24,12 +24,16 @@ export class EditorParser {
         };
         const questions = [];
 
-        for (const cardContent of data.content) {
-            if (EditorSchemaArray.includes(cardContent?.type)) {
-                if (cardContent.type === "questions") {
+        for (const cardContent of data?.content) {
+            if (EditorSchemaArray?.includes(cardContent?.type)) {
+                if (cardContent?.type === "questions") {
                     for (const { content } of cardContent.content) {
-                        const questionTexts = content.map(({ text }) => text);
-                        questions.push(...questionTexts);
+                        if (content) {
+                            const questionTexts = content?.map(
+                                ({ text }) => text
+                            );
+                            questions.push(...questionTexts);
+                        }
                     }
                 }
                 schema[cardContent.type] = this.getSchemaContentBasedOnType(
@@ -51,13 +55,15 @@ export class EditorParser {
     ) {
         const sourceContent = [];
         for (const { content } of cardContent) {
-            for (const { text, marks } of content) {
-                if (marks) {
-                    schema.sources.push(
-                        ...this.getSourcesFromEditorMarks(text, type, marks)
-                    );
+            if (content) {
+                for (const { text, marks } of content) {
+                    if (marks) {
+                        schema.sources.push(
+                            ...this.getSourcesFromEditorMarks(text, type, marks)
+                        );
+                    }
+                    sourceContent.push(text);
                 }
-                sourceContent.push(text);
             }
         }
         return sourceContent.join("");

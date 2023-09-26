@@ -3,6 +3,11 @@
     "back_button": "Voltar",
     "registrationLink": "https://forms.gle/xgCc9fRPKkkCKkkW8",
     "requiredFieldError": "Campo obrigatório",
+    "summaryRequiredFieldError": "Campo de resumo obrigatório",
+    "reportRequiredFieldError": " Campo de relatório obrigatório",
+    "questionsRequiredFieldError": "Campo de perguntas obrigatório",
+    "verificationRequiredFieldError": "Campo de verificação obrigatório",
+    "sourcesRequiredFieldError": "Fonte obrigatória",
     "supportEmail": "support@aletheifact.org",
     "contactEmail": "contato@aletheiafact.org",
     "captchaError": "Erro na validação do captcha"
