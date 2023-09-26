@@ -15,7 +15,7 @@ export const QuestionCard = ({ forwardRef, node }) => {
     return (
         <CardStyle>
             <label>{t("claimReviewForm:questionsLabel")}</label>
-            <Col span={24} style={{ display: "flex" }}>
+            <Col span={24} style={{ display: "flex", position: "initial" }}>
                 <Col span={21} className="card-container">
                     <div
                         className="card-content"

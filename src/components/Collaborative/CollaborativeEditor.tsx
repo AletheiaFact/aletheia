@@ -29,6 +29,9 @@ const CollaborativeEditor = ({
     const { websocketProvider, editorContentObject } = useContext(
         CollaborativeEditorContext
     );
+    const users = websocketProvider.awareness.states.size;
+    const isCollaborative = users > 1;
+
     function createExtensions() {
         return [
             new AnnotationExtension(),
@@ -47,7 +50,7 @@ const CollaborativeEditor = ({
         extensions: createExtensions,
         core: { excludeExtensions: ["history"] },
         stringHandler: "html",
-        content: editorContentObject,
+        content: isCollaborative ? undefined : editorContentObject,
     });
 
     const handleChange = useCallback(
