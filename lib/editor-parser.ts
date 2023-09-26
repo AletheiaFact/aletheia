@@ -99,7 +99,13 @@ export class EditorParser {
     ): Promise<RemirrorJSON> {
         const doc: RemirrorJSON = {
             type: "doc",
-            content: [],
+            content: [
+                /** Always add first line empty to
+                 * prevent no position before top-level node errors
+                 * when adding node extensions.
+                 */
+                { type: "paragraph", content: [{ type: "text", text: " " }] },
+            ],
         };
         for (const key in data) {
             if (EditorSchemaArray.includes(key)) {

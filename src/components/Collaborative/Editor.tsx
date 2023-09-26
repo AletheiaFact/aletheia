@@ -15,10 +15,11 @@ import EditorStyle from "./Editor.style";
 import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
 
 /**
- * Modifies reference to useful properties those are easier to manipulate.
- * using useHelpers hook that only can be used inside a remirror component
+ * Modifies context state to JSON using useHelpers hook
+ * which can only be used inside a remirror component.
+ * Also returns a inputs toolbar which can be used for users
+ * to add a new input.
  * @param state remirror state
- * @param editorRef reference to editor
  */
 const Editor = ({ state }: { state: any }) => {
     const command = useCommands();
@@ -42,39 +43,70 @@ const Editor = ({ state }: { state: any }) => {
     );
 
     const handleInsertNode = useCallback(
-        (insertNodeFunction) => {
+        (insertNodeFunction, fixedPosition) => {
             const { doc } = state;
-            const endPosition = doc.content.size;
+            const { node, selection } = identifyPosition(
+                doc.content,
+                fixedPosition
+            );
+
+            const insertTopLevelNode = (content, selection, node) => {
+                command.focus(selection);
+                if (selection !== content.size && selection !== 0) {
+                    command.insertParagraph(" ", { selection });
+                    command.insertNode(node, { selection });
+                }
+            };
+
+            insertTopLevelNode(doc.content, selection, node);
             command.insertHtml(insertNodeFunction(), {
-                //TODO: investigate how to insert card on fixed positions
-                selection: endPosition,
+                selection,
+                replaceEmptyParentBlock: selection !== 0,
             });
-            command.focus(endPosition);
         },
         [command, state]
     );
+
+    const identifyPosition = (nodes, fixedPosition) => {
+        const target = [0, "verification", "summary", -1];
+        let selection = 0;
+        let node = null;
+
+        for (let i = 0; i < nodes.childCount; i++) {
+            const childNode = nodes.child(i);
+
+            if (target[fixedPosition] === 0) break;
+            else if (target[fixedPosition] === -1) {
+                selection = nodes.size;
+                break;
+            }
+
+            if (childNode.type.name === target[fixedPosition]) {
+                node = childNode;
+                break;
+            }
+            selection += childNode.nodeSize;
+        }
+
+        return {
+            node,
+            selection,
+        };
+    };
 
     return (
         <EditorStyle>
             <div className="toolbar">
                 <Button
                     className="toolbar-item"
-                    onClick={() => handleInsertNode(getSummaryContentHtml)}
-                    disabled={summaryDisabled}
-                >
-                    <SummarizeIcon className="toolbar-item-icon" />
-                </Button>
-
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getQuestionContentHtml)}
+                    onClick={() => handleInsertNode(getQuestionContentHtml, 0)}
                 >
                     <QuestionMarkIcon className="toolbar-item-icon" />
                 </Button>
 
                 <Button
                     className="toolbar-item"
-                    onClick={() => handleInsertNode(getReportContentHtml)}
+                    onClick={() => handleInsertNode(getReportContentHtml, 1)}
                     disabled={reportDisabled}
                 >
                     <ReportProblemIcon className="toolbar-item-icon" />
@@ -82,10 +114,20 @@ const Editor = ({ state }: { state: any }) => {
 
                 <Button
                     className="toolbar-item"
-                    onClick={() => handleInsertNode(getVerificationContentHtml)}
+                    onClick={() =>
+                        handleInsertNode(getVerificationContentHtml, 2)
+                    }
                     disabled={verificationDisabled}
                 >
                     <FactCheckIcon className="toolbar-item-icon" />
+                </Button>
+
+                <Button
+                    className="toolbar-item"
+                    onClick={() => handleInsertNode(getSummaryContentHtml, 3)}
+                    disabled={summaryDisabled}
+                >
+                    <SummarizeIcon className="toolbar-item-icon" />
                 </Button>
             </div>
         </EditorStyle>

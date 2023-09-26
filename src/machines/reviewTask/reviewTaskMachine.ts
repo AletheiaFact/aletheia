@@ -55,10 +55,6 @@ export const createNewMachine = ({ value, context }) => {
                     [Events.goback]: {
                         target: States.unassigned,
                     },
-                    [Events.partialReview]: {
-                        target: States.reported,
-                        actions: [savePartialReviewContext],
-                    },
                     [Events.finishReport]: {
                         target: States.reported,
                         actions: [saveContext],
