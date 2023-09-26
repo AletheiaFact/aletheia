@@ -21,7 +21,7 @@ export class UsersService {
             name: { $regex: searchName || "", $options: "i" },
             role: { $nin: [...(filterOutRoles || []), null] },
             ...(badges ? { badges } : {}),
-        }).select(project || { _id: 1, name: 1 });
+        }).select(project || { _id: 1, name: 1, role: 1 });
     }
 
     async register(user) {
@@ -35,9 +35,10 @@ export class UsersService {
             );
             newUser.oryId = oryUser.id;
         } else {
+            const existingUser = await this.getByOryId(newUser.oryId);
             this.logger.log("User id provided, updating an ory identity");
             await this.oryService.updateIdentity(
-                newUser,
+                existingUser ? existingUser : newUser,
                 user.password,
                 user.role
             );
@@ -52,7 +53,7 @@ export class UsersService {
     }
 
     getByOryId(oryId) {
-        return this.UserModel.findOne({ oryId }, "email name");
+        return this.UserModel.findOne({ oryId }, "email name oryId");
     }
 
     async registerPasswordChange(userId) {
@@ -69,10 +70,6 @@ export class UsersService {
         updates: { role?: Roles; badges?: Badge[]; state?: Status }
     ) {
         const user = await this.getById(userId);
-
-        if (user.role === Roles.SuperAdmin) {
-            throw new Error("SuperAdmins cannot be updated.");
-        }
 
         if (updates.state) {
             await this.oryService.updateUserState(user, updates.state);

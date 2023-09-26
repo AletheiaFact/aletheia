@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Roles } from "auth/ability/ability.factory";
 import {
     IsArray,
     IsNotEmpty,
@@ -31,5 +32,5 @@ export class UpdateBadgeDTO {
     @IsArray()
     @IsOptional()
     @ApiProperty()
-    users: { badges: any[]; name: string; _id: string }[];
+    users: { badges: any[]; name: string; _id: string; role: Roles }[];
 }
