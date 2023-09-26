@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Roles } from "auth/ability/ability.factory";
+import { Roles } from "../../auth/ability/ability.factory";
 import {
     IsArray,
     IsNotEmpty,
