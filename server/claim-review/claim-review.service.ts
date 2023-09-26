@@ -15,6 +15,9 @@ import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ImageService } from "../claim/types/image/image.service";
 import { ContentModelEnum } from "../types/enums";
+import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
+import lookupClaims from "../mongo-pipelines/lookupClaims";
+import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -30,25 +33,49 @@ export class ClaimReviewService {
     ) {}
 
     async listAll(page, pageSize, order, query, latest = false) {
-        const claimReviews = await this.ClaimReviewModel.find(query)
-            .sort(latest ? { date: -1 } : { _id: order })
-            .populate({
-                path: "personality",
-                model: "Personality",
-                select: "name description slug avatar",
-            })
-            .populate({
-                path: "claim",
-                model: "Claim",
-                populate: {
-                    path: "latestRevision",
-                    select: "date contentModel claimId",
+        const aggregation = [];
+
+        aggregation.push(
+            {
+                $sort: latest
+                    ? { date: -1 }
+                    : { _id: order === "asc" ? 1 : -1 },
+            },
+            { $match: query },
+            lookUpPersonalityties(TargetModel.ClaimReview),
+            lookupClaims(TargetModel.ClaimReview),
+            { $unwind: "$claim" },
+            lookupClaimRevisions(TargetModel.ClaimReview),
+            { $unwind: "$claim.latestRevision" },
+            { $match: { "claim.isHidden": query.isHidden } }
+        );
+
+        if (!query.isHidden) {
+            aggregation.push(
+                {
+                    $unwind: {
+                        path: "$personality",
+                        preserveNullAndEmptyArrays: true,
+                        includeArrayIndex: "arrayIndex",
+                    },
                 },
-                select: "slug",
-            })
-            .skip(page * pageSize)
-            .limit(parseInt(pageSize))
-            .lean();
+                {
+                    $match: {
+                        $or: [
+                            { personality: { $exists: false } },
+                            { "personality.isHidden": { $ne: true } },
+                        ],
+                    },
+                }
+            );
+        }
+
+        aggregation.push(
+            { $skip: page * pageSize },
+            { $limit: parseInt(pageSize) }
+        );
+
+        const claimReviews = await this.ClaimReviewModel.aggregate(aggregation);
 
         return Promise.all(
             claimReviews.map(async (review) => this.postProcess(review))
@@ -66,18 +93,9 @@ export class ClaimReviewService {
                     as: "report",
                 },
             },
+            lookupClaims(TargetModel.ClaimReview),
             {
-                $lookup: {
-                    from: "claims",
-                    localField: "claim",
-                    foreignField: "_id",
-                    as: "claim",
-                },
-            },
-            {
-                $match: {
-                    "claim.isHidden": false,
-                },
+                $match: { "claim.isHidden": false },
             },
             { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
@@ -85,40 +103,29 @@ export class ClaimReviewService {
     }
 
     async count(query: any = {}) {
-        const claimReviews = await this.ClaimReviewModel.aggregate([
-            {
-                $match: query,
-            },
-            {
-                $lookup: {
-                    from: "personalities",
-                    localField: "personality",
-                    foreignField: "_id",
-                    as: "personality",
-                },
-            },
-            {
-                $lookup: {
-                    from: "claims",
-                    localField: "claim",
-                    foreignField: "_id",
-                    as: "claim",
-                },
-            },
+        const aggregation = [];
+
+        aggregation.push(
+            { $match: query },
+            lookUpPersonalityties(TargetModel.ClaimReview),
+            lookupClaims(TargetModel.ClaimReview),
             { $unwind: "$claim" },
-            { $match: { "claim.isHidden": false } },
-            {
+            { $match: { "claim.isHidden": query.isHidden } }
+        );
+
+        if (!query.isHidden) {
+            aggregation.push({
                 $match: {
                     $or: [
                         { personality: { $exists: false } },
                         { "personality.isHidden": { $ne: true } },
                     ],
                 },
-            },
-            {
-                $count: "totalCount",
-            },
-        ]);
+            });
+        }
+        aggregation.push({ $count: "totalCount" });
+
+        const claimReviews = await this.ClaimReviewModel.aggregate(aggregation);
 
         return claimReviews.length > 0 ? claimReviews[0].totalCount : 0;
     }
@@ -266,65 +273,6 @@ export class ClaimReviewService {
         );
         this.historyService.createHistory(history);
         return this.ClaimReviewModel.softDelete({ _id: claimReviewId });
-    }
-
-    async getLatestReviews() {
-        const claimReviews = await this.ClaimReviewModel.find({
-            isDeleted: false,
-        })
-            .sort({ date: -1 })
-            .limit(5)
-            .populate({
-                path: "personality",
-                model: "Personality",
-                select: "name description slug avatar",
-            })
-            .populate({
-                path: "claim",
-                model: "Claim",
-                populate: {
-                    path: "latestRevision",
-                    select: "date contentModel claimId",
-                },
-                select: "slug",
-            });
-
-        return Promise.all(
-            claimReviews.map(async (review) => {
-                const { personality, data_hash } = review;
-
-                const claim = {
-                    contentModel: review.claim.latestRevision.contentModel,
-                    date: review.claim.latestRevision.date,
-                };
-
-                const isContentImage =
-                    claim.contentModel === ContentModelEnum.Image;
-                const isContentDebate =
-                    claim.contentModel === ContentModelEnum.Debate;
-
-                const content = isContentImage
-                    ? await this.imageService.getByDataHash(data_hash)
-                    : await this.sentenceService.getByDataHash(data_hash);
-
-                let reviewHref = personality
-                    ? `/personality/${personality?.slug}/claim/${review.claim.slug}`
-                    : `/claim/${review.claim.latestRevision.claimId}`;
-                reviewHref += isContentImage
-                    ? `/image/${data_hash}`
-                    : `/sentence/${data_hash}`;
-                if (isContentDebate) {
-                    reviewHref = `/claim/${review.claim.latestRevision.claimId}/debate`;
-                }
-
-                return {
-                    content,
-                    personality,
-                    reviewHref,
-                    claim,
-                };
-            })
-        );
     }
 
     async hideOrUnhideReview(_id, hide, description) {
