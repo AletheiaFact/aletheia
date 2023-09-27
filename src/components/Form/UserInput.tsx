@@ -40,24 +40,11 @@ const UserInput = ({
                         ? value.map((id) => userApi.getById(id))
                         : [userApi.getById(value)];
                     const users = await Promise.all(userPromises);
-                    if (fieldName === "reviewerId") {
-                        const reviewerUsers = users.filter(
-                            (user) => user?.role === Roles.Reviewer
-                        );
-
-                        const treatedValues = reviewerUsers.map((user) => ({
-                            label: user?.name,
-                            value: user?._id,
-                        }));
-
-                        setTreatedValue(treatedValues);
-                    } else {
-                        const treatedValues = users.map((user) => ({
-                            label: user?.name,
-                            value: user?._id,
-                        }));
-                        setTreatedValue(treatedValues);
-                    }
+                    const treatedValues = users.map((user) => ({
+                        label: user?.name,
+                        value: user?._id,
+                    }));
+                    setTreatedValue(treatedValues);
                 } catch (error) {
                     console.error(error);
                 } finally {
