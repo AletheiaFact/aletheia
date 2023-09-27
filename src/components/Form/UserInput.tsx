@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import SelectOptions from "./SelectOptions";
 import userApi from "../../api/userApi";
+import { Roles } from "../../types/enums";
 
 interface UserInputProps {
+    fieldName: string;
     placeholder: string;
     onChange: any;
     dataCy: string;
@@ -14,6 +16,7 @@ interface UserInputProps {
 }
 
 const UserInput = ({
+    fieldName,
     placeholder,
     onChange,
     dataCy,
@@ -37,11 +40,24 @@ const UserInput = ({
                         ? value.map((id) => userApi.getById(id))
                         : [userApi.getById(value)];
                     const users = await Promise.all(userPromises);
-                    const treatedValues = users.map((user) => ({
-                        label: user?.name,
-                        value: user?._id,
-                    }));
-                    setTreatedValue(treatedValues);
+                    if (fieldName === "reviewerId") {
+                        const reviewerUsers = users.filter(
+                            (user) => user?.role === Roles.Reviewer
+                        );
+
+                        const treatedValues = reviewerUsers.map((user) => ({
+                            label: user?.name,
+                            value: user?._id,
+                        }));
+
+                        setTreatedValue(treatedValues);
+                    } else {
+                        const treatedValues = users.map((user) => ({
+                            label: user?.name,
+                            value: user?._id,
+                        }));
+                        setTreatedValue(treatedValues);
+                    }
                 } catch (error) {
                     console.error(error);
                 } finally {
@@ -60,6 +76,7 @@ const UserInput = ({
 
     return (
         <SelectOptions
+            fieldName={fieldName}
             fetchOptions={dataLoader}
             placeholder={placeholder}
             onChange={onChange}

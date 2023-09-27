@@ -41,6 +41,7 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "inputSearch":
             return (
                 <UserInput
+                    fieldName={props.fieldName}
                     placeholder={t(props.placeholder)}
                     onChange={props.onChange}
                     dataCy={props["data-cy"]}

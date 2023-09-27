@@ -15,6 +15,7 @@ enum Roles {
     FactChecker = "fact-checker",
     Admin = "admin",
     SuperAdmin = "super-admin",
+    Reviewer = "reviewer",
 }
 
 enum Status {
