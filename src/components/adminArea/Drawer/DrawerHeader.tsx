@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import { Divider, Grid } from "@mui/material";
 import { currentUserId } from "../../../atoms/currentUser";
 import { atomUserList } from "../../../atoms/userEdit";
-import { Roles, Status } from "../../../types/enums";
+import { Status } from "../../../types/enums";
 import { finishEditingItem } from "../../../atoms/editDrawer";
 import userApi from "../../../api/userApi";
 import HeaderUserStatus from "./HeaderUserStatus";
