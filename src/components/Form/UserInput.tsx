@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SelectOptions from "./SelectOptions";
 import userApi from "../../api/userApi";
-import { Roles } from "../../types/enums";
 
 interface UserInputProps {
     fieldName: string;
