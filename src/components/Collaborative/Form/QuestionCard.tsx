@@ -19,7 +19,11 @@ export const QuestionCard = ({ forwardRef, node }) => {
                 <Col span={21} className="card-container">
                     <div
                         className="card-content"
-                        style={{ height: "40px", minHeight: "40px" }}
+                        style={{
+                            minHeight: "40px",
+                            display: "flex",
+                            alignItems: "center",
+                        }}
                     >
                         <p style={{ overflowY: "inherit" }} ref={forwardRef} />
                     </div>

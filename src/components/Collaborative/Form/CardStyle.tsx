@@ -27,6 +27,10 @@ const CardStyle = styled(Row)`
         height: auto;
         padding: 10px;
     }
+
+    .card-content * {
+        margin: 0px;
+    }
 `;
 
 export default CardStyle;

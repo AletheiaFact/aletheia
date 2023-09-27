@@ -8,12 +8,12 @@ const saveContext = assign<ReviewTaskMachineContext, SaveEvent>(
     (context, event) => {
         const editorParser = new EditorParser();
         if (event.type === ReviewTaskEvents.finishReport) {
-            const reviewData = editorParser.editor2schema(
-                event.reviewData.editor
-            );
+            const schema = editorParser.editor2schema(event.reviewData.editor);
+            const reviewDataHtml = editorParser.schema2html(schema);
             event.reviewData = {
                 ...event.reviewData,
-                ...reviewData,
+                ...schema,
+                reviewDataHtml,
             };
         }
         return {

@@ -5,12 +5,14 @@ import SentenceReportContentStyle from "./SentenceReportContent.style";
 import SourcesList from "../Source/SourcesList";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import dompurify from "dompurify";
 
 const { Paragraph } = Typography;
 const SentenceReportContent = ({ context }) => {
     const { t } = useTranslation();
     const { summary, questions, report, verification, sources } = context;
     const router = useRouter();
+    const sanitizer = dompurify.sanitize;
 
     return (
         <SentenceReportContentStyle>
@@ -19,8 +21,9 @@ const SentenceReportContent = ({ context }) => {
                     {t("claimReview:summarySectionTitle")}
                 </Paragraph>
                 <Paragraph className="paragraph">
-                    {/* This line had a security audit */}
-                    <p dangerouslySetInnerHTML={{ __html: summary }} />
+                    <p
+                        dangerouslySetInnerHTML={{ __html: sanitizer(summary) }}
+                    />
                 </Paragraph>
                 <Divider />
             </Col>
@@ -31,9 +34,13 @@ const SentenceReportContent = ({ context }) => {
                     </Paragraph>
                     {questions.map((item) => {
                         return (
-                            <li key={item} className="paragraph">
-                                {item}
-                            </li>
+                            <li
+                                key={item}
+                                className="paragraph"
+                                dangerouslySetInnerHTML={{
+                                    __html: sanitizer(item),
+                                }}
+                            />
                         );
                     })}
                     <Divider />
@@ -44,7 +51,10 @@ const SentenceReportContent = ({ context }) => {
                     <Paragraph className="title">
                         {t("claimReview:verificationSectionTitle")}
                     </Paragraph>
-                    <Paragraph className="paragraph">{report}</Paragraph>
+                    <p
+                        dangerouslySetInnerHTML={{ __html: sanitizer(report) }}
+                        className="paragraph"
+                    />
                     <Divider />
                 </Col>
             )}
@@ -53,7 +63,12 @@ const SentenceReportContent = ({ context }) => {
                     <Paragraph className="title">
                         {t("claimReview:howSectionTitle")}
                     </Paragraph>
-                    <Paragraph className="paragraph">{verification}</Paragraph>
+                    <p
+                        dangerouslySetInnerHTML={{
+                            __html: sanitizer(verification),
+                        }}
+                        className="paragraph"
+                    />
                     <Divider />
                 </Col>
             )}

@@ -5,7 +5,6 @@ import InputTextList from "../InputTextList";
 import Loading from "../Loading";
 import TextArea from "../TextArea";
 import UserInput from "./UserInput";
-import { htmlToText } from "html-to-text";
 import { useTranslation } from "next-i18next";
 
 const CollaborativeEditor = lazy(
@@ -33,7 +32,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     rows={4}
                     placeholder={t(props.placeholder)}
                     onChange={(value) => props.onChange(value)}
-                    defaultValue={htmlToText(props.defaultValue)}
+                    defaultValue={props.defaultValue}
                     data-cy={props["data-cy"]}
                     white="true"
                 />

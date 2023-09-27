@@ -11,13 +11,16 @@ export enum SourceTargetModel {
 @Schema()
 export class Source {
     @Prop({ required: true })
-    link: string;
+    href: string;
 
     @Prop({
         type: "string",
         required: false,
     })
     targetText: string;
+
+    @Prop({ required: false })
+    textRange: number[];
 
     @Prop({
         type: "string",

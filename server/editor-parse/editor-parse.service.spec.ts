@@ -7,6 +7,12 @@ const util = require("util");
 
 describe("ParserService", () => {
     let editorParseService: EditorParseService;
+    const schemaHtml = {
+        questions: ["teste1", "testekakaka ava"],
+        summary: "<div><p>teste4</p></div>",
+        report: `<div><p>teste2 <a href='#esse e um link' rel='noopener noreferrer nofollow'>esse e um link<sup>1</sup></a></p></div>`,
+        verification: "<div><p>teste3</p></div>",
+    };
 
     const schemaContent: ReviewTaskMachineContextReviewData = {
         sources: [
@@ -14,9 +20,11 @@ describe("ParserService", () => {
                 href: "https://google.com",
                 field: "report",
                 textRange: [7, 21],
+                targetText: "esse e um link",
+                sup: 1,
             },
         ],
-        questions: ["teste1"],
+        questions: ["teste1", "testekakaka ava"],
         summary: "teste4",
         report: "teste2 esse e um link",
         verification: "teste3",
@@ -43,6 +51,20 @@ describe("ParserService", () => {
                             {
                                 type: "text",
                                 text: "teste1",
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                type: "questions",
+                content: [
+                    {
+                        type: "paragraph",
+                        content: [
+                            {
+                                type: "text",
+                                text: "testekakaka ava",
                             },
                         ],
                     },
@@ -145,6 +167,21 @@ describe("ParserService", () => {
             );
 
             expect(schemaResult).toMatchObject(schemaContent);
+        });
+
+        it("Schema to HTML is parsed correctly", async () => {
+            const schemaHtmlResult = await editorParseService.schema2html(
+                schemaContent
+            );
+
+            console.log(
+                util.inspect(schemaHtmlResult, {
+                    showHidden: false,
+                    depth: null,
+                    colors: true,
+                })
+            );
+            expect(schemaHtmlResult).toMatchObject(schemaHtml);
         });
     });
 });

@@ -447,4 +447,12 @@ export class ClaimReviewTaskService {
             machine.context.reviewData
         );
     }
+
+    async getHtmlFromSchema(schema) {
+        const htmlContent = this.editorParseService.schema2html(schema);
+        return {
+            ...schema,
+            ...htmlContent,
+        };
+    }
 }

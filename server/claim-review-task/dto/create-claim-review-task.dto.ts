@@ -18,6 +18,7 @@ export type ReviewTaskMachineContextReviewData = {
     reviewerId?: any;
     rejectionComment?: string;
     editor?: any;
+    reviewDataHtml?: ReviewTaskMachineContextReviewData;
 };
 
 export type ReviewTaskMachineContext = {

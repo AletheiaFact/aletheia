@@ -3,7 +3,7 @@ import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
-import { saveContext, savePartialReviewContext } from "./actions";
+import { saveContext } from "./actions";
 import {
     CompoundStates,
     ReviewTaskEvents as Events,

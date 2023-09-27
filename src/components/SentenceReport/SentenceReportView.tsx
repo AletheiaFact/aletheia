@@ -56,7 +56,9 @@ const SentenceReportView = ({
                             }
                         }
                     >
-                        <SentenceReportContent context={context} />
+                        <SentenceReportContent
+                            context={context?.reviewDataHtml || context}
+                        />
                         {!isLoggedIn && <CTARegistration />}
                     </Col>
                 </Row>

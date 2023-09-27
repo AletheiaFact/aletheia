@@ -4,14 +4,124 @@ import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/
 const EditorSchemaArray = ["summary", "report", "verification", "questions"];
 
 export class EditorParser {
-    reportHasSources(report): boolean {
-        return report.sources.length > 0;
+    hasSources(sources): boolean {
+        return sources.length > 0;
     }
 
     getSourceByProperty(sources, property) {
         return sources.filter((s) => {
             return s.field === property;
         });
+    }
+
+    buildHtmlContentWithoutSources(
+        content: string | object[]
+    ): string | string[] {
+        if (Array.isArray(content)) {
+            return content.map((c) => `<div><p>${c}</p></div>`);
+        }
+
+        return `<div><p>${content}</p></div>`;
+    }
+
+    extractHtmlContentFromRange(
+        { targetText, textRange, content, sup },
+        type = "text"
+    ) {
+        const fragmentText = content.slice(...textRange);
+        if (type === "text") {
+            return fragmentText;
+        }
+
+        if (type === "source" && fragmentText === targetText) {
+            return `<a href='#${fragmentText}' rel='noopener noreferrer nofollow'>${fragmentText}<sup>${sup}</sup></a>`;
+        }
+        return fragmentText;
+    }
+
+    getHtmlContent(rawSourcesRanges, sourcesRanges, content, key) {
+        const allRanges = this.getAllTextRanges(
+            rawSourcesRanges,
+            sourcesRanges,
+            content
+        );
+
+        const htmlContent = allRanges.map(
+            ({ targetText, textRange, type, sup }) => {
+                return this.extractHtmlContentFromRange(
+                    {
+                        targetText,
+                        textRange,
+                        content,
+                        sup,
+                    },
+                    type
+                );
+            }
+        );
+
+        if (key === "questions") {
+            return htmlContent.join("");
+        }
+
+        return `<div><p>${htmlContent.join("")}</p></div>`;
+    }
+
+    buildHtmlContent({ content, rawSourcesRanges, sourcesRanges, key }) {
+        if (Array.isArray(content)) {
+            return content.map((c) => {
+                return this.getHtmlContent(
+                    rawSourcesRanges,
+                    sourcesRanges,
+                    c,
+                    key
+                );
+            });
+        } else {
+            return this.getHtmlContent(
+                rawSourcesRanges,
+                sourcesRanges,
+                content,
+                key
+            );
+        }
+    }
+
+    schema2html(
+        schema: ReviewTaskMachineContextReviewData
+    ): ReviewTaskMachineContextReviewData {
+        const newSchema = {
+            ...schema,
+        };
+
+        const hasSources = this.hasSources(newSchema?.sources);
+
+        for (const key in newSchema) {
+            if (EditorSchemaArray.includes(key)) {
+                const content = newSchema[key];
+                if (!hasSources) {
+                    newSchema[key] =
+                        this.buildHtmlContentWithoutSources(content);
+                    continue;
+                }
+                const sources = this.getSourceByProperty(
+                    newSchema.sources,
+                    key
+                );
+
+                const { rawSourcesRanges, sourcesRanges } =
+                    this.getRawSourcesAndSourcesRanges(sources);
+
+                newSchema[key] = this.buildHtmlContent({
+                    content,
+                    sourcesRanges,
+                    rawSourcesRanges,
+                    key,
+                });
+            }
+        }
+
+        return newSchema;
     }
 
     editor2schema(data): ReviewTaskMachineContextReviewData {
@@ -32,7 +142,7 @@ export class EditorParser {
                             const questionTexts = content?.map(
                                 ({ text }) => text
                             );
-                            questions.push(...questionTexts);
+                            questions.push(...[questionTexts.join("")]);
                         }
                     }
                 }
@@ -81,17 +191,19 @@ export class EditorParser {
         const newSources = [];
 
         for (const key in schema) {
-            schema.sources.forEach(({ field, href, textRange }) => {
+            schema.sources.forEach(({ field, href, textRange }, index) => {
                 if (field === key) {
                     newSources.push({
                         field,
                         href,
                         textRange: this.findTextRange(schema[field], textRange),
+                        targetText: textRange,
+                        sup: index + 1,
                     });
                 }
             });
         }
-        return newSources;
+        return newSources.sort((a, b) => a.sup - b.sup);
     }
 
     findTextRange(content, textTarget) {
@@ -116,7 +228,7 @@ export class EditorParser {
         for (const key in data) {
             if (EditorSchemaArray.includes(key)) {
                 const content = data[key];
-                if (!this.reportHasSources(data)) {
+                if (!this.hasSources(data?.sources)) {
                     doc.content.push(
                         ...this.buildContentWithoutSouces(key, content)
                     );
@@ -124,16 +236,8 @@ export class EditorParser {
                 }
                 const sources = this.getSourceByProperty(data.sources, key);
 
-                const rawSourcesRanges = sources.map((s) => {
-                    return s.textRange;
-                });
-
-                const sourcesRanges = sources.map((source) => {
-                    return {
-                        ...source,
-                        type: "source",
-                    };
-                });
+                const { rawSourcesRanges, sourcesRanges } =
+                    this.getRawSourcesAndSourcesRanges(sources);
 
                 doc.content.push(
                     ...this.buildContentFragments({
@@ -148,8 +252,26 @@ export class EditorParser {
         return doc;
     }
 
+    getRawSourcesAndSourcesRanges(sources) {
+        const rawSourcesRanges = sources.map((s) => {
+            return s.textRange;
+        });
+
+        const sourcesRanges = sources.map((source) => {
+            return {
+                ...source,
+                type: "source",
+            };
+        });
+
+        return {
+            rawSourcesRanges,
+            sourcesRanges,
+        };
+    }
+
     extractContentFragmentFromRange(
-        { textRange, content, href = null },
+        { targetText, textRange, content, href = null },
         type = "text"
     ) {
         const fragmentText = content.slice(...textRange);
@@ -157,9 +279,10 @@ export class EditorParser {
             return this.getContentObject(fragmentText);
         }
 
-        if (type === "source") {
+        if (type === "source" && fragmentText === targetText) {
             return this.getContentObjectWithMarks(fragmentText, href);
         }
+        return this.getContentObject(fragmentText);
     }
 
     getMissingRanges(ranges, length) {
@@ -220,7 +343,7 @@ export class EditorParser {
         };
     }
 
-    getParagraphFragments(rawSourcesRanges, sourcesRanges, content) {
+    getAllTextRanges(rawSourcesRanges, sourcesRanges, content) {
         const missingTextRanges = this.getMissingRanges(
             rawSourcesRanges,
             content.length
@@ -231,22 +354,31 @@ export class EditorParser {
             };
         });
 
-        const allRanges = [...sourcesRanges, ...missingTextRanges].sort(
-            (a, b) => {
-                return a.textRange[0] - b.textRange[0];
-            }
+        return [...sourcesRanges, ...missingTextRanges].sort((a, b) => {
+            return a.textRange[0] - b.textRange[0];
+        });
+    }
+
+    getParagraphFragments(rawSourcesRanges, sourcesRanges, content) {
+        const allRanges = this.getAllTextRanges(
+            rawSourcesRanges,
+            sourcesRanges,
+            content
         );
 
-        const textFragments = allRanges.map(({ textRange, type, href }) => {
-            return this.extractContentFragmentFromRange(
-                {
-                    textRange,
-                    content,
-                    href,
-                },
-                type
-            );
-        });
+        const textFragments = allRanges.map(
+            ({ targetText, textRange, type, href }) => {
+                return this.extractContentFragmentFromRange(
+                    {
+                        targetText,
+                        textRange,
+                        content,
+                        href,
+                    },
+                    type
+                );
+            }
+        );
 
         return {
             type: "paragraph",
