@@ -222,7 +222,7 @@ export class EditorParser {
                  * prevent no position before top-level node errors
                  * when adding node extensions.
                  */
-                { type: "paragraph", content: [{ type: "text", text: " " }] },
+                { type: "paragraph" },
             ],
         };
         for (const key in data) {
@@ -253,9 +253,7 @@ export class EditorParser {
     }
 
     getRawSourcesAndSourcesRanges(sources) {
-        const rawSourcesRanges = sources.map((s) => {
-            return s.textRange;
-        });
+        const rawSourcesRanges = sources.map((s) => s.textRange);
 
         const sourcesRanges = sources.map((source) => {
             return {
@@ -275,14 +273,18 @@ export class EditorParser {
         type = "text"
     ) {
         const fragmentText = content.slice(...textRange);
-        if (type === "text") {
-            return this.getContentObject(fragmentText);
-        }
 
-        if (type === "source" && fragmentText === targetText) {
-            return this.getContentObjectWithMarks(fragmentText, href);
+        switch (type) {
+            case "text":
+                return this.getContentObject(fragmentText);
+            case "source":
+                if (fragmentText === targetText) {
+                    return this.getContentObjectWithMarks(fragmentText, href);
+                }
+            // Fall through to the default case if type is "source" and the text doesn't match targetText
+            default:
+                return this.getContentObject(fragmentText);
         }
-        return this.getContentObject(fragmentText);
     }
 
     getMissingRanges(ranges, length) {
@@ -323,7 +325,7 @@ export class EditorParser {
              * The text can not be a empty string,
              * because it is not supported by remirror.
              * */
-            text: text === "" ? " " : text,
+            text,
         };
     }
 
@@ -360,6 +362,9 @@ export class EditorParser {
     }
 
     getParagraphFragments(rawSourcesRanges, sourcesRanges, content) {
+        if (content === "") {
+            return { type: "paragraph" };
+        }
         const allRanges = this.getAllTextRanges(
             rawSourcesRanges,
             sourcesRanges,
@@ -387,23 +392,20 @@ export class EditorParser {
     }
 
     buildContentWithoutSouces(key, content): RemirrorJSON[] {
-        if (Array.isArray(content)) {
-            const questions = content.map((c) => {
-                return {
-                    type: key,
-                    content: [this.getContentObject(c)],
-                };
-            });
+        const isEmpty = content === "";
+        const contentArray = Array.isArray(content) ? content : [content];
 
-            return questions;
-        } else {
-            return [
-                {
-                    type: key,
-                    content: [this.getContentObject(content)],
-                },
-            ];
-        }
+        return contentArray.map((c) => ({
+            type: key,
+            content: isEmpty
+                ? [{ type: "paragraph" }]
+                : [
+                      {
+                          type: "paragraph",
+                          content: [this.getContentObject(c)],
+                      },
+                  ],
+        }));
     }
 
     buildContentFragments({
@@ -412,32 +414,13 @@ export class EditorParser {
         rawSourcesRanges,
         sourcesRanges,
     }): RemirrorJSON[] {
-        if (Array.isArray(content)) {
-            return content.map((c) => {
-                return {
-                    type: key,
-                    content: [
-                        this.getParagraphFragments(
-                            rawSourcesRanges,
-                            sourcesRanges,
-                            c
-                        ),
-                    ],
-                };
-            });
-        } else {
-            return [
-                {
-                    type: key,
-                    content: [
-                        this.getParagraphFragments(
-                            rawSourcesRanges,
-                            sourcesRanges,
-                            content
-                        ),
-                    ],
-                },
-            ];
-        }
+        const contentArray = Array.isArray(content) ? content : [content];
+
+        return contentArray.map((c) => ({
+            type: key,
+            content: [
+                this.getParagraphFragments(rawSourcesRanges, sourcesRanges, c),
+            ],
+        }));
     }
 }

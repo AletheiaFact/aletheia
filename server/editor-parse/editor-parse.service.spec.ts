@@ -35,12 +35,6 @@ describe("ParserService", () => {
         content: [
             {
                 type: "paragraph",
-                content: [
-                    {
-                        type: "text",
-                        text: " ",
-                    },
-                ],
             },
             {
                 type: "questions",

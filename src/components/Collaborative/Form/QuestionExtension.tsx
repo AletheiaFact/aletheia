@@ -16,8 +16,15 @@ class QuestionExtension extends NodeExtension {
     ReactComponent: ComponentType<NodeViewComponentProps> = ({
         node,
         forwardRef,
+        getPosition,
     }) => {
-        return <QuestionCard node={node} forwardRef={forwardRef} />;
+        return (
+            <QuestionCard
+                node={node}
+                forwardRef={forwardRef}
+                initialPosition={getPosition()}
+            />
+        );
     };
 
     createTags() {
@@ -26,18 +33,14 @@ class QuestionExtension extends NodeExtension {
 
     createNodeSpec(): NodeExtensionSpec {
         return {
-            /**
-             * FIXME: Draggable is not working currently, needs investigation
-             */
-            draggable: true,
             selectable: true,
             /**
              * Atom is needed to create a boundary between the card and
              * others elements in the editor
              */
-            atom: true,
+            atom: false,
             /**
-             * isolating is needed to not allow cards to get merged
+             * isolating is needed to not allow cards to get deleted
              * whend deleting lines
              */
             isolating: true,

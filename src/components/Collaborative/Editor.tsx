@@ -43,70 +43,30 @@ const Editor = ({ state }: { state: any }) => {
     );
 
     const handleInsertNode = useCallback(
-        (insertNodeFunction, fixedPosition) => {
+        (insertNodeFunction) => {
             const { doc } = state;
-            const { node, selection } = identifyPosition(
-                doc.content,
-                fixedPosition
-            );
-
-            const insertTopLevelNode = (content, selection, node) => {
-                command.focus(selection);
-                if (selection !== content.size && selection !== 0) {
-                    command.insertParagraph(" ", { selection });
-                    command.insertNode(node, { selection });
-                }
-            };
-
-            insertTopLevelNode(doc.content, selection, node);
             command.insertHtml(insertNodeFunction(), {
-                selection,
-                replaceEmptyParentBlock: selection !== 0,
+                selection: doc.content.size,
+                replaceEmptyParentBlock: true,
             });
         },
         [command, state]
     );
-
-    const identifyPosition = (nodes, fixedPosition) => {
-        const target = [0, "verification", "summary", -1];
-        let selection = 0;
-        let node = null;
-
-        for (let i = 0; i < nodes.childCount; i++) {
-            const childNode = nodes.child(i);
-
-            if (target[fixedPosition] === 0) break;
-            else if (target[fixedPosition] === -1) {
-                selection = nodes.size;
-                break;
-            }
-
-            if (childNode.type.name === target[fixedPosition]) {
-                node = childNode;
-                break;
-            }
-            selection += childNode.nodeSize;
-        }
-
-        return {
-            node,
-            selection,
-        };
-    };
 
     return (
         <EditorStyle>
             <div className="toolbar">
                 <Button
                     className="toolbar-item"
-                    onClick={() => handleInsertNode(getQuestionContentHtml, 0)}
+                    onClick={() => handleInsertNode(getSummaryContentHtml)}
+                    disabled={summaryDisabled}
                 >
-                    <QuestionMarkIcon className="toolbar-item-icon" />
+                    <SummarizeIcon className="toolbar-item-icon" />
                 </Button>
 
                 <Button
                     className="toolbar-item"
-                    onClick={() => handleInsertNode(getReportContentHtml, 1)}
+                    onClick={() => handleInsertNode(getReportContentHtml)}
                     disabled={reportDisabled}
                 >
                     <ReportProblemIcon className="toolbar-item-icon" />
@@ -114,9 +74,7 @@ const Editor = ({ state }: { state: any }) => {
 
                 <Button
                     className="toolbar-item"
-                    onClick={() =>
-                        handleInsertNode(getVerificationContentHtml, 2)
-                    }
+                    onClick={() => handleInsertNode(getVerificationContentHtml)}
                     disabled={verificationDisabled}
                 >
                     <FactCheckIcon className="toolbar-item-icon" />
@@ -124,10 +82,9 @@ const Editor = ({ state }: { state: any }) => {
 
                 <Button
                     className="toolbar-item"
-                    onClick={() => handleInsertNode(getSummaryContentHtml, 3)}
-                    disabled={summaryDisabled}
+                    onClick={() => handleInsertNode(getQuestionContentHtml)}
                 >
-                    <SummarizeIcon className="toolbar-item-icon" />
+                    <QuestionMarkIcon className="toolbar-item-icon" />
                 </Button>
             </div>
         </EditorStyle>

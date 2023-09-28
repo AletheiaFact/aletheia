@@ -7,10 +7,18 @@ import { DeleteOutlined } from "@ant-design/icons";
 import CardStyle from "./CardStyle";
 import { useTranslation } from "next-i18next";
 
-export const QuestionCard = ({ forwardRef, node }) => {
+export const QuestionCard = ({ forwardRef, node, initialPosition }) => {
     const { t } = useTranslation();
     const command = useCommands();
-    const handleDelete = useCallback(() => command.delete(), [command]);
+
+    const handleDelete = useCallback(
+        () =>
+            command.delete({
+                from: initialPosition,
+                to: initialPosition + node.nodeSize,
+            }),
+        [command, initialPosition, node.nodeSize]
+    );
 
     return (
         <CardStyle>
@@ -21,8 +29,6 @@ export const QuestionCard = ({ forwardRef, node }) => {
                         className="card-content"
                         style={{
                             minHeight: "40px",
-                            display: "flex",
-                            alignItems: "center",
                         }}
                     >
                         <p style={{ overflowY: "inherit" }} ref={forwardRef} />
