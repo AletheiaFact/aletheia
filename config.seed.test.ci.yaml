@@ -31,7 +31,7 @@ services:
           sendAuthDetails: false
           isTestUser: true
           oryId: {env(CI_ORY_USERID)}
-          role: fact-checker
+          role: super-admin
       throttle:
         ttl: 60
         limit: 1000
