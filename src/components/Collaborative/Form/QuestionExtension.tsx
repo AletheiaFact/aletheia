@@ -33,7 +33,7 @@ class QuestionExtension extends NodeExtension {
 
     createNodeSpec(): NodeExtensionSpec {
         return {
-            selectable: true,
+            selectable: false,
             /**
              * Atom is needed to create a boundary between the card and
              * others elements in the editor

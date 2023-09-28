@@ -442,10 +442,8 @@ export class ClaimReviewTaskService {
         }
     }
 
-    getEditorContentObject(machine) {
-        return this.editorParseService.schema2editor(
-            machine.context.reviewData
-        );
+    getEditorContentObject(schema) {
+        return this.editorParseService.schema2editor(schema);
     }
 
     async getHtmlFromSchema(schema) {

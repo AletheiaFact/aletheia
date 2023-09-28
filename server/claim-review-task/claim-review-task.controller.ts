@@ -131,7 +131,7 @@ export class ClaimReviewController {
             );
 
         return this.claimReviewTaskService.getEditorContentObject(
-            claimReviewTask?.machine
+            claimReviewTask?.machine?.context?.reviewData
         );
     }
 

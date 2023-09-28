@@ -7,7 +7,10 @@ import { ReviewTaskEvents } from "./enums";
 const saveContext = assign<ReviewTaskMachineContext, SaveEvent>(
     (context, event) => {
         const editorParser = new EditorParser();
-        if (event.type === ReviewTaskEvents.finishReport) {
+        if (
+            event.type === ReviewTaskEvents.finishReport ||
+            event.type === ReviewTaskEvents.draft
+        ) {
             const schema = editorParser.editor2schema(event.reviewData.editor);
             const reviewDataHtml = editorParser.schema2html(schema);
             event.reviewData = {

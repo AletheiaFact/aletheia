@@ -3,6 +3,29 @@ import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/
 
 const EditorSchemaArray = ["summary", "report", "verification", "questions"];
 
+const defaultDoc: RemirrorJSON = {
+    type: "doc",
+    content: [
+        { type: "paragraph" },
+        {
+            type: "summary",
+            content: [{ type: "paragraph" }],
+        },
+        {
+            type: "questions",
+            content: [{ type: "paragraph" }],
+        },
+        {
+            type: "report",
+            content: [{ type: "paragraph" }],
+        },
+        {
+            type: "verification",
+            content: [{ type: "paragraph" }],
+        },
+    ],
+};
+
 export class EditorParser {
     hasSources(sources): boolean {
         return sources.length > 0;
@@ -153,8 +176,8 @@ export class EditorParser {
             }
         }
 
-        schema.sources = this.replaceSourceContentToTextRange(schema);
         schema.questions = questions;
+        schema.sources = this.replaceSourceContentToTextRange(schema);
 
         return schema;
     }
@@ -207,14 +230,25 @@ export class EditorParser {
     }
 
     findTextRange(content, textTarget) {
-        const start = content.indexOf(textTarget);
-        const end = start + textTarget.length;
-        return [start, end];
+        const contentArray = Array.isArray(content) ? content : [content];
+
+        return contentArray.flatMap((c) => {
+            const start = c.indexOf(textTarget);
+            if (start !== -1) {
+                const end = start + textTarget.length;
+                return [start, end];
+            }
+            return [];
+        });
     }
 
     async schema2editor(
-        data: ReviewTaskMachineContextReviewData
+        schema: ReviewTaskMachineContextReviewData
     ): Promise<RemirrorJSON> {
+        if (!schema) {
+            return defaultDoc;
+        }
+
         const doc: RemirrorJSON = {
             type: "doc",
             content: [
@@ -225,20 +259,19 @@ export class EditorParser {
                 { type: "paragraph" },
             ],
         };
-        for (const key in data) {
-            if (EditorSchemaArray.includes(key)) {
-                const content = data[key];
-                if (!this.hasSources(data?.sources)) {
-                    doc.content.push(
-                        ...this.buildContentWithoutSouces(key, content)
-                    );
-                    continue;
-                }
-                const sources = this.getSourceByProperty(data.sources, key);
-
+        for (const key of Object.keys(schema).filter((key) =>
+            EditorSchemaArray.includes(key)
+        )) {
+            const content = schema[key];
+            if (!this.hasSources(schema?.sources)) {
+                doc.content.push(
+                    ...this.buildContentWithoutSouces(key, content)
+                );
+                continue;
+            } else {
+                const sources = this.getSourceByProperty(schema.sources, key);
                 const { rawSourcesRanges, sourcesRanges } =
                     this.getRawSourcesAndSourcesRanges(sources);
-
                 doc.content.push(
                     ...this.buildContentFragments({
                         content,
@@ -276,14 +309,19 @@ export class EditorParser {
 
         switch (type) {
             case "text":
-                return this.getContentObject(fragmentText);
+                if (fragmentText) {
+                    return this.getContentObject(fragmentText);
+                }
+                break;
             case "source":
                 if (fragmentText === targetText) {
                     return this.getContentObjectWithMarks(fragmentText, href);
                 }
             // Fall through to the default case if type is "source" and the text doesn't match targetText
             default:
-                return this.getContentObject(fragmentText);
+                if (fragmentText) {
+                    return this.getContentObject(fragmentText);
+                }
         }
     }
 
@@ -371,8 +409,8 @@ export class EditorParser {
             content
         );
 
-        const textFragments = allRanges.map(
-            ({ targetText, textRange, type, href }) => {
+        const textFragments = allRanges
+            .map(({ targetText, textRange, type, href }) => {
                 return this.extractContentFragmentFromRange(
                     {
                         targetText,
@@ -382,8 +420,8 @@ export class EditorParser {
                     },
                     type
                 );
-            }
-        );
+            })
+            .filter((fragment) => fragment !== undefined);
 
         return {
             type: "paragraph",
