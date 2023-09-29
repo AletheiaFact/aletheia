@@ -119,7 +119,7 @@ describe("ParserService", () => {
         ],
     };
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const testingModule: TestingModule = await Test.createTestingModule({
             imports: [EditorParseModule],
         }).compile();
