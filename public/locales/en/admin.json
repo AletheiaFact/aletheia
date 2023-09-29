@@ -8,6 +8,8 @@
     "columnBadges": "Badges",
     "columnTotp": "Totp",
     "role-admin": "Admin",
+    "role-super-admin": "Super Admin",
+    "role-reviewer": "Reviewer",
     "role-regular": "Regular",
     "role-fact-checker": "Fact-checker",
     "user-status-true": "Active",

@@ -20,6 +20,8 @@ export enum Roles {
     Regular = "regular", //read
     FactChecker = "fact-checker", //read, create, update
     Admin = "admin", //manage
+    SuperAdmin = "super-admin", //Manage / Not editable
+    Reviewer = "reviewer", // //read, create, update
 }
 
 export enum Status {
@@ -37,9 +39,12 @@ export class AbilityFactory {
             Ability as AbilityClass<AppAbility>
         );
 
-        if (user.role === Roles.Admin) {
+        if (user.role === Roles.Admin || user.role === Roles.SuperAdmin) {
             can(Action.Manage, "all");
-        } else if (user.role === Roles.FactChecker) {
+        } else if (
+            user.role === Roles.FactChecker ||
+            user.role === Roles.Reviewer
+        ) {
             can(Action.Read, "all");
             can(Action.Update, "all");
             can(Action.Create, "all");

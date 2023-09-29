@@ -77,24 +77,25 @@ const AletheiaMenu = () => {
             >
                 {t("menu:kanbanItem")}
             </Menu.Item>
-            {role === Roles.Admin && (
-                <>
-                    <Menu.Item
-                        key="/admin"
-                        data-cy={"testadminItem"}
-                        onClick={handleClick}
-                    >
-                        {t("menu:adminItem")}
-                    </Menu.Item>
-                    <Menu.Item
-                        key="/admin/badges"
-                        data-cy={"testadminBadgeItem"}
-                        onClick={handleClick}
-                    >
-                        {t("menu:Badges")}
-                    </Menu.Item>
-                </>
-            )}
+            {role === Roles.Admin ||
+                (role === Roles.SuperAdmin && (
+                    <>
+                        <Menu.Item
+                            key="/admin"
+                            data-cy={"testadminItem"}
+                            onClick={handleClick}
+                        >
+                            {t("menu:adminItem")}
+                        </Menu.Item>
+                        <Menu.Item
+                            key="/admin/badges"
+                            data-cy={"testadminBadgeItem"}
+                            onClick={handleClick}
+                        >
+                            {t("menu:Badges")}
+                        </Menu.Item>
+                    </>
+                ))}
         </Menu>
     );
 };

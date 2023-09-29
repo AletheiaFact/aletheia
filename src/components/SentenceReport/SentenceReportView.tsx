@@ -35,7 +35,7 @@ const SentenceReportView = ({
         machineService,
         isPartialReviewSelector
     );
-    const userIsAdmin = role === Roles.Admin;
+    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
 
     const showReport =
         (isPublished && (!isHidden || userIsNotRegular)) ||

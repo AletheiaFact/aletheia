@@ -29,13 +29,15 @@ import {
 } from "../auth/ability/ability.decorator";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
+import { UtilService } from "../util";
 
 @Controller()
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
         private viewService: ViewService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private util: UtilService
     ) {}
 
     @IsPublic()
@@ -135,20 +137,31 @@ export class UsersController {
     async updateUser(
         @Param("id") userId,
         @Body() updates: UpdateUserDTO,
-        @Res() res
+        @Res() res,
+        @Req() request
     ) {
         try {
-            this.usersService
-                .updateUser(Types.ObjectId(userId), updates)
-                .then(() => {
-                    res.status(200).json({
-                        success: true,
-                        message: "User updated successfully",
+            const user = await this.usersService.getById(userId);
+
+            const shouldEdit = this.util.canEditUser(user, request);
+
+            if (shouldEdit) {
+                this.usersService
+                    .updateUser(Types.ObjectId(userId), updates)
+                    .then(() => {
+                        res.status(200).json({
+                            success: true,
+                            message: "User updated successfully",
+                        });
+                    })
+                    .catch((e) => {
+                        res.status(500).json({ message: e.message });
                     });
-                })
-                .catch((e) => {
-                    res.status(500).json({ message: e.message });
+            } else {
+                res.status(403).json({
+                    message: "Unauthorized to edit this user",
                 });
+            }
         } catch (e) {
             res.status(500).json({ message: e.message });
         }

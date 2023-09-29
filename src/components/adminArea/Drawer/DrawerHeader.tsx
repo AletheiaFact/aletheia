@@ -9,6 +9,7 @@ import { finishEditingItem } from "../../../atoms/editDrawer";
 import userApi from "../../../api/userApi";
 import HeaderUserStatus from "./HeaderUserStatus";
 import Button, { ButtonType } from "../../Button";
+import { canEdit } from "../../../utils/GetUserPermission";
 
 const DrawerHeader = ({ currentUser, setIsLoading }) => {
     const { t } = useTranslation();
@@ -16,6 +17,8 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
     const [, finishEditing] = useAtom(finishEditingItem);
     const [status, setStatus] = useState(currentUser?.state || Status.Active);
     const [userId] = useAtom(currentUserId);
+
+    const shouldEdit = canEdit(currentUser, userId);
 
     const handleClickChangeStatus = async () => {
         try {
@@ -63,7 +66,7 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
                         {currentUser?.name} - {currentUser?.email}
                     </h3>
                 </div>
-                {userId !== currentUser?._id && (
+                {userId !== currentUser?._id && shouldEdit && (
                     <Button
                         type={ButtonType.whiteBlue}
                         onClick={handleClickChangeStatus}

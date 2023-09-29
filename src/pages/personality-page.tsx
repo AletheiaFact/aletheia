@@ -37,17 +37,18 @@ const PersonalityPage: NextPage<{
     return (
         <>
             <JsonLd {...jsonldContent} />
-            {role === Roles.Admin && (
-                <AdminToolBar
-                    content={personality}
-                    deleteApiFunction={personalitiesApi.deletePersonality}
-                    changeHideStatusFunction={
-                        personalitiesApi.updatePersonalityHiddenStatus
-                    }
-                    target={TargetModel.Personality}
-                    hideDescriptions={hideDescriptions}
-                />
-            )}
+            {role === Roles.Admin ||
+                (role === Roles.SuperAdmin && (
+                    <AdminToolBar
+                        content={personality}
+                        deleteApiFunction={personalitiesApi.deletePersonality}
+                        changeHideStatusFunction={
+                            personalitiesApi.updatePersonalityHiddenStatus
+                        }
+                        target={TargetModel.Personality}
+                        hideDescriptions={hideDescriptions}
+                    />
+                ))}
             <PersonalityView
                 personality={personality}
                 href={href}

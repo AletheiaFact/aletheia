@@ -31,6 +31,8 @@ import LargeDrawer from "../LargeDrawer";
 import { Controller, useForm } from "react-hook-form";
 import { atomUserList } from "../../atoms/userEdit";
 import { User } from "../../types/User";
+import { currentUserId } from "../../atoms/currentUser";
+import { canEdit } from "../../utils/GetUserPermission";
 
 const BadgesFormDrawer = () => {
     const [badgeEdited] = useAtom(badgeBeeingEdited);
@@ -56,7 +58,7 @@ const BadgesFormDrawer = () => {
             name: badgeEdited?.name,
             description: badgeEdited?.description,
             image: initialFileList,
-            users: badgeEdited?.users.map((user) => user._id),
+            users: badgeEdited?.users?.map((user) => user?._id),
         },
     });
 
@@ -65,17 +67,24 @@ const BadgesFormDrawer = () => {
     const addBadge = useSetAtom(addBadgeToList);
     const finishEditing = useSetAtom(finishEditingItem);
     const cancelEditing = useSetAtom(cancelEditingItem);
+    const [userId] = useAtom(currentUserId);
 
     const isEdit = !!badgeEdited;
     const [imageError, setImageError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [users, setUsers] = useState([]);
+
+    const userListFiltered = userList.filter((user) => {
+        return canEdit(user, userId);
+    });
     useEffect(() => {
         if (badgeEdited) {
             const userIds = badgeEdited?.users?.map((user) => user._id);
             setUsers(
                 userIds?.length
-                    ? userList.filter((user) => userIds.includes(user._id))
+                    ? userListFiltered.filter((user) =>
+                          userIds.includes(user._id)
+                      )
                     : []
             );
 
@@ -165,7 +174,7 @@ const BadgesFormDrawer = () => {
 
     return (
         <LargeDrawer
-            visible={open}
+            open={open}
             onClose={onCloseDrawer}
             backgroundColor={colors.lightGraySecondary}
         >
@@ -230,7 +239,7 @@ const BadgesFormDrawer = () => {
                             <Autocomplete
                                 multiple
                                 id="badge-users"
-                                options={userList}
+                                options={userListFiltered}
                                 getOptionLabel={(option: User) => option.name}
                                 disableCloseOnSelect
                                 limitTags={3}

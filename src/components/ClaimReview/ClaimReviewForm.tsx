@@ -42,7 +42,7 @@ const ClaimReviewForm = ({
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
     const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
-    const userIsAdmin = role === Roles.Admin;
+    const userIsAdmin = role === Roles.Admin || Roles.SuperAdmin;
 
     const showForm =
         isUnassigned ||

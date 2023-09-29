@@ -89,7 +89,6 @@ const AdminView = () => {
                 headerName: t("admin:columnTotp"),
                 flex: 1,
                 valueGetter: (params: GridValueGetterParams) => {
-                    console.log(params, "params");
                     return params.row.totp;
                 },
                 renderCell: (params) => (
