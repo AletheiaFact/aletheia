@@ -44,15 +44,17 @@ jobs:
     - run: yarn build
     - run: yarn lint
     - run: yarn test
-    -   name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    -   name: Cypress run
-        uses: cypress-io/github-action@v4
-        with:
-            start: yarn test:e2e:cy
-            wait-on: 'http://localhost:3000'
-        env:
-            CI: true
+      env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Cypress run
+      uses: cypress-io/github-action@v4
+      with:
+         start: yarn test:e2e:cy
+         wait-on: 'http://localhost:3000'
+      env:
+         CI: true
