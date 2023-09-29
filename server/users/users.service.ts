@@ -38,7 +38,7 @@ export class UsersService {
             const existingUser = await this.getByOryId(newUser.oryId);
             this.logger.log("User id provided, updating an ory identity");
             await this.oryService.updateIdentity(
-                existingUser ? existingUser : newUser,
+                existingUser || newUser,
                 user.password,
                 user.role
             );
