@@ -33,9 +33,6 @@ describe("ParserService", () => {
         type: "doc",
         content: [
             {
-                type: "paragraph",
-            },
-            {
                 type: "questions",
                 content: [
                     {
