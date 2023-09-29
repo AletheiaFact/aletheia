@@ -3,7 +3,6 @@ import { EditorParseModule } from "./editor-parse.module";
 import { EditorParseService } from "./editor-parse.service";
 import { ReviewTaskMachineContextReviewData } from "../claim-review-task/dto/create-claim-review-task.dto";
 import { RemirrorJSON } from "remirror";
-const util = require("util");
 
 describe("ParserService", () => {
     let editorParseService: EditorParseService;
@@ -137,13 +136,6 @@ describe("ParserService", () => {
                 schemaContent
             );
 
-            console.log(
-                util.inspect(editorResult, {
-                    showHidden: false,
-                    depth: null,
-                    colors: true,
-                })
-            );
             expect(editorResult).toMatchObject(editorContent);
         });
 
@@ -152,28 +144,12 @@ describe("ParserService", () => {
                 editorContent
             );
 
-            console.log(
-                util.inspect(schemaResult, {
-                    showHidden: false,
-                    depth: null,
-                    colors: true,
-                })
-            );
-
             expect(schemaResult).toMatchObject(schemaContent);
         });
 
         it("Schema to HTML is parsed correctly", async () => {
             const schemaHtmlResult = await editorParseService.schema2html(
                 schemaContent
-            );
-
-            console.log(
-                util.inspect(schemaHtmlResult, {
-                    showHidden: false,
-                    depth: null,
-                    colors: true,
-                })
             );
             expect(schemaHtmlResult).toMatchObject(schemaHtml);
         });
