@@ -58,8 +58,17 @@ const Editor = ({ state }: { state: any }) => {
             <div className="toolbar">
                 <Button
                     className="toolbar-item"
+                    onClick={() => handleInsertNode(getQuestionContentHtml)}
+                    style={{ outline: "none", border: "none" }}
+                >
+                    <QuestionMarkIcon className="toolbar-item-icon" />
+                </Button>
+
+                <Button
+                    className="toolbar-item"
                     onClick={() => handleInsertNode(getSummaryContentHtml)}
                     disabled={summaryDisabled}
+                    style={{ outline: "none", border: "none" }}
                 >
                     <SummarizeIcon className="toolbar-item-icon" />
                 </Button>
@@ -68,6 +77,7 @@ const Editor = ({ state }: { state: any }) => {
                     className="toolbar-item"
                     onClick={() => handleInsertNode(getReportContentHtml)}
                     disabled={reportDisabled}
+                    style={{ outline: "none", border: "none" }}
                 >
                     <ReportProblemIcon className="toolbar-item-icon" />
                 </Button>
@@ -76,15 +86,9 @@ const Editor = ({ state }: { state: any }) => {
                     className="toolbar-item"
                     onClick={() => handleInsertNode(getVerificationContentHtml)}
                     disabled={verificationDisabled}
+                    style={{ outline: "none", border: "none" }}
                 >
                     <FactCheckIcon className="toolbar-item-icon" />
-                </Button>
-
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getQuestionContentHtml)}
-                >
-                    <QuestionMarkIcon className="toolbar-item-icon" />
                 </Button>
             </div>
         </EditorStyle>

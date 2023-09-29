@@ -19,7 +19,7 @@ const assignedCollaborativeForm: FormField[] = [
         },
     }),
     createFormField({
-        fieldName: "summary",
+        fieldName: "collaborativeEditor",
         type: "collaborative",
         defaultValue: "",
     }),

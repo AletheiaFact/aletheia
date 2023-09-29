@@ -29,6 +29,8 @@
     "reportPlaceholder": "Insira o relatório da verificação",
     "verificationLabel": "Como verificamos?",
     "verificationPlaceholder": "Insira como a verificação foi feita",
+    "collaborativeEditorLabel": "Relatório",
+    "collaborativeEditorPlaceholder": "Insira campos do relatório",
     "sourcesLabel": "Forneça ao menos um link de uma fonte confiável",
     "sourcesPlaceholder": "Cole uma URL",
     "addSourceLabel": "Incluir outra fonte",

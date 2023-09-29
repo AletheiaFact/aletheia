@@ -89,11 +89,13 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                     userIsReviewer={userIsReviewer}
                 />
             )}
-            <SocialMediaShare
-                quote={personality?.name}
-                href={shareHref}
-                claim={claim?.title}
-            />
+            {review?.isPublished && (
+                <SocialMediaShare
+                    quote={personality?.name}
+                    href={shareHref}
+                    claim={claim?.title}
+                />
+            )}
         </div>
     );
 };

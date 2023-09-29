@@ -251,13 +251,7 @@ export class EditorParser {
 
         const doc: RemirrorJSON = {
             type: "doc",
-            content: [
-                /** Always add first line empty to
-                 * prevent no position before top-level node errors
-                 * when adding node extensions.
-                 */
-                { type: "paragraph" },
-            ],
+            content: [],
         };
         for (const key of Object.keys(schema).filter((key) =>
             EditorSchemaArray.includes(key)

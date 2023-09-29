@@ -56,57 +56,57 @@ const ClaimReviewForm = ({
     }, [isUnassigned]);
 
     return (
-        <Col
-            offset={3}
-            span={18}
+        <Row
             style={{
                 background: colors.lightGray,
                 padding: "20px 15px",
             }}
         >
-            {formCollapsed && (
-                <Row
+            <Col offset={3} span={18}>
+                {formCollapsed && (
+                    <Row
+                        style={{
+                            width: "100%",
+                            padding: "0px 0px 15px 0px",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <>
+                            {isLoggedIn && (
+                                <Button
+                                    type={ButtonType.blue}
+                                    onClick={toggleFormCollapse}
+                                    icon={<PlusOutlined />}
+                                    data-cy={"testAddReviewButton"}
+                                >
+                                    {t("claimReviewForm:addReviewButton")}
+                                </Button>
+                            )}
+                        </>
+                    </Row>
+                )}
+                <Col
                     style={{
-                        width: "100%",
-                        padding: "0px 0px 15px 0px",
+                        display: "flex",
                         justifyContent: "center",
+                        padding: "0px 0px 15px 0px",
                     }}
                 >
-                    <>
-                        {isLoggedIn && (
-                            <Button
-                                type={ButtonType.blue}
-                                onClick={toggleFormCollapse}
-                                icon={<PlusOutlined />}
-                                data-cy={"testAddReviewButton"}
-                            >
-                                {t("claimReviewForm:addReviewButton")}
-                            </Button>
-                        )}
-                    </>
-                </Row>
-            )}
-            <Col
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    padding: "0px 0px 15px 0px",
-                }}
-            >
-                {!isLoggedIn && (
-                    <Button href="/login">
-                        {t("claimReviewForm:loginButton")}
-                    </Button>
+                    {!isLoggedIn && (
+                        <Button href="/login">
+                            {t("claimReviewForm:loginButton")}
+                        </Button>
+                    )}
+                </Col>
+                {!formCollapsed && showForm && (
+                    <DynamicReviewTaskForm
+                        data_hash={dataHash}
+                        personality={personalityId}
+                        claim={claimId}
+                    />
                 )}
             </Col>
-            {!formCollapsed && showForm && (
-                <DynamicReviewTaskForm
-                    data_hash={dataHash}
-                    personality={personalityId}
-                    claim={claimId}
-                />
-            )}
-        </Col>
+        </Row>
     );
 };
 
