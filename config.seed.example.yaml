@@ -44,3 +44,6 @@ services:
         url: ORY_SDK_URL
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
+      novu:
+        api_key: NOVU_API_KEY
+        application_identifier: NOVU_APPLICATION_IDENTIFIER
