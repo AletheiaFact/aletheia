@@ -77,7 +77,7 @@ const HeaderContent = () => {
                 )}
                 <DonateButton header={true} />
 
-                <NotificationMenu user={user} />
+                <NotificationMenu user={user} hasSession={hasSession} />
                 <UserMenu hasSession={hasSession} user={user} />
                 {!vw?.sm && (
                     <SelectLanguage
