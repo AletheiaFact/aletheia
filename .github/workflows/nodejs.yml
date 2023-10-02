@@ -51,6 +51,11 @@ jobs:
       env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Test docker image build before merge
+      run: |
+        docker build --build-arg ENVIRONMENT=development \
+          --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
+          --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} .
     - name: Cypress run
       uses: cypress-io/github-action@v4
       with:
@@ -58,3 +63,4 @@ jobs:
          wait-on: 'http://localhost:3000'
       env:
          CI: true
+    
