@@ -6,19 +6,23 @@ import { Personality } from "../../personality/schemas/personality.schema";
 import { User } from "../../users/schemas/user.schema";
 import { ApiProperty } from "@nestjs/swagger";
 
+export type ReviewTaskMachineContextReviewData = {
+    usersId?: any[];
+    summary?: string;
+    questions?: string[];
+    report?: string;
+    verification?: string;
+    sources?: string[] | object[];
+    classification?: ClassificationEnum;
+    data_hash?: string;
+    reviewerId?: any;
+    rejectionComment?: string;
+    editor?: any;
+    reviewDataHtml?: ReviewTaskMachineContextReviewData;
+};
+
 export type ReviewTaskMachineContext = {
-    reviewData: {
-        usersId?: any[];
-        summary?: string;
-        questions?: string[];
-        report?: string;
-        verification?: string;
-        sources?: string[] | object[];
-        classification?: ClassificationEnum;
-        data_hash: string;
-        reviewerId?: any;
-        rejectionComment?: string;
-    };
+    reviewData: ReviewTaskMachineContextReviewData;
     claimReview: {
         usersId?: User[];
         data_hash: string;

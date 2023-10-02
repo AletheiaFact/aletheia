@@ -13,6 +13,7 @@ import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
+import { CollaborativeEditorProvider } from "../components/Collaborative/CollaborativeEditorProvider";
 
 export interface ClaimReviewPageProps {
     personality?: any;
@@ -105,12 +106,14 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 baseMachine={props.claimReviewTask?.machine}
                 publishedReview={{ review: claimReview }}
             >
-                <ClaimReviewView
-                    personality={personality}
-                    claim={claim}
-                    content={content}
-                    hideDescriptions={hideDescriptions}
-                />
+                <CollaborativeEditorProvider data_hash={content.data_hash}>
+                    <ClaimReviewView
+                        personality={personality}
+                        claim={claim}
+                        content={content}
+                        hideDescriptions={hideDescriptions}
+                    />
+                </CollaborativeEditorProvider>
             </ReviewTaskMachineProvider>
             <AffixButton personalitySlug={personality?.slug} />
         </>

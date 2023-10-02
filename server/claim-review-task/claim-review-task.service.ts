@@ -25,6 +25,7 @@ import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";
 import lookupClaimReviews from "../mongo-pipelines/lookupClaimReviews";
 import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
+import { EditorParseService } from "../editor-parse/editor-parse.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -37,7 +38,8 @@ export class ClaimReviewTaskService {
         private historyService: HistoryService,
         private stateEventService: StateEventService,
         private sentenceService: SentenceService,
-        private imageService: ImageService
+        private imageService: ImageService,
+        private editorParseService: EditorParseService
     ) {}
 
     _verifyMachineValueAndAddMatchPipeline(pipeline, value) {
@@ -439,5 +441,17 @@ export class ClaimReviewTaskService {
             console.error("Error in countReviewTasksNotDeleted:", error);
             throw error;
         }
+    }
+
+    getEditorContentObject(schema) {
+        return this.editorParseService.schema2editor(schema);
+    }
+
+    async getHtmlFromSchema(schema) {
+        const htmlContent = this.editorParseService.schema2html(schema);
+        return {
+            ...schema,
+            ...htmlContent,
+        };
     }
 }

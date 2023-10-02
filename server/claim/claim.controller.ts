@@ -306,6 +306,13 @@ export class ClaimController {
             data_hash
         );
 
+        if (claimReview?.report) {
+            claimReview.report =
+                await this.claimReviewTaskService.getHtmlFromSchema(
+                    claimReview?.report
+                );
+        }
+
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
 
         hideDescriptions[TargetModel.Claim] =

@@ -20,9 +20,10 @@ export class ReportService {
             if (report.sources && Array.isArray(report.sources)) {
                 for (const source of report.sources) {
                     await this.sourceService.create({
-                        link: source.link,
+                        href: source.href,
                         targetText: source?.targetText,
-                        targetReference: source?.ref,
+                        textRange: source?.textRange,
+                        targetReference: source?.field,
                         targetId: newReport.id,
                         targetModel: SourceTargetModel.ClaimReview,
                     });
