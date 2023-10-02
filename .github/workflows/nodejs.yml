@@ -58,3 +58,8 @@ jobs:
          wait-on: 'http://localhost:3000'
       env:
          CI: true
+    - name: Test docker image build before merge
+      run: |
+        docker build --build-arg ENVIRONMENT=development \
+          --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
+          --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }}
