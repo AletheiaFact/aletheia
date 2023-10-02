@@ -27,6 +27,9 @@ env:
   ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
   ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
   RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
+  NOVU_API_KEY: ${{ secrets.DEVELOPMENT_NOVU_API_KEY }}
+  NOVU_APPLICATION_IDENTIFIER: ${{ secrets.DEVELOPMENT_NOVU_APPLICATION_IDENTIFIER }}
+
 
   GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
   GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
@@ -60,6 +63,8 @@ jobs:
           echo "AWS_SDK_BUCKET=${{ secrets.PRODUCTION_AWS_SDK_BUCKET }}" >> $GITHUB_ENV
           echo "AWS_ACCESS_KEY_ID=${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "NOVU_API_KEY=${{ secrets.PRODUCTION_NOVU_API_KEY }}" >> $GITHUB_ENV
+          echo "NOVU_APPLICATION_IDENTIFIER=${{ secrets.PRODUCTION_NOVU_APPLICATION_IDENTIFIER }}" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -88,6 +93,8 @@ jobs:
             sed -i "s%AWS_SDK_BUCKET%$AWS_SDK_BUCKET%g" config.$ENVIRONMENT.yaml
             sed -i "s%AWS_ACCESS_KEY_ID%$AWS_ACCESS_KEY_ID%g" config.$ENVIRONMENT.yaml
             sed -i "s%AWS_SECRET_ACCESS_KEY%$AWS_SECRET_ACCESS_KEY%g" config.$ENVIRONMENT.yaml
+            sed -i "s%NOVU_API_KEY%$NOVU_API_KEY%g" config.$ENVIRONMENT.yaml
+            sed -i "s%NOVU_APPLICATION_IDENTIFIER%$NOVU_APPLICATION_IDENTIFIER%g" config.$ENVIRONMENT.yaml
 
       - name: Set migrate-mongo-config.ts
         run: |
@@ -154,6 +161,8 @@ jobs:
           echo "AWS_SDK_BUCKET=${{ secrets.PRODUCTION_AWS_SDK_BUCKET }}" >> $GITHUB_ENV
           echo "AWS_ACCESS_KEY_ID=${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "NOVU_API_KEY=${{ secrets.PRODUCTION_NOVU_API_KEY }}" >> $GITHUB_ENV
+          echo "NOVU_APPLICATION_IDENTIFIER=${{ secrets.PRODUCTION_NOVU_APPLICATION_IDENTIFIER }}" >> $GITHUB_ENV
 
       - name: Set environment
         run: |

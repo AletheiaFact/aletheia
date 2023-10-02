@@ -8,6 +8,7 @@ import OryModule from "../auth/ory/ory.module";
 import { ConfigModule } from "@nestjs/config";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { UtilService } from "../util";
+import { NotificationModule } from "../notifications/notifications.module";
 
 const UserModel = MongooseModule.forFeature([
     {
@@ -17,7 +18,14 @@ const UserModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [UserModel, ViewModule, OryModule, ConfigModule, AbilityModule],
+    imports: [
+        UserModel,
+        ViewModule,
+        OryModule,
+        ConfigModule,
+        AbilityModule,
+        NotificationModule,
+    ],
     exports: [UsersService, UserModel],
     controllers: [UsersController],
     providers: [UsersService, UtilService],

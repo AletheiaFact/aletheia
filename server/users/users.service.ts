@@ -6,13 +6,15 @@ import { Model } from "mongoose";
 import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
 import { Badge } from "../badge/schemas/badge.schema";
+import { NotificationService } from "../notifications/notifications.service";
 
 @Injectable()
 export class UsersService {
     private readonly logger = new Logger("UserService");
     constructor(
         @InjectModel(User.name) private UserModel: Model<UserDocument>,
-        private oryService: OryService
+        private oryService: OryService,
+        private notificationService: NotificationService
     ) {}
 
     async findAll(userQuery): Promise<UserDocument[]> {
@@ -26,6 +28,7 @@ export class UsersService {
 
     async register(user) {
         const newUser = new this.UserModel(user);
+        this.notificationService.createSubscriber(newUser);
         if (!newUser.oryId) {
             this.logger.log("No user id provided, creating a new ory identity");
             const { data: oryUser } = await this.oryService.createIdentity(
