@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import NotificationIcon from "./NotificationIcon";
 import NotificationsApi from "../../api/notificationsApi";
 
-const NotificationMenu = ({ user }) => {
+const NotificationMenu = ({ user, hasSession }) => {
     const language = Cookies.get("default_language") || "pt";
     const [applicationIdentifier, setApplicationIdentifier] = useState(null);
     const [hmacHash, setHmacHash] = useState(null);
@@ -23,7 +23,7 @@ const NotificationMenu = ({ user }) => {
         );
     }, [user?._id]);
 
-    if (hmacHash && applicationIdentifier) {
+    if (hmacHash && applicationIdentifier && hasSession) {
         return (
             <NovuProvider
                 subscriberId={user?._id}
