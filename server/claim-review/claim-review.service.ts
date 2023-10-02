@@ -235,7 +235,7 @@ export class ClaimReviewService {
     getById(claimReviewId) {
         return this.ClaimReviewModel.findById(claimReviewId)
             .populate("claims", "_id title")
-            .populate("sources", "_id link classification");
+            .populate("sources", "_id href classification");
     }
 
     async getReviewByDataHash(

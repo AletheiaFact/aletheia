@@ -23,7 +23,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const { title, stats, content: claimContent } = claim;
 
     const isImage = claim?.contentModel === ContentModelEnum.Image;
-    const sources = claim?.sources?.map((source) => source.link);
+    const sources = claim?.sources?.map((source) => source.href);
 
     const dispatchPersonalityAndClaim = () => {
         dispatch(actions.setSelectClaim(claim));

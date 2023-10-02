@@ -31,7 +31,7 @@ export default function getEditorSources(content: ContentParagraphsProps[]) {
                     return {
                         targetText: content.text,
                         ref: md5(`$${content.text}${sourceReference}`),
-                        link: content.marks[0].attrs.href,
+                        href: content.marks[0].attrs.href,
                     };
                 });
         })
