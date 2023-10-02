@@ -47,6 +47,3 @@ services:
         bucket: {env(AWS_SDK_BUCKET)}
         accessKeyId: {env(AWS_ACCESS_KEY_ID)}
         secretAccessKey: {env(AWS_SECRET_ACCESS_KEY)}
-      novu:
-        api_key: {env(NOVU_API_KEY)}
-        application_identifier: {env(NOVU_APPLICATION_IDENTIFIER)}

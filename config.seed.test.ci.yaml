@@ -44,6 +44,3 @@ services:
         url: {env(GITLAB_FEATURE_FLAG_URL)}
         appName: Staging
         instanceId: {env(GITLAB_FEATURE_FLAG_INSTANCE_ID)}
-      novu:
-        api_key: {env(NOVU_API_KEY)}
-        application_identifier: {env(NOVU_APPLICATION_IDENTIFIER)}

@@ -11,7 +11,16 @@ export class NotificationService {
         private configService: ConfigService
     ) {}
 
+    novuIsConfigured(): boolean {
+        if (this.configService.get<string>("novu.api_key")) return true;
+        return false;
+    }
+
     async createSubscriber({ _id = null, email, name }) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
         const result = await this.novu.subscribers.identify(_id, {
             email,
             firstName: name,
@@ -29,6 +38,10 @@ export class NotificationService {
     }
 
     async sendEmail(subscriberId: string, email: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
         const result = await this.novu.trigger("email-sender", {
             to: {
                 subscriberId,
@@ -41,6 +54,10 @@ export class NotificationService {
     }
 
     async sendNotification(subscriberId: string, payload: any) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
         const result = await this.novu.trigger("email-notifications", {
             to: {
                 subscriberId,
@@ -52,6 +69,10 @@ export class NotificationService {
     }
 
     async createTopic(key: string, name: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
         const result = await this.novu.topics.create({
             key,
             name,
@@ -61,6 +82,10 @@ export class NotificationService {
     }
 
     async addTopicSubscriber(key: string, subscriberId: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
         const result = await this.novu.topics.addSubscribers(key, {
             subscribers: [subscriberId],
         });
@@ -69,6 +94,10 @@ export class NotificationService {
     }
 
     async removeTopicSubscriber(key: string, subscriberId: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
         const result = await this.novu.topics.removeSubscribers(key, {
             subscribers: [subscriberId],
         });
@@ -77,6 +106,10 @@ export class NotificationService {
     }
 
     async sendTopicNotification(key: string, description: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
         //TODO: Rename trigger name based on dashboard
         const result = await this.novu.trigger("email-quickstart", {
             to: [{ type: TriggerRecipientsTypeEnum.TOPIC, topicKey: key }],
@@ -87,6 +120,10 @@ export class NotificationService {
     }
 
     async verifyUserOnTopic(key: string, externalSubscriberId: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
         const result = await this.novu.topics.getSubscriber(
             key,
             externalSubscriberId
@@ -95,11 +132,15 @@ export class NotificationService {
         return result.data;
     }
 
-    generateHmacHash = (subscriberId) => {
+    generateHmacHash(subscriberId) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
         const NOVU_API_KEY = this.configService.get<string>("novu.api_key");
 
         return createHmac("sha256", NOVU_API_KEY)
             .update(subscriberId)
             .digest("hex");
-    };
+    }
 }
