@@ -55,7 +55,7 @@ jobs:
       run: |
         docker build --build-arg ENVIRONMENT=development \
           --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
-          --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }}
+          --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} .
     - name: Cypress run
       uses: cypress-io/github-action@v4
       with:
