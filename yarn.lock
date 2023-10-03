@@ -4356,21 +4356,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ory/client@npm:0.0.1-alpha.153":
-  version: 0.0.1-alpha.153
-  resolution: "@ory/client@npm:0.0.1-alpha.153"
-  dependencies:
-    axios: ^0.21.4
-  checksum: 34dce4264bb4bd4a582d189fe99c2bb256961a4014e94dca49857c08b6eb944b32511794c7b8309d88bb4cf61a4dbc0d33e5d34ab053b3339e7f780e1af27581
-  languageName: node
-  linkType: hard
-
 "@ory/client@npm:^0.2.0-alpha.16":
   version: 0.2.0-alpha.60
   resolution: "@ory/client@npm:0.2.0-alpha.60"
   dependencies:
     axios: ^0.21.4
   checksum: 34907bd665fdd01bc2c828009dd4db8ab1accb1e0075d45c46f76aa3270ef68824e90410ff81027f1b006bbfd138f9a01acab6cb5959f11c2915e7ad65c6086d
+  languageName: node
+  linkType: hard
+
+"@ory/client@npm:~1.0.0":
+  version: 1.0.2
+  resolution: "@ory/client@npm:1.0.2"
+  dependencies:
+    axios: ^0.21.4
+  checksum: 6084ad741529c18953a92e3ff7cfa9b37c489310364de3e78f91e6559dd9f7b792ae8726550ff63246001547e65916fd52d9d4bbdc224e8c02da5b004b9b4781
   languageName: node
   linkType: hard
 
@@ -10036,7 +10036,7 @@ __metadata:
     "@novu/node": ^0.19.0
     "@novu/notification-center": ^0.19.0
     "@ory/cli": ^0.1.24
-    "@ory/client": 0.0.1-alpha.153
+    "@ory/client": ~1.0.0
     "@ory/integrations": ^0.2.5
     "@remirror/extension-yjs": ^3.0.14
     "@remirror/pm": ^2.0.0

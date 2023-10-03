@@ -1,8 +1,7 @@
 import {
-    SelfServiceLoginFlow,
-    SubmitSelfServiceLoginFlowBody,
-    SubmitSelfServiceLoginFlowWithPasswordMethodBody as ValuesType,
-    SubmitSelfServiceSettingsFlowWithTotpMethodBody as TotpValuesType,
+    LoginFlow,
+    UpdateLoginFlowBody,
+    UpdateLoginFlowWithPasswordMethod as ValuesType,
 } from "@ory/client";
 import { Col, message, Row } from "antd";
 import { AxiosError } from "axios";
@@ -22,14 +21,14 @@ import CTAButton from "../Home/CTAButton";
 import { ButtonType } from "../Button";
 
 const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
-    const [flow, setFlow] = useState<SelfServiceLoginFlow>();
+    const [flow, setFlow] = useState<LoginFlow>();
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const router = useRouter();
 
     useEffect(() => {
         oryGetLoginFlow({ router, setFlow, t });
-    }, []);
+    }, [router, t]);
 
     const submitLogin = (password, email) => {
         initializeCsrf();
@@ -50,9 +49,12 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
         });
     };
 
-    const onSubmitTotp = (values: SubmitSelfServiceLoginFlowBody) =>
-        ory
-            .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
+    const onSubmitTotp = (values: UpdateLoginFlowBody) =>
+        ory.frontend
+            .updateLoginFlow({
+                flow: String(flow?.id),
+                updateLoginFlowBody: values,
+            })
             // We logged in successfully! Let's bring the user home.
             .then(() => {
                 if (flow?.return_to) {
@@ -89,7 +91,7 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
         identifier: "",
     };
 
-    let totpValues: TotpValuesType = {
+    let totpValues = {
         csrf_token: "",
         method: "totp",
         totp_code: "",

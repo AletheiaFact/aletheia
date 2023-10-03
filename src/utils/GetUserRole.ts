@@ -2,7 +2,7 @@ import { ory } from "../lib/orysdk";
 import { Roles } from "../types/enums";
 
 export const GetUserRole = () => {
-    return ory
+    return ory.frontend
         .toSession()
         .then((session) => {
             return {

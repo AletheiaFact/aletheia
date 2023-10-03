@@ -23,7 +23,8 @@ const HeaderContent = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        ory.toSession()
+        ory.frontend
+            .toSession()
             .then(async ({ data }) => {
                 const user = await userApi.getByOryId(data.identity.id);
                 setHasSession(true);

@@ -1,9 +1,7 @@
 import { Controller, Get, Post, Req, Res } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { parse } from "url";
 import { ViewService } from "../../view/view.service";
-import OryService from "./ory.service";
 import { IsPublic } from "../decorators/is-public.decorator";
 
 @Controller()
