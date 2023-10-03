@@ -17,7 +17,11 @@ const AletheiaMenu = () => {
 
     const handleClick = (menuItem) => {
         dispatch(actions.openSideMenu());
-        router.push(menuItem.key);
+        if (menuItem.key === "/donate") {
+            window.location.href = "https://donate.aletheiafact.org/";
+        } else {
+            router.push(menuItem.key);
+        }
     };
 
     const [role] = useAtom(currentUserRole);
@@ -96,6 +100,10 @@ const AletheiaMenu = () => {
                 onClick={handleClick}
             >
                 {t("menu:codeOfConductItem")}
+            </Menu.Item>
+
+            <Menu.Item key="/donate" onClick={handleClick}>
+                {t("header:donateButton")}
             </Menu.Item>
         </Menu>
     );

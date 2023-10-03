@@ -1,32 +1,25 @@
 import React from "react";
-import styled from "styled-components";
 import colors from "../../styles/colors";
 import { Badge } from "antd";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-
-const NotificationStyled = styled.div`
-    display: flex;
-    align-items: center;
-    padding-left: 15px;
-    padding-top: 6px;
-
-    .notification-icon {
-        color: ${colors.white};
-        cursor: pointer;
-    }
-`;
+import AletheiaButton from "../Button";
 
 const NotificationIcon = ({ unseenCount }) => {
     return (
-        <NotificationStyled>
+        <AletheiaButton
+            style={{ padding: "4px 15px 0 15px" }}
+            data-cy="testNotificationIcon"
+        >
             <Badge
                 style={{ boxShadow: "none" }}
                 size="small"
                 count={unseenCount}
             >
-                <NotificationsIcon className="notification-icon" />
+                <NotificationsIcon
+                    style={{ color: colors.white, cursor: "pointer" }}
+                />
             </Badge>
-        </NotificationStyled>
+        </AletheiaButton>
     );
 };
 

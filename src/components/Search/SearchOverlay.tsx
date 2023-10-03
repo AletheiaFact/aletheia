@@ -64,7 +64,7 @@ const SearchOverlay = () => {
     });
 
     return (
-        <OverlayCol xs={1} sm={10} md={10}>
+        <OverlayCol xs={1} sm={8} md={10}>
             <div
                 className={`input-container ${
                     vw?.xs && isOpen ? "overlay" : ""

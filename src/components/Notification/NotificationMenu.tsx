@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+    INotificationCenterStyles,
     NovuProvider,
     PopoverNotificationCenter,
 } from "@novu/notification-center";
@@ -9,7 +10,31 @@ import Cookies from "js-cookie";
 import NotificationIcon from "./NotificationIcon";
 import NotificationsApi from "../../api/notificationsApi";
 
-const NotificationMenu = ({ user, hasSession }) => {
+const notificationStyles: INotificationCenterStyles = {
+    popover: {
+        dropdown: {
+            "& > div": {
+                width: "100%",
+                maxWidth: "380px",
+                "@media (max-width: 460px)": {
+                    marginLeft: "10px",
+                    maxWidth: "320px",
+                },
+            },
+            ".nc-header": {
+                gap: "32px",
+            },
+        },
+        arrow: {
+            marginRight: "18px",
+            "@media (max-width: 405px)": {
+                marginRight: "calc(100% - 75vw)",
+            },
+        },
+    },
+};
+
+const NotificationMenu = ({ hasSession, user }) => {
     const language = Cookies.get("default_language") || "pt";
     const [applicationIdentifier, setApplicationIdentifier] = useState(null);
     const [hmacHash, setHmacHash] = useState(null);
@@ -33,6 +58,7 @@ const NotificationMenu = ({ user, hasSession }) => {
                     fetchNotifications: true,
                     fetchUserPreferences: true,
                 }}
+                styles={notificationStyles}
                 i18n={language}
             >
                 <PopoverNotificationCenter

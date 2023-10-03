@@ -9,12 +9,8 @@ const HeaderActionsStyle = styled(Col)`
     align-items: center;
     gap: 16px;
 
-    @media ${queries.sm} {
-        padding: 0 1vw;
-
-        button {
-            padding: 0 1vw;
-        }
+    @media ${queries.xs} {
+        justify-content: flex-end;
     }
 `;
 

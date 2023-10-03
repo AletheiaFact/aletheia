@@ -59,27 +59,26 @@ const HeaderContent = () => {
                 <Logo color="white" />
             </a>
             <SearchOverlay />
-            <HeaderActionsStyle xs={14} sm={6} md={6}>
+            <HeaderActionsStyle xs={14} sm={10} md={6}>
                 {vw?.xs && (
                     <AletheiaButton
                         onClick={handleClickSearchIcon}
                         data-cy={"testSearchPersonality"}
-                        style={{ height: "34px" }}
+                        style={{ padding: "4px 15px 0 15px" }}
                     >
                         <SearchOutlined
                             style={{
-                                fontSize: "16px",
+                                fontSize: "18px",
                                 color: "white",
-                                padding: "8px",
                             }}
                         />
                     </AletheiaButton>
                 )}
-                <DonateButton header={true} />
+                {!hasSession && <DonateButton header={true} />}
 
-                <NotificationMenu user={user} hasSession={hasSession} />
+                <NotificationMenu hasSession={hasSession} user={user} />
                 <UserMenu hasSession={hasSession} user={user} />
-                {!vw?.sm && (
+                {!vw?.xs && (
                     <SelectLanguage
                         dataCy={"LanguageButton"}
                         defaultLanguage="pt"
