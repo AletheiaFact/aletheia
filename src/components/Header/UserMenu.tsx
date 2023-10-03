@@ -85,7 +85,11 @@ const UserMenu = ({ hasSession, user }) => {
 
     return (
         <>
-            <AletheiaButton data-cy="testUserIcon" onClick={handleClick}>
+            <AletheiaButton
+                style={{ padding: "0 12px" }}
+                data-cy="testUserIcon"
+                onClick={handleClick}
+            >
                 <AccountCircleIcon sx={{ width: 28, height: 28 }} />
             </AletheiaButton>
 
@@ -150,7 +154,7 @@ const UserMenu = ({ hasSession, user }) => {
                     {t(`${hasSession ? "menu:logout" : "login:signup"}`)}
                 </MenuItem>
 
-                {vw?.sm && (
+                {vw?.xs && (
                     <MenuItem
                         data-cy={"testLanguages"}
                         key="/language"

@@ -17,7 +17,6 @@ const DonateButton = ({ header = false, style = {} }) => {
             style={{
                 fontWeight: 600,
                 height: header ? 32 : 40,
-                minWidth: "75px",
                 ...style,
             }}
         >
