@@ -110,7 +110,12 @@ export class ClaimReviewService {
             lookUpPersonalityties(TargetModel.ClaimReview),
             lookupClaims(TargetModel.ClaimReview),
             { $unwind: "$claim" },
-            { $match: { "claim.isHidden": query.isHidden } }
+            {
+                $match: {
+                    "claim.isHidden": query.isHidden,
+                    "claim.isDeleted": false,
+                },
+            }
         );
 
         if (!query.isHidden) {

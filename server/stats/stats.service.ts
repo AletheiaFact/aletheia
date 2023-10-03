@@ -13,9 +13,15 @@ export class StatsService {
 
     getHomeStats() {
         return Promise.all([
-            this.claimService.count({ isHidden: false }),
-            this.personalityService.count({ isHidden: false }),
-            this.claimReviewService.count({ isHidden: false }),
+            this.claimService.count({ isHidden: false, isDeleted: false }),
+            this.personalityService.count({
+                isHidden: false,
+                isDeleted: false,
+            }),
+            this.claimReviewService.count({
+                isHidden: false,
+                isDeleted: false,
+            }),
         ]).then((values) => {
             return {
                 claims: values[0],

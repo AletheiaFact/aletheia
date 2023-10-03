@@ -384,6 +384,7 @@ export class PersonalityService {
             queryInputs.name = { $regex: query.name, $options: "i" };
         }
         queryInputs.isHidden = query?.isHidden || false;
+        queryInputs.isDeleted = false;
         return queryInputs;
     }
 
