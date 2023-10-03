@@ -147,8 +147,7 @@ jobs:
       - name: Check Environment
         if: endsWith(github.ref, '/master')
         run: |
-
-          sed -i '11{s/test./www./}' deployment/app.yml
+          sed -i '11{s/test.//}' deployment/app.yml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
           echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
