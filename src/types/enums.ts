@@ -14,6 +14,13 @@ enum Roles {
     Regular = "regular",
     FactChecker = "fact-checker",
     Admin = "admin",
+    SuperAdmin = "super-admin",
+    Reviewer = "reviewer",
+}
+
+enum Status {
+    Active = "active",
+    Inactive = "inactive",
 }
 
 enum ContentModelEnum {
@@ -22,4 +29,13 @@ enum ContentModelEnum {
     Debate = "Debate",
 }
 
-export { ClassificationEnum, Roles, ContentModelEnum };
+export enum TargetModel {
+    Claim = "Claim",
+    Debate = "Debate",
+    Personality = "Personality",
+    ClaimReview = "ClaimReview",
+    ClaimReviewTask = "ClaimReviewTask",
+    Image = "Image",
+}
+
+export { ClassificationEnum, Roles, Status, ContentModelEnum };

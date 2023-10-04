@@ -22,7 +22,7 @@ const Sidebar = () => {
 
     return (
         <Drawer
-            visible={!menuCollapsed}
+            open={!menuCollapsed}
             onClose={() => dispatch(actions.closeSideMenu())}
             width="17rem"
             placement="left"

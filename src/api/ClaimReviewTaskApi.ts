@@ -66,11 +66,23 @@ const autoSaveDraft = (params, t) => {
         });
 };
 
+const getEditorContentObject = (params) => {
+    return request
+        .get(`/editor-content/${params}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch(() => {
+            // TODO: Track with sentry
+        });
+};
+
 const ClaimReviewTaskApi = {
     getMachineByDataHash,
     createClaimReviewTask,
     getClaimReviewTasks,
     autoSaveDraft,
+    getEditorContentObject,
 };
 
 export default ClaimReviewTaskApi;

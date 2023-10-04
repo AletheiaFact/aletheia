@@ -3,6 +3,7 @@ import SelectOptions from "./SelectOptions";
 import userApi from "../../api/userApi";
 
 interface UserInputProps {
+    fieldName: string;
     placeholder: string;
     onChange: any;
     dataCy: string;
@@ -14,6 +15,7 @@ interface UserInputProps {
 }
 
 const UserInput = ({
+    fieldName,
     placeholder,
     onChange,
     dataCy,
@@ -28,7 +30,9 @@ const UserInput = ({
 
     useEffect(() => {
         const fetchUserNames = async () => {
-            if (Array.isArray(value) ? value.length > 0 : value !== "") {
+            if (
+                Array.isArray(value) ? value.length > 0 : value !== "" && value
+            ) {
                 try {
                     setIsLoading(true);
                     const userPromises = Array.isArray(value)
@@ -36,8 +40,8 @@ const UserInput = ({
                         : [userApi.getById(value)];
                     const users = await Promise.all(userPromises);
                     const treatedValues = users.map((user) => ({
-                        label: user.name,
-                        value: user._id,
+                        label: user?.name,
+                        value: user?._id,
                     }));
                     setTreatedValue(treatedValues);
                 } catch (error) {
@@ -58,6 +62,7 @@ const UserInput = ({
 
     return (
         <SelectOptions
+            fieldName={fieldName}
             fetchOptions={dataLoader}
             placeholder={placeholder}
             onChange={onChange}

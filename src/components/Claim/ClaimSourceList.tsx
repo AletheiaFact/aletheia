@@ -16,13 +16,13 @@ const ClaimSourceList = ({ claimId }) => {
                 source && (
                     <LinkPreview
                         key={source._id}
-                        url={source.link}
+                        url={source.href}
                         borderRadius="10px"
                         borderColor="transparent"
                         imageHeight="156px"
                         secondaryTextColor="#515151"
                         width="100%"
-                        fallback={<Link href={source.link}>{source.link}</Link>}
+                        fallback={<Link href={source.href}>{source.href}</Link>}
                         showLoader
                     />
                 )

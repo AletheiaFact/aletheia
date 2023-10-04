@@ -1,18 +1,12 @@
 import { Controller, Get, Post, Req, Res } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { parse } from "url";
 import { ViewService } from "../../view/view.service";
-import OryService from "./ory.service";
 import { IsPublic } from "../decorators/is-public.decorator";
 
 @Controller()
 export default class OryController {
-    constructor(
-        private configService: ConfigService,
-        private viewService: ViewService,
-        private oryService: OryService
-    ) {}
+    constructor(private viewService: ViewService) {}
 
     @IsPublic()
     @Get("api/.ory/*")

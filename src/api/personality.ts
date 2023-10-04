@@ -13,6 +13,7 @@ interface FetchOptions {
     fetchOnly?: boolean;
     i18n?: { languages?: any };
     headers?: { [key: string]: string };
+    isHidden?: boolean;
 }
 
 const getPersonalities = (options: FetchOptions, dispatch) => {
@@ -23,11 +24,12 @@ const getPersonalities = (options: FetchOptions, dispatch) => {
         pageSize: options.pageSize ? options.pageSize : 5,
         withSuggestions: options.withSuggestions,
         language: options?.i18n?.languages[0] || "pt",
+        isHidden: options?.isHidden || false,
     };
     const headers = options?.headers || {};
 
     return axios
-        .get(`${baseUrl}`, { params: params, headers: headers })
+        .get(`${baseUrl}`, { params, headers })
         .then((response) => {
             const { personalities, totalPages, totalPersonalities } =
                 response.data;
@@ -94,9 +96,49 @@ const createPersonality = (personality, t) => {
         });
 };
 
+const deletePersonality = (id: string, recaptcha, t: any) => {
+    return axios
+        .delete(`${baseUrl}/${id}`, { data: recaptcha })
+        .then(() => {
+            message.success(t("personality:deleteSuccess"));
+        })
+        .catch((err) => {
+            console.error(err);
+            message.error(t("personality:deleteError"));
+        });
+};
+
+const updatePersonalityHiddenStatus = (
+    id: string,
+    isHidden: boolean,
+    t: any,
+    recaptcha: string,
+    description: string
+) => {
+    return axios
+        .put(`${baseUrl}/hidden/${id}`, {
+            isHidden,
+            recaptcha,
+            description,
+        })
+        .then(() => {
+            message.success(
+                t(`personality:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
+            );
+        })
+        .catch((err) => {
+            console.error(err);
+            message.error(
+                t(`personality:${isHidden ? "hideError" : "unhideError"}`)
+            );
+        });
+};
+
 const personalitiesApi = {
     getPersonalities,
     getPersonality,
     createPersonality,
+    deletePersonality,
+    updatePersonalityHiddenStatus,
 };
 export default personalitiesApi;

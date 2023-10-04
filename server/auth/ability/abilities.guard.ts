@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Reflector } from "@nestjs/core";
-import { Configuration, V0alpha2Api } from "@ory/client";
+import { Configuration, FrontendApi } from "@ory/client";
 import { CHECK_ABILITY, RequiredRule } from "./ability.decorator";
 import { AbilityFactory } from "./ability.factory";
 
@@ -27,16 +27,14 @@ export class AbilitiesGuard implements CanActivate {
             ) || [];
 
         const request = context.switchToHttp().getRequest();
-        const ory = new V0alpha2Api(
-            new Configuration({
-                basePath: this.configService.get<string>("ory.url"),
-                accessToken: this.configService.get<string>("access_token"),
-            })
-        );
-        const { data: session } = await ory.toSession(
-            undefined,
-            request.header("Cookie")
-        );
+        const oryConfig = new Configuration({
+            basePath: this.configService.get<string>("ory.url"),
+            accessToken: this.configService.get<string>("access_token"),
+        });
+        const ory = new FrontendApi(oryConfig);
+        const { data: session } = await ory.toSession({
+            cookie: request.header("Cookie"),
+        });
         const user = session.identity.traits;
         const ability = this.caslAbilityFactor.defineAbility(user);
         try {

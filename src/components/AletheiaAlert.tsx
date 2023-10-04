@@ -7,6 +7,7 @@ const AletheiaAlert = ({
     description = null,
     action = null,
     showIcon = false,
+    ...props
 }) => {
     return (
         <Alert
@@ -19,6 +20,7 @@ const AletheiaAlert = ({
             description={description}
             action={action}
             showIcon={showIcon}
+            {...props}
         />
     );
 };

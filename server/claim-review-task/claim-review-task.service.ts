@@ -14,7 +14,7 @@ import { HistoryService } from "../history/history.service";
 import { StateEventService } from "../state-event/state-event.service";
 import { TypeModel } from "../state-event/schema/state-event.schema";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { Roles } from "../auth/ability/ability.factory";
@@ -25,6 +25,7 @@ import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";
 import lookupClaimReviews from "../mongo-pipelines/lookupClaimReviews";
 import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
+import { EditorParseService } from "../editor-parse/editor-parse.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -37,7 +38,8 @@ export class ClaimReviewTaskService {
         private historyService: HistoryService,
         private stateEventService: StateEventService,
         private sentenceService: SentenceService,
-        private imageService: ImageService
+        private imageService: ImageService,
+        private editorParseService: EditorParseService
     ) {}
 
     _verifyMachineValueAndAddMatchPipeline(pipeline, value) {
@@ -69,19 +71,19 @@ export class ClaimReviewTaskService {
         const query = getQueryMatchForMachineValue(value);
 
         if (filterUser === true) {
-            query["machine.context.reviewData.usersId"] = [
-                Types.ObjectId(this.req.user._id),
-            ];
+            query["machine.context.reviewData.usersId"] = Types.ObjectId(
+                this.req.user._id
+            );
         }
 
         pipeline.push(
             { $match: query },
             lookupUsers(),
-            lookUpPersonalityties(),
-            lookupClaims({
+            lookUpPersonalityties(TargetModel.ClaimReviewTask),
+            lookupClaims(TargetModel.ClaimReviewTask, {
                 pipeline: [
                     { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
-                    lookupClaimRevisions(),
+                    lookupClaimRevisions(TargetModel.ClaimReviewTask),
                     { $unwind: "$latestRevision" },
                 ],
                 as: "machine.context.claimReview.claim",
@@ -297,6 +299,7 @@ export class ClaimReviewTaskService {
         if (newClaimReviewTaskMachine.value === "published") {
             if (
                 loggedInUser.role !== Roles.Admin &&
+                loggedInUser.role !== Roles.SuperAdmin &&
                 loggedInUser._id !==
                     machine.context.reviewData.reviewerId.toString()
             ) {
@@ -325,6 +328,17 @@ export class ClaimReviewTaskService {
         return this.ClaimReviewTaskModel.findOne({
             data_hash,
         });
+    }
+
+    async getReviewTasksByClaimId(claimId: string) {
+        return await this.ClaimReviewTaskModel.aggregate([
+            {
+                $match: {
+                    "machine.context.claimReview.claim": claimId.toString(),
+                    "machine.value": { $ne: "published" },
+                },
+            },
+        ]);
     }
 
     async getClaimReviewTaskByDataHashWithUsernames(data_hash: string) {
@@ -381,14 +395,20 @@ export class ClaimReviewTaskService {
         return this.ClaimReviewTaskModel.countDocuments().where(query);
     }
 
-    async countReviewTasksNotDeleted(query: any = {}) {
+    async countReviewTasksNotDeleted(query, filterUser) {
         try {
+            if (filterUser === true) {
+                query["machine.context.reviewData.usersId"] = Types.ObjectId(
+                    this.req.user._id
+                );
+            }
+
             const pipeline = [
                 { $match: query },
                 lookupClaimReviews({
                     as: "machine.context.claimReview.claimReview",
                 }),
-                lookupClaims({
+                lookupClaims(TargetModel.ClaimReviewTask, {
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
                         { $project: { isDeleted: 1 } },
@@ -421,5 +441,17 @@ export class ClaimReviewTaskService {
             console.error("Error in countReviewTasksNotDeleted:", error);
             throw error;
         }
+    }
+
+    getEditorContentObject(schema) {
+        return this.editorParseService.schema2editor(schema);
+    }
+
+    async getHtmlFromSchema(schema) {
+        const htmlContent = this.editorParseService.schema2html(schema);
+        return {
+            ...schema,
+            ...htmlContent,
+        };
     }
 }

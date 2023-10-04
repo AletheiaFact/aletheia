@@ -3,17 +3,15 @@ import { Col, List } from "antd";
 import React from "react";
 
 const SourceListItem = ({ source, index }) => {
+    const { href, sup, targetText } = source;
+
     return (
         <Col className="source">
             {typeof source === "object" ? (
-                <List.Item id={source.ref}>
-                    {index}.{" "}
-                    <a
-                        href={source.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        {source.link}
+                <List.Item id={targetText}>
+                    <span style={{ marginRight: 4 }}>{sup}.</span>
+                    <a href={href} target="_blank" rel="noopener noreferrer">
+                        {href}
                     </a>
                 </List.Item>
             ) : (

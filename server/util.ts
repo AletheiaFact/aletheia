@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { Roles } from "./auth/ability/ability.factory";
 import { randomBytes } from "crypto";
 
 @Injectable()
@@ -44,9 +45,26 @@ export class UtilService {
         const buf = randomBytes(8);
 
         if (isTestUser) {
-            return forcePassword ? `${forcePassword}` : process.env.DEVELOPMENT_PASSWORD;
+            return forcePassword
+                ? `${forcePassword}`
+                : process.env.DEVELOPMENT_PASSWORD;
         }
 
         return buf.toString("hex");
-    };
+    }
+
+    getParamsBasedOnUserRole(params, req) {
+        const user = req.user;
+        const isUserAdmin =
+            user?.role === Roles.Admin || user?.role === Roles.SuperAdmin;
+        return isUserAdmin ? params : { ...params, isHidden: false };
+    }
+
+    canEditUser(user, request): boolean {
+        const editorId = request.user._id;
+        const isSelectedSuperAdmin = user.role === Roles.SuperAdmin;
+        const editingSelf = user._id === editorId;
+
+        return (isSelectedSuperAdmin && editingSelf) || !isSelectedSuperAdmin;
+    }
 }

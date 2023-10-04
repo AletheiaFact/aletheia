@@ -13,13 +13,13 @@ import {
     UnprocessableEntityException,
     UseGuards,
 } from "@nestjs/common";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { UsersService } from "./users.service";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { ConfigService } from "@nestjs/config";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import { Types } from "mongoose";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
@@ -29,13 +29,15 @@ import {
 } from "../auth/ability/ability.decorator";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
+import { UtilService } from "../util";
 
 @Controller()
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
         private viewService: ViewService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private util: UtilService
     ) {}
 
     @IsPublic()
@@ -94,6 +96,8 @@ export class UsersController {
                 name: 1,
                 role: 1,
                 badges: 1,
+                state: 1,
+                totp: 1,
             },
         });
         await this.viewService
@@ -133,20 +137,31 @@ export class UsersController {
     async updateUser(
         @Param("id") userId,
         @Body() updates: UpdateUserDTO,
-        @Res() res
+        @Res() res,
+        @Req() request
     ) {
         try {
-            this.usersService
-                .updateUser(Types.ObjectId(userId), updates)
-                .then(() => {
-                    res.status(200).json({
-                        success: true,
-                        message: "User updated successfully",
+            const user = await this.usersService.getById(userId);
+
+            const shouldEdit = this.util.canEditUser(user, request);
+
+            if (shouldEdit) {
+                this.usersService
+                    .updateUser(Types.ObjectId(userId), updates)
+                    .then(() => {
+                        res.status(200).json({
+                            success: true,
+                            message: "User updated successfully",
+                        });
+                    })
+                    .catch((e) => {
+                        res.status(500).json({ message: e.message });
                     });
-                })
-                .catch((e) => {
-                    res.status(500).json({ message: e.message });
+            } else {
+                res.status(403).json({
+                    message: "Unauthorized to edit this user",
                 });
+            }
         } catch (e) {
             res.status(500).json({ message: e.message });
         }
@@ -174,6 +189,14 @@ export class UsersController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getAll(@Query() getUsers) {
         return this.usersService.findAll(getUsers);
+    }
+
+    @IsPublic()
+    @ApiTags("user")
+    @Get("api/user/ory/:id")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getByOryId(@Param("id") oryId) {
+        return this.usersService.getByOryId(oryId);
     }
 
     @ApiTags("user")

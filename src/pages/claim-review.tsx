@@ -13,6 +13,7 @@ import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
+import { CollaborativeEditorProvider } from "../components/Collaborative/CollaborativeEditorProvider";
 
 export interface ClaimReviewPageProps {
     personality?: any;
@@ -21,8 +22,9 @@ export interface ClaimReviewPageProps {
     sitekey: string;
     claimReviewTask: any;
     claimReview: any;
-    description: string;
+    hideDescriptions: object;
     enableCollaborativeEditor: boolean;
+    websocketUrl: string;
 }
 
 const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
@@ -36,8 +38,10 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         claimReview,
         sitekey,
         enableCollaborativeEditor,
+        hideDescriptions,
     } = props;
 
+    dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
@@ -100,16 +104,16 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             <ReviewTaskMachineProvider
                 data_hash={content.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
-                publishedReview={{
-                    review: claimReview,
-                    descriptionForHide: props.description,
-                }}
+                publishedReview={{ review: claimReview }}
             >
-                <ClaimReviewView
-                    personality={personality}
-                    claim={claim}
-                    content={content}
-                />
+                <CollaborativeEditorProvider data_hash={content.data_hash}>
+                    <ClaimReviewView
+                        personality={personality}
+                        claim={claim}
+                        content={content}
+                        hideDescriptions={hideDescriptions}
+                    />
+                </CollaborativeEditorProvider>
             </ReviewTaskMachineProvider>
             <AffixButton personalitySlug={personality?.slug} />
         </>
@@ -129,8 +133,11 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
-            description: query.description,
+            hideDescriptions: JSON.parse(
+                JSON.stringify(query.hideDescriptions)
+            ),
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
+            websocketUrl: query?.websocketUrl,
         },
     };
 }

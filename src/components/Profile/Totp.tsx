@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element  */
 /* eslint-disable jsx-a11y/anchor-has-content */
-import { SubmitSelfServiceSettingsFlowWithTotpMethodBody as ValuesType } from "@ory/client";
+import { UpdateSettingsFlowWithTotpMethod as ValuesType } from "@ory/client";
 import { Form, message, Row, Typography } from "antd";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import { getUiNode } from "../../lib/orysdk/utils";
 import { useRouter } from "next/router";
 import AletheiaButton, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
+import userApi from "../../api/userApi";
 
 export const Totp = ({ flow, setFlow }) => {
     const [imgSource, setImgSource] = useState("");
@@ -59,6 +60,11 @@ export const Totp = ({ flow, setFlow }) => {
 
     const onSubmitLink = (values: ValuesType) => {
         orySubmitTotp({ router, flow, setFlow, t, values })
+            .then(() => {
+                return userApi.updateTotp(flow.identity.traits.user_id, {
+                    totp: true,
+                });
+            })
             .then(() => setIsLoading(false))
             .catch(() => {
                 message.error(t("profile:totpIncorectCodeMessage"));
@@ -66,20 +72,32 @@ export const Totp = ({ flow, setFlow }) => {
             });
     };
 
-    const onSubmitUnLink = () => {
+    const onSubmitUnLink = (values: ValuesType) => {
         initializeCsrf();
         setIsLoading(true);
-        const values = {
-            csrf_token: flowValues.csrf_token,
-            totp_unlink: true,
-            method: "totp",
-        };
         orySubmitTotp({ router, flow, setFlow, t, values })
+            .then(() => {
+                return userApi.updateTotp(flow.identity.traits.user_id, {
+                    totp: false,
+                });
+            })
             .then(() => setIsLoading(false))
             .catch(() => {
                 message.error(t("prifile:totpUnLinkErrorMessage"));
                 setIsLoading(false);
             });
+    };
+
+    const onFinishUnlink = () => {
+        initializeCsrf();
+        setIsLoading(true);
+        flowValues = {
+            ...flowValues,
+            csrf_token: flowValues.csrf_token,
+            totp_unlink: true,
+            method: "totp",
+        };
+        onSubmitUnLink(flowValues);
     };
 
     const onFinish = (values) => {
@@ -181,7 +199,7 @@ export const Totp = ({ flow, setFlow }) => {
                 </Form>
             )}
             {!showForm && (
-                <Form onFinish={onSubmitUnLink}>
+                <Form onFinish={onFinishUnlink}>
                     <AletheiaButton
                         loading={isLoading}
                         htmlType="submit"

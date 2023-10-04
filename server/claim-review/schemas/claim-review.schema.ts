@@ -3,7 +3,7 @@ import { Personality } from "../../personality/schemas/personality.schema";
 import * as mongoose from "mongoose";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";
-import { ReportDocument } from "../../report/schemas/report.schema";
+import type { ReportDocument } from "../../report/schemas/report.schema";
 import { User } from "../../users/schemas/user.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
@@ -19,7 +19,7 @@ export class ClaimReview {
 
     @Prop({
         type: mongoose.Types.ObjectId,
-        required: true,
+        required: false,
         ref: "Personality",
     })
     personality: Personality;

@@ -12,11 +12,9 @@ import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { Row } from "antd";
 import Text from "antd/lib/typography/Text";
-import getEditorSources from "../../Collaborative/utils/getEditorSources";
 import getNextEvents from "../../../machines/reviewTask/getNextEvent";
 import getNextForm from "../../../machines/reviewTask/getNextForm";
-import { isUserLoggedIn } from "../../../atoms/currentUser";
-import replaceHrefReferenceWithHash from "../../Collaborative/utils/replaceHrefReferenceWithHash";
+import { isUserLoggedIn, currentUserId } from "../../../atoms/currentUser";
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import { trackUmamiEvent } from "../../../lib/umami";
 import { useAppSelector } from "../../../store/store";
@@ -36,9 +34,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         watch,
     } = useForm();
     const { machineService } = useContext(ReviewTaskMachineContext);
-    const { editorContent, setEditorError } = useContext(
-        CollaborativeEditorContext
-    );
+    const { editorContentObject } = useContext(CollaborativeEditorContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const preloadedOptions = useSelector(
         machineService,
@@ -63,6 +59,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     }));
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [userId] = useAtom(currentUserId);
 
     const setCurrentFormAndNextEvents = (param) => {
         if (param !== ReviewTaskEvents.draft) {
@@ -153,6 +150,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             recaptchaString,
             setCurrentFormAndNextEvents,
             resetIsLoading,
+            currentUserId: userId,
         });
         setRecaptchaString("");
         recaptchaRef.current?.resetRecaptcha();
@@ -165,24 +163,16 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         return isValidReviewer;
     };
 
-    const handleSendEvent = async (event, data = null) => {
-        if (!data) data = getValues();
+    const handleSendEvent = async (event, machineContext = null) => {
+        if (!machineContext) machineContext = getValues();
 
-        if (
-            enableCollaborativeEdit &&
-            editorContent &&
-            nextEvents.includes("FULL_REVIEW")
-        ) {
-            setEditorError(null);
-
-            if (!editorContent.html.includes(`<a href="http`)) {
-                return setEditorError(t("sourceForm:errorMessageNoURL"));
-            }
-
-            data.summary = replaceHrefReferenceWithHash(editorContent.html);
-            data.sources = getEditorSources(editorContent.JSON.content);
-        }
-        sendEventToMachine(data, event);
+        sendEventToMachine(
+            {
+                ...machineContext,
+                editor: editorContentObject,
+            },
+            event
+        );
     };
 
     /**
@@ -258,7 +248,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             </Row>
 
             <WarningModal
-                visible={gobackWarningModal}
+                open={gobackWarningModal}
                 title={t("warningModal:title", {
                     warning: t("warningModal:gobackWarning"),
                 })}

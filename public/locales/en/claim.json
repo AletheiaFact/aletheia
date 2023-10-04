@@ -22,5 +22,19 @@
     "cardLinkToImage": "see full image",
     "cardLinkToDebate": "see full debate",
     "claimListHeader": "Claims",
-    "imageAlreadyExists": "Image already exists in the platform"
+    "imageAlreadyExists": "Image already exists in the platform",
+
+    "hideModalTitle": "Hide claim",
+    "hideModalBody": "Are you sure you want to hide this claim? only admins can see hide claims",
+    "unhideModalTitle": "Unhide claim",
+    "unhideModalBody": "Are you sure you want to unhide this claim?",
+    "deleteModalTitle": "Delete claim",
+    "deleteModalBody": "Are you sure you want to delete this claim? This action cannot be undone.",
+    "deleteSuccess": "Claim deleted succesfully",
+    "deleteError": "Error while deleting claim",
+    "warningTitle": "Hidden claim",
+    "hideSuccess": "Claim hidden succesfully",
+    "hideError": "Error while hidden claim",
+    "unhideSuccess": "Claim unhide succesfully",
+    "unhideError": "Error while unhide claim"
 }

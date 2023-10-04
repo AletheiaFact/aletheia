@@ -9,6 +9,7 @@ import LocalizedDate from "../LocalizedDate";
 import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import SentenceReportCardStyle from "./SentenceReportCard.style";
 import SentenceReportSummary from "./SentenceReportSummary";
+import AletheiaAlert from "../AletheiaAlert";
 
 const { Title, Paragraph } = Typography;
 
@@ -17,11 +18,13 @@ const SentenceReportCard = ({
     personality,
     classification,
     content,
+    hideDescription,
 }: {
     personality?: any;
     claim: any;
     content: any;
     classification?: any;
+    hideDescription?: string;
 }) => {
     const { t } = useTranslation();
     const isImage = claim?.contentModel === ContentModelEnum.Image;
@@ -96,6 +99,15 @@ const SentenceReportCard = ({
                         {!isImage && t("claim:cardHeader2")}&nbsp;
                         <strong>{t(speechTypeTranslation)}</strong>
                     </Paragraph>
+                    {hideDescription && (
+                        <AletheiaAlert
+                            type="warning"
+                            message={t("claim:warningTitle")}
+                            description={hideDescription}
+                            showIcon={true}
+                            style={{ padding: "10px" }}
+                        />
+                    )}
                 </Col>
             </Row>
         </SentenceReportCardStyle>

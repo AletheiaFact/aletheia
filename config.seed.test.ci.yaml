@@ -1,7 +1,7 @@
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
 # Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 1
+num_workers: 0
 
 # Logger info
 logging:
@@ -12,7 +12,7 @@ logging:
 
 # Using config.yaml with wikimedia service-runner pattern
 services:
-  - name: service-aletheia
+  - name: ci-seed-command
     # path relative to the __dirname variable
     module: dist/server/seed.js
     conf:
@@ -31,7 +31,7 @@ services:
           sendAuthDetails: false
           isTestUser: true
           oryId: {env(CI_ORY_USERID)}
-          role: fact-checker
+          role: super-admin
       throttle:
         ttl: 60
         limit: 1000

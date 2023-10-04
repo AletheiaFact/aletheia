@@ -26,8 +26,8 @@ yarn-error.log*
 dist
 
 config.yaml
-config.nest.yaml
 config.seed.yaml
+config.websocket.yaml
 migrate-mongo-config.*
 
 .idea/**/*
@@ -60,3 +60,7 @@ data/localstack/startup_info.json
 
 # localstack
 data
+
+# Auto-generated documentation
+docs/compodoc/**/*
+docs/storybook/**/*

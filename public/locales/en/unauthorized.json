@@ -1,4 +1,7 @@
 {
-    "firstPartMessage": "You do not have permission to access the page ",
-    "secondPartMessage": ", because you're a user with the role "
+    "firstPartMessageURL": "You do not have permission to access the page ",
+    "firstPartMessage": "You do not have permission to access the page",
+    "secondPartMessage": ", because you're a user with the role ",
+    "inactiveAccountTitle": "Your account has been disabled.",
+    "inactiveAccountBody": "Contact us by e-mail - contato@aletheiafact.org"
 }

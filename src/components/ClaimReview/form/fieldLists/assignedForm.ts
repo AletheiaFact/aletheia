@@ -23,6 +23,26 @@ const assignedForm: FormField[] = [
         type: "textArea",
         defaultValue: "",
     }),
+
+    createFormField({
+        fieldName: "questions",
+        type: "textList",
+        addInputLabel: "claimReviewForm:addQuestionLabel",
+        defaultValue: [],
+    }),
+
+    createFormField({
+        fieldName: "report",
+        type: "textArea",
+        defaultValue: "",
+    }),
+
+    createFormField({
+        fieldName: "verification",
+        type: "textArea",
+        defaultValue: "",
+    }),
+
     createFormField({
         fieldName: "sources",
         type: "textList",

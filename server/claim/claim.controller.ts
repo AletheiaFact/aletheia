@@ -19,7 +19,7 @@ import {
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
 import { ConfigService } from "@nestjs/config";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { parse } from "url";
 import { PersonalityService } from "../personality/personality.service";
 import { ViewService } from "../view/view.service";
@@ -32,7 +32,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { SentenceService } from "./types/sentence/sentence.service";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import slugify from "slugify";
 import { UnleashService } from "nestjs-unleash";
 import { ContentModelEnum } from "../types/enums";
@@ -51,6 +51,7 @@ import { UpdateDebateDto } from "./dto/update-debate.dto";
 import { ParserService } from "./parser/parser.service";
 import { Roles } from "../auth/ability/ability.factory";
 import { ApiTags } from "@nestjs/swagger";
+import { HistoryService } from "../history/history.service";
 
 @Controller()
 export class ClaimController {
@@ -68,14 +69,18 @@ export class ClaimController {
         private debateService: DebateService,
         private editorService: EditorService,
         private parserService: ParserService,
+        private historyService: HistoryService,
         @Optional() private readonly unleash: UnleashService
     ) {}
 
     _verifyInputsQuery(query) {
-        const inputs = {};
-        if (query.personality) {
-            // @ts-ignore
+        const inputs: any = {
+            isHidden: query.isHidden,
+        };
+
+        if (query.personality && !query.isHidden) {
             inputs.personalities = new mongoose.Types.ObjectId(
+                // @ts-ignore
                 query.personality
             );
         }
@@ -162,7 +167,8 @@ export class ClaimController {
             const claim = await this._createClaim(createClaimDTO);
 
             const path =
-                req.user.role === Roles.Admin
+                req.user.role === Roles.Admin ||
+                req.user.role === Roles.SuperAdmin
                     ? `/claim/${claim._id}/debate/edit`
                     : `/claim/${claim._id}/debate`;
             return { title: claim.title, path };
@@ -218,8 +224,31 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Delete("api/claim/:id")
-    delete(@Param("id") claimId) {
+    async delete(@Param("id") claimId, @Body() body) {
+        const validateCaptcha = await this.captchaService.validate(
+            body.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
         return this.claimService.delete(claimId);
+    }
+
+    @ApiTags("claim")
+    @Put("api/claim/hidden/:id")
+    async updateHiddenStatus(@Param("id") claimId, @Body() body) {
+        const validateCaptcha = await this.captchaService.validate(
+            body.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
+
+        return this.claimService.hideOrUnhideClaim(
+            claimId,
+            body.isHidden,
+            body.description
+        );
     }
 
     @IsPublic()
@@ -232,7 +261,10 @@ export class ClaimController {
     ) {
         const { data_hash, personalitySlug, claimSlug } = req.params;
         const personality = await this.personalityService.getPersonalityBySlug(
-            personalitySlug,
+            {
+                slug: personalitySlug,
+                isDeleted: false,
+            },
             req.language
         );
 
@@ -263,6 +295,8 @@ export class ClaimController {
         content: SentenceDocument | ImageDocument,
         personality: any = null
     ) {
+        const hideDescriptions = {};
+
         const claimReviewTask =
             await this.claimReviewTaskService.getClaimReviewTaskByDataHashWithUsernames(
                 data_hash
@@ -272,11 +306,26 @@ export class ClaimController {
             data_hash
         );
 
+        if (claimReview?.report) {
+            claimReview.report =
+                await this.claimReviewTaskService.getHtmlFromSchema(
+                    claimReview?.report
+                );
+        }
+
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
 
-        const description = await this.claimReviewService.getDescriptionForHide(
-            claimReview
-        );
+        hideDescriptions[TargetModel.Claim] =
+            await this.historyService.getDescriptionForHide(
+                claim,
+                TargetModel.Claim
+            );
+
+        hideDescriptions[TargetModel.ClaimReview] =
+            await this.historyService.getDescriptionForHide(
+                claimReview,
+                TargetModel.ClaimReview
+            );
 
         const parsedUrl = parse(req.url, true);
 
@@ -291,8 +340,9 @@ export class ClaimController {
                 claimReviewTask,
                 claimReview,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                description,
+                hideDescriptions,
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }
@@ -355,6 +405,7 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }
@@ -369,7 +420,10 @@ export class ClaimController {
     ) {
         const { data_hash, personalitySlug, claimSlug } = req.params;
         const personality = await this.personalityService.getPersonalityBySlug(
-            personalitySlug,
+            {
+                slug: personalitySlug,
+                isDeleted: false,
+            },
             req.language
         );
 
@@ -405,7 +459,10 @@ export class ClaimController {
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
-                  query.personality,
+                  {
+                      slug: query.personality,
+                      isDeleted: false,
+                  },
                   req.language
               )
             : null;
@@ -482,6 +539,7 @@ export class ClaimController {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }
@@ -494,6 +552,7 @@ export class ClaimController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
+        const hideDescriptions: any = {};
         const { personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
@@ -501,13 +560,23 @@ export class ClaimController {
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
-                personalitySlug,
+                {
+                    slug: personalitySlug,
+                    isDeleted: false,
+                },
                 req.language
             );
+
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
             claimSlug
         );
+
+        hideDescriptions[TargetModel.Claim] =
+            await this.historyService.getDescriptionForHide(
+                claim,
+                TargetModel.Claim
+            );
 
         await this.viewService.getNextServer().render(
             req,
@@ -518,6 +587,8 @@ export class ClaimController {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
+                hideDescriptions,
             })
         );
     }
@@ -532,7 +603,10 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
-                personalitySlug,
+                {
+                    slug: personalitySlug,
+                    isDeleted: false,
+                },
                 req.language
             );
 
@@ -552,6 +626,7 @@ export class ClaimController {
                 personality,
                 claim,
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }
@@ -564,9 +639,10 @@ export class ClaimController {
         const { personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
-        const personality = await this.personalityService.getPersonalityBySlug(
-            personalitySlug
-        );
+        const personality = await this.personalityService.getPersonalityBySlug({
+            slug: personalitySlug,
+            isDeleted: false,
+        });
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
@@ -595,9 +671,10 @@ export class ClaimController {
         const { data_hash, personalitySlug, claimSlug } = req.params;
         const parsedUrl = parse(req.url, true);
 
-        const personality = await this.personalityService.getPersonalityBySlug(
-            personalitySlug
-        );
+        const personality = await this.personalityService.getPersonalityBySlug({
+            slug: personalitySlug,
+            isDeleted: false,
+        });
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
@@ -629,9 +706,10 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
 
         const personality =
-            await this.personalityService.getClaimsByPersonalitySlug(
-                personalitySlug
-            );
+            await this.personalityService.getClaimsByPersonalitySlug({
+                slug: personalitySlug,
+                isDeleted: false,
+            });
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,

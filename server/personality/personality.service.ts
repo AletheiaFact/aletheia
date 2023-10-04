@@ -16,7 +16,7 @@ import { HistoryService } from "../history/history.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 
 export interface FindAllOptions {
     searchText: string;
@@ -41,7 +41,8 @@ export class PersonalityService {
         private claimReview: ClaimReviewService,
         private history: HistoryService,
         private wikidata: WikidataService,
-        private util: UtilService
+        private util: UtilService,
+        private historyService: HistoryService
     ) {}
 
     async getWikidataEntities(regex, language) {
@@ -57,6 +58,7 @@ export class PersonalityService {
         pageSize,
         order,
         query,
+        filter,
         language,
         withSuggestions = false
     ) {
@@ -64,17 +66,21 @@ export class PersonalityService {
 
         if (order === "random") {
             personalities = await this.PersonalityModel.aggregate([
-                { $match: query },
+                {
+                    $match: {
+                        $and: [query, { _id: { $ne: filter } }],
+                    },
+                },
                 { $sample: { size: pageSize } },
             ]);
-        } else if (Object.keys(query).length > 0) {
+        } else if (Object.keys(query).length > 0 && query?.name) {
             const wikidataList = await this.getWikidataList(
                 query?.name.$regex,
                 language
             );
 
             personalities = await this.PersonalityModel.find({
-                $or: [{ wikidata: { $in: wikidataList } }, query],
+                $or: [{ wikidata: { $in: wikidataList } }, { query }],
             })
                 .skip(page * pageSize)
                 .limit(pageSize)
@@ -158,34 +164,52 @@ export class PersonalityService {
     }
 
     async getById(personalityId, language = "en") {
-        const personality = await this.PersonalityModel.findById(
-            personalityId
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            {
+                _id: personalityId,
+            },
+            this.req
+        );
+
+        const personality = await this.PersonalityModel.findOne(
+            queryOptions
         ).populate({
             path: "claims",
             select: "_id title content",
         });
-        this.logger.log(`Found personality ${personality._id}`);
+        this.logger.log(`Found personality ${personality?._id}`);
         return await this.postProcess(personality.toObject(), language);
     }
 
-    async getPersonalityBySlug(personalitySlug, language = "pt") {
+    async getPersonalityBySlug(query, language = "pt") {
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            query,
+            this.req
+        );
+
         try {
-            const personality = await this.PersonalityModel.findOne({
-                slug: personalitySlug,
-            });
+            const personality = await this.PersonalityModel.findOne(
+                queryOptions
+            );
             return await this.postProcess(personality.toObject(), language);
         } catch {
             throw new NotFoundException();
         }
     }
 
-    async getClaimsByPersonalitySlug(personalitySlug, language = "pt") {
+    async getClaimsByPersonalitySlug(query, language = "pt") {
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            query,
+            this.req
+        );
+
         try {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            const personality: any = await this.PersonalityModel.findOne({
-                slug: personalitySlug,
-            }).populate({
+            const personality: any = await this.PersonalityModel.findOne(
+                queryOptions
+            ).populate({
                 path: "claims",
+                match: { isHidden: false, isDeleted: false },
                 populate: {
                     path: "latestRevision",
                     select: "_id title content",
@@ -231,10 +255,9 @@ export class PersonalityService {
         return personality;
     }
 
-    async getReviewStats(id) {
-        const personality = await this.PersonalityModel.findById(id);
+    async getReviewStats(_id) {
         const reviews = await this.claimReview.agreggateClassification({
-            personality: personality._id,
+            personality: _id,
             isDeleted: false,
             isPublished: true,
             isHidden: false,
@@ -284,6 +307,33 @@ export class PersonalityService {
         return personalityUpdate;
     }
 
+    async hideOrUnhidePersonality(personalityId, isHidden, description) {
+        const personality = await this.getById(personalityId);
+
+        const newPersonality = {
+            ...personality,
+            isHidden,
+        };
+
+        const before = { isHidden: !isHidden };
+        const after = isHidden ? { isHidden, description } : { isHidden };
+
+        const history = this.historyService.getHistoryParams(
+            newPersonality._id,
+            TargetModel.Personality,
+            this.req?.user,
+            isHidden ? HistoryType.Hide : HistoryType.Unhide,
+            after,
+            before
+        );
+        this.historyService.createHistory(history);
+
+        return this.PersonalityModel.updateOne(
+            { _id: personality._id },
+            newPersonality
+        );
+    }
+
     /**
      * This function does a soft deletion, doesn't delete claim in DataBase,
      * but omit its in the front page
@@ -306,8 +356,15 @@ export class PersonalityService {
         return this.PersonalityModel.softDelete({ _id: personalityId });
     }
 
+    /**
+     * Don't count hide personalities because of cache
+     */
     count(query: any = {}) {
-        return this.PersonalityModel.countDocuments().where(query);
+        return this.PersonalityModel.countDocuments().where({
+            ...query,
+            isDeleted: false,
+            isHidden: query.isHidden || false,
+        });
     }
 
     extractClaimWithTextSummary(claims: any) {
@@ -321,11 +378,13 @@ export class PersonalityService {
     }
 
     verifyInputsQuery(query) {
-        const queryInputs = {};
+        const queryInputs: any = {};
         if (query.name) {
             // @ts-ignore
             queryInputs.name = { $regex: query.name, $options: "i" };
         }
+        queryInputs.isHidden = query?.isHidden || false;
+        queryInputs.isDeleted = false;
         return queryInputs;
     }
 
@@ -339,6 +398,7 @@ export class PersonalityService {
                 parseInt(pageSize, 10),
                 order,
                 queryInputs,
+                query.filter,
                 query.language,
                 query.withSuggestions
             ),
@@ -383,6 +443,7 @@ export class PersonalityService {
                     },
                 },
             },
+            { $match: { isHidden: false, isDeleted: false } },
             {
                 $facet: {
                     rows: [

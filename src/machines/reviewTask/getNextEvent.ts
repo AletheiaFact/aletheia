@@ -7,18 +7,8 @@ const getNextEvents = (param: Events | States) => {
     const defaultEvents = [Events.goback, Events.draft];
     const eventsMap = {
         [States.unassigned]: [Events.assignUser],
-        [Events.assignUser]: [
-            ...defaultEvents,
-            Events.partialReview,
-            Events.fullReview,
-        ],
-        [States.assigned]: [
-            ...defaultEvents,
-            Events.partialReview,
-            Events.fullReview,
-        ],
-        [Events.fullReview]: [...defaultEvents, Events.finishReport],
-        [States.summarized]: [...defaultEvents, Events.finishReport],
+        [Events.assignUser]: [...defaultEvents, Events.finishReport],
+        [States.assigned]: [...defaultEvents, Events.finishReport],
 
         [Events.finishReport]: [Events.goback, Events.submit],
         [Events.partialReview]: [Events.goback, Events.submit],
@@ -28,11 +18,7 @@ const getNextEvents = (param: Events | States) => {
         [Events.submit]: [Events.reject, Events.publish],
 
         [States.rejected]: [Events.goback, Events.addRejectionComment],
-        [Events.addRejectionComment]: [
-            ...defaultEvents,
-            Events.partialReview,
-            Events.fullReview,
-        ],
+        [Events.addRejectionComment]: [...defaultEvents, Events.finishReport],
 
         [States.published]: [],
         [Events.publish]: [],

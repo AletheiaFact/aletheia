@@ -16,7 +16,7 @@ import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
 import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { parse } from "url";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { GetTasksDTO } from "./dto/get-tasks.dto";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
@@ -54,7 +54,8 @@ export class ClaimReviewController {
                 filterUser
             ),
             this.claimReviewTaskService.countReviewTasksNotDeleted(
-                getQueryMatchForMachineValue(value)
+                getQueryMatchForMachineValue(value),
+                filterUser
             ),
         ]).then(([tasks, totalTasks]) => {
             const totalPages = Math.ceil(totalTasks / pageSize);
@@ -120,12 +121,25 @@ export class ClaimReviewController {
         );
     }
 
+    @ApiTags("claim-review-task")
+    @Get("api/claimreviewtask/editor-content/:data_hash")
+    @Header("Cache-Control", "no-cache")
+    async getEditorContentByDataHash(@Param("data_hash") data_hash: string) {
+        const claimReviewTask =
+            await this.claimReviewTaskService.getClaimReviewTaskByDataHash(
+                data_hash
+            );
+
+        return this.claimReviewTaskService.getEditorContentObject(
+            claimReviewTask?.machine?.context?.reviewData
+        );
+    }
+
     @ApiTags("pages")
     @Get("kanban")
     @Header("Cache-Control", "no-cache")
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
 
         await this.viewService.getNextServer().render(
@@ -135,6 +149,7 @@ export class ClaimReviewController {
             Object.assign(parsedUrl.query, {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
             })
         );
     }

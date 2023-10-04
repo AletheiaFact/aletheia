@@ -1,5 +1,5 @@
 import { Badge } from "./Badge";
-import { Roles } from "./enums";
+import { Roles, Status } from "./enums";
 
 export type User = {
     _id: string;
@@ -7,4 +7,6 @@ export type User = {
     email: string;
     role: Roles;
     badges: Badge[];
+    state: Status;
+    totp: boolean;
 };

@@ -9,8 +9,8 @@
     "skipLibCheck": true,
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "./dist/server",
-    "rootDir": "server",
+    "outDir": "./dist",
+    "rootDir": "./",
     "baseUrl": "./",
     "incremental": true,
     "lib": [
@@ -29,7 +29,8 @@
     "jsx": "preserve"
   },
   "include": [
-    "server/**/*"
+    "server/**/*",
+    "lib/**/*",
   ],
   "exclude": [
     "node_modules",

@@ -15,7 +15,7 @@ env:
   ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
   ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
   CI_ORY_USERID: ${{ secrets.CI_ORY_USERID }}
-  CI_MONGODB_URI: mongodb://localhost:35025/Aletheia
+  CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
   TEST_RECAPTCHA_SECRET: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe # public secret for CI tests provided by google
   TEST_RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
   NEXT_PUBLIC_RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.19.0]
+        node-version: [18.14.0]
 
     steps:
     - uses: actions/checkout@v2
@@ -44,15 +44,23 @@ jobs:
     - run: yarn build
     - run: yarn lint
     - run: yarn test
-    -   name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    -   name: Cypress run
-        uses: cypress-io/github-action@v4
-        with:
-            start: yarn test:e2e:cy
-            wait-on: 'http://localhost:3000'
-        env:
-            CI: true
+      env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Test docker image build before merge
+      run: |
+        docker build --build-arg ENVIRONMENT=development \
+          --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
+          --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} .
+    - name: Cypress run
+      uses: cypress-io/github-action@v4
+      with:
+         start: yarn test:e2e:cy
+         wait-on: 'http://localhost:3000'
+      env:
+         CI: true
+    

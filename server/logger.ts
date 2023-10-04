@@ -11,7 +11,8 @@ export default class Logger implements LoggerService {
     }
 
     debug(message: any, context?: string): any {
-        this.logger.log("debug", message);
+        if (!message.includes("feature_flags/unleash"))
+            this.logger.log("debug", message);
     }
 
     error(message: any, trace?: string, context?: string): any {

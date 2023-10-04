@@ -1,17 +1,16 @@
 import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
+import { Col } from "antd";
 
-const HeaderActionsStyle = styled.div`
+const HeaderActionsStyle = styled(Col)`
     display: flex;
     align-items: flex-end;
-    padding: 0 15px;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 16px;
 
-    @media ${queries.sm} {
-        padding: 0 1vw;
-
-        button {
-            padding: 0 1vw;
-        }
+    @media ${queries.xs} {
+        justify-content: flex-end;
     }
 `;
 

@@ -4,7 +4,7 @@ import React from "react";
 
 import colors from "../styles/colors";
 
-const Loading = () => {
+const Loading = ({ style = {} }) => {
     const { t } = useTranslation();
     return (
         <div
@@ -13,6 +13,7 @@ const Loading = () => {
                 height: "50%",
                 display: "grid",
                 placeContent: "center",
+                ...style,
             }}
         >
             <LoadingOutlined

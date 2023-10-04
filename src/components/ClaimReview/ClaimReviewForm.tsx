@@ -3,7 +3,6 @@ import { Col, Row } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
     crossCheckingSelector,
-    publishedSelector,
     reviewDataSelector,
     reviewNotStartedSelector,
 } from "../../machines/reviewTask/selectors";
@@ -13,7 +12,6 @@ import {
     isUserLoggedIn,
 } from "../../atoms/currentUser";
 
-import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
 import DynamicReviewTaskForm from "./form/DynamicReviewTaskForm";
 import { PlusOutlined } from "@ant-design/icons";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -37,12 +35,11 @@ const ClaimReviewForm = ({
     const { machineService } = useContext(ReviewTaskMachineContext);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
-    const isPublished = useSelector(machineService, publishedSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
     const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
-    const userIsAdmin = role === Roles.Admin;
+    const userIsAdmin = role === Roles.Admin || Roles.SuperAdmin;
 
     const showForm =
         isUnassigned ||
@@ -59,15 +56,13 @@ const ClaimReviewForm = ({
     }, [isUnassigned]);
 
     return (
-        !isPublished && (
-            <Col
-                offset={3}
-                span={18}
-                style={{
-                    background: colors.lightGray,
-                    padding: "20px 15px",
-                }}
-            >
+        <Row
+            style={{
+                background: colors.lightGray,
+                padding: "20px 15px",
+            }}
+        >
+            <Col offset={3} span={18}>
                 {formCollapsed && (
                     <Row
                         style={{
@@ -104,16 +99,14 @@ const ClaimReviewForm = ({
                     )}
                 </Col>
                 {!formCollapsed && showForm && (
-                    <CollaborativeEditorProvider data_hash={dataHash}>
-                        <DynamicReviewTaskForm
-                            data_hash={dataHash}
-                            personality={personalityId}
-                            claim={claimId}
-                        />
-                    </CollaborativeEditorProvider>
+                    <DynamicReviewTaskForm
+                        data_hash={dataHash}
+                        personality={personalityId}
+                        claim={claimId}
+                    />
                 )}
             </Col>
-        )
+        </Row>
     );
 };
 

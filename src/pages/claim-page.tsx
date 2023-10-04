@@ -16,6 +16,8 @@ export interface ClaimPageProps {
     sitekey: string;
     href: string;
     enableCollaborativeEditor: boolean;
+    hideDescriptions: object;
+    websocketUrl: string;
 }
 
 const ClaimPage: NextPage<ClaimPageProps> = (props) => {
@@ -23,6 +25,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
+    dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
     dispatch({
         type: ActionTypes.SET_COLLABORATIVE_EDIT,
@@ -69,9 +72,13 @@ export async function getServerSideProps({ query, locale, locales, req }) {
                 ? JSON.parse(JSON.stringify(query.personality))
                 : null,
             claim: JSON.parse(JSON.stringify(query.claim)),
+            hideDescriptions: query.hideDescriptions
+                ? JSON.parse(JSON.stringify(query.personality))
+                : null,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
+            websocketUrl: query.websocketUrl,
         },
     };
 }

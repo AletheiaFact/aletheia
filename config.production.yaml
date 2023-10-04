@@ -34,6 +34,7 @@ services:
     conf:
       port: 3000
       cors: '*'
+      websocketUrl: wss://ws.aletheiafact.org
       recaptcha_secret: RECAPTCHA_SECRET
       recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
       db:
@@ -60,3 +61,6 @@ services:
         bucket: AWS_SDK_BUCKET
         accessKeyId: AWS_ACCESS_KEY_ID
         secretAccessKey: AWS_SECRET_ACCESS_KEY
+      novu: # Notifications provider
+        api_key: NOVU_API_KEY
+        application_identifier: NOVU_APPLICATION_IDENTIFIER

@@ -1,7 +1,7 @@
 import { Avatar, Grid } from "@mui/material";
 import {
-    SelfServiceSettingsFlow,
-    SubmitSelfServiceSettingsFlowWithPasswordMethodBody as ValuesType,
+    SettingsFlowState,
+    UpdateSettingsFlowWithPasswordMethod as ValuesType,
 } from "@ory/client";
 import { Alert, Form, FormInstance, Typography } from "antd";
 import { useTranslation } from "next-i18next";
@@ -18,7 +18,7 @@ import Loading from "../Loading";
 import { Totp } from "./Totp";
 
 const OryProfileView = ({ user }) => {
-    const [flow, setFlow] = useState<SelfServiceSettingsFlow>();
+    const [flow, setFlow] = useState<SettingsFlowState>();
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { t } = useTranslation();

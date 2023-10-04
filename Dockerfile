@@ -1,4 +1,4 @@
-FROM node:16.19.0-alpine AS package
+FROM node:18.14.0-alpine AS package
 
 ARG NEXT_PUBLIC_UMAMI_SITE_ID
 ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
@@ -7,6 +7,7 @@ ENV PARCEL_WORKERS=1
 
 COPY ./.babelrc /app/.babelrc
 COPY config.$ENVIRONMENT.yaml /app/config.yaml
+COPY config.websocket.$ENVIRONMENT.yaml /app/config.websocket.yaml
 COPY config.seed.example.yaml /app/config.seed.yaml
 COPY migrate-mongo-config-example.ts /app/migrate-mongo-config.ts
 COPY ./migrations /app/migrations
@@ -20,6 +21,7 @@ COPY ./scripts /app/scripts
 COPY ./tsconfig.json /app/tsconfig.json
 COPY ./server /app/server
 COPY ./src /app/src
+COPY ./lib /app/lib
 COPY ./public /app/public
 COPY ./next-i18next.config.js /app/next-i18next.config.js
 
@@ -31,7 +33,7 @@ RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
     yarn build
 
-FROM node:16.19.0-alpine
+FROM node:18.14.0-alpine
 
 LABEL maintainer="Giovanni Rossini <giovannijrrossini@gmail.com>"
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
-import { Roles } from "../types/enums";
+import { Roles, Status } from "../types/enums";
 import { Badge } from "../types/Badge";
 
 const request = axios.create({
@@ -13,6 +13,17 @@ const getById = (id, params = {}) => {
         .get(`/${id}`, {
             params,
         })
+        .then((response) => {
+            return response.data;
+        })
+        .catch(() => {
+            message.error("Error while fetching User");
+        });
+};
+
+const getByOryId = (id) => {
+    return request
+        .get(`/ory/${id}`)
         .then((response) => {
             return response.data;
         })
@@ -70,7 +81,31 @@ const register = (params, t) => {
         });
 };
 
-const update = (userId, params: { role: string; badges: Badge[] }, t) => {
+const updateTotp = (
+    userId,
+    params: {
+        totp: boolean;
+    }
+) => {
+    return request
+        .put(`/${userId}`, params)
+        .then((response) => {
+            return response?.data;
+        })
+        .catch((e) => {
+            return e?.response?.data;
+        });
+};
+
+const update = (
+    userId,
+    params: {
+        role?: Roles;
+        badges?: Badge[];
+        state?: Status;
+    },
+    t
+) => {
     return request
         .put(`/${userId}`, params)
         .then((response) => {
@@ -85,7 +120,9 @@ const update = (userId, params: { role: string; badges: Badge[] }, t) => {
 
 const userApi = {
     updatePassword,
+    updateTotp,
     getById,
+    getByOryId,
     getUsers,
     register,
     update,

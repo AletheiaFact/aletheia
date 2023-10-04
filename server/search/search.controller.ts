@@ -14,8 +14,8 @@ import { PersonalityService } from "../personality/personality.service";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { ViewService } from "../view/view.service";
 import { parse } from "url";
-import { Response } from "express";
-import { BaseRequest } from "../types";
+import type { Response } from "express";
+import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller()

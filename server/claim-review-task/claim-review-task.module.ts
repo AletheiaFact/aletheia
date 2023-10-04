@@ -15,6 +15,7 @@ import { StateEventModule } from "../state-event/state-event.module";
 import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { ConfigModule } from "@nestjs/config";
 import { ImageModule } from "../claim/types/image/image.module";
+import { EditorParseModule } from "../editor-parse/editor-parse.module";
 
 export const ClaimReviewTaskModel = MongooseModule.forFeature([
     {
@@ -35,6 +36,7 @@ export const ClaimReviewTaskModel = MongooseModule.forFeature([
         SentenceModule,
         ConfigModule,
         ImageModule,
+        EditorParseModule,
     ],
     providers: [ClaimReviewTaskService],
     exports: [ClaimReviewTaskService],

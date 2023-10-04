@@ -27,6 +27,9 @@ env:
   ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
   ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
   RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
+  NOVU_API_KEY: ${{ secrets.DEVELOPMENT_NOVU_API_KEY }}
+  NOVU_APPLICATION_IDENTIFIER: ${{ secrets.DEVELOPMENT_NOVU_APPLICATION_IDENTIFIER }}
+
 
   GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
   GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
@@ -45,7 +48,8 @@ jobs:
       - name: Check Environment
         if: endsWith(github.ref, '/master')
         run: |
-          sed -i '11{s/test.//}' deployment.yml
+          sed -i '11{s/test.//}' deployment/app.yml
+          sed -i '11{s/testws./ws./}' deployment/websocket.yml
           sed -i '11{s/test.//}' config.seed.example.yaml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
           echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
@@ -59,6 +63,8 @@ jobs:
           echo "AWS_SDK_BUCKET=${{ secrets.PRODUCTION_AWS_SDK_BUCKET }}" >> $GITHUB_ENV
           echo "AWS_ACCESS_KEY_ID=${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "NOVU_API_KEY=${{ secrets.PRODUCTION_NOVU_API_KEY }}" >> $GITHUB_ENV
+          echo "NOVU_APPLICATION_IDENTIFIER=${{ secrets.PRODUCTION_NOVU_APPLICATION_IDENTIFIER }}" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -87,6 +93,8 @@ jobs:
             sed -i "s%AWS_SDK_BUCKET%$AWS_SDK_BUCKET%g" config.$ENVIRONMENT.yaml
             sed -i "s%AWS_ACCESS_KEY_ID%$AWS_ACCESS_KEY_ID%g" config.$ENVIRONMENT.yaml
             sed -i "s%AWS_SECRET_ACCESS_KEY%$AWS_SECRET_ACCESS_KEY%g" config.$ENVIRONMENT.yaml
+            sed -i "s%NOVU_API_KEY%$NOVU_API_KEY%g" config.$ENVIRONMENT.yaml
+            sed -i "s%NOVU_APPLICATION_IDENTIFIER%$NOVU_APPLICATION_IDENTIFIER%g" config.$ENVIRONMENT.yaml
 
       - name: Set migrate-mongo-config.ts
         run: |
@@ -139,7 +147,7 @@ jobs:
       - name: Check Environment
         if: endsWith(github.ref, '/master')
         run: |
-          sed -i '11{s/test.//}' deployment.yml
+          sed -i '11{s/test.//}' deployment/app.yml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
           echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
@@ -152,18 +160,22 @@ jobs:
           echo "AWS_SDK_BUCKET=${{ secrets.PRODUCTION_AWS_SDK_BUCKET }}" >> $GITHUB_ENV
           echo "AWS_ACCESS_KEY_ID=${{ secrets.PRODUCTION_AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "NOVU_API_KEY=${{ secrets.PRODUCTION_NOVU_API_KEY }}" >> $GITHUB_ENV
+          echo "NOVU_APPLICATION_IDENTIFIER=${{ secrets.PRODUCTION_NOVU_APPLICATION_IDENTIFIER }}" >> $GITHUB_ENV
 
       - name: Set environment
         run: |
-          sed -i "s/ENVIRONMENT/${{ env.ENVIRONMENT }}/g" deployment.yml
-          sed -i "s/UMAMI_SITE_ID_STUB/${{ env.UMAMI_SITE_ID }}/g" deployment.yml
-          sed -i "s/RECAPTCHA_SITEKEY_STUB/${{ env.RECAPTCHA_SITEKEY }}/g" deployment.yml
-          sed -i "s%ORY_SDK_URL_STUB%${{ env.ORY_SDK_URL }}%g" deployment.yml
-          sed -i "s/ORY_ACCESS_TOKEN_STUB/${{ env.ORY_ACCESS_TOKEN }}/g" deployment.yml
+          sed -i "s/ENVIRONMENT/${{ env.ENVIRONMENT }}/g" deployment/app.yml
+          sed -i "s/ENVIRONMENT/${{ env.ENVIRONMENT }}/g" deployment/websocket.yml
+          sed -i "s/UMAMI_SITE_ID_STUB/${{ env.UMAMI_SITE_ID }}/g" deployment/app.yml
+          sed -i "s/RECAPTCHA_SITEKEY_STUB/${{ env.RECAPTCHA_SITEKEY }}/g" deployment/app.yml
+          sed -i "s%ORY_SDK_URL_STUB%${{ env.ORY_SDK_URL }}%g" deployment/app.yml
+          sed -i "s/ORY_ACCESS_TOKEN_STUB/${{ env.ORY_ACCESS_TOKEN }}/g" deployment/app.yml
 
-      - name: Set deployment.yml
+      - name: Set deployment
         run: |
-          sed -i "s/TAG/$GITHUB_SHA/" deployment.yml
+          sed -i "s/TAG/$GITHUB_SHA/" deployment/app.yml
+          sed -i "s/TAG/$GITHUB_SHA/" deployment/websocket.yml
 
       - name: Applying Kubernetes Deployment
         uses: giovannirossini/aws-eks@v1
@@ -172,7 +184,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
           cluster-name: 'production'
-          command: kubectl apply -f deployment.yml
+          command: kubectl apply -f ./deployment/
 
       - name: Validation
         uses: giovannirossini/aws-eks@v1
@@ -181,7 +193,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'us-east-1'
           cluster-name: 'production'
-          command: kubectl rollout status deployments/aletheia -n ${{ env.ENVIRONMENT }} --timeout=240s
+          command: kubectl rollout status deployments/aletheia -n ${{ env.ENVIRONMENT }} --timeout=360s
         if: success()
 
       - name: Rollback

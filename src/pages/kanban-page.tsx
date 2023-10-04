@@ -9,11 +9,14 @@ import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 
-const KanbanPage: NextPage<{ sitekey; enableCollaborativeEditor }> = (
-    props
-) => {
+const KanbanPage: NextPage<{
+    sitekey;
+    enableCollaborativeEditor;
+    websocketUrl: string;
+}> = (props) => {
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(props.sitekey));
+    dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch({
         type: ActionTypes.SET_COLLABORATIVE_EDIT,
         enableCollaborativeEdit: props.enableCollaborativeEditor,
@@ -34,12 +37,12 @@ const KanbanPage: NextPage<{ sitekey; enableCollaborativeEditor }> = (
 
 export async function getServerSideProps({ locale, locales, req, query }) {
     locale = GetLocale(req, locale, locales);
-
     return {
         props: {
             ...(await serverSideTranslations(locale)),
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
+            websocketUrl: query.websocketUrl,
         },
     };
 }

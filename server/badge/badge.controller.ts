@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Put, Req, Res } from "@nestjs/common";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { ImageService } from "../claim/types/image/image.service";
 import { parse } from "url";
 
@@ -10,6 +10,7 @@ import { UpdateBadgeDTO } from "./dto/update-badge.dto";
 import { UsersService } from "../users/users.service";
 import { Types } from "mongoose";
 import { ApiTags } from "@nestjs/swagger";
+import { UtilService } from "../util";
 
 @Controller()
 export class BadgeController {
@@ -17,12 +18,13 @@ export class BadgeController {
         private badgeService: BadgeService,
         private viewService: ViewService,
         private imageService: ImageService,
-        private usersService: UsersService
+        private usersService: UsersService,
+        private util: UtilService
     ) {}
 
     @ApiTags("badge")
     @Post("api/badge")
-    public async createBadge(@Body() badge: CreateBadgeDTO) {
+    public async createBadge(@Body() badge: CreateBadgeDTO, @Req() request) {
         const { users, ...rest } = badge;
         if (!rest.image._id) {
             const image = await this.imageService.create(rest.image);
@@ -34,10 +36,13 @@ export class BadgeController {
 
         if (users) {
             users.forEach((user) => {
-                {
-                    this.usersService.updateUser(user._id, {
-                        badges: [...user.badges, createdBadge._id],
-                    });
+                const isAuthorized = this.util.canEditUser(user, request);
+                if (isAuthorized) {
+                    {
+                        this.usersService.updateUser(user._id, {
+                            badges: [...user.badges, createdBadge._id],
+                        });
+                    }
                 }
             });
         }
@@ -47,7 +52,7 @@ export class BadgeController {
 
     @ApiTags("badge")
     @Put("api/badge/:id")
-    public async updateBadge(@Body() badge: UpdateBadgeDTO) {
+    public async updateBadge(@Body() badge: UpdateBadgeDTO, @Req() request) {
         const { users, ...rest } = badge;
 
         if (!rest.image._id) {
@@ -64,6 +69,11 @@ export class BadgeController {
 
         // Remove badge from users that no longer have it
         usersWithBadge.forEach((user) => {
+            const isAuthorized = this.util.canEditUser(user, request);
+
+            if (!isAuthorized) {
+                return;
+            }
             const userId = user._id.toString();
             const usersIds = users.map((user) => user._id);
             const isUserIdOnUsersList = usersIds.includes(userId);
@@ -87,19 +97,23 @@ export class BadgeController {
 
         // Add badge to users that should now have it
         users.forEach((user) => {
-            if (
-                !user.badges?.some(
-                    (userBadge) =>
-                        userBadge._id !== Types.ObjectId(updatedBadge._id)
-                )
-            ) {
-                this.usersService.updateUser(user._id, {
-                    badges: [...user.badges, updatedBadge._id],
-                });
-            }
-        });
+            const isAuthorized = this.util.canEditUser(user, request);
 
-        return updatedBadge;
+            if (isAuthorized) {
+                if (
+                    !user.badges?.some(
+                        (userBadge) =>
+                            userBadge._id !== Types.ObjectId(updatedBadge._id)
+                    )
+                ) {
+                    this.usersService.updateUser(user._id, {
+                        badges: [...user.badges, updatedBadge._id],
+                    });
+                }
+            }
+
+            return updatedBadge;
+        });
     }
 
     @ApiTags("badge")

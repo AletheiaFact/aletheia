@@ -43,6 +43,10 @@ const actions = {
         type: ActionTypes.SET_SITEKEY,
         sitekey,
     }),
+    setWebsocketUrl: (websocketUrl) => ({
+        type: ActionTypes.SET_WEBSOCKET_URL,
+        websocketUrl,
+    }),
 };
 
 export default actions;

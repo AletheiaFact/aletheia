@@ -14,6 +14,8 @@ import { startEditingItem } from "../../atoms/editDrawer";
 
 import { atomUserList } from "../../atoms/userEdit";
 import { User } from "../../types/User";
+import HeaderUserStatus from "./Drawer/HeaderUserStatus";
+import HeaderTotpStatus from "./Drawer/HeaderTotpStatus";
 
 const AdminView = () => {
     const { t } = useTranslation();
@@ -69,6 +71,28 @@ const AdminView = () => {
                             );
                         })}
                     </AvatarGroup>
+                ),
+            },
+            {
+                field: "state",
+                headerName: t("admin:columnStatus"),
+                flex: 1,
+                valueGetter: (params: GridValueGetterParams) => {
+                    return params.row.state;
+                },
+                renderCell: (params) => (
+                    <HeaderUserStatus status={params.value} />
+                ),
+            },
+            {
+                field: "totp",
+                headerName: t("admin:columnTotp"),
+                flex: 1,
+                valueGetter: (params: GridValueGetterParams) => {
+                    return params.row.totp;
+                },
+                renderCell: (params) => (
+                    <HeaderTotpStatus status={params.value} />
                 ),
             },
             {

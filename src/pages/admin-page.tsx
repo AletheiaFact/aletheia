@@ -3,17 +3,26 @@ import { InferGetServerSidePropsType, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
 import AdminView from "../components/adminArea/AdminView";
-import UserEditDrawer from "../components/adminArea/UserEditDrawer";
+import UserEditDrawer from "../components/adminArea/Drawer/UserEditDrawer";
 import { useAtom } from "jotai";
 import { atomUserList } from "../atoms/userEdit";
 import { atomBadgesList } from "../atoms/badges";
 import BadgesApi from "../api/badgesApi";
+import { Grid } from "@mui/material";
+import DashboardView from "../components/Dashboard/DashboardView";
+import AdminTabNavigator from "../components/adminArea/AdminTabNavigator";
+import AdminScreens from "../components/adminArea/AdminScreens";
 
 const Admin: NextPage<{ data: string }> = ({
     users,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+    const [value, setValue] = React.useState(0);
     const [userList, setUserList] = useAtom(atomUserList);
     const [, setBadgesList] = useAtom(atomBadgesList);
+
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
 
     useEffect(() => {
         if (userList.length === 0) {
@@ -22,11 +31,22 @@ const Admin: NextPage<{ data: string }> = ({
         BadgesApi.getBadges().then((badges) => {
             setBadgesList(badges);
         });
-    });
+    }, [setBadgesList, setUserList, userList.length, users]);
 
     return (
         <>
-            <AdminView />
+            <Grid sx={{ width: "100%" }}>
+                <AdminTabNavigator value={value} handleChange={handleChange} />
+
+                <AdminScreens value={value} index={0}>
+                    <AdminView />
+                </AdminScreens>
+
+                <AdminScreens value={value} index={1}>
+                    <DashboardView />
+                </AdminScreens>
+            </Grid>
+
             <UserEditDrawer />
         </>
     );
