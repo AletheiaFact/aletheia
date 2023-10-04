@@ -20,6 +20,8 @@ import { finishEditingItem } from "../../../atoms/editDrawer";
 import { atomBadgesList } from "../../../atoms/badges";
 import { Badge } from "../../../types/Badge";
 import Button from "../../Button";
+import { currentUserId, currentUserRole } from "../../../atoms/currentUser";
+import { canEdit } from "../../../utils/GetUserPermission";
 
 const UserEditForm = ({ currentUser, setIsLoading }) => {
     const { t } = useTranslation();
@@ -27,6 +29,8 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
     const [badges, setBadges] = useState([]);
     const [role, setUserRole] = useState(currentUser?.role || Roles.Regular);
     const [badgesList] = useAtom(atomBadgesList);
+    const [userRole] = useAtom(currentUserRole);
+    const [userId] = useAtom(currentUserId);
 
     const handleChangeBadges = (_event, newValue: Badge[]) => {
         setBadges(newValue);
@@ -46,6 +50,8 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                 : []
         );
     }, [badgesList, currentUser?.badges, currentUser?.role]);
+
+    const shouldEdit = canEdit(currentUser, userId);
 
     const handleClickSave = async () => {
         try {
@@ -83,20 +89,30 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                         value={role}
                         onChange={handleChangeRole}
                     >
-                        {Object.values(Roles).map((role) => (
-                            <FormControlLabel
-                                key={role}
-                                value={role}
-                                control={<Radio />}
-                                label={t(`admin:role-${role}`)}
-                            />
-                        ))}
+                        {Object.values(Roles)
+                            .filter((role) => {
+                                if (userRole !== Roles.SuperAdmin) {
+                                    return role !== Roles.SuperAdmin;
+                                } else {
+                                    return role;
+                                }
+                            })
+                            .map((role) => (
+                                <FormControlLabel
+                                    disabled={!shouldEdit}
+                                    key={role}
+                                    value={role}
+                                    control={<Radio />}
+                                    label={t(`admin:role-${role}`)}
+                                />
+                            ))}
                     </RadioGroup>
                 </FormControl>
             </Grid>
             <Grid item xs={10} mt={2}>
                 <Label>{t("menu:badgesItem")}</Label>
                 <Autocomplete
+                    disabled={!shouldEdit}
                     multiple
                     id="badges"
                     options={badgesList}
@@ -124,9 +140,11 @@ const UserEditForm = ({ currentUser, setIsLoading }) => {
                 />
             </Grid>
             <Grid item xs={10} mt={5}>
-                <Button onClick={handleClickSave}>
-                    {t("admin:saveButtonLabel")}
-                </Button>
+                {shouldEdit && (
+                    <Button onClick={handleClickSave}>
+                        {t("admin:saveButtonLabel")}
+                    </Button>
+                )}
             </Grid>
         </>
     );

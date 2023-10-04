@@ -121,6 +121,20 @@ export class ClaimReviewController {
         );
     }
 
+    @ApiTags("claim-review-task")
+    @Get("api/claimreviewtask/editor-content/:data_hash")
+    @Header("Cache-Control", "no-cache")
+    async getEditorContentByDataHash(@Param("data_hash") data_hash: string) {
+        const claimReviewTask =
+            await this.claimReviewTaskService.getClaimReviewTaskByDataHash(
+                data_hash
+            );
+
+        return this.claimReviewTaskService.getEditorContentObject(
+            claimReviewTask?.machine?.context?.reviewData
+        );
+    }
+
     @ApiTags("pages")
     @Get("kanban")
     @Header("Cache-Control", "no-cache")

@@ -75,7 +75,7 @@ export class ClaimRevisionService {
                 for (let source of claim.sources) {
                     if (typeof source === "string") {
                         await this.sourceService.create({
-                            link: source,
+                            href: source,
                             targetId: claimId,
                             targetModel: SourceTargetModel.Claim,
                         });

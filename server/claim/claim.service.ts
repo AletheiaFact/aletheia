@@ -93,7 +93,12 @@ export class ClaimService {
             {
                 $match: {
                     $or: [
-                        { "personalities.isHidden": { $ne: true } },
+                        {
+                            $and: [
+                                { "personalities.isHidden": { $ne: true } },
+                                { "personalities.isDeleted": { $ne: true } },
+                            ],
+                        },
                         { personalities: { $exists: false } },
                     ],
                 },
@@ -302,7 +307,7 @@ export class ClaimService {
                 if (population) {
                     claim = await this.ClaimModel.findOne(match)
                         .populate("personalities")
-                        .populate("sources", "_id link")
+                        .populate("sources", "_id href")
                         .populate("latestRevision")
                         .lean();
                 } else {
@@ -311,7 +316,7 @@ export class ClaimService {
                         "_id personalities latestRevision isHidden"
                     )
                         .populate("personalities", "_id name")
-                        .populate("sources", "_id link")
+                        .populate("sources", "_id href")
                         .populate({
                             path: "latestRevision",
                             select: {

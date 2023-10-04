@@ -3,16 +3,13 @@ import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContext } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
-import {
-    saveContext,
-    saveFullReviewContext,
-    savePartialReviewContext,
-} from "./actions";
+import { saveContext } from "./actions";
 import {
     CompoundStates,
     ReviewTaskEvents as Events,
     ReviewTaskStates as States,
 } from "./enums";
+import sendReviewNotifications from "../../notifications/sendReviewNotifications";
 
 const draftSubStates = {
     initial: CompoundStates.undraft,
@@ -58,22 +55,6 @@ export const createNewMachine = ({ value, context }) => {
                 on: {
                     [Events.goback]: {
                         target: States.unassigned,
-                    },
-                    [Events.partialReview]: {
-                        target: States.reported,
-                        actions: [savePartialReviewContext],
-                    },
-                    [Events.fullReview]: {
-                        target: States.summarized,
-                        actions: [saveFullReviewContext],
-                    },
-                },
-            },
-            [States.summarized]: {
-                ...draftSubStates,
-                on: {
-                    [Events.goback]: {
-                        target: States.assigned,
                     },
                     [Events.finishReport]: {
                         target: States.reported,
@@ -132,6 +113,7 @@ export const transitionHandler = (state) => {
         recaptchaString,
         setCurrentFormAndNextEvents,
         resetIsLoading,
+        currentUserId,
     } = state.event;
     const event = state.event.type;
 
@@ -168,6 +150,14 @@ export const transitionHandler = (state) => {
             })
             .finally(() => resetIsLoading());
     }
+
+    sendReviewNotifications(
+        data_hash,
+        event,
+        state.context.reviewData,
+        currentUserId,
+        t
+    );
 };
 
 export const createNewMachineService = (machine: any) => {

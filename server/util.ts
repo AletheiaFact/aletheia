@@ -1,8 +1,6 @@
-import { Injectable, Inject, Scope } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Roles } from "./auth/ability/ability.factory";
 import { randomBytes } from "crypto";
-import { REQUEST } from "@nestjs/core";
-import type { BaseRequest } from "./types";
 
 @Injectable()
 export class UtilService {
@@ -57,7 +55,16 @@ export class UtilService {
 
     getParamsBasedOnUserRole(params, req) {
         const user = req.user;
-        const isUserAdmin = user?.role === Roles.Admin;
+        const isUserAdmin =
+            user?.role === Roles.Admin || user?.role === Roles.SuperAdmin;
         return isUserAdmin ? params : { ...params, isHidden: false };
+    }
+
+    canEditUser(user, request): boolean {
+        const editorId = request.user._id;
+        const isSelectedSuperAdmin = user.role === Roles.SuperAdmin;
+        const editingSelf = user._id === editorId;
+
+        return (isSelectedSuperAdmin && editingSelf) || !isSelectedSuperAdmin;
     }
 }

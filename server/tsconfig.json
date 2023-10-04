@@ -9,8 +9,8 @@
         "skipLibCheck": true,
         "target": "es2017",
         "sourceMap": true,
-        "outDir": "../dist/server",
-        "rootDir": "./",
+        "outDir": "../dist/",
+        "rootDir": "../",
         "baseUrl": "./",
         "incremental": true
     },

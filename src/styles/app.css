@@ -133,6 +133,8 @@ h6 {
 /* TODO: Find a better solution than global css */
 .ProseMirror.remirror-editor {
     overflow-y: inherit !important;
+    min-height: 40vh;
+    outline: none;
 }
 
 .MuiPopper-root {

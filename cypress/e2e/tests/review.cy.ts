@@ -52,7 +52,7 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
     });
 
-    it("should be able to submit partial review fields", () => {
+    it("should be able to submit full review fields", () => {
         cy.login();
         goToClaimReviewPage();
         cy.get(locators.claimReview.INPUT_CLASSIFICATION)
@@ -64,28 +64,18 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.INPUT_SUMMARY)
             .should("exist")
             .type(review.summary);
-        cy.get(locators.claimReview.INPUT_SOURCE)
-            .should("exist")
-            .type(review.source1);
-        cy.checkRecaptcha();
-        cy.get(locators.claimReview.BTN_FULL_REVIEW)
-            .should("be.enabled")
-            .click();
-        cy.get(locators.claimReview.INPUT_REPORT).should("exist");
-    });
-
-    it("should be able to submit full review fields", () => {
-        cy.login();
-        goToClaimReviewPage();
-        cy.get(locators.claimReview.INPUT_REPORT)
-            .should("exist")
-            .type(review.report);
         cy.get(locators.claimReview.INPUT_QUESTION)
             .should("exist")
             .type(review.question1);
+        cy.get(locators.claimReview.INPUT_REPORT)
+            .should("exist")
+            .type(review.report);
         cy.get(locators.claimReview.INPUT_HOW)
             .should("exist")
             .type(review.process);
+        cy.get(locators.claimReview.INPUT_SOURCE)
+            .should("exist")
+            .type(review.source1);
         cy.checkRecaptcha();
         cy.get(locators.claimReview.BTN_FINISH_REPORT)
             .should("be.enabled")

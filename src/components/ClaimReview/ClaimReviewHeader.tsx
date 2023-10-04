@@ -64,7 +64,7 @@ const ClaimReviewHeader = ({
         publishedReview?.review;
     const isPublishedOrCanSeeHidden =
         isPublished && (!isHidden || userIsNotRegular);
-    const userIsAdmin = role === Roles.Admin;
+    const userIsAdmin = role === Roles.Admin || Roles.SuperAdmin;
 
     const alertTypes = {
         hiddenReport: {
@@ -132,13 +132,9 @@ const ClaimReviewHeader = ({
     }, [isHidden]);
 
     return (
-        <Row>
+        <Row style={{ background: isPublished ? "none" : colors.lightGray }}>
             <Col offset={3} span={18}>
-                <Row
-                    style={{
-                        background: isPublished ? "none" : colors.lightGray,
-                    }}
-                >
+                <Row>
                     <Col
                         lg={{
                             order: 1,

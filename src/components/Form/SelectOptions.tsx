@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import Loading from "../Loading";
+import { Roles } from "../../types/enums";
 
 const StyledSelect = styled(Select)`
     .ant-select-selector {
@@ -16,6 +17,7 @@ const StyledSelect = styled(Select)`
 `;
 
 function SelectOptions({
+    fieldName = "",
     fetchOptions,
     mode,
     style,
@@ -40,7 +42,17 @@ function SelectOptions({
             setOptions([]);
             setFetching(true);
             fetchOptions(value, t).then((newOptions) => {
-                setOptions(newOptions);
+                if (fieldName === "reviewerId") {
+                    const reviewerUsers = newOptions.filter(
+                        (user) =>
+                            user?.role === Roles.Reviewer ||
+                            user?.role === Roles.Admin ||
+                            user?.role === Roles.SuperAdmin
+                    );
+                    setOptions(reviewerUsers);
+                } else {
+                    setOptions(newOptions);
+                }
                 setFetching(false);
             });
         };

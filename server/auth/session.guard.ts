@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { Configuration, V0alpha2Api } from "@ory/client";
+import { Configuration, FrontendApi } from "@ory/client";
 import { Reflector } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { Roles } from "./ability/ability.factory";
@@ -27,17 +27,14 @@ export class SessionGuard implements CanActivate {
 
         try {
             if (type === "ory") {
-                const ory = new V0alpha2Api(
-                    new Configuration({
-                        basePath: this.configService.get<string>("ory.url"),
-                        accessToken:
-                            this.configService.get<string>("access_token"),
-                    })
-                );
-                const { data: session } = await ory.toSession(
-                    undefined,
-                    request.header("Cookie")
-                );
+                const oryConfig = new Configuration({
+                    basePath: this.configService.get<string>("ory.url"),
+                    accessToken: this.configService.get<string>("access_token"),
+                });
+                const ory = new FrontendApi(oryConfig);
+                const { data: session } = await ory.toSession({
+                    cookie: request.header("Cookie"),
+                });
                 request.user = {
                     _id: session?.identity?.traits?.user_id,
                     role: session?.identity?.traits?.role,
@@ -67,7 +64,8 @@ export class SessionGuard implements CanActivate {
 
     private checkAndRedirect(request, response, isPublic, redirectPath) {
         const isAllowedPublicUrl = [
-            redirectPath,
+            "/login",
+            "/unauthorized",
             "/_next",
             "/api/.ory",
             "/api/health",

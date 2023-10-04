@@ -9,7 +9,11 @@ import { useAppSelector } from "../../store/store";
 const { Option } = Select;
 
 const SelectInput = styled(Select)`
-    background-color: none;
+    .ant-select-selection-item {
+        display: flex;
+        align-items: center;
+    }
+
     .ant-select-arrow {
         color: ${colors.white};
         font-size: 0.8rem;
@@ -40,11 +44,8 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
 
     return (
         <>
-            {!vw?.sm && (
+            {!vw?.xs && (
                 <SelectInput
-                    style={{
-                        paddingTop: 6,
-                    }}
                     bordered={false}
                     showArrow={true}
                     value={language}
@@ -54,18 +55,18 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                     <Option value="pt" data-cy="testLanguagePt">
                         <ReactCountryFlag
                             countryCode="BR"
-                            style={{ fontSize: "20px" }}
+                            style={{ fontSize: "20px", paddingTop: "6px" }}
                         />
                     </Option>
                     <Option value="en" data-cy="testLanguageEn">
                         <ReactCountryFlag
                             countryCode="GB"
-                            style={{ fontSize: "20px" }}
+                            style={{ fontSize: "20px", paddingTop: "6px" }}
                         />
                     </Option>
                 </SelectInput>
             )}
-            {vw?.sm && (
+            {vw?.xs && (
                 <div
                     style={{
                         display: "flex",

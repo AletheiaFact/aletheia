@@ -21,6 +21,7 @@ COPY ./scripts /app/scripts
 COPY ./tsconfig.json /app/tsconfig.json
 COPY ./server /app/server
 COPY ./src /app/src
+COPY ./lib /app/lib
 COPY ./public /app/public
 COPY ./next-i18next.config.js /app/next-i18next.config.js
 

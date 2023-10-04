@@ -1,9 +1,6 @@
-import { ory } from '../../lib/orysdk'
+import { ory } from "../../lib/orysdk";
 
 export async function CreateLogoutHandler() {
-  
-    const {data} = await ory
-      .createSelfServiceLogoutFlowUrlForBrowsers()
-      await ory
-      .submitSelfServiceLogoutFlow(data.logout_token)
-  }
+    const { data } = await ory.frontend.createBrowserLogoutFlow();
+    await ory.frontend.updateLogoutFlow({ token: data.logout_token });
+}

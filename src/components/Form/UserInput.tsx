@@ -3,6 +3,7 @@ import SelectOptions from "./SelectOptions";
 import userApi from "../../api/userApi";
 
 interface UserInputProps {
+    fieldName: string;
     placeholder: string;
     onChange: any;
     dataCy: string;
@@ -14,6 +15,7 @@ interface UserInputProps {
 }
 
 const UserInput = ({
+    fieldName,
     placeholder,
     onChange,
     dataCy,
@@ -60,6 +62,7 @@ const UserInput = ({
 
     return (
         <SelectOptions
+            fieldName={fieldName}
             fetchOptions={dataLoader}
             placeholder={placeholder}
             onChange={onChange}

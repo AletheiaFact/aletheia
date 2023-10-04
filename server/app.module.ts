@@ -46,6 +46,8 @@ import { UnauthorizedExceptionFilter } from "./filters/unauthorized.filter";
 import { DebateModule } from "./claim/types/debate/debate.module";
 import { EditorModule } from "./editor/editor.module";
 import { BadgeModule } from "./badge/badge.module";
+import { EditorParseModule } from "./editor-parse/editor-parse.module";
+import { NotificationModule } from "./notifications/notifications.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -100,6 +102,8 @@ export class AppModule implements NestModule {
             DebateModule,
             EditorModule,
             BadgeModule,
+            EditorParseModule,
+            NotificationModule,
         ];
         if (options.config.feature_flag) {
             imports.push(
@@ -109,6 +113,9 @@ export class AppModule implements NestModule {
                     instanceId: options.config.feature_flag.instanceId,
                 })
             );
+        }
+        if (options.config.novu) {
+            imports.push(NotificationModule);
         }
         return {
             module: AppModule,

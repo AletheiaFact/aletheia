@@ -51,3 +51,6 @@ services:
         secretAccessKey: test
         # endpoint is only needed when using localstack
         endpoint: http://localhost:4566
+      novu: # Notifications provider
+        api_key: NOVU_API_KEY
+

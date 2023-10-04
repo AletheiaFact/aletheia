@@ -17,7 +17,11 @@ const AletheiaMenu = () => {
 
     const handleClick = (menuItem) => {
         dispatch(actions.openSideMenu());
-        router.push(menuItem.key);
+        if (menuItem.key === "/donate") {
+            window.location.href = "https://donate.aletheiafact.org/";
+        } else {
+            router.push(menuItem.key);
+        }
     };
 
     const [role] = useAtom(currentUserRole);
@@ -34,6 +38,48 @@ const AletheiaMenu = () => {
             }}
             selectable={false}
         >
+            <Menu.Item
+                key="/personality"
+                onClick={handleClick}
+                data-cy={"testPersonalitytItem"}
+            >
+                {t("menu:personalityItem")}
+            </Menu.Item>
+            <Menu.Item
+                key="/claim"
+                onClick={handleClick}
+                data-cy={"testClaimtItem"}
+            >
+                {t("menu:claimItem")}
+            </Menu.Item>
+
+            {role !== Roles.Regular && (
+                <Menu.Item
+                    key="/kanban"
+                    onClick={handleClick}
+                    data-cy={"testKanbantItem"}
+                >
+                    {t("menu:kanbanItem")}
+                </Menu.Item>
+            )}
+            {(role === Roles.Admin || role === Roles.SuperAdmin) && (
+                <>
+                    <Menu.Item
+                        key="/admin"
+                        data-cy={"testadminItem"}
+                        onClick={handleClick}
+                    >
+                        {t("menu:adminItem")}
+                    </Menu.Item>
+                    <Menu.Item
+                        key="/admin/badges"
+                        data-cy={"testadminBadgeItem"}
+                        onClick={handleClick}
+                    >
+                        {t("menu:Badges")}
+                    </Menu.Item>
+                </>
+            )}
             <Menu.Item
                 key="/about"
                 data-cy={"testAboutItem"}
@@ -55,46 +101,10 @@ const AletheiaMenu = () => {
             >
                 {t("menu:codeOfConductItem")}
             </Menu.Item>
-            <Menu.Item
-                key="/personality"
-                onClick={handleClick}
-                data-cy={"testPersonalitytItem"}
-            >
-                {t("menu:personalityItem")}
-            </Menu.Item>
-            <Menu.Item
-                key="/claim"
-                onClick={handleClick}
-                data-cy={"testClaimtItem"}
-            >
-                {t("menu:claimItem")}
-            </Menu.Item>
 
-            <Menu.Item
-                key="/kanban"
-                onClick={handleClick}
-                data-cy={"testKanbantItem"}
-            >
-                {t("menu:kanbanItem")}
+            <Menu.Item key="/donate" onClick={handleClick}>
+                {t("header:donateButton")}
             </Menu.Item>
-            {role === Roles.Admin && (
-                <>
-                    <Menu.Item
-                        key="/admin"
-                        data-cy={"testadminItem"}
-                        onClick={handleClick}
-                    >
-                        {t("menu:adminItem")}
-                    </Menu.Item>
-                    <Menu.Item
-                        key="/admin/badges"
-                        data-cy={"testadminBadgeItem"}
-                        onClick={handleClick}
-                    >
-                        {t("menu:Badges")}
-                    </Menu.Item>
-                </>
-            )}
         </Menu>
     );
 };

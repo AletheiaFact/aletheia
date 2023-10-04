@@ -35,10 +35,10 @@ export class SourceService {
     }
 
     find(match) {
-        return this.SourceModel.find({ match }, { _id: 1, link: 1 });
+        return this.SourceModel.find({ match }, { _id: 1, href: 1 });
     }
 
     getById(_id) {
-        return this.SourceModel.findById(_id, { _id: 1, link: 1 });
+        return this.SourceModel.findById(_id, { _id: 1, href: 1 });
     }
 }

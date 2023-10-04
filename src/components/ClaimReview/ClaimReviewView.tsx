@@ -18,7 +18,7 @@ export interface ClaimReviewViewProps {
     personality?: any;
     claim: any;
     content: Content;
-    hideDescriptions: any;
+    hideDescriptions?: any;
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
@@ -53,17 +53,18 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
 
     return (
         <div>
-            {role === Roles.Admin && review?.isPublished && (
-                <AdminToolBar
-                    content={review}
-                    deleteApiFunction={ClaimReviewApi.deleteClaimReview}
-                    changeHideStatusFunction={
-                        ClaimReviewApi.updateClaimReviewHiddenStatus
-                    }
-                    target={TargetModel.ClaimReview}
-                    hideDescriptions={hideDescriptions}
-                />
-            )}
+            {(role === Roles.Admin || role === Roles.SuperAdmin) &&
+                review?.isPublished && (
+                    <AdminToolBar
+                        content={review}
+                        deleteApiFunction={ClaimReviewApi.deleteClaimReview}
+                        changeHideStatusFunction={
+                            ClaimReviewApi.updateClaimReviewHiddenStatus
+                        }
+                        target={TargetModel.ClaimReview}
+                        hideDescriptions={hideDescriptions}
+                    />
+                )}
             <ClaimReviewHeader
                 classification={
                     review?.report?.classification || reviewData?.classification
@@ -80,17 +81,22 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 userIsReviewer={userIsReviewer}
                 isHidden={review?.isHidden}
             />
-            <ClaimReviewForm
-                claimId={claim._id}
-                personalityId={personality?._id}
-                dataHash={content.data_hash}
-                userIsReviewer={userIsReviewer}
-            />
-            <SocialMediaShare
-                quote={personality?.name}
-                href={shareHref}
-                claim={claim?.title}
-            />
+
+            {!review?.isPublished && (
+                <ClaimReviewForm
+                    claimId={claim._id}
+                    personalityId={personality?._id}
+                    dataHash={content.data_hash}
+                    userIsReviewer={userIsReviewer}
+                />
+            )}
+            {review?.isPublished && (
+                <SocialMediaShare
+                    quote={personality?.name}
+                    href={shareHref}
+                    claim={claim?.title}
+                />
+            )}
         </div>
     );
 };

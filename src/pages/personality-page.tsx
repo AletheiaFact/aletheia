@@ -37,7 +37,7 @@ const PersonalityPage: NextPage<{
     return (
         <>
             <JsonLd {...jsonldContent} />
-            {role === Roles.Admin && (
+            {(role === Roles.SuperAdmin || role === Roles.Admin) && (
                 <AdminToolBar
                     content={personality}
                     deleteApiFunction={personalitiesApi.deletePersonality}

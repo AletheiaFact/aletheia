@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element  */
 /* eslint-disable jsx-a11y/anchor-has-content */
-import { SubmitSelfServiceSettingsFlowWithTotpMethodBody as ValuesType } from "@ory/client";
+import { UpdateSettingsFlowWithTotpMethod as ValuesType } from "@ory/client";
 import { Form, message, Row, Typography } from "antd";
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
