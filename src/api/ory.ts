@@ -8,7 +8,8 @@ const oryGetLoginFlow = ({ router, setFlow, t }) => {
     const { return_to: returnTo, flow: flowId, refresh, aal } = router.query;
     // If ?flow=.. was in the URL, we fetch it
     if (flowId) {
-        ory.getSelfServiceLoginFlow(String(flowId))
+        ory.frontend
+            .getLoginFlow({ id: flowId })
             .then(({ data }) => {
                 setFlow(data);
             })
@@ -16,11 +17,12 @@ const oryGetLoginFlow = ({ router, setFlow, t }) => {
         return;
     }
     // Otherwise we initialize it
-    ory.initializeSelfServiceLoginFlowForBrowsers(
-        Boolean(refresh),
-        aal ? String(aal) : undefined,
-        returnTo ? String(returnTo) : undefined
-    )
+    ory.frontend
+        .createBrowserLoginFlow({
+            refresh: Boolean(refresh),
+            aal: aal ? String(aal) : undefined,
+            returnTo: returnTo ? String(returnTo) : undefined,
+        })
         .then(({ data }) => {
             setFlow(data);
         })
@@ -28,10 +30,13 @@ const oryGetLoginFlow = ({ router, setFlow, t }) => {
 };
 
 const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
-    return ory
-        .submitSelfServiceLoginFlow(String(flow?.id), undefined, values)
+    return ory.frontend
+        .updateLoginFlow({
+            flow: String(flow?.id),
+            updateLoginFlowBody: values,
+        })
         .then((response) => {
-            return ory
+            return ory.frontend
                 .toSession()
                 .then(() => response)
                 .catch((err: AxiosError) => {
@@ -73,8 +78,8 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
 };
 
 const oryGetSettingsFlow = ({ router, setFlow, t }) => {
-    return ory
-        .initializeSelfServiceSettingsFlowForBrowsers()
+    return ory.frontend
+        .createBrowserSettingsFlow()
         .then(({ data }) => {
             setFlow(data);
         })
@@ -82,8 +87,11 @@ const oryGetSettingsFlow = ({ router, setFlow, t }) => {
 };
 
 const orySubmitSettings = ({ router, flow, setFlow, t, values }) => {
-    return ory
-        .submitSelfServiceSettingsFlow(String(flow?.id), undefined, values)
+    return ory.frontend
+        .updateSettingsFlow({
+            flow: String(flow?.id),
+            updateSettingsFlowBody: values,
+        })
         .then(() => {
             router.push("/");
             message.success(t("profile:changesSaved"));
@@ -92,8 +100,11 @@ const orySubmitSettings = ({ router, flow, setFlow, t, values }) => {
 };
 
 const orySubmitTotp = ({ router, flow, setFlow, t, values }) => {
-    return ory
-        .submitSelfServiceSettingsFlow(String(flow?.id), undefined, values)
+    return ory.frontend
+        .updateSettingsFlow({
+            flow: String(flow?.id),
+            updateSettingsFlowBody: values,
+        })
         .then(({ data }) => {
             setFlow(data);
             message.success(t("profile:changesSaved"));
