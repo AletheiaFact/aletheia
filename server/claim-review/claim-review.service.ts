@@ -47,7 +47,13 @@ export class ClaimReviewService {
             { $unwind: "$claim" },
             lookupClaimRevisions(TargetModel.ClaimReview),
             { $unwind: "$claim.latestRevision" },
-            { $match: { "claim.isHidden": query.isHidden } }
+            {
+                $match: {
+                    "claim.isHidden": query.isHidden,
+                    "claim.isDeleted": false,
+                    "personality.isDeleted": false,
+                },
+            }
         );
 
         if (!query.isHidden) {
@@ -95,7 +101,7 @@ export class ClaimReviewService {
             },
             lookupClaims(TargetModel.ClaimReview),
             {
-                $match: { "claim.isHidden": false },
+                $match: { "claim.isHidden": false, "claim.isDeleted": false },
             },
             { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
@@ -112,6 +118,7 @@ export class ClaimReviewService {
             { $unwind: "$claim" },
             {
                 $match: {
+                    "personality.isDeleted": false,
                     "claim.isHidden": query.isHidden,
                     "claim.isDeleted": false,
                 },

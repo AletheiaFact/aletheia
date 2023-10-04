@@ -209,7 +209,7 @@ export class PersonalityService {
                 queryOptions
             ).populate({
                 path: "claims",
-                match: { isHidden: false },
+                match: { isHidden: false, isDeleted: false },
                 populate: {
                     path: "latestRevision",
                     select: "_id title content",
