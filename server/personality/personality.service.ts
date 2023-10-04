@@ -209,7 +209,7 @@ export class PersonalityService {
                 queryOptions
             ).populate({
                 path: "claims",
-                match: { isHidden: false },
+                match: { isHidden: false, isDeleted: false },
                 populate: {
                     path: "latestRevision",
                     select: "_id title content",
@@ -384,6 +384,7 @@ export class PersonalityService {
             queryInputs.name = { $regex: query.name, $options: "i" };
         }
         queryInputs.isHidden = query?.isHidden || false;
+        queryInputs.isDeleted = false;
         return queryInputs;
     }
 

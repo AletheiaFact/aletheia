@@ -48,10 +48,10 @@ export class ClaimReviewController {
                 page,
                 pageSize,
                 order,
-                { isHidden },
+                { isHidden, isDeleted: false },
                 latest
             ),
-            this.claimReviewService.count({ isHidden }),
+            this.claimReviewService.count({ isHidden, isDeleted: false }),
         ]).then(([reviews, totalReviews]) => {
             const totalPages = Math.ceil(totalReviews / pageSize);
 

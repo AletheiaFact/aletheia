@@ -93,7 +93,12 @@ export class ClaimService {
             {
                 $match: {
                     $or: [
-                        { "personalities.isHidden": { $ne: true } },
+                        {
+                            $and: [
+                                { "personalities.isHidden": { $ne: true } },
+                                { "personalities.isDeleted": { $ne: true } },
+                            ],
+                        },
                         { personalities: { $exists: false } },
                     ],
                 },
