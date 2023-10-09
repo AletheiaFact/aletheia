@@ -74,12 +74,12 @@ function useFloatingLinkState() {
         [chain, href, linkShortcut, to]
     );
 
-    const submitHref = useCallback(async () => {
+    const submitHref = useCallback(() => {
         setIsLoading(true);
 
         try {
             const id = uniqueId();
-            await updateFloatingLink(id);
+            updateFloatingLink(id);
             const { $to } = ranges[0];
             //@ts-ignore
             const field = $to?.path[3]?.type?.name;

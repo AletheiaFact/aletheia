@@ -82,24 +82,19 @@ const CollaborativeEditor = ({
     );
 
     return (
-        <>
-            <CollaborativeEditorStyle>
-                <Remirror
-                    manager={manager}
-                    initialContent={state}
-                    autoFocus
-                    autoRender="end"
-                    onChange={handleChange}
-                >
-                    <FloatingLinkToolbar />
-                    <Editor state={state} />
-                    <EditorSourcesList
-                        node={state.doc}
-                        sources={editorSources}
-                    />
-                </Remirror>
-            </CollaborativeEditorStyle>
-        </>
+        <CollaborativeEditorStyle>
+            <Remirror
+                manager={manager}
+                initialContent={state}
+                autoFocus
+                autoRender="end"
+                onChange={handleChange}
+            >
+                <FloatingLinkToolbar />
+                <Editor state={state} />
+                <EditorSourcesList node={state.doc} sources={editorSources} />
+            </Remirror>
+        </CollaborativeEditorStyle>
     );
 };
 

@@ -28,7 +28,10 @@ const EditorSourcePopover = ({
     const [isArchive, setIsArchive] = useState<boolean>(false);
 
     useEffect(() => {
-        setIsArchive(href.includes("http://web.archive.org/web/"));
+        const url = new URL(href);
+        if (url.hostname.includes("web.archive.org")) {
+            setIsArchive(true);
+        }
         return () => {};
     }, [href]);
 
@@ -87,8 +90,10 @@ const EditorSourcePopover = ({
         const response = await fetch(
             `https://archive.org/wayback/available?url=${href}`
         );
-        const { archived_snapshots } = await response.json();
-        return archived_snapshots.closest.url;
+        const teste = await response.json();
+        // const { archived_snapshots } = await response.json();
+        console.log("teste", teste);
+        return teste.archived_snapshots.closest.url;
     };
 
     const updateEditorSources = (archiveHref) => {
