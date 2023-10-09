@@ -6,7 +6,6 @@ const EditorSchemaArray = ["summary", "report", "verification", "questions"];
 const defaultDoc: RemirrorJSON = {
     type: "doc",
     content: [
-        { type: "paragraph" },
         {
             type: "summary",
             content: [{ type: "paragraph" }],
@@ -32,9 +31,7 @@ export class EditorParser {
     }
 
     getSourceByProperty(sources, property) {
-        return sources.filter((s) => {
-            return s.field === property;
-        });
+        return sources.filter(({ props }) => props.field === property);
     }
 
     buildHtmlContentWithoutSources(
@@ -47,10 +44,8 @@ export class EditorParser {
         return `<div><p>${content}</p></div>`;
     }
 
-    extractHtmlContentFromRange(
-        { targetText, textRange, content, sup },
-        type = "text"
-    ) {
+    extractHtmlContentFromRange({ props, content }, type = "text") {
+        const { textRange, targetText, sup } = props;
         const fragmentText = content.slice(...textRange);
         if (type === "text") {
             return fragmentText;
@@ -69,19 +64,15 @@ export class EditorParser {
             content
         );
 
-        const htmlContent = allRanges.map(
-            ({ targetText, textRange, type, sup }) => {
-                return this.extractHtmlContentFromRange(
-                    {
-                        targetText,
-                        textRange,
-                        content,
-                        sup,
-                    },
-                    type
-                );
-            }
-        );
+        const htmlContent = allRanges.map(({ props, type }) => {
+            return this.extractHtmlContentFromRange(
+                {
+                    content,
+                    props,
+                },
+                type
+            );
+        });
 
         if (key === "questions") {
             return htmlContent.join("");
@@ -147,7 +138,7 @@ export class EditorParser {
         return newSchema;
     }
 
-    editor2schema(data): ReviewTaskMachineContextReviewData {
+    editor2schema(data: RemirrorJSON): ReviewTaskMachineContextReviewData {
         const schema = {
             summary: "",
             verification: "",
@@ -156,7 +147,6 @@ export class EditorParser {
             questions: [],
         };
         const questions = [];
-
         for (const cardContent of data?.content) {
             if (EditorSchemaArray?.includes(cardContent?.type)) {
                 if (cardContent?.type === "questions") {
@@ -204,9 +194,12 @@ export class EditorParser {
 
     getSourcesFromEditorMarks(text, field, marks) {
         return marks.map(({ attrs }: ObjectMark) => ({
-            field,
             href: attrs.href,
-            textRange: text,
+            props: {
+                field,
+                textRange: text,
+                id: attrs.id,
+            },
         }));
     }
 
@@ -214,14 +207,21 @@ export class EditorParser {
         const newSources = [];
 
         for (const key in schema) {
-            schema.sources.forEach(({ field, href, textRange }, index) => {
+            schema.sources.forEach(({ props, href }, index) => {
+                const { field, textRange, id } = props;
                 if (field === key) {
                     newSources.push({
-                        field,
                         href,
-                        textRange: this.findTextRange(schema[field], textRange),
-                        targetText: textRange,
-                        sup: index + 1,
+                        props: {
+                            field,
+                            textRange: this.findTextRange(
+                                schema[field],
+                                textRange
+                            ),
+                            targetText: textRange,
+                            sup: index + 1,
+                            id,
+                        },
                     });
                 }
             });
@@ -280,7 +280,7 @@ export class EditorParser {
     }
 
     getRawSourcesAndSourcesRanges(sources) {
-        const rawSourcesRanges = sources.map((s) => s.textRange);
+        const rawSourcesRanges = sources.map(({ props }) => props.textRange);
 
         const sourcesRanges = sources.map((source) => {
             return {
@@ -296,9 +296,10 @@ export class EditorParser {
     }
 
     extractContentFragmentFromRange(
-        { targetText, textRange, content, href = null },
+        { props, content, href = null },
         type = "text"
     ) {
+        const { textRange, targetText, id } = props;
         const fragmentText = content.slice(...textRange);
 
         switch (type) {
@@ -309,7 +310,11 @@ export class EditorParser {
                 break;
             case "source":
                 if (fragmentText === targetText) {
-                    return this.getContentObjectWithMarks(fragmentText, href);
+                    return this.getContentObjectWithMarks(
+                        fragmentText,
+                        href,
+                        id
+                    );
                 }
             // Fall through to the default case if type is "source" and the text doesn't match targetText
             default:
@@ -361,7 +366,7 @@ export class EditorParser {
         };
     }
 
-    getContentObjectWithMarks(content, href): RemirrorJSON {
+    getContentObjectWithMarks(content, href, id): RemirrorJSON {
         return {
             ...this.getContentObject(content),
             marks: [
@@ -371,6 +376,7 @@ export class EditorParser {
                         href: href,
                         target: null,
                         auto: false,
+                        id,
                     },
                 },
             ],
@@ -383,13 +389,15 @@ export class EditorParser {
             content.length
         ).map((textRange) => {
             return {
-                textRange,
+                props: {
+                    textRange,
+                },
                 type: "text",
             };
         });
 
         return [...sourcesRanges, ...missingTextRanges].sort((a, b) => {
-            return a.textRange[0] - b.textRange[0];
+            return a.props.textRange[0] - b.props.textRange[0];
         });
     }
 
@@ -404,11 +412,10 @@ export class EditorParser {
         );
 
         const textFragments = allRanges
-            .map(({ targetText, textRange, type, href }) => {
+            .map(({ props, type, href }) => {
                 return this.extractContentFragmentFromRange(
                     {
-                        targetText,
-                        textRange,
+                        props,
                         content,
                         href,
                     },

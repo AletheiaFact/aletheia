@@ -80,7 +80,10 @@ export class ClaimRevisionService {
                             targetModel: SourceTargetModel.Claim,
                         });
                     } else {
-                        await this.sourceService.update(source._id, claimId);
+                        await this.sourceService.updateTargetId(
+                            source._id,
+                            claimId
+                        );
                     }
                 }
             } catch (e) {

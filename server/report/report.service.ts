@@ -15,25 +15,23 @@ export class ReportService {
     ) {}
 
     async create(report) {
-        if (Object.values(ClassificationEnum).includes(report.classification)) {
-            const newReport = new this.ReportModel(report);
-            if (report.sources && Array.isArray(report.sources)) {
-                for (const source of report.sources) {
-                    await this.sourceService.create({
-                        href: source.href,
-                        targetText: source?.targetText,
-                        textRange: source?.textRange,
-                        targetReference: source?.field,
-                        targetId: newReport.id,
-                        targetModel: SourceTargetModel.ClaimReview,
-                    });
-                }
-            }
-            newReport.save();
-            return newReport;
-        } else {
+        if (
+            !Object.values(ClassificationEnum).includes(report.classification)
+        ) {
             throw new Error("Classification doesn't match options");
         }
+        const newReport = new this.ReportModel(report);
+
+        for (const source of report.sources) {
+            await this.sourceService.create({
+                href: source.href,
+                props: source?.props,
+                targetId: newReport.id,
+            });
+        }
+
+        newReport.save();
+        return newReport;
     }
 
     findByDataHash(data_hash) {

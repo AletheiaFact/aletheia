@@ -44,18 +44,15 @@ const SentenceReportView = ({
     return (
         showReport && (
             <div>
-                <Row>
-                    {isPublished && isPartialReview && <PartialReviewWarning />}
-                    <Col
-                        offset={3}
-                        span={18}
-                        style={
-                            isCrossChecking && {
-                                backgroundColor: colors.lightGray,
-                                padding: "15px",
-                            }
+                <Row
+                    style={
+                        isCrossChecking && {
+                            backgroundColor: colors.lightGray,
                         }
-                    >
+                    }
+                >
+                    {isPublished && isPartialReview && <PartialReviewWarning />}
+                    <Col offset={3} span={18}>
                         <SentenceReportContent
                             context={context?.reviewDataHtml || context}
                         />

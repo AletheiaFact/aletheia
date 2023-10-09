@@ -13,20 +13,8 @@ export class Source {
     @Prop({ required: true })
     href: string;
 
-    @Prop({
-        type: "string",
-        required: false,
-    })
-    targetText: string;
-
-    @Prop({ required: false })
-    textRange: number[];
-
-    @Prop({
-        type: "string",
-        required: false,
-    })
-    targetReference: string;
+    @Prop({ type: Object, required: false })
+    props: object;
 
     /**
      * Use Dynamic ref https://mongoosejs.com/docs/populate.html#dynamic-ref

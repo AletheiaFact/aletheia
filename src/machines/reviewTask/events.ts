@@ -22,7 +22,7 @@ export type ReviewData = {
     classification: string | ClassificationEnum;
     rejectionComment: string;
     reviewerId: string;
-    editor?: RemirrorJSON;
+    collaborativeEditor?: RemirrorJSON;
     reviewDataHtml?: any;
 };
 
