@@ -13,7 +13,10 @@ const EditorSourceListItem = ({ node, sup, source }) => {
     const [isArchive, setIsArchive] = useState<boolean>(false);
 
     useEffect(() => {
-        setIsArchive(href.includes("http://web.archive.org/web/"));
+        const url = new URL(href);
+        if (url.hostname.includes("web.archive.org")) {
+            setIsArchive(true);
+        }
         return () => {};
     }, [href]);
 
@@ -43,6 +46,7 @@ const EditorSourceListItem = ({ node, sup, source }) => {
                         node={node}
                         source={source}
                         setIsLoading={setIsLoading}
+                        isArchive={isArchive}
                     >
                         <MoreVertIcon style={{ cursor: "pointer" }} />
                     </EditorSourcePopover>

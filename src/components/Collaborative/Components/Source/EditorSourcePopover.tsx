@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Popover } from "antd";
 import EditorSourcePopoverContent from "./EditorSourcePopoverContent";
 import { useCommands } from "@remirror/react";
@@ -15,25 +15,18 @@ const EditorSourcePopover = ({
     node,
     source,
     setIsLoading,
+    isArchive,
     children,
 }: {
     node: ProsemirrorNode;
     source: any;
     setIsLoading: any;
+    isArchive: boolean;
     children: React.ReactNode;
 }) => {
     const command = useCommands();
     const { setEditorSources } = useContext(CollaborativeEditorContext);
     const { props, href } = source;
-    const [isArchive, setIsArchive] = useState<boolean>(false);
-
-    useEffect(() => {
-        const url = new URL(href);
-        if (url.hostname.includes("web.archive.org")) {
-            setIsArchive(true);
-        }
-        return () => {};
-    }, [href]);
 
     function findMarkPositions(
         doc: ProsemirrorNode,
