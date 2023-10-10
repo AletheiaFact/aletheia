@@ -83,10 +83,8 @@ const EditorSourcePopover = ({
         const response = await fetch(
             `https://archive.org/wayback/available?url=${href}`
         );
-        const teste = await response.json();
-        // const { archived_snapshots } = await response.json();
-        console.log("teste", teste);
-        return teste.archived_snapshots.closest.url;
+        const { archived_snapshots } = await response.json();
+        return archived_snapshots.closest.url;
     };
 
     const updateEditorSources = (archiveHref) => {

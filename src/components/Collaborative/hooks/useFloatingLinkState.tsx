@@ -17,7 +17,6 @@ import {
 import { useTranslation } from "next-i18next";
 import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
-import useUpdateSelection from "./useUpdateSelection";
 import { uniqueId } from "remirror";
 
 function useFloatingLinkState() {
@@ -33,8 +32,8 @@ function useFloatingLinkState() {
     const { from, to, empty, ranges } = useCurrentSelection();
     const url = (useAttrs().link()?.href as string) ?? "https://";
     const [href, setHref] = useState<string>(url);
+    const isSelected = !empty;
 
-    const isSelected = useUpdateSelection();
     const updateReason = useUpdateReason();
     const floatingLinkPositioner = useMemo(
         () => createMarkPositioner({ type: "link" }),
