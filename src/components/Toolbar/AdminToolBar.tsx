@@ -33,10 +33,10 @@ const AdminToolBar = ({
         return setWarningDescription(hideDescriptions?.[target]);
     }, [hide, hideDescriptions, target]);
 
-    const handleDelete = async ({ recaptcha }) => {
+    const handleDelete = async () => {
         try {
             setIsLoading(true);
-            await deleteApiFunction(content._id, recaptcha, t);
+            await deleteApiFunction(content._id, t);
             setIsDeleteModalVisible(false);
             router.push("/");
         } catch (e) {

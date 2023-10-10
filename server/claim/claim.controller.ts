@@ -224,13 +224,8 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Delete("api/claim/:id")
-    async delete(@Param("id") claimId, @Body() body) {
-        const validateCaptcha = await this.captchaService.validate(
-            body.recaptcha
-        );
-        if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
-        }
+    @CheckAbilities(new AdminUserAbility())
+    async delete(@Param("id") claimId) {
         return this.claimService.delete(claimId);
     }
 

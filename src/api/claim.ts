@@ -143,9 +143,9 @@ const updateDebate = (
         });
 };
 
-const deleteClaim = (id: string, recaptcha, t: any) => {
+const deleteClaim = (id: string, t: any) => {
     return request
-        .delete(`${id}`, { data: recaptcha })
+        .delete(`${id}`)
         .then(() => {
             message.success(t("claim:deleteSuccess"));
         })
