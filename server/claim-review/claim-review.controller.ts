@@ -87,13 +87,7 @@ export class ClaimReviewController {
     @Delete("api/review/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    async delete(@Param("id") reviewId, @Body() body) {
-        const validateCaptcha = await this.captchaService.validate(
-            body.recaptcha
-        );
-        if (!validateCaptcha) {
-            throw new Error("Error validating captcha");
-        }
+    async delete(@Param("id") reviewId) {
         return this.claimReviewService.delete(reviewId);
     }
 
