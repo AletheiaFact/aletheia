@@ -60,9 +60,9 @@ const updateClaimReviewHiddenStatus = (
         });
 };
 
-const deleteClaimReview = (id: string, recaptcha, t: any) => {
+const deleteClaimReview = (id: string, t: any) => {
     return request
-        .delete(`/review/${id}`, { data: recaptcha })
+        .delete(`/review/${id}`)
         .then(() => {
             message.success(t("claim:deleteSuccess"));
         })

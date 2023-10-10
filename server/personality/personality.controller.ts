@@ -25,6 +25,10 @@ import { ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { CaptchaService } from "../captcha/captcha.service";
 import { HistoryService } from "../history/history.service";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../auth/ability/ability.decorator";
 
 @Controller()
 export class PersonalityController {
@@ -99,6 +103,7 @@ export class PersonalityController {
 
     @ApiTags("personality")
     @Delete("api/personality/:id")
+    @CheckAbilities(new AdminUserAbility())
     async delete(@Param("id") personalityId) {
         return this.personalityService.delete(personalityId).catch((err) => {
             this.logger.error(err);
