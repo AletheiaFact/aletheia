@@ -34,7 +34,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         watch,
     } = useForm();
     const { machineService } = useContext(ReviewTaskMachineContext);
-    const { editorContentObject } = useContext(CollaborativeEditorContext);
+    const { editorContentObject, comments } = useContext(
+        CollaborativeEditorContext
+    );
     const reviewData = useSelector(machineService, reviewDataSelector);
     const preloadedOptions = useSelector(
         machineService,
@@ -140,6 +142,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             data_hash,
             reviewData: {
                 ...formData,
+                comments,
             },
             claimReview: {
                 personality,

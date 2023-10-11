@@ -77,12 +77,24 @@ const getEditorContentObject = (params) => {
         });
 };
 
+const addComment = (hash, commentId) => {
+    return request
+        .post(`/comment/${hash}`, { commentId })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
+
 const ClaimReviewTaskApi = {
     getMachineByDataHash,
     createClaimReviewTask,
     getClaimReviewTasks,
     autoSaveDraft,
     getEditorContentObject,
+    addComment,
 };
 
 export default ClaimReviewTaskApi;

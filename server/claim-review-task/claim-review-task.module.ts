@@ -16,6 +16,7 @@ import { SentenceModule } from "../claim/types/sentence/sentence.module";
 import { ConfigModule } from "@nestjs/config";
 import { ImageModule } from "../claim/types/image/image.module";
 import { EditorParseModule } from "../editor-parse/editor-parse.module";
+import { CommentModule } from "./comment/comment.module";
 
 export const ClaimReviewTaskModel = MongooseModule.forFeature([
     {
@@ -37,6 +38,7 @@ export const ClaimReviewTaskModel = MongooseModule.forFeature([
         ConfigModule,
         ImageModule,
         EditorParseModule,
+        CommentModule,
     ],
     providers: [ClaimReviewTaskService],
     exports: [ClaimReviewTaskService],

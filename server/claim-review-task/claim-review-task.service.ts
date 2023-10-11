@@ -26,6 +26,7 @@ import lookupClaims from "../mongo-pipelines/lookupClaims";
 import lookupClaimReviews from "../mongo-pipelines/lookupClaimReviews";
 import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
+import { CommentService } from "./comment/comment.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -39,7 +40,8 @@ export class ClaimReviewTaskService {
         private stateEventService: StateEventService,
         private sentenceService: SentenceService,
         private imageService: ImageService,
-        private editorParseService: EditorParseService
+        private editorParseService: EditorParseService,
+        private commentService: CommentService
     ) {}
 
     _verifyMachineValueAndAddMatchPipeline(pipeline, value) {
@@ -240,22 +242,27 @@ export class ClaimReviewTaskService {
     }
 
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
+        const reviewDataBody = claimReviewTaskBody.machine.context.reviewData;
         const claimReviewTask = await this.getClaimReviewTaskByDataHash(
             claimReviewTaskBody.data_hash
         );
 
         claimReviewTaskBody.machine.context.reviewData.usersId =
-            claimReviewTaskBody.machine.context.reviewData.usersId.map(
-                (userId) => {
-                    return Types.ObjectId(userId);
-                }
-            );
+            reviewDataBody.usersId.map((userId) => {
+                return Types.ObjectId(userId);
+            });
 
-        if (claimReviewTaskBody.machine.context.reviewData.reviewerId) {
+        if (reviewDataBody.reviewerId) {
             claimReviewTaskBody.machine.context.reviewData.reviewerId =
-                Types.ObjectId(
-                    claimReviewTaskBody.machine.context.reviewData.reviewerId
-                ) || "";
+                Types.ObjectId(reviewDataBody.reviewerId) || "";
+        }
+
+        if (reviewDataBody.comments) {
+            this.commentService.updateManyComments(reviewDataBody.comments);
+            claimReviewTaskBody.machine.context.reviewData.comments =
+                reviewDataBody.comments.map(
+                    (comment) => Types.ObjectId(comment._id) || ""
+                );
         }
 
         if (claimReviewTask) {
@@ -327,6 +334,13 @@ export class ClaimReviewTaskService {
     getClaimReviewTaskByDataHash(data_hash: string) {
         return this.ClaimReviewTaskModel.findOne({
             data_hash,
+        }).populate({
+            path: "machine.context.reviewData.comments",
+            model: "Comment",
+            populate: {
+                path: "user",
+                select: "name",
+            },
         });
     }
 
@@ -445,6 +459,26 @@ export class ClaimReviewTaskService {
 
     getEditorContentObject(schema) {
         return this.editorParseService.schema2editor(schema);
+    }
+
+    async addComment(data_hash, commentId) {
+        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
+            data_hash
+        );
+        const reviewData = claimReviewTask.machine.context.reviewData;
+        if (!reviewData.comments) {
+            reviewData.comments = [];
+        }
+
+        reviewData.comments.push(Types.ObjectId(commentId));
+
+        const { machine } = await this.ClaimReviewTaskModel.findOneAndUpdate(
+            { _id: claimReviewTask._id },
+            { "machine.context.reviewData": reviewData },
+            { new: true }
+        );
+
+        return machine.context.reviewData;
     }
 
     async getHtmlFromSchema(schema) {

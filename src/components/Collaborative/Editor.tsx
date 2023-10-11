@@ -22,7 +22,7 @@ import useCardPresence from "./hooks/useCardPresence";
  * to add a new input.
  * @param state remirror state
  */
-const Editor = ({ state }: { state: any }) => {
+const Editor = ({ editable, state }: { editable: boolean; state: any }) => {
     const command = useCommands();
     const { setEditorContentObject } = useContext(CollaborativeEditorContext);
     const { getJSON } = useHelpers();
@@ -58,6 +58,7 @@ const Editor = ({ state }: { state: any }) => {
                 <Button
                     className="toolbar-item"
                     onClick={() => handleInsertNode(getQuestionContentHtml)}
+                    disabled={editable}
                     style={{ outline: "none", border: "none" }}
                 >
                     <QuestionMarkIcon className="toolbar-item-icon" />
@@ -66,7 +67,7 @@ const Editor = ({ state }: { state: any }) => {
                 <Button
                     className="toolbar-item"
                     onClick={() => handleInsertNode(getSummaryContentHtml)}
-                    disabled={summaryDisabled}
+                    disabled={editable || summaryDisabled}
                     style={{ outline: "none", border: "none" }}
                 >
                     <SummarizeIcon className="toolbar-item-icon" />
@@ -75,7 +76,7 @@ const Editor = ({ state }: { state: any }) => {
                 <Button
                     className="toolbar-item"
                     onClick={() => handleInsertNode(getReportContentHtml)}
-                    disabled={reportDisabled}
+                    disabled={editable || reportDisabled}
                     style={{ outline: "none", border: "none" }}
                 >
                     <ReportProblemIcon className="toolbar-item-icon" />
@@ -84,7 +85,7 @@ const Editor = ({ state }: { state: any }) => {
                 <Button
                     className="toolbar-item"
                     onClick={() => handleInsertNode(getVerificationContentHtml)}
-                    disabled={verificationDisabled}
+                    disabled={editable || verificationDisabled}
                     style={{ outline: "none", border: "none" }}
                 >
                     <FactCheckIcon className="toolbar-item-icon" />

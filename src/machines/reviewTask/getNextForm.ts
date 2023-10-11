@@ -4,8 +4,8 @@ import assignedCollaborativeForm from "../../components/ClaimReview/form/fieldLi
 import assignedForm from "../../components/ClaimReview/form/fieldLists/assignedForm";
 import rejectedForm from "../../components/ClaimReview/form/fieldLists/rejectedForm";
 import reportedForm from "../../components/ClaimReview/form/fieldLists/reportedForm";
-import summarizedForm from "../../components/ClaimReview/form/fieldLists/summarizedForm";
 import unassignedForm from "../../components/ClaimReview/form/fieldLists/unassignedForm";
+import submittedForm from "../../components/ClaimReview/form/fieldLists/submittedForm";
 
 const getNextForm = (
     param: ReviewTaskEvents | ReviewTaskStates,
@@ -26,7 +26,9 @@ const getNextForm = (
 
         [ReviewTaskEvents.submit]: [],
         [ReviewTaskStates.submitted]: [],
-        [ReviewTaskStates.rejected]: rejectedForm,
+        [ReviewTaskStates.rejected]: enableCollaborativeEdit
+            ? submittedForm
+            : rejectedForm,
         [ReviewTaskEvents.addRejectionComment]: enableCollaborativeEdit
             ? assignedCollaborativeForm
             : assignedForm,
