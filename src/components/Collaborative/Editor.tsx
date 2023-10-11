@@ -13,6 +13,7 @@ import FactCheckIcon from "@mui/icons-material/FactCheck";
 import { Button } from "antd";
 import EditorStyle from "./Editor.style";
 import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
+import useCardPresence from "./hooks/useCardPresence";
 
 /**
  * Modifies context state to JSON using useHelpers hook
@@ -23,9 +24,7 @@ import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
  */
 const Editor = ({ state }: { state: any }) => {
     const command = useCommands();
-    const { setEditorContentObject, useCardPresence } = useContext(
-        CollaborativeEditorContext
-    );
+    const { setEditorContentObject } = useContext(CollaborativeEditorContext);
     const { getJSON } = useHelpers();
 
     useEffect(

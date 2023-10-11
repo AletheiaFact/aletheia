@@ -17,10 +17,13 @@ describe("ParserService", () => {
         sources: [
             {
                 href: "https://google.com",
-                field: "report",
-                textRange: [7, 21],
-                targetText: "esse e um link",
-                sup: 1,
+                props: {
+                    field: "report",
+                    textRange: [7, 21],
+                    targetText: "esse e um link",
+                    sup: 1,
+                    id: "uniqueId",
+                },
             },
         ],
         questions: ["teste1", "testekakaka ava"],
@@ -91,6 +94,7 @@ describe("ParserService", () => {
                                     {
                                         type: "link",
                                         attrs: {
+                                            id: "uniqueId",
                                             href: "https://google.com",
                                             target: null,
                                             auto: false,

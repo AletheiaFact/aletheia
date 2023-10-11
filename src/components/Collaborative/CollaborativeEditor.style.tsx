@@ -7,14 +7,14 @@ const CollaborativeEditorStyle = styled(AllStyledComponent)`
     border-radius: 4px;
     border: none;
     min-height: 40vh;
-    width: 100%;
     padding: 10px;
     display: flex;
     justify-content: space-between;
     gap: 16px;
+    flex-wrap: wrap;
 
     .remirror-editor-wrapper {
-        width: 100%;
+        width: calc(100% - 90px);
     }
 `;
 
