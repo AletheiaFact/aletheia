@@ -1,6 +1,7 @@
 {
     "formHeader": "Login to your account",
     "signUpHeader": "Don't have an account yet? Sign up",
+    "forgotPassword": "Forgot your password?",
     "emailLabel": "E-mail",
     "passwordLabel": "Password",
     "nameLabel": "Name",

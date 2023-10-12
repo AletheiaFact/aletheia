@@ -1,6 +1,7 @@
 {
     "formHeader": "Acesse sua conta",
     "signUpHeader": "Ainda não tem uma conta? Cadastre-se",
+    "forgotPassword": "Esqueceu a senha?",
     "emailLabel": "E-mail",
     "passwordLabel": "Senha",
     "nameLabel": "Nome",
