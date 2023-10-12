@@ -28,14 +28,20 @@ const EditorSourcesList = ({
                         xl: 3,
                         xxl: 3,
                     }}
-                    renderItem={(source, index) => (
-                        <EditorSourceListItem
-                            node={node}
-                            key={index}
-                            sup={index + 1}
-                            source={source}
-                        />
-                    )}
+                    renderItem={(source, index) => {
+                        if (typeof source === "object") {
+                            return (
+                                <EditorSourceListItem
+                                    node={node}
+                                    key={index}
+                                    sup={index + 1}
+                                    source={source}
+                                />
+                            );
+                        } else {
+                            return <></>;
+                        }
+                    }}
                 />
             ) : (
                 <div className="empty-sources-container">
