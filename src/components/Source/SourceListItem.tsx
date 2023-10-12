@@ -8,8 +8,10 @@ const SourceListItem = ({ source, index }) => {
     return (
         <Col className="source">
             {typeof source === "object" ? (
-                <List.Item id={source?.props.targetText}>
-                    <span style={{ marginRight: 4 }}>{source?.props.sup}.</span>
+                <List.Item id={source?.props?.targetText || source?.targetText}>
+                    <span style={{ marginRight: 4 }}>
+                        {source?.props?.sup || source?.sup}.
+                    </span>
                     <a href={href} target="_blank" rel="noopener noreferrer">
                         {href}
                     </a>
