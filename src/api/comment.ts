@@ -30,9 +30,22 @@ const updateComments = (comments) => {
         });
 };
 
+const updateComment = (commentId, comment) => {
+    return request
+        .put(`/${commentId}`, comment)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            message.error(err.response.data?.message);
+            throw err;
+        });
+};
+
 const CommentApi = {
     createComment,
     updateComments,
+    updateComment,
 };
 
 export default CommentApi;

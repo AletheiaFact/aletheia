@@ -461,16 +461,21 @@ export class ClaimReviewTaskService {
         return this.editorParseService.schema2editor(schema);
     }
 
-    async addComment(data_hash, commentId) {
+    async addComment(data_hash, comment) {
         const claimReviewTask = await this.getClaimReviewTaskByDataHash(
             data_hash
         );
         const reviewData = claimReviewTask.machine.context.reviewData;
+        const newComment = await this.commentService.create({
+            ...comment,
+            targetId: claimReviewTask._id,
+        });
+
         if (!reviewData.comments) {
             reviewData.comments = [];
         }
 
-        reviewData.comments.push(Types.ObjectId(commentId));
+        reviewData.comments.push(Types.ObjectId(newComment?._id));
 
         const { machine } = await this.ClaimReviewTaskModel.findOneAndUpdate(
             { _id: claimReviewTask._id },
@@ -478,7 +483,25 @@ export class ClaimReviewTaskService {
             { new: true }
         );
 
-        return machine.context.reviewData;
+        return {
+            reviewData: machine.context.reviewData,
+            comment: newComment,
+        };
+    }
+
+    async deleteComment(data_hash, commentId) {
+        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
+            data_hash
+        );
+        const reviewData = claimReviewTask.machine.context.reviewData;
+        reviewData.comments = reviewData.comments.filter(
+            (comment) => !Types.ObjectId(comment._id).equals(commentId)
+        );
+
+        return this.ClaimReviewTaskModel.findByIdAndUpdate(
+            claimReviewTask._id,
+            { "machine.context.reviewData": reviewData }
+        );
     }
 
     async getHtmlFromSchema(schema) {

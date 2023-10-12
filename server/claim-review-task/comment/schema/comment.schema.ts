@@ -13,7 +13,7 @@ export class Comment {
     to: number;
 
     @Prop({ required: true })
-    comment: string;
+    comment: string; //TODO: Transform it into a array of strings
 
     @Prop({ required: true })
     text: string;
@@ -28,8 +28,15 @@ export class Comment {
     })
     user: User;
 
-    //TODO: targetId
-    //TODO: Resolved ?
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        refPath: "onModel",
+    })
+    targetId: mongoose.Types.ObjectId;
+
+    @Prop({ required: true, default: false })
+    resolved: boolean;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

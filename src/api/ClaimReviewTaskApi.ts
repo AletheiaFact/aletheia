@@ -77,9 +77,20 @@ const getEditorContentObject = (params) => {
         });
 };
 
-const addComment = (hash, commentId) => {
+const addComment = (hash, comment) => {
     return request
-        .post(`/comment/${hash}`, { commentId })
+        .put(`/add-comment/${hash}`, { comment })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
+
+const deleteComment = (hash, commentId) => {
+    return request
+        .put(`/delete-comment/${hash}`, { commentId })
         .then((response) => {
             return response.data;
         })
@@ -95,6 +106,7 @@ const ClaimReviewTaskApi = {
     autoSaveDraft,
     getEditorContentObject,
     addComment,
+    deleteComment,
 };
 
 export default ClaimReviewTaskApi;

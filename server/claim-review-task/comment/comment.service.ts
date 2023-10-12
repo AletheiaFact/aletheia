@@ -10,19 +10,26 @@ export class CommentService {
         private CommentModel: Model<CommentDocument>
     ) {}
 
-    async create(body) {
-        body.user = Types.ObjectId(body.user);
-        return await new this.CommentModel(body).save();
+    async create(comment) {
+        comment.user = Types.ObjectId(comment.user);
+        return await new this.CommentModel(comment).save();
     }
 
     async updateManyComments(comments) {
-        await comments.forEach((comment) => this.update(comment));
+        await comments.forEach((comment) => this.update(comment?._id, comment));
         return comments;
     }
 
-    async update(newComment) {
-        const comment = await this.CommentModel.findById(newComment._id);
-        newComment.user = Types.ObjectId(newComment.user);
-        return this.CommentModel.updateOne({ _id: comment._id }, newComment);
+    async update(id, comment) {
+        const existingComment = await this.CommentModel.findById(id);
+        const newComment = {
+            ...existingComment.toObject(),
+            ...comment,
+            user: Types.ObjectId(comment.user || existingComment.user),
+        };
+        return this.CommentModel.updateOne(
+            { _id: existingComment._id },
+            newComment
+        );
     }
 }

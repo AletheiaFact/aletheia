@@ -2,7 +2,7 @@ import colors from "../../../../styles/colors";
 import styled from "styled-components";
 
 export const EditorSourcesListStyle = styled.div`
-    order: 3;
+    order: 4;
     width: calc(100% - 90px);
 
     a {

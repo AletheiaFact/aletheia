@@ -36,7 +36,7 @@ export const CollaborativeEditorProvider = (
     const [editorSources, setEditorSources] = useState([]);
     const [isFetchingEditor, setIsFetchingEditor] = useState(false);
     const { websocketUrl } = useAppSelector((state) => state);
-    const [comments, setComments] = useState([]);
+    const [comments, setComments] = useState(null);
 
     useEffect(() => {
         const fetchEditorContentObject = (data_hash) => {

@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Param, Patch, Post, Put } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { CommentService } from "./comment.service";
 
@@ -16,5 +16,11 @@ export class CommentController {
     @Patch("api/comment/bulk-update")
     updateMany(@Body() body) {
         return this.commentService.updateManyComments(body);
+    }
+
+    @ApiTags("comment")
+    @Put("api/comment/:id")
+    update(@Param("id") id, @Body() body) {
+        return this.commentService.update(id, body);
     }
 }

@@ -14,7 +14,7 @@ const CollaborativeEditorStyle = styled(AllStyledComponent)`
     flex-wrap: wrap;
 
     .remirror-editor-wrapper {
-        width: calc(100% - 90px);
+        flex: 1;
     }
 `;
 

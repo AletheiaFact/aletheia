@@ -136,10 +136,17 @@ export class ClaimReviewController {
     }
 
     @ApiTags("claim-review-task")
-    @Post("api/claimreviewtask/comment/:data_hash")
+    @Put("api/claimreviewtask/add-comment/:data_hash")
     @Header("Cache-Control", "no-cache")
     async addComment(@Param("data_hash") data_hash: string, @Body() body) {
-        return this.claimReviewTaskService.addComment(
+        return this.claimReviewTaskService.addComment(data_hash, body.comment);
+    }
+
+    @ApiTags("claim-review-task")
+    @Put("api/claimreviewtask/delete-comment/:data_hash")
+    @Header("Cache-Control", "no-cache")
+    async deleteComment(@Param("data_hash") data_hash: string, @Body() body) {
+        return this.claimReviewTaskService.deleteComment(
             data_hash,
             body.commentId
         );
