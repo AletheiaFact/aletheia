@@ -8,10 +8,23 @@ import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import CommentApi from "../../../api/comment";
 import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
 import { useCommands } from "@remirror/react";
+import { currentUserRole } from "../../../atoms/currentUser";
+import { useAtom } from "jotai";
+import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
+import { crossCheckingSelector } from "../../../machines/reviewTask/selectors";
+import { useSelector } from "@xstate/react";
+import { Roles } from "../../../types/enums";
 
 const CommentCardActions = ({ content, setIsResolved }) => {
     const { data_hash, setComments } = useContext(CollaborativeEditorContext);
     const { removeAnnotations } = useCommands();
+    const [role] = useAtom(currentUserRole);
+    const { machineService } = useContext(ReviewTaskMachineContext);
+    const isCrossCheckingState = useSelector(
+        machineService,
+        crossCheckingSelector
+    );
+
     const handleResolvedClick = async () => {
         await CommentApi.updateComment(content?._id, { resolved: true });
         removeAnnotations([content?._id]);
@@ -34,21 +47,27 @@ const CommentCardActions = ({ content, setIsResolved }) => {
 
     return (
         <div className="comment-card-actions">
-            <Button type={ButtonType.white} onClick={handleResolvedClick}>
-                <CheckIcon style={{ fontSize: "16px" }} />
-            </Button>
-            <Popover
-                trigger="click"
-                placement="bottom"
-                overlayInnerStyle={{ padding: 0 }}
-                content={
-                    <CommentPopoverContent
-                        handleDeleteClick={handleDeleteClick}
-                    />
-                }
-            >
-                <MoreVertIcon style={{ cursor: "pointer" }} />
-            </Popover>
+            <div className="comment-card-actions-resolve-button">
+                <Button type={ButtonType.white} onClick={handleResolvedClick}>
+                    <CheckIcon style={{ fontSize: "16px" }} />
+                </Button>
+            </div>
+            {role !== Roles.Regular &&
+                role !== Roles.FactChecker &&
+                isCrossCheckingState && (
+                    <Popover
+                        trigger="click"
+                        placement="bottom"
+                        overlayInnerStyle={{ padding: 0 }}
+                        content={
+                            <CommentPopoverContent
+                                handleDeleteClick={handleDeleteClick}
+                            />
+                        }
+                    >
+                        <MoreVertIcon style={{ cursor: "pointer" }} />
+                    </Popover>
+                )}
         </div>
     );
 };

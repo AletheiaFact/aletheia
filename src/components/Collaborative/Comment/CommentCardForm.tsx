@@ -5,11 +5,17 @@ import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
 import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
 
-const CommentCardForm = ({ user, setIsCommentVisible }) => {
+const CommentCardForm = ({
+    user,
+    setIsCommentVisible,
+    isEditing,
+    isSelected,
+}) => {
     const { from, to, $to } = useCurrentSelection();
     const { addAnnotation } = useCommands();
     const { data_hash, setComments } = useContext(CollaborativeEditorContext);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showButtons, setShowButtons] = useState<boolean>(false);
     const [commentValue, setCommentValue] = useState("");
 
     const handleOnSubmit = useCallback(async () => {
@@ -54,7 +60,10 @@ const CommentCardForm = ({ user, setIsCommentVisible }) => {
     ]);
 
     const handleCancel = () => {
-        setIsCommentVisible(false);
+        if (isEditing) {
+            setIsCommentVisible(false);
+        }
+        setShowButtons(false);
         setCommentValue("");
     };
 
@@ -63,20 +72,23 @@ const CommentCardForm = ({ user, setIsCommentVisible }) => {
             <AletheiaInput
                 value={commentValue}
                 onChange={({ target }) => setCommentValue(target.value)}
+                onFocus={() => setShowButtons(true)}
             />
 
-            <div className="comment-card-form-actions">
-                <Button onClick={handleOnSubmit} loading={isLoading}>
-                    Submit
-                </Button>
-                <Button
-                    type={ButtonType.whiteBlack}
-                    onClick={handleCancel}
-                    loading={isLoading}
-                >
-                    Cancel
-                </Button>
-            </div>
+            {(isEditing || showButtons) && (
+                <div className="comment-card-form-actions">
+                    <Button onClick={handleOnSubmit} loading={isLoading}>
+                        Submit
+                    </Button>
+                    <Button
+                        type={ButtonType.whiteBlack}
+                        onClick={handleCancel}
+                        loading={isLoading}
+                    >
+                        Cancel
+                    </Button>
+                </div>
+            )}
         </div>
     );
 };

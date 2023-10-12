@@ -13,7 +13,7 @@ export class Comment {
     to: number;
 
     @Prop({ required: true })
-    comment: string; //TODO: Transform it into a array of strings
+    comment: string;
 
     @Prop({ required: true })
     text: string;

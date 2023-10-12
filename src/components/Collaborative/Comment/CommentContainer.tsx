@@ -15,14 +15,18 @@ import { useSelector } from "@xstate/react";
 import { reviewDataSelector } from "../../../machines/reviewTask/selectors";
 import CommentCard from "./CommentCard";
 import { ory } from "../../../lib/orysdk";
-
 import userApi from "../../../api/userApi";
+import { useAtom } from "jotai";
+import { Roles } from "../../../types/enums";
+import { currentUserRole } from "../../../atoms/currentUser";
+
 const SuggestionCard = ({ readonly, state }) => {
     const { addAnnotation, setAnnotations } = useCommands();
     const { getAnnotations } = useHelpers();
     const { comments, setComments } = useContext(CollaborativeEditorContext);
     const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
+    const [role] = useAtom(currentUserRole);
     const [isCommentVisible, setIsCommentVisible] = useState<boolean>(false);
     const [hasSession, setHasSession] = useState(null);
     const [user, setUser] = useState(null);
@@ -63,7 +67,7 @@ const SuggestionCard = ({ readonly, state }) => {
 
     return (
         <>
-            {readonly && (
+            {readonly && role !== Roles.Regular && role !== Roles.FactChecker && (
                 <FloatingToolbar>
                     <CommandButton
                         icon="chatNewLine"

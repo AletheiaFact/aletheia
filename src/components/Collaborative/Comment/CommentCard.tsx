@@ -95,13 +95,15 @@ const CommentCard = ({
                         />
                     )}
                 </div>
-                {isEditing && (
+                <p style={{ margin: 0, fontSize: 14 }}>{content?.comment}</p>
+                {(isEditing || isSelected) && (
                     <CommentCardForm
                         user={user}
                         setIsCommentVisible={setIsCommentVisible}
+                        isEditing={isEditing}
+                        isSelected={isSelected}
                     />
                 )}
-                <p style={{ margin: 0, fontSize: 14 }}>{content?.comment}</p>
             </CommentCardStyle>
         );
     } else {

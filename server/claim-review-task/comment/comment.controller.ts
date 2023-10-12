@@ -18,6 +18,7 @@ export class CommentController {
         return this.commentService.updateManyComments(body);
     }
 
+    //TODO: Add check ability for reviewers
     @ApiTags("comment")
     @Put("api/comment/:id")
     update(@Param("id") id, @Body() body) {
