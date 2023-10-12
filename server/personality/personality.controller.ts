@@ -11,6 +11,7 @@ import {
     Query,
     Req,
     Res,
+    UseGuards,
 } from "@nestjs/common";
 import { parse } from "url";
 import type { Request, Response } from "express";
@@ -29,6 +30,7 @@ import {
     AdminUserAbility,
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 
 @Controller()
 export class PersonalityController {
@@ -86,6 +88,8 @@ export class PersonalityController {
 
     @ApiTags("personality")
     @Put("api/personality/hidden/:id")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     async updateHiddenStatus(@Param("id") personalityId, @Body() body) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
@@ -103,6 +107,7 @@ export class PersonalityController {
 
     @ApiTags("personality")
     @Delete("api/personality/:id")
+    @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     async delete(@Param("id") personalityId) {
         return this.personalityService.delete(personalityId).catch((err) => {
