@@ -31,7 +31,10 @@ export class EditorParser {
     }
 
     getSourceByProperty(sources, property) {
-        return sources.filter(({ props }) => props.field === property);
+        //FIXME: Create migration
+        return sources.filter(
+            (source) => (source?.props?.field || source?.field) === property
+        );
     }
 
     buildHtmlContentWithoutSources(
