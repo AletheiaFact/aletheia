@@ -33,7 +33,7 @@ export class EditorParser {
     getSourceByProperty(sources, property) {
         //FIXME: Create migration
         return sources.filter(
-            (source) => source?.props?.field || source?.field === property
+            (source) => (source?.props?.field || source?.field) === property
         );
     }
 
