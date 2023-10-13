@@ -169,7 +169,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         sendEventToMachine(
             {
                 ...machineContext,
-                editor: editorContentObject,
+                collaborativeEditor: editorContentObject,
             },
             event
         );

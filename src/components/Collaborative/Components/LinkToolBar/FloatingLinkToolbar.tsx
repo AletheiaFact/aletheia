@@ -9,7 +9,7 @@ import {
 import React, { useCallback } from "react";
 
 import SourceDialog from "./Dialog/SourceDialog";
-import useFloatingLinkState from "./useFloatingLinkState";
+import useFloatingLinkState from "../../hooks/useFloatingLinkState";
 import { useTranslation } from "next-i18next";
 
 const FloatingLinkToolbar = () => {
@@ -24,6 +24,7 @@ const FloatingLinkToolbar = () => {
         isSelected,
         cancelHref,
         error,
+        isLoading,
     } = useFloatingLinkState();
     const { t } = useTranslation();
     const { empty } = useCurrentSelection();
@@ -51,17 +52,11 @@ const FloatingLinkToolbar = () => {
         }
     };
 
-    const handleClickButton = () => {
-        submitHref();
-    };
+    const handleClickButton = () => submitHref();
 
-    const handleCloseModal = () => {
-        cancelHref();
-    };
+    const handleCloseModal = () => cancelHref();
 
-    const handleRemoveLink = () => {
-        onRemoveLink();
-    };
+    const handleRemoveLink = () => onRemoveLink();
 
     const linkEditButton = (
         <CommandButton
@@ -98,6 +93,7 @@ const FloatingLinkToolbar = () => {
                     error={error}
                     activeLink={activeLink}
                     onRemoveLink={handleRemoveLink}
+                    isLoading={isLoading}
                 />
             </FloatingWrapper>
         </>

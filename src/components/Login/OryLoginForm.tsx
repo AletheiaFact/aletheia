@@ -5,6 +5,7 @@ import React from "react";
 import Input from "../AletheiaInput";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
+import ForgotPasswordLink from "./ForgotPasswordLink";
 
 const OryLoginForm = ({
     flow,
@@ -59,7 +60,15 @@ const OryLoginForm = ({
                                 },
                             ]}
                         >
-                            <InputPassword />
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <InputPassword />
+                                <ForgotPasswordLink t={t} />
+                            </div>
                         </Form.Item>
                         <Form.Item>
                             <div

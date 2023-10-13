@@ -1,8 +1,8 @@
 import React from "react";
-import AletheiaInput from "../../../AletheiaInput";
-import AletheiaButton from "../../../Button";
+import AletheiaInput from "../../../../AletheiaInput";
+import AletheiaButton from "../../../../Button";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import colors from "../../../../styles/colors";
+import colors from "../../../../../styles/colors";
 
 const InsertSourceForm = ({
     inputRef,
@@ -10,6 +10,7 @@ const InsertSourceForm = ({
     activeLink,
     onRemoveLink,
     error,
+    isLoading,
     ...rest
 }) => {
     return (
@@ -32,6 +33,7 @@ const InsertSourceForm = ({
                 />
                 <AletheiaButton
                     onClick={handleClickButton}
+                    loading={isLoading}
                     style={{
                         fontWeight: "bold",
                         height: "auto",
@@ -45,6 +47,7 @@ const InsertSourceForm = ({
                 {activeLink && (
                     <AletheiaButton
                         onClick={onRemoveLink}
+                        loading={isLoading}
                         style={{
                             fontWeight: "bold",
                             height: "auto",

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 
 import InsertSourceForm from "./InsertSourceForm";
 import SourceDialogHeader from "./SourceDialogHeader";
-import colors from "../../../../styles/colors";
+import colors from "../../../../../styles/colors";
 
 const SourceDialog = ({
     autoFocus,
@@ -11,6 +11,7 @@ const SourceDialog = ({
     onCloseModal,
     activeLink,
     onRemoveLink,
+    isLoading,
     ...rest
 }) => {
     const inputRef = useRef<HTMLInputElement>();
@@ -20,12 +21,12 @@ const SourceDialog = ({
             return;
         }
 
-        const frame = window.requestAnimationFrame(() => {
+        const focusTimeout = setTimeout(() => {
             inputRef.current?.focus();
-        });
+        }, 10);
 
         return () => {
-            window.cancelAnimationFrame(frame);
+            clearTimeout(focusTimeout);
         };
     }, [autoFocus]);
 
@@ -45,6 +46,7 @@ const SourceDialog = ({
                 activeLink={activeLink}
                 onRemoveLink={onRemoveLink}
                 error={error}
+                isLoading={isLoading}
                 {...rest}
             />
         </div>
