@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useContext } from "react";
 
 import ClaimReviewSelect from "./ClaimReviewSelect";
 import InputTextList from "../InputTextList";
@@ -6,6 +6,7 @@ import Loading from "../Loading";
 import TextArea from "../TextArea";
 import UserInput from "./UserInput";
 import { useTranslation } from "next-i18next";
+import { CollaborativeEditorContext } from "../Collaborative/CollaborativeEditorProvider";
 
 const CollaborativeEditor = lazy(
     () => import("../Collaborative/CollaborativeEditor")
@@ -24,6 +25,8 @@ interface DynamicInputProps {
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
+    const { isFetchingEditor } = useContext(CollaborativeEditorContext);
+
     const { t } = useTranslation();
     switch (props.type) {
         case "textArea":
@@ -72,14 +75,18 @@ const DynamicInput = (props: DynamicInputProps) => {
                 />
             );
         case "collaborative":
-            return (
-                <Suspense fallback={<Loading />}>
-                    <CollaborativeEditor
-                        placeholder={t(props.placeholder)}
-                        onContentChange={({ doc }) => props.onChange(doc)}
-                    />
-                </Suspense>
-            );
+            if (isFetchingEditor) {
+                return <Loading />;
+            } else {
+                return (
+                    <Suspense fallback={<Loading />}>
+                        <CollaborativeEditor
+                            placeholder={t(props.placeholder)}
+                            onContentChange={({ doc }) => props.onChange(doc)}
+                        />
+                    </Suspense>
+                );
+            }
         default:
             return null;
     }
