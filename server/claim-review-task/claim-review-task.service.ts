@@ -337,10 +337,19 @@ export class ClaimReviewTaskService {
         }).populate({
             path: "machine.context.reviewData.comments",
             model: "Comment",
-            populate: {
-                path: "user",
-                select: "name",
-            },
+            populate: [
+                {
+                    path: "user",
+                    select: "name",
+                },
+                {
+                    path: "replies",
+                    populate: {
+                        path: "user",
+                        select: "name",
+                    },
+                },
+            ],
         });
     }
 

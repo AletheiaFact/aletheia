@@ -37,6 +37,12 @@ export class Comment {
 
     @Prop({ required: true, default: false })
     resolved: boolean;
+
+    @Prop({ required: true, default: [] })
+    replies: Comment[];
+
+    @Prop({ required: true, default: false })
+    isReply: boolean;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

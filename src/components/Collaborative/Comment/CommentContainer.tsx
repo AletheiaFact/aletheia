@@ -20,7 +20,7 @@ import { useAtom } from "jotai";
 import { Roles } from "../../../types/enums";
 import { currentUserRole } from "../../../atoms/currentUser";
 
-const SuggestionCard = ({ readonly, state }) => {
+const CommentContainer = ({ readonly, state }) => {
     const { addAnnotation, setAnnotations } = useCommands();
     const { getAnnotations } = useHelpers();
     const { comments, setComments } = useContext(CollaborativeEditorContext);
@@ -46,24 +46,29 @@ const SuggestionCard = ({ readonly, state }) => {
     }, [hasSession]);
 
     useEffect(() => {
-        const preloadedComments = comments ? comments : reviewData.comments;
-        const commentsUnresolved = preloadedComments.filter(
-            (comment) => !comment?.resolved
-        );
-        setComments(preloadedComments);
-        setAnnotations(commentsUnresolved);
-    }, [
-        comments,
-        setComments,
-        getAnnotations,
-        reviewData.comments,
-        setAnnotations,
-    ]);
+        if (comments === null) {
+            const reviewDataComments = reviewData?.comments;
+            const unresolvedComments = reviewDataComments?.filter(
+                (comment) => !comment?.resolved
+            );
+            setComments(unresolvedComments);
+        }
+    }, [comments, setComments, reviewData.comments]);
 
-    useEffect(
-        () => setComments(getAnnotations()),
-        [getAnnotations, setComments, state.doc]
-    );
+    useEffect(() => {
+        if (comments) {
+            setAnnotations(comments);
+        }
+    }, [comments, setAnnotations]);
+
+    useEffect(() => {
+        if (comments?.length > 0) {
+            const annotations = getAnnotations();
+            if (annotations) {
+                setComments(annotations);
+            }
+        }
+    }, [comments?.length, getAnnotations, setComments, state.doc]);
 
     return (
         <>
@@ -103,4 +108,4 @@ const SuggestionCard = ({ readonly, state }) => {
     );
 };
 
-export default SuggestionCard;
+export default CommentContainer;

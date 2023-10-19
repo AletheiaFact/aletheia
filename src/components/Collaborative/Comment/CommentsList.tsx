@@ -5,15 +5,13 @@ const CommentsList = ({ comments, user }) => {
     return (
         <>
             {comments &&
-                comments.map((comment) => {
-                    return (
-                        <CommentCard
-                            key={comment.id}
-                            content={comment}
-                            user={user}
-                        />
-                    );
-                })}
+                comments.map((comment) => (
+                    <CommentCard
+                        key={comment.id}
+                        comment={comment}
+                        user={user}
+                    />
+                ))}
         </>
     );
 };

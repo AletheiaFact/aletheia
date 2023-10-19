@@ -42,10 +42,36 @@ const updateComment = (commentId, comment) => {
         });
 };
 
+const createReplyComment = (commentId, newComment) => {
+    return request
+        .put(`/${commentId}/create-reply`, newComment)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            message.error(err.response.data?.message);
+            throw err;
+        });
+};
+
+const deleteReplyComment = (commentId, replyCommentId) => {
+    return request
+        .put(`/${commentId}/delete-reply`, { replyCommentId })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            message.error(err.response.data?.message);
+            throw err;
+        });
+};
+
 const CommentApi = {
     createComment,
     updateComments,
     updateComment,
+    createReplyComment,
+    deleteReplyComment,
 };
 
 export default CommentApi;

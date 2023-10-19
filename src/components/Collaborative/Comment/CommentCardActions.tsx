@@ -33,13 +33,30 @@ const CommentCardActions = ({ content, setIsResolved }) => {
 
     const handleDeleteClick = async () => {
         try {
-            await ClaimReviewTaskApi.deleteComment(data_hash, content._id);
-            setComments((comment) => {
-                return comment.filter((c) => {
-                    return c._id !== content?._id;
-                });
-            });
-            removeAnnotations([content?._id]);
+            if (content.isReply) {
+                await CommentApi.deleteReplyComment(
+                    content.targetId,
+                    content._id
+                );
+                setComments((comments) =>
+                    comments.map((comment) =>
+                        comment._id === content.targetId
+                            ? {
+                                  ...comment,
+                                  replies: comment.replies.filter(
+                                      (reply) => reply._id !== content._id
+                                  ),
+                              }
+                            : comment
+                    )
+                );
+            } else {
+                await ClaimReviewTaskApi.deleteComment(data_hash, content._id);
+                setComments((comments) =>
+                    comments.filter((c) => c._id !== content?._id)
+                );
+                removeAnnotations([content?._id]);
+            }
         } catch (error) {
             console.error("Error handling delete click:", error);
         }
@@ -48,9 +65,14 @@ const CommentCardActions = ({ content, setIsResolved }) => {
     return (
         <div className="comment-card-actions">
             <div className="comment-card-actions-resolve-button">
-                <Button type={ButtonType.white} onClick={handleResolvedClick}>
-                    <CheckIcon style={{ fontSize: "16px" }} />
-                </Button>
+                {!content.isReply && (
+                    <Button
+                        type={ButtonType.white}
+                        onClick={handleResolvedClick}
+                    >
+                        <CheckIcon style={{ fontSize: "16px" }} />
+                    </Button>
+                )}
             </div>
             {role !== Roles.Regular &&
                 role !== Roles.FactChecker &&

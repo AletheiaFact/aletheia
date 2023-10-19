@@ -24,4 +24,16 @@ export class CommentController {
     update(@Param("id") id, @Body() body) {
         return this.commentService.update(id, body);
     }
+
+    @ApiTags("comment")
+    @Put("api/comment/:id/create-reply")
+    createReplyComment(@Param("id") id, @Body() body) {
+        return this.commentService.createReplyComment(id, body);
+    }
+
+    @ApiTags("comment")
+    @Put("api/comment/:id/delete-reply")
+    deleteReplyComment(@Param("id") id, @Body() body) {
+        return this.commentService.deleteReplyComment(id, body.replyCommentId);
+    }
 }
