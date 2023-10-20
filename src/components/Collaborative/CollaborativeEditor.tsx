@@ -19,6 +19,9 @@ import { TrailingNodeExtension } from "remirror/extensions";
 import { RemirrorContentType } from "remirror";
 import EditorSourcesList from "./Components/Source/EditorSourceList";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import { crossCheckingSelector } from "../../machines/reviewTask/selectors";
+import { useSelector } from "@xstate/react";
+import CommentContainer from "./Comment/CommentContainer";
 
 interface CollaborativeEditorProps {
     placeholder: string;
@@ -36,6 +39,7 @@ const CollaborativeEditor = ({
         setEditorSources,
     } = useContext(CollaborativeEditorContext);
     const { machineService } = useContext(ReviewTaskMachineContext);
+    const readonly = useSelector(machineService, crossCheckingSelector);
     const users = websocketProvider.awareness.states.size;
     const isCollaborative = users > 1;
 
@@ -46,7 +50,8 @@ const CollaborativeEditor = ({
 
     function createExtensions() {
         return [
-            new AnnotationExtension(),
+            // TODO: Make annotations shared across documents
+            // new AnnotationExtension(),
             new PlaceholderExtension({ placeholder }),
             new LinkExtension({
                 extraAttributes: {
@@ -89,9 +94,11 @@ const CollaborativeEditor = ({
                 autoFocus
                 autoRender="end"
                 onChange={handleChange}
+                editable={!readonly}
             >
                 <FloatingLinkToolbar />
-                <Editor state={state} />
+                <Editor editable={readonly} state={state} />
+                <CommentContainer readonly={readonly} state={state} />
                 <EditorSourcesList node={state.doc} sources={editorSources} />
             </Remirror>
         </CollaborativeEditorStyle>

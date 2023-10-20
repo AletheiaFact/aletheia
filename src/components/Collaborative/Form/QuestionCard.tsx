@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import { uniqueId } from "remirror";
 import { Col } from "antd";
 import Button from "../../Button";
@@ -6,9 +6,14 @@ import { useCommands } from "@remirror/react";
 import { DeleteOutlined } from "@ant-design/icons";
 import CardStyle from "./CardStyle";
 import { useTranslation } from "next-i18next";
+import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
+import { crossCheckingSelector } from "../../../machines/reviewTask/selectors";
+import { useSelector } from "@xstate/react";
 
 export const QuestionCard = ({ forwardRef, node, initialPosition }) => {
     const { t } = useTranslation();
+    const { machineService } = useContext(ReviewTaskMachineContext);
+    const editable = useSelector(machineService, crossCheckingSelector);
     const command = useCommands();
 
     const handleDelete = useCallback(
@@ -38,6 +43,7 @@ export const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                     <Button
                         style={{ height: "40px", margin: "0 auto" }}
                         onClick={handleDelete}
+                        disabled={editable}
                     >
                         <DeleteOutlined />
                     </Button>

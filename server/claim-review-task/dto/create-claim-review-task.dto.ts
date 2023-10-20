@@ -19,6 +19,7 @@ export type ReviewTaskMachineContextReviewData = {
     rejectionComment?: string;
     editor?: any;
     reviewDataHtml?: ReviewTaskMachineContextReviewData;
+    comments?: any[];
 };
 
 export type ReviewTaskMachineContext = {

@@ -48,6 +48,7 @@ import { EditorModule } from "./editor/editor.module";
 import { BadgeModule } from "./badge/badge.module";
 import { EditorParseModule } from "./editor-parse/editor-parse.module";
 import { NotificationModule } from "./notifications/notifications.module";
+import { CommentModule } from "./claim-review-task/comment/comment.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -104,6 +105,7 @@ export class AppModule implements NestModule {
             BadgeModule,
             EditorParseModule,
             NotificationModule,
+            CommentModule,
         ];
         if (options.config.feature_flag) {
             imports.push(
