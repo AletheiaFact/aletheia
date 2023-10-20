@@ -49,7 +49,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                         comment._id === content._id
                             ? {
                                   ...comment,
-                                  replies: [...comment?.replies, replyComment],
+                                  replies: [...comment.replies, replyComment],
                               }
                             : comment
                     )

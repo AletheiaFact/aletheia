@@ -499,12 +499,13 @@ export class ClaimReviewTaskService {
     }
 
     async deleteComment(data_hash, commentId) {
+        const commentIdObject = Types.ObjectId(commentId);
         const claimReviewTask = await this.getClaimReviewTaskByDataHash(
             data_hash
         );
         const reviewData = claimReviewTask.machine.context.reviewData;
         reviewData.comments = reviewData.comments.filter(
-            (comment) => !Types.ObjectId(comment._id).equals(commentId)
+            (comment) => !Types.ObjectId(comment._id).equals(commentIdObject)
         );
 
         return this.ClaimReviewTaskModel.findByIdAndUpdate(

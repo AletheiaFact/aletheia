@@ -4,7 +4,7 @@ import CommentCardForm from "./CommentCardForm";
 import CommentCardHeader from "./CommentCardHeader";
 import { Divider } from "@mui/material";
 
-const CommentCard = ({
+const CommentCardContent = ({
     user,
     content = {},
     isEditing = false,
@@ -56,20 +56,19 @@ const CommentCard = ({
             <p style={{ margin: 0, fontSize: 14 }}>{content?.comment}</p>
             {!content.isReply && (
                 <>
-                    {content.replies &&
-                        content.replies.map((replyComment) => (
-                            <>
-                                <Divider />
-                                <CommentCard
-                                    key={replyComment.id}
-                                    user={user}
-                                    content={replyComment}
-                                    isSelected={isSelected}
-                                    setIsSelected={setIsSelected}
-                                    setIsResolved={setIsResolved}
-                                />
-                            </>
-                        ))}
+                    {content.replies?.map((replyComment) => (
+                        <>
+                            <Divider />
+                            <CommentCardContent
+                                key={replyComment.id}
+                                user={user}
+                                content={replyComment}
+                                isSelected={isSelected}
+                                setIsSelected={setIsSelected}
+                                setIsResolved={setIsResolved}
+                            />
+                        </>
+                    ))}
                     {(isEditing || isSelected) && (
                         <CommentCardForm
                             user={user}
@@ -84,4 +83,4 @@ const CommentCard = ({
     );
 };
 
-export default CommentCard;
+export default CommentCardContent;
