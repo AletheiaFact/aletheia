@@ -505,7 +505,7 @@ export class ClaimReviewTaskService {
         );
         const reviewData = claimReviewTask.machine.context.reviewData;
         reviewData.comments = reviewData.comments.filter(
-            (comment) => !Types.ObjectId(comment._id).equals(commentIdObject)
+            (comment) => !comment._id.equals(commentIdObject)
         );
 
         return this.ClaimReviewTaskModel.findByIdAndUpdate(
