@@ -21,8 +21,6 @@ import { Roles } from "../../../types/enums";
 import { currentUserRole } from "../../../atoms/currentUser";
 
 const CommentContainer = ({ readonly, state }) => {
-    const { addAnnotation, setAnnotations } = useCommands();
-    const { getAnnotations } = useHelpers();
     const { comments, setComments } = useContext(CollaborativeEditorContext);
     const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
@@ -30,7 +28,10 @@ const CommentContainer = ({ readonly, state }) => {
     const [isCommentVisible, setIsCommentVisible] = useState<boolean>(false);
     const [hasSession, setHasSession] = useState(null);
     const [user, setUser] = useState(null);
-    const enabled = addAnnotation.enabled({ id: "" });
+    // const { addAnnotation } = useCommands();
+    // const { getAnnotations } = useHelpers();
+    // const enabled = addAnnotation?.enabled({ id: "" });
+    // const annotations = getAnnotations();
 
     useEffect(() => {
         ory.frontend
@@ -53,22 +54,15 @@ const CommentContainer = ({ readonly, state }) => {
             );
             setComments(unresolvedComments);
         }
-    }, [comments, setComments, reviewData.comments]);
+    }, [comments, setComments, reviewData?.comments]);
 
-    useEffect(() => {
-        if (comments) {
-            setAnnotations(comments);
-        }
-    }, [comments, setAnnotations]);
-
-    useEffect(() => {
-        if (comments?.length > 0) {
-            const annotations = getAnnotations();
-            if (annotations) {
-                setComments(annotations);
-            }
-        }
-    }, [comments?.length, getAnnotations, setComments, state.doc]);
+    // useEffect(() => {
+    //     if ((comments && annotations.length === 0) || (state.doc.content.size === annotations[0]?.from)) {
+    //         setAnnotations(comments);
+    //     } else if (comments && state.doc.content.size) {
+    //         setComments(annotations);
+    //     }
+    // }, [setAnnotations, setComments, state.doc]);
 
     return (
         <>
@@ -77,7 +71,7 @@ const CommentContainer = ({ readonly, state }) => {
                     <CommandButton
                         icon="chatNewLine"
                         commandName="addAnnotation"
-                        enabled={enabled}
+                        enabled={true}
                         onSelect={() => setIsCommentVisible(true)}
                     />
                 </FloatingToolbar>

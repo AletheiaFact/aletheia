@@ -50,7 +50,8 @@ const CollaborativeEditor = ({
 
     function createExtensions() {
         return [
-            new AnnotationExtension(),
+            // TODO: Make annotations shared across documents
+            // new AnnotationExtension(),
             new PlaceholderExtension({ placeholder }),
             new LinkExtension({
                 extraAttributes: {
@@ -97,8 +98,8 @@ const CollaborativeEditor = ({
             >
                 <FloatingLinkToolbar />
                 <Editor editable={readonly} state={state} />
-                <EditorSourcesList node={state.doc} sources={editorSources} />
                 <CommentContainer readonly={readonly} state={state} />
+                <EditorSourcesList node={state.doc} sources={editorSources} />
             </Remirror>
         </CollaborativeEditorStyle>
     );

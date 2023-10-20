@@ -7,7 +7,7 @@ import Button, { ButtonType } from "../../Button";
 import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import CommentApi from "../../../api/comment";
 import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
-import { useCommands } from "@remirror/react";
+// import { useCommands } from "@remirror/react";
 import { currentUserRole } from "../../../atoms/currentUser";
 import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -17,7 +17,7 @@ import { Roles } from "../../../types/enums";
 
 const CommentCardActions = ({ content, setIsResolved }) => {
     const { data_hash, setComments } = useContext(CollaborativeEditorContext);
-    const { removeAnnotations } = useCommands();
+    // const { removeAnnotations } = useCommands();
     const [role] = useAtom(currentUserRole);
     const { machineService } = useContext(ReviewTaskMachineContext);
     const isCrossCheckingState = useSelector(
@@ -27,7 +27,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
 
     const handleResolvedClick = async () => {
         await CommentApi.updateComment(content?._id, { resolved: true });
-        removeAnnotations([content?._id]);
+        // removeAnnotations([content?._id]);
         setIsResolved(true);
     };
 
@@ -55,7 +55,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
                 setComments((comments) =>
                     comments.filter((c) => c._id !== content?._id)
                 );
-                removeAnnotations([content?._id]);
+                // removeAnnotations([content?._id]);
             }
         } catch (error) {
             console.error("Error handling delete click:", error);
