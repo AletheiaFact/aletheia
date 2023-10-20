@@ -12,6 +12,7 @@ import Logger from "../logger";
 import { ViewModule } from "../view/view.module";
 import { ConfigModule } from "@nestjs/config";
 import { CaptchaModule } from "../captcha/captcha.module";
+import { AbilityModule } from "../auth/ability/ability.module";
 
 const PersonalityModel = MongooseModule.forFeature([
     {
@@ -29,6 +30,7 @@ const PersonalityModel = MongooseModule.forFeature([
         HistoryModule,
         ViewModule,
         ConfigModule,
+        AbilityModule,
         CaptchaModule,
     ],
     exports: [PersonalityService],

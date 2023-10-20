@@ -224,6 +224,7 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Delete("api/claim/:id")
+    @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     async delete(@Param("id") claimId) {
         return this.claimService.delete(claimId);
@@ -231,6 +232,8 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Put("api/claim/hidden/:id")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     async updateHiddenStatus(@Param("id") claimId, @Body() body) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
