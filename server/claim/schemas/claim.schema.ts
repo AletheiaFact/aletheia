@@ -31,6 +31,9 @@ export class Claim {
 
     @Prop({ type: Boolean, default: false, required: true })
     isHidden: boolean;
+
+    @Prop({ default: "aletheia", required: true })
+    nameSpace: string;
 }
 const ClaimSchemaRaw = SchemaFactory.createForClass(Claim);
 

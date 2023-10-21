@@ -30,6 +30,7 @@ export enum ActionTypes {
     SET_SEARCH_FILTER,
     SET_SEARCH_FILTER_USED,
     SET_COLLABORATIVE_EDIT,
+    SET_NAMESPACE,
 }
 
 export enum SearchTypes {
@@ -66,4 +67,5 @@ export interface RootState {
     selectedClaim: any;
     selectedContent: Content;
     sitekey: string;
+    nameSpace: string;
 }

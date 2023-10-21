@@ -11,6 +11,7 @@ interface FetchOptions {
     order?: "asc" | "desc";
     pageSize?: number;
     isHidden?: boolean;
+    nameSpace?: string;
     personality: string;
     i18n?: { languages?: any };
     fetchOnly?: boolean;
@@ -24,6 +25,7 @@ const get = (options: FetchOptions) => {
         personality: options.personality,
         language: options?.i18n?.languages[0],
         isHidden: options?.isHidden || false,
+        nameSpace: options?.nameSpace || "aletheia",
     };
 
     return request

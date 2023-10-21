@@ -19,9 +19,18 @@ const PersonalityPage: NextPage<{
     personalities: any[];
     sitekey: string;
     hideDescriptions: object;
-}> = ({ personality, href, personalities, sitekey, hideDescriptions }) => {
+    nameSpace: string;
+}> = ({
+    personality,
+    href,
+    personalities,
+    sitekey,
+    hideDescriptions,
+    nameSpace,
+}) => {
     const [role] = useAtom(currentUserRole);
     const dispatch = useDispatch();
+    dispatch(actions.setNameSpace(nameSpace));
 
     useEffect(() => {
         dispatch(actions.setSitekey(sitekey));
@@ -70,6 +79,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             hideDescriptions: JSON.parse(
                 JSON.stringify(query.hideDescriptions)
             ),
+            nameSpace: query.nameSpace ? query.nameSpace : "aletheia",
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
         },

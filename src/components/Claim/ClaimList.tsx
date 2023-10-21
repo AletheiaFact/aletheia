@@ -5,14 +5,16 @@ import claimApi from "../../api/claim";
 import BaseList from "../List/BaseList";
 import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import ClaimCard from "./ClaimCard";
+import { useAppSelector } from "../../store/store";
 
 const ClaimList = ({ personality }) => {
     const { i18n, t } = useTranslation();
+    const { nameSpace } = useAppSelector((state) => state);
 
     return (
         <BaseList
             apiCall={claimApi.get}
-            filter={{ personality: personality._id, i18n }}
+            filter={{ personality: personality._id, i18n, nameSpace }}
             title={t("claim:claimListHeader")}
             showDividers={false}
             bluePrimary={true}

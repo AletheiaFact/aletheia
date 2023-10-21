@@ -32,7 +32,7 @@ import {
 } from "../auth/ability/ability.decorator";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 
-@Controller()
+@Controller(":namespace?")
 export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(
@@ -190,6 +190,7 @@ export class PersonalityController {
                 personality,
                 personalities,
                 hideDescriptions,
+                nameSpace: req.params.namespace,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
             })
         );

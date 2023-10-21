@@ -49,6 +49,7 @@ import { BadgeModule } from "./badge/badge.module";
 import { EditorParseModule } from "./editor-parse/editor-parse.module";
 import { NotificationModule } from "./notifications/notifications.module";
 import { CommentModule } from "./claim-review-task/comment/comment.module";
+import { NameSpaceModule } from "./name-space/name-space.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -106,6 +107,7 @@ export class AppModule implements NestModule {
             EditorParseModule,
             NotificationModule,
             CommentModule,
+            NameSpaceModule,
         ];
         if (options.config.feature_flag) {
             imports.push(

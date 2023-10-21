@@ -180,6 +180,11 @@ const reducer = (state, action) => {
                 ...state,
                 sitekey: action.sitekey,
             };
+        case ActionTypes.SET_NAMESPACE:
+            return {
+                ...state,
+                nameSpace: action.nameSpace,
+            };
         default:
             return state;
     }

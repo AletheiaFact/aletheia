@@ -77,7 +77,9 @@ export class ClaimController {
         const inputs: any = {
             isHidden: query.isHidden,
         };
-
+        if (query.nameSpace) {
+            inputs.nameSpace = query.nameSpace;
+        }
         if (query.personality && !query.isHidden) {
             inputs.personalities = new mongoose.Types.ObjectId(
                 // @ts-ignore
