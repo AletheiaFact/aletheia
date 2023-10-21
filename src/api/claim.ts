@@ -25,7 +25,7 @@ const get = (options: FetchOptions) => {
         personality: options.personality,
         language: options?.i18n?.languages[0],
         isHidden: options?.isHidden || false,
-        nameSpace: options?.nameSpace || "aletheia",
+        nameSpace: options?.nameSpace || "main",
     };
 
     return request

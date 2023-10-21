@@ -79,7 +79,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             hideDescriptions: JSON.parse(
                 JSON.stringify(query.hideDescriptions)
             ),
-            nameSpace: query.nameSpace ? query.nameSpace : "aletheia",
+            nameSpace: query.nameSpace ? query.nameSpace : "main",
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
         },

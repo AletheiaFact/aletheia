@@ -17,8 +17,8 @@ export class NameSpaceService {
         return new this.NameSpaceModel(nameSpace).save();
     }
 
-    find(match) {
-        return this.NameSpaceModel.find({ match });
+    findOne(match) {
+        return this.NameSpaceModel.findOne(match);
     }
 
     getById(_id) {
