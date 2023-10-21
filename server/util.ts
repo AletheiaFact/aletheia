@@ -56,13 +56,14 @@ export class UtilService {
     getParamsBasedOnUserRole(params, req) {
         const user = req.user;
         const isUserAdmin =
-            user?.role === Roles.Admin || user?.role === Roles.SuperAdmin;
+            user?.role.main === Roles.Admin ||
+            user?.role.main === Roles.SuperAdmin;
         return isUserAdmin ? params : { ...params, isHidden: false };
     }
 
     canEditUser(user, request): boolean {
         const editorId = request.user._id;
-        const isSelectedSuperAdmin = user.role === Roles.SuperAdmin;
+        const isSelectedSuperAdmin = user.role.main === Roles.SuperAdmin;
         const editingSelf = user._id === editorId;
 
         return (isSelectedSuperAdmin && editingSelf) || !isSelectedSuperAdmin;

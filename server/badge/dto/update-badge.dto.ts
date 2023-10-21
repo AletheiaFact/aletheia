@@ -32,5 +32,10 @@ export class UpdateBadgeDTO {
     @IsArray()
     @IsOptional()
     @ApiProperty()
-    users: { badges: any[]; name: string; _id: string; role: Roles }[];
+    users: {
+        badges: any[];
+        name: string;
+        _id: string;
+        role: { main: Roles };
+    }[];
 }

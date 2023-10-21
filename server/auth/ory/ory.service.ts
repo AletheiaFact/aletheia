@@ -97,7 +97,7 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
-                    role: role ? role : Roles.Regular,
+                    role: role ? role : { main: Roles.Regular },
                 },
                 credentials: {
                     password: {

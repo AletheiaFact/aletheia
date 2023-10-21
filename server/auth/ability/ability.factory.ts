@@ -39,11 +39,14 @@ export class AbilityFactory {
             Ability as AbilityClass<AppAbility>
         );
 
-        if (user.role === Roles.Admin || user.role === Roles.SuperAdmin) {
+        if (
+            user.role.main === Roles.Admin ||
+            user.role.main === Roles.SuperAdmin
+        ) {
             can(Action.Manage, "all");
         } else if (
-            user.role === Roles.FactChecker ||
-            user.role === Roles.Reviewer
+            user.role.main === Roles.FactChecker ||
+            user.role.main === Roles.Reviewer
         ) {
             can(Action.Read, "all");
             can(Action.Update, "all");

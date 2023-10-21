@@ -70,7 +70,7 @@ export class UsersService {
 
     async updateUser(
         userId,
-        updates: { role?: Roles; badges?: Badge[]; state?: Status }
+        updates: { role?: object; badges?: Badge[]; state?: Status }
     ) {
         const user = await this.getById(userId);
 

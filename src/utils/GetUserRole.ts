@@ -7,7 +7,7 @@ export const GetUserRole = () => {
         .then((session) => {
             return {
                 role:
-                    (session.data.identity.traits.role as Roles) ||
+                    (session.data.identity.traits.role.main as Roles) ||
                     Roles.Regular,
                 isLoggedIn: true,
                 aal: session.data.authenticator_assurance_level,
