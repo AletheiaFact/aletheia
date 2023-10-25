@@ -3,6 +3,7 @@ import * as mongoose from "mongoose";
 import { Personality } from "../../personality/schemas/personality.schema";
 import { ClaimRevision } from "../claim-revision/schema/claim-revision.schema";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";
+import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 
 export type ClaimDocument = Claim & mongoose.Document & { revisions: any };
 
@@ -32,7 +33,7 @@ export class Claim {
     @Prop({ type: Boolean, default: false, required: true })
     isHidden: boolean;
 
-    @Prop({ default: "main", required: true })
+    @Prop({ default: NameSpaceEnum.Main, required: true })
     nameSpace: string;
 }
 const ClaimSchemaRaw = SchemaFactory.createForClass(Claim);

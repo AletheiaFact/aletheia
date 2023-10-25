@@ -23,31 +23,29 @@ export class NameSpaceGuard implements CanActivate {
             accessToken: this.configService.get<string>("access_token"),
         });
 
-        const namespaceName = request.params.namespace;
+        const namespaceSlug = request.params.namespace;
         const cookie = request.header("Cookie");
 
-        if (!cookie && namespaceName) {
+        if (!cookie && namespaceSlug) {
             throw new UnauthorizedException();
         }
 
-        if (namespaceName && cookie) {
+        if (namespaceSlug && cookie) {
             const { data: session } = await new FrontendApi(
                 oryConfig
             ).toSession({ cookie });
 
             const user_id = session.identity.traits.user_id;
             const namespace = await this.nameSpaceService.findOne({
-                name: namespaceName,
+                slug: namespaceSlug,
             });
 
             if (!namespace) {
-                throw new NotFoundException(
-                    "User does not have access to this namespace"
-                );
+                throw new NotFoundException();
             }
 
-            //@ts-ignore
             const userHasAccess = namespace.users.some(
+                //@ts-ignore
                 (user) => user._id.toString() === user_id
             );
             if (!userHasAccess) {

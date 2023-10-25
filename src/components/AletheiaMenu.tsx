@@ -78,6 +78,13 @@ const AletheiaMenu = () => {
                     >
                         {t("menu:Badges")}
                     </Menu.Item>
+                    <Menu.Item
+                        key="/admin/name-spaces"
+                        data-cy={"testadminNameSpaceItem"}
+                        onClick={handleClick}
+                    >
+                        {t("menu:nameSpaceItem")}
+                    </Menu.Item>
                 </>
             )}
             <Menu.Item

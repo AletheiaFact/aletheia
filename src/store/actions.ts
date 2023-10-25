@@ -47,10 +47,6 @@ const actions = {
         type: ActionTypes.SET_WEBSOCKET_URL,
         websocketUrl,
     }),
-    setNameSpace: (nameSpace) => ({
-        type: ActionTypes.SET_NAMESPACE,
-        nameSpace,
-    }),
 };
 
 export default actions;

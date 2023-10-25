@@ -5,13 +5,15 @@ import JsonLd from "../components/JsonLd";
 import { GetLocale } from "../utils/GetLocale";
 import AffixButton from "../components/AffixButton/AffixButton";
 import AdminToolBar from "../components/Toolbar/AdminToolBar";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { currentUserRole } from "../atoms/currentUser";
 import { Roles, TargetModel } from "../types/enums";
 import personalitiesApi from "../api/personality";
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";
 import { useEffect } from "react";
+import { currentNameSpace } from "../atoms/namespace";
+import { NameSpaceEnum } from "../types/namespace";
 
 const PersonalityPage: NextPage<{
     personality: any;
@@ -19,7 +21,7 @@ const PersonalityPage: NextPage<{
     personalities: any[];
     sitekey: string;
     hideDescriptions: object;
-    nameSpace: string;
+    nameSpace: NameSpaceEnum;
 }> = ({
     personality,
     href,
@@ -30,7 +32,8 @@ const PersonalityPage: NextPage<{
 }) => {
     const [role] = useAtom(currentUserRole);
     const dispatch = useDispatch();
-    dispatch(actions.setNameSpace(nameSpace));
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(nameSpace);
 
     useEffect(() => {
         dispatch(actions.setSitekey(sitekey));
@@ -79,7 +82,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             hideDescriptions: JSON.parse(
                 JSON.stringify(query.hideDescriptions)
             ),
-            nameSpace: query.nameSpace ? query.nameSpace : "main",
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
         },

@@ -5,11 +5,12 @@ import claimApi from "../../api/claim";
 import BaseList from "../List/BaseList";
 import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import ClaimCard from "./ClaimCard";
-import { useAppSelector } from "../../store/store";
+import { currentNameSpace } from "../../atoms/namespace";
+import { useAtom } from "jotai";
 
 const ClaimList = ({ personality }) => {
     const { i18n, t } = useTranslation();
-    const { nameSpace } = useAppSelector((state) => state);
+    const [nameSpace] = useAtom(currentNameSpace);
 
     return (
         <BaseList

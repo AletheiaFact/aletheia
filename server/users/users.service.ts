@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Roles, Status } from "../auth/ability/ability.factory";
-import { Model } from "mongoose";
+import { Status } from "../auth/ability/ability.factory";
+import { Model, Aggregate } from "mongoose";
 
 import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
@@ -18,12 +18,32 @@ export class UsersService {
     ) {}
 
     async findAll(userQuery): Promise<UserDocument[]> {
-        const { searchName, filterOutRoles, badges, project } = userQuery;
-        return this.UserModel.find({
+        const { searchName, filterOutRoles, badges, project, nameSpaceSlug } =
+            userQuery;
+        const pipeline: Aggregate<any[]> = this.UserModel.aggregate();
+
+        pipeline.match({
             name: { $regex: searchName || "", $options: "i" },
             role: { $nin: [...(filterOutRoles || []), null] },
             ...(badges ? { badges } : {}),
-        }).select(project || { _id: 1, name: 1, role: 1 });
+        });
+
+        if (nameSpaceSlug) {
+            pipeline
+                .lookup({
+                    from: "namespaces",
+                    localField: "_id",
+                    foreignField: "users",
+                    as: "namespaces",
+                })
+                .match({
+                    "namespaces.slug": nameSpaceSlug,
+                });
+        }
+
+        pipeline.project(project ? project : { _id: 1, name: 1, role: 1 });
+
+        return await pipeline.exec();
     }
 
     async register(user) {

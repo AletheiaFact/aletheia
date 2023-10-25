@@ -4,17 +4,29 @@ import { User } from "../../../users/schemas/user.schema";
 
 export type NameSpaceDocument = NameSpace & mongoose.Document;
 
+export enum NameSpaceEnum {
+    Main = "main",
+}
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class NameSpace {
     @Prop({ required: true })
     name: string;
 
+    @Prop({ required: true })
+    slug: string;
+
     @Prop({
-        type: mongoose.Types.ObjectId,
-        required: true,
-        ref: "User",
+        type: [
+            {
+                type: mongoose.Types.ObjectId,
+                required: true,
+                ref: "User",
+            },
+        ],
     })
     users: User[];
+
+    // logo, description
 }
 
 export const NameSpaceSchema = SchemaFactory.createForClass(NameSpace);

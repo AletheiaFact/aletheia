@@ -1,4 +1,12 @@
-import { Controller, Get, Header, Redirect, Req, Res } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Header,
+    Param,
+    Redirect,
+    Req,
+    Res,
+} from "@nestjs/common";
 import { ViewService } from "../view/view.service";
 import type { Response } from "express";
 import { parse } from "url";
@@ -21,15 +29,15 @@ export class HomeController {
     ) {}
 
     @ApiTags("pages")
-    @Get("/home")
+    @Get("/home/:namespace?")
     @Redirect()
-    redirect(@Res() res) {
-        return res.redirect("/");
+    redirect(@Param("namespace") namespace, @Res() res) {
+        return res.redirect(`/${namespace}`);
     }
 
     @IsPublic()
     @ApiTags("pages")
-    @Get()
+    @Get("/:namespace?")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -77,6 +85,7 @@ export class HomeController {
                 personalities,
                 stats,
                 claims,
+                nameSpace: req.params.namespace,
             })
         );
     }

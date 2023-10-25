@@ -77,10 +77,13 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
-                    role: role,
+                    role,
                 },
             }),
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
         });
     }
 
@@ -105,7 +108,10 @@ export default class OryService {
                     },
                 },
             }),
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
         });
     }
 

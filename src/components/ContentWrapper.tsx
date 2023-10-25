@@ -39,6 +39,7 @@ const ContentWrapper = ({ children }) => {
         "login",
         "admin-page",
         "admin-badges",
+        "admin-namespaces",
         "profile",
         "search-page",
     ];

@@ -34,19 +34,19 @@ export type AppAbility = Ability<[Action, Subjects]>;
 
 @Injectable()
 export class AbilityFactory {
-    defineAbility(user: User) {
+    defineAbility(user: User, nameSpace: string) {
         const { can, cannot, build } = new AbilityBuilder(
             Ability as AbilityClass<AppAbility>
         );
 
         if (
-            user.role.main === Roles.Admin ||
-            user.role.main === Roles.SuperAdmin
+            user.role[nameSpace] === Roles.Admin ||
+            user.role[nameSpace] === Roles.SuperAdmin
         ) {
             can(Action.Manage, "all");
         } else if (
-            user.role.main === Roles.FactChecker ||
-            user.role.main === Roles.Reviewer
+            user.role[nameSpace] === Roles.FactChecker ||
+            user.role[nameSpace] === Roles.Reviewer
         ) {
             can(Action.Read, "all");
             can(Action.Update, "all");

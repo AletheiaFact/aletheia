@@ -9,5 +9,6 @@
     "adminItem": "Admin",
     "personalityItem": "Personalidades",
     "claimItem": "Afirmações",
-    "kanbanItem": "Kanban"
+    "kanbanItem": "Kanban",
+    "nameSpaceItem": "Name space"
 }

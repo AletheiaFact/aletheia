@@ -6,14 +6,20 @@ import AffixButton from "../components/AffixButton/AffixButton";
 import Home from "../components/Home/Home";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
+import { useSetAtom } from "jotai";
+import { currentNameSpace } from "../atoms/namespace";
+import { NameSpaceEnum } from "../types/namespace";
 
 const HomePage: NextPage<{
     personalities;
     stats;
     href;
     claims;
+    nameSpace;
 }> = (props) => {
     const { t } = useTranslation();
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(props.nameSpace);
     return (
         <>
             <Seo title="Home" description={t("landingPage:description")} />
@@ -32,6 +38,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personalities: JSON.parse(JSON.stringify(query.personalities)),
             claims: JSON.parse(JSON.stringify(query.claims)),
             stats: JSON.parse(JSON.stringify(query.stats)),
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

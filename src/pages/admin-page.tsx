@@ -4,7 +4,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
 import AdminView from "../components/adminArea/AdminView";
 import UserEditDrawer from "../components/adminArea/Drawer/UserEditDrawer";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { atomUserList } from "../atoms/userEdit";
 import { atomBadgesList } from "../atoms/badges";
 import BadgesApi from "../api/badgesApi";
@@ -12,13 +12,18 @@ import { Grid } from "@mui/material";
 import DashboardView from "../components/Dashboard/DashboardView";
 import AdminTabNavigator from "../components/adminArea/AdminTabNavigator";
 import AdminScreens from "../components/adminArea/AdminScreens";
+import { currentNameSpace } from "../atoms/namespace";
+import { NameSpaceEnum } from "../types/namespace";
 
-const Admin: NextPage<{ data: string }> = ({
+const Admin: NextPage<{ users: string; nameSpace: string }> = ({
     users,
+    nameSpace,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const [value, setValue] = React.useState(0);
     const [userList, setUserList] = useAtom(atomUserList);
     const [, setBadgesList] = useAtom(atomBadgesList);
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(nameSpace);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -58,6 +63,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             users: JSON.parse(JSON.stringify(query?.users)),
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

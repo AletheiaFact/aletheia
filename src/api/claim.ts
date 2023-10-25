@@ -1,5 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
+import { NameSpaceEnum } from "../types/namespace";
 
 const request = axios.create({
     withCredentials: true,
@@ -25,7 +26,7 @@ const get = (options: FetchOptions) => {
         personality: options.personality,
         language: options?.i18n?.languages[0],
         isHidden: options?.isHidden || false,
-        nameSpace: options?.nameSpace || "main",
+        nameSpace: options?.nameSpace || NameSpaceEnum.Main,
     };
 
     return request
