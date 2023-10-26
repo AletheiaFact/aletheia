@@ -11,6 +11,8 @@ import { useAtom } from "jotai";
 import { createClaimMachineAtom } from "../../machines/createClaim/provider";
 import PersonalityCardAvatar from "./PersonalityCardAvatar";
 import PersonalityCardButton from "./PersonalityCardButton";
+import { currentNameSpace } from "../../atoms/namespace";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const { Title, Paragraph } = Typography;
 
@@ -50,7 +52,15 @@ const PersonalityCard = ({
     const [state] = useAtom(createClaimMachineAtom);
     const { claimData } = state.context;
     const { personalities } = claimData;
+    const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
+    console.log("hrefBase: ", hrefBase);
+    const baseHref = hrefBase || "";
+    const nameSpaceHref =
+        nameSpace !== NameSpaceEnum.Main
+            ? `/${nameSpace}/personality/`
+            : "/personality/";
+
     const personalityFoundProps = isCreatingClaim
         ? {
               onClick: () => {
@@ -60,7 +70,7 @@ const PersonalityCard = ({
               },
           }
         : {
-              href: `${hrefBase || "/personality/"}${personality.slug}`,
+              href: `${baseHref}${nameSpaceHref}${personality.slug}`,
               onClick,
           };
 

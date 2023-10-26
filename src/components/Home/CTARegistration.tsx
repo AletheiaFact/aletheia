@@ -4,14 +4,20 @@ import CTARegistrationStyle from "./CTARegistration.style";
 import colors from "../../styles/colors";
 import CTAButton from "./CTAButton";
 import { ButtonType } from "../Button";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 function CTARegistration() {
     const { t } = useTranslation();
-
+    const [nameSpace] = useAtom(currentNameSpace);
     return (
         <CTARegistrationStyle
             style={{
-                backgroundColor: colors.bluePrimary,
+                backgroundColor:
+                    nameSpace === NameSpaceEnum.Main
+                        ? colors.bluePrimary
+                        : colors.blueSecondary,
                 textAlign: "center",
                 maxWidth: "100%",
                 display: "grid",

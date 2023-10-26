@@ -27,6 +27,7 @@ import lookupClaimReviews from "../mongo-pipelines/lookupClaimReviews";
 import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { CommentService } from "./comment/comment.service";
+import { NameSpaceEnum } from "auth/name-space/schemas/name-space.schema";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -99,6 +100,7 @@ export class ClaimReviewTaskService {
 
     async listAll(page, pageSize, order, value, filterUser) {
         const pipeline = this._buildPipeline(value, filterUser);
+        const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
         pipeline.push(
             { $sort: { _id: order === "asc" ? 1 : -1 } },
             { $skip: page * pageSize },
@@ -128,7 +130,10 @@ export class ClaimReviewTaskService {
                     [ContentModelEnum.Speech]: `${personalityPath}/claim/${claim?.slug}/sentence/${data_hash}`,
                 };
 
-                let reviewHref = contentModelPathMap[contentModel];
+                let reviewHref =
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}${contentModelPathMap[contentModel]}`
+                        : contentModelPathMap[contentModel];
 
                 const usersName = machine.context.reviewData.users.map(
                     (user) => {

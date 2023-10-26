@@ -13,7 +13,7 @@ import { useDispatch } from "react-redux";
 import actions from "../store/actions";
 import { useEffect } from "react";
 import { currentNameSpace } from "../atoms/namespace";
-import { NameSpaceEnum } from "../types/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const PersonalityPage: NextPage<{
     personality: any;

@@ -13,7 +13,7 @@ import DashboardView from "../components/Dashboard/DashboardView";
 import AdminTabNavigator from "../components/adminArea/AdminTabNavigator";
 import AdminScreens from "../components/adminArea/AdminScreens";
 import { currentNameSpace } from "../atoms/namespace";
-import { NameSpaceEnum } from "../types/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const Admin: NextPage<{ users: string; nameSpace: string }> = ({
     users,

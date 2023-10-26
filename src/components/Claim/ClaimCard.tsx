@@ -14,6 +14,9 @@ import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
 import { ContentModelEnum } from "../../types/enums";
 import { useAppSelector } from "../../store/store";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const { Paragraph } = Typography;
 
@@ -31,6 +34,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const review = claim?.stats?.reviews[0];
     const paragraphs = claim.content;
     const [claimContent, setClaimContent] = useState("");
+    const [nameSpace] = useAtom(currentNameSpace);
     const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
     const isDebate = claim?.contentModel === ContentModelEnum.Debate;
 
@@ -46,12 +50,23 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
         dispatch(actions.setSelectPersonality(personality));
     };
 
-    let href = personality.slug
-        ? `/personality/${personality.slug}/claim/${claim.slug}`
-        : `/claim/${claim._id}`;
+    let href =
+        nameSpace !== NameSpaceEnum.Main
+            ? `/${nameSpace}/claim/${claim._id}`
+            : `/claim/${claim._id}`;
+
+    if (personality.slug) {
+        href =
+            nameSpace !== NameSpaceEnum.Main
+                ? `/${nameSpace}/personality/${personality.slug}/claim/${claim.slug}`
+                : `/personality/${personality.slug}/claim/${claim.slug}`;
+    }
 
     if (isDebate) {
-        href = `/claim/${claim._id}/debate`;
+        href =
+            nameSpace !== NameSpaceEnum.Main
+                ? `/${nameSpace}/claim/${claim._id}/debate`
+                : `/claim/${claim._id}/debate`;
     }
 
     useEffect(() => {

@@ -4,16 +4,23 @@ import React from "react";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import { Stats } from "./Stats";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const HomeStats = ({ stats }) => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
+    const [nameSpace] = useAtom(currentNameSpace);
     const statsHeight = vw?.sm ? 66 : 86;
 
     return (
         <div
             style={{
-                backgroundColor: colors.bluePrimary,
+                backgroundColor:
+                    nameSpace === NameSpaceEnum.Main
+                        ? colors.bluePrimary
+                        : colors.blueSecondary,
                 color: colors.white,
                 width: vw?.sm ? "100%" : "88%",
                 justifyContent: "space-between",

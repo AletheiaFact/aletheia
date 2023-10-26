@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { NameSpace, NameSpaceEnum } from "../types/namespace";
+import { NameSpace, NameSpaceEnum } from "../types/Namespace";
 import { indexOfItemBeingEdited } from "./editDrawer";
 
 const currentNameSpace = atom<NameSpaceEnum>(NameSpaceEnum.Main);

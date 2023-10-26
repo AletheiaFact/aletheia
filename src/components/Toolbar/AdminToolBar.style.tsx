@@ -1,6 +1,7 @@
 import { AppBar } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../styles/colors";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const AdminToolBarStyle = styled(AppBar)`
     .toolbar {
@@ -28,7 +29,10 @@ const AdminToolBarStyle = styled(AppBar)`
         background: none;
         border: none;
         font-size: 16;
-        color: ${colors.bluePrimary};
+        color: ${({ namespace }) =>
+            namespace === NameSpaceEnum.Main
+                ? colors.bluePrimary
+                : colors.blueSecondary};
     }
 `;
 

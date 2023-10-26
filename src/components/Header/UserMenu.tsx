@@ -15,6 +15,9 @@ import LoginIcon from "@mui/icons-material/Login";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import UserMenuStyle from "./UserMenu.style";
+import { currentNameSpace } from "../../atoms/namespace";
+import { useAtom } from "jotai";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const menuSlotProps = {
     paper: {
@@ -46,6 +49,7 @@ const menuSlotProps = {
 };
 
 const UserMenu = ({ hasSession, user }) => {
+    const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
     const { t } = useTranslation();
     const router = useRouter();
@@ -57,9 +61,17 @@ const UserMenu = ({ hasSession, user }) => {
     const loginOrProfile = () => {
         setAnchorEl(null);
         if (router.pathname !== "/profile-page" && hasSession) {
-            router.push("profile");
+            router.push(
+                nameSpace !== NameSpaceEnum.Main
+                    ? "profile"
+                    : `${nameSpace}/profile`
+            );
         } else if (router.pathname !== "/login" && !hasSession) {
-            router.push("profile");
+            router.push(
+                nameSpace !== NameSpaceEnum.Main
+                    ? "profile"
+                    : `${nameSpace}/profile`
+            );
         }
     };
 
@@ -99,6 +111,7 @@ const UserMenu = ({ hasSession, user }) => {
                 open={open}
                 onClose={handleClose}
                 slotProps={menuSlotProps}
+                namespace={nameSpace}
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >

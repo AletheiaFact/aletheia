@@ -15,12 +15,16 @@ import Menu from "./Menu";
 import NotificationMenu from "../Notification/NotificationMenu";
 import userApi from "../../api/userApi";
 import { ory } from "../../lib/orysdk";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
     const { vw } = useAppSelector((state) => state);
     const [hasSession, setHasSession] = useState<boolean>(null);
     const [user, setUser] = useState(null);
+    const [nameSpace] = useAtom(currentNameSpace);
 
     useEffect(() => {
         ory.frontend
@@ -50,7 +54,7 @@ const HeaderContent = () => {
         >
             <Menu />
             <a
-                href="/"
+                href={nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "/"}
                 style={{
                     height: "56px",
                     display: "grid",

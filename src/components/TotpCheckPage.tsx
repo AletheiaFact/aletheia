@@ -3,10 +3,12 @@ import { useAtom } from "jotai";
 import { currentAuthentication, currentUserId } from "../atoms/currentUser";
 import userApi from "../api/userApi";
 import { useTranslation } from "next-i18next";
-import { userBeingEdited } from "../atoms/userEdit";
+import { currentNameSpace } from "../atoms/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const AalCheckPage = () => {
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const [aal] = useAtom(currentAuthentication);
     const [userId] = useAtom(currentUserId);
@@ -39,7 +41,7 @@ const AalCheckPage = () => {
         >
             <div>{t("checkAal:informationUpdated")}</div>
             <a
-                href="/"
+                href={nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "/"}
                 style={{
                     height: "60px",
                     fontSize: "1rem",

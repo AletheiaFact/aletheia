@@ -8,7 +8,7 @@ import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
-import { NameSpaceEnum } from "../types/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const HomePage: NextPage<{
     personalities;

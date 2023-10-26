@@ -6,10 +6,14 @@ import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
 import SearchCard from "./SearchCard";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const OverlaySearchResults = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const [nameSpace] = useAtom(currentNameSpace);
     const { results, searchName } = useAppSelector((state) => {
         return {
             results: [
@@ -30,16 +34,24 @@ const OverlaySearchResults = () => {
         dispatch(actions.closeResultsOverlay());
         switch (type) {
             case "personality":
-                router.push(`/personality/${personalitySlug}`);
+                router.push(
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/personality/${personalitySlug}`
+                        : `/personality/${personalitySlug}`
+                );
                 break;
             case "claim":
                 router.push(
-                    `/personality/${personalitySlug}/claim/${claimSlug}`
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/personality/${personalitySlug}/claim/${claimSlug}`
+                        : `/personality/${personalitySlug}/claim/${claimSlug}`
                 );
                 break;
             case "sentence":
                 router.push(
-                    `/personality/${personalitySlug}/claim/${claimSlug}/sentence/${data_hash}`
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/personality/${personalitySlug}/claim/${claimSlug}/sentence/${data_hash}`
+                        : `/personality/${personalitySlug}/claim/${claimSlug}/sentence/${data_hash}`
                 );
                 break;
         }

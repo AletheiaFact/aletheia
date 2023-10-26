@@ -4,9 +4,13 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import PersonalityMinimalCardStyle from "./PersonalityMinimalCard.style";
 import PersonalityCardAvatar from "./PersonalityCardAvatar";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const PersonalityMinimalCard = ({ personality }) => {
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
     return (
         <PersonalityMinimalCardStyle
             className="personality-card"
@@ -35,7 +39,11 @@ const PersonalityMinimalCard = ({ personality }) => {
                     </span>
                     <a
                         className="personality-profile"
-                        href={`/personality/${personality.slug}`}
+                        href={
+                            nameSpace !== NameSpaceEnum.Main
+                                ? `/${nameSpace}/personality/${personality.slug}`
+                                : `/personality/${personality.slug}`
+                        }
                     >
                         {t("personality:profile_button")}
                     </a>

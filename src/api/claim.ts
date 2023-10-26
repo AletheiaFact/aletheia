@@ -1,6 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
-import { NameSpaceEnum } from "../types/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,

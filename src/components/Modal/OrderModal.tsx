@@ -4,8 +4,11 @@ import React from "react";
 import AletheiaButton, { ButtonType } from "../Button";
 import OrderRadio from "../Radio/OrderRadio";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
+    const [nameSpace] = useAtom(currentNameSpace);
     const { t } = useTranslation();
 
     return (
@@ -13,6 +16,7 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
             className="ant-modal-content"
             open={open}
             footer={false}
+            namespace={nameSpace}
             onCancel={handleCancel}
             title={t("orderModal:title")}
         >

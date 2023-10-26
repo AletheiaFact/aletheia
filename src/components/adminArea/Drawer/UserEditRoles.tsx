@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
     FormControl,
     FormControlLabel,
@@ -9,7 +9,7 @@ import { Roles } from "../../../types/enums";
 import Label from "../../Label";
 import colors from "../../../styles/colors";
 import { currentUserRole } from "../../../atoms/currentUser";
-import { NameSpaceEnum } from "../../../types/namespace";
+import { NameSpaceEnum } from "../../../types/Namespace";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";

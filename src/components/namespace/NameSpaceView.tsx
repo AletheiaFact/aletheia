@@ -11,7 +11,7 @@ import { Button, Grid } from "@mui/material";
 import { useAtom } from "jotai";
 import { isEditDrawerOpen, startEditingItem } from "../../atoms/editDrawer";
 import { atomNameSpacesList } from "../../atoms/namespace";
-import { NameSpace } from "../../types/namespace";
+import { NameSpace } from "../../types/Namespace";
 
 const NameSpaceView = () => {
     const { t } = useTranslation();
