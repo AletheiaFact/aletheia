@@ -14,10 +14,16 @@ import type { BaseRequest } from "../types";
 import { ContentModelEnum } from "../types/enums";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 import { UtilService } from "../util";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 type ClaimMatchParameters = (
-    | { _id: string; isHidden?: boolean }
-    | { personalities: string; slug: string; isHidden?: boolean }
+    | { _id: string; isHidden?: boolean; nameSpace?: string }
+    | {
+          personalities: string;
+          slug: string;
+          isHidden?: boolean;
+          nameSpace?: string;
+      }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -255,9 +261,12 @@ export class ClaimService {
         }
     }
 
-    async getById(claimId) {
+    async getById(claimId, nameSpace = NameSpaceEnum.Main) {
         return this._getClaim(
-            this.util.getParamsBasedOnUserRole({ _id: claimId }, this.req)
+            this.util.getParamsBasedOnUserRole(
+                { _id: claimId, nameSpace },
+                this.req
+            )
         );
     }
 
@@ -267,10 +276,12 @@ export class ClaimService {
         revisionId = undefined,
         population = true
     ) {
+        const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
         const queryOptions = this.util.getParamsBasedOnUserRole(
             {
                 personalities: personalityId,
                 slug: claimSlug,
+                nameSpace,
             },
             this.req
         );

@@ -177,14 +177,15 @@ export class UsersController {
         const parsedUrl = parse(req.url, true);
         const user = await this.usersService.getById(req.user._id);
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/profile-page",
-                Object.assign(parsedUrl.query, { user })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/profile-page",
+            Object.assign(parsedUrl.query, {
+                user,
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 
     @IsPublic()

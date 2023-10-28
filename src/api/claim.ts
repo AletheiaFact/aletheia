@@ -4,7 +4,7 @@ import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
-    baseURL: `/api/claim`,
+    baseURL: `/api`,
 });
 
 interface FetchOptions {
@@ -30,7 +30,7 @@ const get = (options: FetchOptions) => {
     };
 
     return request
-        .get("/", { params })
+        .get("/claim", { params })
         .then((response) => {
             const { claims, totalPages, totalClaims } = response.data;
             if (options.fetchOnly) {
@@ -46,11 +46,14 @@ const get = (options: FetchOptions) => {
         });
 };
 
-const getById = (id, t, params = {}) => {
+const getById = (id, t, params = {}, nameSpace = NameSpaceEnum.Main) => {
     return request
-        .get(`${id}`, {
-            params,
-        })
+        .get(
+            nameSpace === NameSpaceEnum.Main
+                ? `/claim/${id}`
+                : `/${nameSpace}/claim/${id}`,
+            { params }
+        )
         .then((response) => {
             return response.data;
         })
@@ -61,7 +64,7 @@ const getById = (id, t, params = {}) => {
 
 const saveSpeech = (t, claim = {}) => {
     return request
-        .post("/", claim)
+        .post("/claim", claim)
         .then((response) => {
             const { title } = response.data;
             message.success(
@@ -85,7 +88,7 @@ const saveSpeech = (t, claim = {}) => {
 
 const saveImage = (t, claimImage = {}) => {
     return request
-        .post("/image", claimImage)
+        .post("/claim/image", claimImage)
         .then((response) => {
             const { title } = response.data;
             message.success(
@@ -105,7 +108,7 @@ const saveImage = (t, claimImage = {}) => {
 
 const saveDebate = (t, debate = {}) => {
     return request
-        .post("/debate", debate)
+        .post("/claim/debate", debate)
         .then((response) => {
             const { title } = response.data;
             message.success(
@@ -128,7 +131,7 @@ const updateDebate = (
     params: { content: string; personality: string; isLive: boolean }
 ) => {
     return request
-        .put(`/debate/${debateId}`, params)
+        .put(`/claim/debate/${debateId}`, params)
         .then((response) => {
             return response.data;
         })
@@ -148,7 +151,7 @@ const updateDebate = (
 
 const deleteClaim = (id: string, t: any) => {
     return request
-        .delete(`${id}`)
+        .delete(`/claim/${id}`)
         .then(() => {
             message.success(t("claim:deleteSuccess"));
         })
@@ -166,7 +169,7 @@ const updateClaimHiddenStatus = (
     description: string
 ) => {
     return request
-        .put(`/hidden/${id}`, {
+        .put(`/claim/hidden/${id}`, {
             isHidden,
             recaptcha,
             description,

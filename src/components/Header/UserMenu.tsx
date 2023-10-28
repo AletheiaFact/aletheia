@@ -63,14 +63,14 @@ const UserMenu = ({ hasSession, user }) => {
         if (router.pathname !== "/profile-page" && hasSession) {
             router.push(
                 nameSpace !== NameSpaceEnum.Main
-                    ? "profile"
-                    : `${nameSpace}/profile`
+                    ? `${nameSpace}/profile`
+                    : "profile"
             );
         } else if (router.pathname !== "/login" && !hasSession) {
             router.push(
                 nameSpace !== NameSpaceEnum.Main
-                    ? "profile"
-                    : `${nameSpace}/profile`
+                    ? `${nameSpace}/profile`
+                    : "profile"
             );
         }
     };
@@ -82,7 +82,13 @@ const UserMenu = ({ hasSession, user }) => {
     const onLogout = () => {
         if (!isLoading) {
             setIsLoading(true);
-            CreateLogoutHandler().then(() => router.reload());
+            CreateLogoutHandler().then(() => {
+                if (nameSpace !== NameSpaceEnum.Main) {
+                    router.push("/");
+                } else {
+                    router.reload();
+                }
+            });
         }
         setAnchorEl(null);
     };

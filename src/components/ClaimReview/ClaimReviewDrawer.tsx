@@ -47,19 +47,18 @@ const ClaimReviewDrawer = () => {
 
     const isContentImage = claim?.contentModel === ContentModelEnum.Image;
 
-    let href =
-        nameSpace !== NameSpaceEnum.Main
-            ? `/${nameSpace}/claim/${claim?._id}`
-            : `/claim/${claim?._id}`;
+    const getHref = () => {
+        let href = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
+        if (personality) {
+            href += `/personality/${personality.slug}/claim/${claim.slug}`;
+        } else {
+            href += `/claim/${claim?._id}`;
+        }
 
-    if (personality) {
-        href =
-            nameSpace !== NameSpaceEnum.Main
-                ? `${nameSpace}/personality/${personality?.slug}/claim/${claim?.slug}`
-                : `/personality/${personality?.slug}/claim/${claim?.slug}`;
-    }
-
-    href += isContentImage ? `/image/${data_hash}` : `/sentence/${data_hash}`;
+        return (href += isContentImage
+            ? `/image/${data_hash}`
+            : `/sentence/${data_hash}`);
+    };
 
     return (
         <LargeDrawer
@@ -90,7 +89,7 @@ const ClaimReviewDrawer = () => {
                             </Col>
                             <Col>
                                 <AletheiaButton
-                                    href={href}
+                                    href={getHref()}
                                     onClick={() => setIsLoading(true)}
                                     type={ButtonType.gray}
                                     style={{

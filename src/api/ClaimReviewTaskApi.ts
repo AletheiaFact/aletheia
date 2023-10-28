@@ -1,9 +1,10 @@
 import { message } from "antd";
 import axios from "axios";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
-    baseURL: `/api/claimreviewtask`,
+    baseURL: `/api`,
 });
 
 const getClaimReviewTasks = (options) => {
@@ -13,9 +14,10 @@ const getClaimReviewTasks = (options) => {
         pageSize: options.pageSize ? options.pageSize : 5,
         value: options.value,
         filterUser: options.filterUser ? true : null,
+        nameSpace: options.nameSpace ? options.nameSpace : NameSpaceEnum.Main,
     };
     return request
-        .get(`/`, { params })
+        .get(`/claimreviewtask`, { params })
         .then((response) => {
             const { tasks, totalPages, totalTasks } = response.data;
 
@@ -32,7 +34,7 @@ const getClaimReviewTasks = (options) => {
 
 const getMachineByDataHash = (params) => {
     return request
-        .get(`/hash/${params}`)
+        .get(`/claimreviewtask/hash/${params}`)
         .then((response) => {
             return response.data.machine;
         })
@@ -41,9 +43,14 @@ const getMachineByDataHash = (params) => {
         });
 };
 
-const createClaimReviewTask = (params, t, type) => {
+const createClaimReviewTask = (params, t, type, nameSpace) => {
     return request
-        .post("/", { ...params })
+        .post(
+            nameSpace !== NameSpaceEnum.Main
+                ? `/${nameSpace}/claimreviewtask`
+                : "/claimreviewtask",
+            { ...params }
+        )
         .then((response) => {
             message.success(t(`claimReviewTask:${type}_SUCCESS`));
             return response.data;
@@ -56,7 +63,7 @@ const createClaimReviewTask = (params, t, type) => {
 
 const autoSaveDraft = (params, t) => {
     return request
-        .put(`/${params.data_hash}`, { ...params })
+        .put(`/claimreviewtask/${params.data_hash}`, { ...params })
         .then((response) => {
             message.success(t(`claimReviewTask:SAVE_DRAFT_SUCCESS`));
             return response.data;
@@ -68,7 +75,7 @@ const autoSaveDraft = (params, t) => {
 
 const getEditorContentObject = (params) => {
     return request
-        .get(`/editor-content/${params}`)
+        .get(`/claimreviewtask/editor-content/${params}`)
         .then((response) => {
             return response.data;
         })
@@ -79,7 +86,7 @@ const getEditorContentObject = (params) => {
 
 const addComment = (hash, comment) => {
     return request
-        .put(`/add-comment/${hash}`, { comment })
+        .put(`/claimreviewtask/add-comment/${hash}`, { comment })
         .then((response) => {
             return response.data;
         })
@@ -90,7 +97,7 @@ const addComment = (hash, comment) => {
 
 const deleteComment = (hash, commentId) => {
     return request
-        .put(`/delete-comment/${hash}`, { commentId })
+        .put(`/claimreviewtask/delete-comment/${hash}`, { commentId })
         .then((response) => {
             return response.data;
         })

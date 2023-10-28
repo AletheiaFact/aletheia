@@ -1,6 +1,7 @@
 import axios from "axios";
 import { message } from "antd";
 import { ActionTypes } from "../store/types";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const baseUrl = `/api/personality`;
 
@@ -14,6 +15,7 @@ interface FetchOptions {
     i18n?: { languages?: any };
     headers?: { [key: string]: string };
     isHidden?: boolean;
+    nameSpace?: string;
 }
 
 const getPersonalities = (options: FetchOptions, dispatch) => {
@@ -25,6 +27,7 @@ const getPersonalities = (options: FetchOptions, dispatch) => {
         withSuggestions: options.withSuggestions,
         language: options?.i18n?.languages[0] || "pt",
         isHidden: options?.isHidden || false,
+        nameSpace: options?.nameSpace || NameSpaceEnum.Main,
     };
     const headers = options?.headers || {};
 

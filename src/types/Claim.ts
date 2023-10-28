@@ -1,5 +1,6 @@
 import { ContentModelEnum } from "./enums";
 import { Image } from "./Image";
+import { NameSpaceEnum } from "./Namespace";
 import { Personality } from "./Personality";
 
 export type Claim = {
@@ -10,4 +11,5 @@ export type Claim = {
     sources?: string[];
     personalities?: Personality[];
     recaptcha?: string;
+    nameSpace?: NameSpaceEnum;
 };

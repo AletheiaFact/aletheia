@@ -83,8 +83,8 @@ const DebateGrid = ({ debates }) => {
                                     <Button
                                         href={
                                             nameSpace !== NameSpaceEnum.Main
-                                                ? `/claim/${debateClaim.claimId}/debate`
-                                                : `/${nameSpace}/claim/${debateClaim.claimId}/debate`
+                                                ? `/${nameSpace}/claim/${debateClaim.claimId}/debate`
+                                                : `/claim/${debateClaim.claimId}/debate`
                                         }
                                     >
                                         <span style={{ marginTop: 4 }}>

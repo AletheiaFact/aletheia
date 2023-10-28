@@ -50,11 +50,11 @@ const PersonalityCard = ({
 }: PersonalityCardProps) => {
     const isCreatingClaim = selectPersonality !== null;
     const [state] = useAtom(createClaimMachineAtom);
-    const { claimData } = state.context;
+    const { claimData } = state?.context;
     const { personalities } = claimData;
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
-    console.log("hrefBase: ", hrefBase);
+
     const baseHref = hrefBase || "";
     const nameSpaceHref =
         nameSpace !== NameSpaceEnum.Main
@@ -70,7 +70,7 @@ const PersonalityCard = ({
               },
           }
         : {
-              href: `${baseHref}${nameSpaceHref}${personality.slug}`,
+              href: `${baseHref || nameSpaceHref}${personality.slug}`,
               onClick,
           };
 

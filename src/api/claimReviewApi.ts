@@ -1,5 +1,6 @@
 import { message } from "antd";
 import axios from "axios";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
@@ -12,6 +13,7 @@ interface FetchOptions {
     pageSize?: number;
     isHidden?: boolean;
     latest?: boolean;
+    nameSpace?: NameSpaceEnum;
 }
 
 const get = (options: FetchOptions = {}) => {
@@ -24,7 +26,12 @@ const get = (options: FetchOptions = {}) => {
     };
 
     return request
-        .get("/review", { params })
+        .get(
+            options.nameSpace === NameSpaceEnum.Main
+                ? `/review`
+                : `/${options.nameSpace}/review`,
+            { params }
+        )
         .then((response) => {
             const { totalPages, totalReviews, reviews } = response.data;
 

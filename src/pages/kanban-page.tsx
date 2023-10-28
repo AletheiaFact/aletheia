@@ -8,13 +8,19 @@ import Seo from "../components/Seo";
 import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
+import { useSetAtom } from "jotai";
+import { currentNameSpace } from "../atoms/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const KanbanPage: NextPage<{
     sitekey;
     enableCollaborativeEditor;
     websocketUrl: string;
+    nameSpace: NameSpaceEnum;
 }> = (props) => {
     const dispatch = useDispatch();
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(props.nameSpace);
     dispatch(actions.setSitekey(props.sitekey));
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch({
@@ -43,6 +49,7 @@ export async function getServerSideProps({ locale, locales, req, query }) {
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             websocketUrl: query.websocketUrl,
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

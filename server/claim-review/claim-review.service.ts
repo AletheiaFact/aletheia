@@ -18,7 +18,7 @@ import { ContentModelEnum } from "../types/enums";
 import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";
 import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
-import { NameSpaceEnum } from "auth/name-space/schemas/name-space.schema";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -52,6 +52,8 @@ export class ClaimReviewService {
                 $match: {
                     "claim.isHidden": query.isHidden,
                     "claim.isDeleted": false,
+                    "claim.nameSpace":
+                        this.req.params.namespace || NameSpaceEnum.Main,
                     "personality.isDeleted": false,
                 },
             }
@@ -90,6 +92,8 @@ export class ClaimReviewService {
     }
 
     agreggateClassification(match: any) {
+        const nameSpace = this.req.params.namespace || this.req.query.nameSpace;
+
         return this.ClaimReviewModel.aggregate([
             { $match: match },
             {
@@ -102,7 +106,11 @@ export class ClaimReviewService {
             },
             lookupClaims(TargetModel.ClaimReview),
             {
-                $match: { "claim.isHidden": false, "claim.isDeleted": false },
+                $match: {
+                    "claim.isHidden": false,
+                    "claim.isDeleted": false,
+                    "claim.nameSpace": nameSpace || NameSpaceEnum.Main,
+                },
             },
             { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
@@ -122,6 +130,8 @@ export class ClaimReviewService {
                     "personality.isDeleted": false,
                     "claim.isHidden": query.isHidden,
                     "claim.isDeleted": false,
+                    "claim.nameSpace":
+                        this.req.params.namespace || NameSpaceEnum.Main,
                 },
             }
         );

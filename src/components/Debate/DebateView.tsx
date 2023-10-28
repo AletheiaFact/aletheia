@@ -13,6 +13,7 @@ import DebateHeader from "./DebateHeader";
 import DebateTimelineWrapper from "./DebateTimelineWrapper";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const DebateView = ({ claim }) => {
     const debate = claim?.content;
@@ -20,14 +21,17 @@ const DebateView = ({ claim }) => {
     const speeches = debate.content;
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const dispatch = useDispatch();
+    const [nameSpace] = useAtom(currentNameSpace);
     dispatch(actions.setSelectClaim(claim));
 
     // the new debate data will in the callbackResult of the state
     const updateTimeline = useCallback(() => {
-        return claimApi.getById(claim?._id, t).then((debateClaim) => {
-            return debateClaim;
-        });
-    }, [claim?._id, t]);
+        return claimApi
+            .getById(claim?._id, t, {}, nameSpace)
+            .then((debateClaim) => {
+                return debateClaim;
+            });
+    }, [claim?._id, nameSpace, t]);
 
     const timerConfig = {
         stopped: !debate.isLive,
@@ -39,7 +43,10 @@ const DebateView = ({ claim }) => {
         <>
             <CallbackTimerProvider
                 //@ts-ignore
-                initialValues={[[callbackTimerInitialConfig, timerConfig]]}
+                initialValues={[
+                    [callbackTimerInitialConfig, timerConfig],
+                    [currentNameSpace, nameSpace],
+                ]}
             >
                 <Row
                     style={{

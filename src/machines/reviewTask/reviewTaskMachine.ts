@@ -114,6 +114,7 @@ export const transitionHandler = (state) => {
         setCurrentFormAndNextEvents,
         resetIsLoading,
         currentUserId,
+        nameSpace,
     } = state.event;
     const event = state.event.type;
 
@@ -138,7 +139,8 @@ export const transitionHandler = (state) => {
                 recaptcha: recaptchaString,
             },
             t,
-            event
+            event,
+            nameSpace
         )
             .then(() => {
                 return event === Events.goback

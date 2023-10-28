@@ -11,18 +11,21 @@ import { useDispatch } from "react-redux";
 import { ContentModelEnum } from "../../types/enums";
 import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const { Text, Paragraph } = Typography;
 
 const KanbanCard = ({ reviewTask }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const [nameSpace] = useAtom(currentNameSpace);
     const goToClaimReview = () => {
         dispatch(actions.setSelectClaim(null));
         dispatch(actions.setSelectPersonality(null));
         dispatch(actions.setSelectContent(null));
         Promise.all([
-            claimApi.getById(reviewTask.claimId, t, {}),
+            claimApi.getById(reviewTask.claimId, t, {}, nameSpace),
             personalityApy.getPersonality(reviewTask.personalityId, {}, t),
         ]).then(([claim, personality]) => {
             dispatch(actions.setSelectClaim(claim));

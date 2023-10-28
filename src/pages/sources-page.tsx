@@ -5,9 +5,17 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import ClaimSourceList from "../components/Claim/ClaimSourceList";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
+import { NameSpaceEnum } from "../types/Namespace";
+import { currentNameSpace } from "../atoms/namespace";
+import { useSetAtom } from "jotai";
 
-const ClaimSourcePage: NextPage<{ targetId }> = ({ targetId }) => {
+const ClaimSourcePage: NextPage<{ targetId; nameSpace }> = ({
+    targetId,
+    nameSpace,
+}) => {
     const { t } = useTranslation();
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(nameSpace);
     return (
         <>
             <Seo
@@ -28,6 +36,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
             targetId: JSON.parse(JSON.stringify(query.targetId)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

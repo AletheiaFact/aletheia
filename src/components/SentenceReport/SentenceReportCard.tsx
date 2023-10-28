@@ -10,6 +10,9 @@ import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import SentenceReportCardStyle from "./SentenceReportCard.style";
 import SentenceReportSummary from "./SentenceReportSummary";
 import AletheiaAlert from "../AletheiaAlert";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const { Title, Paragraph } = Typography;
 
@@ -28,25 +31,46 @@ const SentenceReportCard = ({
 }) => {
     const { t } = useTranslation();
     const isImage = claim?.contentModel === ContentModelEnum.Image;
+    const [nameSpace] = useAtom(currentNameSpace);
+
+    const generateContentPath = (nameSpace, personality, claim) => {
+        if (claim?.contentModel === ContentModelEnum.Speech) {
+            return nameSpace !== NameSpaceEnum.Main
+                ? `/${nameSpace}/personality/${personality?.slug}/claim/${claim?.slug}`
+                : `/personality/${personality?.slug}/claim/${claim?.slug}`;
+        } else if (isImage) {
+            if (personality) {
+                return nameSpace !== NameSpaceEnum.Main
+                    ? `/${nameSpace}/personality/${personality.slug}/claim/${claim?.slug}`
+                    : `/personality/${personality.slug}/claim/${claim?.slug}`;
+            } else {
+                return nameSpace !== NameSpaceEnum.Main
+                    ? `/${nameSpace}/claim/${claim?._id}`
+                    : `/claim/${claim?._id}`;
+            }
+        } else if (claim?.contentModel === ContentModelEnum.Debate) {
+            return nameSpace !== NameSpaceEnum.Main
+                ? `/${nameSpace}/claim/${claim?._id}/debate`
+                : `/claim/${claim?._id}/debate`;
+        }
+    };
 
     const contentProps = {
         [ContentModelEnum.Speech]: {
             linkText: "claim:cardLinkToFullText",
-            contentPath: `/personality/${personality?.slug}/claim/${claim?.slug}`,
+            contentPath: generateContentPath(nameSpace, personality, claim),
             title: `"(...) ${content.content}"`,
             speechTypeTranslation: "claim:typeSpeech",
         },
         [ContentModelEnum.Image]: {
             linkText: "claim:cardLinkToImage",
-            contentPath: personality
-                ? `/personality/${personality?.slug}/claim/${claim?.slug}`
-                : `/claim/${claim?._id}`,
+            contentPath: generateContentPath(nameSpace, personality, claim),
             title: claim.title,
             speechTypeTranslation: "",
         },
         [ContentModelEnum.Debate]: {
             linkText: "claim:cardLinkToDebate",
-            contentPath: `/claim/${claim?._id}/debate`,
+            contentPath: generateContentPath(nameSpace, personality, claim),
             title: `"(...) ${content.content}"`,
             speechTypeTranslation: "claim:typeDebate",
         },

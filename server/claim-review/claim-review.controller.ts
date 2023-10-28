@@ -22,7 +22,7 @@ import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
 
-@Controller()
+@Controller("api/:namespace?")
 export class ClaimReviewController {
     constructor(
         private claimReviewService: ClaimReviewService,
@@ -32,7 +32,7 @@ export class ClaimReviewController {
 
     @IsPublic()
     @ApiTags("claim-review")
-    @Get("api/review")
+    @Get("/review")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     listAll(@Query() getClaimReviewsDto: GetClaimReviewsDTO) {
         const {
@@ -66,7 +66,7 @@ export class ClaimReviewController {
     }
 
     @ApiTags("claim-review")
-    @Put("api/review/:id")
+    @Put("/review/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     async update(@Param("id") reviewId, @Body() body) {
@@ -84,7 +84,7 @@ export class ClaimReviewController {
     }
 
     @ApiTags("claim-review")
-    @Delete("api/review/:id")
+    @Delete("/review/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     async delete(@Param("id") reviewId) {
@@ -93,7 +93,7 @@ export class ClaimReviewController {
 
     @IsPublic()
     @ApiTags("claim-review")
-    @Get("api/review/:data_hash")
+    @Get("/review/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async getReviewByDataHash(@Param("data_hash") data_hash) {
         const review = await this.claimReviewService.getReviewByDataHash(

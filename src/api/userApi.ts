@@ -47,6 +47,7 @@ const getUsers = (
     params: {
         searchName: string;
         filterOutRoles?: Roles[];
+        nameSpaceSlug: string;
     },
     t
 ) => {

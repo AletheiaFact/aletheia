@@ -50,6 +50,7 @@ export class HomeController {
             }
         );
 
+        //TODO: Get live debates from namespaces
         const liveDebates = await this.debateService.listAll(0, 6, "asc", {
             isLive: true,
         });

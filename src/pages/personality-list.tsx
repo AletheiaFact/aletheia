@@ -3,8 +3,15 @@ import PersonalityList from "../components/Personality/PersonalityList";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetLocale } from "../utils/GetLocale";
 import AffixButton from "../components/AffixButton/AffixButton";
+import { useSetAtom } from "jotai";
+import { currentNameSpace } from "../atoms/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
-const PersonalityListPage: NextPage = () => {
+const PersonalityListPage: NextPage<{ nameSpace: NameSpaceEnum }> = ({
+    nameSpace,
+}) => {
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(nameSpace);
     return (
         <>
             <PersonalityList />
@@ -13,11 +20,12 @@ const PersonalityListPage: NextPage = () => {
     );
 };
 
-export async function getServerSideProps({ locale, locales, req }) {
+export async function getServerSideProps({ query, locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

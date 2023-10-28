@@ -17,7 +17,7 @@ export type FormField = {
 
 // Use to add properties specific to one type of field
 type FormFieldExtraProps = {
-    dataLoader?: (value: string, t: any) => Promise<any>;
+    dataLoader?: (value: string, t: any, nameSpace: string) => Promise<any>;
     mode?: string;
     preloadedOptions?: string[];
 };
