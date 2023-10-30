@@ -26,7 +26,7 @@ export class NameSpace {
     })
     users: User[];
 
-    // logo, description
+    // TODO: Add logo and description field
 }
 
 export const NameSpaceSchema = SchemaFactory.createForClass(NameSpace);

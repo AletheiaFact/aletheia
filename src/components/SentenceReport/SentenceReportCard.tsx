@@ -34,21 +34,27 @@ const SentenceReportCard = ({
     const [nameSpace] = useAtom(currentNameSpace);
 
     const generateContentPath = (nameSpace, personality, claim) => {
-        if (claim?.contentModel === ContentModelEnum.Speech) {
+        const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
+        const isDebate = claim?.contentModel === ContentModelEnum.Debate;
+
+        if (isSpeech) {
             return nameSpace !== NameSpaceEnum.Main
                 ? `/${nameSpace}/personality/${personality?.slug}/claim/${claim?.slug}`
                 : `/personality/${personality?.slug}/claim/${claim?.slug}`;
-        } else if (isImage) {
+        }
+
+        if (isImage) {
             if (personality) {
                 return nameSpace !== NameSpaceEnum.Main
                     ? `/${nameSpace}/personality/${personality.slug}/claim/${claim?.slug}`
                     : `/personality/${personality.slug}/claim/${claim?.slug}`;
-            } else {
-                return nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/claim/${claim?._id}`
-                    : `/claim/${claim?._id}`;
             }
-        } else if (claim?.contentModel === ContentModelEnum.Debate) {
+            return nameSpace !== NameSpaceEnum.Main
+                ? `/${nameSpace}/claim/${claim?._id}`
+                : `/claim/${claim?._id}`;
+        }
+
+        if (isDebate) {
             return nameSpace !== NameSpaceEnum.Main
                 ? `/${nameSpace}/claim/${claim?._id}/debate`
                 : `/claim/${claim?._id}/debate`;

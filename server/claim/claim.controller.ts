@@ -561,11 +561,11 @@ export class ClaimController {
                 lower: true,
                 strict: true,
             });
-            return res.redirect(
+            const redirectUrl =
                 namespace !== NameSpaceEnum.Main
                     ? `/${namespace}/personality/${personalitySlug}/claim/${claim.slug}`
-                    : `/personality/${personalitySlug}/claim/${claim.slug}`
-            );
+                    : `/personality/${personalitySlug}/claim/${claim.slug}`;
+            return res.redirect(redirectUrl);
         }
         await this.viewService.getNextServer().render(
             req,
@@ -691,17 +691,15 @@ export class ClaimController {
             false
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/sources-page",
-                Object.assign(parsedUrl.query, {
-                    targetId: claim._id,
-                    nameSpace: namespace,
-                })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/sources-page",
+            Object.assign(parsedUrl.query, {
+                targetId: claim._id,
+                nameSpace: namespace,
+            })
+        );
     }
 
     @IsPublic()
