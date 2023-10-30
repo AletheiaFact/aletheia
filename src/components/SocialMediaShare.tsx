@@ -16,12 +16,15 @@ import SocialMediaShareStyle from "./SocialMediaShare.style";
 import { trackUmamiEvent } from "../lib/umami";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../atoms/currentUser";
+import { NameSpaceEnum } from "../types/Namespace";
+import { currentNameSpace } from "../atoms/namespace";
 
 const { Title } = Typography;
 
 const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
     const { t } = useTranslation();
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [nameSpace] = useAtom(currentNameSpace);
 
     quote = quote || t("share:quote");
 
@@ -92,7 +95,12 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             <FacebookIcon
                                 size={33}
                                 round
-                                bgStyle={{ fill: colors.bluePrimary }}
+                                bgStyle={{
+                                    fill:
+                                        nameSpace === NameSpaceEnum.Main
+                                            ? colors.bluePrimary
+                                            : colors.blueSecondary,
+                                }}
                             />
                         </FacebookShareButton>
                     </li>
@@ -119,7 +127,12 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             <TwitterIcon
                                 size={33}
                                 round
-                                bgStyle={{ fill: colors.bluePrimary }}
+                                bgStyle={{
+                                    fill:
+                                        nameSpace === NameSpaceEnum.Main
+                                            ? colors.bluePrimary
+                                            : colors.blueSecondary,
+                                }}
                             />
                         </TwitterShareButton>
                     </li>
@@ -137,7 +150,12 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             <WhatsappIcon
                                 size={33}
                                 round
-                                bgStyle={{ fill: colors.bluePrimary }}
+                                bgStyle={{
+                                    fill:
+                                        nameSpace === NameSpaceEnum.Main
+                                            ? colors.bluePrimary
+                                            : colors.blueSecondary,
+                                }}
                             />
                         </WhatsappShareButton>
                     </li>
@@ -155,7 +173,12 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                             <TelegramIcon
                                 size={33}
                                 round
-                                bgStyle={{ fill: colors.bluePrimary }}
+                                bgStyle={{
+                                    fill:
+                                        nameSpace === NameSpaceEnum.Main
+                                            ? colors.bluePrimary
+                                            : colors.blueSecondary,
+                                }}
                             />
                         </TelegramShareButton>
                     </li>

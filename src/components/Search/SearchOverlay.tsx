@@ -1,6 +1,6 @@
 import { LeftCircleFilled } from "@ant-design/icons";
 import { Col } from "antd";
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
@@ -10,6 +10,9 @@ import colors from "../../styles/colors";
 import { queries } from "../../styles/mediaQueries";
 import AletheiaButton from "../Button";
 import OverlaySearchInput from "./OverlaySearchInput";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const OverlayCol = styled(Col)`
     .ant-input-lg {
@@ -43,7 +46,10 @@ const OverlayCol = styled(Col)`
     }
 
     .overlay {
-        background-color: ${colors.bluePrimary};
+        background-color: ${({ namespace }) =>
+            namespace === NameSpaceEnum.Main
+                ? colors.bluePrimary
+                : colors.blueSecondary};
         position: fixed;
         z-index: 3;
         width: 100vw;
@@ -56,15 +62,21 @@ const OverlayCol = styled(Col)`
 
 const SearchOverlay = () => {
     const dispatch = useDispatch();
+    const [nameSpace] = useAtom(currentNameSpace);
     const { vw, isOpen } = useAppSelector((state) => {
         return {
             vw: state.vw,
             isOpen: state?.search?.overlayVisible || false,
         };
     });
+    const [nameSpaceProp, setNameSpaceProp] = useState(NameSpaceEnum.Main);
+
+    useLayoutEffect(() => {
+        setNameSpaceProp(nameSpace);
+    }, [nameSpace]);
 
     return (
-        <OverlayCol xs={1} sm={8} md={10}>
+        <OverlayCol namespace={nameSpaceProp} xs={1} sm={8} md={10}>
             <div
                 className={`input-container ${
                     vw?.xs && isOpen ? "overlay" : ""

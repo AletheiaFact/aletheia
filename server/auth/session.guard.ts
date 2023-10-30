@@ -41,7 +41,7 @@ export class SessionGuard implements CanActivate {
                     status: session?.identity.state,
                 };
                 const overridePublicRoutes =
-                    session?.identity?.traits?.role === Roles.Regular &&
+                    session?.identity?.traits?.role.main === Roles.Regular &&
                     this.configService.get<string>("override_public_routes");
 
                 if (overridePublicRoutes) {

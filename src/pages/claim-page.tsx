@@ -9,6 +9,9 @@ import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
+import { NameSpaceEnum } from "../types/Namespace";
+import { useSetAtom } from "jotai";
+import { currentNameSpace } from "../atoms/namespace";
 
 export interface ClaimPageProps {
     personality: any;
@@ -18,12 +21,15 @@ export interface ClaimPageProps {
     enableCollaborativeEditor: boolean;
     hideDescriptions: object;
     websocketUrl: string;
+    nameSpace: NameSpaceEnum;
 }
 
 const ClaimPage: NextPage<ClaimPageProps> = (props) => {
     const { personality, claim, sitekey, enableCollaborativeEditor } = props;
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    setCurrentNameSpace(props.nameSpace);
 
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
@@ -79,6 +85,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             websocketUrl: query.websocketUrl,
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

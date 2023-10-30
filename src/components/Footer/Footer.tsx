@@ -8,16 +8,23 @@ import colors from "../../styles/colors";
 import AletheiaSocialMediaFooter from "./AletheiaSocialMediaFooter";
 import FooterInfo from "./FooterInfo";
 import AletheiaInfo from "./AletheiaInfo";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const Footer = () => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
+    const [nameSpace] = useAtom(currentNameSpace);
 
     return (
         <Layout.Footer
             style={{
                 textAlign: "center",
-                background: colors.bluePrimary,
+                background:
+                    nameSpace === NameSpaceEnum.Main
+                        ? colors.bluePrimary
+                        : colors.blueSecondary,
                 color: colors.white,
                 padding: "32px",
             }}

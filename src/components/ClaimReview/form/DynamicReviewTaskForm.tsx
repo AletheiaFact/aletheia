@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
 import WarningModal from "../../Modal/WarningModal";
+import { currentNameSpace } from "../../../atoms/namespace";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -44,7 +45,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     );
 
     const { t } = useTranslation();
-
+    const [nameSpace] = useAtom(currentNameSpace);
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
     const [isLoading, setIsLoading] = useState({});
@@ -154,6 +155,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             setCurrentFormAndNextEvents,
             resetIsLoading,
             currentUserId: userId,
+            nameSpace,
         });
         setRecaptchaString("");
         recaptchaRef.current?.resetRecaptcha();

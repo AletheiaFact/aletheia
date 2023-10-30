@@ -15,6 +15,8 @@ import AletheiaButton, { ButtonType } from "../Button";
 import { AletheiaModal } from "../Modal/AletheiaModal.style";
 import PulseAnimation from "../PulseAnimation";
 import Fab from "./Fab";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { currentNameSpace } from "../../atoms/namespace";
 interface AffixButtonProps {
     personalitySlug?: string;
 }
@@ -25,6 +27,7 @@ interface AffixButtonProps {
 const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userRole] = useAtom(currentUserRole);
+    const [nameSpace] = useAtom(currentNameSpace);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isOptionsVisible, setIsOptionsVisible] = useState(false);
     const { t } = useTranslation();
@@ -32,18 +35,26 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
         {
             icon: <UserAddOutlined />,
             tooltip: t("affix:affixButtonCreatePersonality"),
-            href: `/personality/search`,
+            href:
+                nameSpace !== NameSpaceEnum.Main
+                    ? `/${nameSpace}/personality/search`
+                    : `/personality/search`,
             dataCy: "testFloatButtonAddPersonality",
         },
     ];
+
+    const hrefPersonalitySlug = personalitySlug
+        ? `?personality=${personalitySlug}`
+        : "";
 
     userRole !== "regular" &&
         actions.push({
             icon: <FileAddFilled />,
             tooltip: t("affix:affixButtonCreateClaim"),
-            href: `/claim/create${
-                personalitySlug ? `?personality=${personalitySlug}` : ""
-            }`,
+            href:
+                nameSpace !== NameSpaceEnum.Main
+                    ? `/${nameSpace}/claim/create${hrefPersonalitySlug}`
+                    : `/claim/create${hrefPersonalitySlug}`,
             dataCy: "testFloatButtonAddClaim",
         });
 
@@ -89,7 +100,11 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 <PulseAnimation
                     pulse={isModalVisible}
                     startColor={colors.blueSecondary}
-                    endColor={colors.bluePrimary}
+                    endColor={
+                        nameSpace === NameSpaceEnum.Main
+                            ? colors.bluePrimary
+                            : colors.blueSecondary
+                    }
                     startSize={0}
                     endSize={65}
                     style={{

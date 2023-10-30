@@ -1,6 +1,7 @@
 import { Menu } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../styles/colors";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const UserMenuStyle = styled(Menu)`
     .menu-header {
@@ -29,7 +30,10 @@ const UserMenuStyle = styled(Menu)`
         width: 24px;
         height: 24px;
         background: transparent;
-        color: ${colors.bluePrimary};
+        color: ${({ namespace }) =>
+            namespace === NameSpaceEnum.Main
+                ? colors.bluePrimary
+                : colors.blueSecondary};
     }
 
     .select-menu-item {

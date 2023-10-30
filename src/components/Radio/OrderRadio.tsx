@@ -3,18 +3,28 @@ import { Radio, Space } from "antd";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const RadioInput = styled(Radio)`
     margin: 10px 0 0 0;
 
     .ant-radio-checked .ant-radio-inner {
-        border: 2px solid ${colors.bluePrimary};
+        border: 2px solid
+            ${({ namespace }) =>
+                namespace === NameSpaceEnum.Main
+                    ? colors.bluePrimary
+                    : colors.blueSecondary};
         width: 25px;
         height: 25px;
     }
 
     .ant-radio-checked .ant-radio-inner:after {
-        background-color: ${colors.bluePrimary};
+        background-color: ${({ namespace }) =>
+            namespace === NameSpaceEnum.Main
+                ? colors.bluePrimary
+                : colors.blueSecondary};
         position: relative;
         top: 3px;
         left: 3px;
@@ -41,13 +51,18 @@ interface OrderRadioProps {
 
 const OrderRadio = ({ value, setValue }: OrderRadioProps) => {
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const onChangeRadio = (e) => {
         setValue(e.target.value);
     };
 
     return (
-        <RadioInput.Group onChange={onChangeRadio} value={value}>
+        <RadioInput.Group
+            namespace={nameSpace}
+            onChange={onChangeRadio}
+            value={value}
+        >
             <Space style={{ marginTop: 10 }} direction="vertical">
                 <RadioInput value="asc">
                     <span

@@ -18,6 +18,7 @@ import { ContentModelEnum } from "../types/enums";
 import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";
 import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -51,6 +52,10 @@ export class ClaimReviewService {
                 $match: {
                     "claim.isHidden": query.isHidden,
                     "claim.isDeleted": false,
+                    "claim.nameSpace":
+                        this.req.params.namespace ||
+                        this.req.query.nameSpace ||
+                        NameSpaceEnum.Main,
                     "personality.isDeleted": false,
                 },
             }
@@ -89,6 +94,8 @@ export class ClaimReviewService {
     }
 
     agreggateClassification(match: any) {
+        const nameSpace = this.req.params.namespace || this.req.query.nameSpace;
+
         return this.ClaimReviewModel.aggregate([
             { $match: match },
             {
@@ -101,7 +108,11 @@ export class ClaimReviewService {
             },
             lookupClaims(TargetModel.ClaimReview),
             {
-                $match: { "claim.isHidden": false, "claim.isDeleted": false },
+                $match: {
+                    "claim.isHidden": false,
+                    "claim.isDeleted": false,
+                    "claim.nameSpace": nameSpace || NameSpaceEnum.Main,
+                },
             },
             { $group: { _id: "$report.classification", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
@@ -121,6 +132,10 @@ export class ClaimReviewService {
                     "personality.isDeleted": false,
                     "claim.isHidden": query.isHidden,
                     "claim.isDeleted": false,
+                    "claim.nameSpace":
+                        this.req.params.namespace ||
+                        this.req.query.nameSpace ||
+                        NameSpaceEnum.Main,
                 },
             }
         );
@@ -318,7 +333,10 @@ export class ClaimReviewService {
 
     private async postProcess(review) {
         const { personality, data_hash } = review;
-
+        const nameSpace =
+            this.req.params.namespace ||
+            this.req.query.nameSpace ||
+            NameSpaceEnum.Main;
         const claim = {
             contentModel: review.claim.latestRevision.contentModel,
             date: review.claim.latestRevision.date,
@@ -331,14 +349,26 @@ export class ClaimReviewService {
             ? await this.imageService.getByDataHash(data_hash)
             : await this.sentenceService.getByDataHash(data_hash);
 
-        let reviewHref = personality
-            ? `/personality/${personality?.slug}/claim/${review.claim.slug}`
-            : `/claim/${review.claim.latestRevision.claimId}`;
+        let reviewHref =
+            nameSpace !== NameSpaceEnum.Main
+                ? `/${nameSpace}/claim/${review.claim.latestRevision.claimId}`
+                : `/claim/${review.claim.latestRevision.claimId}`;
+
+        if (personality) {
+            reviewHref =
+                nameSpace !== NameSpaceEnum.Main
+                    ? `/${nameSpace}/personality/${personality?.slug}/claim/${review.claim.slug}`
+                    : `/personality/${personality?.slug}/claim/${review.claim.slug}`;
+        }
+
         reviewHref += isContentImage
             ? `/image/${data_hash}`
             : `/sentence/${data_hash}`;
         if (isContentDebate) {
-            reviewHref = `/claim/${review.claim.latestRevision.claimId}/debate`;
+            reviewHref =
+                nameSpace !== NameSpaceEnum.Main
+                    ? `/${nameSpace}/claim/${review.claim.latestRevision.claimId}/debate`
+                    : `/claim/${review.claim.latestRevision.claimId}/debate`;
         }
 
         return {

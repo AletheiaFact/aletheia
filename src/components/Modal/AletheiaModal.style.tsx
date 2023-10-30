@@ -1,6 +1,7 @@
 import { Button, Modal } from "antd";
 import styled from "styled-components";
 import colors from "../../styles/colors";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const AletheiaModal = styled(Modal)`
     background: none;
@@ -67,7 +68,10 @@ const AletheiaModal = styled(Modal)`
 const ModalCancelButton = styled(Button)`
     height: 40px;
     width: 120px;
-    color: ${colors.bluePrimary};
+    color: ${({ namespace }) =>
+        namespace === NameSpaceEnum.Main
+            ? colors.bluePrimary
+            : colors.blueSecondary};
     text-align: "center";
     font-weight: 700;
     font-size: 14;

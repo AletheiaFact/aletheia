@@ -13,9 +13,9 @@ enum ClassificationEnum {
 enum Roles {
     Regular = "regular",
     FactChecker = "fact-checker",
+    Reviewer = "reviewer",
     Admin = "admin",
     SuperAdmin = "super-admin",
-    Reviewer = "reviewer",
 }
 
 enum Status {

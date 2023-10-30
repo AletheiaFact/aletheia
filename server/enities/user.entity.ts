@@ -1,3 +1,5 @@
 export class User {
-    role: string;
+    role: {
+        main: string;
+    };
 }

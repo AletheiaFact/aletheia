@@ -49,6 +49,8 @@ import { BadgeModule } from "./badge/badge.module";
 import { EditorParseModule } from "./editor-parse/editor-parse.module";
 import { NotificationModule } from "./notifications/notifications.module";
 import { CommentModule } from "./claim-review-task/comment/comment.module";
+import { NameSpaceModule } from "./auth/name-space/name-space.module";
+import { NameSpaceGuard } from "./auth/name-space/name-space.guard";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -106,6 +108,7 @@ export class AppModule implements NestModule {
             EditorParseModule,
             NotificationModule,
             CommentModule,
+            NameSpaceModule,
         ];
         if (options.config.feature_flag) {
             imports.push(
@@ -141,6 +144,11 @@ export class AppModule implements NestModule {
                     provide: APP_GUARD,
                     useExisting: SessionGuard,
                 },
+                {
+                    provide: APP_GUARD,
+                    useExisting: NameSpaceGuard,
+                },
+                NameSpaceGuard,
                 SessionGuard,
             ],
         };

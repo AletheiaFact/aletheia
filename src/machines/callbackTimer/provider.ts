@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { atomWithMachine } from "jotai/xstate";
+import { atomWithMachine } from "jotai-xstate";
 import { initialContext } from "./context";
 import {
     CallbackTimerMachine,

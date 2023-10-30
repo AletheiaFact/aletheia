@@ -13,9 +13,13 @@ import Loading from "../Loading";
 import LargeDrawer from "../LargeDrawer";
 import { ContentModelEnum } from "../../types/enums";
 import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [nameSpace] = useAtom(currentNameSpace);
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const {
@@ -43,10 +47,19 @@ const ClaimReviewDrawer = () => {
 
     const isContentImage = claim?.contentModel === ContentModelEnum.Image;
 
-    let href = personality
-        ? `/personality/${personality?.slug}/claim/${claim?.slug}`
-        : `/claim/${claim?._id}`;
-    href += isContentImage ? `/image/${data_hash}` : `/sentence/${data_hash}`;
+    const getHref = () => {
+        const hrefContent = isContentImage
+            ? `/image/${data_hash}`
+            : `/sentence/${data_hash}`;
+        let href = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
+        if (personality) {
+            href += `/personality/${personality.slug}/claim/${claim.slug}`;
+        } else {
+            href += `/claim/${claim?._id}`;
+        }
+
+        return `${href}${hrefContent}`;
+    };
 
     return (
         <LargeDrawer
@@ -77,7 +90,7 @@ const ClaimReviewDrawer = () => {
                             </Col>
                             <Col>
                                 <AletheiaButton
-                                    href={href}
+                                    href={getHref()}
                                     onClick={() => setIsLoading(true)}
                                     type={ButtonType.gray}
                                     style={{

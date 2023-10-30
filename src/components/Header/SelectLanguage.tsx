@@ -1,10 +1,13 @@
 import { Select, Switch } from "antd";
 import ReactCountryFlag from "react-country-flag";
 import Cookies from "js-cookie";
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { useAppSelector } from "../../store/store";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const { Option } = Select;
 
@@ -21,13 +24,22 @@ const SelectInput = styled(Select)`
 `;
 
 const SwitchInputStyle = styled(Switch)`
-    background-color: ${colors.bluePrimary};
+    background-color: ${({ namespace }) =>
+        namespace === NameSpaceEnum.Main
+            ? colors.bluePrimary
+            : colors.blueSecondary};
 `;
 
 const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
     const { vw } = useAppSelector((state) => state);
     const [switchLoading, setSwitchLoading] = useState<boolean>(false);
+    const [nameSpace] = useAtom(currentNameSpace);
     const language = Cookies.get("default_language") || props.defaultLanguage;
+    const [nameSpaceProp, setNameSpaceProp] = useState(NameSpaceEnum.Main);
+
+    useLayoutEffect(() => {
+        setNameSpaceProp(nameSpace);
+    }, [nameSpace]);
 
     const setDefaultLanguage = (language) => {
         if (!document.cookie.includes(`default_language=${language}`)) {
@@ -86,6 +98,7 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                         defaultChecked={language === "pt"}
                         onChange={onChangeSwitch}
                         loading={switchLoading}
+                        namespace={nameSpaceProp}
                     />
                 </div>
             )}

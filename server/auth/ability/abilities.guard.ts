@@ -10,6 +10,7 @@ import { Reflector } from "@nestjs/core";
 import { Configuration, FrontendApi } from "@ory/client";
 import { CHECK_ABILITY, RequiredRule } from "./ability.decorator";
 import { AbilityFactory } from "./ability.factory";
+import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 
 @Injectable()
 export class AbilitiesGuard implements CanActivate {
@@ -36,7 +37,11 @@ export class AbilitiesGuard implements CanActivate {
             cookie: request.header("Cookie"),
         });
         const user = session.identity.traits;
-        const ability = this.caslAbilityFactor.defineAbility(user);
+        const nameSpaceSlug = request.params.namespace || NameSpaceEnum.Main;
+        const ability = this.caslAbilityFactor.defineAbility(
+            user,
+            nameSpaceSlug
+        );
         try {
             rules.forEach((rule) =>
                 ForbiddenError.from(ability).throwUnlessCan(

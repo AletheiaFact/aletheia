@@ -13,6 +13,8 @@ import { currentUserId, currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 import AdminToolBar from "../Toolbar/AdminToolBar";
 import ClaimReviewApi from "../../api/claimReviewApi";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { currentNameSpace } from "../../atoms/namespace";
 
 export interface ClaimReviewViewProps {
     personality?: any;
@@ -26,7 +28,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
         ReviewTaskMachineContext
     );
     const { review } = publishedReview || {};
-
+    const [nameSpace] = useAtom(currentNameSpace);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const [role] = useAtom(currentUserRole);
     const [userId] = useAtom(currentUserId);
@@ -43,9 +45,16 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
             ? window.location.origin
             : "";
 
-    let contentPath = personality
-        ? `/personality/${personality?.slug}/claim`
-        : `/claim`;
+    let contentPath =
+        nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/claim` : `/claim`;
+
+    if (personality) {
+        contentPath =
+            nameSpace !== NameSpaceEnum.Main
+                ? `${nameSpace}/personality/${personality?.slug}/claim`
+                : `/personality/${personality?.slug}/claim`;
+    }
+
     contentPath += isContentImage
         ? `/${claim?._id}`
         : `/${claim?.slug}/sentence/${content.data_hash}`;

@@ -1,11 +1,12 @@
 import { atom, PrimitiveAtom } from "jotai";
-import { atomWithMachine } from "jotai/xstate";
+import { atomWithMachine } from "jotai-xstate";
 import { enableImageClaim } from "../../atoms/featureFlags";
 import { ContentModelEnum } from "../../types/enums";
 import { Personality } from "../../types/Personality";
 import { CreateClaimContext, initialContext } from "./context";
 import { newCreateClaimMachine } from "./createClaimMachine";
 import { CreateClaimStates } from "./types";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const claimPersonalities = atom<Personality[]>([]) as PrimitiveAtom<
     Personality[]
@@ -18,11 +19,13 @@ const machineConfig = atom((get) => {
         : CreateClaimStates.setupSpeech;
 
     const personalities = get(claimPersonalities);
+    const nameSpace = get(currentNameSpace);
     const context: CreateClaimContext = {
         ...initialContext,
         claimData: {
             personalities,
             contentModel: imagesEnabled ? null : ContentModelEnum.Speech,
+            nameSpace,
         },
     };
 

@@ -4,6 +4,9 @@ import React from "react";
 import { useTranslation } from "next-i18next";
 import ImageClaim from "../ImageClaim";
 import { ContentModelEnum } from "../../types/enums";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 const { Paragraph } = Typography;
 
 interface ClaimSummaryContentProps {
@@ -22,6 +25,7 @@ const ClaimSummaryContent = ({
     contentModel,
 }: ClaimSummaryContentProps) => {
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
     const isImage = contentModel === ContentModelEnum.Image;
     const contentProps = {
         [ContentModelEnum.Speech]: {
@@ -83,7 +87,10 @@ const ClaimSummaryContent = ({
                 href={href}
                 style={{
                     fontSize: 14,
-                    color: colors.bluePrimary,
+                    color:
+                        nameSpace === NameSpaceEnum.Main
+                            ? colors.bluePrimary
+                            : colors.blueSecondary,
                     fontWeight: "bold",
                     textDecoration: "underline",
                 }}

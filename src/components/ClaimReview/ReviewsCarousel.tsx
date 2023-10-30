@@ -5,22 +5,26 @@ import CardBase from "../CardBase";
 import ClaimReviewApi from "../../api/claimReviewApi";
 import ReviewCarouselSkeleton from "../Skeleton/ReviewCarouselSkeleton";
 import ReviewCardComment from "./ReviewCardComment";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const ReviewsCarousel = () => {
     const [currIndex, setCurrIndex] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
     const [reviewsList, setReviewsList] = useState([]);
+    const [nameSpace] = useAtom(currentNameSpace);
 
     useEffect(() => {
         ClaimReviewApi.get({
             page: 0,
             order: "desc",
             pageSize: 5,
+            nameSpace,
         }).then(({ data }) => {
             setReviewsList(data);
             setLoading(false);
         });
-    }, []);
+    }, [nameSpace]);
 
     const currentReview = reviewsList[currIndex];
 

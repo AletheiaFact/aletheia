@@ -16,6 +16,7 @@ import { atomUserList } from "../../atoms/userEdit";
 import { User } from "../../types/User";
 import HeaderUserStatus from "./Drawer/HeaderUserStatus";
 import HeaderTotpStatus from "./Drawer/HeaderTotpStatus";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const AdminView = () => {
     const { t } = useTranslation();
@@ -23,6 +24,7 @@ const AdminView = () => {
     const [, startEditing] = useAtom(startEditingItem);
     const [userList] = useAtom(atomUserList);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const handleEdit = React.useCallback(
         (userId) => () => {
@@ -48,7 +50,7 @@ const AdminView = () => {
                 headerName: t("admin:columnRole"),
                 flex: 1,
                 valueGetter: (params: GridValueGetterParams) => {
-                    return t(`admin:role-${params.row.role}`);
+                    return t(`admin:role-${params.row.role[nameSpace]}`);
                 },
             },
             {
@@ -109,7 +111,7 @@ const AdminView = () => {
                 ],
             },
         ],
-        [handleEdit, t]
+        [handleEdit, nameSpace, t]
     );
 
     return (

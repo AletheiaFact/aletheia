@@ -26,7 +26,7 @@ import {
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
 
-@Controller()
+@Controller(":namespace?")
 export class BadgeController {
     constructor(
         private badgeService: BadgeService,
@@ -144,13 +144,15 @@ export class BadgeController {
         const badges = await this.badgeService.listAll();
         const users = await this.usersService.findAll({});
         const parsedUrl = parse(req.url, true);
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/admin-badges",
-                Object.assign(parsedUrl.query, { badges, users })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/admin-badges",
+            Object.assign(parsedUrl.query, {
+                badges,
+                users,
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 }

@@ -27,6 +27,7 @@ import lookupClaimReviews from "../mongo-pipelines/lookupClaimReviews";
 import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { CommentService } from "./comment/comment.service";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -68,7 +69,7 @@ export class ClaimReviewTaskService {
         }
     }
 
-    _buildPipeline(value, filterUser) {
+    _buildPipeline(value, filterUser, nameSpace) {
         const pipeline = [];
         const query = getQueryMatchForMachineValue(value);
 
@@ -89,7 +90,12 @@ export class ClaimReviewTaskService {
                     { $unwind: "$latestRevision" },
                 ],
                 as: "machine.context.claimReview.claim",
-            })
+            }),
+            {
+                $match: {
+                    "machine.context.claimReview.claim.nameSpace": nameSpace,
+                },
+            }
         );
 
         this._verifyMachineValueAndAddMatchPipeline(pipeline, value);
@@ -97,8 +103,8 @@ export class ClaimReviewTaskService {
         return pipeline;
     }
 
-    async listAll(page, pageSize, order, value, filterUser) {
-        const pipeline = this._buildPipeline(value, filterUser);
+    async listAll(page, pageSize, order, value, filterUser, nameSpace) {
+        const pipeline = this._buildPipeline(value, filterUser, nameSpace);
         pipeline.push(
             { $sort: { _id: order === "asc" ? 1 : -1 } },
             { $skip: page * pageSize },
@@ -128,7 +134,10 @@ export class ClaimReviewTaskService {
                     [ContentModelEnum.Speech]: `${personalityPath}/claim/${claim?.slug}/sentence/${data_hash}`,
                 };
 
-                let reviewHref = contentModelPathMap[contentModel];
+                let reviewHref =
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}${contentModelPathMap[contentModel]}`
+                        : contentModelPathMap[contentModel];
 
                 const usersName = machine.context.reviewData.users.map(
                     (user) => {
@@ -268,7 +277,8 @@ export class ClaimReviewTaskService {
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.data_hash,
-                claimReviewTaskBody
+                claimReviewTaskBody,
+                claimReviewTaskBody.nameSpace
             );
         } else {
             const newClaimReviewTask = new this.ClaimReviewTaskModel(
@@ -284,8 +294,10 @@ export class ClaimReviewTaskService {
     async update(
         data_hash: string,
         { machine }: UpdateClaimReviewTaskDTO,
+        nameSpace: string,
         history: boolean = true
     ) {
+        const loggedInUser = this.req.user;
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claimReviewTask = await this.getClaimReviewTaskByDataHash(
             data_hash
@@ -301,12 +313,10 @@ export class ClaimReviewTaskService {
             machine: newClaimReviewTaskMachine,
         };
 
-        const loggedInUser = this.req.user;
-
         if (newClaimReviewTaskMachine.value === "published") {
             if (
-                loggedInUser.role !== Roles.Admin &&
-                loggedInUser.role !== Roles.SuperAdmin &&
+                loggedInUser.role[nameSpace] !== Roles.Admin &&
+                loggedInUser.role[nameSpace] !== Roles.SuperAdmin &&
                 loggedInUser._id !==
                     machine.context.reviewData.reviewerId.toString()
             ) {
@@ -418,7 +428,7 @@ export class ClaimReviewTaskService {
         return this.ClaimReviewTaskModel.countDocuments().where(query);
     }
 
-    async countReviewTasksNotDeleted(query, filterUser) {
+    async countReviewTasksNotDeleted(query, filterUser, nameSpace) {
         try {
             if (filterUser === true) {
                 query["machine.context.reviewData.usersId"] = Types.ObjectId(
@@ -434,12 +444,14 @@ export class ClaimReviewTaskService {
                 lookupClaims(TargetModel.ClaimReviewTask, {
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
-                        { $project: { isDeleted: 1 } },
+                        { $project: { isDeleted: 1, nameSpace: 1 } },
                     ],
                     as: "machine.context.claimReview.claim",
                 }),
                 {
                     $match: {
+                        "machine.context.claimReview.claim.nameSpace":
+                            nameSpace,
                         "machine.context.claimReview.claimReview.isDeleted": {
                             $ne: true,
                         },

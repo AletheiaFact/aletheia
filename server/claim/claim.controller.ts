@@ -52,8 +52,9 @@ import { ParserService } from "./parser/parser.service";
 import { Roles } from "../auth/ability/ability.factory";
 import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
-@Controller()
+@Controller(":namespace?")
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
     constructor(
@@ -77,7 +78,9 @@ export class ClaimController {
         const inputs: any = {
             isHidden: query.isHidden,
         };
-
+        if (query.nameSpace) {
+            inputs.nameSpace = query.nameSpace;
+        }
         if (query.personality && !query.isHidden) {
             inputs.personalities = new mongoose.Types.ObjectId(
                 // @ts-ignore
@@ -128,7 +131,13 @@ export class ClaimController {
             const path = claim.slug
                 ? `/personality/${personality.slug}/claim/${claim.slug}`
                 : `/personality/${personality.slug}`;
-            return { title: claim.title, path };
+            return {
+                title: claim.title,
+                path:
+                    claim.nameSpace !== NameSpaceEnum.Main
+                        ? `/${claim.nameSpace}${path}`
+                        : path,
+            };
         } catch (error) {
             return error;
         }
@@ -150,7 +159,13 @@ export class ClaimController {
             const path = personality
                 ? `/personality/${personality.slug}/claim/${claim.slug}`
                 : `/claim/${claim._id}`;
-            return { title: claim.title, path };
+            return {
+                title: claim.title,
+                path:
+                    claim.nameSpace !== NameSpaceEnum.Main
+                        ? `/${claim.nameSpace}${path}`
+                        : path,
+            };
         } catch (error) {
             return error;
         }
@@ -167,11 +182,17 @@ export class ClaimController {
             const claim = await this._createClaim(createClaimDTO);
 
             const path =
-                req.user.role === Roles.Admin ||
-                req.user.role === Roles.SuperAdmin
+                req.user.role[claim.nameSpace] === Roles.Admin ||
+                req.user.role[claim.nameSpace] === Roles.SuperAdmin
                     ? `/claim/${claim._id}/debate/edit`
                     : `/claim/${claim._id}/debate`;
-            return { title: claim.title, path };
+            return {
+                title: claim.title,
+                path:
+                    claim.nameSpace !== NameSpaceEnum.Main
+                        ? `/${claim.nameSpace}${path}`
+                        : path,
+            };
         } catch (error) {
             return error;
         }
@@ -212,8 +233,8 @@ export class ClaimController {
     @Get("api/claim/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     @ApiTags("claim")
-    getById(@Param("id") claimId) {
-        return this.claimService.getById(claimId);
+    getById(@Param("id") claimId, @Query() query) {
+        return this.claimService.getById(claimId, query.nameSpace);
     }
 
     @ApiTags("claim")
@@ -341,6 +362,7 @@ export class ClaimController {
                 hideDescriptions,
                 enableCollaborativeEditor,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
+                nameSpace: req.params.namespace,
             })
         );
     }
@@ -353,8 +375,11 @@ export class ClaimController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
-        const { data_hash, claimId } = req.params;
-        const claim = await this.claimService.getById(claimId);
+        const { data_hash, claimId, namespace } = req.params;
+        const claim = await this.claimService.getById(
+            claimId,
+            namespace as NameSpaceEnum
+        );
         const image = await this.imageService.getByDataHash(data_hash);
         await this.returnClaimReviewPage(data_hash, req, res, claim, image);
     }
@@ -369,9 +394,12 @@ export class ClaimController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-        const { claimId } = req.params;
+        const { claimId, namespace } = req.params;
 
-        const claim = await this.claimService.getById(claimId);
+        const claim = await this.claimService.getById(
+            claimId,
+            namespace as NameSpaceEnum
+        );
         const editor = await this.editorService.getByReference(claim.contentId);
         claim.editor = editor;
 
@@ -382,6 +410,7 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                nameSpace: req.params.namespace,
             })
         );
     }
@@ -392,9 +421,12 @@ export class ClaimController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async getDebate(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        const { claimId } = req.params;
+        const { claimId, namespace } = req.params;
 
-        const claim = await this.claimService.getById(claimId);
+        const claim = await this.claimService.getById(
+            claimId,
+            namespace as NameSpaceEnum
+        );
 
         await this.viewService.getNextServer().render(
             req,
@@ -404,6 +436,7 @@ export class ClaimController {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 websocketUrl: this.configService.get<string>("websocketUrl"),
+                nameSpace: req.params.namespace,
             })
         );
     }
@@ -473,6 +506,7 @@ export class ClaimController {
                 personality,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableImageClaim,
+                nameSpace: req.params.namespace,
             })
         );
     }
@@ -491,14 +525,14 @@ export class ClaimController {
 
         const parsedUrl = parse(req.url, true);
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/image-claims-page",
-                Object.assign(parsedUrl.query, {})
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/image-claims-page",
+            Object.assign(parsedUrl.query, {
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 
     @IsPublic()
@@ -507,10 +541,12 @@ export class ClaimController {
     @Get("claim/:claimId")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async imageClaimPage(@Req() req: BaseRequest, @Res() res: Response) {
-        const { claimId } = req.params;
+        const { claimId, namespace = NameSpaceEnum.Main } = req.params;
         const parsedUrl = parse(req.url, true);
-        const claim = await this.claimService.getById(claimId);
-
+        const claim = await this.claimService.getById(
+            claimId,
+            namespace as NameSpaceEnum
+        );
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
 
         if (
@@ -525,9 +561,11 @@ export class ClaimController {
                 lower: true,
                 strict: true,
             });
-            return res.redirect(
-                `/personality/${personalitySlug}/claim/${claim.slug}`
-            );
+            const redirectUrl =
+                namespace !== NameSpaceEnum.Main
+                    ? `/${namespace}/personality/${personalitySlug}/claim/${claim.slug}`
+                    : `/personality/${personalitySlug}/claim/${claim.slug}`;
+            return res.redirect(redirectUrl);
         }
         await this.viewService.getNextServer().render(
             req,
@@ -538,6 +576,7 @@ export class ClaimController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
+                nameSpace: namespace,
             })
         );
     }
@@ -551,7 +590,7 @@ export class ClaimController {
         @Res() res: Response
     ) {
         const hideDescriptions: any = {};
-        const { personalitySlug, claimSlug } = req.params;
+        const { personalitySlug, claimSlug, namespace } = req.params;
         const parsedUrl = parse(req.url, true);
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
@@ -587,6 +626,7 @@ export class ClaimController {
                 enableCollaborativeEditor,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 hideDescriptions,
+                nameSpace: namespace,
             })
         );
     }
@@ -597,7 +637,8 @@ export class ClaimController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
-        const { personalitySlug, claimSlug, revisionId } = req.params;
+        const { personalitySlug, claimSlug, revisionId, namespace } =
+            req.params;
         const parsedUrl = parse(req.url, true);
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
@@ -625,6 +666,7 @@ export class ClaimController {
                 claim,
                 enableCollaborativeEditor,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
+                nameSpace: namespace,
             })
         );
     }
@@ -634,7 +676,7 @@ export class ClaimController {
     @Get("personality/:personalitySlug/claim/:claimSlug/sources")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async sourcesClaimPage(@Req() req: Request, @Res() res: Response) {
-        const { personalitySlug, claimSlug } = req.params;
+        const { personalitySlug, claimSlug, namespace } = req.params;
         const parsedUrl = parse(req.url, true);
 
         const personality = await this.personalityService.getPersonalityBySlug({
@@ -649,14 +691,15 @@ export class ClaimController {
             false
         );
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/sources-page",
-                Object.assign(parsedUrl.query, { targetId: claim._id })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/sources-page",
+            Object.assign(parsedUrl.query, {
+                targetId: claim._id,
+                nameSpace: namespace,
+            })
+        );
     }
 
     @IsPublic()
@@ -693,6 +736,7 @@ export class ClaimController {
             "/sources-page",
             Object.assign(parsedUrl.query, {
                 targetId: report._id,
+                nameSpace: req.params.namespace,
             })
         );
     }
@@ -700,7 +744,7 @@ export class ClaimController {
     @ApiTags("pages")
     @Get("personality/:personalitySlug/claim/:claimSlug/history")
     public async ClaimHistoryPage(@Req() req: Request, @Res() res: Response) {
-        const { personalitySlug, claimSlug } = req.params;
+        const { personalitySlug, claimSlug, namespace } = req.params;
         const parsedUrl = parse(req.url, true);
 
         const personality =
@@ -721,6 +765,7 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 targetId: claim._id,
                 targetModel: TargetModel.Claim,
+                nameSpace: namespace,
             })
         );
     }
@@ -748,6 +793,7 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 targetId: claimReviewTask._id,
                 targetModel: TargetModel.ClaimReviewTask,
+                nameSpace: req.params.namespace,
             })
         );
     }

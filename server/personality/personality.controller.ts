@@ -32,7 +32,7 @@ import {
 } from "../auth/ability/ability.decorator";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 
-@Controller()
+@Controller(":namespace?")
 export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(
@@ -136,14 +136,14 @@ export class PersonalityController {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/personality-create-search",
-                Object.assign(parsedUrl.query)
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/personality-create-search",
+            Object.assign(parsedUrl.query, {
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 
     @IsPublic()
@@ -190,6 +190,7 @@ export class PersonalityController {
                 personality,
                 personalities,
                 hideDescriptions,
+                nameSpace: req.params.namespace,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
             })
         );
@@ -202,14 +203,14 @@ export class PersonalityController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/personality-list",
-                Object.assign(parsedUrl.query, {})
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/personality-list",
+            Object.assign(parsedUrl.query, {
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 
     @ApiTags("pages")
@@ -233,6 +234,7 @@ export class PersonalityController {
             Object.assign(parsedUrl.query, {
                 targetId: personality._id,
                 targetModel: TargetModel.Personality,
+                nameSpace: req.params.namespace,
             })
         );
     }

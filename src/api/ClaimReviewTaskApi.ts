@@ -1,5 +1,6 @@
 import { message } from "antd";
 import axios from "axios";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
@@ -13,6 +14,7 @@ const getClaimReviewTasks = (options) => {
         pageSize: options.pageSize ? options.pageSize : 5,
         value: options.value,
         filterUser: options.filterUser ? true : null,
+        nameSpace: options.nameSpace ? options.nameSpace : NameSpaceEnum.Main,
     };
     return request
         .get(`/`, { params })

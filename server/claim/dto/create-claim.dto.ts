@@ -47,4 +47,8 @@ export class CreateClaimDTO {
     @ArrayNotEmpty()
     @ApiProperty()
     personalities: Personality[];
+
+    @IsString()
+    @ApiProperty()
+    nameSpace: string;
 }

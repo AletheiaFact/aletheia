@@ -7,11 +7,15 @@ import Button from "../Button";
 import CardBase from "../CardBase";
 import GridList from "../GridList";
 import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const { Title } = Typography;
 
 const DebateGrid = ({ debates }) => {
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
     return (
         <GridList
             title={"Debates"}
@@ -77,7 +81,11 @@ const DebateGrid = ({ debates }) => {
                             >
                                 <Col>
                                     <Button
-                                        href={`/claim/${debateClaim.claimId}/debate`}
+                                        href={
+                                            nameSpace !== NameSpaceEnum.Main
+                                                ? `/${nameSpace}/claim/${debateClaim.claimId}/debate`
+                                                : `/claim/${debateClaim.claimId}/debate`
+                                        }
                                     >
                                         <span style={{ marginTop: 4 }}>
                                             {t("debates:seeDebate")}

@@ -7,6 +7,9 @@ import Loading from "../Loading";
 import SkeletonList from "../Skeleton/SkeletonList";
 
 import SortByButton from "./SortByButton";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const BaseList = ({
     apiCall,
@@ -30,11 +33,18 @@ const BaseList = ({
     const [items, setItems] = useState([]);
     const [sortByOrder] = useState("asc");
     const [execLoadMore, setExecLoadMore] = useState<boolean>(true);
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const loadingIcon = (
         <LoadingOutlined
             spin
-            style={{ fontSize: 48, color: colors.bluePrimary }}
+            style={{
+                fontSize: 48,
+                color:
+                    nameSpace === NameSpaceEnum.Main
+                        ? colors.bluePrimary
+                        : colors.blueSecondary,
+            }}
         />
     );
     const loadingProps = {

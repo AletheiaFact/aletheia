@@ -9,6 +9,9 @@ import ToolbarActionsModal from "../Modal/ToolbarActionsModal";
 import AletheiaAlert from "../AletheiaAlert";
 import AdminToolBarStyle from "./AdminToolBar.style";
 import { TargetModel } from "../../types/enums";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const AdminToolBar = ({
     content,
@@ -19,7 +22,7 @@ const AdminToolBar = ({
 }) => {
     const { t } = useTranslation();
     const router = useRouter();
-
+    const [nameSpace] = useAtom(currentNameSpace);
     const [isHideModalVisible, setIsHideModalVisible] = useState(false);
     const [isUnhideModalVisible, setIsUnhideModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +41,9 @@ const AdminToolBar = ({
             setIsLoading(true);
             await deleteApiFunction(content._id, t);
             setIsDeleteModalVisible(false);
-            router.push("/");
+            router.push(
+                nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "/"
+            );
         } catch (e) {
             console.error(e);
         } finally {
@@ -90,6 +95,7 @@ const AdminToolBar = ({
         <Row justify="center">
             <Col xs={22} lg={18}>
                 <AdminToolBarStyle
+                    namespace={nameSpace}
                     position="static"
                     style={{ boxShadow: "none", background: "transparent" }}
                 >
