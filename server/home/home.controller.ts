@@ -1,12 +1,4 @@
-import {
-    Controller,
-    Get,
-    Header,
-    Param,
-    Redirect,
-    Req,
-    Res,
-} from "@nestjs/common";
+import { Controller, Get, Header, Redirect, Req, Res } from "@nestjs/common";
 import { ViewService } from "../view/view.service";
 import type { Response } from "express";
 import { parse } from "url";
@@ -31,8 +23,8 @@ export class HomeController {
     @ApiTags("pages")
     @Get("/home/:namespace?")
     @Redirect()
-    redirect(@Param("namespace") namespace, @Res() res) {
-        return res.redirect(`/${namespace}`);
+    redirect(@Res() res) {
+        return res.redirect("/");
     }
 
     @IsPublic()

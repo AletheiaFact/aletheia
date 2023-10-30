@@ -43,22 +43,18 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
         },
     ];
 
+    const hrefPersonalitySlug = personalitySlug
+        ? `?personality=${personalitySlug}`
+        : "";
+
     userRole !== "regular" &&
         actions.push({
             icon: <FileAddFilled />,
             tooltip: t("affix:affixButtonCreateClaim"),
             href:
                 nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/claim/create${
-                          personalitySlug
-                              ? `?personality=${personalitySlug}`
-                              : ""
-                      }`
-                    : `/claim/create${
-                          personalitySlug
-                              ? `?personality=${personalitySlug}`
-                              : ""
-                      }`,
+                    ? `/${nameSpace}/claim/create${hrefPersonalitySlug}`
+                    : `/claim/create${hrefPersonalitySlug}`,
             dataCy: "testFloatButtonAddClaim",
         });
 

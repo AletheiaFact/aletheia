@@ -48,6 +48,9 @@ const ClaimReviewDrawer = () => {
     const isContentImage = claim?.contentModel === ContentModelEnum.Image;
 
     const getHref = () => {
+        const hrefContent = isContentImage
+            ? `/image/${data_hash}`
+            : `/sentence/${data_hash}`;
         let href = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
         if (personality) {
             href += `/personality/${personality.slug}/claim/${claim.slug}`;
@@ -55,9 +58,7 @@ const ClaimReviewDrawer = () => {
             href += `/claim/${claim?._id}`;
         }
 
-        return (href += isContentImage
-            ? `/image/${data_hash}`
-            : `/sentence/${data_hash}`);
+        return `${href}${hrefContent}`;
     };
 
     return (

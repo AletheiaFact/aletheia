@@ -17,8 +17,6 @@ const AdminNameSpacesPage: NextPage<{ data: string }> = ({
     setNameSpacesList(nameSpaces);
     setUserlist(users);
 
-    // Add Seo
-
     return (
         <>
             <NameSpaceView />

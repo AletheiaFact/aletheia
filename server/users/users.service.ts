@@ -41,7 +41,7 @@ export class UsersService {
                 });
         }
 
-        pipeline.project(project ? project : { _id: 1, name: 1, role: 1 });
+        pipeline.project(project || { _id: 1, name: 1, role: 1 });
 
         return await pipeline.exec();
     }
@@ -76,7 +76,7 @@ export class UsersService {
     }
 
     getByOryId(oryId) {
-        return this.UserModel.findOne({ oryId }, "email name oryId");
+        return this.UserModel.findOne({ oryId }, "email name oryId role");
     }
 
     async registerPasswordChange(userId) {

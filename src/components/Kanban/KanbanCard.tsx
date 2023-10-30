@@ -34,12 +34,21 @@ const KanbanCard = ({ reviewTask }) => {
         });
         dispatch(actions.openReviewDrawer());
     };
+
+    const goToClaimReviewWithKeyboard = (event) => {
+        if (event.key === "Enter") {
+            goToClaimReview();
+        }
+    };
+
     const isImage = reviewTask.contentModel === ContentModelEnum.Image;
     const title = isImage ? reviewTask.claimTitle : reviewTask.content.content;
 
     return (
         <a
             onClick={goToClaimReview}
+            onKeyUp={goToClaimReviewWithKeyboard}
+            tabIndex={0}
             style={{ width: "100%", minWidth: "330px" }}
         >
             <CardBase
