@@ -5,6 +5,8 @@ import { NameSpaceController } from "./name-space.controller";
 import { NameSpaceService } from "./name-space.service";
 import { UsersModule } from "../../users/users.module";
 import { ViewModule } from "../../view/view.module";
+import { AbilityModule } from "../../auth/ability/ability.module";
+import { ConfigModule } from "@nestjs/config";
 
 const NameSpaceModel = MongooseModule.forFeature([
     {
@@ -14,7 +16,13 @@ const NameSpaceModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [NameSpaceModel, UsersModule, ViewModule],
+    imports: [
+        NameSpaceModel,
+        UsersModule,
+        ViewModule,
+        AbilityModule,
+        ConfigModule,
+    ],
     providers: [NameSpaceService],
     exports: [NameSpaceService],
     controllers: [NameSpaceController],

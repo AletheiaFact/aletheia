@@ -10,7 +10,6 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
-import { Avatar, Box } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -18,6 +17,7 @@ import UserMenuStyle from "./UserMenu.style";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../types/Namespace";
+import UserMenuHeader from "./UserMenuHeader";
 
 const menuSlotProps = {
     paper: {
@@ -122,22 +122,7 @@ const UserMenu = ({ hasSession, user }) => {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
                 {hasSession && (
-                    <Box className="menu-header">
-                        <Avatar
-                            style={{ margin: 0 }}
-                            className="menu-header-avatar"
-                        >
-                            {user?.name?.slice(0, 1)}
-                        </Avatar>
-                        <Box sx={{ width: "100%" }}>
-                            <p className="menu-header-info name">
-                                {user?.name}
-                            </p>
-                            <p className="menu-header-info email">
-                                {user?.email}
-                            </p>
-                        </Box>
-                    </Box>
+                    <UserMenuHeader isLoading={isLoading} user={user} />
                 )}
                 <MenuItem
                     key="/profile"

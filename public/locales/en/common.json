@@ -10,5 +10,6 @@
     "sourcesRequiredFieldError": "Source is required",
     "supportEmail": "support@aletheifact.org",
     "contactEmail": "contact@aletheiafact.org",
-    "captchaError": "There was an error validating the captcha"
+    "captchaError": "There was an error validating the captcha",
+    "change": "Change"
 }

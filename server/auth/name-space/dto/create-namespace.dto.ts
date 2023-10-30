@@ -8,11 +8,6 @@ export class CreateNameSpaceDTO {
     @ApiProperty()
     name: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    slug: string;
-
     @IsArray()
     @IsOptional()
     @ApiProperty()

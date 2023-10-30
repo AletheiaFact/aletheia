@@ -3,6 +3,7 @@ import colors from "../styles/colors";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
+import { useLayoutEffect, useState } from "react";
 
 export enum ButtonType {
     blue = "blue",
@@ -23,6 +24,16 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
     props: IAletheiaButtonProps
 ) => {
     const [nameSpace] = useAtom(currentNameSpace);
+
+    const [backgroundColor, setBackgroundColor] = useState(colors.bluePrimary);
+    useLayoutEffect(() => {
+        setBackgroundColor(
+            nameSpace === NameSpaceEnum.Main
+                ? colors.bluePrimary
+                : colors.blueSecondary
+        );
+    }, [nameSpace]);
+
     let buttonStyle = {
         borderWidth: "2px",
         display: "flex",
@@ -39,10 +50,7 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
                 ...buttonStyle,
                 background: colors.white,
                 borderColor: colors.white,
-                color:
-                    nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary,
+                color: backgroundColor,
             };
             break;
         case ButtonType.gray:
@@ -50,19 +58,13 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
                 ...buttonStyle,
                 background: colors.lightGray,
                 borderColor: colors.lightGray,
-                color:
-                    nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary,
+                color: backgroundColor,
             };
             break;
         case ButtonType.whiteBlue:
             buttonStyle = {
                 ...buttonStyle,
-                background:
-                    nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary,
+                background: backgroundColor,
                 borderColor: colors.white,
                 color: colors.white,
             };
@@ -79,14 +81,8 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
         default:
             buttonStyle = {
                 ...buttonStyle,
-                background:
-                    nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary,
-                borderColor:
-                    nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary,
+                background: backgroundColor,
+                borderColor: backgroundColor,
                 color: colors.white,
             };
             break;

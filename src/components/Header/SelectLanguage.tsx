@@ -1,7 +1,7 @@
 import { Select, Switch } from "antd";
 import ReactCountryFlag from "react-country-flag";
 import Cookies from "js-cookie";
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { useAppSelector } from "../../store/store";
@@ -35,6 +35,11 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
     const [switchLoading, setSwitchLoading] = useState<boolean>(false);
     const [nameSpace] = useAtom(currentNameSpace);
     const language = Cookies.get("default_language") || props.defaultLanguage;
+    const [nameSpaceProp, setNameSpaceProp] = useState(NameSpaceEnum.Main);
+
+    useLayoutEffect(() => {
+        setNameSpaceProp(nameSpace);
+    }, [nameSpace]);
 
     const setDefaultLanguage = (language) => {
         if (!document.cookie.includes(`default_language=${language}`)) {
@@ -56,7 +61,6 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                     bordered={false}
                     showArrow={true}
                     value={language}
-                    namespace={nameSpace}
                     onSelect={setDefaultLanguage}
                     data-cy={props.dataCy}
                 >
@@ -94,6 +98,7 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                         defaultChecked={language === "pt"}
                         onChange={onChangeSwitch}
                         loading={switchLoading}
+                        namespace={nameSpaceProp}
                     />
                 </div>
             )}

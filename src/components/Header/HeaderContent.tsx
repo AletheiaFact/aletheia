@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
@@ -25,6 +25,11 @@ const HeaderContent = () => {
     const [hasSession, setHasSession] = useState<boolean>(null);
     const [user, setUser] = useState(null);
     const [nameSpace] = useAtom(currentNameSpace);
+    const [href, setHref] = useState("/");
+
+    useLayoutEffect(() => {
+        setHref(nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "/");
+    }, [nameSpace]);
 
     useEffect(() => {
         ory.frontend
@@ -54,7 +59,7 @@ const HeaderContent = () => {
         >
             <Menu />
             <a
-                href={nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "/"}
+                href={href}
                 style={{
                     height: "56px",
                     display: "grid",

@@ -1,5 +1,5 @@
 import { Button, ButtonProps, Tooltip } from "antd";
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import colors from "../../styles/colors";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
@@ -13,13 +13,18 @@ interface FabProps extends Omit<ButtonProps, "shape" | "type" | "size"> {
 
 const Fab = ({ tooltipText, style, icon, size, ...rest }: FabProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
+    const [nameSpaceProp, setNameSpaceProp] = useState(NameSpaceEnum.Main);
+
+    useLayoutEffect(() => {
+        setNameSpaceProp(nameSpace);
+    }, [nameSpace]);
     return (
         <Tooltip placement="left" title={tooltipText}>
             <Button
                 style={{
                     background: colors.white,
                     color:
-                        nameSpace === NameSpaceEnum.Main
+                        nameSpaceProp === NameSpaceEnum.Main
                             ? colors.bluePrimary
                             : colors.blueSecondary,
                     boxShadow: "rgba(0, 0, 0, 0.35) 0px 8px 24px",

@@ -1,6 +1,6 @@
 import { LeftCircleFilled } from "@ant-design/icons";
 import { Col } from "antd";
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
@@ -69,9 +69,14 @@ const SearchOverlay = () => {
             isOpen: state?.search?.overlayVisible || false,
         };
     });
+    const [nameSpaceProp, setNameSpaceProp] = useState(NameSpaceEnum.Main);
+
+    useLayoutEffect(() => {
+        setNameSpaceProp(nameSpace);
+    }, [nameSpace]);
 
     return (
-        <OverlayCol namespace={nameSpace} xs={1} sm={8} md={10}>
+        <OverlayCol namespace={nameSpaceProp} xs={1} sm={8} md={10}>
             <div
                 className={`input-container ${
                     vw?.xs && isOpen ? "overlay" : ""
