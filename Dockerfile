@@ -33,7 +33,7 @@ RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
     yarn build
 
-FROM node:18.14.0-alpine
+FROM node:18.17.0-alpine
 
 LABEL maintainer="Giovanni Rossini <giovannijrrossini@gmail.com>"
 
