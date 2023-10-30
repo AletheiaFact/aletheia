@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Status } from "../../auth/ability/ability.factory";
+import { Roles, Status } from "../../auth/ability/ability.factory";
 import { Document, Types } from "mongoose";
 import { Badge } from "../../badge/schemas/badge.schema";
 
@@ -21,7 +21,7 @@ export class User {
     @Prop({ required: true, default: false })
     firstPasswordChanged: boolean;
 
-    @Prop({ type: Object, required: true })
+    @Prop({ type: Object, required: true, default: { main: Roles.Regular } })
     role: object;
 
     @Prop({ required: true, default: false })

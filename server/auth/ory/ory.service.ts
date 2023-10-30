@@ -93,7 +93,7 @@ export default class OryService {
             url,
             schema_id,
         } = this.configService.get("ory");
-        return fetch(`${url}/${this.adminEndpoint}/identities`, {
+        const result = await fetch(`${url}/${this.adminEndpoint}/identities`, {
             method: "post",
             body: JSON.stringify({
                 schema_id,
@@ -113,6 +113,8 @@ export default class OryService {
                 Authorization: `Bearer ${token}`,
             },
         });
+
+        return await result.json();
     }
 
     deleteIdentity(identityId): Promise<any> {
