@@ -137,10 +137,10 @@ export const transitionHandler = (state) => {
                     value: state.value,
                 },
                 recaptcha: recaptchaString,
+                nameSpace,
             },
             t,
-            event,
-            nameSpace
+            event
         )
             .then(() => {
                 return event === Events.goback

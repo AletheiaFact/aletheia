@@ -27,7 +27,7 @@ const DebateView = ({ claim }) => {
     // the new debate data will in the callbackResult of the state
     const updateTimeline = useCallback(() => {
         return claimApi
-            .getById(claim?._id, t, {}, nameSpace)
+            .getById(claim?._id, t, { nameSpace })
             .then((debateClaim) => {
                 return debateClaim;
             });

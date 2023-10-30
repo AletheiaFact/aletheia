@@ -230,11 +230,11 @@ export class ClaimController {
     }
 
     @IsPublic()
-    @Get("api/:namespace?/claim/:id")
+    @Get("api/claim/:id")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     @ApiTags("claim")
-    getById(@Param("id") claimId, @Param("namespace") namespace) {
-        return this.claimService.getById(claimId, namespace);
+    getById(@Param("id") claimId, @Query() query) {
+        return this.claimService.getById(claimId, query.nameSpace);
     }
 
     @ApiTags("claim")

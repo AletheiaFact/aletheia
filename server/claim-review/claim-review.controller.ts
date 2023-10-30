@@ -21,8 +21,9 @@ import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
-@Controller("api/:namespace?")
+@Controller()
 export class ClaimReviewController {
     constructor(
         private claimReviewService: ClaimReviewService,
@@ -32,7 +33,7 @@ export class ClaimReviewController {
 
     @IsPublic()
     @ApiTags("claim-review")
-    @Get("/review")
+    @Get("api/review")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     listAll(@Query() getClaimReviewsDto: GetClaimReviewsDTO) {
         const {
@@ -41,6 +42,7 @@ export class ClaimReviewController {
             order = "asc",
             isHidden = false,
             latest = false,
+            nameSpace = NameSpaceEnum.Main,
         } = getClaimReviewsDto;
 
         return Promise.all([
@@ -66,7 +68,7 @@ export class ClaimReviewController {
     }
 
     @ApiTags("claim-review")
-    @Put("/review/:id")
+    @Put("api/review/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     async update(@Param("id") reviewId, @Body() body) {
@@ -84,7 +86,7 @@ export class ClaimReviewController {
     }
 
     @ApiTags("claim-review")
-    @Delete("/review/:id")
+    @Delete("api/review/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     async delete(@Param("id") reviewId) {
@@ -93,7 +95,7 @@ export class ClaimReviewController {
 
     @IsPublic()
     @ApiTags("claim-review")
-    @Get("/review/:data_hash")
+    @Get("api/review/:data_hash")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async getReviewByDataHash(@Param("data_hash") data_hash) {
         const review = await this.claimReviewService.getReviewByDataHash(

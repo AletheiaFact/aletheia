@@ -57,4 +57,8 @@ export class CreateClaimReviewTaskDTO {
     @IsString()
     @ApiProperty()
     recaptcha: string;
+
+    @IsString()
+    @ApiProperty()
+    nameSpace: string;
 }

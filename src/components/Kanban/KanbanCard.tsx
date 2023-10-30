@@ -25,7 +25,7 @@ const KanbanCard = ({ reviewTask }) => {
         dispatch(actions.setSelectPersonality(null));
         dispatch(actions.setSelectContent(null));
         Promise.all([
-            claimApi.getById(reviewTask.claimId, t, {}, nameSpace),
+            claimApi.getById(reviewTask.claimId, t, { nameSpace }),
             personalityApy.getPersonality(reviewTask.personalityId, {}, t),
         ]).then(([claim, personality]) => {
             dispatch(actions.setSelectClaim(claim));

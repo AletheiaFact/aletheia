@@ -4,7 +4,7 @@ import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
-    baseURL: `/api`,
+    baseURL: `/api/claimreviewtask`,
 });
 
 const getClaimReviewTasks = (options) => {
@@ -17,7 +17,7 @@ const getClaimReviewTasks = (options) => {
         nameSpace: options.nameSpace ? options.nameSpace : NameSpaceEnum.Main,
     };
     return request
-        .get(`/claimreviewtask`, { params })
+        .get(`/`, { params })
         .then((response) => {
             const { tasks, totalPages, totalTasks } = response.data;
 
@@ -34,7 +34,7 @@ const getClaimReviewTasks = (options) => {
 
 const getMachineByDataHash = (params) => {
     return request
-        .get(`/claimreviewtask/hash/${params}`)
+        .get(`/hash/${params}`)
         .then((response) => {
             return response.data.machine;
         })
@@ -43,14 +43,9 @@ const getMachineByDataHash = (params) => {
         });
 };
 
-const createClaimReviewTask = (params, t, type, nameSpace) => {
+const createClaimReviewTask = (params, t, type) => {
     return request
-        .post(
-            nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/claimreviewtask`
-                : "/claimreviewtask",
-            { ...params }
-        )
+        .post("/", { ...params })
         .then((response) => {
             message.success(t(`claimReviewTask:${type}_SUCCESS`));
             return response.data;
@@ -63,7 +58,7 @@ const createClaimReviewTask = (params, t, type, nameSpace) => {
 
 const autoSaveDraft = (params, t) => {
     return request
-        .put(`/claimreviewtask/${params.data_hash}`, { ...params })
+        .put(`/${params.data_hash}`, { ...params })
         .then((response) => {
             message.success(t(`claimReviewTask:SAVE_DRAFT_SUCCESS`));
             return response.data;
@@ -75,7 +70,7 @@ const autoSaveDraft = (params, t) => {
 
 const getEditorContentObject = (params) => {
     return request
-        .get(`/claimreviewtask/editor-content/${params}`)
+        .get(`/editor-content/${params}`)
         .then((response) => {
             return response.data;
         })
@@ -86,7 +81,7 @@ const getEditorContentObject = (params) => {
 
 const addComment = (hash, comment) => {
     return request
-        .put(`/claimreviewtask/add-comment/${hash}`, { comment })
+        .put(`/add-comment/${hash}`, { comment })
         .then((response) => {
             return response.data;
         })
@@ -97,7 +92,7 @@ const addComment = (hash, comment) => {
 
 const deleteComment = (hash, commentId) => {
     return request
-        .put(`/claimreviewtask/delete-comment/${hash}`, { commentId })
+        .put(`/delete-comment/${hash}`, { commentId })
         .then((response) => {
             return response.data;
         })

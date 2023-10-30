@@ -23,15 +23,11 @@ const get = (options: FetchOptions = {}) => {
         pageSize: options.pageSize ? options.pageSize : 5,
         isHidden: options?.isHidden || false,
         latest: options?.latest,
+        nameSpace: options?.nameSpace,
     };
 
     return request
-        .get(
-            options.nameSpace === NameSpaceEnum.Main
-                ? `/review`
-                : `/${options.nameSpace}/review`,
-            { params }
-        )
+        .get(`/review`, { params })
         .then((response) => {
             const { totalPages, totalReviews, reviews } = response.data;
 

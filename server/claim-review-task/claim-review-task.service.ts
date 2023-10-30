@@ -277,7 +277,8 @@ export class ClaimReviewTaskService {
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.data_hash,
-                claimReviewTaskBody
+                claimReviewTaskBody,
+                claimReviewTaskBody.nameSpace
             );
         } else {
             const newClaimReviewTask = new this.ClaimReviewTaskModel(
@@ -293,9 +294,9 @@ export class ClaimReviewTaskService {
     async update(
         data_hash: string,
         { machine }: UpdateClaimReviewTaskDTO,
+        nameSpace: string,
         history: boolean = true
     ) {
-        const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
         const loggedInUser = this.req.user;
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const claimReviewTask = await this.getClaimReviewTaskByDataHash(

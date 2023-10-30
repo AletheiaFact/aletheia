@@ -53,7 +53,9 @@ export class ClaimReviewService {
                     "claim.isHidden": query.isHidden,
                     "claim.isDeleted": false,
                     "claim.nameSpace":
-                        this.req.params.namespace || NameSpaceEnum.Main,
+                        this.req.params.namespace ||
+                        this.req.query.nameSpace ||
+                        NameSpaceEnum.Main,
                     "personality.isDeleted": false,
                 },
             }
@@ -131,7 +133,9 @@ export class ClaimReviewService {
                     "claim.isHidden": query.isHidden,
                     "claim.isDeleted": false,
                     "claim.nameSpace":
-                        this.req.params.namespace || NameSpaceEnum.Main,
+                        this.req.params.namespace ||
+                        this.req.query.nameSpace ||
+                        NameSpaceEnum.Main,
                 },
             }
         );
@@ -329,7 +333,10 @@ export class ClaimReviewService {
 
     private async postProcess(review) {
         const { personality, data_hash } = review;
-        const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
+        const nameSpace =
+            this.req.params.namespace ||
+            this.req.query.nameSpace ||
+            NameSpaceEnum.Main;
         const claim = {
             contentModel: review.claim.latestRevision.contentModel,
             date: review.claim.latestRevision.date,

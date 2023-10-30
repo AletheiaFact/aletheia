@@ -82,7 +82,7 @@ export class ClaimReviewController {
     }
 
     @ApiTags("claim-review-task")
-    @Post("api/:namespace?/claimreviewtask")
+    @Post("api/claimreviewtask")
     @Header("Cache-Control", "no-cache")
     async create(@Body() createClaimReviewTask: CreateClaimReviewTaskDTO) {
         const validateCaptcha = await this.captchaService.validate(
@@ -109,6 +109,7 @@ export class ClaimReviewController {
                     return this.claimReviewTaskService.update(
                         data_hash,
                         claimReviewTaskBody,
+                        claimReviewTaskBody.nameSpace,
                         history
                     );
                 }
