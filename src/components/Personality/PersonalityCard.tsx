@@ -50,7 +50,7 @@ const PersonalityCard = ({
 }: PersonalityCardProps) => {
     const isCreatingClaim = selectPersonality !== null;
     const [state] = useAtom(createClaimMachineAtom);
-    const { claimData } = state?.context;
+    const { claimData } = state.context;
     const { personalities } = claimData;
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);

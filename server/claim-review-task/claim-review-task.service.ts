@@ -139,7 +139,6 @@ export class ClaimReviewTaskService {
                         ? `/${nameSpace}${contentModelPathMap[contentModel]}`
                         : contentModelPathMap[contentModel];
 
-                console.log("check users", machine.context.reviewData);
                 const usersName = machine.context.reviewData.users.map(
                     (user) => {
                         return user.name;

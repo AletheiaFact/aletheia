@@ -7,6 +7,7 @@ import {
     Put,
     Req,
     Res,
+    UseGuards,
 } from "@nestjs/common";
 import { NameSpaceService } from "./name-space.service";
 import type { Request, Response } from "express";
@@ -14,6 +15,13 @@ import { ApiTags } from "@nestjs/swagger";
 import { UsersService } from "../../users/users.service";
 import { parse } from "url";
 import { ViewService } from "../../view/view.service";
+import { CreateNameSpaceDTO } from "./dto/create-namespace.dto";
+import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../../auth/ability/ability.decorator";
+import { AbilitiesGuard } from "../../auth/ability/abilities.guard";
 
 @Controller()
 export class NameSpaceController {
@@ -25,13 +33,17 @@ export class NameSpaceController {
 
     @ApiTags("name-space")
     @Post("api/name-space")
-    async create(@Body() namespace) {
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
+    async create(@Body() namespace: CreateNameSpaceDTO) {
         return await this.nameSpaceService.create(namespace);
     }
 
     @ApiTags("name-space")
     @Put("api/name-space/:id")
-    async update(@Param("id") id, @Body() namespace) {
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
+    async update(@Param("id") id, @Body() namespace: UpdateNameSpaceDTO) {
         return await this.nameSpaceService.update(id, namespace);
     }
 

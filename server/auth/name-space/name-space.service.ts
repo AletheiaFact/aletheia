@@ -5,6 +5,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import slugify from "slugify";
 import { UsersService } from "../../users/users.service";
 import { Roles } from "../../auth/ability/ability.factory";
+import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
 
 @Injectable()
 export class NameSpaceService {
@@ -41,7 +42,7 @@ export class NameSpaceService {
         return new this.NameSpaceModel(nameSpace).save();
     }
 
-    async update(id, nameSpaceBody) {
+    async update(id, nameSpaceBody: UpdateNameSpaceDTO) {
         const nameSpace = await this.getById(id);
         const newNameSpace = {
             ...nameSpace.toObject(),

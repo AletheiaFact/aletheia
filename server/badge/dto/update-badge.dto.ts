@@ -36,6 +36,6 @@ export class UpdateBadgeDTO {
         badges: any[];
         name: string;
         _id: string;
-        role: { main: Roles };
+        role: object;
     }[];
 }

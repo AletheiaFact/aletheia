@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Roles } from "./auth/ability/ability.factory";
 import { randomBytes } from "crypto";
+import { NameSpaceEnum } from "auth/name-space/schemas/name-space.schema";
 
 @Injectable()
 export class UtilService {
@@ -55,15 +56,17 @@ export class UtilService {
 
     getParamsBasedOnUserRole(params, req) {
         const user = req.user;
+        const namespace = req.params.namespace || NameSpaceEnum.Main;
         const isUserAdmin =
-            user?.role.main === Roles.Admin ||
-            user?.role.main === Roles.SuperAdmin;
+            user?.role[namespace] === Roles.Admin ||
+            user?.role[namespace] === Roles.SuperAdmin;
         return isUserAdmin ? params : { ...params, isHidden: false };
     }
 
     canEditUser(user, request): boolean {
         const editorId = request.user._id;
-        const isSelectedSuperAdmin = user.role.main === Roles.SuperAdmin;
+        const namespace = request.params.namespace || NameSpaceEnum.Main;
+        const isSelectedSuperAdmin = user.role[namespace] === Roles.SuperAdmin;
         const editingSelf = user._id === editorId;
 
         return (isSelectedSuperAdmin && editingSelf) || !isSelectedSuperAdmin;
