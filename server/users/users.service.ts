@@ -7,6 +7,7 @@ import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
 import { Badge } from "../badge/schemas/badge.schema";
 import { NotificationService } from "../notifications/notifications.service";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Injectable()
 export class UsersService {
@@ -28,7 +29,7 @@ export class UsersService {
             ...(badges ? { badges } : {}),
         });
 
-        if (nameSpaceSlug) {
+        if (nameSpaceSlug && nameSpaceSlug !== NameSpaceEnum.Main) {
             pipeline
                 .lookup({
                     from: "namespaces",
