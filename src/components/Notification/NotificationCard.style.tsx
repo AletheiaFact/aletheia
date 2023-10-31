@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import colors from "../../styles/colors";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const NotificationCardStyle = styled.div`
     background-color: ${({ isSeen }) =>
@@ -29,7 +30,10 @@ const NotificationCardStyle = styled.div`
     }
 
     .notification-avatar-icon {
-        color: ${colors.bluePrimary};
+        color: ${({ namespace }) =>
+            namespace === NameSpaceEnum.Main
+                ? colors.bluePrimary
+                : colors.blueSecondary};
         margin: 0px;
         width: 32px;
         height: 32px;

@@ -1,5 +1,6 @@
 import { message } from "antd";
 import axios from "axios";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
@@ -13,6 +14,7 @@ const getClaimReviewTasks = (options) => {
         pageSize: options.pageSize ? options.pageSize : 5,
         value: options.value,
         filterUser: options.filterUser ? true : null,
+        nameSpace: options.nameSpace ? options.nameSpace : NameSpaceEnum.Main,
     };
     return request
         .get(`/`, { params })
@@ -77,12 +79,36 @@ const getEditorContentObject = (params) => {
         });
 };
 
+const addComment = (hash, comment) => {
+    return request
+        .put(`/add-comment/${hash}`, { comment })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
+
+const deleteComment = (hash, commentId) => {
+    return request
+        .put(`/delete-comment/${hash}`, { commentId })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
+
 const ClaimReviewTaskApi = {
     getMachineByDataHash,
     createClaimReviewTask,
     getClaimReviewTasks,
     autoSaveDraft,
     getEditorContentObject,
+    addComment,
+    deleteComment,
 };
 
 export default ClaimReviewTaskApi;

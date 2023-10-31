@@ -10,6 +10,8 @@ import Label from "../Label";
 import PersonalitySearchResultSection from "./PersonalitySearchResultSection";
 import { ActionTypes } from "../../store/types";
 import { useRouter } from "next/router";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const PersonalityCreateSearch = ({
     withSuggestions,
@@ -18,6 +20,7 @@ const PersonalityCreateSearch = ({
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const router = useRouter();
     const { t, i18n } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
     const dispatch = useDispatch();
     const { searchName } = useAppSelector((state) => {
         return { searchName: state?.search?.searchInput || null };
@@ -45,7 +48,7 @@ const PersonalityCreateSearch = ({
             if (selectPersonality !== null) {
                 createClaim();
             } else {
-                router.push(path).catch((e) => e);
+                router.push(`/${nameSpace}${path}`).catch((e) => e);
             }
 
             const headers = {

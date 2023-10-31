@@ -9,11 +9,14 @@ import { currentUserRole } from "../atoms/currentUser";
 import actions from "../store/actions";
 import colors from "../styles/colors";
 import { Roles } from "../types/enums";
+import { NameSpaceEnum } from "../types/Namespace";
+import { currentNameSpace } from "../atoms/namespace";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const router = useRouter();
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const handleClick = (menuItem) => {
         dispatch(actions.openSideMenu());
@@ -39,14 +42,22 @@ const AletheiaMenu = () => {
             selectable={false}
         >
             <Menu.Item
-                key="/personality"
+                key={
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/personality`
+                        : "/personality"
+                }
                 onClick={handleClick}
                 data-cy={"testPersonalitytItem"}
             >
                 {t("menu:personalityItem")}
             </Menu.Item>
             <Menu.Item
-                key="/claim"
+                key={
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/claim`
+                        : "/claim"
+                }
                 onClick={handleClick}
                 data-cy={"testClaimtItem"}
             >
@@ -55,7 +66,11 @@ const AletheiaMenu = () => {
 
             {role !== Roles.Regular && (
                 <Menu.Item
-                    key="/kanban"
+                    key={
+                        nameSpace !== NameSpaceEnum.Main
+                            ? `/${nameSpace}/kanban`
+                            : "/kanban"
+                    }
                     onClick={handleClick}
                     data-cy={"testKanbantItem"}
                 >
@@ -65,18 +80,33 @@ const AletheiaMenu = () => {
             {(role === Roles.Admin || role === Roles.SuperAdmin) && (
                 <>
                     <Menu.Item
-                        key="/admin"
+                        key={
+                            nameSpace !== NameSpaceEnum.Main
+                                ? `/${nameSpace}/admin`
+                                : "/admin"
+                        }
                         data-cy={"testadminItem"}
                         onClick={handleClick}
                     >
                         {t("menu:adminItem")}
                     </Menu.Item>
                     <Menu.Item
-                        key="/admin/badges"
+                        key={
+                            nameSpace !== NameSpaceEnum.Main
+                                ? `/${nameSpace}/admin/badges`
+                                : "/admin/badges"
+                        }
                         data-cy={"testadminBadgeItem"}
                         onClick={handleClick}
                     >
                         {t("menu:Badges")}
+                    </Menu.Item>
+                    <Menu.Item
+                        key="/admin/name-spaces"
+                        data-cy={"testadminNameSpaceItem"}
+                        onClick={handleClick}
+                    >
+                        {t("menu:nameSpaceItem")}
                     </Menu.Item>
                 </>
             )}

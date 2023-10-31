@@ -1,4 +1,4 @@
-import { Provider as CreateClaimMachineProvider } from "jotai";
+import { Provider as CreateClaimMachineProvider, useSetAtom } from "jotai";
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -11,13 +11,18 @@ import Seo from "../components/Seo";
 import { claimPersonalities } from "../machines/createClaim/provider";
 import actions from "../store/actions";
 import { GetLocale } from "../utils/GetLocale";
+import { NameSpaceEnum } from "../types/Namespace";
+import { currentNameSpace } from "../atoms/namespace";
 
 const ClaimCreatePage: NextPage<any> = ({
     sitekey,
     personality,
     enableImageClaim,
+    nameSpace,
 }) => {
     const { t } = useTranslation();
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(nameSpace);
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
     return (
@@ -33,6 +38,7 @@ const ClaimCreatePage: NextPage<any> = ({
                 initialValues={[
                     [claimPersonalities, personality ? [personality] : []],
                     [featureAtom, enableImageClaim],
+                    [currentNameSpace, nameSpace],
                 ]}
             >
                 <CreateClaimView />
@@ -56,6 +62,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableImageClaim: JSON.parse(
                 JSON.stringify(query?.enableImageClaim)
             ),
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

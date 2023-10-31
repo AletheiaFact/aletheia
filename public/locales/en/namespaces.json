@@ -1,0 +1,8 @@
+{
+    "nameColumn": "Name",
+    "title": "Namespaces area",
+    "addNameSpace": "Add namespace",
+    "editNameSpace": "Edit namespace",
+    "nameSpaceSaved": "Namespace was saved successfully",
+    "selectNameSpaces": "Select the namespaces"
+}

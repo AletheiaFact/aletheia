@@ -31,6 +31,7 @@ export class EditorParser {
     }
 
     getSourceByProperty(sources, property) {
+        //FIXME: Create migration
         return sources.filter(
             (source) => (source?.props?.field || source?.field) === property
         );
@@ -47,13 +48,14 @@ export class EditorParser {
     }
 
     extractHtmlContentFromRange({ props, content }, type = "text") {
-        const fragmentText = content.slice(...props?.textRange);
+        const { textRange, targetText, sup } = props;
+        const fragmentText = content.slice(...textRange);
         if (type === "text") {
             return fragmentText;
         }
 
-        if (type === "source" && fragmentText === props?.targetText) {
-            return `<a href='#${fragmentText}' rel='noopener noreferrer nofollow'>${fragmentText}<sup>${props?.sup}</sup></a>`;
+        if (type === "source" && fragmentText === targetText) {
+            return `<a href='#${fragmentText}' rel='noopener noreferrer nofollow'>${fragmentText}<sup>${sup}</sup></a>`;
         }
         return fragmentText;
     }
@@ -65,19 +67,15 @@ export class EditorParser {
             content
         );
 
-        const htmlContent = allRanges.map(
-            ({ targetText, textRange, sup, props, type }) => {
-                return this.extractHtmlContentFromRange(
-                    {
-                        content,
-                        props: props
-                            ? { ...props }
-                            : { targetText, textRange, sup },
-                    },
-                    type
-                );
-            }
-        );
+        const htmlContent = allRanges.map(({ props, type }) => {
+            return this.extractHtmlContentFromRange(
+                {
+                    content,
+                    props,
+                },
+                type
+            );
+        });
 
         if (key === "questions") {
             return htmlContent.join("");
@@ -285,9 +283,7 @@ export class EditorParser {
     }
 
     getRawSourcesAndSourcesRanges(sources) {
-        const rawSourcesRanges = sources.map(
-            (s) => s?.props?.textRange || s?.textRange
-        );
+        const rawSourcesRanges = sources.map(({ props }) => props.textRange);
 
         const sourcesRanges = sources.map((source) => {
             return {
@@ -306,7 +302,8 @@ export class EditorParser {
         { props, content, href = null },
         type = "text"
     ) {
-        const fragmentText = content.slice(...props?.textRange);
+        const { textRange, targetText, id } = props;
+        const fragmentText = content.slice(...textRange);
 
         switch (type) {
             case "text":
@@ -315,11 +312,11 @@ export class EditorParser {
                 }
                 break;
             case "source":
-                if (fragmentText === props?.targetText) {
+                if (fragmentText === targetText) {
                     return this.getContentObjectWithMarks(
                         fragmentText,
                         href,
-                        props?.id
+                        id
                     );
                 }
             // Fall through to the default case if type is "source" and the text doesn't match targetText
@@ -403,9 +400,7 @@ export class EditorParser {
         });
 
         return [...sourcesRanges, ...missingTextRanges].sort((a, b) => {
-            const getRange = (item) =>
-                item?.textRange || item?.props?.textRange || [0];
-            return getRange(a)[0] - getRange(b)[0];
+            return a.props.textRange[0] - b.props.textRange[0];
         });
     }
 
@@ -420,12 +415,10 @@ export class EditorParser {
         );
 
         const textFragments = allRanges
-            .map(({ targetText, textRange, props, type, href, id = null }) => {
+            .map(({ props, type, href }) => {
                 return this.extractContentFragmentFromRange(
                     {
-                        props: props
-                            ? { ...props }
-                            : { targetText, textRange, id },
+                        props,
                         content,
                         href,
                     },

@@ -1,12 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Roles, Status } from "../auth/ability/ability.factory";
-import { Model } from "mongoose";
+import { Status } from "../auth/ability/ability.factory";
+import { Model, Aggregate } from "mongoose";
 
 import OryService from "../auth/ory/ory.service";
 import { User, UserDocument } from "./schemas/user.schema";
 import { Badge } from "../badge/schemas/badge.schema";
 import { NotificationService } from "../notifications/notifications.service";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Injectable()
 export class UsersService {
@@ -18,12 +19,32 @@ export class UsersService {
     ) {}
 
     async findAll(userQuery): Promise<UserDocument[]> {
-        const { searchName, filterOutRoles, badges, project } = userQuery;
-        return this.UserModel.find({
+        const { searchName, filterOutRoles, badges, project, nameSpaceSlug } =
+            userQuery;
+        const pipeline: Aggregate<any[]> = this.UserModel.aggregate();
+
+        pipeline.match({
             name: { $regex: searchName || "", $options: "i" },
             role: { $nin: [...(filterOutRoles || []), null] },
             ...(badges ? { badges } : {}),
-        }).select(project || { _id: 1, name: 1, role: 1 });
+        });
+
+        if (nameSpaceSlug && nameSpaceSlug !== NameSpaceEnum.Main) {
+            pipeline
+                .lookup({
+                    from: "namespaces",
+                    localField: "_id",
+                    foreignField: "users",
+                    as: "namespaces",
+                })
+                .match({
+                    "namespaces.slug": nameSpaceSlug,
+                });
+        }
+
+        pipeline.project(project || { _id: 1, name: 1, role: 1 });
+
+        return await pipeline.exec();
     }
 
     async register(user) {
@@ -31,7 +52,7 @@ export class UsersService {
         this.notificationService.createSubscriber(newUser);
         if (!newUser.oryId) {
             this.logger.log("No user id provided, creating a new ory identity");
-            const { data: oryUser } = await this.oryService.createIdentity(
+            const oryUser = await this.oryService.createIdentity(
                 newUser,
                 user.password,
                 user.role
@@ -56,7 +77,7 @@ export class UsersService {
     }
 
     getByOryId(oryId) {
-        return this.UserModel.findOne({ oryId }, "email name oryId");
+        return this.UserModel.findOne({ oryId }, "email name oryId role");
     }
 
     async registerPasswordChange(userId) {
@@ -70,7 +91,7 @@ export class UsersService {
 
     async updateUser(
         userId,
-        updates: { role?: Roles; badges?: Badge[]; state?: Status }
+        updates: { role?: object; badges?: Badge[]; state?: Status }
     ) {
         const user = await this.getById(userId);
 

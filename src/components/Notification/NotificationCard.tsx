@@ -7,9 +7,12 @@ import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
 import NotificationCardActions from "./NotificationCardActions";
 import NotificationCardTime from "./NotificationCardTime";
 import NotificationCardStyle from "./NotificationCard.style";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const NotificationCard = ({ notification, handleNotificationClick }) => {
     const { seen, createdAt, payload } = notification;
+    const [nameSpace] = useAtom(currentNameSpace);
     const [isSeen, setIsSeen] = useState<boolean>(seen);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -31,7 +34,7 @@ const NotificationCard = ({ notification, handleNotificationClick }) => {
             spinning={isLoading}
             style={{ fontSize: 48, color: colors.bluePrimary, display: "flex" }}
         >
-            <NotificationCardStyle isSeen={isSeen}>
+            <NotificationCardStyle isSeen={isSeen} namespace={nameSpace}>
                 <div className="container" onClick={handleContainerClick}>
                     <div className="notification-avatar">
                         {!isSeen && <Badge status="processing" />}

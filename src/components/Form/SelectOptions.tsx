@@ -5,6 +5,8 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 import Loading from "../Loading";
 import { Roles } from "../../types/enums";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const StyledSelect = styled(Select)`
     .ant-select-selector {
@@ -34,6 +36,7 @@ function SelectOptions({
         const slug = value.toLowerCase().replace(" ", "-");
         return !props?.preloadedTopics?.includes(slug || value);
     });
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const { t } = useTranslation();
 
@@ -41,13 +44,13 @@ function SelectOptions({
         return (value: string) => {
             setOptions([]);
             setFetching(true);
-            fetchOptions(value, t).then((newOptions) => {
+            fetchOptions(value, t, nameSpace).then((newOptions) => {
                 if (fieldName === "reviewerId") {
                     const reviewerUsers = newOptions.filter(
                         (user) =>
-                            user?.role === Roles.Reviewer ||
-                            user?.role === Roles.Admin ||
-                            user?.role === Roles.SuperAdmin
+                            user?.role[nameSpace] === Roles.Reviewer ||
+                            user?.role[nameSpace] === Roles.Admin ||
+                            user?.role[nameSpace] === Roles.SuperAdmin
                     );
                     setOptions(reviewerUsers);
                 } else {
@@ -56,7 +59,7 @@ function SelectOptions({
                 setFetching(false);
             });
         };
-    }, [fetchOptions, t]);
+    }, [fetchOptions, fieldName, nameSpace, t]);
 
     return (
         <StyledSelect

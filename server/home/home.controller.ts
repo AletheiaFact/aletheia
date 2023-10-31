@@ -21,7 +21,7 @@ export class HomeController {
     ) {}
 
     @ApiTags("pages")
-    @Get("/home")
+    @Get("/home/:namespace?")
     @Redirect()
     redirect(@Res() res) {
         return res.redirect("/");
@@ -29,7 +29,7 @@ export class HomeController {
 
     @IsPublic()
     @ApiTags("pages")
-    @Get()
+    @Get("/:namespace?")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
@@ -42,6 +42,7 @@ export class HomeController {
             }
         );
 
+        //TODO: Get live debates from namespaces
         const liveDebates = await this.debateService.listAll(0, 6, "asc", {
             isLive: true,
         });
@@ -77,6 +78,7 @@ export class HomeController {
                 personalities,
                 stats,
                 claims,
+                nameSpace: req.params.namespace,
             })
         );
     }

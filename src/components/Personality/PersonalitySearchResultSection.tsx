@@ -31,7 +31,6 @@ const PersonalitySearchResultSection = ({
                             personality={p}
                             summarized={true}
                             enableStats={false}
-                            hrefBase="./"
                             onClick={onClick}
                             key={i}
                             isFormSubmitted={isFormSubmitted}

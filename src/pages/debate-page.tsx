@@ -7,11 +7,17 @@ import DebateView from "../components/Debate/DebateView";
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";
 import AffixButton from "../components/AffixButton/AffixButton";
+import { NameSpaceEnum } from "../types/Namespace";
+import { useSetAtom } from "jotai";
+import { currentNameSpace } from "../atoms/namespace";
 
 const DebatePage: NextPage<any> = ({
     claim,
     sitekey,
+    nameSpace,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): any => {
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(nameSpace);
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
 
@@ -30,6 +36,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             ...(await serverSideTranslations(locale)),
             claim: JSON.parse(JSON.stringify(query?.claim)),
             sitekey: query.sitekey,
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

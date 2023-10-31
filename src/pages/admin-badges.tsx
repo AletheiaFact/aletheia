@@ -9,13 +9,18 @@ import { atomBadgesList } from "../atoms/badges";
 import Seo from "../components/Seo";
 import { useTranslation } from "next-i18next";
 import { atomUserList } from "../atoms/userEdit";
+import { NameSpaceEnum } from "../types/Namespace";
+import { currentNameSpace } from "../atoms/namespace";
 
 const AdminBadgesPage: NextPage<{ data: string }> = ({
     badges,
     users,
+    nameSpace,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const setBadgesList = useSetAtom(atomBadgesList);
     const setUserlist = useSetAtom(atomUserList);
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(nameSpace);
     useEffect(() => {
         setBadgesList(badges);
         setUserlist(users);
@@ -38,6 +43,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             ...(await serverSideTranslations(locale)),
             badges: JSON.parse(JSON.stringify(query.badges)),
             users: JSON.parse(JSON.stringify(query.users)),
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

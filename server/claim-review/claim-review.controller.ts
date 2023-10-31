@@ -21,6 +21,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { GetClaimReviewsDTO } from "./dto/get-claim-reviews.dto";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Controller()
 export class ClaimReviewController {
@@ -41,6 +42,7 @@ export class ClaimReviewController {
             order = "asc",
             isHidden = false,
             latest = false,
+            nameSpace = NameSpaceEnum.Main,
         } = getClaimReviewsDto;
 
         return Promise.all([

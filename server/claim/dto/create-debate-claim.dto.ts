@@ -44,4 +44,8 @@ export class CreateDebateClaimDTO {
     @ArrayMinSize(2)
     @ApiProperty()
     personalities: Personality[];
+
+    @IsString()
+    @ApiProperty()
+    nameSpace: string;
 }

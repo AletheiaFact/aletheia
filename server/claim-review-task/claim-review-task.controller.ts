@@ -23,8 +23,9 @@ import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { ConfigService } from "@nestjs/config";
 import { UnleashService } from "nestjs-unleash";
 import { ApiTags } from "@nestjs/swagger";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
-@Controller()
+@Controller(":namespace?")
 export class ClaimReviewController {
     constructor(
         private claimReviewTaskService: ClaimReviewTaskService,
@@ -44,6 +45,7 @@ export class ClaimReviewController {
             order = 1,
             value,
             filterUser,
+            nameSpace = NameSpaceEnum.Main,
         } = getTasksDTO;
         return Promise.all([
             this.claimReviewTaskService.listAll(
@@ -51,11 +53,13 @@ export class ClaimReviewController {
                 pageSize,
                 order,
                 value,
-                filterUser
+                filterUser,
+                nameSpace
             ),
             this.claimReviewTaskService.countReviewTasksNotDeleted(
                 getQueryMatchForMachineValue(value),
-                filterUser
+                filterUser,
+                nameSpace
             ),
         ]).then(([tasks, totalTasks]) => {
             const totalPages = Math.ceil(totalTasks / pageSize);
@@ -105,6 +109,7 @@ export class ClaimReviewController {
                     return this.claimReviewTaskService.update(
                         data_hash,
                         claimReviewTaskBody,
+                        claimReviewTaskBody.nameSpace,
                         history
                     );
                 }
@@ -135,6 +140,23 @@ export class ClaimReviewController {
         );
     }
 
+    @ApiTags("claim-review-task")
+    @Put("api/claimreviewtask/add-comment/:data_hash")
+    @Header("Cache-Control", "no-cache")
+    async addComment(@Param("data_hash") data_hash: string, @Body() body) {
+        return this.claimReviewTaskService.addComment(data_hash, body.comment);
+    }
+
+    @ApiTags("claim-review-task")
+    @Put("api/claimreviewtask/delete-comment/:data_hash")
+    @Header("Cache-Control", "no-cache")
+    async deleteComment(@Param("data_hash") data_hash: string, @Body() body) {
+        return this.claimReviewTaskService.deleteComment(
+            data_hash,
+            body.commentId
+        );
+    }
+
     @ApiTags("pages")
     @Get("kanban")
     @Header("Cache-Control", "no-cache")
@@ -150,6 +172,7 @@ export class ClaimReviewController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
+                nameSpace: req.params.namespace,
             })
         );
     }

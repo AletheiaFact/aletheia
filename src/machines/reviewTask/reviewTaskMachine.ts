@@ -114,6 +114,7 @@ export const transitionHandler = (state) => {
         setCurrentFormAndNextEvents,
         resetIsLoading,
         currentUserId,
+        nameSpace,
     } = state.event;
     const event = state.event.type;
 
@@ -136,6 +137,7 @@ export const transitionHandler = (state) => {
                     value: state.value,
                 },
                 recaptcha: recaptchaString,
+                nameSpace,
             },
             t,
             event

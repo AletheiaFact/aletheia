@@ -26,4 +26,8 @@ export class GetTasksDTO {
     @IsBoolean()
     @IsOptional()
     filterUser?: boolean;
+
+    @IsString()
+    @IsOptional()
+    nameSpace?: string;
 }

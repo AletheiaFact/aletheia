@@ -43,23 +43,21 @@ const SentenceReportView = ({
 
     return (
         showReport && (
-            <div>
-                <Row
-                    style={
-                        isCrossChecking && {
-                            backgroundColor: colors.lightGray,
-                        }
+            <Row
+                style={
+                    isCrossChecking && {
+                        backgroundColor: colors.lightGray,
                     }
-                >
-                    {isPublished && isPartialReview && <PartialReviewWarning />}
-                    <Col offset={3} span={18}>
-                        <SentenceReportContent
-                            context={context?.reviewDataHtml || context}
-                        />
-                        {!isLoggedIn && <CTARegistration />}
-                    </Col>
-                </Row>
-            </div>
+                }
+            >
+                {isPublished && isPartialReview && <PartialReviewWarning />}
+                <Col offset={3} span={18}>
+                    <SentenceReportContent
+                        context={context?.reviewDataHtml || context}
+                    />
+                    {!isLoggedIn && <CTARegistration />}
+                </Col>
+            </Row>
         )
     );
 };

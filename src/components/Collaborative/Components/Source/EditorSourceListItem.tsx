@@ -4,10 +4,14 @@ import { LoadingOutlined } from "@ant-design/icons";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditorSourcePopover from "./EditorSourcePopover";
 import colors from "../../../../styles/colors";
+import { NameSpaceEnum } from "../../../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../../../atoms/namespace";
 
 const WEB_ARCHIVE_POSITION_OFFSET = 42;
 
 const EditorSourceListItem = ({ node, sup, source }) => {
+    const [nameSpace] = useAtom(currentNameSpace);
     const { href } = source;
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isArchive, setIsArchive] = useState<boolean>(false);
@@ -34,7 +38,14 @@ const EditorSourceListItem = ({ node, sup, source }) => {
         <Spin
             spinning={isLoading}
             indicator={
-                <LoadingOutlined style={{ color: colors.bluePrimary }} />
+                <LoadingOutlined
+                    style={{
+                        color:
+                            nameSpace === NameSpaceEnum.Main
+                                ? colors.bluePrimary
+                                : colors.blueSecondary,
+                    }}
+                />
             }
         >
             <Col className="source-card">

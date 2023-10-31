@@ -8,6 +8,7 @@ import { BadgeService } from "./badge.service";
 import { Badge, BadgeSchema } from "./schemas/badge.schema";
 import { UsersModule } from "../users/users.module";
 import { UtilService } from "../util";
+import { ConfigModule } from "@nestjs/config";
 
 const BadgeModel = MongooseModule.forFeature([
     {
@@ -17,7 +18,14 @@ const BadgeModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [BadgeModel, ViewModule, AbilityModule, ImageModule, UsersModule],
+    imports: [
+        BadgeModel,
+        ViewModule,
+        AbilityModule,
+        ImageModule,
+        UsersModule,
+        ConfigModule,
+    ],
     exports: [BadgeService],
     providers: [BadgeService, UtilService],
     controllers: [BadgeController],

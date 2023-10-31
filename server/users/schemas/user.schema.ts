@@ -21,8 +21,8 @@ export class User {
     @Prop({ required: true, default: false })
     firstPasswordChanged: boolean;
 
-    @Prop({ required: true, default: Roles.Regular })
-    role: Roles;
+    @Prop({ type: Object, required: true, default: { main: Roles.Regular } })
+    role: object;
 
     @Prop({ required: true, default: false })
     totp: boolean;

@@ -1,6 +1,7 @@
 import AletheiaButton, { ButtonType } from "../../Button";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
+    crossCheckingSelector,
     preloadedOptionsSelector,
     reviewDataSelector,
 } from "../../../machines/reviewTask/selectors";
@@ -14,7 +15,11 @@ import { Row } from "antd";
 import Text from "antd/lib/typography/Text";
 import getNextEvents from "../../../machines/reviewTask/getNextEvent";
 import getNextForm from "../../../machines/reviewTask/getNextForm";
-import { isUserLoggedIn, currentUserId } from "../../../atoms/currentUser";
+import {
+    isUserLoggedIn,
+    currentUserId,
+    currentUserRole,
+} from "../../../atoms/currentUser";
 import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import { trackUmamiEvent } from "../../../lib/umami";
 import { useAppSelector } from "../../../store/store";
@@ -23,6 +28,8 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
 import WarningModal from "../../Modal/WarningModal";
+import { currentNameSpace } from "../../../atoms/namespace";
+import { Roles } from "../../../types/enums";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -34,7 +41,10 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         watch,
     } = useForm();
     const { machineService } = useContext(ReviewTaskMachineContext);
-    const { editorContentObject } = useContext(CollaborativeEditorContext);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const { editorContentObject, comments } = useContext(
+        CollaborativeEditorContext
+    );
     const reviewData = useSelector(machineService, reviewDataSelector);
     const preloadedOptions = useSelector(
         machineService,
@@ -42,7 +52,8 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     );
 
     const { t } = useTranslation();
-
+    const [nameSpace] = useAtom(currentNameSpace);
+    const [role] = useAtom(currentUserRole);
     const [currentForm, setCurrentForm] = useState(null);
     const [nextEvents, setNextEvents] = useState(null);
     const [isLoading, setIsLoading] = useState({});
@@ -140,6 +151,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             data_hash,
             reviewData: {
                 ...formData,
+                comments,
             },
             claimReview: {
                 personality,
@@ -151,6 +163,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             setCurrentFormAndNextEvents,
             resetIsLoading,
             currentUserId: userId,
+            nameSpace,
         });
         setRecaptchaString("");
         recaptchaRef.current?.resetRecaptcha();
@@ -201,6 +214,21 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         else if (event === ReviewTaskEvents.draft) handleSendEvent(event);
     };
 
+    const checkIfUserCanSeeButtons = (): boolean => {
+        const userIsReviewer = reviewData.reviewerId === userId;
+        const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+
+        if (isCrossChecking) {
+            if (!userIsReviewer || !userIsAdmin) {
+                return false;
+            }
+            return true;
+        }
+        return true;
+    };
+
+    const showButtons = checkIfUserCanSeeButtons();
+
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
             {currentForm && (
@@ -218,7 +246,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                             </Text>
                         )}
                     </div>
-                    {nextEvents?.length > 0 && (
+                    {nextEvents?.length > 0 && showButtons && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
                             ref={recaptchaRef}
@@ -226,26 +254,31 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                     )}
                 </>
             )}
-            <Row
-                style={{ padding: "32px 0 0", justifyContent: "space-evenly" }}
-            >
-                {nextEvents?.map((event) => {
-                    return (
-                        <AletheiaButton
-                            loading={isLoading[event]}
-                            key={event}
-                            type={ButtonType.blue}
-                            htmlType={defineButtonHtmlType(event)}
-                            onClick={() => handleOnClick(event)}
-                            event={event}
-                            disabled={!hasCaptcha}
-                            data-cy={`testClaimReview${event}`}
-                        >
-                            {t(`claimReviewTask:${event}`)}
-                        </AletheiaButton>
-                    );
-                })}
-            </Row>
+            {showButtons && (
+                <Row
+                    style={{
+                        padding: "32px 0 0",
+                        justifyContent: "space-evenly",
+                    }}
+                >
+                    {nextEvents?.map((event) => {
+                        return (
+                            <AletheiaButton
+                                loading={isLoading[event]}
+                                key={event}
+                                type={ButtonType.blue}
+                                htmlType={defineButtonHtmlType(event)}
+                                onClick={() => handleOnClick(event)}
+                                event={event}
+                                disabled={!hasCaptcha}
+                                data-cy={`testClaimReview${event}`}
+                            >
+                                {t(`claimReviewTask:${event}`)}
+                            </AletheiaButton>
+                        );
+                    })}
+                </Row>
+            )}
 
             <WarningModal
                 open={gobackWarningModal}

@@ -54,4 +54,9 @@ export class GetPersonalities {
         return [true, "enabled", "true", 1, "1"].indexOf(value) > -1;
     })
     isHidden: boolean | string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    nameSpace?: string;
 }

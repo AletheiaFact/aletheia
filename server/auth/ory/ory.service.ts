@@ -77,10 +77,13 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
-                    role: role,
+                    role,
                 },
             }),
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
         });
     }
 
@@ -90,14 +93,14 @@ export default class OryService {
             url,
             schema_id,
         } = this.configService.get("ory");
-        return fetch(`${url}/${this.adminEndpoint}/identities`, {
+        const result = await fetch(`${url}/${this.adminEndpoint}/identities`, {
             method: "post",
             body: JSON.stringify({
                 schema_id,
                 traits: {
                     email: user.email,
                     user_id: user._id,
-                    role: role ? role : Roles.Regular,
+                    role: role || { main: Roles.Regular },
                 },
                 credentials: {
                     password: {
@@ -105,8 +108,13 @@ export default class OryService {
                     },
                 },
             }),
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
         });
+
+        return await result.json();
     }
 
     deleteIdentity(identityId): Promise<any> {

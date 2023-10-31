@@ -1,13 +1,19 @@
-import { Roles, Status } from "../../auth/ability/ability.factory";
-import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
+import { Status } from "../../auth/ability/ability.factory";
+import {
+    IsArray,
+    IsBoolean,
+    IsObject,
+    IsOptional,
+    IsString,
+} from "class-validator";
 import { Badge } from "../../badge/schemas/badge.schema";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateUserDTO {
-    @IsString()
+    @IsObject()
     @IsOptional()
     @ApiProperty()
-    role: Roles;
+    role: object;
 
     @IsArray()
     @IsOptional()

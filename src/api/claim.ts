@@ -1,5 +1,6 @@
 import axios from "axios";
 import { message } from "antd";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
@@ -11,6 +12,7 @@ interface FetchOptions {
     order?: "asc" | "desc";
     pageSize?: number;
     isHidden?: boolean;
+    nameSpace?: string;
     personality: string;
     i18n?: { languages?: any };
     fetchOnly?: boolean;
@@ -24,6 +26,7 @@ const get = (options: FetchOptions) => {
         personality: options.personality,
         language: options?.i18n?.languages[0],
         isHidden: options?.isHidden || false,
+        nameSpace: options?.nameSpace || NameSpaceEnum.Main,
     };
 
     return request
@@ -45,9 +48,7 @@ const get = (options: FetchOptions) => {
 
 const getById = (id, t, params = {}) => {
     return request
-        .get(`${id}`, {
-            params,
-        })
+        .get(`/${id}`, { params })
         .then((response) => {
             return response.data;
         })
@@ -145,7 +146,7 @@ const updateDebate = (
 
 const deleteClaim = (id: string, t: any) => {
     return request
-        .delete(`${id}`)
+        .delete(`/${id}`)
         .then(() => {
             message.success(t("claim:deleteSuccess"));
         })

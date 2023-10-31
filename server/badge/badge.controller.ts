@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Put, Req, Res } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Get,
+    Post,
+    Put,
+    Req,
+    Res,
+    UseGuards,
+} from "@nestjs/common";
 import type { Request, Response } from "express";
 import { ImageService } from "../claim/types/image/image.service";
 import { parse } from "url";
@@ -11,8 +20,13 @@ import { UsersService } from "../users/users.service";
 import { Types } from "mongoose";
 import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../auth/ability/ability.decorator";
 
-@Controller()
+@Controller(":namespace?")
 export class BadgeController {
     constructor(
         private badgeService: BadgeService,
@@ -124,17 +138,21 @@ export class BadgeController {
 
     @ApiTags("admin")
     @Get("admin/badges")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     public async adminBadges(@Req() req: Request, @Res() res: Response) {
         const badges = await this.badgeService.listAll();
         const users = await this.usersService.findAll({});
         const parsedUrl = parse(req.url, true);
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/admin-badges",
-                Object.assign(parsedUrl.query, { badges, users })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/admin-badges",
+            Object.assign(parsedUrl.query, {
+                badges,
+                users,
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 }

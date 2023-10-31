@@ -5,6 +5,8 @@ import Button, { ButtonType } from "./Button";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { isUserLoggedIn } from "../atoms/currentUser";
 import { useAtom } from "jotai";
+import { currentNameSpace } from "../atoms/namespace";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const GridList = ({
     renderItem,
@@ -16,6 +18,7 @@ const GridList = ({
     gridLayout = {},
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const overrideGridLayout = isLoggedIn
         ? {
@@ -73,7 +76,11 @@ const GridList = ({
                     }}
                 >
                     <Button
-                        href="/personality"
+                        href={
+                            nameSpace !== NameSpaceEnum.Main
+                                ? `/${nameSpace}/personality`
+                                : "/personality"
+                        }
                         type={ButtonType.blue}
                         data-cy="testSeeMorePersonality"
                     >

@@ -5,14 +5,17 @@ import claimApi from "../../api/claim";
 import BaseList from "../List/BaseList";
 import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import ClaimCard from "./ClaimCard";
+import { currentNameSpace } from "../../atoms/namespace";
+import { useAtom } from "jotai";
 
 const ClaimList = ({ personality }) => {
     const { i18n, t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
 
     return (
         <BaseList
             apiCall={claimApi.get}
-            filter={{ personality: personality._id, i18n }}
+            filter={{ personality: personality._id, i18n, nameSpace }}
             title={t("claim:claimListHeader")}
             showDividers={false}
             bluePrimary={true}

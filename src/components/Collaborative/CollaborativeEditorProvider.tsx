@@ -12,6 +12,8 @@ interface ContextType {
     setEditorSources?: (data: any) => void;
     data_hash?: string;
     isFetchingEditor?: boolean;
+    comments?: any[];
+    setComments?: (data: any) => void;
 }
 
 export const CollaborativeEditorContext = createContext<ContextType>({
@@ -34,6 +36,7 @@ export const CollaborativeEditorProvider = (
     const [editorSources, setEditorSources] = useState([]);
     const [isFetchingEditor, setIsFetchingEditor] = useState(false);
     const { websocketUrl } = useAppSelector((state) => state);
+    const [comments, setComments] = useState(null);
 
     useEffect(() => {
         const fetchEditorContentObject = (data_hash) => {
@@ -64,6 +67,8 @@ export const CollaborativeEditorProvider = (
                 setEditorSources,
                 data_hash: props.data_hash,
                 isFetchingEditor,
+                comments,
+                setComments,
             }}
         >
             {props.children}

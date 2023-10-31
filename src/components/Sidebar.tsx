@@ -38,7 +38,11 @@ const Sidebar = () => {
                     paddingLeft: "48px",
                 }}
             >
-                <Logo color={colors.bluePrimary} height="48px" />
+                <Logo
+                    color={colors.bluePrimary}
+                    height="48px"
+                    lineHeight="36px"
+                />
             </div>
             <AletheiaMenu />
         </Drawer>

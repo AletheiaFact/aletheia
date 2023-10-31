@@ -30,4 +30,8 @@ export class GetClaimReviewsDTO {
         return [true, "enabled", "true", 1, "1"].indexOf(value) > -1;
     })
     latest: boolean;
+
+    @IsString()
+    @ApiProperty()
+    nameSpace: string;
 }

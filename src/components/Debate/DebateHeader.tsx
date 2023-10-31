@@ -8,11 +8,14 @@ import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import PersonalityCard from "../Personality/PersonalityCard";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const { Title } = Typography;
 const DebateHeader = ({ title, personalities }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
     const [state] = useAtom(callbackTimerAtom);
 
     useLayoutEffect(() => {
@@ -45,7 +48,10 @@ const DebateHeader = ({ title, personalities }) => {
         >
             <div
                 style={{
-                    backgroundColor: colors.bluePrimary,
+                    backgroundColor:
+                        nameSpace === NameSpaceEnum.Main
+                            ? colors.bluePrimary
+                            : colors.blueSecondary,
                     color: colors.white,
                     width: vw?.sm ? "100%" : "55%",
                     justifyContent: "space-between",

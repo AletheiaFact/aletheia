@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
@@ -15,12 +15,21 @@ import Menu from "./Menu";
 import NotificationMenu from "../Notification/NotificationMenu";
 import userApi from "../../api/userApi";
 import { ory } from "../../lib/orysdk";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
     const { vw } = useAppSelector((state) => state);
     const [hasSession, setHasSession] = useState<boolean>(null);
     const [user, setUser] = useState(null);
+    const [nameSpace] = useAtom(currentNameSpace);
+    const [href, setHref] = useState("/");
+
+    useLayoutEffect(() => {
+        setHref(nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "/");
+    }, [nameSpace]);
 
     useEffect(() => {
         ory.frontend
@@ -50,7 +59,7 @@ const HeaderContent = () => {
         >
             <Menu />
             <a
-                href="/"
+                href={href}
                 style={{
                     height: "56px",
                     display: "grid",

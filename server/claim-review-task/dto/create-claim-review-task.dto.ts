@@ -19,6 +19,7 @@ export type ReviewTaskMachineContextReviewData = {
     rejectionComment?: string;
     editor?: any;
     reviewDataHtml?: ReviewTaskMachineContextReviewData;
+    comments?: any[];
 };
 
 export type ReviewTaskMachineContext = {
@@ -56,4 +57,8 @@ export class CreateClaimReviewTaskDTO {
     @IsString()
     @ApiProperty()
     recaptcha: string;
+
+    @IsString()
+    @ApiProperty()
+    nameSpace: string;
 }

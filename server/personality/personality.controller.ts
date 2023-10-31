@@ -11,6 +11,7 @@ import {
     Query,
     Req,
     Res,
+    UseGuards,
 } from "@nestjs/common";
 import { parse } from "url";
 import type { Request, Response } from "express";
@@ -29,8 +30,9 @@ import {
     AdminUserAbility,
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 
-@Controller()
+@Controller(":namespace?")
 export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(
@@ -86,6 +88,8 @@ export class PersonalityController {
 
     @ApiTags("personality")
     @Put("api/personality/hidden/:id")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
     async updateHiddenStatus(@Param("id") personalityId, @Body() body) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
@@ -103,6 +107,7 @@ export class PersonalityController {
 
     @ApiTags("personality")
     @Delete("api/personality/:id")
+    @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     async delete(@Param("id") personalityId) {
         return this.personalityService.delete(personalityId).catch((err) => {
@@ -131,14 +136,14 @@ export class PersonalityController {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/personality-create-search",
-                Object.assign(parsedUrl.query)
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/personality-create-search",
+            Object.assign(parsedUrl.query, {
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 
     @IsPublic()
@@ -185,6 +190,7 @@ export class PersonalityController {
                 personality,
                 personalities,
                 hideDescriptions,
+                nameSpace: req.params.namespace,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
             })
         );
@@ -197,14 +203,14 @@ export class PersonalityController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/personality-list",
-                Object.assign(parsedUrl.query, {})
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/personality-list",
+            Object.assign(parsedUrl.query, {
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 
     @ApiTags("pages")
@@ -228,6 +234,7 @@ export class PersonalityController {
             Object.assign(parsedUrl.query, {
                 targetId: personality._id,
                 targetModel: TargetModel.Personality,
+                nameSpace: req.params.namespace,
             })
         );
     }

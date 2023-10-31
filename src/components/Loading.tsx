@@ -3,9 +3,13 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 
 import colors from "../styles/colors";
+import { NameSpaceEnum } from "../types/Namespace";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../atoms/namespace";
 
 const Loading = ({ style = {} }) => {
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
     return (
         <div
             style={{
@@ -18,9 +22,23 @@ const Loading = ({ style = {} }) => {
         >
             <LoadingOutlined
                 spin
-                style={{ fontSize: 48, color: colors.bluePrimary }}
+                style={{
+                    fontSize: 48,
+                    color:
+                        nameSpace === NameSpaceEnum.Main
+                            ? colors.bluePrimary
+                            : colors.blueSecondary,
+                }}
             />
-            <p style={{ color: colors.bluePrimary, marginTop: "24px" }}>
+            <p
+                style={{
+                    color:
+                        nameSpace === NameSpaceEnum.Main
+                            ? colors.bluePrimary
+                            : colors.blueSecondary,
+                    marginTop: "24px",
+                }}
+            >
                 {t("common:loading")}
             </p>
         </div>

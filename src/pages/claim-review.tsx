@@ -14,6 +14,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
 import { CollaborativeEditorProvider } from "../components/Collaborative/CollaborativeEditorProvider";
+import { NameSpaceEnum } from "../types/Namespace";
+import { useSetAtom } from "jotai";
+import { currentNameSpace } from "../atoms/namespace";
 
 export interface ClaimReviewPageProps {
     personality?: any;
@@ -25,12 +28,14 @@ export interface ClaimReviewPageProps {
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
     websocketUrl: string;
+    nameSpace: string;
 }
 
 const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-
+    const setCurrentNameSpace = useSetAtom(currentNameSpace);
+    setCurrentNameSpace(props.nameSpace as NameSpaceEnum);
     const {
         personality,
         claim,
@@ -138,6 +143,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             ),
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             websocketUrl: query?.websocketUrl,
+            nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }

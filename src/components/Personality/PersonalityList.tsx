@@ -8,9 +8,13 @@ import Seo from "../Seo";
 import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
 import PersonalityCard from "./PersonalityCard";
 import PersonalityCreateCTA from "./PersonalityCreateCTA";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const PersonalityList = () => {
     const { i18n, t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
     const createPersonalityCTA = (
         <Row
             style={{
@@ -19,7 +23,13 @@ const PersonalityList = () => {
                 width: "100%",
             }}
         >
-            <PersonalityCreateCTA href="/personality/search" />
+            <PersonalityCreateCTA
+                href={
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/personality/search`
+                        : "/personality/search"
+                }
+            />
         </Row>
     );
     return (
@@ -32,6 +42,7 @@ const PersonalityList = () => {
                 apiCall={api.getPersonalities}
                 filter={{
                     i18n,
+                    nameSpace,
                 }}
                 emptyFallback={createPersonalityCTA}
                 renderItem={(p) =>

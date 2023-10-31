@@ -9,7 +9,7 @@ import { SeedTestUser } from "./utils/SeedTestUser";
 
 jest.setTimeout(10000);
 
-describe("LocationController (e2e)", () => {
+describe("PersonalityController (e2e)", () => {
     let app: any;
     let db: any;
 

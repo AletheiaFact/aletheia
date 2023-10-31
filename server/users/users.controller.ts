@@ -31,7 +31,7 @@ import { UpdateUserDTO } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
 
-@Controller()
+@Controller(":namespace?")
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
@@ -87,6 +87,7 @@ export class UsersController {
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     public async admin(@Req() req: Request, @Res() res: Response) {
+        const nameSpace = req.params.namespace;
         const parsedUrl = parse(req.url, true);
         const users = await this.usersService.findAll({
             searchName: "",
@@ -98,16 +99,19 @@ export class UsersController {
                 badges: 1,
                 state: 1,
                 totp: 1,
+                namespaces: 1,
             },
+            nameSpaceSlug: nameSpace,
         });
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/admin-page",
-                Object.assign(parsedUrl.query, { users })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/admin-page",
+            Object.assign(parsedUrl.query, {
+                users,
+                nameSpace,
+            })
+        );
     }
 
     @ApiTags("user")
@@ -173,14 +177,15 @@ export class UsersController {
         const parsedUrl = parse(req.url, true);
         const user = await this.usersService.getById(req.user._id);
 
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/profile-page",
-                Object.assign(parsedUrl.query, { user })
-            );
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/profile-page",
+            Object.assign(parsedUrl.query, {
+                user,
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 
     @IsPublic()
