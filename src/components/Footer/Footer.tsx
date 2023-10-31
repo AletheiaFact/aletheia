@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { Col, Layout, Row } from "antd";
 import { useTranslation } from "next-i18next";
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -16,15 +16,21 @@ const Footer = () => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
     const [nameSpace] = useAtom(currentNameSpace);
+    const [backgroundColor, setBackgroundColor] = useState(colors.bluePrimary);
+
+    useLayoutEffect(() => {
+        setBackgroundColor(
+            nameSpace === NameSpaceEnum.Main
+                ? colors.bluePrimary
+                : colors.blueSecondary
+        );
+    }, [nameSpace]);
 
     return (
         <Layout.Footer
             style={{
                 textAlign: "center",
-                background:
-                    nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary,
+                background: backgroundColor,
                 color: colors.white,
                 padding: "32px",
             }}
