@@ -52,7 +52,7 @@ export class UsersService {
         this.notificationService.createSubscriber(newUser);
         if (!newUser.oryId) {
             this.logger.log("No user id provided, creating a new ory identity");
-            const { data: oryUser } = await this.oryService.createIdentity(
+            const oryUser = await this.oryService.createIdentity(
                 newUser,
                 user.password,
                 user.role
