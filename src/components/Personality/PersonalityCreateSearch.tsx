@@ -12,6 +12,7 @@ import { ActionTypes } from "../../store/types";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const PersonalityCreateSearch = ({
     withSuggestions,
@@ -48,7 +49,13 @@ const PersonalityCreateSearch = ({
             if (selectPersonality !== null) {
                 createClaim();
             } else {
-                router.push(`/${nameSpace}${path}`).catch((e) => e);
+                router
+                    .push(
+                        `/${
+                            nameSpace === NameSpaceEnum.Main ? "" : nameSpace
+                        }${path}`
+                    )
+                    .catch((e) => e);
             }
 
             const headers = {

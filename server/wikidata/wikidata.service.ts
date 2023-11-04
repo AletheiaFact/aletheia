@@ -78,17 +78,24 @@ export class WikidataService {
             language
         );
 
-        if (wikidata.claims.P31) {
-            const wikidataInstanceof =
-                wikidata.claims.P31[0].mainsnak.datavalue.value;
-            wikidataProps.isAllowedProp = wikidataInstanceof.id === "Q5";
+        const allowedInstances = ["Q5", "Q891723"];
+        const hasP31Claims =
+            wikidata.claims.P31 && wikidata.claims.P31.length > 0;
+        if (hasP31Claims) {
+            const isAllowedProp = wikidata.claims.P31.some((claim) => {
+                const instance = claim.mainsnak.datavalue.value;
+                return allowedInstances.includes(instance.id);
+            });
+
+            wikidataProps.isAllowedProp = isAllowedProp;
         } else {
             wikidataProps.isAllowedProp = false;
         }
 
         // Extract image if it exists
-        if (wikidata.claims.P18) {
-            const fileName = wikidata.claims.P18[0].mainsnak.datavalue.value;
+        const wikidataPropImage = wikidata.claims.P18 || wikidata.claims.P154;
+        if (wikidataPropImage) {
+            const fileName = wikidataPropImage[0].mainsnak.datavalue.value;
             wikidataProps.image = await this.getCommonsThumbURL(fileName, 400);
             wikidataProps.avatar = await this.getCommonsThumbURL(fileName, 100);
         }
@@ -110,7 +117,7 @@ export class WikidataService {
                 wikidataProps.twitterAccounts.push(twitterAccount);
             });
         }
-        
+
         return wikidataProps;
     }
 
