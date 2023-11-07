@@ -5,8 +5,8 @@ const review = {
     question2: "Question 2 content",
     report: "Verification Report content",
     process: "Verification process content",
-    source1: "http://wikipedia.org",
-    source2: "http://google.com",
+    source1: "wikipedia.org",
+    source2: "google.com",
     classification: "arguable",
 };
 

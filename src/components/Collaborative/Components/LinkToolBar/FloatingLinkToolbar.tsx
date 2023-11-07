@@ -69,9 +69,16 @@ const FloatingLinkToolbar = () => {
 
     return (
         <>
-            {!isEditing && <FloatingToolbar>{linkEditButton}</FloatingToolbar>}
+            {!isEditing && (
+                <FloatingToolbar data-cy="testFloatingLinkToolbar">
+                    {linkEditButton}
+                </FloatingToolbar>
+            )}
             {!isEditing && isSelected && empty && (
-                <FloatingToolbar positioner={linkPositioner}>
+                <FloatingToolbar
+                    data-cy="testFloatingLinkToolbar"
+                    positioner={linkPositioner}
+                >
                     {linkEditButton}
                 </FloatingToolbar>
             )}

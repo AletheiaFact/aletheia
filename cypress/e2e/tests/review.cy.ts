@@ -63,7 +63,21 @@ describe("Test claim review", () => {
             .click();
         cy.get(locators.claimReview.INPUT_SUMMARY)
             .should("exist")
-            .type(review.summary);
+            .type(`${review.summary}{selectAll}`, { waitForAnimations: true });
+        cy.get("[data-cy=testFloatingLinkToolbar]").should("exist").click();
+        cy.get("[data-cy=testClaimReviewSourcesInput]")
+            .should("exist")
+            .type(review.source1);
+        cy.get("[data-cy=testClaimReviewSourcesButton]")
+            .should("be.enabled")
+            .click();
+        cy.get("body").then(($body) => {
+            if ($body.find("[data-cy=testClaimReviewquestions0]").length <= 0) {
+                cy.get(locators.claimReview.BTN_ADD_QUESTION)
+                    .should("exist")
+                    .click();
+            }
+        });
         cy.get(locators.claimReview.INPUT_QUESTION)
             .should("exist")
             .type(review.question1);
@@ -73,9 +87,6 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.INPUT_HOW)
             .should("exist")
             .type(review.process);
-        cy.get(locators.claimReview.INPUT_SOURCE)
-            .should("exist")
-            .type(review.source1);
         cy.checkRecaptcha();
         cy.get(locators.claimReview.BTN_FINISH_REPORT)
             .should("be.enabled")

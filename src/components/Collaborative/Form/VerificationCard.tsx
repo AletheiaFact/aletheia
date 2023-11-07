@@ -10,7 +10,10 @@ export const VerificationCard = ({ forwardRef, node }) => {
         <CardStyle>
             <label>{t("claimReviewForm:verificationLabel")}</label>
             <Col span={24} className="card-container">
-                <div className="card-content">
+                <div
+                    className="card-content"
+                    data-cy="testClaimReviewverification"
+                >
                     <p style={{ overflowY: "inherit" }} ref={forwardRef} />
                 </div>
             </Col>
