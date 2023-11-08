@@ -57,7 +57,7 @@ jobs:
           --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
           --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} .
     - name: Cypress run
-      uses: cypress-io/github-action@v4
+      uses: cypress-io/github-action@v6
       with:
          start: yarn test:e2e:cy
          wait-on: 'http://localhost:3000'
