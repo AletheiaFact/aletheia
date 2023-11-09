@@ -29,6 +29,13 @@ export class UsersService {
             ...(badges ? { badges } : {}),
         });
 
+        pipeline.lookup({
+            from: "badges",
+            localField: "badges",
+            foreignField: "_id",
+            as: "badges",
+        });
+
         if (nameSpaceSlug && nameSpaceSlug !== NameSpaceEnum.Main) {
             pipeline
                 .lookup({

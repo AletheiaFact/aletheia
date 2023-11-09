@@ -39,7 +39,10 @@ const BadgesView = () => {
                 headerName: t("badges:imageColumn"),
                 flex: 1,
                 renderCell: (params) => (
-                    <Avatar src={params.value.content} alt={params.row.name} />
+                    <Avatar
+                        src={params?.value?.content}
+                        alt={params.row.name}
+                    />
                 ),
             },
             {

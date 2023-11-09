@@ -62,16 +62,17 @@ const AdminView = () => {
                 },
                 renderCell: (params) => (
                     <AvatarGroup max={4}>
-                        {params.value.map((badge) => {
-                            return (
-                                <Avatar
-                                    key={badge._id}
-                                    title={badge?.name}
-                                    src={badge?.image?.content}
-                                    alt={badge}
-                                />
-                            );
-                        })}
+                        {params?.value &&
+                            params?.value?.map((badge) => {
+                                return (
+                                    <Avatar
+                                        key={badge._id}
+                                        title={badge?.name}
+                                        src={badge?.image?.content}
+                                        alt={badge}
+                                    />
+                                );
+                            })}
                     </AvatarGroup>
                 ),
             },
