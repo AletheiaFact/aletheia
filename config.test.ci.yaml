@@ -15,6 +15,11 @@ logging:
 
 # Using config.yaml with wikimedia service-runner pattern
 services:
+  - name: ci-websocket-aletheia
+    module: dist/server/websocket.js
+    conf:
+      port: 5001
+
   - name: ci-aletheia-server
     # path relative to the __dirname variable
     module: dist/server/main.js
