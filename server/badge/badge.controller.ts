@@ -142,7 +142,14 @@ export class BadgeController {
     @CheckAbilities(new AdminUserAbility())
     public async adminBadges(@Req() req: Request, @Res() res: Response) {
         const badges = await this.badgeService.listAll();
-        const users = await this.usersService.findAll({});
+        const users = await this.usersService.findAll({
+            project: {
+                _id: 1,
+                name: 1,
+                role: 1,
+                badges: 1,
+            },
+        });
         const parsedUrl = parse(req.url, true);
         await this.viewService.getNextServer().render(
             req,
