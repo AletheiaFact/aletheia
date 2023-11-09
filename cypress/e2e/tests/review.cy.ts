@@ -61,6 +61,7 @@ describe("Test claim review", () => {
         cy.get(`[data-cy=${review.classification}]`)
             .should("be.visible")
             .click();
+        cy.wait(2000);
         cy.get(locators.claimReview.INPUT_SUMMARY)
             .should("exist")
             .type(`${review.summary}{selectAll}`, { waitForAnimations: true });
