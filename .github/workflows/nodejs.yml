@@ -56,10 +56,6 @@ jobs:
       with:
         name: aletheia-dist
         path: dist/
-    - uses: actions/upload-artifact@v3
-      with:
-        name: aletheia-node-modules
-        path: node_modules/
   test-lint:
     needs: build
     runs-on: ubuntu-latest
@@ -72,9 +68,7 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: aletheia-dist
-    - uses: actions/download-artifact@v3
-      with:
-        name: aletheia-node-modules
+    - run: yarn install
     - name: List directory contents
       run: |
         ls -lah
@@ -97,9 +91,7 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: aletheia-dist
-    - uses: actions/download-artifact@v3
-      with:
-        name: aletheia-node-modules
+    - run: yarn install
     - name: Cypress run
       uses: cypress-io/github-action@v6
       with:
