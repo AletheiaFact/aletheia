@@ -69,10 +69,11 @@ jobs:
       with:
         name: aletheia-dist
     - run: yarn install
-    - name: List directory contents
+    - name: Move dist contents
       run: |
+        mv /home/runner/work/aletheia/aletheia/aletheia-dist/* .
+        echo "Contents of the current directory:"
         ls -lah
-        ls -lah aletheia-build/
     - run: yarn lint
     - run: yarn test
       env:
@@ -91,6 +92,11 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: aletheia-dist
+    - name: Move dist contents
+      run: |
+        mv /home/runner/work/aletheia/aletheia/aletheia-dist/* .
+        echo "Contents of the current directory:"
+        ls -lah
     - run: yarn install
     - name: Cypress run
       uses: cypress-io/github-action@v6
