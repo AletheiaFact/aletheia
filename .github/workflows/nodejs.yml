@@ -54,8 +54,12 @@ jobs:
     - run: yarn build
     - uses: actions/upload-artifact@v3
       with:
-        name: aletheia-build
+        name: aletheia-dist
         path: dist/
+    - uses: actions/upload-artifact@v3
+      with:
+        name: aletheia-node-modules
+        path: node_modules/
   test-lint:
     needs: build
     runs-on: ubuntu-latest
@@ -67,7 +71,10 @@ jobs:
       uses: actions/checkout@v4
     - uses: actions/download-artifact@v3
       with:
-       name: aletheia-build
+        name: aletheia-dist
+    - uses: actions/download-artifact@v3
+      with:
+        name: aletheia-node-modules
     - run: yarn lint
     - run: yarn test
       env:
@@ -85,11 +92,14 @@ jobs:
       uses: actions/checkout@v4
     - uses: actions/download-artifact@v3
       with:
-       name: aletheia-build
+        name: aletheia-dist
+    - uses: actions/download-artifact@v3
+      with:
+        name: aletheia-node-modules
     - name: Cypress run
       uses: cypress-io/github-action@v6
       with:
-       start: yarn test:e2e:cy
-       wait-on: 'http://localhost:3000'
+        start: yarn test:e2e:cy
+        wait-on: 'http://localhost:3000'
       env:
-       CI: true
+        CI: true
