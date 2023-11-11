@@ -71,13 +71,19 @@ jobs:
     - run: yarn install
     - name: Move dist contents
       run: |
-        mv /home/runner/work/aletheia/aletheia/aletheia-dist/* .
+        mv /home/runner/work/aletheia/aletheia/dist ./dist
         echo "Contents of the current directory:"
         ls -lah
     - run: yarn lint
     - run: yarn test
       env:
        NODE_OPTIONS: "--max_old_space_size=4096"
+  # sonarcloud:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       node-version: [18.14.0]
+  #   steps:
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@master
       env:
@@ -92,9 +98,11 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: aletheia-dist
+    - name: List contents of aletheia-dist
+      run: ls -lah /home/runner/work/aletheia/aletheia
     - name: Move dist contents
       run: |
-        mv /home/runner/work/aletheia/aletheia/aletheia-dist/* .
+        mv /home/runner/work/aletheia/aletheia/dist ./dist
         echo "Contents of the current directory:"
         ls -lah
     - run: yarn install
