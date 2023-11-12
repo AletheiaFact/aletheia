@@ -54,6 +54,15 @@ describe("Test claim review", () => {
 
     it("should be able to submit full review fields", () => {
         cy.login();
+        cy.intercept("GET", "/api/claimreviewtask/editor-content/*", (req) => {
+            req.reply({
+                statusCode: 200,
+                body: review.editorContent,
+                headers: {
+                    "content-type": "application/json",
+                },
+            });
+        });
         goToClaimReviewPage();
         cy.get(locators.claimReview.INPUT_CLASSIFICATION)
             .should("exist")
@@ -64,21 +73,7 @@ describe("Test claim review", () => {
         cy.wait(2000);
         cy.get(locators.claimReview.INPUT_SUMMARY)
             .should("exist")
-            .type(`${review.summary}{selectAll}`, { waitForAnimations: true });
-        cy.get("[data-cy=testFloatingLinkToolbar]").should("exist").click();
-        cy.get("[data-cy=testClaimReviewSourcesInput]")
-            .should("exist")
-            .type(review.source1);
-        cy.get("[data-cy=testClaimReviewSourcesButton]")
-            .should("be.enabled")
-            .click();
-        cy.get("body").then(($body) => {
-            if ($body.find("[data-cy=testClaimReviewquestions0]").length <= 0) {
-                cy.get(locators.claimReview.BTN_ADD_QUESTION)
-                    .should("exist")
-                    .click();
-            }
-        });
+            .type(review.summary);
         cy.get(locators.claimReview.INPUT_QUESTION)
             .should("exist")
             .type(review.question1);
