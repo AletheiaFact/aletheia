@@ -30,7 +30,9 @@ describe("Test claim review", () => {
         );
         cy.get("[data-cy=frase1]").click();
         cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
-        cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("not.exist");
+        cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW)
+            .should("not.exist")
+            .click();
     });
 
     it("should be able to assign a user", () => {
@@ -70,13 +72,9 @@ describe("Test claim review", () => {
         cy.get(`[data-cy=${review.classification}]`)
             .should("be.visible")
             .click();
-        cy.wait(2000);
         cy.get(locators.claimReview.INPUT_SUMMARY)
             .should("exist")
             .type(review.summary);
-        cy.get(locators.claimReview.INPUT_QUESTION)
-            .should("exist")
-            .type(review.question1);
         cy.get(locators.claimReview.INPUT_REPORT)
             .should("exist")
             .type(review.report);
