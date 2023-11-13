@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - stage
+      - setup-new-relic
   # For future
   # release:
   #   types: [created]
@@ -18,6 +19,7 @@ env:
   ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
   GITHUB_SHA: ${{ github.sha }}
   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+  NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
   IMAGE: aletheiafact-production
   ENVIRONMENT: development
   UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
@@ -29,6 +31,7 @@ env:
   RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
   NOVU_API_KEY: ${{ secrets.DEVELOPMENT_NOVU_API_KEY }}
   NOVU_APPLICATION_IDENTIFIER: ${{ secrets.DEVELOPMENT_NOVU_APPLICATION_IDENTIFIER }}
+  NEW_RELIC_APP_NAME: ${{ secrets.DEVELOPMENT_NEW_RELIC_APP_NAME }}
 
 
   GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
@@ -65,6 +68,7 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PRODUCTION_AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "NOVU_API_KEY=${{ secrets.PRODUCTION_NOVU_API_KEY }}" >> $GITHUB_ENV
           echo "NOVU_APPLICATION_IDENTIFIER=${{ secrets.PRODUCTION_NOVU_APPLICATION_IDENTIFIER }}" >> $GITHUB_ENV
+          echo "NEW_RELIC_APP_NAME=${{ secrets.PRODUCTION_NEW_RELIC_APP_NAME }}" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -171,6 +175,8 @@ jobs:
           sed -i "s/RECAPTCHA_SITEKEY_STUB/${{ env.RECAPTCHA_SITEKEY }}/g" deployment/app.yml
           sed -i "s%ORY_SDK_URL_STUB%${{ env.ORY_SDK_URL }}%g" deployment/app.yml
           sed -i "s/ORY_ACCESS_TOKEN_STUB/${{ env.ORY_ACCESS_TOKEN }}/g" deployment/app.yml
+          sed -i "s/NEW_RELIC_LICENSE_KEY_STUB/${{ env.NEW_RELIC_LICENSE_KEY }}/g" deployment/app.yml
+          sed -i "s/NEW_RELIC_APP_NAME_STUB/${{ env.NEW_RELIC_APP_NAME }}/g" deployment/app.yml
 
       - name: Set deployment
         run: |

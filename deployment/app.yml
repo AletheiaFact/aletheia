@@ -86,6 +86,10 @@ spec:
               value: ORY_SDK_URL_STUB
             - name: ORY_ACCESS_TOKEN
               value: ORY_ACCESS_TOKEN_STUB
+            - name: NEW_RELIC_LICENSE_KEY
+              value: NEW_RELIC_LICENSE_KEY_STUB
+            - name: NEW_RELIC_APP_NAME
+              value: NEW_RELIC_APP_NAME_STUB
           resources:
             limits:
               cpu: 400m
