@@ -32,6 +32,7 @@ export const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                 <Col span={21} className="card-container">
                     <div
                         className="card-content"
+                        data-cy="testClaimReviewquestions0"
                         style={{
                             minHeight: "40px",
                         }}
@@ -44,6 +45,7 @@ export const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                         style={{ height: "40px", margin: "0 auto" }}
                         onClick={handleDelete}
                         disabled={editable}
+                        data-cy="testClaimReviewquestionsRemove1"
                     >
                         <DeleteOutlined />
                     </Button>

@@ -10,7 +10,7 @@ export const SummaryCard = ({ forwardRef, node }) => {
         <CardStyle>
             <label>{t("claimReviewForm:summaryLabel")}</label>
             <Col span={24} className="card-container">
-                <div className="card-content">
+                <div className="card-content" data-cy="testClaimReviewsummary">
                     <p style={{ overflowY: "inherit" }} ref={forwardRef} />
                 </div>
             </Col>
