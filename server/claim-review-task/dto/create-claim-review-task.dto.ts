@@ -16,7 +16,6 @@ export type ReviewTaskMachineContextReviewData = {
     classification?: ClassificationEnum;
     data_hash?: string;
     reviewerId?: any;
-    rejectionComment?: string;
     editor?: any;
     reviewDataHtml?: ReviewTaskMachineContextReviewData;
     reviewComments?: any[];

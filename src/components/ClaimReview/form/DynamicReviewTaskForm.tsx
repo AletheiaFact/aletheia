@@ -70,21 +70,14 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
 
-    const { autoSave, enableCollaborativeEdit } = useAppSelector((state) => ({
-        autoSave: state.autoSave,
-        enableCollaborativeEdit: state?.enableCollaborativeEdit,
-    }));
+    const autoSave = useAppSelector((state) => state.autoSave);
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
 
     const setCurrentFormAndNextEvents = (param, isSameLabel = false) => {
         if (param !== ReviewTaskEvents.draft) {
-            let nextForm = getNextForm(
-                param,
-                enableCollaborativeEdit,
-                isSameLabel
-            );
+            let nextForm = getNextForm(param, isSameLabel);
             nextForm = setUserPreloads(nextForm);
             setCurrentForm(nextForm);
             setNextEvents(getNextEvents(param, isSameLabel));
