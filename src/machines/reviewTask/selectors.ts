@@ -37,10 +37,6 @@ const reviewDataSelector = (state) => {
     return state.context.reviewData;
 };
 
-const isPartialReviewSelector = (state) => {
-    return state.context.claimReview.isPartialReview || false;
-};
-
 const preloadedOptionsSelector = (state) => {
     return state.context.preloadedOptions;
 };
@@ -52,6 +48,5 @@ export {
     reviewNotStartedSelector,
     reviewDataSelector,
     preloadedOptionsSelector,
-    isPartialReviewSelector,
     reportSelector,
 };

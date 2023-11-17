@@ -6,17 +6,16 @@ import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMa
 import { Roles } from "../../types/enums";
 import {
     reviewingSelector,
-    isPartialReviewSelector,
     publishedSelector,
     crossCheckingSelector,
     reportSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
-import PartialReviewWarning from "../PartialReviewWarning";
 import SentenceReportContent from "./SentenceReportContent";
 import { useAtom } from "jotai";
 import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
+import SentenceReportComments from "./SentenceReportComments";
 
 const SentenceReportView = ({
     context,
@@ -37,25 +36,19 @@ const SentenceReportView = ({
     const isPublished =
         useSelector(machineService, publishedSelector) ||
         publishedReview?.review;
-    const isPartialReview = useSelector(
-        machineService,
-        isPartialReviewSelector
-    );
     const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
 
-    const showReport =
-        (isPublished && (!isHidden || userIsNotRegular)) ||
+    const canShowClassificationAndCrossChecking =
         (isCrossChecking && (userIsAdmin || userIsCrossChecker)) ||
         (isReviewing && (userIsAdmin || userIsReviewer)) ||
         (isReport && (userIsAdmin || userIsAssignee || userIsCrossChecker));
 
-    const showClassification =
-        (isCrossChecking && (userIsAdmin || userIsCrossChecker)) ||
-        (isReviewing && (userIsAdmin || userIsReviewer)) ||
-        (isReport && (userIsAdmin || userIsAssignee || userIsCrossChecker));
+    const canShowReport =
+        (isPublished && (!isHidden || userIsNotRegular)) ||
+        canShowClassificationAndCrossChecking;
 
     return (
-        showReport && (
+        canShowReport && (
             <Row
                 style={
                     (isCrossChecking || isReport || isReviewing) && {
@@ -63,12 +56,16 @@ const SentenceReportView = ({
                     }
                 }
             >
-                {isPublished && isPartialReview && <PartialReviewWarning />}
                 <Col offset={3} span={18}>
+                    {canShowClassificationAndCrossChecking && (
+                        <SentenceReportComments context={context} />
+                    )}
                     <SentenceReportContent
                         context={context?.reviewDataHtml || context}
                         classification={context.classification}
-                        showClassification={showClassification}
+                        showClassification={
+                            canShowClassificationAndCrossChecking
+                        }
                     />
                     {!isLoggedIn && <CTARegistration />}
                 </Col>
