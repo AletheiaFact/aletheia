@@ -6,9 +6,14 @@ import SourcesList from "../Source/SourcesList";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import dompurify from "dompurify";
+import ClassificationText from "../ClassificationText";
 
 const { Paragraph } = Typography;
-const SentenceReportContent = ({ context }) => {
+const SentenceReportContent = ({
+    context,
+    classification,
+    showClassification,
+}) => {
     const { t } = useTranslation();
     const { summary, questions, report, verification, sources } = context;
     const router = useRouter();
@@ -16,6 +21,17 @@ const SentenceReportContent = ({ context }) => {
 
     return (
         <SentenceReportContentStyle>
+            {showClassification && classification && (
+                <Col span={24}>
+                    <Paragraph className="title">
+                        {t("claimReview:claimReview")}
+                    </Paragraph>
+                    <Paragraph className="paragraph">
+                        <ClassificationText classification={classification} />
+                    </Paragraph>
+                    <Divider />
+                </Col>
+            )}
             <Col span={24}>
                 <Paragraph className="title">
                     {t("claimReview:summarySectionTitle")}

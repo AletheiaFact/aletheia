@@ -5,15 +5,16 @@ import {
     fieldValidation,
 } from "../../../Form/FormField";
 
-const assignedCollaborativeForm: FormField[] = [
+const crossCheckingForm: FormField[] = [
+    //TODO: Create Enum of fieldName based on reviewData
     createFormField({
-        fieldName: "collaborativeEditor",
-        type: "collaborative",
+        fieldName: "crossCheckingComment",
+        type: "textArea",
         defaultValue: "",
     }),
 
     createFormField({
-        fieldName: "classification",
+        fieldName: "crossCheckingClassification",
         type: "select",
         defaultValue: "",
         rules: {
@@ -30,4 +31,4 @@ function isValidClassification(string) {
     return Object.values(ClassificationEnum).includes(string);
 }
 
-export default assignedCollaborativeForm;
+export default crossCheckingForm;

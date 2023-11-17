@@ -11,7 +11,7 @@ import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
 import { currentUserRole } from "../../../atoms/currentUser";
 import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
-import { crossCheckingSelector } from "../../../machines/reviewTask/selectors";
+import { reviewingSelector } from "../../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
 import { Roles } from "../../../types/enums";
 
@@ -20,10 +20,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
     // const { removeAnnotations } = useCommands();
     const [role] = useAtom(currentUserRole);
     const { machineService } = useContext(ReviewTaskMachineContext);
-    const isCrossCheckingState = useSelector(
-        machineService,
-        crossCheckingSelector
-    );
+    const isReviewing = useSelector(machineService, reviewingSelector);
 
     const handleResolvedClick = async () => {
         await CommentApi.updateComment(content?._id, { resolved: true });
@@ -76,7 +73,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
             </div>
             {role !== Roles.Regular &&
                 role !== Roles.FactChecker &&
-                isCrossCheckingState && (
+                isReviewing && (
                     <Popover
                         trigger="click"
                         placement="bottom"

@@ -3,5 +3,6 @@
     "gobackWarning": "voltar",
     "okButton": "Pronto",
     "deleteButton": "Deletar",
-    "cancelButton": "Cancelar"
+    "cancelButton": "Cancelar",
+    "crossCheckingClassification": "enviar o relatório com a classificação diferente do comentário do cross-checking"
 }

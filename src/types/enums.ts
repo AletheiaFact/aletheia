@@ -38,4 +38,9 @@ export enum TargetModel {
     Image = "Image",
 }
 
-export { ClassificationEnum, Roles, Status, ContentModelEnum };
+enum CommentEnum {
+    crossChecking = "cross-checking",
+    review = "review",
+}
+
+export { ClassificationEnum, Roles, Status, ContentModelEnum, CommentEnum };

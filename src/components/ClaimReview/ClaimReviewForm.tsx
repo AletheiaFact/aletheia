@@ -2,7 +2,7 @@ import Button, { ButtonType } from "../Button";
 import { Col, Row } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
-    crossCheckingSelector,
+    reviewingSelector,
     reviewDataSelector,
     reviewNotStartedSelector,
 } from "../../machines/reviewTask/selectors";
@@ -35,7 +35,7 @@ const ClaimReviewForm = ({
     const { machineService } = useContext(ReviewTaskMachineContext);
 
     const reviewData = useSelector(machineService, reviewDataSelector);
-    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isReviewing = useSelector(machineService, reviewingSelector);
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
     const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
@@ -44,8 +44,8 @@ const ClaimReviewForm = ({
     const showForm =
         isUnassigned ||
         userIsAdmin ||
-        (userIsAssignee && !isCrossChecking) ||
-        (isCrossChecking && userIsReviewer);
+        (userIsAssignee && !isReviewing) ||
+        (isReviewing && userIsReviewer);
 
     const toggleFormCollapse = () => {
         setFormCollapsed(!formCollapsed);

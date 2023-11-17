@@ -1,9 +1,11 @@
 import AletheiaButton, { ButtonType } from "../../Button";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
-    crossCheckingSelector,
+    reviewingSelector,
     preloadedOptionsSelector,
     reviewDataSelector,
+    crossCheckingSelector,
+    reportSelector,
 } from "../../../machines/reviewTask/selectors";
 
 import AletheiaCaptcha from "../../AletheiaCaptcha";
@@ -29,7 +31,7 @@ import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
 import WarningModal from "../../Modal/WarningModal";
 import { currentNameSpace } from "../../../atoms/namespace";
-import { Roles } from "../../../types/enums";
+import { CommentEnum, Roles } from "../../../types/enums";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -41,7 +43,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         watch,
     } = useForm();
     const { machineService } = useContext(ReviewTaskMachineContext);
+    const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isReported = useSelector(machineService, reportSelector);
     const { editorContentObject, comments } = useContext(
         CollaborativeEditorContext
     );
@@ -61,6 +65,8 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const [recaptchaString, setRecaptchaString] = useState("");
     const [gobackWarningModal, setGobackWarningModal] =
         useState<boolean>(false);
+    const [finishReportWarningModal, setFinishReportWarningModal] =
+        useState<boolean>(false);
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
 
@@ -72,12 +78,16 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
 
-    const setCurrentFormAndNextEvents = (param) => {
+    const setCurrentFormAndNextEvents = (param, isSameLabel = false) => {
         if (param !== ReviewTaskEvents.draft) {
-            let nextForm = getNextForm(param, enableCollaborativeEdit);
+            let nextForm = getNextForm(
+                param,
+                enableCollaborativeEdit,
+                isSameLabel
+            );
             nextForm = setUserPreloads(nextForm);
             setCurrentForm(nextForm);
-            setNextEvents(getNextEvents(param));
+            setNextEvents(getNextEvents(param, isSameLabel));
         }
     };
 
@@ -151,7 +161,11 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             data_hash,
             reviewData: {
                 ...formData,
-                comments,
+                reviewComments:
+                    comments?.filter(
+                        (comment) => comment.type === CommentEnum.review
+                    ) || reviewData.reviewComments,
+                crossCheckingComments: reviewData.crossCheckingComments,
             },
             claimReview: {
                 personality,
@@ -169,23 +183,63 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         recaptchaRef.current?.resetRecaptcha();
     };
 
-    const ValidateSelectedReviewer = (data) => {
+    const ValidateSelectedReviewer = (data, event) => {
         const isValidReviewer =
-            !data.reviewerId || !reviewData.usersId.includes(data.reviewerId);
+            event === ReviewTaskEvents.sendToCrossChecking
+                ? !data.crossCheckerId ||
+                  !reviewData.usersId.includes(data.crossCheckerId)
+                : !data.reviewerId ||
+                  !reviewData.usersId.includes(data.reviewerId);
+
         setReviewerError(!isValidReviewer);
         return isValidReviewer;
     };
 
-    const handleSendEvent = async (event, machineContext = null) => {
-        if (!machineContext) machineContext = getValues();
+    const scrollToTop = (event) => {
+        const eventsToScroll = [
+            ReviewTaskEvents.goback,
+            ReviewTaskEvents.finishReport,
+            ReviewTaskEvents.publish,
+            ReviewTaskEvents.submitComment,
+            ReviewTaskEvents.sendToCrossChecking,
+            ReviewTaskEvents.sendToReview,
+            ReviewTaskEvents.submitCrossChecking,
+            ReviewTaskEvents.addRejectionComment,
+        ];
 
-        sendEventToMachine(
-            {
-                ...machineContext,
-                collaborativeEditor: editorContentObject,
-            },
-            event
-        );
+        if (eventsToScroll.includes(event)) {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+            });
+        }
+    };
+
+    const handleSendEvent = async (
+        event,
+        machineContext = null,
+        force = false
+    ) => {
+        const context = machineContext || getValues();
+        const shouldShowFinishReportWarning =
+            !force &&
+            event === ReviewTaskEvents.finishReport &&
+            context.crossCheckingClassification !== "" &&
+            context.classification !== context.crossCheckingClassification;
+
+        if (shouldShowFinishReportWarning) {
+            setFinishReportWarningModal(!finishReportWarningModal);
+        } else {
+            sendEventToMachine(
+                {
+                    ...context,
+                    collaborativeEditor: editorContentObject,
+                },
+                event
+            );
+        }
+
+        scrollToTop(event);
     };
 
     /**
@@ -195,7 +249,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
      */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        if (ValidateSelectedReviewer(data)) {
+        if (ValidateSelectedReviewer(data, event)) {
             handleSendEvent(event, data);
         }
     };
@@ -216,13 +270,23 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
 
     const checkIfUserCanSeeButtons = (): boolean => {
         const userIsReviewer = reviewData.reviewerId === userId;
+        const userIsCrossChecker = reviewData.crossCheckerId === userId;
+        const userIsAssignee = reviewData.usersId.includes(userId);
         const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
 
+        if (
+            isReported &&
+            !userIsAssignee &&
+            !userIsCrossChecker &&
+            !userIsAdmin
+        ) {
+            return false;
+        }
         if (isCrossChecking) {
-            if (!userIsReviewer || !userIsAdmin) {
-                return false;
-            }
-            return true;
+            return userIsCrossChecker || userIsAdmin;
+        }
+        if (isReviewing) {
+            return userIsReviewer || userIsAdmin;
         }
         return true;
     };
@@ -291,6 +355,21 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                     setGobackWarningModal(!gobackWarningModal);
                 }}
                 handleCancel={() => setGobackWarningModal(!gobackWarningModal)}
+            />
+
+            <WarningModal
+                open={finishReportWarningModal}
+                title={t("warningModal:title", {
+                    warning: t("warningModal:crossCheckingClassification"),
+                })}
+                width={400}
+                handleOk={() => {
+                    handleSendEvent(ReviewTaskEvents.finishReport, null, true);
+                    setFinishReportWarningModal(!finishReportWarningModal);
+                }}
+                handleCancel={() =>
+                    setFinishReportWarningModal(!finishReportWarningModal)
+                }
             />
         </form>
     );

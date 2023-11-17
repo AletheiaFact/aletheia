@@ -16,6 +16,10 @@ const CollaborativeEditorStyle = styled(AllStyledComponent)`
     .remirror-editor-wrapper {
         flex: 1;
     }
+
+    .remirror-floating-popover {
+        z-index: 2;
+    }
 `;
 
 export default CollaborativeEditorStyle;

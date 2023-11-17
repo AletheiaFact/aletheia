@@ -24,6 +24,9 @@ export type ReviewData = {
     reviewerId: string;
     collaborativeEditor?: RemirrorJSON;
     reviewDataHtml?: any;
+    crossCheckingComments: any[];
+    crossCheckingComment: string;
+    crossCheckingClassification: string;
 };
 
 export type ClaimReview = {

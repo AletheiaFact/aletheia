@@ -5,9 +5,11 @@ import React, { useContext } from "react";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { Roles } from "../../types/enums";
 import {
-    crossCheckingSelector,
+    reviewingSelector,
     isPartialReviewSelector,
     publishedSelector,
+    crossCheckingSelector,
+    reportSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
@@ -21,13 +23,17 @@ const SentenceReportView = ({
     userIsNotRegular,
     userIsReviewer,
     isHidden,
+    userIsAssignee,
+    userIsCrossChecker,
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
     const { machineService, publishedReview } = useContext(
         ReviewTaskMachineContext
     );
+    const isReport = useSelector(machineService, reportSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isReviewing = useSelector(machineService, reviewingSelector);
     const isPublished =
         useSelector(machineService, publishedSelector) ||
         publishedReview?.review;
@@ -39,13 +45,20 @@ const SentenceReportView = ({
 
     const showReport =
         (isPublished && (!isHidden || userIsNotRegular)) ||
-        (isCrossChecking && (userIsAdmin || userIsReviewer));
+        (isCrossChecking && (userIsAdmin || userIsCrossChecker)) ||
+        (isReviewing && (userIsAdmin || userIsReviewer)) ||
+        (isReport && (userIsAdmin || userIsAssignee || userIsCrossChecker));
+
+    const showClassification =
+        (isCrossChecking && (userIsAdmin || userIsCrossChecker)) ||
+        (isReviewing && (userIsAdmin || userIsReviewer)) ||
+        (isReport && (userIsAdmin || userIsAssignee || userIsCrossChecker));
 
     return (
         showReport && (
             <Row
                 style={
-                    isCrossChecking && {
+                    (isCrossChecking || isReport || isReviewing) && {
                         backgroundColor: colors.lightGray,
                     }
                 }
@@ -54,6 +67,8 @@ const SentenceReportView = ({
                 <Col offset={3} span={18}>
                     <SentenceReportContent
                         context={context?.reviewDataHtml || context}
+                        classification={context.classification}
+                        showClassification={showClassification}
                     />
                     {!isLoggedIn && <CTARegistration />}
                 </Col>

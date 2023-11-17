@@ -2,8 +2,10 @@
     "timeNow": "agora",
     "assignedUser": "Você foi atribuído para começar uma revisão",
     "reviewProgress": "A revisão na qual você esta atribuido(a) avançou",
+    "crossCheckingSubmit": "A revisão na qual você esta atribuido(a) foi enviada para cross-checking",
     "reviewSubmit": "A revisão na qual você esta atribuido(a) foi enviada para revisão",
-    "reviewerCrossChecking": "Você foi selecionado como revisor para o cross-checking de uma checagem",
+    "crossChecker": "Você foi selecionado como cross-checker de uma checagem",
+    "reviewer": "Você foi selecionado como revisor de uma checagem",
     "reviewRejected": "A revisão na qual você esta atribuido(a) foi rejeitada, faça as alterações necessárias para que seja aceita",
     "reviewPublished": "Sua revisão foi publicada"
 }

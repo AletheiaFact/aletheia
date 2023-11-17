@@ -19,7 +19,11 @@ export type ReviewTaskMachineContextReviewData = {
     rejectionComment?: string;
     editor?: any;
     reviewDataHtml?: ReviewTaskMachineContextReviewData;
-    comments?: any[];
+    reviewComments?: any[];
+    crossCheckingComment?: string;
+    crossCheckingClassification?: string;
+    crossCheckingComments?: any[];
+    crossCheckerId?: any;
 };
 
 export type ReviewTaskMachineContext = {
@@ -34,6 +38,7 @@ export type ReviewTaskMachineContext = {
     preloadedOptions: {
         usersId?: any[];
         reviewerId?: any[];
+        crossCheckerId?: any[];
     };
 };
 
