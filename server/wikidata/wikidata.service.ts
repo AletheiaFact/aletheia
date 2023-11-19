@@ -78,7 +78,16 @@ export class WikidataService {
             language
         );
 
-        const allowedInstances = ["Q5", "Q891723"];
+        /**
+         * Q5 = Human
+         * Q891723 = Public Companies
+         * Q1153191 = Online newspaper
+         */
+        const allowedInstances = ["Q5", "Q891723", "Q1153191"];
+        /**
+         * Relation of type constraints
+         * https://www.wikidata.org/wiki/Q21503252
+         */
         const hasP31Claims =
             wikidata.claims.P31 && wikidata.claims.P31.length > 0;
         if (hasP31Claims) {
