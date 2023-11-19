@@ -27,7 +27,7 @@ services:
       users:
         - name: Test User
           email: test-cypress@aletheiafact.org
-          password: TEST_USER_PASS
+          password: {env(CI_ORY_USER_PASSWORD)}
           sendAuthDetails: false
           isTestUser: true
           oryId: {env(CI_ORY_USERID)}

@@ -90,6 +90,10 @@ spec:
               value: NEW_RELIC_LICENSE_KEY_STUB
             - name: NEW_RELIC_APP_NAME
               value: NEW_RELIC_APP_NAME_STUB
+            - name: ENVIRONMENT
+              value: ENVIRONMENT_STUB
+            - name: NEXT_PUBLIC_ORY_SDK_URL
+              value: NEXT_PUBLIC_ORY_SDK_URL_STUB
           resources:
             limits:
               cpu: 400m
