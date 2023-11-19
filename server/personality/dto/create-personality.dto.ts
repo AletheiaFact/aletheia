@@ -10,7 +10,7 @@ import {
 export class CreatePersonalityDTO {
     @IsNotEmpty()
     @IsString()
-    @MinLength(3)
+    @MinLength(2)
     @ApiProperty()
     name: string;
 
