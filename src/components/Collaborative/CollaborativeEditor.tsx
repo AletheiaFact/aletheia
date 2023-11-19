@@ -22,7 +22,6 @@ import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMa
 import { reviewingSelector } from "../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
 import CommentContainer from "./Comment/CommentContainer";
-import { useAppSelector } from "../../store/store";
 
 interface CollaborativeEditorProps {
     placeholder: string;
@@ -33,9 +32,6 @@ const CollaborativeEditor = ({
     placeholder,
     onContentChange,
 }: CollaborativeEditorProps) => {
-    const { enableCollaborativeEdit } = useAppSelector((state) => ({
-        enableCollaborativeEdit: state?.enableCollaborativeEdit,
-    }));
     const {
         websocketProvider,
         editorContentObject,
@@ -70,7 +66,7 @@ const CollaborativeEditor = ({
             new VerificationExtesion({ disableExtraAttributes: true }),
             new TrailingNodeExtension(),
         ];
-        if (enableCollaborativeEdit) {
+        if (websocketProvider) {
             extensions.push(
                 new YjsExtension({ getProvider: () => websocketProvider })
             );
