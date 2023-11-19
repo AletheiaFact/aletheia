@@ -20,7 +20,6 @@ export type ReviewData = {
     verification: string;
     sources: string[] | object[];
     classification: string | ClassificationEnum;
-    rejectionComment: string;
     reviewerId: string;
     collaborativeEditor?: RemirrorJSON;
     reviewDataHtml?: any;
