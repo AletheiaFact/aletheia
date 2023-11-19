@@ -12,10 +12,30 @@ import colors from "../styles/colors";
 import { DefaultSeo } from "next-seo";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { materialTheme } from "../styles/materialTheme";
+import { useSetAtom } from "jotai";
+import {
+    currentAuthentication,
+    currentUserId,
+    currentUserRole,
+    isUserLoggedIn,
+} from "../atoms/currentUser";
+import { GetUserRole } from "../utils/GetUserRole";
 
 function MyApp({ Component, pageProps }) {
     const store = useStore();
     const { t } = useTranslation();
+    const setCurrentRole = useSetAtom(currentUserRole);
+    const setCurrentLoginStatus = useSetAtom(isUserLoggedIn);
+    const setCurrentUserId = useSetAtom(currentUserId);
+    const setCurrentLevelAuthentication = useSetAtom(currentAuthentication);
+
+    GetUserRole().then(({ role, isLoggedIn, id, aal }) => {
+        setCurrentRole(role);
+        setCurrentLoginStatus(isLoggedIn);
+        setCurrentUserId(id);
+        setCurrentLevelAuthentication(aal);
+    });
+
     return (
         <>
             <Head>
