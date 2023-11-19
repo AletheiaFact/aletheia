@@ -28,6 +28,7 @@ import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { CommentService } from "./comment/comment.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { CommentEnum } from "./comment/schema/comment.schema";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewTaskService {
@@ -250,28 +251,71 @@ export class ClaimReviewTaskService {
         );
     }
 
+    _returnObjectId(data): any {
+        if (Array.isArray(data)) {
+            return data.map((item) =>
+                item._id ? Types.ObjectId(item._id) || "" : Types.ObjectId(item)
+            );
+        }
+    }
+
+    _createCrossCheckingComment(comment, text, targetId) {
+        const newCrossCheckingComment = {
+            comment,
+            text,
+            type: CommentEnum.crossChecking,
+            targetId,
+            user: this.req.user._id,
+        };
+        return this.commentService.create(newCrossCheckingComment);
+    }
+
     async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
         const reviewDataBody = claimReviewTaskBody.machine.context.reviewData;
         const claimReviewTask = await this.getClaimReviewTaskByDataHash(
             claimReviewTaskBody.data_hash
         );
 
+        const createCrossCheckingComment =
+            claimReviewTask?.machine?.value === "addCommentCrossChecking" &&
+            reviewDataBody.crossCheckingClassification &&
+            reviewDataBody.crossCheckingComment;
+
         claimReviewTaskBody.machine.context.reviewData.usersId =
-            reviewDataBody.usersId.map((userId) => {
-                return Types.ObjectId(userId);
-            });
+            this._returnObjectId(reviewDataBody.usersId);
 
         if (reviewDataBody.reviewerId) {
             claimReviewTaskBody.machine.context.reviewData.reviewerId =
                 Types.ObjectId(reviewDataBody.reviewerId) || "";
         }
 
-        if (reviewDataBody.comments) {
-            this.commentService.updateManyComments(reviewDataBody.comments);
-            claimReviewTaskBody.machine.context.reviewData.comments =
-                reviewDataBody.comments.map(
-                    (comment) => Types.ObjectId(comment._id) || ""
-                );
+        if (reviewDataBody.crossCheckerId) {
+            claimReviewTaskBody.machine.context.reviewData.crossCheckerId =
+                Types.ObjectId(reviewDataBody.crossCheckerId) || "";
+        }
+
+        if (reviewDataBody.reviewComments) {
+            this.commentService.updateManyComments(
+                reviewDataBody.reviewComments
+            );
+            claimReviewTaskBody.machine.context.reviewData.reviewComments =
+                this._returnObjectId(reviewDataBody.reviewComments);
+        }
+
+        if (reviewDataBody.crossCheckingComments) {
+            claimReviewTaskBody.machine.context.reviewData.crossCheckingComments =
+                this._returnObjectId(reviewDataBody.crossCheckingComments);
+        }
+
+        if (createCrossCheckingComment) {
+            const crossCheckingComment = await this._createCrossCheckingComment(
+                reviewDataBody.crossCheckingComment,
+                reviewDataBody.crossCheckingClassification,
+                claimReviewTask._id
+            );
+            claimReviewTaskBody.machine.context.reviewData.crossCheckingComments.push(
+                crossCheckingComment._id
+            );
         }
 
         if (claimReviewTask) {
@@ -342,25 +386,31 @@ export class ClaimReviewTaskService {
     }
 
     getClaimReviewTaskByDataHash(data_hash: string) {
-        return this.ClaimReviewTaskModel.findOne({
-            data_hash,
-        }).populate({
-            path: "machine.context.reviewData.comments",
-            model: "Comment",
-            populate: [
-                {
+        const commentPopulation = [
+            {
+                path: "user",
+                select: "name",
+            },
+            {
+                path: "replies",
+                populate: {
                     path: "user",
                     select: "name",
                 },
-                {
-                    path: "replies",
-                    populate: {
-                        path: "user",
-                        select: "name",
-                    },
-                },
-            ],
-        });
+            },
+        ];
+
+        return this.ClaimReviewTaskModel.findOne({ data_hash })
+            .populate({
+                path: "machine.context.reviewData.reviewComments",
+                model: "Comment",
+                populate: commentPopulation,
+            })
+            .populate({
+                path: "machine.context.reviewData.crossCheckingComments",
+                model: "Comment",
+                populate: commentPopulation,
+            });
     }
 
     async getReviewTasksByClaimId(claimId: string) {
@@ -381,6 +431,11 @@ export class ClaimReviewTaskService {
         )
             .populate({
                 path: "machine.context.reviewData.usersId",
+                model: "User",
+                select: "name",
+            })
+            .populate({
+                path: "machine.context.reviewData.crossCheckerId",
                 model: "User",
                 select: "name",
             })
@@ -406,6 +461,20 @@ export class ClaimReviewTaskService {
             claimReviewTask.machine.context.preloadedOptions = {
                 usersId: preloadedAsignees,
             };
+
+            if (claimReviewTask.machine.context.reviewData.crossCheckerId) {
+                const crossCheckerUser =
+                    claimReviewTask.machine.context.reviewData.crossCheckerId;
+                claimReviewTask.machine.context.preloadedOptions.crossCheckerId =
+                    [
+                        {
+                            value: crossCheckerUser._id,
+                            label: crossCheckerUser.name,
+                        },
+                    ];
+                claimReviewTask.machine.context.reviewData.crossCheckerId =
+                    crossCheckerUser._id;
+            }
 
             if (claimReviewTask.machine.context.reviewData.reviewerId) {
                 const reviewerUser =
@@ -492,11 +561,11 @@ export class ClaimReviewTaskService {
             targetId: claimReviewTask._id,
         });
 
-        if (!reviewData.comments) {
-            reviewData.comments = [];
+        if (!reviewData.reviewComments) {
+            reviewData.reviewComments = [];
         }
 
-        reviewData.comments.push(Types.ObjectId(newComment?._id));
+        reviewData.reviewComments.push(Types.ObjectId(newComment?._id));
 
         const { machine } = await this.ClaimReviewTaskModel.findOneAndUpdate(
             { _id: claimReviewTask._id },
@@ -516,7 +585,10 @@ export class ClaimReviewTaskService {
             data_hash
         );
         const reviewData = claimReviewTask.machine.context.reviewData;
-        reviewData.comments = reviewData.comments.filter(
+        reviewData.reviewComments = reviewData.reviewComments.filter(
+            (comment) => !comment._id.equals(commentIdObject)
+        );
+        reviewData.reviewComments = reviewData.crossCheckingComments.filter(
             (comment) => !comment._id.equals(commentIdObject)
         );
 

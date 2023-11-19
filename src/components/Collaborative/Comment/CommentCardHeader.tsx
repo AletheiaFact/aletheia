@@ -45,6 +45,15 @@ const CommentCardHeader = ({ content, name, isEditing, setIsResolved }) => {
                 </Avatar>
                 <div>
                     <p style={{ margin: 0, paddingTop: 4 }}>{name}</p>
+                    <p
+                        style={{
+                            margin: 0,
+                            fontSize: 12,
+                            textTransform: "capitalize",
+                        }}
+                    >
+                        {content.type}
+                    </p>
                     {!isEditing && (
                         <p style={{ margin: 0, fontSize: 12 }}>
                             {getCommentTime(content?.createdAt)}

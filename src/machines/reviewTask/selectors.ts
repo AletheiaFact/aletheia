@@ -4,7 +4,22 @@ const publishedSelector = (state) => {
     return state.matches(ReviewTaskStates.published);
 };
 
+const reportSelector = (state) => {
+    return (
+        state.matches(ReviewTaskStates.reported) ||
+        state.matches(ReviewTaskStates.selectCrossChecker) ||
+        state.matches(ReviewTaskStates.selectReviewer)
+    );
+};
+
 const crossCheckingSelector = (state) => {
+    return (
+        state.matches(ReviewTaskStates.crossChecking) ||
+        state.matches(ReviewTaskStates.addCommentCrossChecking)
+    );
+};
+
+const reviewingSelector = (state) => {
     return (
         state.matches(ReviewTaskStates.submitted) ||
         state.matches(ReviewTaskStates.rejected)
@@ -22,10 +37,6 @@ const reviewDataSelector = (state) => {
     return state.context.reviewData;
 };
 
-const isPartialReviewSelector = (state) => {
-    return state.context.claimReview.isPartialReview || false;
-};
-
 const preloadedOptionsSelector = (state) => {
     return state.context.preloadedOptions;
 };
@@ -33,8 +44,9 @@ const preloadedOptionsSelector = (state) => {
 export {
     publishedSelector,
     crossCheckingSelector,
+    reviewingSelector,
     reviewNotStartedSelector,
     reviewDataSelector,
     preloadedOptionsSelector,
-    isPartialReviewSelector,
+    reportSelector,
 };

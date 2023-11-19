@@ -33,6 +33,13 @@ const draftSubStates = {
     },
 };
 
+const isSameLabel = (context, event) =>
+    context.reviewData.classification ===
+    event.reviewData.crossCheckingClassification;
+
+const isDifferentLabel = (context, event) =>
+    context.classification !== event.reviewData.crossCheckingClassification;
+
 export const createNewMachine = ({ value, context }) => {
     return createMachine<
         ReviewTaskMachineContext,
@@ -67,13 +74,68 @@ export const createNewMachine = ({ value, context }) => {
                     [Events.goback]: {
                         target: States.assigned,
                     },
-
-                    [Events.submit]: {
+                    [Events.selectedCrossChecking]: {
+                        target: States.selectCrossChecker,
+                    },
+                    [Events.selectedReview]: {
+                        target: States.selectReviewer,
+                    },
+                },
+            },
+            [States.selectCrossChecker]: {
+                on: {
+                    [Events.goback]: {
+                        target: States.reported,
+                    },
+                    [Events.sendToCrossChecking]: {
+                        target: States.crossChecking,
+                        actions: [saveContext],
+                    },
+                },
+            },
+            [States.selectReviewer]: {
+                on: {
+                    [Events.goback]: {
+                        target: States.reported,
+                    },
+                    [Events.sendToReview]: {
                         target: States.submitted,
                         actions: [saveContext],
                     },
                 },
             },
+            [States.crossChecking]: {
+                on: {
+                    [Events.addComment]: {
+                        target: States.addCommentCrossChecking,
+                        actions: [saveContext],
+                    },
+                    [Events.submitCrossChecking]: {
+                        target: States.reported,
+                        actions: [saveContext],
+                    },
+                },
+            },
+            [States.addCommentCrossChecking]: {
+                on: {
+                    [Events.goback]: {
+                        target: States.crossChecking,
+                    },
+                    [Events.submitComment]: [
+                        {
+                            target: States.reported,
+                            actions: [saveContext],
+                            cond: isSameLabel,
+                        },
+                        {
+                            target: States.assigned,
+                            actions: [saveContext],
+                            cond: isDifferentLabel,
+                        },
+                    ],
+                },
+            },
+            //TODO: Investigate how to move rejected and addComment crossChecking as substates
             [States.submitted]: {
                 on: {
                     [Events.reject]: {
@@ -123,7 +185,11 @@ export const transitionHandler = (state) => {
             ? Object.keys(state.value)[0]
             : state.value;
 
-    if (event === Events.reject) {
+    if (
+        event === Events.reject ||
+        event === Events.selectedCrossChecking ||
+        event === Events.selectedReview
+    ) {
         setCurrentFormAndNextEvents(nextState);
     } else if (event !== Events.init) {
         api.createClaimReviewTask(
@@ -145,7 +211,10 @@ export const transitionHandler = (state) => {
             .then(() => {
                 return event === Events.goback
                     ? setCurrentFormAndNextEvents(nextState)
-                    : setCurrentFormAndNextEvents(event);
+                    : setCurrentFormAndNextEvents(
+                          event,
+                          isSameLabel(state.context, state.event)
+                      );
             })
             .catch((e) => {
                 // TODO: Track errors with Sentry

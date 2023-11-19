@@ -22,11 +22,7 @@ const sendReviewNotifications = (
         }
     }
 
-    if (
-        event === Events.finishReport ||
-        event === Events.fullReview ||
-        event === Events.partialReview
-    ) {
+    if (event === Events.finishReport) {
         payload.messageIdentifier = t("notification:reviewProgress");
         const inactiveUsers = reviewData.usersId.filter(
             (userId) => userId !== currentUserId
@@ -37,7 +33,26 @@ const sendReviewNotifications = (
         }
     }
 
-    if (event === Events.submit) {
+    if (event === Events.sendToCrossChecking) {
+        payload.messageIdentifier = t("notification:crossCheckingSubmit");
+        const inactiveUsers = reviewData.usersId.filter(
+            (userId) => userId !== currentUserId
+        );
+
+        for (const user of inactiveUsers) {
+            NotificationsApi.sendNotification(user, payload);
+        }
+
+        if (reviewData.crossCheckerId) {
+            payload.messageIdentifier = t("notification:crossChecker");
+            NotificationsApi.sendNotification(
+                reviewData.crossCheckerId,
+                payload
+            );
+        }
+    }
+
+    if (event === Events.sendToReview) {
         payload.messageIdentifier = t("notification:reviewSubmit");
         const inactiveUsers = reviewData.usersId.filter(
             (userId) => userId !== currentUserId
@@ -48,7 +63,7 @@ const sendReviewNotifications = (
         }
 
         if (reviewData.reviewerId) {
-            payload.messageIdentifier = t("notification:reviewerCrossChecking");
+            payload.messageIdentifier = t("notification:reviewer");
             NotificationsApi.sendNotification(reviewData.reviewerId, payload);
         }
     }

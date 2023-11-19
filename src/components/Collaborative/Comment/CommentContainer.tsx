@@ -48,11 +48,17 @@ const CommentContainer = ({ readonly, state }) => {
 
     useEffect(() => {
         if (comments === null) {
-            const reviewDataComments = reviewData?.comments;
-            const unresolvedComments = reviewDataComments?.filter(
+            const reviewComments = reviewData?.reviewComments?.filter(
                 (comment) => !comment?.resolved
             );
-            setComments(unresolvedComments);
+            const crossCheckingComments =
+                reviewData?.crossCheckingComments?.filter(
+                    (crossCheckingComment) => !crossCheckingComment?.resolved
+                );
+            setComments([
+                ...(reviewComments ? reviewComments : []),
+                ...(crossCheckingComments ? crossCheckingComments : []),
+            ]);
         }
     }, [comments, setComments, reviewData?.comments]);
 

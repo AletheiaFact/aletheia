@@ -1,7 +1,7 @@
 import { createFormField, FormField } from "../../../Form/FormField";
 import { fetchUserList } from "./unassignedForm";
 
-const reportedForm: FormField[] = [
+const selectReviewerForm: FormField[] = [
     createFormField({
         fieldName: "reviewerId",
         type: "inputSearch",
@@ -11,4 +11,4 @@ const reportedForm: FormField[] = [
     }),
 ];
 
-export default reportedForm;
+export default selectReviewerForm;

@@ -6,10 +6,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { ClassificationEnum, Roles, TargetModel } from "../../types/enums";
 import {
-    crossCheckingSelector,
+    reviewingSelector,
     publishedSelector,
-    reviewDataSelector,
     reviewNotStartedSelector,
+    crossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
@@ -52,19 +52,19 @@ const ClaimReviewHeader = ({
     const isHidden = publishedReview?.review?.isHidden;
     const [hide, setHide] = useState(isHidden);
 
-    const reviewData = useSelector(machineService, reviewDataSelector);
     const reviewNotStarted = useSelector(
         machineService,
         reviewNotStartedSelector
     );
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isReviewing = useSelector(machineService, reviewingSelector);
     const userHasPermission = userIsReviewer || userIsAssignee;
     const isPublished =
         useSelector(machineService, publishedSelector) ||
         publishedReview?.review;
     const isPublishedOrCanSeeHidden =
         isPublished && (!isHidden || userIsNotRegular);
-    const userIsAdmin = role === Roles.Admin || Roles.SuperAdmin;
+    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
 
     const alertTypes = {
         hiddenReport: {
@@ -77,10 +77,10 @@ const ClaimReviewHeader = ({
             description: "",
             title: "claimReviewTask:crossCheckingAlertTitle",
         },
-        rejected: {
+        reviewing: {
             show: true,
-            description: reviewData.rejectionComment,
-            title: "claimReviewTask:rejectionAlertTitle",
+            description: "",
+            title: "claimReviewTask:reviewingAlertTitle",
         },
         hasStarted: {
             show: true,
@@ -103,14 +103,11 @@ const ClaimReviewHeader = ({
             return alertTypes.hiddenReport;
         }
         if (!isPublished) {
-            if (isCrossChecking && (userIsAdmin || userHasPermission)) {
+            if (isCrossChecking && (!userIsAdmin || !userHasPermission)) {
                 return alertTypes.crossChecking;
             }
-            if (
-                (userIsAdmin || userIsAssignee) &&
-                reviewData.rejectionComment
-            ) {
-                return alertTypes.rejected;
+            if (isReviewing && (!userIsAdmin || !userHasPermission)) {
+                return alertTypes.reviewing;
             }
             if (!userHasPermission && !userIsAdmin && !reviewNotStarted) {
                 return alertTypes.hasStarted;
@@ -119,13 +116,17 @@ const ClaimReviewHeader = ({
         return alertTypes.noAlert;
     };
 
-    const showClassification =
-        isPublishedOrCanSeeHidden || (isCrossChecking && userHasPermission);
-
     useEffect(() => {
         const newAlert = getAlert();
         setAlert(newAlert);
-    }, [isCrossChecking, hide, isLoggedIn, reviewData.rejectionComment]);
+    }, [
+        isCrossChecking,
+        isReviewing,
+        hide,
+        isLoggedIn,
+        userHasPermission,
+        userIsAdmin,
+    ]);
 
     useEffect(() => {
         setHide(isHidden);
@@ -153,7 +154,7 @@ const ClaimReviewHeader = ({
                             claim={claim}
                             content={content}
                             classification={
-                                showClassification ? classification : ""
+                                isPublishedOrCanSeeHidden ? classification : ""
                             }
                             hideDescription={
                                 hideDescription?.[TargetModel.Claim]

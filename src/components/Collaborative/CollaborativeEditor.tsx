@@ -19,7 +19,7 @@ import { TrailingNodeExtension } from "remirror/extensions";
 import { RemirrorContentType } from "remirror";
 import EditorSourcesList from "./Components/Source/EditorSourceList";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { crossCheckingSelector } from "../../machines/reviewTask/selectors";
+import { reviewingSelector } from "../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
 import CommentContainer from "./Comment/CommentContainer";
 
@@ -39,7 +39,7 @@ const CollaborativeEditor = ({
         setEditorSources,
     } = useContext(CollaborativeEditorContext);
     const { machineService } = useContext(ReviewTaskMachineContext);
-    const readonly = useSelector(machineService, crossCheckingSelector);
+    const readonly = useSelector(machineService, reviewingSelector);
     const users = websocketProvider.awareness.states.size;
     const isCollaborative = users > 1;
 

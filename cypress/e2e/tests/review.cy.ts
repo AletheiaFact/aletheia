@@ -70,6 +70,10 @@ describe("Test claim review", () => {
         cy.get(`[data-cy=${review.classification}]`)
             .should("be.visible")
             .click();
+        cy.get(locators.claimReview.BTN_ADD_QUESTION).should("exist").click();
+        cy.get(locators.claimReview.INPUT_QUESTION)
+            .eq(1)
+            .type(review.question2);
         cy.get(locators.claimReview.INPUT_SUMMARY)
             .should("exist")
             .type(review.summary);

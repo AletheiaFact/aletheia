@@ -4,12 +4,17 @@ import { User } from "../../../users/schemas/user.schema";
 
 export type CommentDocument = Comment & mongoose.Document;
 
+export enum CommentEnum {
+    crossChecking = "cross-checking",
+    review = "review",
+}
+
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
 export class Comment {
-    @Prop({ type: Number, required: true })
+    @Prop({ type: Number })
     from: number;
 
-    @Prop({ type: Number, required: true })
+    @Prop({ type: Number })
     to: number;
 
     @Prop({ required: true })
@@ -43,6 +48,9 @@ export class Comment {
 
     @Prop({ required: true, default: false })
     isReply: boolean;
+
+    @Prop({ required: true, default: CommentEnum.review })
+    type: CommentEnum;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
