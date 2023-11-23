@@ -14,15 +14,16 @@ import DonateButton from "./DonateButton";
 import Menu from "./Menu";
 import NotificationMenu from "../Notification/NotificationMenu";
 import userApi from "../../api/userApi";
-import { ory } from "../../lib/orysdk";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { currentUserId } from "../../atoms/currentUser";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
     const { vw } = useAppSelector((state) => state);
-    const [hasSession, setHasSession] = useState<boolean>(null);
+    const [userId] = useAtom(currentUserId);
+    const hasSession = !!userId;
     const [user, setUser] = useState(null);
     const [nameSpace] = useAtom(currentNameSpace);
     const [href, setHref] = useState("/");
@@ -32,17 +33,12 @@ const HeaderContent = () => {
     }, [nameSpace]);
 
     useEffect(() => {
-        ory.frontend
-            .toSession()
-            .then(async ({ data }) => {
-                const user = await userApi.getByOryId(data.identity.id);
-                setHasSession(true);
+        if (hasSession) {
+            userApi.getById(userId).then((user) => {
                 setUser(user);
-            })
-            .catch(() => {
-                setHasSession(false);
             });
-    }, [hasSession]);
+        }
+    }, [hasSession, userId]);
 
     const handleClickSearchIcon = () => {
         dispatch(actions.openResultsOverlay());
