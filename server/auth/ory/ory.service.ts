@@ -113,7 +113,7 @@ export default class OryService {
                 Authorization: `Bearer ${token}`,
             },
         });
-
+        // FIXME: log errors in the server when  creating an user
         return await result.json();
     }
 

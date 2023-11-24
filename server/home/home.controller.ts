@@ -36,7 +36,7 @@ export class HomeController {
         const { personalities } = await this.personalityService.combinedListAll(
             {
                 language: req.language,
-                order: "random",
+                // order: "random",
                 pageSize: 6,
                 fetchOnly: true,
             }

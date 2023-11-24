@@ -63,7 +63,15 @@ export class PersonalityService {
         withSuggestions = false
     ) {
         let personalities;
-
+        console.log(
+            page,
+            pageSize,
+            order,
+            query,
+            filter,
+            language,
+            withSuggestions
+        );
         if (order === "random") {
             personalities = await this.PersonalityModel.aggregate([
                 {
@@ -87,11 +95,13 @@ export class PersonalityService {
                 .sort({ _id: order })
                 .lean();
         } else {
+            console.log("caiu aqui nessa porra");
             personalities = await this.PersonalityModel.find(query)
                 .skip(page * pageSize)
                 .limit(pageSize)
                 .sort({ _id: order })
                 .lean();
+            console.log(personalities, "personalities");
         }
 
         if (withSuggestions) {
@@ -406,6 +416,7 @@ export class PersonalityService {
             this.count(queryInputs),
         ])
             .then(([personalities, totalPersonalities]) => {
+                console.log(personalities, totalPersonalities);
                 const totalPages = Math.ceil(
                     totalPersonalities / parseInt(pageSize, 10)
                 );
