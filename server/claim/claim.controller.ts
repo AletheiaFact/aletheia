@@ -132,6 +132,7 @@ export class ClaimController {
                 ? `/personality/${personality.slug}/claim/${claim.slug}`
                 : `/personality/${personality.slug}`;
             return {
+                _id: claim._id,
                 title: claim.title,
                 path:
                     claim.nameSpace !== NameSpaceEnum.Main
@@ -146,7 +147,7 @@ export class ClaimController {
     // TODO: create a image controller under types and move the endpoints to it
     @ApiTags("claim")
     @Post("api/claim/image")
-    async createClaimImage(@Body() createClaimDTO) {
+    async createClaimImage(@Body() createClaimDTO: CreateClaimDTO) {
         if (!this.isEnabledImageClaim()) {
             throw new NotFoundException();
         }
