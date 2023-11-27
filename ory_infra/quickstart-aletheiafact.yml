@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  kratos-migrate:
+    volumes:
+      - type: bind
+        # source: /home/runner/work/aletheia/aletheia/ory_infra/config
+        source: /host_mnt/Users/msantos/workspace/aletheia_fact/aletheia/ory_infra/config
+        target: /etc/config/kratos
+
+  kratos-selfservice-ui-node:
+    ports:
+      - "4455:4455"
+    environment:
+      - PORT=4455
+      - SECURITY_MODE=
+      - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
+
+  kratos:
+    volumes:
+      - type: volume
+        source: kratos-sqlite
+        target: /var/lib/sqlite
+        read_only: false
+      - type: bind
+        # source: /home/runner/work/aletheia/aletheia/ory_infra/config
+        source: /host_mnt/Users/msantos/workspace/aletheia_fact/aletheia/ory_infra/config
+        target: /etc/config/kratos

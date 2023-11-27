@@ -38,7 +38,17 @@
 yarn build
 ```
 ## Configuring Ory 
+### Local environment
+Todo:
+- [ ] Incorporate the docker-compose config into the base docker-compose
+- [ ] Document how to run it
+- [ ] Remove the unnecessary docker images from Cypress CI pipeline
 
+```
+git submodules update --init
+```
+
+### Ory Cloud
 #### Taking What You Need:
 - Create an account and a project on https://console.ory.sh/login.
 - Copy the SDK Configuration url and save it.

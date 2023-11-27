@@ -11,8 +11,8 @@ on:
 
 env:
   UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
-  ORY_SDK_URL: ${{ secrets.DEVELOPMENT_ORY_SDK_URL }}
-  ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
+  ORY_SDK_URL: http://127.0.0.1:4433 #${{ secrets.DEVELOPMENT_ORY_SDK_URL }}
+  # ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
   ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
   CI_ORY_USERID: ${{ secrets.CI_ORY_USERID }}
   CI_ORY_USER_PASSWORD: ${{ secrets.CI_ORY_USER_PASSWORD }}
@@ -96,8 +96,7 @@ jobs:
       with:
         name: aletheia-dist
         path: dist
-    - name: List contents of aletheia-dist
-      run: ls -lah /home/runner/work/aletheia/aletheia
+    - run:  git submodule update --init --recursive 
     - run: |
         echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
         yarn install

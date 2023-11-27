@@ -19,9 +19,12 @@ services:
         limit: 1000
       authentication_type: ory
       ory:
-        url: {env(ORY_SDK_URL)}
-        access_token: {env(ORY_ACCESS_TOKEN)}
-        schema_id: {env(ALETHEIA_SCHEMA_ID)}
+        url: http://localhost:4433
+        admin_url: http://localhost:4434
+        admin_endpoint: admin
+        # url: {env(ORY_SDK_URL)}
+        # access_token: {env(ORY_ACCESS_TOKEN)}
+        # schema_id: {env(ALETHEIA_SCHEMA_ID)}
       feature_flag:
         url: {env(GITLAB_FEATURE_FLAG_URL)}
         appName: Staging
