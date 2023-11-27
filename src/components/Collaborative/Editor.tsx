@@ -60,6 +60,7 @@ const Editor = ({ editable, state }: { editable: boolean; state: any }) => {
                     onClick={() => handleInsertNode(getQuestionContentHtml)}
                     disabled={editable}
                     style={{ outline: "none", border: "none" }}
+                    data-cy="testClaimReviewquestionsAdd"
                 >
                     <QuestionMarkIcon className="toolbar-item-icon" />
                 </Button>
@@ -69,6 +70,7 @@ const Editor = ({ editable, state }: { editable: boolean; state: any }) => {
                     onClick={() => handleInsertNode(getSummaryContentHtml)}
                     disabled={editable || summaryDisabled}
                     style={{ outline: "none", border: "none" }}
+                    data-cy="testClaimReviewsummarizeAdd"
                 >
                     <SummarizeIcon className="toolbar-item-icon" />
                 </Button>
@@ -78,6 +80,7 @@ const Editor = ({ editable, state }: { editable: boolean; state: any }) => {
                     onClick={() => handleInsertNode(getReportContentHtml)}
                     disabled={editable || reportDisabled}
                     style={{ outline: "none", border: "none" }}
+                    data-cy="testClaimReviewreportAdd"
                 >
                     <ReportProblemIcon className="toolbar-item-icon" />
                 </Button>
@@ -87,6 +90,7 @@ const Editor = ({ editable, state }: { editable: boolean; state: any }) => {
                     onClick={() => handleInsertNode(getVerificationContentHtml)}
                     disabled={editable || verificationDisabled}
                     style={{ outline: "none", border: "none" }}
+                    data-cy="testClaimReviewverificationAdd"
                 >
                     <FactCheckIcon className="toolbar-item-icon" />
                 </Button>

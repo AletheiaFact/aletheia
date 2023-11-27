@@ -19,7 +19,7 @@ import { TrailingNodeExtension } from "remirror/extensions";
 import { RemirrorContentType } from "remirror";
 import EditorSourcesList from "./Components/Source/EditorSourceList";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { crossCheckingSelector } from "../../machines/reviewTask/selectors";
+import { reviewingSelector } from "../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
 import CommentContainer from "./Comment/CommentContainer";
 
@@ -39,8 +39,8 @@ const CollaborativeEditor = ({
         setEditorSources,
     } = useContext(CollaborativeEditorContext);
     const { machineService } = useContext(ReviewTaskMachineContext);
-    const readonly = useSelector(machineService, crossCheckingSelector);
-    const users = websocketProvider.awareness.states.size;
+    const readonly = useSelector(machineService, reviewingSelector);
+    const users = websocketProvider?.awareness?.states?.size;
     const isCollaborative = users > 1;
 
     useEffect(() => {
@@ -49,7 +49,7 @@ const CollaborativeEditor = ({
     }, [machineService.state.context.reviewData.sources, setEditorSources]);
 
     function createExtensions() {
-        return [
+        const extensions: any = [
             // TODO: Make annotations shared across documents
             // new AnnotationExtension(),
             new PlaceholderExtension({ placeholder }),
@@ -60,13 +60,19 @@ const CollaborativeEditor = ({
                 autoLink: true,
                 selectTextOnClick: true,
             }),
-            new YjsExtension({ getProvider: () => websocketProvider }),
             new SummaryExtension({ disableExtraAttributes: true }),
             new QuestionExtension({ disableExtraAttributes: true }),
             new ReportExtension({ disableExtraAttributes: true }),
             new VerificationExtesion({ disableExtraAttributes: true }),
             new TrailingNodeExtension(),
         ];
+        if (websocketProvider) {
+            extensions.push(
+                new YjsExtension({ getProvider: () => websocketProvider })
+            );
+        }
+
+        return extensions;
     }
 
     const { manager, state, setState } = useRemirror({

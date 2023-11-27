@@ -20,10 +20,12 @@ export type ReviewData = {
     verification: string;
     sources: string[] | object[];
     classification: string | ClassificationEnum;
-    rejectionComment: string;
     reviewerId: string;
     collaborativeEditor?: RemirrorJSON;
     reviewDataHtml?: any;
+    crossCheckingComments: any[];
+    crossCheckingComment: string;
+    crossCheckingClassification: string;
 };
 
 export type ClaimReview = {

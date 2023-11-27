@@ -23,5 +23,7 @@
     "hideSuccess": "Relatório escondido com sucesso",
     "hideError": "Erro ao esconder o relatório",
     "unhideSuccess": "Relatório público com sucesso",
-    "unhideError": "Erro ao mostrar o relatório"
+    "unhideError": "Erro ao mostrar o relatório",
+    "crossCheckingClassification": "Etiqueta cross-check",
+    "crossCheckingComments": "Comentários"
 }

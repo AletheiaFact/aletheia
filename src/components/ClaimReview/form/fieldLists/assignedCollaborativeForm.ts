@@ -7,6 +7,12 @@ import {
 
 const assignedCollaborativeForm: FormField[] = [
     createFormField({
+        fieldName: "collaborativeEditor",
+        type: "collaborative",
+        defaultValue: "",
+    }),
+
+    createFormField({
         fieldName: "classification",
         type: "select",
         defaultValue: "",
@@ -17,11 +23,6 @@ const assignedCollaborativeForm: FormField[] = [
                     "common:requiredFieldError",
             },
         },
-    }),
-    createFormField({
-        fieldName: "collaborativeEditor",
-        type: "collaborative",
-        defaultValue: "",
     }),
 ];
 

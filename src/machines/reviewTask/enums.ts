@@ -1,22 +1,31 @@
 enum ReviewTaskEvents {
     init = "xstate.init",
     assignUser = "ASSIGN_USER",
-    partialReview = "PARTIAL_REVIEW",
     finishReport = "FINISH_REPORT",
-    submit = "SUBMIT",
+    sendToCrossChecking = "SEND_TO_CROSS_CHECKING",
+    submitCrossChecking = "SUBMIT_CROSS_CHECKING",
+    sendToReview = "SEND_TO_REVIEW",
     reject = "REJECT",
     publish = "PUBLISH",
     draft = "SAVE_DRAFT",
     goback = "GO_BACK",
     addRejectionComment = "ADD_REJECTION_COMMENT",
+    addComment = "ADD_COMMENT",
+    submitComment = "SUBMIT_COMMENT",
+    selectedReview = "SELECTED_REVIEW",
+    selectedCrossChecking = "SELECTED_CROSS_CHECKING",
 }
 
 enum ReviewTaskStates {
     unassigned = "unassigned",
     assigned = "assigned",
     reported = "reported",
+    selectReviewer = "selectReviewer",
+    selectCrossChecker = "selectCrossChecker",
+    crossChecking = "cross-checking",
     submitted = "submitted",
     rejected = "rejected",
+    addCommentCrossChecking = "addCommentCrossChecking",
     published = "published",
 }
 

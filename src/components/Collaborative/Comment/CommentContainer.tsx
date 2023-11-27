@@ -14,11 +14,10 @@ import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTas
 import { useSelector } from "@xstate/react";
 import { reviewDataSelector } from "../../../machines/reviewTask/selectors";
 import CommentCard from "./CommentCard";
-import { ory } from "../../../lib/orysdk";
 import userApi from "../../../api/userApi";
 import { useAtom } from "jotai";
 import { Roles } from "../../../types/enums";
-import { currentUserRole } from "../../../atoms/currentUser";
+import { currentUserId, currentUserRole } from "../../../atoms/currentUser";
 
 const CommentContainer = ({ readonly, state }) => {
     const { comments, setComments } = useContext(CollaborativeEditorContext);
@@ -26,7 +25,8 @@ const CommentContainer = ({ readonly, state }) => {
     const reviewData = useSelector(machineService, reviewDataSelector);
     const [role] = useAtom(currentUserRole);
     const [isCommentVisible, setIsCommentVisible] = useState<boolean>(false);
-    const [hasSession, setHasSession] = useState(null);
+    const [userId] = useAtom(currentUserId);
+    const hasSession = !!userId;
     const [user, setUser] = useState(null);
     // const { addAnnotation } = useCommands();
     // const { getAnnotations } = useHelpers();
@@ -34,25 +34,26 @@ const CommentContainer = ({ readonly, state }) => {
     // const annotations = getAnnotations();
 
     useEffect(() => {
-        ory.frontend
-            .toSession()
-            .then(async ({ data }) => {
-                const user = await userApi.getByOryId(data.identity.id);
-                setHasSession(true);
+        if (hasSession) {
+            userApi.getById(userId).then((user) => {
                 setUser(user);
-            })
-            .catch(() => {
-                setHasSession(false);
             });
-    }, [hasSession]);
+        }
+    }, [hasSession, userId]);
 
     useEffect(() => {
         if (comments === null) {
-            const reviewDataComments = reviewData?.comments;
-            const unresolvedComments = reviewDataComments?.filter(
+            const reviewComments = reviewData?.reviewComments?.filter(
                 (comment) => !comment?.resolved
             );
-            setComments(unresolvedComments);
+            const crossCheckingComments =
+                reviewData?.crossCheckingComments?.filter(
+                    (crossCheckingComment) => !crossCheckingComment?.resolved
+                );
+            setComments([
+                ...(reviewComments ? reviewComments : []),
+                ...(crossCheckingComments ? crossCheckingComments : []),
+            ]);
         }
     }, [comments, setComments, reviewData?.comments]);
 

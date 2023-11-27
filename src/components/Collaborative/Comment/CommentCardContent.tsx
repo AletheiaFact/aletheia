@@ -3,6 +3,9 @@ import React from "react";
 import CommentCardForm from "./CommentCardForm";
 import CommentCardHeader from "./CommentCardHeader";
 import { Divider } from "@mui/material";
+import reviewColors from "../../../constants/reviewColors";
+import { useTranslation } from "next-i18next";
+import { CommentEnum } from "../../../types/enums";
 
 const CommentCardContent = ({
     user,
@@ -21,6 +24,7 @@ const CommentCardContent = ({
     setIsSelected?: any;
     setIsResolved?: any;
 }) => {
+    const { t } = useTranslation();
     // const { from } = useCurrentSelection();
     // const { getAnnotationsAt } = useHelpers();
 
@@ -41,17 +45,34 @@ const CommentCardContent = ({
                 setIsResolved={setIsResolved}
             />
             {!content.isReply && (
-                <p
-                    style={{
-                        padding: "0px 10px",
-                        width: "fit-content",
-                        borderLeft: "2px solid black",
-                        fontStyle: "italic",
-                        margin: 0,
-                    }}
-                >
-                    {content?.text}
-                </p>
+                <>
+                    {content.type === CommentEnum.review && (
+                        <p
+                            style={{
+                                padding: "0px 10px",
+                                width: "fit-content",
+                                borderLeft: "2px solid black",
+                                fontStyle: "italic",
+                                margin: 0,
+                            }}
+                        >
+                            {content?.text}
+                        </p>
+                    )}
+                    {content.type === CommentEnum.crossChecking && (
+                        <p
+                            style={{
+                                padding: "0 4px",
+                                color: reviewColors[content.text],
+                                fontWeight: "bold",
+                                textTransform: "uppercase",
+                                margin: 0,
+                            }}
+                        >
+                            {t(`claimReviewForm:${content?.text}`)}
+                        </p>
+                    )}
+                </>
             )}
             <p style={{ margin: 0, fontSize: 14 }}>{content?.comment}</p>
             {!content.isReply && (

@@ -35,6 +35,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
 
     const userIsNotRegular = !(role === Roles.Regular || role === null);
     const userIsReviewer = reviewData.reviewerId === userId;
+    const userIsCrossChecker = reviewData.crossCheckerId === userId;
     const userIsAssignee = reviewData.usersId.includes(userId);
 
     const { personality, claim, content, hideDescriptions } = props;
@@ -88,6 +89,8 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 context={review?.report || reviewData}
                 userIsNotRegular={userIsNotRegular}
                 userIsReviewer={userIsReviewer}
+                userIsAssignee={userIsAssignee}
+                userIsCrossChecker={userIsCrossChecker}
                 isHidden={review?.isHidden}
             />
 

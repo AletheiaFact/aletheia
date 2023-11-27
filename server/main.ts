@@ -5,6 +5,7 @@ import Logger from "./logger";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+require("newrelic");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 

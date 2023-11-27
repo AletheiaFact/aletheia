@@ -2,8 +2,10 @@
     "timeNow": "now",
     "assignedUser": "You have been assigned to start a review",
     "reviewProgress": "The review you are assigned to has progressed",
+    "crossCheckingSubmit": "The review you are assigned to has been sent for cross-checking",
     "reviewSubmit": "The review you are assigned to has been sent for review",
-    "reviewerCrossChecking": "You have been selected as a reviewer for cross-checking",
+    "crossChecker": "You have been selected as a cross-checker",
+    "reviewer": "You have been selected as a reviewer",
     "reviewRejected": "The review you are assigned to has been rejected, make the necessary changes for it to be accepted",
     "reviewPublished": "Your review has been published"
 }

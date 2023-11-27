@@ -7,13 +7,13 @@ import { DeleteOutlined } from "@ant-design/icons";
 import CardStyle from "./CardStyle";
 import { useTranslation } from "next-i18next";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
-import { crossCheckingSelector } from "../../../machines/reviewTask/selectors";
+import { reviewingSelector } from "../../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
 
 export const QuestionCard = ({ forwardRef, node, initialPosition }) => {
     const { t } = useTranslation();
     const { machineService } = useContext(ReviewTaskMachineContext);
-    const editable = useSelector(machineService, crossCheckingSelector);
+    const editable = useSelector(machineService, reviewingSelector);
     const command = useCommands();
 
     const handleDelete = useCallback(
@@ -32,6 +32,7 @@ export const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                 <Col span={21} className="card-container">
                     <div
                         className="card-content"
+                        data-cy="testClaimReviewquestions0"
                         style={{
                             minHeight: "40px",
                         }}
@@ -44,6 +45,7 @@ export const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                         style={{ height: "40px", margin: "0 auto" }}
                         onClick={handleDelete}
                         disabled={editable}
+                        data-cy="testClaimReviewquestionsRemove1"
                     >
                         <DeleteOutlined />
                     </Button>

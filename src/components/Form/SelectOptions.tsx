@@ -44,8 +44,14 @@ function SelectOptions({
         return (value: string) => {
             setOptions([]);
             setFetching(true);
+            //TODO: query with the filter
             fetchOptions(value, t, nameSpace).then((newOptions) => {
-                if (fieldName === "reviewerId") {
+                if (fieldName === "crossCheckerId") {
+                    const reviewerUsers = newOptions.filter(
+                        (user) => user?.role[nameSpace] !== Roles.Regular
+                    );
+                    setOptions(reviewerUsers);
+                } else if (fieldName === "reviewerId") {
                     const reviewerUsers = newOptions.filter(
                         (user) =>
                             user?.role[nameSpace] === Roles.Reviewer ||

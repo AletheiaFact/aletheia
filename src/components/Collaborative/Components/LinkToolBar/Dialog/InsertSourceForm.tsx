@@ -29,6 +29,7 @@ const InsertSourceForm = ({
                     }}
                     white
                     ref={inputRef}
+                    data-cy="testClaimReviewSourcesInput"
                     {...rest}
                 />
                 <AletheiaButton
@@ -41,6 +42,7 @@ const InsertSourceForm = ({
                         boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.4)",
                         marginRight: 2,
                     }}
+                    data-cy="testClaimReviewSourcesButton"
                 >
                     <PlusOutlined />
                 </AletheiaButton>
