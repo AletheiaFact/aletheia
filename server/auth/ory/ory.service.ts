@@ -69,22 +69,25 @@ export default class OryService {
             schema_id,
         } = this.configService.get("ory");
 
-        return fetch(`${url}/${this.adminEndpoint}/identities/${user.oryId}`, {
-            method: "put",
-            body: JSON.stringify({
-                schema_id,
-                //When updating any traits, the user_id and email traits are required.
-                traits: {
-                    email: user.email,
-                    user_id: user._id,
-                    role,
+        return await fetch(
+            `${url}/${this.adminEndpoint}/identities/${user.oryId}`,
+            {
+                method: "put",
+                body: JSON.stringify({
+                    schema_id,
+                    //When updating any traits, the user_id and email traits are required.
+                    traits: {
+                        email: user.email,
+                        user_id: user._id,
+                        role,
+                    },
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
-            }),
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        });
+            }
+        );
     }
 
     async createIdentity(user, password, role?): Promise<any> {
@@ -112,9 +115,10 @@ export default class OryService {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
+            credentials: "omit",
         });
-
-        return await result.json();
+        console.log(result);
+        return result;
     }
 
     deleteIdentity(identityId): Promise<any> {

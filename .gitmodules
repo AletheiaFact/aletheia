@@ -1,0 +1,3 @@
+[submodule "ory_infra/kratos"]
+	path = ory_infra/kratos
+	url = https://github.com/ory/kratos.git
