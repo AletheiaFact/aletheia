@@ -169,15 +169,15 @@ jobs:
 
       - name: Set environment
         run: |
-          sed -i 's/ENVIRONMENT/$ENVIRONMENT/g' deployment/app.yml
-          sed -i 's/ENVIRONMENT/${{ env.ENVIRONMENT }}/g' deployment/websocket.yml
-          sed -i "s/UMAMI_SITE_ID_STUB/${{ env.UMAMI_SITE_ID }}/g" deployment/app.yml
-          sed -i "s/RECAPTCHA_SITEKEY_STUB/${{ env.RECAPTCHA_SITEKEY }}/g" deployment/app.yml
+          sed -i 's%ENVIRONMENT%${{ env.ENVIRONMENT }}%g' deployment/app.yml
+          sed -i 's%ENVIRONMENT%${{ env.ENVIRONMENT }}%g' deployment/websocket.yml
+          sed -i "s%UMAMI_SITE_ID_STUB%${{ env.UMAMI_SITE_ID }}%g" deployment/app.yml
+          sed -i "s%RECAPTCHA_SITEKEY_STUB%${{ env.RECAPTCHA_SITEKEY }}%g" deployment/app.yml
           sed -i "s%ORY_SDK_URL_STUB%${{ env.ORY_SDK_URL }}%g" deployment/app.yml
-          sed -i "s/ORY_ACCESS_TOKEN_STUB/${{ env.ORY_ACCESS_TOKEN }}/g" deployment/app.yml
-          sed -i "s/NEW_RELIC_LICENSE_KEY_STUB/${{ env.NEW_RELIC_LICENSE_KEY }}/g" deployment/app.yml
-          sed -i "s/NEW_RELIC_APP_NAME_STUB/${{ env.NEW_RELIC_APP_NAME }}/g" deployment/app.yml
-          sed -i "s/NEXT_PUBLIC_ORY_SDK_URL_STUB/${{ env.NEXT_PUBLIC_ORY_SDK_URL }}/g" deployment/app.yml
+          sed -i "s%ORY_ACCESS_TOKEN_STUB%${{ env.ORY_ACCESS_TOKEN }}%g" deployment/app.yml
+          sed -i "s%NEW_RELIC_LICENSE_KEY_STUB%${{ env.NEW_RELIC_LICENSE_KEY }}%g" deployment/app.yml
+          sed -i "s%NEW_RELIC_APP_NAME_STUB%${{ env.NEW_RELIC_APP_NAME }}%g" deployment/app.yml
+          sed -i "s%NEXT_PUBLIC_ORY_SDK_URL_STUB%${{ env.NEXT_PUBLIC_ORY_SDK_URL }}%g" deployment/app.yml
 
       - name: Set deployment
         run: |
