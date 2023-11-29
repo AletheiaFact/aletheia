@@ -56,6 +56,10 @@ export class ClaimReview {
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);
 
+ClaimReviewSchemaRaw.pre("find", function () {
+    this.populate("report");
+});
+
 ClaimReviewSchemaRaw.virtual("sources", {
     ref: "Source",
     localField: "_id",

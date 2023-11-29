@@ -23,7 +23,7 @@ const get = (options: FetchOptions = {}) => {
         pageSize: options.pageSize ? options.pageSize : 5,
         isHidden: options?.isHidden || false,
         latest: options?.latest,
-        nameSpace: options?.nameSpace,
+        nameSpace: options?.nameSpace || NameSpaceEnum.Main,
     };
 
     return request
