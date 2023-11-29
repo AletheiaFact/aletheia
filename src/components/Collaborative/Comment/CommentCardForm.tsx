@@ -22,9 +22,13 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
     const [commentValue, setCommentValue] = useState("");
     const [error, setError] = useState<boolean>(null);
 
-    const handleKeyPress = (e) => {
-        if (e.key === "Enter") {
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
             handleOnSubmit();
+        }
+
+        if (e.key === "Escape" && isEditing) {
+            setIsCommentVisible(false);
         }
     };
 
@@ -116,7 +120,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                 value={commentValue}
                 onChange={({ target }) => setCommentValue(target.value)}
                 onFocus={() => setShowButtons(true)}
-                onKeyPress={(e) => handleKeyPress(e)}
+                onKeyDown={(e) => handleKeyDown(e)}
             />
             {error && (
                 <span style={{ fontSize: 14, color: colors.redText }}>
