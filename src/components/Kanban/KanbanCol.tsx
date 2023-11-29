@@ -9,8 +9,6 @@ import BaseList from "../List/BaseList";
 import EmptyKanbanCol from "./EmptyKanbanCol";
 import KanbanCard from "./KanbanCard";
 import styled from "styled-components";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../atoms/namespace";
 
 const StyledColumn = styled.div`
     .ant-list-item {
@@ -19,13 +17,14 @@ const StyledColumn = styled.div`
 `;
 
 interface KanbanColProps {
+    nameSpace: string;
     state: ReviewTaskStates;
     filterUser: boolean;
 }
 
-const KanbanCol = ({ state, filterUser }: KanbanColProps) => {
+const KanbanCol = ({ nameSpace, state, filterUser }: KanbanColProps) => {
     const { t } = useTranslation();
-    const [nameSpace] = useAtom(currentNameSpace);
+
     return (
         <StyledColumn
             style={{
@@ -49,6 +48,7 @@ const KanbanCol = ({ state, filterUser }: KanbanColProps) => {
                 }
                 showDividers={false}
                 skeleton={<KanbanSkeleton />}
+                style={{ textTransform: "capitalize" }}
             />
         </StyledColumn>
     );
