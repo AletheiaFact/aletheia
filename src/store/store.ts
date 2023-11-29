@@ -134,6 +134,11 @@ const reducer = (state, action) => {
                 ...state,
                 enableCollaborativeEdit: action.enableCollaborativeEdit,
             };
+        case ActionTypes.SET_EDITOR_ANNOTATION:
+            return {
+                ...state,
+                enableEditorAnnotations: action.enableEditorAnnotations,
+            };
         case ActionTypes.SET_USER_ROLE:
             return {
                 ...state,

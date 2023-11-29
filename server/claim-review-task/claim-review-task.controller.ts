@@ -163,6 +163,7 @@ export class ClaimReviewController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         await this.viewService.getNextServer().render(
             req,
@@ -171,6 +172,7 @@ export class ClaimReviewController {
             Object.assign(parsedUrl.query, {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                enableEditorAnnotations,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })
@@ -182,6 +184,14 @@ export class ClaimReviewController {
 
         return config
             ? this.unleash.isEnabled("enable_collaborative_editor")
+            : false;
+    }
+
+    private isEnableEditorAnnotations() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_editor_annotations")
             : false;
     }
 }

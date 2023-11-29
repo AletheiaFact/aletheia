@@ -1,11 +1,12 @@
-import React from "react";
-// import { useCurrentSelection, useHelpers } from "@remirror/react";
+import React, { useEffect } from "react";
+import { useCurrentSelection, useHelpers } from "@remirror/react";
 import CommentCardForm from "./CommentCardForm";
 import CommentCardHeader from "./CommentCardHeader";
 import { Divider } from "@mui/material";
 import reviewColors from "../../../constants/reviewColors";
 import { useTranslation } from "next-i18next";
 import { CommentEnum } from "../../../types/enums";
+import { useAppSelector } from "../../../store/store";
 
 const CommentCardContent = ({
     user,
@@ -24,17 +25,28 @@ const CommentCardContent = ({
     setIsSelected?: any;
     setIsResolved?: any;
 }) => {
+    const enableEditorAnnotations = useAppSelector(
+        (state) => state?.enableEditorAnnotations
+    );
     const { t } = useTranslation();
-    // const { from } = useCurrentSelection();
-    // const { getAnnotationsAt } = useHelpers();
+    const { from } = useCurrentSelection();
+    const { getAnnotationsAt } = useHelpers();
 
-    // useEffect(() => {
-    //     const annotations = getAnnotationsAt(from);
-    //     const hasMatchingId = annotations.some(
-    //         (annotation) => annotation?.id === content?._id
-    //     );
-    //     setIsSelected(hasMatchingId);
-    // }, [content?._id, from, getAnnotationsAt, setIsSelected]);
+    useEffect(() => {
+        if (enableEditorAnnotations) {
+            const annotations = getAnnotationsAt(from);
+            const hasMatchingId = annotations.some(
+                (annotation) => annotation?.id === content?._id
+            );
+            setIsSelected(hasMatchingId);
+        }
+    }, [
+        content?._id,
+        enableEditorAnnotations,
+        from,
+        getAnnotationsAt,
+        setIsSelected,
+    ]);
 
     return (
         <>
@@ -46,19 +58,20 @@ const CommentCardContent = ({
             />
             {!content.isReply && (
                 <>
-                    {content.type === CommentEnum.review && (
-                        <p
-                            style={{
-                                padding: "0px 10px",
-                                width: "fit-content",
-                                borderLeft: "2px solid black",
-                                fontStyle: "italic",
-                                margin: 0,
-                            }}
-                        >
-                            {content?.text}
-                        </p>
-                    )}
+                    {!enableEditorAnnotations &&
+                        content.type === CommentEnum.review && (
+                            <p
+                                style={{
+                                    padding: "0px 10px",
+                                    width: "fit-content",
+                                    borderLeft: "2px solid black",
+                                    fontStyle: "italic",
+                                    margin: 0,
+                                }}
+                            >
+                                {content?.text}
+                            </p>
+                        )}
                     {content.type === CommentEnum.crossChecking && (
                         <p
                             style={{

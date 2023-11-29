@@ -22,6 +22,7 @@ import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMa
 import { reviewingSelector } from "../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
 import CommentContainer from "./Comment/CommentContainer";
+import { useAppSelector } from "../../store/store";
 
 interface CollaborativeEditorProps {
     placeholder: string;
@@ -38,6 +39,9 @@ const CollaborativeEditor = ({
         editorSources,
         setEditorSources,
     } = useContext(CollaborativeEditorContext);
+    const enableEditorAnnotations = useAppSelector(
+        (state) => state?.enableEditorAnnotations
+    );
     const { machineService } = useContext(ReviewTaskMachineContext);
     const readonly = useSelector(machineService, reviewingSelector);
     const users = websocketProvider?.awareness?.states?.size;
@@ -50,8 +54,6 @@ const CollaborativeEditor = ({
 
     function createExtensions() {
         const extensions: any = [
-            // TODO: Make annotations shared across documents
-            // new AnnotationExtension(),
             new PlaceholderExtension({ placeholder }),
             new LinkExtension({
                 extraAttributes: {
@@ -70,6 +72,11 @@ const CollaborativeEditor = ({
             extensions.push(
                 new YjsExtension({ getProvider: () => websocketProvider })
             );
+        }
+
+        if (enableEditorAnnotations) {
+            // TODO: Make annotations shared across documents
+            extensions.push(new AnnotationExtension());
         }
 
         return extensions;
