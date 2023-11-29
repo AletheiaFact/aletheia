@@ -2,21 +2,31 @@ import React, { useCallback, useContext, useState } from "react";
 import Button, { ButtonType } from "../../Button";
 import AletheiaInput from "../../AletheiaInput";
 import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
-import { useCurrentSelection } from "@remirror/react";
+import { useCommands, useCurrentSelection } from "@remirror/react";
 import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
 import CommentApi from "../../../api/comment";
 import { useTranslation } from "next-i18next";
 import colors from "../../../styles/colors";
+import { useAppSelector } from "../../../store/store";
 
 const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
+    const enableEditorAnnotations = useAppSelector(
+        (state) => state?.enableEditorAnnotations
+    );
     const { t } = useTranslation();
     const { from, to, $to } = useCurrentSelection();
-    // const { addAnnotation } = useCommands();
+    const { addAnnotation } = useCommands();
     const { data_hash, setComments } = useContext(CollaborativeEditorContext);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showButtons, setShowButtons] = useState<boolean>(false);
     const [commentValue, setCommentValue] = useState("");
     const [error, setError] = useState<boolean>(null);
+
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            handleOnSubmit();
+        }
+    };
 
     const handleOnSubmit = useCallback(async () => {
         if (!commentValue) {
@@ -58,9 +68,12 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                 const { comment: createdComment } =
                     await ClaimReviewTaskApi.addComment(data_hash, newComment);
 
-                // if (addAnnotation.enabled({ id: createdComment?._id })) {
-                //     addAnnotation({ id: createdComment?._id });
-                // }
+                if (
+                    enableEditorAnnotations &&
+                    addAnnotation.enabled({ id: createdComment?._id })
+                ) {
+                    addAnnotation({ id: createdComment?._id });
+                }
                 setComments((comments) =>
                     comments ? [...comments, createdComment] : [createdComment]
                 );
@@ -74,7 +87,8 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
         }
     }, [
         $to.doc,
-        // addAnnotation,
+        addAnnotation,
+        content.text,
         commentValue,
         content._id,
         data_hash,
@@ -84,6 +98,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
         t,
         to,
         user?._id,
+        enableEditorAnnotations,
     ]);
 
     const handleCancel = () => {
@@ -101,6 +116,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                 value={commentValue}
                 onChange={({ target }) => setCommentValue(target.value)}
                 onFocus={() => setShowButtons(true)}
+                onKeyPress={(e) => handleKeyPress(e)}
             />
             {error && (
                 <span style={{ fontSize: 14, color: colors.redText }}>

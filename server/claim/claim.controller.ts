@@ -331,6 +331,7 @@ export class ClaimController {
         }
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         hideDescriptions[TargetModel.Claim] =
             await this.historyService.getDescriptionForHide(
@@ -359,6 +360,7 @@ export class ClaimController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 hideDescriptions,
                 enableCollaborativeEditor,
+                enableEditorAnnotations,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })
@@ -539,6 +541,7 @@ export class ClaimController {
             namespace as NameSpaceEnum
         );
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         if (claim.personalities.length > 0) {
             const personalitySlug = slugify(claim.personalities[0].name, {
@@ -559,6 +562,7 @@ export class ClaimController {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                enableEditorAnnotations,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -578,6 +582,7 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
@@ -608,6 +613,7 @@ export class ClaimController {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
+                enableEditorAnnotations,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 hideDescriptions,
                 nameSpace: namespace,
@@ -634,6 +640,7 @@ export class ClaimController {
             );
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
@@ -649,6 +656,7 @@ export class ClaimController {
                 personality,
                 claim,
                 enableCollaborativeEditor,
+                enableEditorAnnotations,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -787,6 +795,14 @@ export class ClaimController {
 
         return config
             ? this.unleash.isEnabled("enable_collaborative_editor")
+            : false;
+    }
+
+    private isEnableEditorAnnotations() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_editor_annotations")
             : false;
     }
 }

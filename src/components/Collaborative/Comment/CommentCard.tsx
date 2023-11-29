@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import CommentCardContent from "./CommentCardContent";
 import CommentCardStyle from "./CommentCard.style";
-// import { useCommands } from "@remirror/react";
+import { useCommands } from "@remirror/react";
+import { useAppSelector } from "../../../store/store";
 
 const CommentCard = ({
     user,
@@ -14,21 +15,30 @@ const CommentCard = ({
     isEditing?: boolean;
     setIsCommentVisible?: any;
 }) => {
-    // const { selectText } = useCommands();
+    const enableEditorAnnotations = useAppSelector(
+        (state) => state?.enableEditorAnnotations
+    );
+    const { selectText } = useCommands();
     const [isResolved, setIsResolved] = useState(comment?.resolved);
     const [isSelected, setIsSelected] = useState(false);
 
-    // const handleClickCard = () => {
-    //     if (comment?.from && comment?.to) {
-    //         selectText({ from: comment.from, to: comment.to });
-    //     }
-    // };
+    const handleClickCard = () => {
+        if (enableEditorAnnotations && comment?.from && comment?.to) {
+            selectText({ from: comment.from, to: comment.to });
+        }
+    };
+
+    const handleEscapeKey = (e) => {
+        if (e.key === "Escape") {
+            setIsCommentVisible(false);
+        }
+    };
 
     return !isResolved ? (
         <CommentCardStyle
-            onClick={() => setIsSelected(true)}
-            onMouseLeave={() => setIsSelected(false)}
+            onClick={handleClickCard}
             isselected={isSelected.toString()}
+            onKeyDown={handleEscapeKey}
         >
             <CommentCardContent
                 key={`${comment.id}_content`}
