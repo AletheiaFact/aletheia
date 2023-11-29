@@ -28,17 +28,10 @@ const CommentCard = ({
         }
     };
 
-    const handleEscapeKey = (e) => {
-        if (e.key === "Escape") {
-            setIsCommentVisible(false);
-        }
-    };
-
     return !isResolved ? (
         <CommentCardStyle
             onClick={handleClickCard}
             isselected={isSelected.toString()}
-            onKeyDown={handleEscapeKey}
         >
             <CommentCardContent
                 key={`${comment.id}_content`}
