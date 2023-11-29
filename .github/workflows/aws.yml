@@ -31,8 +31,6 @@ env:
   NOVU_API_KEY: ${{ secrets.DEVELOPMENT_NOVU_API_KEY }}
   NOVU_APPLICATION_IDENTIFIER: ${{ secrets.DEVELOPMENT_NOVU_APPLICATION_IDENTIFIER }}
   NEW_RELIC_APP_NAME: ${{ secrets.DEVELOPMENT_NEW_RELIC_APP_NAME }}
-  NEXT_PUBLIC_ORY_SDK_URL: ${{ secrets.NEXT_PUBLIC_ORY_SDK_URL }}
-
   GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
   GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
   # Needed env variables for first build on next
@@ -68,7 +66,7 @@ jobs:
           echo "NOVU_API_KEY=${{ secrets.PRODUCTION_NOVU_API_KEY }}" >> $GITHUB_ENV
           echo "NOVU_APPLICATION_IDENTIFIER=${{ secrets.PRODUCTION_NOVU_APPLICATION_IDENTIFIER }}" >> $GITHUB_ENV
           echo "NEW_RELIC_APP_NAME=${{ secrets.PRODUCTION_NEW_RELIC_APP_NAME }}" >> $GITHUB_ENV
-          echo "NEXT_PUBLIC_ORY_SDK_URL=${{ secrets.NEXT_PUBLIC_ORY_SDK_URL }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_ORY_SDK_URL=${{ secrets.ORY_SDK_URL }}" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -130,6 +128,8 @@ jobs:
         run: |
           docker build --build-arg ENVIRONMENT=$ENVIRONMENT \
             --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
+            --build-arg NEXT_PUBLIC_ENVIRONMENT=$ENVIRONMENT \
+            --build-arg NEXT_PUBLIC_ORY_SDK_URL=$ORY_SDK_URL \
             --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} \
             -t "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" .
           docker tag "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$IMAGE":latest
@@ -179,7 +179,7 @@ jobs:
           sed -i "s%ORY_ACCESS_TOKEN_STUB%${{ env.ORY_ACCESS_TOKEN }}%g" deployment/app.yml
           sed -i "s%NEW_RELIC_LICENSE_KEY_STUB%${{ env.NEW_RELIC_LICENSE_KEY }}%g" deployment/app.yml
           sed -i "s%NEW_RELIC_APP_NAME_STUB%${{ env.NEW_RELIC_APP_NAME }}%g" deployment/app.yml
-          sed -i "s%NEXT_PUBLIC_ORYSDKURL_STUB%${{ env.NEXT_PUBLIC_ORY_SDK_URL }}%g" deployment/app.yml
+          sed -i "s%NEXT_PUBLIC_ORYSDKURL_STUB%${{ env.ORY_SDK_URL }}%g" deployment/app.yml
 
       - name: Set deployment
         run: |
