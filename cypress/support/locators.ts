@@ -54,8 +54,9 @@ const locators = {
         INPUT_CLASSIFICATION: "[data-cy=testClassificationText]",
         INPUT_REVIEWER: "[data-cy=testClaimReviewreviewerId]",
         BTN_SAVE_DRAFT: "[data-cy=testClaimReviewSAVE_DRAFT]",
-        BTN_SUBMIT: "[data-cy=testClaimReviewSUBMIT]",
+        BTN_SUBMIT: "[data-cy=testClaimReviewSEND_TO_REVIEW]",
         BTN_PUBLISH: "[data-cy=testClaimReviewPUBLISH]",
+        BTN_SELECTED_REVIEW: "[data-cy=testClaimReviewSELECTED_REVIEW]",
         TEXT_REVIEWER_ERROR: "[data-cy=testReviewerError]",
     },
 
