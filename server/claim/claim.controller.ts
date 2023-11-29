@@ -148,9 +148,6 @@ export class ClaimController {
     @ApiTags("claim")
     @Post("api/claim/image")
     async createClaimImage(@Body() createClaimDTO: CreateClaimDTO) {
-        if (!this.isEnabledImageClaim()) {
-            throw new NotFoundException();
-        }
         try {
             const claim = await this._createClaim(createClaimDTO);
 
@@ -487,8 +484,6 @@ export class ClaimController {
     ) {
         const parsedUrl = parse(req.url, true);
 
-        const enableImageClaim = this.isEnabledImageClaim();
-
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
                   {
@@ -506,7 +501,6 @@ export class ClaimController {
             Object.assign(parsedUrl.query, {
                 personality,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                enableImageClaim,
                 nameSpace: req.params.namespace,
             })
         );
@@ -520,10 +514,6 @@ export class ClaimController {
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
-        if (!this.isEnabledImageClaim()) {
-            throw new NotFoundException();
-        }
-
         const parsedUrl = parse(req.url, true);
 
         await this.viewService.getNextServer().render(
@@ -549,13 +539,6 @@ export class ClaimController {
             namespace as NameSpaceEnum
         );
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-
-        if (
-            claim.contentModel === ContentModelEnum.Image &&
-            !this.isEnabledImageClaim()
-        ) {
-            throw new NotFoundException();
-        }
 
         if (claim.personalities.length > 0) {
             const personalitySlug = slugify(claim.personalities[0].name, {
@@ -797,12 +780,6 @@ export class ClaimController {
                 nameSpace: req.params.namespace,
             })
         );
-    }
-
-    private isEnabledImageClaim() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config ? this.unleash.isEnabled("enable_image_claim") : false;
     }
 
     private isEnableCollaborativeEditor() {

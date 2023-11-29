@@ -67,7 +67,7 @@ describe("Create personality and claim", () => {
         );
     });
 
-    it.skip("should create an image claim with a personality", () => {
+    it("should create an image claim with a personality", () => {
         cy.get(locators.floatButton.FLOAT_BUTTON).should("be.visible").click();
         cy.get(locators.floatButton.ADD_CLAIM).should("be.visible").click();
         cy.get(locators.claim.BTN_ADD_IMAGE).should("be.visible").click();

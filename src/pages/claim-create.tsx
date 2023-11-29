@@ -4,7 +4,6 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 
-import { enableImageClaim as featureAtom } from "../atoms/featureFlags";
 import AffixButton from "../components/AffixButton/AffixButton";
 import CreateClaimView from "../components/Claim/CreateClaim/CreateClaimView";
 import Seo from "../components/Seo";
@@ -17,7 +16,6 @@ import { currentNameSpace } from "../atoms/namespace";
 const ClaimCreatePage: NextPage<any> = ({
     sitekey,
     personality,
-    enableImageClaim,
     nameSpace,
 }) => {
     const { t } = useTranslation();
@@ -37,7 +35,6 @@ const ClaimCreatePage: NextPage<any> = ({
                 //@ts-ignore
                 initialValues={[
                     [claimPersonalities, personality ? [personality] : []],
-                    [featureAtom, enableImageClaim],
                     [currentNameSpace, nameSpace],
                 ]}
             >
@@ -59,9 +56,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personality: query?.personality
                 ? JSON.parse(JSON.stringify(query?.personality))
                 : "",
-            enableImageClaim: JSON.parse(
-                JSON.stringify(query?.enableImageClaim)
-            ),
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
