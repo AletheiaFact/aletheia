@@ -5,7 +5,6 @@
 
 # testing
 /coverage
-/cypress/support/cypress.env.json
 
 # production
 /build
