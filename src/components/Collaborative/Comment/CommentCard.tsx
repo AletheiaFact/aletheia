@@ -23,9 +23,11 @@ const CommentCard = ({
     const [isSelected, setIsSelected] = useState(false);
 
     const handleClickCard = () => {
+        const isCrossCheckingComment = comment.type === "cross-checking";
         if (enableEditorAnnotations && comment?.from && comment?.to) {
             selectText({ from: comment.from, to: comment.to });
         }
+        setIsSelected(isCrossCheckingComment);
     };
 
     return !isResolved ? (
