@@ -98,7 +98,9 @@ jobs:
         path: dist
     - name: List contents of aletheia-dist
       run: ls -lah /home/runner/work/aletheia/aletheia
-    - run: yarn install
+    - run: |
+        echo '{"CI_ORY_USER_PASSWORD": ${{ env.CI_ORY_USER_PASSWORD }}}' > cypress.env.json
+        yarn install
     - name: Cypress run
       uses: cypress-io/github-action@v6
       with:
