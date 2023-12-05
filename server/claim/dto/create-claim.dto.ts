@@ -18,7 +18,7 @@ export class CreateClaimDTO {
 
     @IsNotEmpty()
     @ApiProperty()
-    content: string | object;
+    content: string;
 
     @IsNotEmpty()
     @IsString()
