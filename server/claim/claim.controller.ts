@@ -147,7 +147,7 @@ export class ClaimController {
     // TODO: create a image controller under types and move the endpoints to it
     @ApiTags("claim")
     @Post("api/claim/image")
-    async createClaimImage(@Body() createClaimDTO: CreateClaimDTO) {
+    async createClaimImage(@Body() createClaimDTO) {
         try {
             const claim = await this._createClaim(createClaimDTO);
 
