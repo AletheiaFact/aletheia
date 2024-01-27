@@ -1,6 +1,6 @@
 import "remirror/styles/all.css";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
     CommandButton,
     FloatingToolbar,
@@ -38,6 +38,13 @@ const CommentContainer = ({ readonly, state }) => {
         ? addAnnotation?.enabled({ id: "" })
         : true;
     const annotations = enableEditorAnnotations ? getAnnotations() : null;
+    const crossCheckingComments = useMemo(
+        () =>
+            reviewData?.crossCheckingComments?.filter(
+                (crossCheckingComment) => !crossCheckingComment?.resolved
+            ),
+        [reviewData?.crossCheckingComments]
+    );
 
     useEffect(() => {
         if (hasSession) {
@@ -52,10 +59,6 @@ const CommentContainer = ({ readonly, state }) => {
             const reviewComments = reviewData?.reviewComments?.filter(
                 (comment) => !comment?.resolved
             );
-            const crossCheckingComments =
-                reviewData?.crossCheckingComments?.filter(
-                    (crossCheckingComment) => !crossCheckingComment?.resolved
-                );
             setComments([
                 ...(reviewComments ? reviewComments : []),
                 ...(crossCheckingComments ? crossCheckingComments : []),
@@ -71,7 +74,7 @@ const CommentContainer = ({ readonly, state }) => {
             ) {
                 setAnnotations(comments);
             } else if (comments && state.doc.content.size) {
-                setComments(annotations);
+                setComments([...annotations, ...crossCheckingComments]);
             }
         }
     }, [setAnnotations, setComments, state.doc]);
