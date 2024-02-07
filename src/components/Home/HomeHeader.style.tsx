@@ -19,7 +19,7 @@ const HomeHeaderStyle = styled.div`
     }
 
     .video-container {
-        height: clamp(149px, 28vw, 317px);
+        height: auto;
         aspect-ratio: 16 / 9;
     }
 

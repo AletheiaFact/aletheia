@@ -131,6 +131,13 @@ const AletheiaMenu = () => {
             >
                 {t("menu:codeOfConductItem")}
             </Menu.Item>
+            <Menu.Item
+                key="/supportive-materials"
+                data-cy={"testSupportiveMaterialsItem"}
+                onClick={handleClick}
+            >
+                {t("menu:supportiveMaterials")}
+            </Menu.Item>
 
             <Menu.Item key="/donate" onClick={handleClick}>
                 {t("header:donateButton")}

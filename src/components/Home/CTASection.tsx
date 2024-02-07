@@ -48,7 +48,10 @@ const CTASection = () => {
                             href={"/sign-up"}
                             type={ButtonType.white}
                             style={{
-                                height: "40px",
+                                height: "auto",
+                                minHeight: "40px",
+                                lineHeight: "inherit",
+                                textWrap: "wrap",
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",

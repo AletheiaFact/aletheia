@@ -23,7 +23,7 @@ const HomeHeader = () => {
             >
                 <Col
                     sm={18}
-                    md={8}
+                    md={10}
                     style={{
                         display: "flex",
                         flexDirection: "column",
@@ -62,7 +62,7 @@ const HomeHeader = () => {
                     <CTASection />
                 </Col>
 
-                <Col sm={18} md={10}>
+                <Col sm={18} md={8}>
                     <div className="video-container">
                         <AletheiaVideo />
                     </div>
