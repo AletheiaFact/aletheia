@@ -16,7 +16,16 @@ export class NameSpaceService {
     ) {}
 
     listAll() {
-        return this.NameSpaceModel.find().populate("users");
+        return this.NameSpaceModel.aggregate([
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "users",
+                    foreignField: "_id",
+                    as: "users",
+                },
+            },
+        ]);
     }
 
     async create(nameSpace) {
