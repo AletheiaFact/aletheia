@@ -1,4 +1,7 @@
 {
   "title": "Materiais de Apoio",
-  "loggedOutMessage": "Para acessar os materias de apoio é preciso ter uma conta na plataforma."
+  "loggedOutMessage": "Para acessar os materias de apoio é preciso ter uma conta na plataforma.",
+  "disclaimerFirstParagraph": "Ao finalizar o seu cadastro, você terá acesso a todas as áreas da plataforma AletheiaFact.org, incluindo materiais complementares, relatórios de checagem atualizados e, é claro, ao nosso Manual de Checagem completo. Oferecemos informações e orientações totalmente gratuitas para que você combata a desinformação de forma autônoma e com credibilidade.",
+  "disclaimerSecondParagraph": "Para saber mais sobre como você pode se tornar um checador de fatos e publicar seus relatórios na plataforma, contribuindo para o Movimento de forma voluntária, entre em contato conosco pelo e-mail:"
+
 }

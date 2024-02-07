@@ -1,4 +1,6 @@
 {
   "title": "Supportive Materials",
-  "loggedOutMessage": "You need to login to access the supportive materials."
+  "loggedOutMessage": "You need to login to access the supportive materials.",
+  "disclaimerFirstParagraph": "When you complete your registration, you will have access to all areas of the AletheiaFact.org platform, including complementary materials, up-to-date fact-checking reports and, of course, our complete Fact-Checking Manual. We offer totally free information and guidance so that you can fight disinformation independently and credibly.",
+  "disclaimerSecondParagraph": "To find out more about how you can become a fact-checker and publish your reports on the platform, contributing to the Movement on a voluntary basis, please contact us at"
 }
