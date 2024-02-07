@@ -17,6 +17,7 @@ import { ImageService } from "../claim/types/image/image.service";
 import { ContentModelEnum } from "../types/enums";
 import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";
+import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Injectable({ scope: Scope.REQUEST })
@@ -33,65 +34,89 @@ export class ClaimReviewService {
     ) {}
 
     async listAll(page, pageSize, order, query, latest = false) {
-        const pipeline = this.ClaimReviewModel.find(query)
-            .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
-            .populate({
-                path: "claim",
-                model: "Claim",
-                populate: {
-                    path: "latestRevision",
-                    model: "ClaimRevision",
-                },
-                match: {
-                    isDeleted: false,
-                    nameSpace:
+        const aggregation = [];
+
+        aggregation.push(
+            {
+                $sort: latest
+                    ? { date: -1 }
+                    : { _id: order === "asc" ? 1 : -1 },
+            },
+            { $match: query },
+            lookUpPersonalityties(TargetModel.ClaimReview),
+            lookupClaims(TargetModel.ClaimReview),
+            { $unwind: "$claim" },
+            lookupClaimRevisions(TargetModel.ClaimReview),
+            { $unwind: "$claim.latestRevision" },
+            {
+                $match: {
+                    "claim.isHidden": query.isHidden,
+                    "claim.isDeleted": false,
+                    "claim.nameSpace":
                         this.req.params.namespace ||
                         this.req.query.nameSpace ||
                         NameSpaceEnum.Main,
+                    "personality.isDeleted": false,
                 },
-            })
-            .skip(page * pageSize)
-            .limit(parseInt(pageSize));
-
-        const personalityPopulateOptions: any = {
-            path: "personality",
-            model: "Personality",
-            match: {
-                isDeleted: false,
-            },
-        };
+            }
+        );
 
         if (!query.isHidden) {
-            personalityPopulateOptions.match = {
-                $or: [
-                    { personality: { $exists: false } },
-                    { isHidden: { $ne: true } },
-                ],
-            };
+            aggregation.push(
+                {
+                    $unwind: {
+                        path: "$personality",
+                        preserveNullAndEmptyArrays: true,
+                        includeArrayIndex: "arrayIndex",
+                    },
+                },
+                {
+                    $match: {
+                        $or: [
+                            { personality: { $exists: false } },
+                            { "personality.isHidden": { $ne: true } },
+                        ],
+                    },
+                }
+            );
         }
 
-        const claimReviews = await pipeline
-            .populate(personalityPopulateOptions)
-            .exec();
+        aggregation.push(
+            { $skip: page * pageSize },
+            { $limit: parseInt(pageSize) }
+        );
+
+        const claimReviews = await this.ClaimReviewModel.aggregate(aggregation);
 
         return Promise.all(
             claimReviews.map(async (review) => this.postProcess(review))
         );
     }
 
-    async agreggateClassification(match: any) {
+    agreggateClassification(match: any) {
         const nameSpace = this.req.params.namespace || this.req.query.nameSpace;
 
-        const claimReviews = await this.ClaimReviewModel.find(match).populate({
-            path: "claim",
-            model: "Claim",
-            match: {
-                "claim.isHidden": false,
-                "claim.nameSpace": nameSpace || NameSpaceEnum.Main,
+        return this.ClaimReviewModel.aggregate([
+            { $match: match },
+            {
+                $lookup: {
+                    from: "reports",
+                    localField: "report",
+                    foreignField: "_id",
+                    as: "report",
+                },
             },
-        });
-
-        return this.sortReviewStats(claimReviews);
+            lookupClaims(TargetModel.ClaimReview),
+            {
+                $match: {
+                    "claim.isHidden": false,
+                    "claim.isDeleted": false,
+                    "claim.nameSpace": nameSpace || NameSpaceEnum.Main,
+                },
+            },
+            { $group: { _id: "$report.classification", count: { $sum: 1 } } },
+            { $sort: { count: -1 } },
+        ]);
     }
 
     async count(query: any = {}) {
@@ -133,14 +158,27 @@ export class ClaimReviewService {
     }
 
     async getReviewStatsByClaimId(claimId) {
-        const reviews = await this.ClaimReviewModel.find({
-            claim: claimId,
-            isDeleted: false,
-            isPublished: true,
-            isHidden: false,
-        });
-        const sortedReviews = this.sortReviewStats(reviews);
-        return this.util.formatStats(sortedReviews);
+        const reviews = await this.ClaimReviewModel.aggregate([
+            {
+                $match: {
+                    claim: claimId,
+                    isDeleted: false,
+                    isPublished: true,
+                    isHidden: false,
+                },
+            },
+            {
+                $lookup: {
+                    from: "reports",
+                    localField: "report",
+                    foreignField: "_id",
+                    as: "report",
+                },
+            },
+            { $group: { _id: "$report.classification", count: { $sum: 1 } } },
+            { $sort: { count: -1 } },
+        ]);
+        return this.util.formatStats(reviews);
     }
 
     /**
@@ -148,30 +186,34 @@ export class ClaimReviewService {
      * @param claimId claim Id
      * @returns
      */
-    async getReviewsByClaimId(claimId) {
-        const classificationCounts = {};
-        const claimReviews = await this.ClaimReviewModel.find({
-            claim: claimId,
-            isDeleted: false,
-            isPublished: true,
-            isHidden: false,
-        });
-
-        claimReviews.forEach((review) => {
-            const key = JSON.stringify({
-                data_hash: review.data_hash,
-                classification: review.report.classification,
-            });
-            classificationCounts[key] = (classificationCounts[key] || 0) + 1;
-        });
-
-        return Object.entries(classificationCounts).map(([key, count]) => {
-            const { data_hash, classification } = JSON.parse(key);
-            return {
-                _id: { data_hash, classification: [classification] },
-                count: count as number,
-            };
-        });
+    getReviewsByClaimId(claimId) {
+        return this.ClaimReviewModel.aggregate([
+            {
+                $match: {
+                    claim: claimId,
+                    isDeleted: false,
+                    isPublished: true,
+                    isHidden: false,
+                },
+            },
+            {
+                $lookup: {
+                    from: "reports",
+                    localField: "report",
+                    foreignField: "_id",
+                    as: "report",
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        data_hash: "$data_hash",
+                        classification: "$report.classification",
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+        ]).option({ serializeFunctions: true });
     }
 
     /**
@@ -226,11 +268,15 @@ export class ClaimReviewService {
     async getReviewByDataHash(
         data_hash: string
     ): Promise<LeanDocument<ClaimReviewDocument>> {
-        return await this.ClaimReviewModel.findOne({ data_hash }).lean();
+        return await this.ClaimReviewModel.findOne({ data_hash })
+            .populate("report")
+            .lean();
     }
 
     async getReport(match): Promise<LeanDocument<ReportDocument>> {
-        const claimReview = await this.ClaimReviewModel.findOne(match).lean();
+        const claimReview = await this.ClaimReviewModel.findOne(match)
+            .populate("report")
+            .lean();
         return claimReview.report;
     }
 
@@ -331,20 +377,5 @@ export class ClaimReviewService {
             reviewHref,
             claim,
         };
-    }
-
-    private sortReviewStats(claimReviews) {
-        const classificationCounts = claimReviews.reduce((acc, review) => {
-            const classification = review.report.classification;
-            acc[classification] = (acc[classification] || 0) + 1;
-            return acc;
-        }, {});
-
-        return Object.entries(classificationCounts)
-            .sort((a, b) => (b[1] as number) - (a[1] as number))
-            .map(([classification, count]) => ({
-                _id: [classification],
-                count: count as number,
-            }));
     }
 }
