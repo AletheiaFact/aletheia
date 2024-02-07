@@ -22,7 +22,6 @@ const NotificationCard = ({ notification, handleNotificationClick }) => {
             setIsSeen(true);
         }
         if (payload.redirectUrl) {
-            console.log(payload);
             setIsLoading(true);
             window.location = payload.redirectUrl;
         }

@@ -52,8 +52,8 @@ export class ClaimService {
 
         const claims = await this.ClaimModel.find(query)
             .populate("latestRevision")
-            .skip(page * pageSize)
-            .limit(pageSize)
+            .skip(page * parseInt(pageSize, 10))
+            .limit(parseInt(pageSize, 10))
             .sort({ _id: order })
             .lean();
 

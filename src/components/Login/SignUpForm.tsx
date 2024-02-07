@@ -2,6 +2,7 @@ import { Form } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
+import AletheiaAlert from "../AletheiaAlert";
 import Input from "../AletheiaInput";
 import Button, { ButtonType } from "../Button";
 import InputPassword from "../InputPassword";
@@ -11,6 +12,20 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
 
     return (
         <div>
+            <AletheiaAlert
+                type="info"
+                message={
+                    <>
+                        {t("materials:disclaimerFirstParagraph")} <br />
+                        <br />
+                        {t("materials:disclaimerSecondParagraph")}{" "}
+                        <a href="email:contato@aletheiafact.org">
+                            contato@aletheiafact.org
+                        </a>
+                        .
+                    </>
+                }
+            />
             <h2>{t("login:signupFormHeader")}</h2>
             <Form
                 name="signUp"

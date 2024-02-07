@@ -5,17 +5,24 @@ import { useTranslation } from "next-i18next";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import KanbanCol from "./KanbanCol";
 import { FormControlLabel, Switch } from "@mui/material";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
-const KanbanView = (props) => {
-    // Don't show unassigned and rejected column
-    // because we don't save tasks in these states
+const KanbanView = () => {
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
+    // Don't show unassigned, rejected, selectCrossChecker and selectReviewer column
+    // because we don't save tasks in these states
     const states = Object.keys(ReviewTaskStates).filter(
         (state) =>
             state !== ReviewTaskStates.unassigned &&
+            state !== ReviewTaskStates.selectCrossChecker &&
+            state !== ReviewTaskStates.selectReviewer &&
+            state !== ReviewTaskStates.addCommentCrossChecking &&
             state !== ReviewTaskStates.rejected
     );
     const [filterUser, setFilterUser] = useState(false);
+
     return (
         <Row justify="center" style={{ padding: "3vh 0", height: "100%" }}>
             <Col
@@ -50,6 +57,7 @@ const KanbanView = (props) => {
                     return (
                         <KanbanCol
                             key={state}
+                            nameSpace={nameSpace}
                             state={ReviewTaskStates[state]}
                             filterUser={filterUser}
                         />

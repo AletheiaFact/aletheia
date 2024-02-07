@@ -27,6 +27,7 @@ export interface ClaimReviewPageProps {
     claimReview: any;
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
+    enableEditorAnnotations: boolean;
     websocketUrl: string;
     nameSpace: string;
 }
@@ -43,6 +44,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         claimReview,
         sitekey,
         enableCollaborativeEditor,
+        enableEditorAnnotations,
         hideDescriptions,
     } = props;
 
@@ -55,6 +57,10 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
     dispatch({
         type: ActionTypes.SET_COLLABORATIVE_EDIT,
         enableCollaborativeEdit: enableCollaborativeEditor,
+    });
+    dispatch({
+        type: ActionTypes.SET_EDITOR_ANNOTATION,
+        enableEditorAnnotations: enableEditorAnnotations,
     });
 
     const isImage = claim?.contentModel === ContentModelEnum.Image;
@@ -142,6 +148,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
                 JSON.stringify(query.hideDescriptions)
             ),
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
+            enableEditorAnnotations: query?.enableEditorAnnotations,
             websocketUrl: query?.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

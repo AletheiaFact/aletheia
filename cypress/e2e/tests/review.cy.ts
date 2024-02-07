@@ -87,12 +87,16 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.BTN_FINISH_REPORT)
             .should("be.enabled")
             .click();
-        cy.get(locators.claimReview.INPUT_REVIEWER).should("exist");
+        cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist");
     });
 
     it("should not be able submit after choosing assigned user as reviewer", () => {
         cy.login();
         goToClaimReviewPage();
+        cy.checkRecaptcha();
+        cy.get(locators.claimReview.BTN_SELECTED_REVIEW)
+            .should("exist")
+            .click();
         cy.get(locators.claimReview.INPUT_REVIEWER)
             .should("exist")
             .type(review.username, { delay: 200 });

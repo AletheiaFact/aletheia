@@ -22,7 +22,7 @@ const UserInput = ({
     dataLoader,
     mode = "multiple",
     style = {},
-    value = [],
+    value = null,
     preloadedOptions = [],
 }: UserInputProps) => {
     const [treatedValue, setTreatedValue] = useState([]);

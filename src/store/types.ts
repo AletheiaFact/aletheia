@@ -30,6 +30,7 @@ export enum ActionTypes {
     SET_SEARCH_FILTER,
     SET_SEARCH_FILTER_USED,
     SET_COLLABORATIVE_EDIT,
+    SET_EDITOR_ANNOTATION,
 }
 
 export enum SearchTypes {
@@ -57,6 +58,7 @@ export interface RootState {
     };
     autoSave: boolean;
     enableCollaborativeEdit: boolean;
+    enableEditorAnnotations: boolean;
     websocketUrl: string;
     claimType: string;
     claimPersonality: Personality;

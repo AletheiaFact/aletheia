@@ -1,6 +1,6 @@
 import "remirror/styles/all.css";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
     CommandButton,
     FloatingToolbar,
@@ -18,8 +18,12 @@ import userApi from "../../../api/userApi";
 import { useAtom } from "jotai";
 import { Roles } from "../../../types/enums";
 import { currentUserId, currentUserRole } from "../../../atoms/currentUser";
+import { useAppSelector } from "../../../store/store";
 
 const CommentContainer = ({ readonly, state }) => {
+    const enableEditorAnnotations = useAppSelector(
+        (state) => state?.enableEditorAnnotations
+    );
     const { comments, setComments } = useContext(CollaborativeEditorContext);
     const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
@@ -28,10 +32,19 @@ const CommentContainer = ({ readonly, state }) => {
     const [userId] = useAtom(currentUserId);
     const hasSession = !!userId;
     const [user, setUser] = useState(null);
-    // const { addAnnotation } = useCommands();
-    // const { getAnnotations } = useHelpers();
-    // const enabled = addAnnotation?.enabled({ id: "" });
-    // const annotations = getAnnotations();
+    const { addAnnotation, setAnnotations } = useCommands();
+    const { getAnnotations } = useHelpers();
+    const enabled = enableEditorAnnotations
+        ? addAnnotation?.enabled({ id: "" })
+        : true;
+    const annotations = enableEditorAnnotations ? getAnnotations() : null;
+    const crossCheckingComments = useMemo(
+        () =>
+            reviewData?.crossCheckingComments?.filter(
+                (crossCheckingComment) => !crossCheckingComment?.resolved
+            ),
+        [reviewData?.crossCheckingComments]
+    );
 
     useEffect(() => {
         if (hasSession) {
@@ -46,10 +59,6 @@ const CommentContainer = ({ readonly, state }) => {
             const reviewComments = reviewData?.reviewComments?.filter(
                 (comment) => !comment?.resolved
             );
-            const crossCheckingComments =
-                reviewData?.crossCheckingComments?.filter(
-                    (crossCheckingComment) => !crossCheckingComment?.resolved
-                );
             setComments([
                 ...(reviewComments ? reviewComments : []),
                 ...(crossCheckingComments ? crossCheckingComments : []),
@@ -57,13 +66,18 @@ const CommentContainer = ({ readonly, state }) => {
         }
     }, [comments, setComments, reviewData?.comments]);
 
-    // useEffect(() => {
-    //     if ((comments && annotations.length === 0) || (state.doc.content.size === annotations[0]?.from)) {
-    //         setAnnotations(comments);
-    //     } else if (comments && state.doc.content.size) {
-    //         setComments(annotations);
-    //     }
-    // }, [setAnnotations, setComments, state.doc]);
+    useEffect(() => {
+        if (enableEditorAnnotations) {
+            if (
+                (comments && annotations.length === 0) ||
+                state.doc.content.size === annotations[0]?.from
+            ) {
+                setAnnotations(comments);
+            } else if (comments && state.doc.content.size) {
+                setComments([...annotations, ...crossCheckingComments]);
+            }
+        }
+    }, [setAnnotations, setComments, state.doc]);
 
     return (
         <>
@@ -72,7 +86,7 @@ const CommentContainer = ({ readonly, state }) => {
                     <CommandButton
                         icon="chatNewLine"
                         commandName="addAnnotation"
-                        enabled={true}
+                        enabled={enabled}
                         onSelect={() => setIsCommentVisible(true)}
                     />
                 </FloatingToolbar>

@@ -56,6 +56,26 @@ export class ViewController {
 
     @IsPublic()
     @ApiTags("pages")
+    @Get("supportive-materials")
+    @Header("Cache-Control", "max-age=86400")
+    public async supportiveMaterialsPage(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService
+            .getNextServer()
+            .render(
+                req,
+                res,
+                "/supportive-materials",
+                Object.assign(parsedUrl.query, {})
+            );
+    }
+
+    @IsPublic()
+    @ApiTags("pages")
     @Get("privacy-policy")
     @Header("Cache-Control", "max-age=86400")
     public async showPrivacyPolicyPage(

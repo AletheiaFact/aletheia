@@ -1,16 +1,16 @@
-import { MongoClient } from 'mongodb'
-import { UserMock } from "./UserMock";
+import { MongoClient } from "mongodb";
+import { AdminUserMock } from "./AdminUserMock";
 
 export const SeedTestUser = async (uri) => {
     const client = await new MongoClient(uri);
-    await client.connect()
+    await client.connect();
 
     try {
         return await client
             .db("Aletheia")
             .collection("users")
-            .insertOne(UserMock);
+            .insertOne(AdminUserMock);
     } finally {
         await client.close();
     }
-}
+};
