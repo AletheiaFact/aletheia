@@ -63,19 +63,17 @@ export class AppModule implements NestModule {
     }
 
     static register(options): DynamicModule {
-        // TODO: interface app with service-runner metrics interface
-
         const imports = [
             MongooseModule.forRoot(
-                options.config.db.connection_uri,
-                options.config.db.options
+                options.db.connection_uri,
+                options.db.options
             ),
             ConfigModule.forRoot({
-                load: [() => options.config || {}],
+                load: [() => options || {}],
             }),
             ThrottlerModule.forRoot({
-                ttl: options.config.throttle.ttl,
-                limit: options.config.throttle.limit,
+                ttl: options.throttle.ttl,
+                limit: options.throttle.limit,
             }),
             UsersModule,
             WikidataModule,
@@ -110,16 +108,16 @@ export class AppModule implements NestModule {
             CommentModule,
             NameSpaceModule,
         ];
-        if (options.config.feature_flag) {
+        if (options.feature_flag) {
             imports.push(
                 UnleashModule.forRoot({
-                    url: options.config.feature_flag.url,
-                    appName: options.config.feature_flag.appName,
-                    instanceId: options.config.feature_flag.instanceId,
+                    url: options.feature_flag.url,
+                    appName: options.feature_flag.appName,
+                    instanceId: options.feature_flag.instanceId,
                 })
             );
         }
-        if (options.config.novu) {
+        if (options.novu) {
             imports.push(NotificationModule);
         }
         return {
