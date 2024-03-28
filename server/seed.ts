@@ -1,21 +1,23 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import Logger from "./logger";
+import { Logger } from "@nestjs/common";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { EmailService } from "./email/email.service";
 import { ConfigService } from "@nestjs/config";
 import { UsersService } from "./users/users.service";
 import { UtilService } from "./util";
+import loadConfig from "./configLoader";
 
-const initApp = async (options) => {
-    options.logger.log("info", `Loading AppModule`);
+async function initApp() {
+    const defaultConfigFilePath = "config.seed.yaml";
+    const options = loadConfig(defaultConfigFilePath);
+
+    const logger = new Logger();
     const app = await NestFactory.create<NestExpressApplication>(
-        AppModule.register(options),
-        {
-            logger: new Logger(options.logger) || undefined
-        }
+        AppModule.register(options)
     );
-    options.logger.log("info", `AppModule loaded`);
+
+    logger.log("info", `AppModule loaded`);
     const emailService = app.get(EmailService);
     const configService = app.get(ConfigService);
     const userService = app.get(UsersService);
@@ -24,9 +26,10 @@ const initApp = async (options) => {
     const disableSMTP = configService.get<any>("disable_smtp");
 
     const seedSingleUser = async (userData, password) => {
-        return userService.register({ ...userData, password})
+        return userService
+            .register({ ...userData, password })
             .then(async (user) => {
-                options.logger.log("info", `${userData.email} seeded`);
+                logger.log("info", `${userData.email} seeded`);
                 if (userData.sendAuthDetails && !disableSMTP) {
                     const emailResponse = await emailService.sendEmail(
                         userData.email,
@@ -35,30 +38,30 @@ const initApp = async (options) => {
                         { ...userData, password },
                         "./templates/userSeed.html"
                     );
-                    options.logger.log("info", emailResponse);
-                    options.logger.log("info", `E-mail sent to ${userData.email}`);
+                    logger.log("info", emailResponse);
+                    logger.log("info", `E-mail sent to ${userData.email}`);
                 }
                 return user;
             })
             .catch((e) => {
-                options.logger.log("error", e);
-                options.logger.log("info", `Error while seeding ${userData.email}`);
+                logger.log("error", e);
+                logger.log("info", `Error while seeding ${userData.email}`);
                 return null;
             });
     };
     // Using await Promise.all to force loop to finish before continuing
     await Promise.all(
         users.map(async (userData) => {
-            const password = utilService.generatePassword(userData.isTestUser, userData.password);
+            const password = utilService.generatePassword(
+                userData.isTestUser,
+                userData.password
+            );
             return seedSingleUser(userData, password);
         })
     );
 
-    options.logger.log(
-        "info",
-        "Seed is finished"
-    );
+    logger.log("info", "Seed is finished");
     await app.close();
-};
+}
 
-module.exports = initApp;
+initApp();
