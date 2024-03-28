@@ -21,7 +21,7 @@ describe("PersonalityController (e2e)", () => {
         await SeedTestUser(TestConfigOptions.config.db.connection_uri);
 
         const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule.register(TestConfigOptions)],
+            imports: [AppModule.register(TestConfigOptions.config)],
         })
             .overrideProvider(SessionGuard)
             .useValue(SessionGuardMock)

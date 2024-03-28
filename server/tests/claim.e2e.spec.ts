@@ -31,7 +31,7 @@ describe("ClaimController (e2e)", () => {
         personalitiesId = [insertedIds["0"], insertedIds["1"]];
 
         const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule.register(TestConfigOptions)],
+            imports: [AppModule.register(TestConfigOptions.config)],
         })
             .overrideProvider(SessionGuard)
             .useValue(SessionGuardMock)
