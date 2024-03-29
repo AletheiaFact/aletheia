@@ -1,6 +1,7 @@
 const fs = require("fs");
 const yaml = require("js-yaml");
 
+// Function extracted from service-runner codebase
 function _replaceEnvVars(config) {
     const envRegex = /{\s*env\(([^,\s)]+),?\s*([^)]+)?\)\s*}/g;
     if (Buffer.isBuffer(config)) {

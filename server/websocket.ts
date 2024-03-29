@@ -3,14 +3,11 @@ import { NestFactory } from "@nestjs/core";
 import { WebsocketModule } from "./yjs-websocket/websocket.module";
 import { WsAdapter } from "@nestjs/platform-ws";
 import { Logger } from "@nestjs/common";
-const fs = require("fs");
-const yaml = require("js-yaml");
+import loadConfig from "./configLoader";
 
 async function initApp() {
     const defaultConfigFilePath = "config.yaml";
-    const doc = yaml.load(fs.readFileSync(defaultConfigFilePath, "utf8"));
-
-    const { conf: options } = doc.services[0];
+    const options = loadConfig(defaultConfigFilePath);
 
     const logger = new Logger();
     const app = await NestFactory.create<NestExpressApplication>(
