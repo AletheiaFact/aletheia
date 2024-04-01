@@ -18,7 +18,7 @@ function _replaceEnvVars(config) {
     });
 }
 function loadConfig() {
-    const defaultConfigFilePath = "config.seed.yaml";
+    const defaultConfigFilePath = "config.yaml";
     const configFileIndex = process.argv.findIndex((arg) => arg === "-c");
     const configFilePath =
         configFileIndex !== -1 ? process.argv[configFileIndex + 1] : null;
