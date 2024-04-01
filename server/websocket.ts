@@ -6,8 +6,7 @@ import { Logger } from "@nestjs/common";
 import loadConfig from "./configLoader";
 
 async function initApp() {
-    const defaultConfigFilePath = "config.yaml";
-    const options = loadConfig(defaultConfigFilePath);
+    const options = loadConfig();
 
     const logger = new Logger();
     const app = await NestFactory.create<NestExpressApplication>(

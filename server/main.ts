@@ -16,8 +16,7 @@ if (!isLocal) {
 }
 
 async function initApp() {
-    const defaultConfigFilePath = "config.yaml";
-    const options = loadConfig(defaultConfigFilePath);
+    const options = loadConfig();
 
     const corsOptions = {
         origin: options?.cors || "*",

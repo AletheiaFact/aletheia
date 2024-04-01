@@ -9,8 +9,7 @@ import { UtilService } from "./util";
 import loadConfig from "./configLoader";
 
 async function initApp() {
-    const defaultConfigFilePath = "config.seed.yaml";
-    const options = loadConfig(defaultConfigFilePath);
+    const options = loadConfig();
 
     const logger = new Logger();
     const app = await NestFactory.create<NestExpressApplication>(
