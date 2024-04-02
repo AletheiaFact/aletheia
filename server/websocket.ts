@@ -2,13 +2,13 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { NestFactory } from "@nestjs/core";
 import { WebsocketModule } from "./yjs-websocket/websocket.module";
 import { WsAdapter } from "@nestjs/platform-ws";
-import { Logger } from "@nestjs/common";
 import loadConfig from "./configLoader";
+import { WinstonLogger } from "./winstonLogger";
 
 async function initApp() {
     const options = loadConfig();
 
-    const logger = new Logger();
+    const logger = new WinstonLogger();
     const app = await NestFactory.create<NestExpressApplication>(
         WebsocketModule.register(options)
     );
@@ -18,7 +18,6 @@ async function initApp() {
     await app.listen(options.port);
 
     logger.log(
-        "info",
         `${options.name} with PID ${process.pid} listening on ${
             options.interface || "*"
         }:${options.port}`

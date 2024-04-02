@@ -2,10 +2,11 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { join } from "path";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { ValidationPipe, Logger } from "@nestjs/common";
+import { ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import loadConfig from "./configLoader";
 import * as dotenv from "dotenv";
+import { WinstonLogger } from "./winstonLogger";
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 dotenv.config();
@@ -25,11 +26,13 @@ async function initApp() {
         allowedHeaders: ["accept", "x-requested-with", "content-type"],
     };
 
-    const logger = new Logger();
+    const logger = new WinstonLogger();
+
     const app = await NestFactory.create<NestExpressApplication>(
         AppModule.register(options),
         {
             bodyParser: false,
+            logger: logger,
             cors: corsOptions,
         }
     );
@@ -68,7 +71,6 @@ async function initApp() {
     });
     await app.listen(options.port);
     logger.log(
-        "info",
         `${options.name} with PID ${process.pid} listening on ${
             options.interface || "*"
         }:${options.port}`
