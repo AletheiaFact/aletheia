@@ -29,19 +29,17 @@ export class WebsocketModule implements NestModule {
     }
 
     static register(options): DynamicModule {
-        // TODO: interface app with service-runner metrics interface
-
         const imports = [
             ConfigModule.forRoot({
-                load: [() => options.config || {}],
+                load: [() => options || {}],
             }),
         ];
-        if (options.config.feature_flag) {
+        if (options.feature_flag) {
             imports.push(
                 UnleashModule.forRoot({
-                    url: options.config.feature_flag.url,
-                    appName: options.config.feature_flag.appName,
-                    instanceId: options.config.feature_flag.instanceId,
+                    url: options.feature_flag.url,
+                    appName: options.feature_flag.appName,
+                    instanceId: options.feature_flag.instanceId,
                 })
             );
         }
