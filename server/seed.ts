@@ -1,22 +1,22 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { Logger } from "@nestjs/common";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { EmailService } from "./email/email.service";
 import { ConfigService } from "@nestjs/config";
 import { UsersService } from "./users/users.service";
 import { UtilService } from "./util";
 import loadConfig from "./configLoader";
+import { WinstonLogger } from "./winstonLogger";
 
 async function initApp() {
     const options = loadConfig();
 
-    const logger = new Logger();
+    const logger = new WinstonLogger();
     const app = await NestFactory.create<NestExpressApplication>(
         AppModule.register(options)
     );
 
-    logger.log("info", `AppModule loaded`);
+    logger.log(`AppModule loaded`);
     const emailService = app.get(EmailService);
     const configService = app.get(ConfigService);
     const userService = app.get(UsersService);
@@ -28,7 +28,7 @@ async function initApp() {
         return userService
             .register({ ...userData, password })
             .then(async (user) => {
-                logger.log("info", `${userData.email} seeded`);
+                logger.log(`${userData.email} seeded`);
                 if (userData.sendAuthDetails && !disableSMTP) {
                     const emailResponse = await emailService.sendEmail(
                         userData.email,
@@ -37,14 +37,14 @@ async function initApp() {
                         { ...userData, password },
                         "./templates/userSeed.html"
                     );
-                    logger.log("info", emailResponse);
-                    logger.log("info", `E-mail sent to ${userData.email}`);
+                    logger.log(emailResponse);
+                    logger.log(`E-mail sent to ${userData.email}`);
                 }
                 return user;
             })
             .catch((e) => {
-                logger.log("error", e);
-                logger.log("info", `Error while seeding ${userData.email}`);
+                logger.error("error", e);
+                logger.log(`Error while seeding ${userData.email}`);
                 return null;
             });
     };
@@ -59,7 +59,7 @@ async function initApp() {
         })
     );
 
-    logger.log("info", "Seed is finished");
+    logger.log("Seed is finished");
     await app.close();
 }
 
