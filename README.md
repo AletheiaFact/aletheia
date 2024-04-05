@@ -82,7 +82,7 @@ yarn build
           "type": "string"
         },
         "role": {
-          "type": "string"
+          "type": "object"
         }
       },
       "required": [
