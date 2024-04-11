@@ -37,7 +37,7 @@ const AutomatedFactCheckingSteps = ({
             )}
             {steps.map((stepComponent, index) =>
                 React.cloneElement(stepComponent, {
-                    key: index,
+                    key: `step-${index}`,
                     index: index - 1,
                 })
             )}

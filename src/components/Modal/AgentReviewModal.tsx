@@ -85,7 +85,10 @@ const AgentReviewModal = ({
                 ));
 
                 if (steps.length > 0) {
-                    setAgentSteps([<StepConnector />, steps[index - 1]]);
+                    setAgentSteps([
+                        <StepConnector key={`connector${index - 1}`} />,
+                        steps[index - 1],
+                    ]);
                 }
 
                 intervalIdRef.current = setInterval(() => {
