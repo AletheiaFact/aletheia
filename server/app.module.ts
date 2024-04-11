@@ -51,6 +51,7 @@ import { NotificationModule } from "./notifications/notifications.module";
 import { CommentModule } from "./claim-review-task/comment/comment.module";
 import { NameSpaceModule } from "./auth/name-space/name-space.module";
 import { NameSpaceGuard } from "./auth/name-space/name-space.guard";
+import { AutomatedFactCheckingModule } from "./automated-fact-checking/automated-fact-checking.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -107,6 +108,7 @@ export class AppModule implements NestModule {
             NotificationModule,
             CommentModule,
             NameSpaceModule,
+            AutomatedFactCheckingModule,
         ];
         if (options.feature_flag) {
             imports.push(

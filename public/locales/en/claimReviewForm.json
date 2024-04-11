@@ -45,5 +45,12 @@
     "rejectionCommentLabel": "Rejection comment",
     "rejectionCommentPlaceholder": "Describe what needs to be changed",
     "loginButton": "Login to continue",
-    "notReviewed": "Not reviewed"
+    "notReviewed": "Not reviewed",
+    "addAgentReview": "Add AI review",
+    "agentInputText": "Fact-check the following claim: {{sentence}}, provide the answer in English.",
+    "addAgentReviewModalTitle": "Generating fact-checking report",
+    "agentLoadingThoughts": "Thinking...",
+    "agentFinishedThoughts": "Finished.",
+    "agentFinishedReport": "Report generated",
+    "submitAgentReview": "Submit generated report"
 }

@@ -13,7 +13,6 @@ import {
     Res,
     Header,
     Optional,
-    NotFoundException,
     UseGuards,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
@@ -35,7 +34,6 @@ import { SentenceService } from "./types/sentence/sentence.service";
 import type { BaseRequest } from "../types";
 import slugify from "slugify";
 import { UnleashService } from "nestjs-unleash";
-import { ContentModelEnum } from "../types/enums";
 import { SentenceDocument } from "./types/sentence/schemas/sentence.schema";
 import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
@@ -331,6 +329,7 @@ export class ClaimController {
         }
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableAgentReview = this.isEnableAgentReview();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         hideDescriptions[TargetModel.Claim] =
@@ -361,6 +360,7 @@ export class ClaimController {
                 hideDescriptions,
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
+                enableAgentReview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })
@@ -541,6 +541,7 @@ export class ClaimController {
             namespace as NameSpaceEnum
         );
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableAgentReview = this.isEnableAgentReview();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         if (claim.personalities.length > 0) {
@@ -563,6 +564,7 @@ export class ClaimController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
+                enableAgentReview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -582,6 +584,7 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableAgentReview = this.isEnableAgentReview();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         const personality =
@@ -614,6 +617,7 @@ export class ClaimController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
+                enableAgentReview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 hideDescriptions,
                 nameSpace: namespace,
@@ -640,6 +644,7 @@ export class ClaimController {
             );
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableAgentReview = this.isEnableAgentReview();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
@@ -657,6 +662,7 @@ export class ClaimController {
                 claim,
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
+                enableAgentReview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -796,6 +802,12 @@ export class ClaimController {
         return config
             ? this.unleash.isEnabled("enable_collaborative_editor")
             : false;
+    }
+
+    private isEnableAgentReview() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config ? this.unleash.isEnabled("agent_review") : false;
     }
 
     private isEnableEditorAnnotations() {

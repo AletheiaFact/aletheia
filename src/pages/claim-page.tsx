@@ -19,6 +19,7 @@ export interface ClaimPageProps {
     sitekey: string;
     href: string;
     enableCollaborativeEditor: boolean;
+    enableAgentReview: boolean;
     enableEditorAnnotations: boolean;
     hideDescriptions: object;
     websocketUrl: string;
@@ -31,6 +32,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
         claim,
         sitekey,
         enableCollaborativeEditor,
+        enableAgentReview,
         enableEditorAnnotations,
     } = props;
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
@@ -43,6 +45,10 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
     dispatch({
         type: ActionTypes.SET_COLLABORATIVE_EDIT,
         enableCollaborativeEdit: enableCollaborativeEditor,
+    });
+    dispatch({
+        type: ActionTypes.SET_AGENT_REVIEW,
+        enableAgentReview: enableAgentReview,
     });
     dispatch({
         type: ActionTypes.SET_EDITOR_ANNOTATION,
@@ -95,6 +101,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
+            enableAgentReview: query?.enableAgentReview,
             enableEditorAnnotations: query?.enableEditorAnnotations,
             websocketUrl: query.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,

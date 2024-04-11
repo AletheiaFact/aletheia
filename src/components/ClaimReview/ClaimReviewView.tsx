@@ -100,6 +100,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                     personalityId={personality?._id}
                     dataHash={content.data_hash}
                     userIsReviewer={userIsReviewer}
+                    sentenceContent={content.content}
                 />
             )}
             {review?.isPublished && (
