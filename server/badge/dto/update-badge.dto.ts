@@ -10,22 +10,22 @@ import {
 
 export class UpdateBadgeDTO {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     _id: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     name: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     description: string;
 
     @IsObject()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     image: any;
 

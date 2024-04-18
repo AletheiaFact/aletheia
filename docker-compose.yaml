@@ -1,14 +1,25 @@
 version: "3"
 services:
-  mongodb:
-    container_name: mongodb
-    image: mongo:5.0.8
-    restart: unless-stopped
-    volumes:
-      - ${DATA_PATH}/mongodb:/data:delegated
-      - ${DATA_PATH}/mongodb/db:/data/db:delegated
+  # mongodb:
+  #   container_name: mongodb
+  #   image: mongo:5.0.8
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ${DATA_PATH}/mongodb:/data:delegated
+  #     - ${DATA_PATH}/mongodb/db:/data/db:delegated
+  #   ports:
+  #     - "${MONGODB_PORT:-27017}:27017"
+  
+  ferretdb:
+    container_name: ferretdb
+    image: ghcr.io/ferretdb/ferretdb
+    restart: on-failure
     ports:
-      - "${MONGODB_PORT:-27017}:27017"
+      - 27017:27017
+    environment:
+      - FERRETDB_HANDLER=sqlite
+    volumes:
+      - ${DATA_PATH}/ferretdb:/state:delegated
 
   localstack:
     container_name: aletheia-localstack
