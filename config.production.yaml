@@ -20,6 +20,8 @@ services:
       authentication_type: ory
       ory:
         url: ORY_SDK_URL
+        admin_url: ORY_SDK_URL
+        admin_endpoint: api/kratos/admin 
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
       feature_flag:

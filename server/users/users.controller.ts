@@ -72,13 +72,14 @@ export class UsersController {
     public async register(@Body() createUserDto: CreateUserDTO) {
         try {
             return await this.usersService.register(createUserDto);
-        } catch (error) {
-            if (error.response?.status === 409) {
+        } catch (errorResponse) {
+            const { error } = errorResponse;
+            if (error?.status === 409) {
                 // Ory identity already exists
-                throw new ConflictException(error.message);
+                throw new ConflictException(error?.message);
             }
             // Problems saving in database
-            throw new UnprocessableEntityException(error.message);
+            throw new UnprocessableEntityException(error?.message);
         }
     }
 
