@@ -52,8 +52,10 @@ git submodule update --init
 #### 2. Start Ory Kratos
 Execute the following command to start Ory Kratos using Docker Compose:
 ```sh
-docker-compose -f ./ory_infra/kratos/quickstart.yml -f ./ory_infra/quickstart-aletheiafact.yml up -d --build --force-recreate
+docker-compose up kratos kratos-migrate
 ```
+
+You can also use the self-service-ui-node and maisluper images to have a better experience debugging Ory.
 
 #### 3. Verify the Ory Kratos Installation
 After starting the service, you can verify that it's running by accessing the admin panel:
