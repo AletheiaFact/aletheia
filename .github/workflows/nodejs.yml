@@ -96,7 +96,6 @@ jobs:
       with:
         name: aletheia-dist
         path: dist
-    - run:  git submodule update --init --recursive 
     - run: |
         echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
         yarn install

@@ -39,17 +39,6 @@ yarn build
 ```
 ## Configuring Ory 
 ### Local environment
-Todo:
-- [ ] Incorporate the docker-compose config into the base docker-compose
-- [ ] Remove the unnecessary docker images from Cypress CI pipeline
-
-#### 1. Initialize the Ory Kratos submodule
-To initialize the Ory Kratos submodule, run the following command in your terminal:
-```sh
-git submodule update --init
-```
-
-#### 2. Start Ory Kratos
 Execute the following command to start Ory Kratos using Docker Compose:
 ```sh
 docker-compose up kratos kratos-migrate
