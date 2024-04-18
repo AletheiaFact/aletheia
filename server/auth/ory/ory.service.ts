@@ -114,8 +114,7 @@ export default class OryService {
     }
 
     deleteIdentity(identityId): Promise<any> {
-        const { access_token: token, admin_url } =
-            this.configService.get("ory");
+        const { access_token: token } = this.configService.get("ory");
         return fetch(`${this.adminUrl}/identities/${identityId}`, {
             method: "delete",
             headers: { Authorization: `Bearer ${token}` },

@@ -74,7 +74,6 @@ export class UsersController {
             return await this.usersService.register(createUserDto);
         } catch (errorResponse) {
             const { error } = errorResponse;
-            console.log(error);
             if (error?.status === 409) {
                 // Ory identity already exists
                 throw new ConflictException(error?.message);

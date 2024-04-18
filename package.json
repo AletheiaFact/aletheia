@@ -36,7 +36,7 @@
     "migrate": "env-cmd ts-node node_modules/.bin/migrate-mongo-ts up -f migrate-mongo-config.ts",
     "cypress-open": "cypress open",
     "cypress-run": "cypress run",
-    "ory-kratos:cy": "docker compose -f ./ory_infra/kratos/quickstart.yml -f ./ory_infra/quickstart-aletheiafact.yml up -d --build --force-recreate",
+    "ory-kratos:cy": "docker compose -f quickstart.yml -f quickstart-aletheiafact.yml up -d --build --force-recreate",
     "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Ory,Server\" \"yarn test:e2e:mongo-server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:35025 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
     "test:e2e:mongo-server": "node dist/server/mongodb.server.js",
     "test:e2e:app-server": "yarn seed:ci && yarn start -c config.test.ci.yaml"

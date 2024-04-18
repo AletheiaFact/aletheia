@@ -74,7 +74,6 @@ export class UsersService {
                 user.role
             );
         }
-
         return await newUser.save();
     }
 

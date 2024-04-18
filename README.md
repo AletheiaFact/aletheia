@@ -11,7 +11,7 @@
   git clone https://github.com/<your-username>/aletheia
   cd aletheia
   ```
-- Startup Mongo DB via Docker:
+- Startup Mongo DB via Docker and Ory Kratos:
   ``` sh
   docker-compose up -d
   ```
@@ -41,12 +41,43 @@ yarn build
 ### Local environment
 Todo:
 - [ ] Incorporate the docker-compose config into the base docker-compose
-- [ ] Document how to run it
 - [ ] Remove the unnecessary docker images from Cypress CI pipeline
 
+#### 1. Initialize the Ory Kratos submodule
+To initialize the Ory Kratos submodule, run the following command in your terminal:
+```sh
+git submodule update --init
 ```
-git submodules update --init
+
+#### 2. Start Ory Kratos
+Execute the following command to start Ory Kratos using Docker Compose:
+```sh
+docker-compose -f ./ory_infra/kratos/quickstart.yml -f ./ory_infra/quickstart-aletheiafact.yml up -d --build --force-recreate
 ```
+
+#### 3. Verify the Ory Kratos Installation
+After starting the service, you can verify that it's running by accessing the admin panel:
+- Open your web browser and go to [http://localhost:4434/admin](http://localhost:4434/admin)
+- You should see a `404 page not found` message, which indicates that the server is running but the requested endpoint does not exist.
+
+#### 4. Configuration Setup
+- Configuring YAML Files
+Copy the Ory configurations from `config.example.yaml` to your `config.yaml` and `config.seed.yaml`:
+- - Replace the values for `url`, `admin_url`, `admin_endpoint`, and `schema_id` with the appropriate values based on your setup in `config.example.yaml`.
+
+- Configuring Environment Variables
+Copy the Ory configurations from `.env.example` to your `.env` file:
+- - Update the `NEXT_PUBLIC_ORY_SDK_URL` and `ORY_SDK_URL` variables as specified in the `.env.example` file.
+
+#### 5. Seed the Database
+Run the following command to seed the database with initial data:
+```sh
+yarn seed
+```
+
+#### 6. Verify User Creation
+Check if users were created successfully by accessing the identities page:
+- Open [http://localhost:4434/admin/identities](http://localhost:4434/admin/identities) in your browser.
 
 ### Ory Cloud
 #### Taking What You Need:
