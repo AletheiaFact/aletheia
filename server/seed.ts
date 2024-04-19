@@ -19,7 +19,7 @@ async function initApp() {
     logger.log(`AppModule loaded`);
     const emailService = app.get(EmailService);
     const configService = app.get(ConfigService);
-    const userService = app.get(UsersService);
+    const userService = await app.resolve(UsersService);
     const utilService = app.get(UtilService);
     const users = configService.get<any>("users");
     const disableSMTP = configService.get<any>("disable_smtp");
