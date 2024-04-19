@@ -35,8 +35,12 @@ const FloatingLinkToolbar = () => {
         clickEdit();
     }, [clickEdit]);
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setHref(event.target.value);
+    const handleInputChange = ({
+        target: { value },
+    }: ChangeEvent<HTMLInputElement>) => {
+        // Prevent href with double http protocol
+        const href = value.replace(/(https?:\/\/)(https?:\/\/)+/, "$1");
+        setHref(href);
     };
 
     const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {

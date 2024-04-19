@@ -111,9 +111,9 @@ const EditorSourcePopover = ({
     };
 
     const removeEditorSource = () => {
-        setEditorSources((sources) => {
-            return sources.filter((src) => src.href !== href);
-        });
+        setEditorSources((sources) =>
+            sources.filter(({ props: { id } }) => id !== props.id)
+        );
     };
 
     return (

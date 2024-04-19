@@ -30,10 +30,10 @@ function useFloatingLinkState() {
     const { isEditing, linkShortcut, setIsEditing, isLoading, setIsLoading } =
         useLinkShortcut();
     const { from, to, empty, ranges } = useCurrentSelection();
+    const { $to } = ranges[0];
     const url = (useAttrs().link()?.href as string) ?? "https://";
     const [href, setHref] = useState<string>(url);
     const isSelected = !empty;
-
     const updateReason = useUpdateReason();
     const floatingLinkPositioner = useMemo(
         () => createMarkPositioner({ type: "link" }),
@@ -53,7 +53,9 @@ function useFloatingLinkState() {
     useEffect(() => setHref(url), [url]);
 
     const validateFloatingLink = useCallback(() => {
-        const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/;
+        // TODO: use a library or service that maintains a comprehensive list of valid TLDs
+        const urlPattern =
+            /^(ftp|http|https):\/\/[^ "]+\.(br|com|org|net|edu|gov|mil|co|info|io|biz|us|uk)(\/|\?|#|$)/;
         if (!urlPattern.test(href)) {
             throw new Error(t("sourceForm:errorMessageValidURL"));
         }
@@ -78,8 +80,6 @@ function useFloatingLinkState() {
 
         try {
             const id = uniqueId();
-            updateFloatingLink(id);
-            const { $to } = ranges[0];
             //@ts-ignore
             const field = $to?.path[3]?.type?.name;
             const targetText = $to.doc.textBetween(from, to);
@@ -89,6 +89,7 @@ function useFloatingLinkState() {
                     field,
                     targetText,
                     id,
+                    textRange: [from, to],
                 },
             };
 
@@ -99,12 +100,13 @@ function useFloatingLinkState() {
                 }
                 return [...sources, newSource];
             });
+            updateFloatingLink(id);
+            setIsEditing(false);
         } catch (error) {
             setError(error.message);
         } finally {
             setHref("https://");
             setIsLoading(false);
-            setIsEditing(false);
         }
     }, [
         setIsLoading,
@@ -118,14 +120,31 @@ function useFloatingLinkState() {
         setIsEditing,
     ]);
 
+    const areTextRangesEqual = (arr1, arr2) => {
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     const onRemoveLink = useCallback(async () => {
         setIsLoading(true);
-        setEditorSources((sources) => {
-            const index = editorSources.findIndex(
-                (source: any) => source.href === href
+        const targetText = $to.doc.textBetween(from, to);
+        const [
+            {
+                props: { id: deletedSourceId },
+            },
+        ] = editorSources.filter((source) => {
+            return (
+                areTextRangesEqual(source.props.textRange, [from, to]) &&
+                source.props.targetText === targetText
             );
-            return sources.filter((_, i) => i !== index);
         });
+        setEditorSources((sources) =>
+            sources.filter(({ props }) => props.id !== deletedSourceId)
+        );
         chain.removeLink().focus().run();
         setIsLoading(false);
     }, [chain, editorSources, href, setEditorSources, setIsLoading]);

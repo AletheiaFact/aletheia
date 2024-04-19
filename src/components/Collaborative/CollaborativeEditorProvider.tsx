@@ -3,12 +3,13 @@ import { useAppSelector } from "../../store/store";
 import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
 import { RemirrorJSON } from "remirror";
+import { SourceType } from "../../types/Source";
 
 interface ContextType {
     websocketProvider: any;
     editorContentObject?: RemirrorJSON;
     setEditorContentObject?: (data: any) => void;
-    editorSources?: object[];
+    editorSources?: SourceType[];
     setEditorSources?: (data: any) => void;
     data_hash?: string;
     isFetchingEditor?: boolean;

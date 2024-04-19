@@ -7,21 +7,35 @@ import colors from "../../../../styles/colors";
 import { NameSpaceEnum } from "../../../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../../atoms/namespace";
+import { ProsemirrorNode } from "remirror";
+import { SourceType } from "../../../../types/Source";
 
-const WEB_ARCHIVE_POSITION_OFFSET = 42;
+const WEB_ARCHIVE_POSITION_OFFSET: number = 42;
 
-const EditorSourceListItem = ({ node, sup, source }) => {
+interface EditorSouceListProps {
+    node: ProsemirrorNode;
+    sup: number;
+    source: SourceType;
+}
+
+const EditorSourceListItem = ({ node, sup, source }: EditorSouceListProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
     const { href } = source;
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isArchive, setIsArchive] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isArchive, setIsArchive] = useState(false);
 
     useEffect(() => {
-        const url = new URL(href);
-        if (url.hostname.includes("web.archive.org")) {
-            setIsArchive(true);
+        function updateIsArchive(url) {
+            try {
+                const parsedUrl = new URL(url);
+                return parsedUrl.hostname === "web.archive.org";
+            } catch (error) {
+                console.error("Invalid URL:", error);
+                return false;
+            }
         }
-        return () => {};
+
+        setIsArchive(updateIsArchive(href));
     }, [href]);
 
     const title = useMemo(() => {
