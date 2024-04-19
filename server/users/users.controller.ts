@@ -30,6 +30,7 @@ import {
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
+import { GetUsersDTO } from "./dto/get-users.dto";
 
 @Controller(":namespace?")
 export class UsersController {
@@ -192,7 +193,7 @@ export class UsersController {
     @ApiTags("user")
     @Get("api/user")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    public async getAll(@Query() getUsers) {
+    public async getAll(@Query() getUsers: GetUsersDTO) {
         return this.usersService.findAll(getUsers);
     }
 
