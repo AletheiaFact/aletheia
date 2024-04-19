@@ -8,7 +8,7 @@ import { User, UserDocument } from "./schemas/user.schema";
 import { Badge } from "../badge/schemas/badge.schema";
 import { NotificationService } from "../notifications/notifications.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-import { BaseRequest } from "types";
+import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
 import { GetUsersDTO } from "./dto/get-users.dto";
 
