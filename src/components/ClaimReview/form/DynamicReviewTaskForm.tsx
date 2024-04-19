@@ -2,7 +2,6 @@ import AletheiaButton, { ButtonType } from "../../Button";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
     reviewingSelector,
-    preloadedOptionsSelector,
     reviewDataSelector,
     crossCheckingSelector,
     reportSelector,
@@ -15,16 +14,12 @@ import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { Row } from "antd";
 import Text from "antd/lib/typography/Text";
-import getNextEvents from "../../../machines/reviewTask/getNextEvent";
-import getNextForm from "../../../machines/reviewTask/getNextForm";
 import {
     isUserLoggedIn,
     currentUserId,
     currentUserRole,
 } from "../../../atoms/currentUser";
-import reviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import { trackUmamiEvent } from "../../../lib/umami";
-import { useAppSelector } from "../../../store/store";
 import { useAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import { useSelector } from "@xstate/react";
@@ -32,6 +27,7 @@ import { useTranslation } from "next-i18next";
 import WarningModal from "../../Modal/WarningModal";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
+import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -42,7 +38,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         formState: { errors },
         watch,
     } = useForm();
-    const { machineService } = useContext(ReviewTaskMachineContext);
+    const { machineService, events, form, setFormAndEvents } = useContext(
+        ReviewTaskMachineContext
+    );
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isReported = useSelector(machineService, reportSelector);
@@ -50,59 +48,25 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         CollaborativeEditorContext
     );
     const reviewData = useSelector(machineService, reviewDataSelector);
-    const preloadedOptions = useSelector(
-        machineService,
-        preloadedOptionsSelector
-    );
 
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const [role] = useAtom(currentUserRole);
-    const [currentForm, setCurrentForm] = useState(null);
-    const [nextEvents, setNextEvents] = useState(null);
     const [isLoading, setIsLoading] = useState({});
-    const [reviewerError, setReviewerError] = useState<boolean>(false);
+    const [reviewerError, setReviewerError] = useState(false);
     const [recaptchaString, setRecaptchaString] = useState("");
-    const [gobackWarningModal, setGobackWarningModal] =
-        useState<boolean>(false);
+    const [gobackWarningModal, setGobackWarningModal] = useState(false);
     const [finishReportWarningModal, setFinishReportWarningModal] =
-        useState<boolean>(false);
+        useState(false);
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
-
-    const autoSave = useAppSelector((state) => state.autoSave);
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
 
-    const setCurrentFormAndNextEvents = (param, isSameLabel = false) => {
-        if (param !== ReviewTaskEvents.draft) {
-            let nextForm = getNextForm(param, isSameLabel);
-            nextForm = setUserPreloads(nextForm);
-            setCurrentForm(nextForm);
-            setNextEvents(getNextEvents(param, isSameLabel));
-        }
-    };
-
-    const setUserPreloads = (form) => {
-        if (preloadedOptions) {
-            form.forEach((item) => {
-                if (
-                    item.type === "inputSearch" &&
-                    preloadedOptions[item.fieldName]
-                ) {
-                    item.extraProps.preloadedOptions =
-                        preloadedOptions[item.fieldName];
-                }
-            });
-        }
-
-        return form;
-    };
-
     const resetIsLoading = () => {
         const isLoading = {};
-        nextEvents?.forEach((eventName) => {
+        events?.forEach((eventName) => {
             isLoading[eventName] = false;
         });
         setIsLoading(isLoading);
@@ -110,7 +74,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            setCurrentFormAndNextEvents(machineService.machine.config.initial);
+            setFormAndEvents(machineService.machine.config.initial);
         }
     }, [isLoggedIn]);
 
@@ -118,39 +82,13 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         reset(reviewData);
         resetIsLoading();
         setReviewerError(false);
-    }, [nextEvents]);
+    }, [events]);
 
-    useEffect(() => {
-        if (autoSave) {
-            let timeout: NodeJS.Timeout;
-            watch((value) => {
-                if (timeout) clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    reviewTaskApi.autoSaveDraft(
-                        {
-                            data_hash,
-                            machine: {
-                                context: {
-                                    reviewData: value,
-                                    claimReview: {
-                                        personality,
-                                        claim,
-                                        isPartialReview: true,
-                                    },
-                                },
-                            },
-                        },
-                        t
-                    );
-                }, 10000);
-            });
-        }
-    }, [watch]);
+    useAutoSaveDraft(data_hash, personality, claim, watch);
 
     const sendEventToMachine = (formData, eventName) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
-
-        machineService.send(eventName, {
+        const payload = {
             data_hash,
             reviewData: {
                 ...formData,
@@ -167,16 +105,17 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             type: eventName,
             t,
             recaptchaString,
-            setCurrentFormAndNextEvents,
+            setFormAndEvents,
             resetIsLoading,
             currentUserId: userId,
             nameSpace,
-        });
+        };
+        machineService.send(eventName, payload);
         setRecaptchaString("");
         recaptchaRef.current?.resetRecaptcha();
     };
 
-    const ValidateSelectedReviewer = (data, event) => {
+    const validateSelectedReviewer = (data, event) => {
         const isValidReviewer =
             event === ReviewTaskEvents.sendToCrossChecking
                 ? !data.crossCheckerId ||
@@ -242,7 +181,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
      */
     const onSubmit = async (data, e) => {
         const event = e.nativeEvent.submitter.getAttribute("event");
-        if (ValidateSelectedReviewer(data, event)) {
+        if (validateSelectedReviewer(data, event)) {
             handleSendEvent(event, data);
         }
     };
@@ -288,10 +227,10 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
 
     return (
         <form style={{ width: "100%" }} onSubmit={handleSubmit(onSubmit)}>
-            {currentForm && (
+            {form && (
                 <>
                     <DynamicForm
-                        currentForm={currentForm}
+                        currentForm={form}
                         machineValues={reviewData}
                         control={control}
                         errors={errors}
@@ -303,7 +242,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                             </Text>
                         )}
                     </div>
-                    {nextEvents?.length > 0 && showButtons && (
+                    {events?.length > 0 && showButtons && (
                         <AletheiaCaptcha
                             onChange={setRecaptchaString}
                             ref={recaptchaRef}
@@ -318,7 +257,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
                         justifyContent: "space-evenly",
                     }}
                 >
-                    {nextEvents?.map((event) => {
+                    {events?.map((event) => {
                         return (
                             <AletheiaButton
                                 loading={isLoading[event]}

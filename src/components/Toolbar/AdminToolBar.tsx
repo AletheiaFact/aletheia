@@ -13,6 +13,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
 
+//TODO: Make admin tool bar dynamic and react based on target
 const AdminToolBar = ({
     content,
     deleteApiFunction,
