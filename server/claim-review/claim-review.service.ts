@@ -86,6 +86,7 @@ export class ClaimReviewService {
             { $limit: parseInt(pageSize) }
         );
 
+        // error when uses aggregation
         const claimReviews = await this.ClaimReviewModel.aggregate(aggregation);
 
         return Promise.all(
