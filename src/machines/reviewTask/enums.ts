@@ -14,6 +14,7 @@ enum ReviewTaskEvents {
     submitComment = "SUBMIT_COMMENT",
     selectedReview = "SELECTED_REVIEW",
     selectedCrossChecking = "SELECTED_CROSS_CHECKING",
+    reAssignUser = "RE_ASSIGN_USER",
 }
 
 enum ReviewTaskStates {
