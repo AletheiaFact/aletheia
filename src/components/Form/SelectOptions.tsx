@@ -7,6 +7,7 @@ import Loading from "../Loading";
 import { Roles } from "../../types/enums";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { currentUserRole } from "../../atoms/currentUser";
 
 const StyledSelect = styled(Select)`
     .ant-select-selector {
@@ -36,6 +37,7 @@ function SelectOptions({
         const slug = value.toLowerCase().replace(" ", "-");
         return !props?.preloadedTopics?.includes(slug || value);
     });
+    const [role] = useAtom(currentUserRole);
     const [nameSpace] = useAtom(currentNameSpace);
 
     const { t } = useTranslation();
@@ -44,24 +46,22 @@ function SelectOptions({
         return (value: string) => {
             setOptions([]);
             setFetching(true);
-            //TODO: query with the filter
-            fetchOptions(value, t, nameSpace).then((newOptions) => {
-                if (fieldName === "crossCheckerId") {
-                    const reviewerUsers = newOptions.filter(
-                        (user) => user?.role[nameSpace] !== Roles.Regular
-                    );
-                    setOptions(reviewerUsers);
-                } else if (fieldName === "reviewerId") {
-                    const reviewerUsers = newOptions.filter(
-                        (user) =>
-                            user?.role[nameSpace] === Roles.Reviewer ||
-                            user?.role[nameSpace] === Roles.Admin ||
-                            user?.role[nameSpace] === Roles.SuperAdmin
-                    );
-                    setOptions(reviewerUsers);
-                } else {
-                    setOptions(newOptions);
-                }
+            const canAssignUsers = !(
+                fieldName === "usersId" && role === Roles.FactChecker
+            );
+            const filterOutRoles =
+                fieldName === "reviewerId"
+                    ? [Roles.Regular, Roles.FactChecker]
+                    : [Roles.Regular];
+
+            fetchOptions(
+                value,
+                t,
+                nameSpace,
+                filterOutRoles,
+                canAssignUsers
+            ).then((newOptions) => {
+                setOptions(newOptions);
                 setFetching(false);
             });
         };
