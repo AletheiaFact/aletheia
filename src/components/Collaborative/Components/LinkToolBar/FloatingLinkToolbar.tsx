@@ -12,6 +12,8 @@ import SourceDialog from "./Dialog/SourceDialog";
 import useFloatingLinkState from "../../hooks/useFloatingLinkState";
 import { useTranslation } from "next-i18next";
 
+const HTTP_PROTOCOL_REGEX = /(https?:\/\/)(https?:\/\/)+/;
+
 const FloatingLinkToolbar = () => {
     const {
         isEditing,
@@ -39,7 +41,7 @@ const FloatingLinkToolbar = () => {
         target: { value },
     }: ChangeEvent<HTMLInputElement>) => {
         // Prevent href with double http protocol
-        const href = value.replace(/(https?:\/\/)(https?:\/\/)+/, "$1");
+        const href = value.replace(HTTP_PROTOCOL_REGEX, "$1");
         setHref(href);
     };
 

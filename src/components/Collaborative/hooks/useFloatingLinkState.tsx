@@ -19,6 +19,9 @@ import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
 
+const URL_PATTERN =
+    /^(ftp|http|https):\/\/[^ "]+\.(br|com|org|net|edu|gov|mil|co|info|io|biz|us|uk)(\/|\?|#|$)/;
+
 function useFloatingLinkState() {
     const { t } = useTranslation();
     const { editorSources, setEditorSources } = useContext(
@@ -54,9 +57,7 @@ function useFloatingLinkState() {
 
     const validateFloatingLink = useCallback(() => {
         // TODO: use a library or service that maintains a comprehensive list of valid TLDs
-        const urlPattern =
-            /^(ftp|http|https):\/\/[^ "]+\.(br|com|org|net|edu|gov|mil|co|info|io|biz|us|uk)(\/|\?|#|$)/;
-        if (!urlPattern.test(href)) {
+        if (!URL_PATTERN.test(href)) {
             throw new Error(t("sourceForm:errorMessageValidURL"));
         }
     }, [href, t]);
