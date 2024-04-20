@@ -50,13 +50,9 @@ async function initApp() {
     };
     // Using await Promise.all to force loop to finish before continuing
     await Promise.all(
-        users.map(async (userData) => {
-            const password = utilService.generatePassword(
-                userData.isTestUser,
-                userData.password
-            );
-            return seedSingleUser(userData, password);
-        })
+        users.map(async (userData) =>
+            seedSingleUser(userData, userData.password)
+        )
     );
 
     logger.log("Seed is finished");
