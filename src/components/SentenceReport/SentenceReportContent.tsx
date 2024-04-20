@@ -3,7 +3,6 @@ import { Col, Divider, Typography } from "antd";
 import React from "react";
 import SentenceReportContentStyle from "./SentenceReportContent.style";
 import SourcesList from "../Source/SourcesList";
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import dompurify from "dompurify";
 import ClassificationText from "../ClassificationText";
@@ -13,11 +12,12 @@ const SentenceReportContent = ({
     context,
     classification,
     showClassification,
+    href,
 }) => {
     const { t } = useTranslation();
     const { summary, questions, report, verification, sources } = context;
-    const router = useRouter();
     const sanitizer = dompurify.sanitize;
+    const sortedSources = sources.sort((a, b) => a.props.sup - b.props.sup);
 
     return (
         <SentenceReportContentStyle>
@@ -95,8 +95,8 @@ const SentenceReportContent = ({
                             {t("claim:sourceSectionTitle")}
                         </Typography.Title>
                         <SourcesList
-                            sources={sources}
-                            seeMoreHref={`${router.asPath}/sources`}
+                            sources={sortedSources}
+                            seeMoreHref={`${href}/sources`}
                         />
                     </>
                 )}

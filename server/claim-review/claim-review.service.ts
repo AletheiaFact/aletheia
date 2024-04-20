@@ -19,6 +19,7 @@ import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";
 import lookupClaimRevisions from "../mongo-pipelines/lookupClaimRevisions";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { EditorParseService } from "../editor-parse/editor-parse.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -30,7 +31,8 @@ export class ClaimReviewService {
         private historyService: HistoryService,
         private util: UtilService,
         private sentenceService: SentenceService,
-        private imageService: ImageService
+        private imageService: ImageService,
+        private editorParseService: EditorParseService
     ) {}
 
     async listAll(page, pageSize, order, query, latest = false) {
@@ -268,9 +270,17 @@ export class ClaimReviewService {
     async getReviewByDataHash(
         data_hash: string
     ): Promise<LeanDocument<ClaimReviewDocument>> {
-        return await this.ClaimReviewModel.findOne({ data_hash })
+        const claimReview = await this.ClaimReviewModel.findOne({ data_hash })
             .populate("report")
             .lean();
+
+        if (claimReview?.report) {
+            claimReview.report = await this.getHtmlFromSchema(
+                claimReview?.report
+            );
+        }
+
+        return claimReview;
     }
 
     async getReport(match): Promise<LeanDocument<ReportDocument>> {
@@ -376,6 +386,14 @@ export class ClaimReviewService {
             personality,
             reviewHref,
             claim,
+        };
+    }
+
+    getHtmlFromSchema(schema) {
+        const htmlContent = this.editorParseService.schema2html(schema);
+        return {
+            ...schema,
+            ...htmlContent,
         };
     }
 }

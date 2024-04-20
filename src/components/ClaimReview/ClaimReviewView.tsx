@@ -25,6 +25,7 @@ export interface ClaimReviewViewProps {
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
+    const { personality, claim, content, hideDescriptions } = props;
     const { machineService, publishedReview } = useContext(
         ReviewTaskMachineContext
     );
@@ -38,14 +39,8 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const userIsReviewer = reviewData.reviewerId === userId;
     const userIsCrossChecker = reviewData.crossCheckerId === userId;
     const userIsAssignee = reviewData.usersId.includes(userId);
-
-    const { personality, claim, content, hideDescriptions } = props;
     const isContentImage = claim.contentModel === ContentModelEnum.Image;
-
-    const origin =
-        typeof window !== "undefined" && window.location.origin
-            ? window.location.origin
-            : "";
+    const origin = window.location.origin ? window.location.origin : "";
 
     let contentPath =
         nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/claim` : `/claim`;
@@ -60,7 +55,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     contentPath += isContentImage
         ? `/${claim?._id}`
         : `/${claim?.slug}/sentence/${content.data_hash}`;
-    const shareHref = `${origin}${contentPath}`;
+    const href = `${origin}${contentPath}`;
 
     return (
         <div>
@@ -95,6 +90,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 userIsAssignee={userIsAssignee}
                 userIsCrossChecker={userIsCrossChecker}
                 isHidden={review?.isHidden}
+                href={href}
             />
 
             {!review?.isPublished && (
@@ -109,7 +105,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
             {review?.isPublished && (
                 <SocialMediaShare
                     quote={personality?.name}
-                    href={shareHref}
+                    href={href}
                     claim={claim?.title}
                 />
             )}

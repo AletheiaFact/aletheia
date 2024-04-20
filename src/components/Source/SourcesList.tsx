@@ -1,10 +1,13 @@
 import AletheiaButton, { ButtonType } from "../Button";
 import { List, Typography } from "antd";
 
-import React from "react";
+import React, { useContext } from "react";
 import SourceListItem from "./SourceListItem";
 import { SourcesListStyle } from "./SourcesList.style";
 import { useTranslation } from "next-i18next";
+import { useSelector } from "@xstate/react";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import { publishedSelector } from "../../machines/reviewTask/selectors";
 
 const SourcesList = ({
     sources,
@@ -14,13 +17,23 @@ const SourcesList = ({
     seeMoreHref: string;
 }) => {
     const { t } = useTranslation();
+    const { machineService, publishedReview } = useContext(
+        ReviewTaskMachineContext
+    );
+    const isPublished =
+        useSelector(machineService, publishedSelector) ||
+        publishedReview?.review;
     const sourcesGridColumns = 6;
 
     return (
         <SourcesListStyle>
             {sources && (
                 <List
-                    dataSource={sources.slice(0, sourcesGridColumns)}
+                    dataSource={
+                        isPublished
+                            ? sources.slice(0, sourcesGridColumns)
+                            : sources
+                    }
                     style={{ width: "100%" }}
                     grid={{
                         gutter: 38,
@@ -42,7 +55,7 @@ const SourcesList = ({
                     }}
                 />
             )}
-            {sources?.length > sourcesGridColumns && (
+            {isPublished && sources?.length > sourcesGridColumns && (
                 <AletheiaButton
                     type={ButtonType.blue}
                     href={seeMoreHref}
