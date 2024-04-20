@@ -13,6 +13,7 @@ import AletheiaAlert from "../AletheiaAlert";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
+import { useAppSelector } from "../../store/store";
 
 const { Title, Paragraph } = Typography;
 
@@ -32,6 +33,7 @@ const SentenceReportCard = ({
     const { t } = useTranslation();
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     const [nameSpace] = useAtom(currentNameSpace);
+    const { vw } = useAppSelector((state) => state);
 
     const generateContentPath = (nameSpace, personality, claim) => {
         const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
@@ -93,7 +95,12 @@ const SentenceReportCard = ({
                         <PersonalityMinimalCard personality={personality} />
                     </Col>
                 )}
-                <Col md={18} sm={24} className="sentence-card">
+                <Col
+                    md={vw?.md && !vw?.sm ? 17 : 18}
+                    offset={vw?.md && !vw?.sm ? 1 : 0}
+                    sm={24}
+                    className="sentence-card"
+                >
                     {classification && (
                         <Title className="classification" level={1}>
                             {

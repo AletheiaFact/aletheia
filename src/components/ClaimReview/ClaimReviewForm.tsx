@@ -30,6 +30,7 @@ const ClaimReviewForm = ({
     dataHash,
     userIsReviewer,
     sentenceContent,
+    componentStyle,
 }) => {
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
@@ -71,7 +72,7 @@ const ClaimReviewForm = ({
                 padding: "20px 15px",
             }}
         >
-            <Col offset={3} span={18}>
+            <Col span={componentStyle.span} offset={componentStyle.offset}>
                 {formCollapsed && (
                     <Row
                         style={{

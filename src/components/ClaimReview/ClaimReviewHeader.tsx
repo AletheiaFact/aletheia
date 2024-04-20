@@ -29,6 +29,7 @@ interface ClaimReviewHeaderProps {
     userIsReviewer: boolean;
     userIsAssignee: boolean;
     userIsNotRegular: boolean;
+    componentStyle: any;
 }
 
 const ClaimReviewHeader = ({
@@ -40,6 +41,7 @@ const ClaimReviewHeader = ({
     userIsReviewer,
     userIsAssignee,
     userIsNotRegular,
+    componentStyle,
 }: ClaimReviewHeaderProps) => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
@@ -134,7 +136,7 @@ const ClaimReviewHeader = ({
 
     return (
         <Row style={{ background: isPublished ? "none" : colors.lightGray }}>
-            <Col offset={3} span={18}>
+            <Col offset={componentStyle.offset} span={componentStyle.span}>
                 <Row>
                     <Col
                         lg={{
