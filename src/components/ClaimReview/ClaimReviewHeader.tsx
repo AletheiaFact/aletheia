@@ -44,7 +44,12 @@ const ClaimReviewHeader = ({
     componentStyle,
 }: ClaimReviewHeaderProps) => {
     const { t } = useTranslation();
-    const { vw } = useAppSelector((state) => state);
+    const { reviewDrawerCollapsed } = useAppSelector((state) => ({
+        reviewDrawerCollapsed:
+            state?.reviewDrawerCollapsed !== undefined
+                ? state?.reviewDrawerCollapsed
+                : true,
+    }));
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
 
@@ -141,15 +146,16 @@ const ClaimReviewHeader = ({
                     <Col
                         lg={{
                             order: 1,
-                            span: isPublishedOrCanSeeHidden ? 16 : 24,
+                            span:
+                                isPublishedOrCanSeeHidden &&
+                                reviewDrawerCollapsed
+                                    ? 16
+                                    : 24,
                         }}
                         md={{ order: 2, span: 24 }}
                         sm={{ order: 2, span: 24 }}
                         xs={{ order: 2, span: 24 }}
                         className="sentence-report-card"
-                        style={{
-                            paddingRight: vw?.md ? "0" : " 20px",
-                        }}
                     >
                         <SentenceReportCard
                             personality={personality}
