@@ -1,23 +1,33 @@
 import { Col, Divider, Typography } from "antd";
 
-import React from "react";
+import React, { useContext } from "react";
 import SentenceReportContentStyle from "./SentenceReportContent.style";
 import SourcesList from "../Source/SourcesList";
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import dompurify from "dompurify";
 import ClassificationText from "../ClassificationText";
+import { useSelector } from "@xstate/react";
+import { publishedSelector } from "../../machines/reviewTask/selectors";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 
 const { Paragraph } = Typography;
 const SentenceReportContent = ({
     context,
     classification,
     showClassification,
+    href,
 }) => {
     const { t } = useTranslation();
+    const { machineService, publishedReview } = useContext(
+        ReviewTaskMachineContext
+    );
     const { summary, questions, report, verification, sources } = context;
-    const router = useRouter();
     const sanitizer = dompurify.sanitize;
+    const sortedSources = sources.sort((a, b) => a.props.sup - b.props.sup);
+    const showAllSources = !(
+        useSelector(machineService, publishedSelector) ||
+        publishedReview?.review
+    );
 
     return (
         <SentenceReportContentStyle>
@@ -95,8 +105,9 @@ const SentenceReportContent = ({
                             {t("claim:sourceSectionTitle")}
                         </Typography.Title>
                         <SourcesList
-                            sources={sources}
-                            seeMoreHref={`${router.asPath}/sources`}
+                            sources={sortedSources}
+                            seeMoreHref={`${href}/sources`}
+                            showAllSources={showAllSources}
                         />
                     </>
                 )}
