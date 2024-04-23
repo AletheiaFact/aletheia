@@ -137,7 +137,7 @@ h6 {
     outline: none;
 }
 
-.MuiPopper-root {
+[data-cy="testFloatingLinkToolbar"] {
     z-index: 1001;
 }
 
