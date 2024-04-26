@@ -4,7 +4,7 @@ import { queries } from "../../styles/mediaQueries";
 
 const SentenceReportCardStyle = styled.div`
     .main-content {
-        padding-top: 80px;
+        padding-top: 32px;
     }
 
     .sentence-card {
