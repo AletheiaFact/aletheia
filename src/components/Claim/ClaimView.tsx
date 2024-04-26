@@ -1,7 +1,7 @@
 import { Affix, Col, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 
-import { ContentModelEnum, TargetModel } from "../../types/enums";
+import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
 import SourcesList from "../Source/SourcesList";
@@ -14,12 +14,15 @@ import ClaimContentDisplay from "./ClaimContentDisplay";
 import SocialMediaShare from "../SocialMediaShare";
 import AdminToolBar from "../Toolbar/AdminToolBar";
 import claimApi from "../../api/claim";
+import { currentUserRole } from "../../atoms/currentUser";
+import { useAtom } from "jotai";
 
 const { Title } = Typography;
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
+    const [role] = useAtom(currentUserRole);
     const { title, stats, content: claimContent } = claim;
 
     const isImage = claim?.contentModel === ContentModelEnum.Image;
@@ -42,13 +45,15 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
 
     return (
         <>
-            <AdminToolBar
-                content={claim}
-                deleteApiFunction={claimApi.deleteClaim}
-                changeHideStatusFunction={claimApi.updateClaimHiddenStatus}
-                target={TargetModel.Claim}
-                hideDescriptions={hideDescriptions}
-            />
+            {(role === Roles.Admin || role === Roles.SuperAdmin) && (
+                <AdminToolBar
+                    content={claim}
+                    deleteApiFunction={claimApi.deleteClaim}
+                    changeHideStatusFunction={claimApi.updateClaimHiddenStatus}
+                    target={TargetModel.Claim}
+                    hideDescriptions={hideDescriptions}
+                />
+            )}
 
             <Row justify="center">
                 <Col xs={22} sm={22} md={18}>
