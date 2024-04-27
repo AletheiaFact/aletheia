@@ -28,8 +28,8 @@ export class UsersService {
             filterOutRoles,
             badges,
             project,
-            nameSpaceSlug,
-            canAssignUsers,
+            nameSpaceSlug = NameSpaceEnum.Main,
+            canAssignUsers = true,
         } = userQuery;
         const { _id: userId } = this.req.user;
         const pipeline: Aggregate<any[]> = this.UserModel.aggregate();

@@ -1,14 +1,9 @@
 import React, { useCallback } from "react";
-import { Col, Row } from "antd";
+import { Row } from "antd";
 import { Provider as CallbackTimerProvider, useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
-
-import { isUserLoggedIn } from "../../atoms/currentUser";
 import claimApi from "../../api/claim";
 import { callbackTimerInitialConfig } from "../../machines/callbackTimer/provider";
-import DonationCard from "../DonationCard";
-import CTARegistration from "../Home/CTARegistration";
-import VideoCTACard from "../VideoCTACard";
 import DebateHeader from "./DebateHeader";
 import DebateTimelineWrapper from "./DebateTimelineWrapper";
 import { useDispatch } from "react-redux";
@@ -19,7 +14,6 @@ const DebateView = ({ claim }) => {
     const debate = claim?.content;
     const { t } = useTranslation();
     const speeches = debate.content;
-    const [isLoggedIn] = useAtom(isUserLoggedIn);
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
     dispatch(actions.setSelectClaim(claim));
@@ -69,32 +63,6 @@ const DebateView = ({ claim }) => {
                             isLive={debate.isLive}
                         />
                     </Row>
-                    <Row
-                        style={{
-                            padding: "30px 10%",
-                            width: "100%",
-                            justifyContent: "space-evenly",
-                        }}
-                    >
-                        <Col>
-                            <VideoCTACard />
-                        </Col>
-                        <Col>
-                            <DonationCard />
-                        </Col>
-                    </Row>
-                    {!isLoggedIn && (
-                        <Row
-                            style={{
-                                padding: "30px 10%",
-                                width: "100%",
-                            }}
-                        >
-                            <Col xs={24} lg={18} order={3}>
-                                <CTARegistration />
-                            </Col>
-                        </Row>
-                    )}
                 </Row>
             </CallbackTimerProvider>
         </>

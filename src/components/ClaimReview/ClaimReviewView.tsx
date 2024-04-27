@@ -16,6 +16,7 @@ import ClaimReviewApi from "../../api/claimReviewApi";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import ReviewTaskAdminToolBar from "../Toolbar/ReviewTaskAdminToolBar";
+import { useAppSelector } from "../../store/store";
 
 export interface ClaimReviewViewProps {
     personality?: any;
@@ -29,6 +30,12 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const { machineService, publishedReview } = useContext(
         ReviewTaskMachineContext
     );
+    const { reviewDrawerCollapsed } = useAppSelector((state) => ({
+        reviewDrawerCollapsed:
+            state?.reviewDrawerCollapsed !== undefined
+                ? state?.reviewDrawerCollapsed
+                : true,
+    }));
     const { review } = publishedReview || {};
     const [nameSpace] = useAtom(currentNameSpace);
     const reviewData = useSelector(machineService, reviewDataSelector);
@@ -41,6 +48,16 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const userIsAssignee = reviewData.usersId.includes(userId);
     const isContentImage = claim.contentModel === ContentModelEnum.Image;
     const origin = window.location.origin ? window.location.origin : "";
+
+    const componentStyle = {
+        span: 18,
+        offset: 3,
+    };
+
+    if (!reviewDrawerCollapsed) {
+        componentStyle.span = 22;
+        componentStyle.offset = 1;
+    }
 
     let contentPath =
         nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/claim` : `/claim`;
@@ -59,19 +76,22 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
 
     return (
         <div>
-            {(role === Roles.Admin || role === Roles.SuperAdmin) &&
-            review?.isPublished ? (
-                <AdminToolBar
-                    content={review}
-                    deleteApiFunction={ClaimReviewApi.deleteClaimReview}
-                    changeHideStatusFunction={
-                        ClaimReviewApi.updateClaimReviewHiddenStatus
-                    }
-                    target={TargetModel.ClaimReview}
-                    hideDescriptions={hideDescriptions}
-                />
-            ) : (
-                <ReviewTaskAdminToolBar />
+            {(role === Roles.Admin || role === Roles.SuperAdmin) && (
+                <>
+                    {review?.isPublished ? (
+                        <AdminToolBar
+                            content={review}
+                            deleteApiFunction={ClaimReviewApi.deleteClaimReview}
+                            changeHideStatusFunction={
+                                ClaimReviewApi.updateClaimReviewHiddenStatus
+                            }
+                            target={TargetModel.ClaimReview}
+                            hideDescriptions={hideDescriptions}
+                        />
+                    ) : (
+                        <ReviewTaskAdminToolBar />
+                    )}
+                </>
             )}
             <ClaimReviewHeader
                 classification={
@@ -81,6 +101,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 userIsReviewer={userIsReviewer}
                 userIsNotRegular={userIsNotRegular}
                 userIsAssignee={userIsAssignee}
+                componentStyle={componentStyle}
                 {...props}
             />
             <SentenceReportView
@@ -91,6 +112,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 userIsCrossChecker={userIsCrossChecker}
                 isHidden={review?.isHidden}
                 href={href}
+                componentStyle={componentStyle}
             />
 
             {!review?.isPublished && (
@@ -100,6 +122,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                     dataHash={content.data_hash}
                     userIsReviewer={userIsReviewer}
                     sentenceContent={content.content}
+                    componentStyle={componentStyle}
                 />
             )}
             {review?.isPublished && (
