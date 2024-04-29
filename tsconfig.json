@@ -35,6 +35,8 @@
   "exclude": [
     "node_modules",
     "dist",
-    "docs"
+    "docs",
+    "server/**/*.spec.ts",
+    "server/mongodb.server.ts",
   ]
 }

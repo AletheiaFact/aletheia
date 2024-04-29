@@ -9175,13 +9175,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:^1.3.91":
-  version: 1.5.0
-  resolution: "@swc/core-darwin-x64@npm:1.5.0"
-  conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@swc/core-linux-arm-gnueabihf@npm:1.3.91":
   version: 1.3.91
   resolution: "@swc/core-linux-arm-gnueabihf@npm:1.3.91"
@@ -11146,7 +11139,6 @@ __metadata:
     "@storybook/preset-ant-design": ^0.0.2
     "@storybook/react": ^7.4.5
     "@storybook/testing-library": ^0.2.2
-    "@swc/core-darwin-x64": ^1.3.91
     "@types/eslint": ^7.28.0
     "@types/express": ^4.17.13
     "@types/jest": ^27.4.0
@@ -11250,9 +11242,6 @@ __metadata:
     y-webrtc: ^10.2.5
     y-websocket: ^1.5.0
     yjs: ^13.5.23
-  dependenciesMeta:
-    "@swc/core-darwin-x64":
-      optional: true
   languageName: unknown
   linkType: soft
 
