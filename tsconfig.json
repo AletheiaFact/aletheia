@@ -37,6 +37,5 @@
     "dist",
     "docs",
     "server/**/*.spec.ts",
-    "server/mongodb.server.ts",
   ]
 }
