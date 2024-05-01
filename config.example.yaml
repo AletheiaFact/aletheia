@@ -22,6 +22,9 @@ services:
       authentication_type: ory
       ory:
         url: ORY_SDK_URL
+        # Use "admin" as the endpoint when running locally.
+        # When using the cloud, the endpoint should be "api/kratos/admin".
+        admin_endpoint:
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
       feature_flag:
