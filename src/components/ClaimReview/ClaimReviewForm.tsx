@@ -1,6 +1,6 @@
 import Button, { ButtonType } from "../Button";
 import { Col, Row } from "antd";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
     reviewingSelector,
     reviewDataSelector,
@@ -20,25 +20,35 @@ import colors from "../../styles/colors";
 import { useAtom } from "jotai";
 import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
+import AgentReviewModal from "../Modal/AgentReviewModal";
+import { useAppSelector } from "../../store/store";
+import AletheiaCaptcha from "../AletheiaCaptcha";
 
 const ClaimReviewForm = ({
     claimId,
     personalityId,
     dataHash,
     userIsReviewer,
+    sentenceContent,
+    componentStyle,
 }) => {
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
-
+    const { enableAgentReview } = useAppSelector((state) => ({
+        enableAgentReview: state?.enableAgentReview,
+    }));
     const { machineService } = useContext(ReviewTaskMachineContext);
-
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
     const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [recaptchaString, setRecaptchaString] = useState<string>("");
+    const hasCaptcha: boolean = !!recaptchaString;
+    const recaptchaRef = useRef(null);
     const userIsAdmin = role === Roles.Admin || Roles.SuperAdmin;
 
     const showForm =
@@ -62,7 +72,7 @@ const ClaimReviewForm = ({
                 padding: "20px 15px",
             }}
         >
-            <Col offset={3} span={18}>
+            <Col span={componentStyle.span} offset={componentStyle.offset}>
                 {formCollapsed && (
                     <Row
                         style={{
@@ -71,18 +81,54 @@ const ClaimReviewForm = ({
                             justifyContent: "center",
                         }}
                     >
-                        <>
-                            {isLoggedIn && (
-                                <Button
-                                    type={ButtonType.blue}
-                                    onClick={toggleFormCollapse}
-                                    icon={<PlusOutlined />}
-                                    data-cy={"testAddReviewButton"}
+                        {isLoggedIn && (
+                            <Row
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <AletheiaCaptcha
+                                    onChange={setRecaptchaString}
+                                    ref={recaptchaRef}
+                                />
+                                <Col
+                                    style={{
+                                        display: "flex",
+                                        gap: 32,
+                                        flexWrap: "wrap",
+                                        flexDirection: "row",
+                                        justifyContent: "center",
+                                        marginTop: 16,
+                                    }}
                                 >
-                                    {t("claimReviewForm:addReviewButton")}
-                                </Button>
-                            )}
-                        </>
+                                    {enableAgentReview && (
+                                        <Button
+                                            type={ButtonType.blue}
+                                            icon={<PlusOutlined />}
+                                            data-cy={"testAddAgentReviewButton"}
+                                            disabled={!hasCaptcha}
+                                            onClick={() =>
+                                                setIsModalVisible(true)
+                                            }
+                                        >
+                                            {t(
+                                                "claimReviewForm:addAgentReview"
+                                            )}
+                                        </Button>
+                                    )}
+                                    <Button
+                                        type={ButtonType.blue}
+                                        onClick={toggleFormCollapse}
+                                        icon={<PlusOutlined />}
+                                        data-cy={"testAddReviewButton"}
+                                        disabled={!hasCaptcha}
+                                    >
+                                        {t("claimReviewForm:addReviewButton")}
+                                    </Button>
+                                </Col>
+                            </Row>
+                        )}
                     </Row>
                 )}
                 <Col
@@ -106,6 +152,15 @@ const ClaimReviewForm = ({
                     />
                 )}
             </Col>
+
+            <AgentReviewModal
+                sentence={sentenceContent}
+                visible={isModalVisible}
+                handleCancel={() => setIsModalVisible(false)}
+                claimId={claimId}
+                personalityId={personalityId}
+                dataHash={dataHash}
+            />
         </Row>
     );
 };

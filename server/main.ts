@@ -1,27 +1,38 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { join } from "path";
-import Logger from "./logger";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
-require("newrelic");
+import loadConfig from "./configLoader";
+import * as dotenv from "dotenv";
+import { WinstonLogger } from "./winstonLogger";
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+dotenv.config();
 
-const initApp = async (options) => {
+const isLocal = process.env.ENV === "local";
+if (!isLocal) {
+    require("newrelic");
+}
+
+async function initApp() {
+    const options = loadConfig();
+
     const corsOptions = {
-        origin: options?.config?.cors || "*",
+        origin: options?.cors || "*",
         credentials: true,
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS",
         allowedHeaders: ["accept", "x-requested-with", "content-type"],
     };
 
+    const logger = new WinstonLogger();
+
     const app = await NestFactory.create<NestExpressApplication>(
         AppModule.register(options),
         {
             bodyParser: false,
-            logger: new Logger(options.logger) || undefined,
+            logger: logger,
             cors: corsOptions,
         }
     );
@@ -58,14 +69,13 @@ const initApp = async (options) => {
             );
         },
     });
-    await app.listen(options.config.port);
-    options.logger.log(
-        "info",
+    await app.listen(options.port);
+    logger.log(
         `${options.name} with PID ${process.pid} listening on ${
-            options.config.interface || "*"
-        }:${options.config.port}`
+            options.interface || "*"
+        }:${options.port}`
     );
     return app;
-};
+}
 
-module.exports = initApp;
+initApp();

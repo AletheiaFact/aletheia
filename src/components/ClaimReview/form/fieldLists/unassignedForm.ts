@@ -1,13 +1,19 @@
 import usersApi from "../../../../api/userApi";
-import { Roles } from "../../../../types/enums";
 import { createFormField, FormField } from "../../../Form/FormField";
 
-export const fetchUserList = async (name, t, nameSpace) => {
+export const fetchUserList = async (
+    name,
+    t,
+    nameSpace,
+    filterOutRoles,
+    canAssignUsers
+) => {
     const userSearchResults = await usersApi.getUsers(
         {
             searchName: name,
-            filterOutRoles: [Roles.Regular],
+            filterOutRoles,
             nameSpaceSlug: nameSpace,
+            canAssignUsers,
         },
         t
     );

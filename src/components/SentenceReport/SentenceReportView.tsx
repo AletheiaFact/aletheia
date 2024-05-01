@@ -24,6 +24,8 @@ const SentenceReportView = ({
     isHidden,
     userIsAssignee,
     userIsCrossChecker,
+    href,
+    componentStyle,
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
@@ -56,7 +58,7 @@ const SentenceReportView = ({
                     }
                 }
             >
-                <Col offset={3} span={18}>
+                <Col span={componentStyle.span} offset={componentStyle.offset}>
                     {canShowClassificationAndCrossChecking && (
                         <SentenceReportComments context={context} />
                     )}
@@ -66,6 +68,7 @@ const SentenceReportView = ({
                         showClassification={
                             canShowClassificationAndCrossChecking
                         }
+                        href={href}
                     />
                     {!isLoggedIn && <CTARegistration />}
                 </Col>

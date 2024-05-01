@@ -48,6 +48,7 @@ const getUsers = (
         searchName: string;
         filterOutRoles?: Roles[];
         nameSpaceSlug: string;
+        canAssignUsers: boolean;
     },
     t
 ) => {

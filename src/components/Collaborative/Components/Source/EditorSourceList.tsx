@@ -5,13 +5,14 @@ import { useTranslation } from "next-i18next";
 import { EditorSourcesListStyle } from "./EditorSouceList.style";
 import EditorSourceListItem from "./EditorSourceListItem";
 import { ProsemirrorNode } from "remirror";
+import { SourceType } from "../../../../types/Source";
 
 const EditorSourcesList = ({
     node,
     sources,
 }: {
     node: ProsemirrorNode;
-    sources: any[];
+    sources: SourceType[];
 }) => {
     const { t } = useTranslation();
 
@@ -29,12 +30,15 @@ const EditorSourcesList = ({
                         xxl: 3,
                     }}
                     renderItem={(source, index) => {
+                        const {
+                            props: { sup },
+                        } = source;
                         if (typeof source === "object") {
                             return (
                                 <EditorSourceListItem
                                     node={node}
                                     key={index}
-                                    sup={index + 1}
+                                    sup={sup || index + 1}
                                     source={source}
                                 />
                             );

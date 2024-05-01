@@ -1,27 +1,11 @@
-# Number of worker processes to spawn.
-# Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 1
-
-# Log error messages and gracefully restart a worker if v8 reports that it
-# uses more heap (note: not RSS) than this many mb.
-# worker_heap_limit_mb: 250
-
-# Logger info
-logging:
-  level: trace
-  streams:
-  - type: stdout # log to stdout
-    named_levels: true # emit log level name instead of index. e.g. INFO vs 30
-
-# Using config.yaml with wikimedia service-runner pattern
 services:
   - name: service-aletheia
-    # path relative to the __dirname variable
-    module: dist/server/main.js
     conf:
       port: 3000
       cors: '*'
       debug: true
+      websocketUrl: ws://localhost:5001
+      agentsUrl: http://localhost:8000
       #override_public_routes: true
       recaptcha_secret: RECAPTCHA_SECRET
       recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
@@ -38,6 +22,9 @@ services:
       authentication_type: ory
       ory:
         url: ORY_SDK_URL
+        # Use "admin" as the endpoint when running locally.
+        # When using the cloud, the endpoint should be "api/kratos/admin".
+        admin_endpoint:
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
       feature_flag:

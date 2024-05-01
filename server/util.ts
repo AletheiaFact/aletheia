@@ -42,18 +42,6 @@ export class UtilService {
         return Array.from(newArray.values());
     }
 
-    generatePassword(isTestUser = false, forcePassword = null) {
-        const buf = randomBytes(8);
-
-        if (isTestUser) {
-            return forcePassword
-                ? `${forcePassword}`
-                : process.env.DEVELOPMENT_PASSWORD;
-        }
-
-        return buf.toString("hex");
-    }
-
     getParamsBasedOnUserRole(params, req) {
         const user = req.user;
         const namespace = req.params.namespace || NameSpaceEnum.Main;

@@ -63,6 +63,9 @@ export const createNewMachine = ({ value, context }) => {
                     [Events.goback]: {
                         target: States.unassigned,
                     },
+                    [Events.reAssignUser]: {
+                        target: States.unassigned,
+                    },
                     [Events.finishReport]: {
                         target: States.reported,
                         actions: [saveContext],
@@ -73,6 +76,9 @@ export const createNewMachine = ({ value, context }) => {
                 on: {
                     [Events.goback]: {
                         target: States.assigned,
+                    },
+                    [Events.reAssignUser]: {
+                        target: States.unassigned,
                     },
                     [Events.selectedCrossChecking]: {
                         target: States.selectCrossChecker,
@@ -87,6 +93,9 @@ export const createNewMachine = ({ value, context }) => {
                     [Events.goback]: {
                         target: States.reported,
                     },
+                    [Events.reAssignUser]: {
+                        target: States.unassigned,
+                    },
                     [Events.sendToCrossChecking]: {
                         target: States.crossChecking,
                         actions: [saveContext],
@@ -97,6 +106,9 @@ export const createNewMachine = ({ value, context }) => {
                 on: {
                     [Events.goback]: {
                         target: States.reported,
+                    },
+                    [Events.reAssignUser]: {
+                        target: States.unassigned,
                     },
                     [Events.sendToReview]: {
                         target: States.submitted,
@@ -110,6 +122,9 @@ export const createNewMachine = ({ value, context }) => {
                         target: States.addCommentCrossChecking,
                         actions: [saveContext],
                     },
+                    [Events.reAssignUser]: {
+                        target: States.unassigned,
+                    },
                     [Events.submitCrossChecking]: {
                         target: States.reported,
                         actions: [saveContext],
@@ -120,6 +135,9 @@ export const createNewMachine = ({ value, context }) => {
                 on: {
                     [Events.goback]: {
                         target: States.crossChecking,
+                    },
+                    [Events.reAssignUser]: {
+                        target: States.unassigned,
                     },
                     [Events.submitComment]: [
                         {
@@ -141,6 +159,9 @@ export const createNewMachine = ({ value, context }) => {
                     [Events.reject]: {
                         target: States.rejected,
                     },
+                    [Events.reAssignUser]: {
+                        target: States.unassigned,
+                    },
                     [Events.publish]: {
                         target: States.published,
                         actions: [saveContext],
@@ -152,6 +173,9 @@ export const createNewMachine = ({ value, context }) => {
                     [Events.addRejectionComment]: {
                         target: States.assigned,
                         actions: [saveContext],
+                    },
+                    [Events.reAssignUser]: {
+                        target: States.unassigned,
                     },
                     [Events.goback]: {
                         target: States.submitted,
@@ -173,7 +197,7 @@ export const transitionHandler = (state) => {
         data_hash,
         t,
         recaptchaString,
-        setCurrentFormAndNextEvents,
+        setFormAndEvents,
         resetIsLoading,
         currentUserId,
         nameSpace,
@@ -188,9 +212,10 @@ export const transitionHandler = (state) => {
     if (
         event === Events.reject ||
         event === Events.selectedCrossChecking ||
-        event === Events.selectedReview
+        event === Events.selectedReview ||
+        event === Events.reAssignUser
     ) {
-        setCurrentFormAndNextEvents(nextState);
+        setFormAndEvents(nextState);
     } else if (event !== Events.init) {
         api.createClaimReviewTask(
             {
@@ -210,8 +235,8 @@ export const transitionHandler = (state) => {
         )
             .then(() => {
                 return event === Events.goback
-                    ? setCurrentFormAndNextEvents(nextState)
-                    : setCurrentFormAndNextEvents(
+                    ? setFormAndEvents(nextState)
+                    : setFormAndEvents(
                           event,
                           isSameLabel(state.context, state.event)
                       );

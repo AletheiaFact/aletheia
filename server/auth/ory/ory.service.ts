@@ -4,15 +4,16 @@ import { Roles } from "../../auth/ability/ability.factory";
 
 @Injectable()
 export default class OryService {
-    private readonly adminEndpoint: string = "api/kratos/admin";
-    constructor(private configService: ConfigService) {}
+    private adminUrl: string;
+    constructor(private configService: ConfigService) {
+        const { admin_url, admin_endpoint } = this.configService.get("ory");
+
+        this.adminUrl = `${admin_url}/${admin_endpoint}`;
+    }
 
     async updateIdentity(user, password, role): Promise<any> {
-        const {
-            access_token: token,
-            url,
-            schema_id,
-        } = this.configService.get("ory");
+        const { access_token: token, schema_id } =
+            this.configService.get("ory");
         const credentials = password
             ? {
                   password: {
@@ -20,7 +21,7 @@ export default class OryService {
                   },
               }
             : {};
-        return fetch(`${url}/${this.adminEndpoint}/identities/${user.oryId}`, {
+        return fetch(`${this.adminUrl}/identities/${user.oryId}`, {
             method: "put",
             body: JSON.stringify({
                 schema_id,
@@ -39,13 +40,10 @@ export default class OryService {
     }
 
     async updateUserState(user, state): Promise<any> {
-        const {
-            access_token: token,
-            url,
-            schema_id,
-        } = this.configService.get("ory");
+        const { access_token: token, schema_id } =
+            this.configService.get("ory");
 
-        return fetch(`${url}/${this.adminEndpoint}/identities/${user.oryId}`, {
+        return fetch(`${this.adminUrl}/identities/${user.oryId}`, {
             method: "put",
             body: JSON.stringify({
                 schema_id,
@@ -63,13 +61,10 @@ export default class OryService {
     }
 
     async updateUserRole(user, role): Promise<any> {
-        const {
-            access_token: token,
-            url,
-            schema_id,
-        } = this.configService.get("ory");
+        const { access_token: token, schema_id } =
+            this.configService.get("ory");
 
-        return fetch(`${url}/${this.adminEndpoint}/identities/${user.oryId}`, {
+        return await fetch(`${this.adminUrl}/identities/${user.oryId}`, {
             method: "put",
             body: JSON.stringify({
                 schema_id,
@@ -88,12 +83,9 @@ export default class OryService {
     }
 
     async createIdentity(user, password, role?): Promise<any> {
-        const {
-            access_token: token,
-            url,
-            schema_id,
-        } = this.configService.get("ory");
-        const result = await fetch(`${url}/${this.adminEndpoint}/identities`, {
+        const { access_token: token, schema_id } =
+            this.configService.get("ory");
+        return fetch(`${this.adminUrl}/identities`, {
             method: "post",
             body: JSON.stringify({
                 schema_id,
@@ -112,14 +104,18 @@ export default class OryService {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
+            credentials: "omit",
+        }).then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
         });
-
-        return await result.json();
     }
 
     deleteIdentity(identityId): Promise<any> {
-        const { access_token: token, url } = this.configService.get("ory");
-        return fetch(`${url}/${this.adminEndpoint}/identities/${identityId}`, {
+        const { access_token: token } = this.configService.get("ory");
+        return fetch(`${this.adminUrl}/identities/${identityId}`, {
             method: "delete",
             headers: { Authorization: `Bearer ${token}` },
         });

@@ -45,5 +45,12 @@
     "rejectionCommentLabel": "Comentário de rejeição",
     "rejectionCommentPlaceholder": "Descreva o que precisa ser alterado",
     "loginButton": "Faça login para continuar",
-    "notReviewed": "Não revisado"
+    "notReviewed": "Não revisado",
+    "addAgentReview": "Adicionar checagem por IA",
+    "agentInputText": "Faça a checagem da seguinte afirmação: {{sentence}} forneça a resposta em português",
+    "addAgentReviewModalTitle": "Gerando relatório de checagem",
+    "agentLoadingThoughts": "Pensando...",
+    "agentFinishedThoughts": "Finalizado.",
+    "agentFinishedReport": "Relatório gerado",
+    "submitAgentReview": "Enviar relatório gerado"
 }

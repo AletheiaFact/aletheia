@@ -1,20 +1,5 @@
-# Number of worker processes to spawn.
-# Set to 0 to run everything in a single process without clustering.
-# Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 1
-
-# Logger info
-logging:
-  level: trace
-  streams:
-    - type: stdout # log to stdout
-      named_levels: true # emit log level name instead of index. e.g. INFO vs 30
-
-# Using config.yaml with wikimedia service-runner pattern
 services:
   - name: service-aletheia
-    # path relative to the __dirname variable
-    module: dist/server/seed.js
     conf:
       web_url: https://test.aletheiafact.org
       smtp_host: {env(SMTP_CLIENT_HOST)}
@@ -42,5 +27,9 @@ services:
       authentication_type: ory
       ory:
         url: ORY_SDK_URL
+        admin_url: ORY_SDK_URL
+        # Use "admin" as the endpoint when running locally.
+        # When using the cloud, the endpoint should be "api/kratos/admin".
+        admin_endpoint:
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID

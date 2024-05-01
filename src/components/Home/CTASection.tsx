@@ -57,6 +57,7 @@ const CTASection = () => {
                                 alignItems: "center",
                                 width: " 100%",
                                 padding: "0 20px",
+                                whiteSpace: "normal",
                                 fontSize: vw?.md && !vw?.sm ? "12px" : "14px",
                             }}
                         >

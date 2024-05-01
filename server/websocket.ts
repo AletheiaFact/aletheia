@@ -2,29 +2,27 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { NestFactory } from "@nestjs/core";
 import { WebsocketModule } from "./yjs-websocket/websocket.module";
 import { WsAdapter } from "@nestjs/platform-ws";
-import Logger from "./logger";
+import loadConfig from "./configLoader";
+import { WinstonLogger } from "./winstonLogger";
 
-const initApp = async (options) => {
-    const { config } = options;
+async function initApp() {
+    const options = loadConfig();
 
+    const logger = new WinstonLogger();
     const app = await NestFactory.create<NestExpressApplication>(
-        WebsocketModule.register(options),
-        {
-            logger: new Logger(options.logger) || undefined,
-        }
+        WebsocketModule.register(options)
     );
     app.enableCors();
 
     app.useWebSocketAdapter(new WsAdapter(app));
-    await app.listen(config.port);
+    await app.listen(options.port);
 
-    options.logger.log(
-        "info",
+    logger.log(
         `${options.name} with PID ${process.pid} listening on ${
-            options.config.interface || "*"
-        }:${options.config.port}`
+            options.interface || "*"
+        }:${options.port}`
     );
     return app;
-};
+}
 
-module.exports = initApp;
+initApp();

@@ -30,6 +30,7 @@ import {
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { UtilService } from "../util";
+import { GetUsersDTO } from "./dto/get-users.dto";
 
 @Controller(":namespace?")
 export class UsersController {
@@ -72,13 +73,14 @@ export class UsersController {
     public async register(@Body() createUserDto: CreateUserDTO) {
         try {
             return await this.usersService.register(createUserDto);
-        } catch (error) {
-            if (error.response?.status === 409) {
+        } catch (errorResponse) {
+            const { error } = errorResponse;
+            if (error?.status === 409) {
                 // Ory identity already exists
-                throw new ConflictException(error.message);
+                throw new ConflictException(error?.message);
             }
             // Problems saving in database
-            throw new UnprocessableEntityException(error.message);
+            throw new UnprocessableEntityException(error?.message);
         }
     }
 
@@ -192,7 +194,7 @@ export class UsersController {
     @ApiTags("user")
     @Get("api/user")
     @Header("Cache-Control", "max-age=60, must-revalidate")
-    public async getAll(@Query() getUsers) {
+    public async getAll(@Query() getUsers: GetUsersDTO) {
         return this.usersService.findAll(getUsers);
     }
 

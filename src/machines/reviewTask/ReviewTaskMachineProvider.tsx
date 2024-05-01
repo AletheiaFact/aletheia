@@ -5,12 +5,18 @@ import ClaimReviewApi from "../../api/claimReviewApi";
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
 import Loading from "../../components/Loading";
 import { initialContext } from "./context";
-import { ReviewTaskStates } from "./enums";
+import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
 import { createNewMachineService } from "./reviewTaskMachine";
+import getNextForm from "./getNextForm";
+import getNextEvents from "./getNextEvent";
+import { FormField } from "../../components/Form/FormField";
 
 interface ContextType {
     machineService: any;
     publishedReview?: { review: any };
+    setFormAndEvents?: (param: string, isSameLabel?: boolean) => void;
+    form?: FormField[];
+    events?: ReviewTaskEvents[];
 }
 
 export const ReviewTaskMachineContext = createContext<ContextType>({
@@ -37,8 +43,12 @@ export const ReviewTaskMachineProvider = (
     const [publishedClaimReview, setPublishedClaimReview] = useState(
         props.publishedReview
     );
+    const [form, setForm] = useState(null);
+    const [events, setEvents] = useState(null);
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
+    const preloadedOptions =
+        globalMachineService?.state?.context?.preloadedOptions;
 
     useEffect(() => {
         const fetchReviewTask = (data_hash) => {
@@ -75,11 +85,47 @@ export const ReviewTaskMachineProvider = (
         } else setPublishedClaimReview(props.publishedReview);
     }, [props.baseMachine, props.data_hash, props.publishedReview, t]);
 
+    const setPreloadAssignedUsers = (form) => {
+        if (!preloadedOptions) {
+            return form;
+        }
+
+        form.forEach((item) => {
+            if (
+                item.type === "inputSearch" &&
+                preloadedOptions[item.fieldName]
+            ) {
+                item.extraProps.preloadedOptions =
+                    preloadedOptions[item.fieldName];
+            }
+        });
+
+        return form;
+    };
+
+    const setFormAndEvents = (
+        param: ReviewTaskEvents | ReviewTaskStates,
+        isSameLabel: boolean = false
+    ): void => {
+        if (param === ReviewTaskEvents.draft) {
+            return;
+        }
+
+        const nextForm = setPreloadAssignedUsers(
+            getNextForm(param, isSameLabel)
+        );
+        setForm(nextForm);
+        setEvents(getNextEvents(param, isSameLabel));
+    };
+
     return (
         <ReviewTaskMachineContext.Provider
             value={{
                 machineService: globalMachineService,
                 publishedReview: publishedClaimReview,
+                setFormAndEvents,
+                form,
+                events,
             }}
         >
             {loading && <Loading />}

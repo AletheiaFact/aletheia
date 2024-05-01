@@ -9,9 +9,11 @@ import { useTranslation } from "next-i18next";
 const SourcesList = ({
     sources,
     seeMoreHref,
+    showAllSources = false,
 }: {
     sources: any[];
     seeMoreHref: string;
+    showAllSources?: boolean;
 }) => {
     const { t } = useTranslation();
     const sourcesGridColumns = 6;
@@ -20,7 +22,11 @@ const SourcesList = ({
         <SourcesListStyle>
             {sources && (
                 <List
-                    dataSource={sources.slice(0, sourcesGridColumns)}
+                    dataSource={
+                        showAllSources
+                            ? sources
+                            : sources.slice(0, sourcesGridColumns)
+                    }
                     style={{ width: "100%" }}
                     grid={{
                         gutter: 38,
@@ -42,7 +48,7 @@ const SourcesList = ({
                     }}
                 />
             )}
-            {sources?.length > sourcesGridColumns && (
+            {!showAllSources && sources?.length > sourcesGridColumns && (
                 <AletheiaButton
                     type={ButtonType.blue}
                     href={seeMoreHref}

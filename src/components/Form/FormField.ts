@@ -2,6 +2,7 @@ import { Node } from "@remirror/pm/model";
 import { RegisterOptions } from "react-hook-form";
 import { EditorParser } from "../../../lib/editor-parser";
 import { ReviewTaskMachineContextReviewData } from "../../../server/claim-review-task/dto/create-claim-review-task.dto";
+import { Roles } from "../../types/enums";
 
 export type FormField = {
     fieldName: string;
@@ -17,7 +18,13 @@ export type FormField = {
 
 // Use to add properties specific to one type of field
 type FormFieldExtraProps = {
-    dataLoader?: (value: string, t: any, nameSpace: string) => Promise<any>;
+    dataLoader?: (
+        value: string,
+        t: any,
+        nameSpace: string,
+        filterOutRoles: Roles[],
+        canAssignUsers: boolean
+    ) => Promise<any>;
     mode?: string;
     preloadedOptions?: string[];
 };

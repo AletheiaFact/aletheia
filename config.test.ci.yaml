@@ -1,28 +1,5 @@
-# Number of worker processes to spawn.
-# Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 0
-
-# Log error messages and gracefully restart a worker if v8 reports that it
-# uses more heap (note: not RSS) than this many mb.
-# worker_heap_limit_mb: 250
-
-# Logger info
-logging:
-  level: trace
-  streams:
-  - type: stdout # log to stdout
-    named_levels: true # emit log level name instead of index. e.g. INFO vs 30
-
-# Using config.yaml with wikimedia service-runner pattern
 services:
-  - name: ci-websocket-aletheia
-    module: dist/server/websocket.js
-    conf:
-      port: 5001
-
   - name: ci-aletheia-server
-    # path relative to the __dirname variable
-    module: dist/server/main.js
     conf:
       port: 3000
       cors: '*'
@@ -42,9 +19,12 @@ services:
         limit: 1000
       authentication_type: ory
       ory:
-        url: {env(ORY_SDK_URL)}
-        access_token: {env(ORY_ACCESS_TOKEN)}
-        schema_id: {env(ALETHEIA_SCHEMA_ID)}
+        url: http://localhost:4433
+        admin_url: http://localhost:4434
+        admin_endpoint: admin
+        # url: {env(ORY_SDK_URL)}
+        # access_token: {env(ORY_ACCESS_TOKEN)}
+        # schema_id: {env(ALETHEIA_SCHEMA_ID)}
       feature_flag:
         url: {env(GITLAB_FEATURE_FLAG_URL)}
         appName: Staging
