@@ -76,8 +76,12 @@ export class ClaimReviewService {
             .populate(personalityPopulateOptions)
             .exec();
 
+        const filteredClaimReviews = claimReviews.filter(
+            (review) => review.claim
+        );
+
         return Promise.all(
-            claimReviews.map(async (review) => this.postProcess(review))
+            filteredClaimReviews.map(async (review) => this.postProcess(review))
         );
     }
 
