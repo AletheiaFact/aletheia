@@ -10,4 +10,5 @@ export const ReportMock = (userId) => ({
     verification:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     classification: "misleading",
+    data_hash: "4be75d25957a3cc0dbc6975a6939a385",
 });
