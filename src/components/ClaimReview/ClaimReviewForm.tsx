@@ -82,7 +82,12 @@ const ClaimReviewForm = ({
                         }}
                     >
                         {isLoggedIn && (
-                            <>
+                            <Row
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
                                 <AletheiaCaptcha
                                     onChange={setRecaptchaString}
                                     ref={recaptchaRef}
@@ -122,7 +127,7 @@ const ClaimReviewForm = ({
                                         {t("claimReviewForm:addReviewButton")}
                                     </Button>
                                 </Col>
-                            </>
+                            </Row>
                         )}
                     </Row>
                 )}

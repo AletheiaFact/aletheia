@@ -48,7 +48,7 @@ function useFloatingLinkState() {
             return;
         }
 
-        if (updateReason.doc || updateReason.selection) {
+        if (updateReason.doc || !isSelected) {
             setIsEditing(false);
         }
     }, [isEditing, setIsEditing, updateReason.doc, updateReason.selection]);
