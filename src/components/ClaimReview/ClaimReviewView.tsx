@@ -17,6 +17,7 @@ import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import ReviewTaskAdminToolBar from "../Toolbar/ReviewTaskAdminToolBar";
 import { useAppSelector } from "../../store/store";
+import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 
 export interface ClaimReviewViewProps {
     personality?: any;
@@ -47,6 +48,8 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const userIsCrossChecker = reviewData.crossCheckerId === userId;
     const userIsAssignee = reviewData.usersId.includes(userId);
     const isContentImage = claim.contentModel === ContentModelEnum.Image;
+    const hasStartedTask =
+        machineService.state.value !== ReviewTaskStates.unassigned;
     const origin = window.location.origin ? window.location.origin : "";
 
     const componentStyle = {
@@ -89,7 +92,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                             hideDescriptions={hideDescriptions}
                         />
                     ) : (
-                        <ReviewTaskAdminToolBar />
+                        hasStartedTask && <ReviewTaskAdminToolBar />
                     )}
                 </>
             )}
