@@ -17,6 +17,7 @@ import { SeedTestParagraph } from "./utils/SeedTestParagraph";
 import { SeedTestSpeech } from "./utils/SeedTestSpeech";
 import { SeedTestClaimRevision } from "./utils/SeedTestClaimRevision";
 import { SeedTestClaim } from "./utils/SeedTestClaim";
+import { ValidationPipe } from "@nestjs/common";
 const ObjectId = require("mongodb").ObjectID;
 
 jest.setTimeout(10000);
@@ -30,8 +31,9 @@ describe("ClaimReviewController (e2e)", () => {
     let sentenceId: string;
     let paragraphId: string;
     let speecheId: string;
-    let claimRevisionId: string;
     let claimId: string;
+    let claimReviewDataHash: string;
+    let claimReviewId: string;
 
     beforeAll(async () => {
         db = await MongoMemoryServer.create({ instance: { port: 35025 } });
@@ -98,9 +100,17 @@ describe("ClaimReviewController (e2e)", () => {
 
         app = moduleFixture.createNestApplication();
         await app.init();
+        app.useGlobalPipes(
+            new ValidationPipe({
+                transform: true,
+                transformOptions: { enableImplicitConversion: true },
+                whitelist: true,
+                forbidNonWhitelisted: true,
+            })
+        );
     });
 
-    it("/api/review (GET) - ", () => {
+    it("/api/review (GET) - List Reviews", () => {
         return request(app.getHttpServer())
             .get("/api/review")
             .query({
@@ -112,7 +122,55 @@ describe("ClaimReviewController (e2e)", () => {
                 nameSpace: NameSpaceEnum.Main,
             })
             .expect(200)
-            .expect(({ body }) => console.log(body, "TEST"));
+            .expect(({ body }) => {
+                claimReviewDataHash = body.reviews[0].content.data_hash;
+                expect(body.totalReviews).toEqual(1);
+            });
+    });
+
+    it("api/review/:data_hash (GET) - Should get claimReview by dataHash", () => {
+        return request(app.getHttpServer())
+            .get(`/api/review/${claimReviewDataHash}`)
+            .expect(200)
+            .expect(({ body }) => {
+                claimReviewId = body.review._id;
+                expect(body.review.claim).toEqual(claimId.toString());
+                expect(body.review.personality).toEqual(
+                    personalitiesId[0].toString()
+                );
+            });
+    });
+
+    it("api/review/:id (PUT) - Should hide claimReview", () => {
+        return request(app.getHttpServer())
+            .put(`/api/review/${claimReviewId}`)
+            .send({
+                isHidden: true,
+                description: "Hidden claimReview description",
+            })
+            .expect(200);
+    });
+
+    it("api/review/:id (PUT) - Should unhide claimReview", () => {
+        return request(app.getHttpServer())
+            .put(`/api/review/${claimReviewId}`)
+            .send({
+                isHidden: false,
+                description: "",
+            })
+            .expect(200);
+    });
+
+    it("api/review/:id (DELETE) - Should delete claimReview", () => {
+        return request(app.getHttpServer())
+            .delete(`/api/review/${claimReviewId}`)
+            .expect(200);
+    });
+
+    it("api/review/:data_hash (GET) - Should not be able to get claimReview", () => {
+        return request(app.getHttpServer())
+            .get(`/api/review/${claimReviewDataHash}`)
+            .expect(404);
     });
 
     afterAll(async () => {
