@@ -2,7 +2,7 @@ import React from "react";
 import { Col } from "antd";
 import AletheiaAvatar from "../AletheiaAvatar";
 import { useTranslation } from "next-i18next";
-import PersonalityCardTooltip from "./PersonalityCardTooltip";
+import PersonalityCardAvatarTooltip from "./PersonalityCardAvatarTooltip";
 
 const PersonalityCardAvatar = ({
     hoistAvatar,
@@ -25,22 +25,24 @@ const PersonalityCardAvatar = ({
                         : componentStyle.avatarSize + 12,
             }}
         >
-            <PersonalityCardTooltip
-                isHidden={personality?.isHidden}
-                offset={tooltipOffset}
-                style={{
-                    padding: componentStyle.hiddenIconSize / 2.5,
-                    fontSize: componentStyle.hiddenIconSize,
-                }}
-            >
-                <AletheiaAvatar
-                    size={componentStyle.avatarSize}
-                    src={personality.avatar}
-                    alt={t("seo:personalityImageAlt", {
-                        name: personality.name,
-                    })}
-                />
-            </PersonalityCardTooltip>
+            {!hoistAvatar && !personality.isHidden && (
+                <PersonalityCardAvatarTooltip
+                    isHidden={personality?.isHidden}
+                    offset={tooltipOffset}
+                    style={{
+                        padding: componentStyle.hiddenIconSize / 2.5,
+                        fontSize: componentStyle.hiddenIconSize,
+                    }}
+                >
+                    <AletheiaAvatar
+                        size={componentStyle.avatarSize}
+                        src={personality.avatar}
+                        alt={t("seo:personalityImageAlt", {
+                            name: personality.name,
+                        })}
+                    />
+                </PersonalityCardAvatarTooltip>
+            )}
         </Col>
     );
 };

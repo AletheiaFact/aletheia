@@ -4,12 +4,17 @@ import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import { EyeInvisibleFilled, InfoCircleOutlined } from "@ant-design/icons";
 
-const PersonalityCardTooltip = ({ children, isHidden, style, offset }) => {
+const PersonalityCardAvatarTooltip = ({
+    children,
+    isHidden,
+    style,
+    offset,
+}) => {
     const { t } = useTranslation();
 
     return (
         <Popover
-            placement="right"
+            placement="rightTop"
             content={
                 isHidden
                     ? t("personality:hiddenPersonalityAvatarTooltip")
@@ -40,4 +45,4 @@ const PersonalityCardTooltip = ({ children, isHidden, style, offset }) => {
     );
 };
 
-export default PersonalityCardTooltip;
+export default PersonalityCardAvatarTooltip;
