@@ -25,7 +25,7 @@ const PersonalityCardAvatar = ({
                         : componentStyle.avatarSize + 12,
             }}
         >
-            {!hoistAvatar && !personality.isHidden && (
+            {!hoistAvatar && (
                 <PersonalityCardAvatarTooltip
                     isHidden={personality?.isHidden}
                     offset={tooltipOffset}
