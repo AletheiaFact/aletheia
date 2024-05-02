@@ -3,6 +3,7 @@ import { Col } from "antd";
 import AletheiaAvatar from "../AletheiaAvatar";
 import { useTranslation } from "next-i18next";
 import HiddenPersonalityAvatarTooltip from "./HiddenPersonalityAvatarTooltip";
+import PersonalityCardTip from "./PersonalityCardTip";
 
 const PersonalityCardAvatar = ({
     hoistAvatar,
@@ -42,15 +43,17 @@ const PersonalityCardAvatar = ({
                     />
                 </HiddenPersonalityAvatarTooltip>
             )}
-            {!hoistAvatar && !personality.isHidden && (
-                <AletheiaAvatar
-                    size={componentStyle.avatarSize}
-                    src={personality.avatar}
-                    alt={t("seo:personalityImageAlt", {
-                        name: personality.name,
-                    })}
-                />
-            )}
+            <PersonalityCardTip>
+                {!hoistAvatar && !personality.isHidden && (
+                    <AletheiaAvatar
+                        size={componentStyle.avatarSize}
+                        src={personality.avatar}
+                        alt={t("seo:personalityImageAlt", {
+                            name: personality.name,
+                        })}
+                    />
+                )}
+            </PersonalityCardTip>
         </Col>
     );
 };
