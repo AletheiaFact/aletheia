@@ -8,6 +8,7 @@ import {
     Header,
     Delete,
     Query,
+    NotFoundException,
 } from "@nestjs/common";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
@@ -101,6 +102,11 @@ export class ClaimReviewController {
         const review = await this.claimReviewService.getReviewByDataHash(
             data_hash
         );
+
+        if (!review) {
+            throw new NotFoundException("Content not found");
+        }
+
         const descriptionForHide =
             await this.historyService.getDescriptionForHide(
                 review,
