@@ -23,5 +23,6 @@
     "hideError": "Erro ao esconder a personalidade",
     "unhideSuccess": "Personalidade pública com sucesso",
     "unhideError": "Erro ao mostrar a personalidade",
-    "hiddenPersonalityAvatarTooltip": "Personalidade oculta"
+    "hiddenPersonalityAvatarTooltip": "Personalidade oculta",
+    "personalityCardWikidataTooltip": "As informações dessa personalidade são retiradas da Wikidata"
 }

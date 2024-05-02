@@ -2,8 +2,7 @@ import React from "react";
 import { Col } from "antd";
 import AletheiaAvatar from "../AletheiaAvatar";
 import { useTranslation } from "next-i18next";
-import HiddenPersonalityAvatarTooltip from "./HiddenPersonalityAvatarTooltip";
-import PersonalityCardTip from "./PersonalityCardTip";
+import PersonalityCardTooltip from "./PersonalityCardTooltip";
 
 const PersonalityCardAvatar = ({
     hoistAvatar,
@@ -26,34 +25,22 @@ const PersonalityCardAvatar = ({
                         : componentStyle.avatarSize + 12,
             }}
         >
-            {!hoistAvatar && personality.isHidden && (
-                <HiddenPersonalityAvatarTooltip
-                    offset={tooltipOffset}
-                    style={{
-                        padding: componentStyle.hiddenIconSize / 2.5,
-                        fontSize: componentStyle.hiddenIconSize,
-                    }}
-                >
-                    <AletheiaAvatar
-                        size={componentStyle.avatarSize}
-                        src={personality.avatar}
-                        alt={t("seo:personalityImageAlt", {
-                            name: personality.name,
-                        })}
-                    />
-                </HiddenPersonalityAvatarTooltip>
-            )}
-            <PersonalityCardTip>
-                {!hoistAvatar && !personality.isHidden && (
-                    <AletheiaAvatar
-                        size={componentStyle.avatarSize}
-                        src={personality.avatar}
-                        alt={t("seo:personalityImageAlt", {
-                            name: personality.name,
-                        })}
-                    />
-                )}
-            </PersonalityCardTip>
+            <PersonalityCardTooltip
+                isHidden={personality?.isHidden}
+                offset={tooltipOffset}
+                style={{
+                    padding: componentStyle.hiddenIconSize / 2.5,
+                    fontSize: componentStyle.hiddenIconSize,
+                }}
+            >
+                <AletheiaAvatar
+                    size={componentStyle.avatarSize}
+                    src={personality.avatar}
+                    alt={t("seo:personalityImageAlt", {
+                        name: personality.name,
+                    })}
+                />
+            </PersonalityCardTooltip>
         </Col>
     );
 };

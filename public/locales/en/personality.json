@@ -23,5 +23,6 @@
     "hideError": "Error while hidden personality",
     "unhideSuccess": "Personality unhide succesfully",
     "unhideError": "Error while unhide personality",
-    "hiddenPersonalityAvatarTooltip": "Hidden personality"
+    "hiddenPersonalityAvatarTooltip": "Hidden personality",
+    "personalityCardWikidataTooltip": "Information about this personality is taken from Wikidata"
 }
