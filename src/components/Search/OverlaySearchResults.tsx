@@ -60,7 +60,7 @@ const OverlaySearchResults = () => {
         <Row
             className="main-content"
             style={{
-                position: "absolute",
+                position: "fixed",
                 top: "56px",
                 height: "100vh",
                 width: "100vw",
