@@ -103,10 +103,6 @@ export class ClaimReviewController {
             data_hash
         );
 
-        if (!review) {
-            throw new NotFoundException("Content not found");
-        }
-
         const descriptionForHide =
             await this.historyService.getDescriptionForHide(
                 review,
