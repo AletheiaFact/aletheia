@@ -28,6 +28,8 @@ import WarningModal from "../../Modal/WarningModal";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
+import { useDispatch } from "react-redux";
+import actions from "../../../store/actions";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -38,6 +40,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         formState: { errors },
         watch,
     } = useForm();
+    const dispatch = useDispatch();
     const { machineService, events, form, setFormAndEvents } = useContext(
         ReviewTaskMachineContext
     );
@@ -75,6 +78,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     useEffect(() => {
         if (isLoggedIn) {
             setFormAndEvents(machineService.machine.config.initial);
+            dispatch(actions.openCopilotDrawer());
         }
     }, [isLoggedIn]);
 

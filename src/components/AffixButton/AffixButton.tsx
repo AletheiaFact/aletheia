@@ -17,6 +17,7 @@ import PulseAnimation from "../PulseAnimation";
 import Fab from "./Fab";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
+import { useAppSelector } from "../../store/store";
 interface AffixButtonProps {
     personalitySlug?: string;
 }
@@ -25,6 +26,12 @@ interface AffixButtonProps {
  * @param personalitySlug if present will display the Create Claim option too
  */
 const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
+    const { copilotDrawerCollapsed } = useAppSelector((state) => ({
+        copilotDrawerCollapsed:
+            state?.copilotDrawerCollapsed !== undefined
+                ? state?.copilotDrawerCollapsed
+                : true,
+    }));
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userRole] = useAtom(currentUserRole);
     const [nameSpace] = useAtom(currentNameSpace);
@@ -89,7 +96,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 style={{
                     position: "fixed",
                     bottom: "3%",
-                    right: "2%",
+                    right: copilotDrawerCollapsed ? "2%" : `calc(2% + 350px)`,
                     display: "flex",
                     flexDirection: "column-reverse",
                     alignItems: "center",

@@ -18,6 +18,11 @@ const reducer = (state, action) => {
                 ...state,
                 reviewDrawerCollapsed: action.reviewDrawerCollapsed,
             };
+        case ActionTypes.TOGGLE_COPILOT_DRAWER:
+            return {
+                ...state,
+                copilotDrawerCollapsed: action.copilotDrawerCollapsed,
+            };
         case ActionTypes.SET_TOTAL_RESULTS:
             return {
                 ...state,

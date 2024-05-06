@@ -7,6 +7,7 @@ export enum ActionTypes {
     RESULTS_AUTOCOMPLETE,
     TOGGLE_MENU,
     TOGGLE_REVIEW_DRAWER,
+    TOGGLE_COPILOT_DRAWER,
     RESULTS_OVERLAY_VISIBLE,
     SEARCH_RESULTS,
     SET_TOTAL_PAGES,
@@ -43,6 +44,7 @@ export enum SearchTypes {
 export interface RootState {
     menuCollapsed: boolean;
     reviewDrawerCollapsed: boolean;
+    copilotDrawerCollapsed: boolean;
     search: {
         resultsVisible: boolean;
         autocompleteResults: any;

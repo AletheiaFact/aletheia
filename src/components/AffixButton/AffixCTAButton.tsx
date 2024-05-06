@@ -11,6 +11,7 @@ import { Tooltip } from "antd";
 import colors from "../../styles/colors";
 import { t } from "i18next";
 import { trackUmamiEvent } from "../../lib/umami";
+import { useAppSelector } from "../../store/store";
 
 const CloseIcon = () => {
     return (
@@ -32,9 +33,14 @@ const CloseIcon = () => {
     );
 };
 
-const AffixCTAButton = () => {
+const AffixCTAButton = ({ drawerWidth }) => {
     const { t } = useTranslation();
-
+    const { copilotDrawerCollapsed } = useAppSelector((state) => ({
+        copilotDrawerCollapsed:
+            state?.copilotDrawerCollapsed !== undefined
+                ? state?.copilotDrawerCollapsed
+                : true,
+    }));
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [CTABannerShow, setCTABannerShow] = useState<boolean>(true);
 
@@ -60,12 +66,12 @@ const AffixCTAButton = () => {
                     style={{
                         position: "fixed",
                         top: "15%",
-                        right: "0%",
+                        right: copilotDrawerCollapsed ? "0%" : drawerWidth,
                         display: "flex",
                         flexDirection: "column-reverse",
                         alignItems: "center",
                         gap: "1rem",
-                        zIndex: 9999,
+                        zIndex: 999,
                     }}
                 >
                     <CtaAnimation pulse={!CTABannerShow}>
