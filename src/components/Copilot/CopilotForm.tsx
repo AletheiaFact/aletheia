@@ -2,14 +2,21 @@ import React, { useState } from "react";
 import AletheiaTextAreaAutoSize from "../TextAreaAutoSize";
 import colors from "../../styles/colors";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import copilotApi from "../../api/copilotApi";
 
-const CopilotForm = ({ addMessage }) => {
+const CopilotForm = ({ addMessage, setIsLoading }) => {
     const [message, setMessage] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+        const newChatMessage = { content: message, sender: "You" };
         setMessage("");
         addMessage({ content: message, sender: "You" });
+        const aiMessage = await copilotApi.agentChat([newChatMessage]);
+        console.log("aiMessage", aiMessage.data);
+        addMessage({ content: aiMessage.data, sender: "Assistant" });
+        setIsLoading(false);
     };
 
     return (

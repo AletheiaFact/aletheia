@@ -46,7 +46,7 @@ const CopilotDrawer = () => {
             open={!copilotDrawerCollapsed}
         >
             <CopilotConversation messages={messages} isLoading={isLoading} />
-            <CopilotForm addMessage={addMessage} />
+            <CopilotForm addMessage={addMessage} setIsLoading={setIsLoading} />
         </Drawer>
     );
 };

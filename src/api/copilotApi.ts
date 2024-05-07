@@ -4,12 +4,13 @@ import { ActionTypes } from "../store/types";
 
 const request = axios.create({
     withCredentials: true,
-    baseURL: `/api/langchain-chat`,
+    baseURL: `/api/agent-chat`,
 });
 
 const agentChat = (params) => {
+    console.log("params api", { messages: params });
     return request
-        .post("/agent-chat", { ...params })
+        .post("/", { messages: params })
         .then((response) => {
             return response.data;
         })
