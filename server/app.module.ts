@@ -52,6 +52,7 @@ import { CommentModule } from "./claim-review-task/comment/comment.module";
 import { NameSpaceModule } from "./auth/name-space/name-space.module";
 import { NameSpaceGuard } from "./auth/name-space/name-space.guard";
 import { AutomatedFactCheckingModule } from "./automated-fact-checking/automated-fact-checking.module";
+import { LangchainChatModule } from "./copilot/langchain-chat.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -109,6 +110,7 @@ export class AppModule implements NestModule {
             CommentModule,
             NameSpaceModule,
             AutomatedFactCheckingModule,
+            LangchainChatModule,
         ];
         if (options.feature_flag) {
             imports.push(
