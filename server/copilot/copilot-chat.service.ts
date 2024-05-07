@@ -5,7 +5,7 @@
  * It supports context-aware chat.
  * Basic context-aware chat utilize pre-defined templates for processing user queries,
  *
- * @class LangchainChatService
+ * @class CopilotChatService
  *
  * @method contextAwareChat - Processes messages with consideration for the context of previous interactions, using a context-aware template for coherent responses. Handles errors with HttpExceptions.
  * @param {ContextAwareMessagesDto} contextAwareMessagesDto - Data Transfer Object containing the user’s current message and the chat history.
@@ -32,7 +32,7 @@ import {
 import { HumanMessage, AIMessage } from "langchain/schema";
 
 @Injectable()
-export class LangchainChatService {
+export class CopilotChatService {
     constructor() {}
     memories = [];
 
@@ -96,9 +96,8 @@ export class LangchainChatService {
                 }),
             ];
 
-            const messages = contextAwareMessagesDto.messages ?? [];
-
-            const currentMessageContent = messages[messages.length - 1].content;
+            const currentMessageContent = contextAwareMessagesDto.content;
+            console.log(currentMessageContent, "currentMessageContent");
 
             const prompt = ChatPromptTemplate.fromMessages([
                 [
@@ -140,10 +139,11 @@ export class LangchainChatService {
                 input: currentMessageContent,
                 chat_history: this.memories,
             });
+            console.log(response, "response");
 
             this.memories.push(
                 new HumanMessage({
-                    content: messages[0].content,
+                    content: currentMessageContent,
                     additional_kwargs: {},
                 }),
                 new AIMessage({

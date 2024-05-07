@@ -18,18 +18,16 @@
  */
 
 import { Body, Controller, HttpCode, Post } from "@nestjs/common";
-import { LangchainChatService } from "./langchain-chat.service";
+import { CopilotChatService } from "./copilot-chat.service";
 import { ContextAwareMessagesDto } from "./dtos/context-aware-messages.dto";
 
 @Controller()
-export class LangchainChatController {
-    constructor(private readonly langchainChatService: LangchainChatService) {}
+export class CopilotChatController {
+    constructor(private readonly copilotChatService: CopilotChatService) {}
 
     @Post("api/agent-chat")
     @HttpCode(200)
     async agentChat(@Body() contextAwareMessagesDto: ContextAwareMessagesDto) {
-        return await this.langchainChatService.agentChat(
-            contextAwareMessagesDto
-        );
+        return await this.copilotChatService.agentChat(contextAwareMessagesDto);
     }
 }

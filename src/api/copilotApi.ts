@@ -1,6 +1,4 @@
 import axios from "axios";
-import { message } from "antd";
-import { ActionTypes } from "../store/types";
 
 const request = axios.create({
     withCredentials: true,
@@ -8,9 +6,9 @@ const request = axios.create({
 });
 
 const agentChat = (params) => {
-    console.log("params api", { messages: params });
+    console.log("params api", params);
     return request
-        .post("/", { messages: params })
+        .post("/", params)
         .then((response) => {
             return response.data;
         })

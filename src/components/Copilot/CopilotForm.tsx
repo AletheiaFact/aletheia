@@ -10,12 +10,12 @@ const CopilotForm = ({ addMessage, setIsLoading }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const newChatMessage = { content: message, sender: "You" };
+        const newChatMessage = { sender: "You", content: message };
         setMessage("");
         addMessage({ content: message, sender: "You" });
-        const aiMessage = await copilotApi.agentChat([newChatMessage]);
+        const aiMessage = await copilotApi.agentChat(newChatMessage);
         console.log("aiMessage", aiMessage.data);
-        addMessage({ content: aiMessage.data, sender: "Assistant" });
+        addMessage({ sender: "Assistant", content: aiMessage.data });
         setIsLoading(false);
     };
 
