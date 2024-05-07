@@ -1,57 +1,34 @@
 import React, { useState } from "react";
 import AletheiaTextAreaAutoSize from "../TextAreaAutoSize";
-import colors from "../../styles/colors";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import copilotApi from "../../api/copilotApi";
+import { SenderEnum } from "../../types/enums";
+import { useTranslation } from "next-i18next";
 
-const CopilotForm = ({ context, addMessage, setIsLoading, messages }) => {
+//TODO: Implement React Hook forms
+const CopilotForm = ({ handleSendMessage }) => {
+    const { t } = useTranslation();
     const [message, setMessage] = useState("");
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        const newChatMessage = { sender: "You", content: message };
+        handleSendMessage({ sender: SenderEnum.User, content: message });
         setMessage("");
-        addMessage({ content: message, sender: "You" });
-        const { data: aiMessage } = await copilotApi.agentChat({
-            messages: [...messages, newChatMessage],
-            context: context,
-        });
-        addMessage(aiMessage);
-        setIsLoading(false);
     };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "flex-end",
-                padding: "8px",
-                gap: 8,
-                background: colors.grayTertiary,
-                borderRadius: 4,
-            }}
-        >
+        <form className="copilot-form" onSubmit={handleSubmit}>
             <AletheiaTextAreaAutoSize
                 value={message}
-                placeholder="Escreva uma mensagem"
+                placeholder={t("copilotChatBot:inputPlaceholder")}
                 onChange={({ target }) => setMessage(target.value)}
-            />
-            <button
-                style={{
-                    width: 24,
-                    height: 44,
-                    padding: 0,
-                    background: "none",
-                    border: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
+                white={"true"}
+                onKeyDown={(e) => {
+                    if (!e.shiftKey && e.key === "Enter") {
+                        handleSubmit(e);
+                    }
                 }}
-            >
+            />
+            <button className="submit-message-button">
                 <ArrowUpwardIcon />
             </button>
         </form>

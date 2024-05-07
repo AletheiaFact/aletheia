@@ -1,20 +1,31 @@
 import React from "react";
 import { Avatar } from "antd";
+import colors from "../../styles/colors";
+import CopilotConversationCardStyle from "./CopilotConversationCard.style";
+import { SenderEnum } from "../../types/enums";
 
 const CopilotConversationCard = ({ message }) => {
     const { sender, content } = message;
     return (
-        <div style={{ marginBottom: 16 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Avatar style={{ margin: 0 }}>
-                    {sender.slice(0, 1).toUpperCase()}
-                </Avatar>
+        <CopilotConversationCardStyle>
+            <div className="conversation-card-header">
+                {sender === SenderEnum.Assistant ? (
+                    <img
+                        height={32}
+                        width={32}
+                        alt="Aletheia assistant bot avatar"
+                        src="/favicon-32x32.png"
+                        style={{ borderRadius: 16 }}
+                    />
+                ) : (
+                    <Avatar style={{ background: colors.blueQuartiary }}>
+                        {SenderEnum.User.slice(0, 1).toUpperCase()}
+                    </Avatar>
+                )}
                 <span>{sender}</span>
             </div>
-            <p style={{ paddingLeft: "40px", wordBreak: "break-word" }}>
-                {content}
-            </p>
-        </div>
+            <p className="conversation-card-content">{content}</p>
+        </CopilotConversationCardStyle>
     );
 };
 

@@ -43,4 +43,16 @@ enum CommentEnum {
     review = "review",
 }
 
-export { ClassificationEnum, Roles, Status, ContentModelEnum, CommentEnum };
+enum SenderEnum {
+    Assistant = "Assistant",
+    User = "You",
+}
+
+export {
+    ClassificationEnum,
+    Roles,
+    Status,
+    ContentModelEnum,
+    CommentEnum,
+    SenderEnum,
+};

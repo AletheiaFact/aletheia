@@ -1,45 +1,26 @@
 import React, { useEffect, useRef } from "react";
-import { LoadingOutlined } from "@ant-design/icons";
-import colors from "../../styles/colors";
 import CopilotConversationCard from "./CopilotConversationCard";
-import copilotApi from "../../api/copilotApi";
+import CopilotConversationLoading from "./CopilotConversationLoading";
+import { SenderEnum } from "../../types/enums";
+import CopilotConversationSuggestions from "./CopilotConversationSuggestions";
 
-const CopilotConversation = ({
-    context,
-    setIsLoading,
-    isLoading,
-    messages,
-    addMessage,
-}) => {
-    const ref = useRef(null);
+const CopilotConversation = ({ handleSendMessage, isLoading, messages }) => {
+    const CopilotConversationRef = useRef(null);
+    const showSuggestions = messages.length <= 1;
     const loadingMessage = {
-        sender: "Assistant",
-        content: (
-            <LoadingOutlined
-                spin
-                style={{ fontSize: 16, color: colors.bluePrimary }}
-            />
-        ),
+        sender: SenderEnum.Assistant,
+        content: <CopilotConversationLoading />,
     };
 
-    const handleClick = async (e) => {
-        setIsLoading(true);
-        const newChatMessage = {
-            sender: "You",
+    const handleClick = (e) =>
+        handleSendMessage({
             content: e.currentTarget.textContent,
-        };
-        addMessage({ content: e.currentTarget.textContent, sender: "You" });
-        const { data: aiMessage } = await copilotApi.agentChat({
-            messages: [...messages, newChatMessage],
-            context: context,
+            sender: SenderEnum.User,
         });
-        addMessage(aiMessage);
-        setIsLoading(false);
-    };
 
     useEffect(() => {
-        if (ref.current) {
-            ref.current.scrollTo({
+        if (CopilotConversationRef.current) {
+            CopilotConversationRef.current.scrollTo({
                 top: 1e9,
                 behavior: "smooth",
             });
@@ -47,52 +28,15 @@ const CopilotConversation = ({
     }, [messages]);
 
     return (
-        <div ref={ref} style={{ height: "100%", overflow: "overlay" }}>
+        <div
+            ref={CopilotConversationRef}
+            style={{ height: "100%", overflow: "overlay" }}
+        >
             {messages.map((message, i) => (
                 <CopilotConversationCard message={message} key={i} />
             ))}
-            {messages.length <= 1 && (
-                <div
-                    style={{
-                        marginLeft: "40px",
-                        display: "flex",
-                        flexDirection: "column",
-                        border: "1px solid #ccc",
-                        borderRadius: 4,
-                    }}
-                >
-                    <p
-                        style={{
-                            padding: "8px 0",
-                            textAlign: "center",
-                            margin: 0,
-                        }}
-                    >
-                        Como posso te ajudar ?
-                    </p>
-                    <div
-                        onClick={handleClick}
-                        style={{
-                            padding: "8px 0",
-                            cursor: "pointer",
-                            borderTop: "1px solid #ccc",
-                            textAlign: "center",
-                        }}
-                    >
-                        Preciso de ajuda com minha checagem
-                    </div>
-                    <div
-                        onClick={handleClick}
-                        style={{
-                            padding: "8px 0",
-                            cursor: "pointer",
-                            borderTop: "1px solid #ccc",
-                            textAlign: "center",
-                        }}
-                    >
-                        Me ajude a listar perguntas a serem respondidas
-                    </div>
-                </div>
+            {showSuggestions && (
+                <CopilotConversationSuggestions handleClick={handleClick} />
             )}
             {isLoading && <CopilotConversationCard message={loadingMessage} />}
         </div>

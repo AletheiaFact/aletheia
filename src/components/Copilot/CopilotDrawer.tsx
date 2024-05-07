@@ -1,29 +1,22 @@
 import React, { useState } from "react";
-import Drawer from "@mui/material/Drawer";
 import { useAppSelector } from "../../store/store";
 import CopilotForm from "./CopilotForm";
 import CopilotConversation from "./CopilotConversation";
+import { Message } from "../../types/Message";
+import { useTranslation } from "next-i18next";
+import CopilotDrawerStyled from "./CopilotDrawer.style";
+import copilotApi from "../../api/copilotApi";
+import { SenderEnum } from "../../types/enums";
 
-interface Message {
-    sender: string;
-    content: any;
-}
-
-const CopilotDrawer = ({ claim, sentence }) => {
-    const context = {
-        claimDate: claim.date,
-        sentence: sentence,
-        personalityName: claim.personalities[0].name,
-        claimTittle: claim.title,
-    };
-    const initialMessage = [
-        {
-            content: "Ola, eu sou checador de fatos assistente da Aletheia",
-            sender: "Assistant",
-        },
-    ];
-    const [messages, setMessages] = useState<Message[]>(initialMessage);
+const CopilotDrawer = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            content: t("copilotChatBot:chatBotGreetings"),
+            sender: SenderEnum.Assistant,
+        },
+    ]);
 
     const { copilotDrawerCollapsed } = useAppSelector((state) => ({
         copilotDrawerCollapsed:
@@ -32,42 +25,38 @@ const CopilotDrawer = ({ claim, sentence }) => {
                 : true,
     }));
 
-    const addMessage = (newMessage) => {
-        setMessages((messages) => [...messages, newMessage]);
+    const handleSendMessage = async (newChatMessage) => {
+        try {
+            setIsLoading(true);
+            addNewMessage(newChatMessage);
+            const { data: aiMessage } = await copilotApi.agentChat({
+                messages: [...messages, newChatMessage],
+            });
+            addNewMessage(aiMessage);
+        } catch (e) {
+            console.error({ Error: e });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
+    const addNewMessage = (newMessage) =>
+        setMessages((messages) => [...messages, newMessage]);
+
     return (
-        <Drawer
-            sx={{
-                width: 350,
-                flexShrink: 0,
-                "& .MuiDrawer-paper": {
-                    width: 350,
-                    padding: 2,
-                },
-                zIndex: 999999,
-                maxHeight: "100vh",
-                overflow: "hidden",
-                flex: "1 1 350px",
-            }}
+        <CopilotDrawerStyled
             variant="persistent"
             anchor="right"
             open={!copilotDrawerCollapsed}
         >
             <CopilotConversation
-                context={context}
-                setIsLoading={setIsLoading}
+                handleSendMessage={handleSendMessage}
                 messages={messages}
                 isLoading={isLoading}
-                addMessage={addMessage}
             />
-            <CopilotForm
-                context={context}
-                addMessage={addMessage}
-                setIsLoading={setIsLoading}
-                messages={messages}
-            />
-        </Drawer>
+            <CopilotForm handleSendMessage={handleSendMessage} />
+            <span className="footer">{t("copilotChatBot:footer")}</span>
+        </CopilotDrawerStyled>
     );
 };
 
