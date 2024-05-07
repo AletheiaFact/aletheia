@@ -44,24 +44,54 @@ export class LangchainChatService {
                     description: "call this to get values provied by the user",
                     schema: z.object({
                         claim: z.string().describe("the claim provided"),
-                        dateRange: z
-                            .string()
-                            .describe("the date range provided"),
-                        location: z.string().describe("the location provided"),
-                        suggestedFonts: z
-                            .string()
-                            .describe("the suggested fonts provided"),
+                        context: z.object({
+                            published_since: z
+                                .string()
+                                .describe("the oldest date provided"),
+                            published_until: z
+                                .string()
+                                .describe("the newest date provided"),
+                            city: z
+                                .string()
+                                .describe("the city location provided"),
+                            sources: z
+                                .array(z.string())
+                                .describe(
+                                    "the suggested sources as an array provided"
+                                ),
+                        }),
                     }),
-                    func: async ({
-                        claim,
-                        dateRange,
-                        location,
-                        suggestedFonts,
-                    }) => {
-                        console.log(
-                            `Claim: ${claim}, Date Range: ${dateRange}, Location: ${location}, Suggested Fonts: ${suggestedFonts}`
+                    func: async ({ claim, context }) => {
+                        const result = await fetch(
+                            "http://localhost:8000/stream",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                    input: {
+                                        claim,
+                                        context,
+                                        can_be_fact_checked: false,
+                                        messages: [],
+                                        language: "Portuguese",
+                                    },
+                                }),
+                            }
                         );
-                        return claim;
+                        let reader = result.body.getReader();
+                        let streamResponse = "";
+                        let done, value;
+
+                        while (!done) {
+                            ({ done, value } = await reader.read());
+                            streamResponse += new TextDecoder().decode(value, {
+                                stream: true,
+                            });
+                        }
+
+                        return streamResponse;
                     },
                 }),
             ];
@@ -73,8 +103,8 @@ export class LangchainChatService {
             const prompt = ChatPromptTemplate.fromMessages([
                 [
                     "system",
-                    `Your job is to get information from a user about the claim they want to fact-check.
-                    You should get the following information from them:
+                    `You are a helpful assistant, your goal is to extract relevant information from the user
+                    about the claim they want to fact-check. You should get the following information from them:
 
                     - What is the claim you want to fact-check ?
                     - What is the date range you want to search from the public gazettes ? e.g: January 2022 to December 2022.
