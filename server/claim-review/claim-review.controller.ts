@@ -8,7 +8,6 @@ import {
     Header,
     Delete,
     Query,
-    NotFoundException,
 } from "@nestjs/common";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
