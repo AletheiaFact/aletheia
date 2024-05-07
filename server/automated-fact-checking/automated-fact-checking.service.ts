@@ -5,57 +5,37 @@ import { ConfigService } from "@nestjs/config";
 export class AutomatedFactCheckingService {
     constructor(private configService: ConfigService) {}
 
-    async getResponseFromAgents(sentence: string = ""): Promise<object> {
-        try {
-            const url = `${this.configService.get<string>("agentsUrl")}/stream`;
-            const params = {
-                input: {
-                    messages: [
-                        {
-                            content: sentence,
-                            type: "human",
-                            role: "human",
-                        },
-                    ],
-                    sender: "Supervisor",
-                },
-            };
+    async getResponseFromAgents(data) {
+        const params = {
+            input: {
+                claim: data.claim,
+                context: data.context,
+                can_be_fact_checked: false,
+                messages: [],
+                language: "Portuguese",
+            },
+        };
+        const response = await fetch("http://localhost:8000/stream", {
+            method: "POST",
+            body: JSON.stringify(params),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
 
-            const response = await fetch(url, {
-                method: "POST",
-                body: JSON.stringify(params),
-                headers: {
-                    "Content-Type": "application/json",
-                },
+        let reader = response.body.getReader();
+
+        let streamResponse = "";
+        let done, value;
+
+        while (!done) {
+            ({ done, value } = await reader.read());
+            streamResponse += new TextDecoder().decode(value, {
+                stream: true,
             });
-
-            let reader = response.body.getReader();
-
-            let streamResponse = "";
-            let done, value;
-
-            while (!done) {
-                ({ done, value } = await reader.read());
-                streamResponse += new TextDecoder().decode(value, {
-                    stream: true,
-                });
-            }
-
-            const jsonEvents = streamResponse
-                .split("\n")
-                .filter((line) => line.startsWith("data:"))
-                .map((line) => JSON.parse(line.substring(5)))
-                .reduce((acc, data) => ({ ...acc, ...data }), {});
-
-            jsonEvents.__end__.messages = this.convertMessageContentsToJSON(
-                jsonEvents.__end__.messages
-            );
-            return jsonEvents.__end__;
-        } catch (error) {
-            return {
-                error: "Error in data fetching process",
-            };
         }
+
+        return streamResponse;
     }
 
     convertMessageContentsToJSON(messages) {

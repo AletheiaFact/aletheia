@@ -17,7 +17,7 @@
  * This controller uses decorators to define routes and their configurations, ensuring proper request handling and response formatting. It also integrates file upload handling for PDF documents, enabling document-context chat functionalities.
  */
 
-import { Body, Controller, HttpCode, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, Post, Req } from "@nestjs/common";
 import { CopilotChatService } from "./copilot-chat.service";
 import { ContextAwareMessagesDto } from "./dtos/context-aware-messages.dto";
 
@@ -27,7 +27,13 @@ export class CopilotChatController {
 
     @Post("api/agent-chat")
     @HttpCode(200)
-    async agentChat(@Body() contextAwareMessagesDto: ContextAwareMessagesDto) {
-        return await this.copilotChatService.agentChat(contextAwareMessagesDto);
+    async agentChat(
+        @Body() contextAwareMessagesDto: ContextAwareMessagesDto,
+        @Req() req
+    ) {
+        return await this.copilotChatService.agentChat(
+            contextAwareMessagesDto,
+            req.language
+        );
     }
 }

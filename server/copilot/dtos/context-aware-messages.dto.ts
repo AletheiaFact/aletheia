@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsNotEmpty, IsString } from "class-validator";
 
 /**
@@ -14,12 +15,19 @@ import { IsArray, IsNotEmpty, IsString } from "class-validator";
  * @property content - The actual content of the message.
  *                     It is validated to be a non-empty string.
  */
-export class ContextAwareMessagesDto {
-    @IsNotEmpty()
-    @IsString()
-    sender: string;
 
-    @IsNotEmpty()
-    @IsString()
+export enum SenderEnum {
+    User = "You",
+    Assistant = "Assistant",
+}
+
+export type Message = {
+    sender: string;
     content: string;
+};
+
+export class ContextAwareMessagesDto {
+    @ApiProperty()
+    @IsArray()
+    messages: Message[];
 }

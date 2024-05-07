@@ -106,7 +106,7 @@ const ClaimReviewForm = ({
                         claim={claimId}
                     />
                 )}
-                <CopilotDrawer />
+                <CopilotDrawer sentence={sentenceContent} />
             </Col>
 
             <AgentReviewModal

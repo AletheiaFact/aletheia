@@ -20,7 +20,10 @@ import { ChatOpenAI } from "@langchain/openai";
 import customMessage from "./customMessage.response";
 import { MESSAGES } from "./messages.constants";
 import { openAI } from "./openAI.constants";
-import { ContextAwareMessagesDto } from "./dtos/context-aware-messages.dto";
+import {
+    ContextAwareMessagesDto,
+    SenderEnum,
+} from "./dtos/context-aware-messages.dto";
 import { z } from "zod";
 
 import { DynamicStructuredTool } from "@langchain/core/tools";
@@ -30,89 +33,81 @@ import {
     MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import { HumanMessage, AIMessage } from "langchain/schema";
+import { AutomatedFactCheckingService } from "../automated-fact-checking/automated-fact-checking.service";
 
 @Injectable()
 export class CopilotChatService {
-    constructor() {}
-    memories = [];
+    constructor(
+        private automatedFactCheckingService: AutomatedFactCheckingService
+    ) {}
 
-    async agentChat(contextAwareMessagesDto: ContextAwareMessagesDto) {
+    getFactCheckingReportTool = {
+        name: "get-fact-checking-report",
+        description:
+            "Use this tool to provide the information to the automated fact checking agents",
+        schema: z.object({
+            claim: z.string().describe("the claim provided"),
+            context: z.object({
+                published_since: z
+                    .string()
+                    .describe("the oldest date provided"),
+                published_until: z
+                    .string()
+                    .describe("the newest date provided"),
+                city: z.string().describe("the city location provided"),
+                sources: z
+                    .array(z.string())
+                    .describe("the suggested sources as an array provided"),
+            }),
+        }),
+        func: this.automatedFactCheckingService.getResponseFromAgents,
+    };
+
+    async agentChat(
+        contextAwareMessagesDto: ContextAwareMessagesDto,
+        language
+    ) {
+        language = language === "pt" ? "Portuguese" : "English";
+        const messagesHistory = contextAwareMessagesDto.messages.map(
+            (message) => {
+                return this.transformMessage(message);
+            }
+        );
         try {
             const tools = [
-                new DynamicStructuredTool({
-                    name: "extract-values",
-                    description: "call this to get values provied by the user",
-                    schema: z.object({
-                        claim: z.string().describe("the claim provided"),
-                        context: z.object({
-                            published_since: z
-                                .string()
-                                .describe("the oldest date provided"),
-                            published_until: z
-                                .string()
-                                .describe("the newest date provided"),
-                            city: z
-                                .string()
-                                .describe("the city location provided"),
-                            sources: z
-                                .array(z.string())
-                                .describe(
-                                    "the suggested sources as an array provided"
-                                ),
-                        }),
-                    }),
-                    func: async ({ claim, context }) => {
-                        const result = await fetch(
-                            "http://localhost:8000/stream",
-                            {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    input: {
-                                        claim,
-                                        context,
-                                        can_be_fact_checked: false,
-                                        messages: [],
-                                        language: "Portuguese",
-                                    },
-                                }),
-                            }
-                        );
-                        let reader = result.body.getReader();
-                        let streamResponse = "";
-                        let done, value;
-
-                        while (!done) {
-                            ({ done, value } = await reader.read());
-                            streamResponse += new TextDecoder().decode(value, {
-                                stream: true,
-                            });
-                        }
-
-                        return streamResponse;
-                    },
-                }),
+                new DynamicStructuredTool(this.getFactCheckingReportTool),
             ];
-
-            const currentMessageContent = contextAwareMessagesDto.content;
-            console.log(currentMessageContent, "currentMessageContent");
+            const currentMessageContent =
+                contextAwareMessagesDto.messages[
+                    contextAwareMessagesDto.messages.length - 1
+                ];
 
             const prompt = ChatPromptTemplate.fromMessages([
                 [
                     "system",
-                    `You are a helpful assistant, your goal is to extract relevant information from the user
-                    about the claim they want to fact-check. You should get the following information from them:
+                    `
+                    A fact-checker is interacting with you because they need assistance with their fact-check report.
+                    As a helpful assistant, your objective is to gather relevant information from the user about the claim they wish to fact-check.
 
-                    - What is the claim you want to fact-check ?
-                    - What is the date range you want to search from the public gazettes ? e.g: January 2022 to December 2022.
-                    - Which brazillian city the claim was stated ?
-                    - Do you have any suggestion of sources you want to look at ?
+                    Follow these steps carefully:
 
-                    If you are not able to discerne this info, ask them to clarify! Do not attempt to wildly guess.
+                    1. Understand the Problem:
+                    - If the user requests assistance with a fact-check, ask: What is the claim you want to fact-check ?
 
-                    After you are able to discerne all the information, call the relevant tool`,
+                    2. Analyze the Provided Claim:
+                    - If the claim is related to Brazilian municipalities or states:
+                        - Ask: Which Brazilian city or state was the claim made in?
+                        - Inquire about the date range: What time period should we search in the public gazettes? (e.g., January 2022 to December 2022)
+
+                    - If the claim is unrelated to Brazilian municipalities or is a totally different topic:
+                        - Ask: Do you have any suggested sources that we should consult?
+
+                    If any information is ambiguous or missing, request clarification from the user without making assumptions.
+                    Always ask one question at a time and in the specified order.
+
+                    Once you have the necessary information, proceed to use the get-fact-checking-report tool.
+                    Compose your responses using formal language and you MUST provide you answer in ${language}.
+                    `,
                 ],
                 new MessagesPlaceholder({ variableName: "chat_history" }),
                 ["user", "{input}"],
@@ -137,27 +132,29 @@ export class CopilotChatService {
 
             const response = await agentExecutor.invoke({
                 input: currentMessageContent,
-                chat_history: this.memories,
+                chat_history: messagesHistory,
             });
-            console.log(response, "response");
 
-            this.memories.push(
-                new HumanMessage({
-                    content: currentMessageContent,
-                    additional_kwargs: {},
-                }),
-                new AIMessage({
-                    content: response.output,
-                    additional_kwargs: {},
-                })
-            );
-            return customMessage(
-                HttpStatus.OK,
-                MESSAGES.SUCCESS,
-                response.output
-            );
+            return customMessage(HttpStatus.OK, MESSAGES.SUCCESS, {
+                sender: SenderEnum.Assistant,
+                content: response.output,
+            });
         } catch (e: unknown) {
             this.exceptionHandling(e);
+        }
+    }
+
+    transformMessage(message) {
+        if (message.sender === SenderEnum.Assistant) {
+            return new AIMessage({
+                content: message.content,
+                additional_kwargs: {},
+            });
+        } else {
+            return new HumanMessage({
+                content: message.content,
+                additional_kwargs: {},
+            });
         }
     }
 

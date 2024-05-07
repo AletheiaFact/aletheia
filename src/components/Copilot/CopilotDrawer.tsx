@@ -9,9 +9,12 @@ interface Message {
     content: any;
 }
 
-const CopilotDrawer = () => {
+const CopilotDrawer = ({ sentence }) => {
     const initialMessage = [
-        { content: "Ola, como posso te ajudar ?", sender: "Assistant" },
+        {
+            content: "Ola, eu sou checador de fatos assistente da Aletheia",
+            sender: "Assistant",
+        },
     ];
     const [messages, setMessages] = useState<Message[]>(initialMessage);
     const [isLoading, setIsLoading] = useState(false);
@@ -45,8 +48,19 @@ const CopilotDrawer = () => {
             anchor="right"
             open={!copilotDrawerCollapsed}
         >
-            <CopilotConversation messages={messages} isLoading={isLoading} />
-            <CopilotForm addMessage={addMessage} setIsLoading={setIsLoading} />
+            <CopilotConversation
+                sentence={sentence}
+                setIsLoading={setIsLoading}
+                messages={messages}
+                isLoading={isLoading}
+                addMessage={addMessage}
+            />
+            <CopilotForm
+                addMessage={addMessage}
+                setIsLoading={setIsLoading}
+                messages={messages}
+                sentence={sentence}
+            />
         </Drawer>
     );
 };
