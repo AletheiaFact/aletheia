@@ -31,6 +31,7 @@ const CopilotDrawer = () => {
             addNewMessage(newChatMessage);
             const { data: aiMessage } = await copilotApi.agentChat({
                 messages: [...messages, newChatMessage],
+                context: context,
             });
             addNewMessage(aiMessage);
         } catch (e) {

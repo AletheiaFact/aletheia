@@ -11,7 +11,10 @@ const CopilotForm = ({ handleSendMessage }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleSendMessage({ sender: SenderEnum.User, content: message });
+        handleSendMessage({
+            sender: SenderEnum.User,
+            content: message,
+        });
         setMessage("");
     };
 
