@@ -170,7 +170,10 @@ describe("ClaimReviewController (e2e)", () => {
     it("api/review/:data_hash (GET) - Should not be able to get claimReview", () => {
         return request(app.getHttpServer())
             .get(`/api/review/${claimReviewDataHash}`)
-            .expect(404);
+            .expect(200)
+            .expect(({ body }) => {
+                expect(body.review).toEqual(null);
+            });
     });
 
     afterAll(async () => {
