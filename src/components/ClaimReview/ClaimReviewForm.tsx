@@ -24,7 +24,7 @@ import AgentReviewModal from "../Modal/AgentReviewModal";
 import CopilotDrawer from "../Copilot/CopilotDrawer";
 
 const ClaimReviewForm = ({
-    claimId,
+    claim,
     personalityId,
     dataHash,
     userIsReviewer,
@@ -103,17 +103,17 @@ const ClaimReviewForm = ({
                     <DynamicReviewTaskForm
                         data_hash={dataHash}
                         personality={personalityId}
-                        claim={claimId}
+                        claim={claim._id}
                     />
                 )}
-                <CopilotDrawer sentence={sentenceContent} />
+                <CopilotDrawer claim={claim} sentence={sentenceContent} />
             </Col>
 
             <AgentReviewModal
                 sentence={sentenceContent}
                 visible={isModalVisible}
                 handleCancel={() => setIsModalVisible(false)}
-                claimId={claimId}
+                claimId={claim._id}
                 personalityId={personalityId}
                 dataHash={dataHash}
             />

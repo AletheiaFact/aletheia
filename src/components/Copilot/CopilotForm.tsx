@@ -4,7 +4,7 @@ import colors from "../../styles/colors";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import copilotApi from "../../api/copilotApi";
 
-const CopilotForm = ({ addMessage, setIsLoading, messages, sentence }) => {
+const CopilotForm = ({ context, addMessage, setIsLoading, messages }) => {
     const [message, setMessage] = useState("");
 
     const handleSubmit = async (e) => {
@@ -15,6 +15,7 @@ const CopilotForm = ({ addMessage, setIsLoading, messages, sentence }) => {
         addMessage({ content: message, sender: "You" });
         const { data: aiMessage } = await copilotApi.agentChat({
             messages: [...messages, newChatMessage],
+            context: context,
         });
         addMessage(aiMessage);
         setIsLoading(false);

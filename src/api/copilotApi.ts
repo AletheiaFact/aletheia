@@ -6,7 +6,6 @@ const request = axios.create({
 });
 
 const agentChat = (params) => {
-    console.log("params api", params);
     return request
         .post("/", params)
         .then((response) => {

@@ -120,7 +120,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
 
             {!review?.isPublished && (
                 <ClaimReviewForm
-                    claimId={claim._id}
+                    claim={claim}
                     personalityId={personality?._id}
                     dataHash={content.data_hash}
                     userIsReviewer={userIsReviewer}

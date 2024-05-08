@@ -5,7 +5,7 @@ import CopilotConversationCard from "./CopilotConversationCard";
 import copilotApi from "../../api/copilotApi";
 
 const CopilotConversation = ({
-    sentence,
+    context,
     setIsLoading,
     isLoading,
     messages,
@@ -31,6 +31,7 @@ const CopilotConversation = ({
         addMessage({ content: e.currentTarget.textContent, sender: "You" });
         const { data: aiMessage } = await copilotApi.agentChat({
             messages: [...messages, newChatMessage],
+            context: context,
         });
         addMessage(aiMessage);
         setIsLoading(false);

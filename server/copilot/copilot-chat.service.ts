@@ -50,14 +50,27 @@ export class CopilotChatService {
             context: z.object({
                 published_since: z
                     .string()
-                    .describe("the oldest date provided"),
+                    .optional()
+                    .describe(
+                        "the oldest date provided specifically and just by the user"
+                    ),
                 published_until: z
                     .string()
-                    .describe("the newest date provided"),
-                city: z.string().describe("the city location provided"),
+                    .describe(
+                        "the newest date provided or if it's not provided the date that the claim was stated"
+                    ),
+                city: z
+                    .string()
+                    .optional()
+                    .describe(
+                        "the city location provided specifically and just by the user"
+                    ),
                 sources: z
                     .array(z.string())
-                    .describe("the suggested sources as an array provided"),
+                    .optional()
+                    .describe(
+                        "the suggested sources as an array provided specifically and just by the user"
+                    ),
             }),
         }),
         func: this.automatedFactCheckingService.getResponseFromAgents,
@@ -67,6 +80,8 @@ export class CopilotChatService {
         contextAwareMessagesDto: ContextAwareMessagesDto,
         language
     ) {
+        const date = new Date(contextAwareMessagesDto.context.claimDate);
+        const localizedDate = date.toLocaleDateString();
         language = language === "pt" ? "Portuguese" : "English";
         const messagesHistory = contextAwareMessagesDto.messages.map(
             (message) => {
@@ -87,17 +102,17 @@ export class CopilotChatService {
                     "system",
                     `
                     A fact-checker is interacting with you because they need assistance with their fact-check report.
-                    As a helpful assistant, your objective is to gather relevant information from the user about the claim they wish to fact-check.
+                    As a helpful assistant, your objective is to gather relevant information from the user about the claim that he wishes to fact-check.
 
                     Follow these steps carefully:
 
                     1. Understand the Problem:
-                    - If the user requests assistance with a fact-check, ask: What is the claim you want to fact-check ?
+                    - If the user requests assistance with a fact-check, Strictly ask: Is this the claim claim:${contextAwareMessagesDto.context.sentence} stated by ${contextAwareMessagesDto.context.personalityName} that you want to fact-check ?
 
                     2. Analyze the Provided Claim:
-                    - If the claim is related to Brazilian municipalities or states:
+                    - If the claim is strictly related to Brazilian municipalities or states:
                         - Ask: Which Brazilian city or state was the claim made in?
-                        - Inquire about the date range: What time period should we search in the public gazettes? (e.g., January 2022 to December 2022)
+                        - Ask: This claim was stated on ${localizedDate} do you have any time expecific time period we should search in the public gazettes? (e.g., January 2022 to December 2022)
 
                     - If the claim is unrelated to Brazilian municipalities or is a totally different topic:
                         - Ask: Do you have any suggested sources that we should consult?
@@ -107,6 +122,9 @@ export class CopilotChatService {
 
                     Once you have the necessary information, proceed to use the get-fact-checking-report tool.
                     Compose your responses using formal language and you MUST provide you answer in ${language}.
+
+                    If you think it is important to elaborate yours responses here we have an extra context information from the claim,
+                    tittle of the claim: ${contextAwareMessagesDto.context.claimTittle}, 
                     `,
                 ],
                 new MessagesPlaceholder({ variableName: "chat_history" }),

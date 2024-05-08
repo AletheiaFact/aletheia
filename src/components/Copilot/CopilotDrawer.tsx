@@ -9,7 +9,13 @@ interface Message {
     content: any;
 }
 
-const CopilotDrawer = ({ sentence }) => {
+const CopilotDrawer = ({ claim, sentence }) => {
+    const context = {
+        claimDate: claim.date,
+        sentence: sentence,
+        personalityName: claim.personalities[0].name,
+        claimTittle: claim.title,
+    };
     const initialMessage = [
         {
             content: "Ola, eu sou checador de fatos assistente da Aletheia",
@@ -49,17 +55,17 @@ const CopilotDrawer = ({ sentence }) => {
             open={!copilotDrawerCollapsed}
         >
             <CopilotConversation
-                sentence={sentence}
+                context={context}
                 setIsLoading={setIsLoading}
                 messages={messages}
                 isLoading={isLoading}
                 addMessage={addMessage}
             />
             <CopilotForm
+                context={context}
                 addMessage={addMessage}
                 setIsLoading={setIsLoading}
                 messages={messages}
-                sentence={sentence}
             />
         </Drawer>
     );

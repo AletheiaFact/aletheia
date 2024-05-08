@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsObject } from "class-validator";
 
 /**
  * Data Transfer Object for an individual message.
@@ -21,6 +21,13 @@ export enum SenderEnum {
     Assistant = "Assistant",
 }
 
+export type Context = {
+    claimDate: Date;
+    claimTittle: string;
+    personalityName: string;
+    sentence: string;
+};
+
 export type Message = {
     sender: string;
     content: string;
@@ -30,4 +37,8 @@ export class ContextAwareMessagesDto {
     @ApiProperty()
     @IsArray()
     messages: Message[];
+
+    @ApiProperty()
+    @IsObject()
+    context: Context;
 }
