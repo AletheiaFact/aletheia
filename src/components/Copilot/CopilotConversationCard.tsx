@@ -3,8 +3,10 @@ import { Avatar } from "antd";
 import colors from "../../styles/colors";
 import CopilotConversationCardStyle from "./CopilotConversationCard.style";
 import { SenderEnum } from "../../types/enums";
+import { useTranslation } from "next-i18next";
 
 const CopilotConversationCard = ({ message }) => {
+    const { t } = useTranslation();
     const { sender, content } = message;
     return (
         <CopilotConversationCardStyle>
@@ -22,7 +24,7 @@ const CopilotConversationCard = ({ message }) => {
                         {SenderEnum.User.slice(0, 1).toUpperCase()}
                     </Avatar>
                 )}
-                <span>{sender}</span>
+                <span>{t(`copilotChatBot:${sender}`)}</span>
             </div>
             <p className="conversation-card-content">{content}</p>
         </CopilotConversationCardStyle>

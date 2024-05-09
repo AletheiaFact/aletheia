@@ -35,18 +35,14 @@ export class AutomatedFactCheckingService {
             });
         }
 
-        return streamResponse;
-    }
+        const jsonEvents = streamResponse
+            .split("\n")
+            .filter((line) => line.startsWith("data:"))
+            .map((line) => JSON.parse(line.substring(5)))
+            .reduce((acc, data) => ({ ...acc, ...data }), {});
 
-    convertMessageContentsToJSON(messages) {
-        return messages
-            .map(({ content }) => {
-                try {
-                    return JSON.parse(content);
-                } catch (error) {
-                    return undefined;
-                }
-            })
-            .filter((message) => message !== undefined);
+        jsonEvents.__end__.messages = JSON.parse(jsonEvents.__end__.messages);
+
+        return { stream: streamResponse, json: jsonEvents.__end__ };
     }
 }

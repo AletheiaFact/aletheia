@@ -34,12 +34,15 @@ import {
 } from "@langchain/core/prompts";
 import { HumanMessage, AIMessage } from "langchain/schema";
 import { AutomatedFactCheckingService } from "../automated-fact-checking/automated-fact-checking.service";
+import { EditorParseService } from "../editor-parse/editor-parse.service";
 
 @Injectable()
 export class CopilotChatService {
     constructor(
-        private automatedFactCheckingService: AutomatedFactCheckingService
+        private automatedFactCheckingService: AutomatedFactCheckingService,
+        private editorParseService: EditorParseService
     ) {}
+    editorReport = null;
 
     getFactCheckingReportTool = {
         name: "get-fact-checking-report",
@@ -73,7 +76,17 @@ export class CopilotChatService {
                     ),
             }),
         }),
-        func: this.automatedFactCheckingService.getResponseFromAgents,
+        func: async (data) => {
+            const { stream, json } =
+                await this.automatedFactCheckingService.getResponseFromAgents(
+                    data
+                );
+            this.editorReport = await this.editorParseService.schema2editor({
+                ...json.messages,
+                sources: [],
+            });
+            return stream;
+        },
     };
 
     async agentChat(
@@ -156,6 +169,7 @@ export class CopilotChatService {
             return customMessage(HttpStatus.OK, MESSAGES.SUCCESS, {
                 sender: SenderEnum.Assistant,
                 content: response.output,
+                editorReport: this.editorReport,
             });
         } catch (e: unknown) {
             this.exceptionHandling(e);

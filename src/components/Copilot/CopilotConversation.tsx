@@ -1,10 +1,23 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import CopilotConversationCard from "./CopilotConversationCard";
 import CopilotConversationLoading from "./CopilotConversationLoading";
 import { SenderEnum } from "../../types/enums";
 import CopilotConversationSuggestions from "./CopilotConversationSuggestions";
+import AletheiaButton from "../Button";
+import { CollaborativeEditorContext } from "../Collaborative/CollaborativeEditorProvider";
+import { RemirrorContentType } from "remirror";
+import { useTranslation } from "next-i18next";
 
-const CopilotConversation = ({ handleSendMessage, isLoading, messages }) => {
+const CopilotConversation = ({
+    handleSendMessage,
+    isLoading,
+    messages,
+    editorReport,
+}) => {
+    const { t } = useTranslation();
+    const { setEditorContentObject, setShouldInsertAIReport } = useContext(
+        CollaborativeEditorContext
+    );
     const CopilotConversationRef = useRef(null);
     const showSuggestions = messages.length <= 1;
     const loadingMessage = {
@@ -27,6 +40,11 @@ const CopilotConversation = ({ handleSendMessage, isLoading, messages }) => {
         }
     }, [messages]);
 
+    const handleAddReportClick = () => {
+        setShouldInsertAIReport(true);
+        setEditorContentObject(editorReport as RemirrorContentType);
+    };
+
     return (
         <div
             ref={CopilotConversationRef}
@@ -37,6 +55,19 @@ const CopilotConversation = ({ handleSendMessage, isLoading, messages }) => {
             ))}
             {showSuggestions && (
                 <CopilotConversationSuggestions handleClick={handleClick} />
+            )}
+            {editorReport && (
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        margin: 16,
+                    }}
+                >
+                    <AletheiaButton onClick={handleAddReportClick}>
+                        {t("copilotChatBot:addFactCheckingReportButton")}
+                    </AletheiaButton>
+                </div>
             )}
             {isLoading && <CopilotConversationCard message={loadingMessage} />}
         </div>

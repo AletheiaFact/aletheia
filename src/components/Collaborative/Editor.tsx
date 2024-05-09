@@ -14,6 +14,7 @@ import { Button } from "antd";
 import EditorStyle from "./Editor.style";
 import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
 import useCardPresence from "./hooks/useCardPresence";
+import { Node } from "@remirror/pm/model";
 
 /**
  * Modifies context state to JSON using useHelpers hook
@@ -22,15 +23,35 @@ import useCardPresence from "./hooks/useCardPresence";
  * to add a new input.
  * @param state remirror state
  */
-const Editor = ({ editable, state }: { editable: boolean; state: any }) => {
+const Editor = ({
+    node,
+    editable,
+    state,
+}: {
+    node: Node;
+    editable: boolean;
+    state: any;
+}) => {
     const command = useCommands();
-    const { setEditorContentObject } = useContext(CollaborativeEditorContext);
+    const {
+        setEditorContentObject,
+        shouldInsertAIReport,
+        setShouldInsertAIReport,
+    } = useContext(CollaborativeEditorContext);
     const { getJSON } = useHelpers();
 
     useEffect(
         () => setEditorContentObject(getJSON()),
         [state, getJSON, setEditorContentObject]
     );
+
+    useEffect(() => {
+        if (shouldInsertAIReport) {
+            command.delete({ from: 0, to: state.doc.content.size });
+            command.insertNode(node);
+        }
+        setShouldInsertAIReport(false);
+    }, [shouldInsertAIReport]);
 
     const summaryDisabled = useCardPresence(getJSON, state, "summary", false);
     const reportDisabled = useCardPresence(getJSON, state, "report", false);

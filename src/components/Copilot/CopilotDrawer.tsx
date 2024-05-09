@@ -11,6 +11,7 @@ import { SenderEnum } from "../../types/enums";
 const CopilotDrawer = () => {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
+    const [editorReport, setEditorReport] = useState(null);
     const [messages, setMessages] = useState<Message[]>([
         {
             content: t("copilotChatBot:chatBotGreetings"),
@@ -29,11 +30,14 @@ const CopilotDrawer = () => {
         try {
             setIsLoading(true);
             addNewMessage(newChatMessage);
-            const { data: aiMessage } = await copilotApi.agentChat({
+            const {
+                data: { sender, content, editorReport },
+            } = await copilotApi.agentChat({
                 messages: [...messages, newChatMessage],
                 context: context,
             });
-            addNewMessage(aiMessage);
+            setEditorReport(editorReport);
+            addNewMessage({ sender, content });
         } catch (e) {
             console.error({ Error: e });
         } finally {
@@ -54,6 +58,7 @@ const CopilotDrawer = () => {
                 handleSendMessage={handleSendMessage}
                 messages={messages}
                 isLoading={isLoading}
+                editorReport={editorReport}
             />
             <CopilotForm handleSendMessage={handleSendMessage} />
             <span className="footer">{t("copilotChatBot:footer")}</span>
