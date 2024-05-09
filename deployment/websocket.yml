@@ -20,19 +20,19 @@ spec:
                 name: aletheia-ws
 ---
 ### SERVICE  FRONTEND ###
-apiVersion: v1
-kind: Service
-metadata:
-  name: aletheia-ws
-  namespace: ENVIRONMENT
-spec:
-  type: NodePort
-  selector:
-    app: aletheia-ws
-  ports:
-    - name: aletheia-ws
-      targetPort: 5051
-      port: 80
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: aletheia-ws
+#   namespace: ENVIRONMENT
+# spec:
+#   type: NodePort
+#   selector:
+#     app: aletheia-ws
+#   ports:
+#     - name: aletheia-ws
+#       targetPort: 5051
+#       port: 80
 ---
 ### DEPLOYMENT FRONTEND ###
 apiVersion: apps/v1
