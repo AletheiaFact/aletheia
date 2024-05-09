@@ -1,24 +1,24 @@
-### INGRESS FRONTEND ###
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: ingress-aletheia-ws
-  namespace: ENVIRONMENT
-  annotations:
-    kubernetes.io/ingress.class: traefik
-spec:
-  rules:
-    - host: testws.aletheiafact.org
-      http:
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: aletheia-ws
-              port:
-                name: aletheia-ws
----
+# ### INGRESS FRONTEND ###
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: ingress-aletheia-ws
+#   namespace: ENVIRONMENT
+#   annotations:
+#     kubernetes.io/ingress.class: traefik
+# spec:
+#   rules:
+#     - host: testws.aletheiafact.org
+#       http:
+#         paths:
+#         - path: /
+#           pathType: Prefix
+#           backend:
+#             service:
+#               name: aletheia-ws
+#               port:
+#                 name: aletheia-ws
+# ---
 ### SERVICE  FRONTEND ###
 # apiVersion: v1
 # kind: Service
@@ -33,45 +33,45 @@ spec:
 #     - name: aletheia-ws
 #       targetPort: 5051
 #       port: 80
----
-### DEPLOYMENT FRONTEND ###
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: aletheia-ws
-  namespace: ENVIRONMENT
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: aletheia-ws
-  template:
-    metadata:
-      labels:
-        app: aletheia-ws
-    spec:
-      containers:
-        - name: aletheia-ws
-          image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:TAG
-          args: ["-c", "config.websocket.yaml"]
-          imagePullPolicy: Always
-          readinessProbe:
-            httpGet:
-              path: /api/health
-              port: 5051
-            initialDelaySeconds: 50
-            timeoutSeconds: 5
-          livenessProbe:
-            httpGet:
-              path: /api/health
-              port: 5051
-            initialDelaySeconds: 50
-            timeoutSeconds: 10
-            failureThreshold: 10
-          resources:
-            limits:
-              cpu: 120m
-              memory: 256Mi
-            requests:
-              cpu: 80m
-              memory: 128Mi
+# ---
+# ### DEPLOYMENT FRONTEND ###
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: aletheia-ws
+#   namespace: ENVIRONMENT
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: aletheia-ws
+#   template:
+#     metadata:
+#       labels:
+#         app: aletheia-ws
+#     spec:
+#       containers:
+#         - name: aletheia-ws
+#           image: 134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production:TAG
+#           args: ["-c", "config.websocket.yaml"]
+#           imagePullPolicy: Always
+#           readinessProbe:
+#             httpGet:
+#               path: /api/health
+#               port: 5051
+#             initialDelaySeconds: 50
+#             timeoutSeconds: 5
+#           livenessProbe:
+#             httpGet:
+#               path: /api/health
+#               port: 5051
+#             initialDelaySeconds: 50
+#             timeoutSeconds: 10
+#             failureThreshold: 10
+#           resources:
+#             limits:
+#               cpu: 120m
+#               memory: 256Mi
+#             requests:
+#               cpu: 80m
+#               memory: 128Mi
