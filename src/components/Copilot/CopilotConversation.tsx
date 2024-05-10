@@ -43,7 +43,7 @@ const CopilotConversation = ({
                 behavior: "smooth",
             });
         }
-    }, [messages]);
+    }, [messages, showButtons]);
 
     const handleAddReportClick = () => {
         setShouldInsertAIReport(true);

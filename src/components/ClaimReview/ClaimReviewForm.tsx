@@ -20,7 +20,6 @@ import colors from "../../styles/colors";
 import { useAtom } from "jotai";
 import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
-import AgentReviewModal from "../Modal/AgentReviewModal";
 import CopilotDrawer from "../Copilot/CopilotDrawer";
 import { useAppSelector } from "../../store/store";
 
@@ -120,15 +119,6 @@ const ClaimReviewForm = ({
                     <CopilotDrawer claim={claim} sentence={sentenceContent} />
                 )}
             </Col>
-
-            <AgentReviewModal
-                sentence={sentenceContent}
-                visible={isModalVisible}
-                handleCancel={() => setIsModalVisible(false)}
-                claimId={claim._id}
-                personalityId={personalityId}
-                dataHash={dataHash}
-            />
         </Row>
     );
 };

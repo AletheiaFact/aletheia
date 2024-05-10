@@ -45,6 +45,10 @@ const Editor = ({
         [state, getJSON, setEditorContentObject]
     );
 
+    /**
+     * Deletes current report and insert automated fact-checking generated report.
+     * This solution is need because when we try to update the editorContentObject react state, the remirror state overrides the changes, not applying the generated report into the document.
+     */
     useEffect(() => {
         if (shouldInsertAIReport) {
             command.delete({ from: 0, to: state.doc.content.size });

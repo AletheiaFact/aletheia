@@ -12,7 +12,7 @@ import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
 
-const drawerWidth = 350;
+const copilotDrawerWidth = 350;
 
 const MainApp = ({ children }) => {
     const { vw, enableOverlay, copilotDrawerCollapsed } = useAppSelector(
@@ -36,13 +36,13 @@ const MainApp = ({ children }) => {
                 width:
                     copilotDrawerCollapsed || vw?.md
                         ? "100%"
-                        : `calc(100% - ${drawerWidth}px)`,
+                        : `calc(100% - ${copilotDrawerWidth}px)`,
             }}
         >
             <Sidebar />
             <Layout style={{ background: colors.white }}>
                 <Header />
-                <AffixCTAButton drawerWidth={drawerWidth} />
+                <AffixCTAButton copilotDrawerWidth={copilotDrawerWidth} />
                 <ContentWrapper>{children}</ContentWrapper>
                 <Footer />
                 {enableOverlay && <OverlaySearchResults />}

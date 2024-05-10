@@ -5,7 +5,7 @@ import { ConfigService } from "@nestjs/config";
 export class AutomatedFactCheckingService {
     constructor(private configService: ConfigService) {}
 
-    async getResponseFromAgents(data) {
+    async getResponseFromAgents(data): Promise<{ stream: string; json: any }> {
         try {
             const params = {
                 input: {
@@ -17,13 +17,18 @@ export class AutomatedFactCheckingService {
                     can_be_fact_checked: false,
                 },
             };
-            const response = await fetch("http://localhost:8000/stream", {
-                method: "POST",
-                body: JSON.stringify(params),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await fetch(
+                `${this.configService.get<string>(
+                    "automatedFactCheckingAPIUrl"
+                )}/stream`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(params),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
 
             let reader = response.body.getReader();
 

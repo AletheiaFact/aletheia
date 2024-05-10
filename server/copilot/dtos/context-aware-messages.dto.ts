@@ -23,7 +23,7 @@ export enum SenderEnum {
 
 export type Context = {
     claimDate: Date;
-    claimTittle: string;
+    claimTitle: string;
     personalityName: string;
     sentence: string;
 };

@@ -33,7 +33,7 @@ const CloseIcon = () => {
     );
 };
 
-const AffixCTAButton = ({ drawerWidth }) => {
+const AffixCTAButton = ({ copilotDrawerWidth }) => {
     const { t } = useTranslation();
     const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
         vw: state?.vw,
@@ -70,7 +70,7 @@ const AffixCTAButton = ({ drawerWidth }) => {
                         right:
                             copilotDrawerCollapsed || vw?.md
                                 ? "0%"
-                                : drawerWidth,
+                                : copilotDrawerWidth,
                         display: "flex",
                         flexDirection: "column-reverse",
                         alignItems: "center",
