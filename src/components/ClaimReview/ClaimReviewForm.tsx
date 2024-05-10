@@ -22,6 +22,7 @@ import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
 import AgentReviewModal from "../Modal/AgentReviewModal";
 import CopilotDrawer from "../Copilot/CopilotDrawer";
+import { useAppSelector } from "../../store/store";
 
 const ClaimReviewForm = ({
     claim,
@@ -42,7 +43,16 @@ const ClaimReviewForm = ({
     const userIsAssignee = reviewData.usersId.includes(userId);
     const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const userIsAdmin = role === Roles.Admin || Roles.SuperAdmin;
+    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+    const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
+        (state) => ({
+            enableCopilotChatBot: state?.enableCopilotChatBot,
+            reviewDrawerCollapsed:
+                state?.reviewDrawerCollapsed !== undefined
+                    ? state?.reviewDrawerCollapsed
+                    : true,
+        })
+    );
 
     const showForm =
         isUnassigned ||
@@ -106,7 +116,9 @@ const ClaimReviewForm = ({
                         claim={claim._id}
                     />
                 )}
-                <CopilotDrawer claim={claim} sentence={sentenceContent} />
+                {showForm && enableCopilotChatBot && reviewDrawerCollapsed && (
+                    <CopilotDrawer claim={claim} sentence={sentenceContent} />
+                )}
             </Col>
 
             <AgentReviewModal

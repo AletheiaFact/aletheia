@@ -322,7 +322,7 @@ export class ClaimController {
         );
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableAgentReview = this.isEnableAgentReview();
+        const enableCopilotChatBot = this.isEnableCopilotChatBot();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         hideDescriptions[TargetModel.Claim] =
@@ -353,7 +353,7 @@ export class ClaimController {
                 hideDescriptions,
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
-                enableAgentReview,
+                enableCopilotChatBot,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })
@@ -534,7 +534,7 @@ export class ClaimController {
             namespace as NameSpaceEnum
         );
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableAgentReview = this.isEnableAgentReview();
+        const enableCopilotChatBot = this.isEnableCopilotChatBot();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         if (claim.personalities.length > 0) {
@@ -557,7 +557,7 @@ export class ClaimController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
-                enableAgentReview,
+                enableCopilotChatBot,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -577,7 +577,7 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableAgentReview = this.isEnableAgentReview();
+        const enableCopilotChatBot = this.isEnableCopilotChatBot();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         const personality =
@@ -610,7 +610,7 @@ export class ClaimController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
-                enableAgentReview,
+                enableCopilotChatBot,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 hideDescriptions,
                 nameSpace: namespace,
@@ -637,7 +637,7 @@ export class ClaimController {
             );
 
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableAgentReview = this.isEnableAgentReview();
+        const enableCopilotChatBot = this.isEnableCopilotChatBot();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
@@ -655,7 +655,7 @@ export class ClaimController {
                 claim,
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
-                enableAgentReview,
+                enableCopilotChatBot: enableCopilotChatBot,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -797,10 +797,10 @@ export class ClaimController {
             : false;
     }
 
-    private isEnableAgentReview() {
+    private isEnableCopilotChatBot() {
         const config = this.configService.get<string>("feature_flag");
 
-        return config ? this.unleash.isEnabled("agent_review") : false;
+        return config ? this.unleash.isEnabled("copilot_chat_bot") : false;
     }
 
     private isEnableEditorAnnotations() {

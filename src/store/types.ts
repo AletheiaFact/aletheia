@@ -31,7 +31,7 @@ export enum ActionTypes {
     SET_SEARCH_FILTER,
     SET_SEARCH_FILTER_USED,
     SET_COLLABORATIVE_EDIT,
-    SET_AGENT_REVIEW,
+    SET_COPILOT_CHAT_BOT,
     SET_EDITOR_ANNOTATION,
 }
 
@@ -61,7 +61,7 @@ export interface RootState {
     };
     autoSave: boolean;
     enableCollaborativeEdit: boolean;
-    enableAgentReview: boolean;
+    enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
     websocketUrl: string;
     claimType: string;

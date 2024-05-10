@@ -139,10 +139,10 @@ const reducer = (state, action) => {
                 ...state,
                 enableCollaborativeEdit: action.enableCollaborativeEdit,
             };
-        case ActionTypes.SET_AGENT_REVIEW:
+        case ActionTypes.SET_COPILOT_CHAT_BOT:
             return {
                 ...state,
-                enableAgentReview: action.enableAgentReview,
+                enableCopilotChatBot: action.enableCopilotChatBot,
             };
         case ActionTypes.SET_EDITOR_ANNOTATION:
             return {
