@@ -77,31 +77,31 @@ export class CopilotChatService {
             }),
         }),
         func: async (data) => {
-            const { stream, json } =
-                await this.automatedFactCheckingService.getResponseFromAgents(
-                    data
+            try {
+                const { stream, json } =
+                    await this.automatedFactCheckingService.getResponseFromAgents(
+                        data
+                    );
+                this.editorReport = await this.editorParseService.schema2editor(
+                    {
+                        ...json.messages,
+                        sources: [],
+                    }
                 );
-            this.editorReport = await this.editorParseService.schema2editor({
-                ...json.messages,
-                sources: [],
-            });
-            return stream;
+                return stream;
+            } catch (e) {
+                throw new Error(e);
+            }
         },
     };
 
-    async agentChat(
-        contextAwareMessagesDto: ContextAwareMessagesDto,
-        language
-    ) {
-        const date = new Date(contextAwareMessagesDto.context.claimDate);
-        const localizedDate = date.toLocaleDateString();
-        language = language === "pt" ? "Portuguese" : "English";
-        const messagesHistory = contextAwareMessagesDto.messages.map(
-            (message) => {
-                return this.transformMessage(message);
-            }
-        );
+    async agentChat(contextAwareMessagesDto: ContextAwareMessagesDto) {
         try {
+            const date = new Date(contextAwareMessagesDto.context.claimDate);
+            const localizedDate = date.toLocaleDateString();
+            const messagesHistory = contextAwareMessagesDto.messages.map(
+                (message) => this.transformMessage(message)
+            );
             const tools = [
                 new DynamicStructuredTool(this.getFactCheckingReportTool),
             ];
@@ -183,12 +183,12 @@ export class CopilotChatService {
                 content: message.content,
                 additional_kwargs: {},
             });
-        } else {
-            return new HumanMessage({
-                content: message.content,
-                additional_kwargs: {},
-            });
         }
+
+        return new HumanMessage({
+            content: message.content,
+            additional_kwargs: {},
+        });
     }
 
     private exceptionHandling = (e: unknown) => {

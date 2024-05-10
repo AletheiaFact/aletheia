@@ -26,7 +26,8 @@ interface AffixButtonProps {
  * @param personalitySlug if present will display the Create Claim option too
  */
 const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
-    const { copilotDrawerCollapsed } = useAppSelector((state) => ({
+    const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
+        vw: state?.vw,
         copilotDrawerCollapsed:
             state?.copilotDrawerCollapsed !== undefined
                 ? state?.copilotDrawerCollapsed
@@ -96,7 +97,10 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 style={{
                     position: "fixed",
                     bottom: "3%",
-                    right: copilotDrawerCollapsed ? "2%" : `calc(2% + 350px)`,
+                    right:
+                        copilotDrawerCollapsed || vw?.md
+                            ? "2%"
+                            : `calc(2% + 350px)`,
                     display: "flex",
                     flexDirection: "column-reverse",
                     alignItems: "center",

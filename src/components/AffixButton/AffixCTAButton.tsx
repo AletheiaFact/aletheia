@@ -35,7 +35,8 @@ const CloseIcon = () => {
 
 const AffixCTAButton = ({ drawerWidth }) => {
     const { t } = useTranslation();
-    const { copilotDrawerCollapsed } = useAppSelector((state) => ({
+    const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
+        vw: state?.vw,
         copilotDrawerCollapsed:
             state?.copilotDrawerCollapsed !== undefined
                 ? state?.copilotDrawerCollapsed
@@ -66,7 +67,10 @@ const AffixCTAButton = ({ drawerWidth }) => {
                     style={{
                         position: "fixed",
                         top: "15%",
-                        right: copilotDrawerCollapsed ? "0%" : drawerWidth,
+                        right:
+                            copilotDrawerCollapsed || vw?.md
+                                ? "0%"
+                                : drawerWidth,
                         display: "flex",
                         flexDirection: "column-reverse",
                         alignItems: "center",

@@ -1,20 +1,17 @@
-import { Row } from "antd";
 import colors from "../../styles/colors";
 import styled from "styled-components";
-import { queries } from "../../styles/mediaQueries";
 import Drawer from "@mui/material/Drawer";
 
 const CopilotDrawerStyled = styled(Drawer)`
-    width: 350px;
+    width: ${(props) => props.width};
     flex-shrink: 0;
     zindex: 999999;
     max-height: 100vh;
     overflow: hidden;
-    flex: 1 1 350px;
-    background: ${colors.lightGraySecondary};
 
     & .MuiDrawer-paper {
-        width: 350px;
+        width: ${(props) => props.width};
+        height: ${(props) => props.height};
         padding: 32px 16px 16px 16px;
         background: ${colors.lightGraySecondary};
     }

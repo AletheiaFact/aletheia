@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import CopilotConversationCard from "./CopilotConversationCard";
 import CopilotConversationLoading from "./CopilotConversationLoading";
 import { SenderEnum } from "../../types/enums";
@@ -7,6 +7,7 @@ import AletheiaButton from "../Button";
 import { CollaborativeEditorContext } from "../Collaborative/CollaborativeEditorProvider";
 import { RemirrorContentType } from "remirror";
 import { useTranslation } from "next-i18next";
+import CopilotFeedback from "./CopilotFeedback";
 
 const CopilotConversation = ({
     handleSendMessage,
@@ -15,10 +16,14 @@ const CopilotConversation = ({
     editorReport,
 }) => {
     const { t } = useTranslation();
+    const CopilotConversationRef = useRef(null);
     const { setEditorContentObject, setShouldInsertAIReport } = useContext(
         CollaborativeEditorContext
     );
-    const CopilotConversationRef = useRef(null);
+    const [showButtons, setShowButtons] = useState({
+        ADD_REPORT: true,
+        ADD_RATE: false,
+    });
     const showSuggestions = messages.length <= 1;
     const loadingMessage = {
         sender: SenderEnum.Assistant,
@@ -43,6 +48,10 @@ const CopilotConversation = ({
     const handleAddReportClick = () => {
         setShouldInsertAIReport(true);
         setEditorContentObject(editorReport as RemirrorContentType);
+        setShowButtons({
+            ADD_REPORT: false,
+            ADD_RATE: true,
+        });
     };
 
     return (
@@ -56,7 +65,7 @@ const CopilotConversation = ({
             {showSuggestions && (
                 <CopilotConversationSuggestions handleClick={handleClick} />
             )}
-            {editorReport && (
+            {showButtons.ADD_REPORT && editorReport && (
                 <div
                     style={{
                         display: "flex",
@@ -68,6 +77,9 @@ const CopilotConversation = ({
                         {t("copilotChatBot:addFactCheckingReportButton")}
                     </AletheiaButton>
                 </div>
+            )}
+            {showButtons.ADD_RATE && (
+                <CopilotFeedback setShowButtons={setShowButtons} />
             )}
             {isLoading && <CopilotConversationCard message={loadingMessage} />}
         </div>

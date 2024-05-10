@@ -1,12 +1,13 @@
 {
     "chatBotGreetings": "Hello, I am the Aletheia fact-checker assistant.",
     "Assistant": "Assistant",
-    "User": "You",
+    "You": "You",
     "suggestionHeader": "How can I help you ?",
     "suggestion1": "I need help with my report",
     "suggestion2": "List questions to be answered",
     "inputPlaceholder": "Message aletheia assistant",
     "addFactCheckingReportButton": "Add fact-check in my report.",
     "footer": "Aletheia assistant can make mistakes. Consider checking important information.",
-    "agentLoadingThoughts": "Thinking"
+    "agentLoadingThoughts": "Thinking",
+    "rateQuestion": "How would you rate this conversation ?"
 }

@@ -4,10 +4,7 @@ import { useTranslation } from "next-i18next";
 
 const CopilotConversationSuggestions = ({ handleClick }) => {
     const { t } = useTranslation();
-    const suggestions = [
-        { content: t("copilotChatBot:suggestion1") },
-        { content: t("copilotChatBot:suggestion2") },
-    ];
+    const suggestions = [{ content: t("copilotChatBot:suggestion1") }];
 
     return (
         <CopilotConversationSuggestionStyled>

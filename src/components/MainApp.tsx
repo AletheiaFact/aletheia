@@ -15,8 +15,9 @@ import AffixCTAButton from "./AffixButton/AffixCTAButton";
 const drawerWidth = 350;
 
 const MainApp = ({ children }) => {
-    const { enableOverlay, copilotDrawerCollapsed } = useAppSelector(
+    const { vw, enableOverlay, copilotDrawerCollapsed } = useAppSelector(
         (state) => ({
+            vw: state?.vw,
             enableOverlay: state?.search?.overlayVisible,
             copilotDrawerCollapsed:
                 state?.copilotDrawerCollapsed !== undefined
@@ -32,9 +33,10 @@ const MainApp = ({ children }) => {
         <Layout
             style={{
                 minHeight: "100vh",
-                width: copilotDrawerCollapsed
-                    ? "100%"
-                    : `calc(100% - ${drawerWidth}px)`,
+                width:
+                    copilotDrawerCollapsed || vw?.md
+                        ? "100%"
+                        : `calc(100% - ${drawerWidth}px)`,
             }}
         >
             <Sidebar />
