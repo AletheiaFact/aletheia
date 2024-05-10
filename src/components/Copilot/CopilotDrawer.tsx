@@ -9,7 +9,7 @@ import CopilotCollapseDrawerButton from "./CopilotCollapseDrawerButton";
 import { Claim } from "../../types/Claim";
 import { Report } from "../../types/Report";
 import { ChatMessage, ChatResponse, MessageContext } from "../../types/Copilot";
-import { calculatePosition } from "./utils/getPositions";
+import { calculatePosition } from "./utils/calculatePositions";
 import Loading from "../Loading";
 const CopilotConversation = React.lazy(() => import("./CopilotConversation"));
 
