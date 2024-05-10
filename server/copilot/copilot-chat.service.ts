@@ -95,10 +95,14 @@ export class CopilotChatService {
         },
     };
 
-    async agentChat(contextAwareMessagesDto: ContextAwareMessagesDto) {
+    async agentChat(
+        contextAwareMessagesDto: ContextAwareMessagesDto,
+        language
+    ) {
         try {
             const date = new Date(contextAwareMessagesDto.context.claimDate);
             const localizedDate = date.toLocaleDateString();
+            language = language === "pt" ? "Portuguese" : "English";
             const messagesHistory = contextAwareMessagesDto.messages.map(
                 (message) => this.transformMessage(message)
             );
@@ -125,17 +129,19 @@ export class CopilotChatService {
                     - If the user requests assistance with the fact-check, ask the user to confirm the claim that he wants to review is the claim:{claim} stated by {personality}, assure to always compose this specific question using these values {claim} and {personality}.
 
                     2. Analyze the {claim}:
-                    - Based on your analyze assure if the claim is related to Brazilian municipalities or states proceed with the following questions:
-                        - Ask: Which Brazilian city or state was the claim made in?
-                        - Ask: This claim was stated on {date}, do you have any time expecific time period we should search in the public gazettes? (e.g., January 2022 to December 2022)
+                    - Based on your analyze assure if the claim is related to Brazilian municipalities or states proceed with the following questions strictly one at a time:
+                        - Ask the user Which Brazilian city or state was the claim made in?
+                        - Ask: Do you have any time expecific time period we should search in the public gazettes? (e.g., January 2022 to December 2022), or we should search until statement of the claim date:{date}?
 
                     - Based on your analyze if the claim is unrelated to Brazilian municipalities or is a totally different topic proceed with the following question:
-                        - Ask: Do you have any suggested sources that we should consult?
+                        - Ask the user if he has any suggestion of sources that we should consult?
     
                     If any information is ambiguous or missing, request clarification from the user without making assumptions.
                     Always ask one question at a time and in the specified order.
     
-                    Once you have the necessary information, proceed to use the get-fact-checking-report tool.
+                    Once you have the necessary information extracted from the user, proceed to use the get-fact-checking-report tool.
+                    Compose your responses using formal language and you MUST provide you answer in ${language}.
+                    Always pass the {claim} specifically to the tool without translating. 
                     `,
                 ],
                 new MessagesPlaceholder({ variableName: "chat_history" }),
@@ -160,6 +166,7 @@ export class CopilotChatService {
             });
 
             const response = await agentExecutor.invoke({
+                language: language,
                 date: localizedDate,
                 claim: contextAwareMessagesDto.context.sentence,
                 personality: contextAwareMessagesDto.context.personalityName,
