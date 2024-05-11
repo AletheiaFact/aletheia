@@ -17,7 +17,10 @@ const CopilotConversationSuggestionStyled = styled.div`
     .suggestion-card {
         padding: 16px 8px;
         cursor: pointer;
+        border: none;
         border-top: 1px solid #ccc;
+        background: ${colors.white};
+        border-radius: 0 0 10px 10px;
         text-align: center;
         color: ${colors.lightBlueMain};
         font-weight: bold;

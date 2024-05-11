@@ -11,16 +11,17 @@ const CopilotConversationSuggestions = ({ handleClick }) => {
             <p className="suggestions-header">
                 {t("copilotChatBot:suggestionHeader")}
             </p>
-            {suggestions &&
-                suggestions.map(({ content }) => (
-                    <div
-                        key={content}
-                        className="suggestion-card"
-                        onClick={handleClick}
-                    >
-                        {content}
-                    </div>
-                ))}
+            {suggestions
+                ? suggestions.map(({ content }) => (
+                      <button
+                          key={content}
+                          className="suggestion-card"
+                          onClick={handleClick}
+                      >
+                          {content}
+                      </button>
+                  ))
+                : {}}
         </CopilotConversationSuggestionStyled>
     );
 };

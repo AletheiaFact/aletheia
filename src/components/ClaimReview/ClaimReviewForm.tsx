@@ -41,7 +41,6 @@ const ClaimReviewForm = ({
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
     const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
     const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
         (state) => ({

@@ -59,8 +59,11 @@ const CopilotConversation = ({
             ref={CopilotConversationRef}
             style={{ height: "100%", overflow: "overlay" }}
         >
-            {messages.map((message, i) => (
-                <CopilotConversationCard message={message} key={i} />
+            {messages.map((message) => (
+                <CopilotConversationCard
+                    message={message}
+                    key={message.content}
+                />
             ))}
             {showSuggestions && (
                 <CopilotConversationSuggestions handleClick={handleClick} />

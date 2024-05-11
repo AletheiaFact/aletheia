@@ -114,7 +114,6 @@ const CopilotDrawer = ({ claim, sentence }: CopilotDrawerProps) => {
                 width={size.width}
                 height={size.height}
                 aria-hidden={!open}
-                role="button"
             >
                 <Suspense fallback={<Loading />}>
                     <CopilotConversation
