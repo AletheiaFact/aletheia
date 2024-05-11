@@ -9,5 +9,6 @@
     "addFactCheckingReportButton": "Add fact-check in my report.",
     "footer": "Aletheia assistant can make mistakes. Consider checking important information.",
     "agentLoadingThoughts": "Thinking",
-    "rateQuestion": "How would you rate this conversation ?"
+    "rateQuestion": "How would you rate this conversation ?",
+    "copilotWarning": "Assistant visible only in full page."
 }

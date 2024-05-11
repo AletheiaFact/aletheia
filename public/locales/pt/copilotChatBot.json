@@ -9,5 +9,6 @@
     "addFactCheckingReportButton": "Adicionar checagem no meu relatorio.",
     "footer": "Assistente Aletheia pode cometer erros. Considere checar informações importantes.",
     "agentLoadingThoughts": "Pensando",
-    "rateQuestion": "Como você avaliaria esta conversa ?"
+    "rateQuestion": "Como você avaliaria esta conversa ?",
+    "copilotWarning": "Assistente apenas disponivel na página completa."
 }
