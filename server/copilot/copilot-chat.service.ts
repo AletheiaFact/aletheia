@@ -38,6 +38,7 @@ import { EditorParseService } from "../editor-parse/editor-parse.service";
 
 @Injectable()
 export class CopilotChatService {
+    private readonly logger = new Logger("CopilotChatService");
     constructor(
         private automatedFactCheckingService: AutomatedFactCheckingService,
         private editorParseService: EditorParseService
@@ -88,6 +89,8 @@ export class CopilotChatService {
                 );
                 return stream;
             } catch (e) {
+                console.log(e);
+                this.logger.error(e);
                 throw new Error(e);
             }
         },
@@ -111,7 +114,6 @@ export class CopilotChatService {
                 contextAwareMessagesDto.messages[
                     contextAwareMessagesDto.messages.length - 1
                 ];
-            console.log("cahed");
 
             const prompt = ChatPromptTemplate.fromMessages([
                 //TODO: Ensure that the agent only fack-checks the claim from the context
@@ -185,6 +187,7 @@ export class CopilotChatService {
     }
 
     transformMessage(message) {
+        this.logger.log(`${message.sender}: ${message.content}`);
         if (message.sender === SenderEnum.Assistant) {
             return new AIMessage({
                 content: message.content,
@@ -199,7 +202,8 @@ export class CopilotChatService {
     }
 
     private exceptionHandling = (e: unknown) => {
-        Logger.error(e);
+        console.log(e);
+        this.logger.error(e);
         throw new HttpException(
             customMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR,
