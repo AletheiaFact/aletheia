@@ -33,6 +33,7 @@ const ClaimReviewDrawer = () => {
         claim,
         content,
         data_hash,
+        enableCopilotChatBot,
     } = useAppSelector((state) => {
         return {
             reviewDrawerCollapsed:
@@ -44,6 +45,7 @@ const ClaimReviewDrawer = () => {
             claim: state?.selectedClaim,
             content: state?.selectedContent,
             data_hash: state?.selectedDataHash,
+            enableCopilotChatBot: state?.enableCopilotChatBot,
         };
     });
 
@@ -108,30 +110,32 @@ const ClaimReviewDrawer = () => {
                                     </AletheiaButton>
                                 </Col>
                             </Col>
-                            <Col
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    gap: 8,
-                                    alignItems: "center",
-                                }}
-                            >
-                                <ExclamationCircleOutlined
+                            {enableCopilotChatBot && (
+                                <Col
                                     style={{
-                                        fontSize: 16,
-                                        color: colors.blueSecondary,
-                                        paddingBottom: 4,
-                                    }}
-                                />
-                                <span
-                                    style={{
-                                        color: colors.blueSecondary,
-                                        lineHeight: "16px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        gap: 8,
+                                        alignItems: "center",
                                     }}
                                 >
-                                    {t("copilotChatBot:copilotWarning")}
-                                </span>
-                            </Col>
+                                    <ExclamationCircleOutlined
+                                        style={{
+                                            fontSize: 16,
+                                            color: colors.blueSecondary,
+                                            paddingBottom: 4,
+                                        }}
+                                    />
+                                    <span
+                                        style={{
+                                            color: colors.blueSecondary,
+                                            lineHeight: "16px",
+                                        }}
+                                    >
+                                        {t("copilotChatBot:copilotWarning")}
+                                    </span>
+                                </Col>
+                            )}
                         </Row>
                         <ClaimReviewView
                             personality={personality}
