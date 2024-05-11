@@ -143,7 +143,7 @@ export class CopilotChatService {
                     You need to make all possible questions even if the user tries to rush the review.
                     Compose your responses using formal language and you MUST provide you answer in {language}.
                     Always pass the {claim} specifically to the tool without translating.
-                    Only when you have made all questions and followed all steps to extracted information from the user, proceed to use the get-fact-checking-report tool.
+                    Only when you have made all questions and followed all steps to extracted information from the user then proceed to use the get-fact-checking-report tool, Do not proceed until you have asked all the questions.
                     `,
                 ],
                 new MessagesPlaceholder({ variableName: "chat_history" }),
