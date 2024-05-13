@@ -18,6 +18,11 @@ const reducer = (state, action) => {
                 ...state,
                 reviewDrawerCollapsed: action.reviewDrawerCollapsed,
             };
+        case ActionTypes.TOGGLE_COPILOT_DRAWER:
+            return {
+                ...state,
+                copilotDrawerCollapsed: action.copilotDrawerCollapsed,
+            };
         case ActionTypes.SET_TOTAL_RESULTS:
             return {
                 ...state,
@@ -134,10 +139,10 @@ const reducer = (state, action) => {
                 ...state,
                 enableCollaborativeEdit: action.enableCollaborativeEdit,
             };
-        case ActionTypes.SET_AGENT_REVIEW:
+        case ActionTypes.SET_COPILOT_CHAT_BOT:
             return {
                 ...state,
-                enableAgentReview: action.enableAgentReview,
+                enableCopilotChatBot: action.enableCopilotChatBot,
             };
         case ActionTypes.SET_EDITOR_ANNOTATION:
             return {

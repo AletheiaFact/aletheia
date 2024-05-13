@@ -1,6 +1,6 @@
 import Button, { ButtonType } from "../Button";
 import { Col, Row } from "antd";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     reviewingSelector,
     reviewDataSelector,
@@ -20,12 +20,11 @@ import colors from "../../styles/colors";
 import { useAtom } from "jotai";
 import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
-import AgentReviewModal from "../Modal/AgentReviewModal";
+import CopilotDrawer from "../Copilot/CopilotDrawer";
 import { useAppSelector } from "../../store/store";
-import AletheiaCaptcha from "../AletheiaCaptcha";
 
 const ClaimReviewForm = ({
-    claimId,
+    claim,
     personalityId,
     dataHash,
     userIsReviewer,
@@ -36,20 +35,22 @@ const ClaimReviewForm = ({
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
-    const { enableAgentReview } = useAppSelector((state) => ({
-        enableAgentReview: state?.enableAgentReview,
-    }));
     const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
     const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [recaptchaString, setRecaptchaString] = useState<string>("");
-    const hasCaptcha: boolean = !!recaptchaString;
-    const recaptchaRef = useRef(null);
-    const userIsAdmin = role === Roles.Admin || Roles.SuperAdmin;
+    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+    const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
+        (state) => ({
+            enableCopilotChatBot: state?.enableCopilotChatBot,
+            reviewDrawerCollapsed:
+                state?.reviewDrawerCollapsed !== undefined
+                    ? state?.reviewDrawerCollapsed
+                    : true,
+        })
+    );
 
     const showForm =
         isUnassigned ||
@@ -82,52 +83,14 @@ const ClaimReviewForm = ({
                         }}
                     >
                         {isLoggedIn && (
-                            <Row
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                }}
+                            <Button
+                                type={ButtonType.blue}
+                                onClick={toggleFormCollapse}
+                                icon={<PlusOutlined />}
+                                data-cy={"testAddReviewButton"}
                             >
-                                <AletheiaCaptcha
-                                    onChange={setRecaptchaString}
-                                    ref={recaptchaRef}
-                                />
-                                <Col
-                                    style={{
-                                        display: "flex",
-                                        gap: 32,
-                                        flexWrap: "wrap",
-                                        flexDirection: "row",
-                                        justifyContent: "center",
-                                        marginTop: 16,
-                                    }}
-                                >
-                                    {enableAgentReview && (
-                                        <Button
-                                            type={ButtonType.blue}
-                                            icon={<PlusOutlined />}
-                                            data-cy={"testAddAgentReviewButton"}
-                                            disabled={!hasCaptcha}
-                                            onClick={() =>
-                                                setIsModalVisible(true)
-                                            }
-                                        >
-                                            {t(
-                                                "claimReviewForm:addAgentReview"
-                                            )}
-                                        </Button>
-                                    )}
-                                    <Button
-                                        type={ButtonType.blue}
-                                        onClick={toggleFormCollapse}
-                                        icon={<PlusOutlined />}
-                                        data-cy={"testAddReviewButton"}
-                                        disabled={!hasCaptcha}
-                                    >
-                                        {t("claimReviewForm:addReviewButton")}
-                                    </Button>
-                                </Col>
-                            </Row>
+                                {t("claimReviewForm:addReviewButton")}
+                            </Button>
                         )}
                     </Row>
                 )}
@@ -148,19 +111,13 @@ const ClaimReviewForm = ({
                     <DynamicReviewTaskForm
                         data_hash={dataHash}
                         personality={personalityId}
-                        claim={claimId}
+                        claim={claim._id}
                     />
                 )}
+                {showForm && enableCopilotChatBot && reviewDrawerCollapsed && (
+                    <CopilotDrawer claim={claim} sentence={sentenceContent} />
+                )}
             </Col>
-
-            <AgentReviewModal
-                sentence={sentenceContent}
-                visible={isModalVisible}
-                handleCancel={() => setIsModalVisible(false)}
-                claimId={claimId}
-                personalityId={personalityId}
-                dataHash={dataHash}
-            />
         </Row>
     );
 };

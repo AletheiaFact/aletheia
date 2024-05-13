@@ -163,7 +163,7 @@ export class ClaimReviewController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableAgentReview = this.isEnableAgentReview();
+        const enableCopilotChatBot = this.isEnableCopilotChatBot();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
         await this.viewService.getNextServer().render(
@@ -174,7 +174,7 @@ export class ClaimReviewController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
-                enableAgentReview,
+                enableCopilotChatBot,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })
@@ -189,10 +189,10 @@ export class ClaimReviewController {
             : false;
     }
 
-    private isEnableAgentReview() {
+    private isEnableCopilotChatBot() {
         const config = this.configService.get<string>("feature_flag");
 
-        return config ? this.unleash.isEnabled("agent_review") : false;
+        return config ? this.unleash.isEnabled("copilot_chat_bot") : false;
     }
 
     private isEnableEditorAnnotations() {

@@ -36,7 +36,6 @@ describe("Test claim review", () => {
     it("should be able to assign a user", () => {
         cy.login();
         goToClaimReviewPage();
-        cy.checkRecaptcha();
         cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW)
             .should("exist")
             .click();

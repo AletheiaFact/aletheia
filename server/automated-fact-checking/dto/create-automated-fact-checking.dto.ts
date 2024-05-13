@@ -1,6 +1,9 @@
-import { IsString } from "class-validator";
+import { IsObject, IsString } from "class-validator";
 
 export class CreateAutomatedFactCheckingDTO {
     @IsString()
-    sentence: string;
+    claim: string;
+
+    @IsObject()
+    context: object;
 }

@@ -27,7 +27,7 @@ export interface ClaimReviewPageProps {
     claimReview: any;
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
-    enableAgentReview: boolean;
+    enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
     websocketUrl: string;
     nameSpace: string;
@@ -45,13 +45,14 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         claimReview,
         sitekey,
         enableCollaborativeEditor,
-        enableAgentReview,
+        enableCopilotChatBot,
         enableEditorAnnotations,
         hideDescriptions,
     } = props;
 
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
+    dispatch(actions.closeCopilotDrawer());
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: false,
@@ -61,8 +62,8 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         enableCollaborativeEdit: enableCollaborativeEditor,
     });
     dispatch({
-        type: ActionTypes.SET_AGENT_REVIEW,
-        enableAgentReview: enableAgentReview,
+        type: ActionTypes.SET_COPILOT_CHAT_BOT,
+        enableCopilotChatBot: enableCopilotChatBot,
     });
     dispatch({
         type: ActionTypes.SET_EDITOR_ANNOTATION,
@@ -154,7 +155,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
                 JSON.stringify(query.hideDescriptions)
             ),
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
-            enableAgentReview: query?.enableAgentReview,
+            enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
             websocketUrl: query?.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,

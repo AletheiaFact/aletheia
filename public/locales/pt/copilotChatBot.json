@@ -1,0 +1,14 @@
+{
+    "chatBotGreetings": "Olá, eu sou checador de fatos assistente da Aletheia.",
+    "Assistant": "Assistente",
+    "You": "Você",
+    "suggestionHeader": "Como posso te ajudar ?",
+    "suggestion1": "Preciso de ajuda com minha checagem",
+    "suggestion2": "Liste perguntas a serem respondidas",
+    "inputPlaceholder": "Escreva para o assistente da aletheia",
+    "addFactCheckingReportButton": "Adicionar checagem no meu relatorio.",
+    "footer": "Assistente Aletheia pode cometer erros. Considere checar informações importantes.",
+    "agentLoadingThoughts": "Pensando",
+    "rateQuestion": "Como você avaliaria esta conversa ?",
+    "copilotWarning": "Assistente apenas disponivel na página completa."
+}

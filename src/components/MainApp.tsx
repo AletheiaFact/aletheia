@@ -12,22 +12,37 @@ import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
 
+const copilotDrawerWidth = 350;
+
 const MainApp = ({ children }) => {
-    const { enableOverlay } = useAppSelector((state) => {
-        return {
+    const { vw, enableOverlay, copilotDrawerCollapsed } = useAppSelector(
+        (state) => ({
+            vw: state?.vw,
             enableOverlay: state?.search?.overlayVisible,
-        };
-    });
+            copilotDrawerCollapsed:
+                state?.copilotDrawerCollapsed !== undefined
+                    ? state?.copilotDrawerCollapsed
+                    : true,
+        })
+    );
 
     // Setup to provide breakpoints object on redux
     useMediaQueryBreakpoints();
 
     return (
-        <Layout style={{ minHeight: "100vh" }}>
+        <Layout
+            style={{
+                minHeight: "100vh",
+                width:
+                    copilotDrawerCollapsed || vw?.md
+                        ? "100%"
+                        : `calc(100% - ${copilotDrawerWidth}px)`,
+            }}
+        >
             <Sidebar />
             <Layout style={{ background: colors.white }}>
                 <Header />
-                <AffixCTAButton />
+                <AffixCTAButton copilotDrawerWidth={copilotDrawerWidth} />
                 <ContentWrapper>{children}</ContentWrapper>
                 <Footer />
                 {enableOverlay && <OverlaySearchResults />}

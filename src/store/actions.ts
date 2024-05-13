@@ -26,6 +26,14 @@ const actions = {
         type: ActionTypes.TOGGLE_REVIEW_DRAWER,
         reviewDrawerCollapsed: true,
     }),
+    openCopilotDrawer: () => ({
+        type: ActionTypes.TOGGLE_COPILOT_DRAWER,
+        copilotDrawerCollapsed: false,
+    }),
+    closeCopilotDrawer: () => ({
+        type: ActionTypes.TOGGLE_COPILOT_DRAWER,
+        copilotDrawerCollapsed: true,
+    }),
     setSelectPersonality: (personality) => ({
         type: ActionTypes.SET_SELECTED_PERSONALITY,
         selectedPersonality: personality,

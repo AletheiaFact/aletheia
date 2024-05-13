@@ -1,4 +1,7 @@
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import {
+    ArrowLeftOutlined,
+    ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
@@ -16,6 +19,7 @@ import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEdito
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import colors from "../../styles/colors";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -29,6 +33,7 @@ const ClaimReviewDrawer = () => {
         claim,
         content,
         data_hash,
+        enableCopilotChatBot,
     } = useAppSelector((state) => {
         return {
             reviewDrawerCollapsed:
@@ -40,6 +45,7 @@ const ClaimReviewDrawer = () => {
             claim: state?.selectedClaim,
             content: state?.selectedContent,
             data_hash: state?.selectedDataHash,
+            enableCopilotChatBot: state?.enableCopilotChatBot,
         };
     });
 
@@ -72,11 +78,13 @@ const ClaimReviewDrawer = () => {
                         <Row
                             justify="space-between"
                             style={{
-                                width: vw?.sm ? "100%" : "55%",
+                                width: "100%",
                                 padding: "1rem",
+                                display: "flex",
+                                flexDirection: "column",
                             }}
                         >
-                            <Col>
+                            <Col style={{ display: "flex", gap: 32 }}>
                                 <AletheiaButton
                                     icon={<ArrowLeftOutlined />}
                                     onClick={() =>
@@ -87,21 +95,47 @@ const ClaimReviewDrawer = () => {
                                 >
                                     {t("common:back_button")}
                                 </AletheiaButton>
+                                <Col span={vw?.xs ? 8 : 14}>
+                                    <AletheiaButton
+                                        href={getHref()}
+                                        onClick={() => setIsLoading(true)}
+                                        type={ButtonType.gray}
+                                        style={{
+                                            textDecoration: "underline",
+                                            fontWeight: "bold",
+                                        }}
+                                        data-cy="testSeeFullReview"
+                                    >
+                                        {t("claimReviewTask:seeFullPage")}
+                                    </AletheiaButton>
+                                </Col>
                             </Col>
-                            <Col>
-                                <AletheiaButton
-                                    href={getHref()}
-                                    onClick={() => setIsLoading(true)}
-                                    type={ButtonType.gray}
+                            {enableCopilotChatBot && (
+                                <Col
                                     style={{
-                                        textDecoration: "underline",
-                                        fontWeight: "bold",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        gap: 8,
+                                        alignItems: "center",
                                     }}
-                                    data-cy="testSeeFullReview"
                                 >
-                                    {t("claimReviewTask:seeFullPage")}
-                                </AletheiaButton>
-                            </Col>
+                                    <ExclamationCircleOutlined
+                                        style={{
+                                            fontSize: 16,
+                                            color: colors.blueSecondary,
+                                            paddingBottom: 4,
+                                        }}
+                                    />
+                                    <span
+                                        style={{
+                                            color: colors.blueSecondary,
+                                            lineHeight: "16px",
+                                        }}
+                                    >
+                                        {t("copilotChatBot:copilotWarning")}
+                                    </span>
+                                </Col>
+                            )}
                         </Row>
                         <ClaimReviewView
                             personality={personality}
