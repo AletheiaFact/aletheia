@@ -19,7 +19,7 @@ describe("ParserService", () => {
                 href: "https://google.com",
                 props: {
                     field: "report",
-                    textRange: [7, 21],
+                    textRange: [7, 34],
                     targetText: "esse e um link",
                     sup: 1,
                     id: "uniqueId",
@@ -28,7 +28,7 @@ describe("ParserService", () => {
         ],
         questions: ["teste1", "testekakaka ava"],
         summary: "teste4",
-        report: "teste2 esse e um link",
+        report: "teste2 {{uniqueId|esse e um link}}",
         verification: "teste3",
     };
 
