@@ -3,6 +3,8 @@ import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/
 
 const EditorSchemaArray = ["summary", "report", "verification", "questions"];
 
+const regex = /{{[^|]+\|([^}]+)}}/;
+
 const defaultDoc: RemirrorJSON = {
     type: "doc",
     content: [
@@ -54,10 +56,10 @@ export class EditorParser {
             return fragmentText;
         }
 
-        const treatedFragmentText = this.extractTextFromMarkUp(fragmentText);
+        const parsedFragmentText = this.extractTextFromMarkUp(fragmentText);
 
-        if (type === "source" && treatedFragmentText === targetText) {
-            return `<a href='#${treatedFragmentText}' rel='noopener noreferrer nofollow'>${treatedFragmentText}<sup>${sup}</sup></a>`;
+        if (type === "source" && parsedFragmentText === targetText) {
+            return `<a href='#${parsedFragmentText}' rel='noopener noreferrer nofollow'>${parsedFragmentText}<sup>${sup}</sup></a>`;
         }
         return fragmentText;
     }
@@ -317,7 +319,7 @@ export class EditorParser {
         const { textRange, targetText, id } = props;
         const fragmentText = content.slice(...textRange);
 
-        const treatedFragmentText = this.extractTextFromMarkUp(fragmentText);
+        const parsedFragmentText = this.extractTextFromMarkUp(fragmentText);
 
         switch (type) {
             case "text":
@@ -326,9 +328,9 @@ export class EditorParser {
                 }
                 break;
             case "source":
-                if (treatedFragmentText === targetText) {
+                if (parsedFragmentText === targetText) {
                     return this.getContentObjectWithMarks(
-                        treatedFragmentText,
+                        parsedFragmentText,
                         href,
                         id
                     );
@@ -481,7 +483,7 @@ export class EditorParser {
     }
 
     extractTextFromMarkUp(fragmentText) {
-        const match = fragmentText.match(/{{[^|]+\|([^}]+)}}/);
+        const match = fragmentText.match(regex);
         return match ? match[1] : "";
     }
 }
