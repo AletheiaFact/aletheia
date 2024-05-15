@@ -3,7 +3,7 @@ import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/
 
 const EditorSchemaArray = ["summary", "report", "verification", "questions"];
 
-const regex = /{{[^|]+\|([^}]+)}}/;
+const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
 
 const defaultDoc: RemirrorJSON = {
     type: "doc",
@@ -483,7 +483,7 @@ export class EditorParser {
     }
 
     extractTextFromMarkUp(fragmentText) {
-        const match = fragmentText.match(regex);
+        const match = fragmentText.match(MarkupCleanerRegex);
         return match ? match[1] : "";
     }
 }
