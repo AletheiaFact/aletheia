@@ -3,6 +3,8 @@ import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/
 
 const EditorSchemaArray = ["summary", "report", "verification", "questions"];
 
+const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
+
 const defaultDoc: RemirrorJSON = {
     type: "doc",
     content: [
@@ -54,8 +56,10 @@ export class EditorParser {
             return fragmentText;
         }
 
-        if (type === "source" && fragmentText === targetText) {
-            return `<a href='#${fragmentText}' rel='noopener noreferrer nofollow'>${fragmentText}<sup>${sup}</sup></a>`;
+        const parsedFragmentText = this.extractTextFromMarkUp(fragmentText);
+
+        if (type === "source" && parsedFragmentText === targetText) {
+            return `<a href='#${parsedFragmentText}' rel='noopener noreferrer nofollow'>${parsedFragmentText}<sup>${sup}</sup></a>`;
         }
         return fragmentText;
     }
@@ -187,8 +191,15 @@ export class EditorParser {
                         schema.sources.push(
                             ...this.getSourcesFromEditorMarks(text, type, marks)
                         );
+                        const markId = marks.map(
+                            ({ attrs }: ObjectMark) => attrs.id
+                        );
+
+                        // Pushing the text into content with markup based on its source id
+                        sourceContent.push(`{{${markId}|${text}}}`);
+                    } else {
+                        sourceContent.push(text);
                     }
-                    sourceContent.push(text);
                 }
             }
         }
@@ -219,7 +230,8 @@ export class EditorParser {
                             field,
                             textRange: this.findTextRange(
                                 schema[field],
-                                textRange
+                                textRange,
+                                id
                             ),
                             targetText: textRange,
                             sup: index + 1,
@@ -232,13 +244,15 @@ export class EditorParser {
         return newSources.sort((a, b) => a.sup - b.sup);
     }
 
-    findTextRange(content, textTarget) {
+    findTextRange(content, textTarget, sourceId) {
         const contentArray = Array.isArray(content) ? content : [content];
+        const markUpText = `{{${sourceId}|${textTarget}}}`;
 
+        // Looks for the specific text with the right markup and returns the range of the marked-up text
         return contentArray.flatMap((c) => {
-            const start = c.indexOf(textTarget);
+            const start = c.indexOf(markUpText);
             if (start !== -1) {
-                const end = start + textTarget.length;
+                const end = start + markUpText.length;
                 return [start, end];
             }
             return [];
@@ -305,6 +319,8 @@ export class EditorParser {
         const { textRange, targetText, id } = props;
         const fragmentText = content.slice(...textRange);
 
+        const parsedFragmentText = this.extractTextFromMarkUp(fragmentText);
+
         switch (type) {
             case "text":
                 if (fragmentText) {
@@ -312,9 +328,9 @@ export class EditorParser {
                 }
                 break;
             case "source":
-                if (fragmentText === targetText) {
+                if (parsedFragmentText === targetText) {
                     return this.getContentObjectWithMarks(
-                        fragmentText,
+                        parsedFragmentText,
                         href,
                         id
                     );
@@ -464,5 +480,10 @@ export class EditorParser {
                 this.getParagraphFragments(rawSourcesRanges, sourcesRanges, c),
             ],
         }));
+    }
+
+    extractTextFromMarkUp(fragmentText) {
+        const match = fragmentText.match(MarkupCleanerRegex);
+        return match ? match[1] : "";
     }
 }
