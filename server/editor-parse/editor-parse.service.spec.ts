@@ -154,5 +154,20 @@ describe("ParserService", () => {
             );
             expect(schemaHtmlResult).toMatchObject(schemaHtml);
         });
+
+        it("Source from Schema to HTML is parsed in the right position", async () => {
+            const schemaHtmlResult = await editorParseService.schema2html(
+                schemaContent
+            );
+            expect(schemaHtmlResult.report).toEqual(schemaHtml.report);
+        });
+
+        it("Editor content is parsed correctly with markUp source in the right position", async () => {
+            const schemaResult = await editorParseService.editor2schema(
+                editorContent
+            );
+
+            expect(schemaResult.report).toEqual(schemaContent.report);
+        });
     });
 });
