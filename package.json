@@ -1,6 +1,6 @@
 {
   "name": "aletheia",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Crowd-sourced fact-checking platform for the website AletheiaFact.org.",
   "license": "GPL-3.0",
   "main": "./dist/server/main.js",
