@@ -5,6 +5,7 @@ import { Claim } from "../../claim/schemas/claim.schema";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";
 import type { ReportDocument } from "../../report/schemas/report.schema";
 import { User } from "../../users/schemas/user.schema";
+import { ReportModelEnum } from "../../types/enums";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
@@ -40,6 +41,17 @@ export class ClaimReview {
         ref: "Report",
     })
     report: ReportDocument;
+
+    @Prop({
+        required: true,
+        validate: {
+            validator: (v) => {
+                return Object.values(ReportModelEnum).includes(v);
+            },
+        },
+        message: (tag) => `${tag} is not a valid report type.`,
+    })
+    reportModel: ReportModelEnum;
 
     @Prop({ required: true })
     date: Date;

@@ -248,7 +248,8 @@ export class ClaimReviewTaskService {
                 ...claimReviewData,
                 report,
             },
-            data_hash
+            data_hash,
+            reportModel
         );
     }
 

@@ -186,7 +186,7 @@ export class ClaimReviewService {
      * @param claimReview ClaimReviewBody received of the client.
      * @returns Return a new claim review object.
      */
-    async create(claimReview, data_hash) {
+    async create(claimReview, data_hash, reportModel) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const review = await this.getReviewByDataHash(data_hash);
 
@@ -204,6 +204,7 @@ export class ClaimReviewService {
             });
             claimReview.report = Types.ObjectId(claimReview.report._id);
             claimReview.data_hash = data_hash;
+            claimReview.reportModel = reportModel;
             claimReview.date = new Date();
             const newClaimReview = new this.ClaimReviewModel(claimReview);
             newClaimReview.isPublished = true;
