@@ -110,6 +110,7 @@ export class ClaimReviewController {
                         data_hash,
                         claimReviewTaskBody,
                         claimReviewTaskBody.nameSpace,
+                        claimReviewTaskBody.reportModel,
                         history
                     );
                 }

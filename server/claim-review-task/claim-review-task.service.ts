@@ -323,9 +323,9 @@ export class ClaimReviewTaskService {
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.data_hash,
-                claimReviewTask.reportModel,
                 claimReviewTaskBody,
-                claimReviewTaskBody.nameSpace
+                claimReviewTaskBody.nameSpace,
+                claimReviewTask.reportModel
             );
         } else {
             const newClaimReviewTask = new this.ClaimReviewTaskModel(
@@ -340,9 +340,9 @@ export class ClaimReviewTaskService {
 
     async update(
         data_hash: string,
-        reportModel: ReportModelEnum,
         { machine }: UpdateClaimReviewTaskDTO,
         nameSpace: string,
+        reportModel: string,
         history: boolean = true
     ) {
         const loggedInUser = this.req.user;
