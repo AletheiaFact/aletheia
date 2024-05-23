@@ -5,7 +5,7 @@ import ClaimReviewApi from "../../api/claimReviewApi";
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
 import Loading from "../../components/Loading";
 import { initialContext } from "./context";
-import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
+import { ReportModelEnum, ReviewTaskEvents, ReviewTaskStates } from "./enums";
 import { createNewMachineService } from "./reviewTaskMachine";
 import getNextForm from "./getNextForm";
 import getNextEvents from "./getNextEvent";
@@ -17,6 +17,8 @@ interface ContextType {
     setFormAndEvents?: (param: string, isSameLabel?: boolean) => void;
     form?: FormField[];
     events?: ReviewTaskEvents[];
+    reportModel?: string;
+    setCurrentReportModel?: (reportModel: string) => void;
 }
 
 export const ReviewTaskMachineContext = createContext<ContextType>({
@@ -27,6 +29,7 @@ interface ReviewTaskMachineProviderProps {
     data_hash: string;
     children: React.ReactNode;
     baseMachine?: any;
+    reportModel: any;
     publishedReview?: { review: any };
 }
 
@@ -46,6 +49,9 @@ export const ReviewTaskMachineProvider = (
     const [form, setForm] = useState(null);
     const [events, setEvents] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [reportModel, setReportModel] = useState<ReportModelEnum | null>(
+        props.reportModel
+    );
     const { t } = useTranslation();
     const preloadedOptions =
         globalMachineService?.state?.context?.preloadedOptions;
@@ -115,7 +121,11 @@ export const ReviewTaskMachineProvider = (
             getNextForm(param, isSameLabel)
         );
         setForm(nextForm);
-        setEvents(getNextEvents(param, isSameLabel));
+        setEvents(getNextEvents(param, isSameLabel, reportModel));
+    };
+
+    const setCurrentReportModel = (reportModel: string): void => {
+        setReportModel(reportModel as ReportModelEnum);
     };
 
     return (
@@ -124,6 +134,8 @@ export const ReviewTaskMachineProvider = (
                 machineService: globalMachineService,
                 publishedReview: publishedClaimReview,
                 setFormAndEvents,
+                reportModel,
+                setCurrentReportModel,
                 form,
                 events,
             }}

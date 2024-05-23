@@ -42,6 +42,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         watch,
     } = useForm();
     const dispatch = useDispatch();
+    const { reportModel } = useContext(ReviewTaskMachineContext);
     const { machineService, events, form, setFormAndEvents } = useContext(
         ReviewTaskMachineContext
     );
@@ -105,6 +106,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
         const payload = {
             data_hash,
+            reportModel,
             reviewData: {
                 ...formData,
                 reviewComments:

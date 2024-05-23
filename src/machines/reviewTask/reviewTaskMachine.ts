@@ -1,6 +1,6 @@
 import api from "../../api/ClaimReviewTaskApi";
 import { createMachine, interpret } from "xstate";
-import { ReviewTaskMachineContext } from "./context";
+import { ReviewTaskMachineContextType } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
 import { saveContext } from "./actions";
@@ -42,7 +42,7 @@ const isDifferentLabel = (context, event) =>
 
 export const createNewMachine = ({ value, context }) => {
     return createMachine<
-        ReviewTaskMachineContext,
+        ReviewTaskMachineContextType,
         ReviewTaskMachineEvents,
         ReviewTaskMachineState
     >({
@@ -195,6 +195,7 @@ export const createNewMachine = ({ value, context }) => {
 export const transitionHandler = (state) => {
     const {
         data_hash,
+        reportModel,
         t,
         recaptchaString,
         setFormAndEvents,
@@ -220,6 +221,7 @@ export const transitionHandler = (state) => {
         api.createClaimReviewTask(
             {
                 data_hash,
+                reportModel,
                 machine: {
                     context: {
                         reviewData: state.context.reviewData,

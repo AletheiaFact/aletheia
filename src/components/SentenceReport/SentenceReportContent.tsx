@@ -42,18 +42,22 @@ const SentenceReportContent = ({
                     <Divider />
                 </Col>
             )}
-            <Col span={24}>
-                <Paragraph className="title">
-                    {t("claimReview:summarySectionTitle")}
-                </Paragraph>
-                <Paragraph className="paragraph">
-                    <p
-                        dangerouslySetInnerHTML={{ __html: sanitizer(summary) }}
-                    />
-                </Paragraph>
-                <Divider />
-            </Col>
-            {questions.length > 0 && (
+            {summary && (
+                <Col span={24}>
+                    <Paragraph className="title">
+                        {t("claimReview:summarySectionTitle")}
+                    </Paragraph>
+                    <Paragraph className="paragraph">
+                        <p
+                            dangerouslySetInnerHTML={{
+                                __html: sanitizer(summary),
+                            }}
+                        />
+                    </Paragraph>
+                    <Divider />
+                </Col>
+            )}
+            {questions && questions.length > 0 && (
                 <Col span={24}>
                     <Paragraph className="title">
                         {t("claimReview:questionsSectionTitle")}

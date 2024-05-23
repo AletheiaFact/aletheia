@@ -19,7 +19,7 @@ import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { Roles } from "../auth/ability/ability.factory";
 import { ImageService } from "../claim/types/image/image.service";
-import { ContentModelEnum } from "../types/enums";
+import { ContentModelEnum, ReportModelEnum } from "../types/enums";
 import lookupUsers from "../mongo-pipelines/lookupUsers";
 import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";
@@ -233,11 +233,12 @@ export class ClaimReviewTaskService {
         this.stateEventService.createStateEvent(stateEvent);
     }
 
-    async _createReportAndClaimReview(data_hash, machine) {
+    async _createReportAndClaimReview(data_hash, machine, reportModel) {
         const claimReviewData = machine.context.claimReview;
 
         const newReport = Object.assign(machine.context.reviewData, {
             data_hash,
+            reportModel,
         });
 
         const report = await this.reportService.create(newReport);
@@ -321,6 +322,7 @@ export class ClaimReviewTaskService {
         if (claimReviewTask) {
             return this.update(
                 claimReviewTaskBody.data_hash,
+                claimReviewTask.reportModel,
                 claimReviewTaskBody,
                 claimReviewTaskBody.nameSpace
             );
@@ -337,6 +339,7 @@ export class ClaimReviewTaskService {
 
     async update(
         data_hash: string,
+        reportModel: ReportModelEnum,
         { machine }: UpdateClaimReviewTaskDTO,
         nameSpace: string,
         history: boolean = true
@@ -370,7 +373,8 @@ export class ClaimReviewTaskService {
             }
             this._createReportAndClaimReview(
                 data_hash,
-                newClaimReviewTask.machine
+                newClaimReviewTask.machine,
+                reportModel
             );
         }
 
@@ -547,8 +551,8 @@ export class ClaimReviewTaskService {
         }
     }
 
-    getEditorContentObject(schema) {
-        return this.editorParseService.schema2editor(schema);
+    getEditorContentObject(schema, reportModel) {
+        return this.editorParseService.schema2editor(schema, reportModel);
     }
 
     async addComment(data_hash, comment) {

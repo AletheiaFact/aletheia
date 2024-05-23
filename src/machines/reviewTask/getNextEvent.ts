@@ -1,9 +1,14 @@
 import {
     ReviewTaskEvents as Events,
+    ReportModelEnum,
     ReviewTaskStates as States,
 } from "./enums";
 
-const getNextEvents = (param: Events | States, isSameLabel = false) => {
+const getNextEvents = (
+    param: Events | States,
+    isSameLabel = false,
+    reportModel: ReportModelEnum
+) => {
     const defaultEvents = [Events.goback, Events.draft];
     const eventsMap = {
         [States.unassigned]: [Events.assignUser],
@@ -12,12 +17,16 @@ const getNextEvents = (param: Events | States, isSameLabel = false) => {
 
         [Events.finishReport]: [
             Events.goback,
-            Events.selectedCrossChecking,
+            reportModel === ReportModelEnum.FactChecking
+                ? Events.selectedCrossChecking
+                : [],
             Events.selectedReview,
         ],
         [States.reported]: [
             Events.goback,
-            Events.selectedCrossChecking,
+            reportModel === ReportModelEnum.FactChecking
+                ? Events.selectedCrossChecking
+                : [],
             Events.selectedReview,
         ],
         [Events.submitCrossChecking]: [

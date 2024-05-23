@@ -77,48 +77,47 @@ const Editor = ({
         [command, state]
     );
 
+    const actions = [
+        {
+            onClick: () => handleInsertNode(getQuestionContentHtml),
+            disabled: editable,
+            "data-cy": "testClaimReviewquestionsAdd",
+            icon: <QuestionMarkIcon className="toolbar-item-icon" />,
+        },
+        {
+            onClick: () => handleInsertNode(getSummaryContentHtml),
+            disabled: editable || summaryDisabled,
+            "data-cy": "testClaimReviewsummarizeAdd",
+            icon: <SummarizeIcon className="toolbar-item-icon" />,
+        },
+        {
+            onClick: () => handleInsertNode(getReportContentHtml),
+            disabled: editable || reportDisabled,
+            "data-cy": "testClaimReviewreportAdd",
+            icon: <ReportProblemIcon className="toolbar-item-icon" />,
+        },
+        {
+            onClick: () => handleInsertNode(getVerificationContentHtml),
+            disabled: editable || verificationDisabled,
+            "data-cy": "testClaimReviewverificationAdd",
+            icon: <FactCheckIcon className="toolbar-item-icon" />,
+        },
+    ];
+
     return (
         <EditorStyle>
             <div className="toolbar">
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getQuestionContentHtml)}
-                    disabled={editable}
-                    style={{ outline: "none", border: "none" }}
-                    data-cy="testClaimReviewquestionsAdd"
-                >
-                    <QuestionMarkIcon className="toolbar-item-icon" />
-                </Button>
-
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getSummaryContentHtml)}
-                    disabled={editable || summaryDisabled}
-                    style={{ outline: "none", border: "none" }}
-                    data-cy="testClaimReviewsummarizeAdd"
-                >
-                    <SummarizeIcon className="toolbar-item-icon" />
-                </Button>
-
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getReportContentHtml)}
-                    disabled={editable || reportDisabled}
-                    style={{ outline: "none", border: "none" }}
-                    data-cy="testClaimReviewreportAdd"
-                >
-                    <ReportProblemIcon className="toolbar-item-icon" />
-                </Button>
-
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getVerificationContentHtml)}
-                    disabled={editable || verificationDisabled}
-                    style={{ outline: "none", border: "none" }}
-                    data-cy="testClaimReviewverificationAdd"
-                >
-                    <FactCheckIcon className="toolbar-item-icon" />
-                </Button>
+                {actions &&
+                    actions.map(({ icon, ...props }) => (
+                        <Button
+                            key={props["data-cy"]}
+                            className="toolbar-item"
+                            style={{ outline: "none", border: "none" }}
+                            {...props}
+                        >
+                            {icon}
+                        </Button>
+                    ))}
             </div>
         </EditorStyle>
     );

@@ -4,4 +4,9 @@ enum ContentModelEnum {
     Debate = "Debate",
 }
 
-export { ContentModelEnum };
+enum ReportModelEnum {
+    FactChecking = "Fact-checking",
+    InformativeNews = "Informative News",
+}
+
+export { ContentModelEnum, ReportModelEnum };

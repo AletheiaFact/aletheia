@@ -122,6 +122,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             <ReviewTaskMachineProvider
                 data_hash={content.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
+                reportModel={props?.claimReviewTask?.reportModel}
                 publishedReview={{ review: claimReview }}
             >
                 <CollaborativeEditorProvider data_hash={content.data_hash}>

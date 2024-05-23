@@ -1,30 +1,48 @@
 import { ObjectMark, RemirrorJSON } from "remirror";
 import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/dto/create-claim-review-task.dto";
+import { ReportModelEnum } from "../server/types/enums";
 
-const EditorSchemaArray = ["summary", "report", "verification", "questions"];
+type SchemaType = {
+    summary?: string;
+    verification?: string;
+    report: string;
+    sources: any[];
+    questions?: any[];
+};
+
+const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) =>
+    reportModel === ReportModelEnum.FactChecking
+        ? ["summary", "report", "verification", "questions"]
+        : ["report"];
 
 const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
 
-const defaultDoc: RemirrorJSON = {
-    type: "doc",
-    content: [
-        {
-            type: "summary",
-            content: [{ type: "paragraph" }],
-        },
-        {
-            type: "questions",
-            content: [{ type: "paragraph" }],
-        },
-        {
-            type: "report",
-            content: [{ type: "paragraph" }],
-        },
-        {
-            type: "verification",
-            content: [{ type: "paragraph" }],
-        },
-    ],
+const createParagraphBlock = (
+    type: string
+): { type: string; content: [{ type: "paragraph" }] } => ({
+    type: type,
+    content: [{ type: "paragraph" }],
+});
+
+const getDefaultDoc = (reportModel: string): RemirrorJSON => {
+    const baseContent = [
+        createParagraphBlock("summary"),
+        createParagraphBlock("questions"),
+        createParagraphBlock("report"),
+        createParagraphBlock("verification"),
+    ];
+
+    if (reportModel === ReportModelEnum.InformativeNews) {
+        return {
+            type: "doc",
+            content: [createParagraphBlock("report")],
+        };
+    }
+
+    return {
+        type: "doc",
+        content: baseContent,
+    };
 };
 
 export class EditorParser {
@@ -118,7 +136,7 @@ export class EditorParser {
         const hasSources = this.hasSources(newSchema?.sources);
 
         for (const key in newSchema) {
-            if (EditorSchemaArray.includes(key)) {
+            if (getEditorSchemaArray().includes(key)) {
                 const content = newSchema[key];
                 if (!hasSources) {
                     newSchema[key] =
@@ -146,16 +164,13 @@ export class EditorParser {
     }
 
     editor2schema(data: RemirrorJSON): ReviewTaskMachineContextReviewData {
-        const schema = {
-            summary: "",
-            verification: "",
+        const schema: SchemaType = {
             report: "",
             sources: [],
-            questions: [],
         };
         const questions = [];
         for (const cardContent of data?.content) {
-            if (EditorSchemaArray?.includes(cardContent?.type)) {
+            if (getEditorSchemaArray().includes(cardContent?.type)) {
                 if (cardContent?.type === "questions") {
                     for (const { content } of cardContent.content) {
                         if (content) {
@@ -173,7 +188,13 @@ export class EditorParser {
             }
         }
 
-        schema.questions = questions;
+        /**
+         * Needed to do this conditional because the form validation when the reportModel
+         * is equal to Informative news requires the questions field.
+         */
+        if (schema.summary || schema.verification) {
+            schema.questions = questions;
+        }
         schema.sources = this.replaceSourceContentToTextRange(schema);
 
         return schema;
@@ -260,10 +281,11 @@ export class EditorParser {
     }
 
     async schema2editor(
-        schema: ReviewTaskMachineContextReviewData
+        schema: ReviewTaskMachineContextReviewData,
+        reportModel = ReportModelEnum.FactChecking
     ): Promise<RemirrorJSON> {
         if (!schema) {
-            return defaultDoc;
+            return getDefaultDoc(reportModel);
         }
 
         const doc: RemirrorJSON = {
@@ -271,7 +293,7 @@ export class EditorParser {
             content: [],
         };
         for (const key of Object.keys(schema).filter((key) =>
-            EditorSchemaArray.includes(key)
+            getEditorSchemaArray(reportModel).includes(key)
         )) {
             const content = schema[key];
             if (!this.hasSources(schema?.sources)) {
