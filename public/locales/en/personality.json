@@ -24,5 +24,7 @@
     "unhideSuccess": "Personality unhide succesfully",
     "unhideError": "Error while unhide personality",
     "hiddenPersonalityAvatarTooltip": "Hidden personality",
-    "personalityCardWikidataTooltip": "Information about this personality is taken from Wikidata"
+    "personalityCardWikidataTooltip": "Information about this personality is taken from Wikidata",
+    "claimListEmptyFallBackPersonality": "The personality does not have any claims created",
+    "claimListEmptyFallBack": "Create new claim"
 }
