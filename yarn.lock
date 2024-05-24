@@ -11593,7 +11593,7 @@ __metadata:
     ai: ^3.1.1
     antd: ^4.18.5
     aws-sdk: ^2.1154.0
-    axios: ^1.5.0
+    axios: ^1.6.0
     babel-eslint: ^10.1.0
     babel-jest: ^29.7.0
     babel-loader: ^8.2.5
@@ -12304,7 +12304,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.4.0, axios@npm:^1.5.0":
+"axios@npm:^1.4.0":
   version: 1.5.1
   resolution: "axios@npm:1.5.1"
   dependencies:
@@ -12312,6 +12312,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: 4444f06601f4ede154183767863d2b8e472b4a6bfc5253597ed6d21899887e1fd0ee2b3de792ac4f8459fe2e359d2aa07c216e45fd8b9e4e0688a6ebf48a5a8d
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.6.0":
+  version: 1.7.2
+  resolution: "axios@npm:1.7.2"
+  dependencies:
+    follow-redirects: ^1.15.6
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: e457e2b0ab748504621f6fa6609074ac08c824bf0881592209dfa15098ece7e88495300e02cd22ba50b3468fd712fe687e629dcb03d6a3f6a51989727405aedf
   languageName: node
   linkType: hard
 
