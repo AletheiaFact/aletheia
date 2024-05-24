@@ -1,8 +1,7 @@
-import { Col, Divider, Row, Typography } from "antd";
+import { Col, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { CSSProperties } from "react";
 
-import colors from "../../styles/colors";
 import AletheiaAvatar from "../AletheiaAvatar";
 import ReviewStats from "../Metrics/ReviewStats";
 import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
@@ -14,8 +13,6 @@ import PersonalityCardButton from "./PersonalityCardButton";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { PersonalityInfo } from "./PersonalityInfo";
-
-const { Title, Paragraph } = Typography;
 
 interface PersonalityCardProps {
     personality: any;
@@ -78,7 +75,7 @@ const PersonalityCard = ({
     const personalityIsSelected = personalities.some(
         (item) => item._id === personality._id
     );
-
+    const hasReview = personality.stats.reviews.lenght > 0;
     const { t } = useTranslation();
     const componentStyle = {
         titleSpan: !fullWidth ? 14 : 24,
@@ -186,7 +183,7 @@ const PersonalityCard = ({
                         )}
                     </Row>
                 </Col>
-                {enableStats && (
+                {enableStats && hasReview && (
                     <Col
                         xs={24}
                         sm={24}
