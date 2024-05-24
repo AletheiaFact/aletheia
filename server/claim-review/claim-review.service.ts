@@ -239,7 +239,8 @@ export class ClaimReviewService {
 
         if (claimReview?.report) {
             claimReview.report = await this.getHtmlFromSchema(
-                claimReview?.report
+                claimReview?.report,
+                claimReview?.reportModel
             );
         }
 
@@ -364,8 +365,11 @@ export class ClaimReviewService {
                 count: count as number,
             }));
     }
-    getHtmlFromSchema(schema) {
-        const htmlContent = this.editorParseService.schema2html(schema);
+    getHtmlFromSchema(schema, reportModel) {
+        const htmlContent = this.editorParseService.schema2html(
+            schema,
+            reportModel
+        );
         return {
             ...schema,
             ...htmlContent,

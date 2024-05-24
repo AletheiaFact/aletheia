@@ -29,7 +29,7 @@ interface ReviewTaskMachineProviderProps {
     data_hash: string;
     children: React.ReactNode;
     baseMachine?: any;
-    reportModel: any;
+    baseReportModel: any;
     publishedReview?: { review: any };
 }
 
@@ -50,7 +50,7 @@ export const ReviewTaskMachineProvider = (
     const [events, setEvents] = useState(null);
     const [loading, setLoading] = useState(false);
     const [reportModel, setReportModel] = useState<ReportModelEnum | null>(
-        props.reportModel
+        props.baseReportModel
     );
     const { t } = useTranslation();
     const preloadedOptions =
@@ -59,11 +59,11 @@ export const ReviewTaskMachineProvider = (
     useEffect(() => {
         const fetchReviewTask = (data_hash) => {
             return props.baseMachine
-                ? Promise.resolve(props.baseMachine)
+                ? Promise.resolve({ machine: props.baseMachine, reportModel })
                 : ClaimReviewTaskApi.getMachineByDataHash(data_hash);
         };
         setLoading(true);
-        fetchReviewTask(props.data_hash).then((machine) => {
+        fetchReviewTask(props.data_hash).then(({ machine, reportModel }) => {
             // The states assigned and reported have compound states
             // and when we going to save we get "assigned: undraft" as a value.
             // The machine doesn't recognize when we try to persist state the initial value
@@ -79,6 +79,7 @@ export const ReviewTaskMachineProvider = (
                 value: ReviewTaskStates.unassigned,
             };
 
+            setReportModel(reportModel);
             setGlobalMachineService(createNewMachineService(newMachine));
             setLoading(false);
         });
@@ -89,6 +90,12 @@ export const ReviewTaskMachineProvider = (
                 }
             );
         } else setPublishedClaimReview(props.publishedReview);
+
+        return () => {
+            setGlobalMachineService(null);
+            setReportModel(null);
+            setLoading(false);
+        };
     }, [props.baseMachine, props.data_hash, props.publishedReview, t]);
 
     const setPreloadAssignedUsers = (form) => {

@@ -36,7 +36,7 @@ const getMachineByDataHash = (params) => {
     return request
         .get(`/hash/${params}`)
         .then((response) => {
-            return response.data.machine;
+            return response.data;
         })
         .catch(() => {
             // TODO: Track with sentry

@@ -59,6 +59,11 @@ export const CollaborativeEditorProvider = (
                 setIsFetchingEditor(false);
             });
         }
+
+        return () => {
+            setEditorContentObject(null);
+            setIsFetchingEditor(false);
+        };
     }, [props.data_hash, reportModel]);
 
     const websocketProvider = useMemo(() => {

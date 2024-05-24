@@ -127,7 +127,8 @@ export class EditorParser {
     }
 
     schema2html(
-        schema: ReviewTaskMachineContextReviewData
+        schema: ReviewTaskMachineContextReviewData,
+        reportModel = ReportModelEnum.FactChecking
     ): ReviewTaskMachineContextReviewData {
         const newSchema = {
             ...schema,
@@ -136,7 +137,7 @@ export class EditorParser {
         const hasSources = this.hasSources(newSchema?.sources);
 
         for (const key in newSchema) {
-            if (getEditorSchemaArray().includes(key)) {
+            if (getEditorSchemaArray(reportModel).includes(key)) {
                 const content = newSchema[key];
                 if (!hasSources) {
                     newSchema[key] =

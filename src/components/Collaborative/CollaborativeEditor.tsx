@@ -4,7 +4,7 @@ import {
     PlaceholderExtension,
     YjsExtension,
 } from "remirror/extensions";
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import { Remirror, useRemirror } from "@remirror/react";
 
 import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
@@ -91,7 +91,13 @@ const CollaborativeEditor = ({
             : (editorContentObject as RemirrorContentType),
     });
 
-    const editorContentNode = manager.schema.nodeFromJSON(editorContentObject);
+    const editorContentNode = useMemo(() => {
+        if (!editorContentObject) {
+            return null;
+        }
+
+        return manager?.schema?.nodeFromJSON(editorContentObject);
+    }, [editorContentObject]);
 
     const handleChange = useCallback(
         ({ state }) => {

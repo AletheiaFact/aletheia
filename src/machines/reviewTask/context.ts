@@ -1,6 +1,6 @@
 import { ClaimReview, ReviewData } from "./events";
 
-export type ReviewTaskMachineContext = {
+export type ReviewTaskMachineContextType = {
     reviewData: ReviewData;
     claimReview: ClaimReview;
 };
@@ -9,7 +9,7 @@ const buildState = ({
     reviewData,
 }: {
     reviewData?: any;
-}): ReviewTaskMachineContext => {
+}): ReviewTaskMachineContextType => {
     return {
         reviewData: reviewData || {
             usersId: [],
@@ -35,4 +35,4 @@ const buildState = ({
     };
 };
 
-export const initialContext: ReviewTaskMachineContext = buildState({});
+export const initialContext: ReviewTaskMachineContextType = buildState({});
