@@ -1,27 +1,37 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { NotificationService } from "./notifications.service";
 import { ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
+import { SummarizationService } from "../summarization/summarization.service";
+import {
+    AdminUserAbility,
+    CheckAbilities,
+} from "../auth/ability/ability.decorator";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 
 @Controller()
 export class NotificationController {
     constructor(
         private readonly notificationService: NotificationService,
+        private summarizationService: SummarizationService,
         private configService: ConfigService
     ) {}
 
-    @ApiTags("notifications")
-    @Post("api/emails")
-    sendEmail(
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
+    @Post("api/topic-subscription/:key/send")
+    async sendDailyReport(
         @Body()
         body: {
-            subscriberId: string;
-            email: string;
+            key: string;
         }
     ) {
-        return this.notificationService.sendEmail(
-            body.subscriberId,
-            body.email
+        const dailyReport =
+            await this.summarizationService.generateDailyReport();
+
+        return this.notificationService.sendDailyReviewsEmail(
+            body.key,
+            dailyReport
         );
     }
 
@@ -43,14 +53,6 @@ export class NotificationController {
         @Body("subscriberId") subscriberId: string
     ) {
         return this.notificationService.addTopicSubscriber(key, subscriberId);
-    }
-
-    @Post("api/topic-subscription/:key/send")
-    sendTopicNotification(
-        @Param("key") key: string,
-        @Body("description") description: string
-    ) {
-        return this.notificationService.sendTopicNotification(key, description);
     }
 
     @Get("api/notification/token/:subscriberId")

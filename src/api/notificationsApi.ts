@@ -16,9 +16,9 @@ const sendNotification = (subscriberId, payload) => {
         });
 };
 
-const sendEmail = (subscriberId, email, description) => {
+const sendEmail = (key) => {
     return axios
-        .post("/api/emails", { subscriberId, email, description })
+        .post(`/api/topics/${key}/send`)
         .then((response) => {
             return response.data;
         })
