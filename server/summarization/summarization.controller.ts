@@ -10,9 +10,9 @@ import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 export class SummarizationController {
     constructor(private summarizationService: SummarizationService) {}
 
+    @Post("api/daily-report")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    @Post("api/daily-report")
     async createDailyReport() {
         const dailyReport =
             await this.summarizationService.generateDailyReport();

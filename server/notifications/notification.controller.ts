@@ -17,9 +17,9 @@ export class NotificationController {
         private configService: ConfigService
     ) {}
 
+    @Post("api/topic-subscription/:key/send")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    @Post("api/topic-subscription/:key/send")
     async sendDailyReport(
         @Body()
         body: {
