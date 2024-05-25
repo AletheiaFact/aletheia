@@ -196,7 +196,9 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Post("api/claim/generative-information")
-    async createClaimGenerativeEditor(@Body() createClaimDTO: CreateClaimDTO) {
+    async createClaimGenerativeInformation(
+        @Body() createClaimDTO: CreateClaimDTO
+    ) {
         try {
             const claim = await this._createClaim(createClaimDTO);
 
