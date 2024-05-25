@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { SummarizationChainService } from "./summarization-chain.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { WinstonLogger } from "winstonLogger";
+import { WinstonLogger } from "../winstonLogger";
 
 @Injectable()
 export class SummarizationService {

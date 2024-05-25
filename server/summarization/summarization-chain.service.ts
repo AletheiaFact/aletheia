@@ -4,7 +4,7 @@ import { loadSummarizationChain, StuffDocumentsChain } from "langchain/chains";
 import { ChatOpenAI } from "@langchain/openai";
 import { openAI } from "../copilot/openAI.constants";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { WinstonLogger } from "winstonLogger";
+import { WinstonLogger } from "../winstonLogger";
 
 @Injectable()
 export class SummarizationChainService {
