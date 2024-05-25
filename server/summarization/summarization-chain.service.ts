@@ -4,9 +4,11 @@ import { loadSummarizationChain, StuffDocumentsChain } from "langchain/chains";
 import { ChatOpenAI } from "@langchain/openai";
 import { openAI } from "../copilot/openAI.constants";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { WinstonLogger } from "winstonLogger";
 
 @Injectable()
 export class SummarizationChainService {
+    private logger: WinstonLogger;
     constructor() {}
 
     createBulletPointsChain(): StuffDocumentsChain {
@@ -41,7 +43,7 @@ export class SummarizationChainService {
             });
             return await textSplitter.createDocuments([content]);
         } catch (error) {
-            console.error("Error creating documents from text:", error);
+            this.logger.error("Error creating documents from text:", error);
             throw new Error("Failed to create documents from text");
         }
     }
@@ -59,7 +61,7 @@ export class SummarizationChainService {
 
             return results.text as string;
         } catch (error) {
-            console.error("Error generating answer:", error);
+            this.logger.error("Error generating answer:", error);
             throw new Error("Failed to generate answer");
         }
     }

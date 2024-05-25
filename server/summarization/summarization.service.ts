@@ -1,9 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { SummarizationChainService } from "./summarization-chain.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { WinstonLogger } from "winstonLogger";
 
 @Injectable()
 export class SummarizationService {
+    private logger: WinstonLogger;
     constructor(
         private chainService: SummarizationChainService,
         private claimReviewService: ClaimReviewService
@@ -20,14 +22,14 @@ export class SummarizationService {
         };
 
         try {
-            const dailyClaimReviews = await this.claimReviewService.listAll(
-                query.page,
-                query.pageSize,
-                query.order,
-                { isHidden: query.isHidden, isDeleted: false },
-                query.latest,
-                query.isDailyRange
-            );
+            const dailyClaimReviews =
+                await this.claimReviewService.listDailyReviews(
+                    query.page,
+                    query.pageSize,
+                    query.order,
+                    { isHidden: query.isHidden, isDeleted: false },
+                    query.latest
+                );
 
             const summarizedReviews = await this.getSummarizedReviews(
                 dailyClaimReviews
@@ -37,7 +39,7 @@ export class SummarizationService {
 
             return dailyReport;
         } catch (error) {
-            console.error("Error generating daily report:", error);
+            this.logger.error("Error generating daily report:", error);
             throw new Error("Failed to generate daily report");
         }
     }
@@ -59,7 +61,7 @@ export class SummarizationService {
                 })
             );
         } catch (error) {
-            console.error("Error summarizing reviews:", error);
+            this.logger.error("Error summarizing reviews:", error);
             throw new Error("Failed to summarize reviews");
         }
     }
@@ -103,6 +105,9 @@ export class SummarizationService {
                         }
                         .classification {
                             font-weight: bold;
+                        }
+                        a {
+                            color: rgb(17, 39, 58);
                         }
                     </style>
                 </head>

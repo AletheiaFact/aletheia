@@ -34,26 +34,7 @@ export class ClaimReviewService {
         private editorParseService: EditorParseService
     ) {}
 
-    async listAll(
-        page,
-        pageSize,
-        order,
-        query,
-        latest = false,
-        isDailyRange = false
-    ) {
-        if (isDailyRange) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-
-            query.date = {
-                $gte: today,
-                $lt: tomorrow,
-            };
-        }
+    async listAll(page, pageSize, order, query, latest = false) {
         const pipeline = this.ClaimReviewModel.find(query)
             .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
             .populate({
@@ -91,23 +72,77 @@ export class ClaimReviewService {
             };
         }
 
-        let claimReviews = await pipeline
+        const claimReviews = await pipeline
             .populate(personalityPopulateOptions)
             .exec();
 
-        if (isDailyRange) {
-            const reportPopulateOptions = {
+        const filteredClaimReviews = claimReviews.filter(
+            (review) => review.claim
+        );
+
+        return Promise.all(
+            filteredClaimReviews.map(async (review) => this.postProcess(review))
+        );
+    }
+
+    async listDailyReviews(page, pageSize, order, query, latest = false) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        query.date = {
+            $gte: today,
+            $lt: tomorrow,
+        };
+        const pipeline = this.ClaimReviewModel.find(query)
+            .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
+            .populate({
+                path: "claim",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    model: "ClaimRevision",
+                },
+                match: {
+                    isDeleted: false,
+                    nameSpace:
+                        this.req.params.namespace ||
+                        this.req.query.nameSpace ||
+                        NameSpaceEnum.Main,
+                },
+            })
+            .populate({
                 path: "report",
                 model: "Report",
                 match: {
                     isDeleted: false,
                 },
-            };
+            })
+            .skip(page * pageSize)
+            .limit(parseInt(pageSize));
 
-            claimReviews = await pipeline
-                .populate(reportPopulateOptions)
-                .exec();
+        const personalityPopulateOptions: any = {
+            path: "personality",
+            model: "Personality",
+            match: {
+                isDeleted: false,
+            },
+        };
+
+        if (!query.isHidden) {
+            personalityPopulateOptions.match = {
+                $or: [
+                    { personality: { $exists: false } },
+                    { isHidden: { $ne: true } },
+                ],
+            };
         }
+
+        const claimReviews = await pipeline
+            .populate(personalityPopulateOptions)
+            .exec();
 
         const filteredClaimReviews = claimReviews.filter(
             (review) => review.claim
