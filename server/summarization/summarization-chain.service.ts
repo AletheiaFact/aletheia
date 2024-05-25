@@ -34,7 +34,7 @@ export class SummarizationChainService {
         }) as StuffDocumentsChain;
     }
 
-    async createDocumentsFromText(content: string) {
+    private async createDocumentsFromText(content: string) {
         try {
             const textSplitter = new RecursiveCharacterTextSplitter({
                 chunkSize: 1000,

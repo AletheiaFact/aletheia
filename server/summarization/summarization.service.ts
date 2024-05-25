@@ -114,7 +114,7 @@ export class SummarizationService {
     }
 
     async bulletPoints(content) {
-        const stuffChain = await this.chainService.createBulletPointsChain();
+        const stuffChain = this.chainService.createBulletPointsChain();
         const text = await this.chainService.generateAnswer(
             stuffChain,
             content
