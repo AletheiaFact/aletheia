@@ -30,6 +30,7 @@
     "Image": "Image",
     "Speech": "Speech",
     "Debate": "Debate",
+    "GenerativeInformation": "Generative Information",
     "selectPersonalityTitle": "Personality",
     "selectPersonalityText": "Select the personality who made this claim",
     "selectPersonalityButton": "Continue",

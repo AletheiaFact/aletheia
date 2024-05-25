@@ -26,9 +26,18 @@ const addDebateSelector = (state) => {
     );
 };
 
+const addGenerativeInformationSelector = (state) => {
+    return (
+        state.matches(CreateClaimStates.personalityAdded) &&
+        state.context.claimData.contentModel ===
+            ContentModelEnum.GenerativeInformation
+    );
+};
+
 export {
     addImageSelector,
     addSpeechSelector,
     stateSelector,
     addDebateSelector,
+    addGenerativeInformationSelector,
 };

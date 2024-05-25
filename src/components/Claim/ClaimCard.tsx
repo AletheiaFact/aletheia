@@ -37,9 +37,11 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const [nameSpace] = useAtom(currentNameSpace);
     const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
     const isDebate = claim?.contentModel === ContentModelEnum.Debate;
-
+    const isGenerativeInformation =
+        claim?.contentModel === ContentModelEnum.GenerativeInformation;
     const isInsideDebate =
         selectedClaim?.contentModel === ContentModelEnum.Debate;
+
     const dispatchPersonalityAndClaim = () => {
         if (!isInsideDebate) {
             // when selecting a claim from the debate page to review or to read,
@@ -49,25 +51,6 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
         }
         dispatch(actions.setSelectPersonality(personality));
     };
-
-    let href =
-        nameSpace !== NameSpaceEnum.Main
-            ? `/${nameSpace}/claim/${claim._id}`
-            : `/claim/${claim._id}`;
-
-    if (personality.slug) {
-        href =
-            nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/personality/${personality.slug}/claim/${claim.slug}`
-                : `/personality/${personality.slug}/claim/${claim.slug}`;
-    }
-
-    if (isDebate) {
-        href =
-            nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/claim/${claim._id}/debate`
-                : `/claim/${claim._id}/debate`;
-    }
 
     useEffect(() => {
         const CreateFirstParagraph = () => {
@@ -79,15 +62,21 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
             });
             setClaimContent(textContent.trim());
         };
-        if (isSpeech) {
+        if (isSpeech || isGenerativeInformation) {
             CreateFirstParagraph();
         } else {
             setClaimContent(claim.content);
         }
     }, [claim.content, isSpeech, paragraphs]);
 
-    if (!claim) {
-        return <div></div>;
+    let href = `/${nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""}`;
+
+    if (isDebate) {
+        href += `claim/${claim._id}/debate`;
+    } else if (personality && personality.slug) {
+        href += `personality/${personality.slug}/claim/${claim.slug}`;
+    } else {
+        href += `claim/${claim.slug}`;
     }
 
     return (

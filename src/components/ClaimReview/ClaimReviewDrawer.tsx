@@ -51,20 +51,23 @@ const ClaimReviewDrawer = () => {
 
     useEffect(() => setIsLoading(false), [claim, data_hash]);
 
-    const isContentImage = claim?.contentModel === ContentModelEnum.Image;
+    let href = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
 
-    const getHref = () => {
-        const hrefContent = isContentImage
-            ? `/image/${data_hash}`
-            : `/sentence/${data_hash}`;
-        let href = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
-        if (personality) {
-            href += `/personality/${personality.slug}/claim/${claim.slug}`;
-        } else {
-            href += `/claim/${claim?._id}`;
-        }
-
-        return `${href}${hrefContent}`;
+    const contentProps = {
+        [ContentModelEnum.Speech]: {
+            href: `${href}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`,
+        },
+        [ContentModelEnum.Image]: {
+            href: `${href}${
+                personality ? `/personality/${personality?.slug}` : ""
+            }/claim/${claim?.slug}/image/${data_hash}`,
+        },
+        [ContentModelEnum.Debate]: {
+            href: `${href}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`,
+        },
+        [ContentModelEnum.GenerativeInformation]: {
+            href: `/claim/${claim?.slug}/sentence/${data_hash}`,
+        },
     };
 
     return (
@@ -97,7 +100,10 @@ const ClaimReviewDrawer = () => {
                                 </AletheiaButton>
                                 <Col span={vw?.xs ? 8 : 14}>
                                     <AletheiaButton
-                                        href={getHref()}
+                                        href={
+                                            contentProps[claim.contentModel]
+                                                .href
+                                        }
                                         onClick={() => setIsLoading(true)}
                                         type={ButtonType.gray}
                                         style={{

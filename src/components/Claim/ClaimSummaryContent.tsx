@@ -43,6 +43,11 @@ const ClaimSummaryContent = ({
             title: claimTitle,
             contentHeight: "5.3em",
         },
+        [ContentModelEnum.GenerativeInformation]: {
+            linkText: "claim:cardLinkToFullText",
+            title: claimContent,
+            contentHeight: "6.4em",
+        },
     };
 
     const { linkText, title, contentHeight } = contentProps[contentModel];

@@ -5,6 +5,7 @@ import {
     IsDateString,
     IsNotEmpty,
     IsString,
+    IsOptional,
 } from "class-validator";
 import { ContentModelEnum } from "../../types/enums";
 import { Personality } from "../../personality/schemas/personality.schema";
@@ -45,7 +46,8 @@ export class CreateClaimDTO {
     @IsArray()
     @ArrayNotEmpty()
     @ApiProperty()
-    personalities: Personality[];
+    @IsOptional()
+    personalities?: Personality[];
 
     @IsString()
     @ApiProperty()
