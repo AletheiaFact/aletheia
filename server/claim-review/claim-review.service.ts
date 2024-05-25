@@ -34,7 +34,26 @@ export class ClaimReviewService {
         private editorParseService: EditorParseService
     ) {}
 
-    async listAll(page, pageSize, order, query, latest = false) {
+    async listAll(
+        page,
+        pageSize,
+        order,
+        query,
+        latest = false,
+        isDailyRange = false
+    ) {
+        if (isDailyRange) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+
+            query.date = {
+                $gte: today,
+                $lt: tomorrow,
+            };
+        }
         const pipeline = this.ClaimReviewModel.find(query)
             .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
             .populate({
@@ -72,9 +91,23 @@ export class ClaimReviewService {
             };
         }
 
-        const claimReviews = await pipeline
+        let claimReviews = await pipeline
             .populate(personalityPopulateOptions)
             .exec();
+
+        if (isDailyRange) {
+            const reportPopulateOptions = {
+                path: "report",
+                model: "Report",
+                match: {
+                    isDeleted: false,
+                },
+            };
+
+            claimReviews = await pipeline
+                .populate(reportPopulateOptions)
+                .exec();
+        }
 
         const filteredClaimReviews = claimReviews.filter(
             (review) => review.claim
@@ -302,7 +335,7 @@ export class ClaimReviewService {
     }
 
     private async postProcess(review) {
-        const { personality, data_hash } = review;
+        const { personality, data_hash, report } = review;
         const nameSpace =
             this.req.params.namespace ||
             this.req.query.nameSpace ||
@@ -346,6 +379,7 @@ export class ClaimReviewService {
             personality,
             reviewHref,
             claim,
+            report,
         };
     }
 
