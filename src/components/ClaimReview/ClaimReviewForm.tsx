@@ -36,7 +36,7 @@ const ClaimReviewForm = ({
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
-    const { setCurrentReportModel, machineService, reportModel } = useContext(
+    const { machineService, reportModel, recreateMachine } = useContext(
         ReviewTaskMachineContext
     );
     const reviewData = useSelector(machineService, reviewDataSelector);
@@ -65,7 +65,7 @@ const ClaimReviewForm = ({
 
     const toggleFormCollapse = (event) => {
         setFormCollapsed(!formCollapsed);
-        setCurrentReportModel(event.currentTarget.id);
+        recreateMachine(event.currentTarget.id);
     };
 
     useEffect(() => {

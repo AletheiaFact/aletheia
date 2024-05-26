@@ -23,6 +23,8 @@
     "assignUserPlaceholder": "Selecione um usuário",
     "summaryLabel": "Resumo da conclusão",
     "summaryPlaceholder": "Insira o resumo da conclusão",
+    "informativeNewsLabel": "Material checado",
+    "informativeNewsPlaceholder": "Insira o material checado",
     "questionsLabel": "Quais perguntas a verificação deverá responder?",
     "questionsPlaceholder": "Insira uma pergunta",
     "addQuestionLabel": "Incluir outra pergunta",
