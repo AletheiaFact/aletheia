@@ -101,6 +101,7 @@ export class ClaimReviewController {
         const review = await this.claimReviewService.getReviewByDataHash(
             data_hash
         );
+
         const descriptionForHide =
             await this.historyService.getDescriptionForHide(
                 review,

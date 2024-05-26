@@ -91,6 +91,8 @@ const CollaborativeEditor = ({
             : (editorContentObject as RemirrorContentType),
     });
 
+    const editorContentNode = manager.schema.nodeFromJSON(editorContentObject);
+
     const handleChange = useCallback(
         ({ state }) => {
             onContentChange(state);
@@ -110,7 +112,11 @@ const CollaborativeEditor = ({
                 editable={!readonly}
             >
                 <FloatingLinkToolbar />
-                <Editor editable={readonly} state={state} />
+                <Editor
+                    node={editorContentNode}
+                    editable={readonly}
+                    state={state}
+                />
                 <CommentContainer readonly={readonly} state={state} />
                 <EditorSourcesList node={state.doc} sources={editorSources} />
             </Remirror>

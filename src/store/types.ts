@@ -7,6 +7,7 @@ export enum ActionTypes {
     RESULTS_AUTOCOMPLETE,
     TOGGLE_MENU,
     TOGGLE_REVIEW_DRAWER,
+    TOGGLE_COPILOT_DRAWER,
     RESULTS_OVERLAY_VISIBLE,
     SEARCH_RESULTS,
     SET_TOTAL_PAGES,
@@ -30,7 +31,7 @@ export enum ActionTypes {
     SET_SEARCH_FILTER,
     SET_SEARCH_FILTER_USED,
     SET_COLLABORATIVE_EDIT,
-    SET_AGENT_REVIEW,
+    SET_COPILOT_CHAT_BOT,
     SET_EDITOR_ANNOTATION,
 }
 
@@ -43,6 +44,7 @@ export enum SearchTypes {
 export interface RootState {
     menuCollapsed: boolean;
     reviewDrawerCollapsed: boolean;
+    copilotDrawerCollapsed: boolean;
     search: {
         resultsVisible: boolean;
         autocompleteResults: any;
@@ -59,7 +61,7 @@ export interface RootState {
     };
     autoSave: boolean;
     enableCollaborativeEdit: boolean;
-    enableAgentReview: boolean;
+    enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
     websocketUrl: string;
     claimType: string;

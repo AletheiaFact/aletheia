@@ -9,7 +9,7 @@ describe("ParserService", () => {
     const schemaHtml = {
         questions: ["teste1", "testekakaka ava"],
         summary: "<div><p>teste4</p></div>",
-        report: `<div><p>teste2 <a href='#esse e um link' rel='noopener noreferrer nofollow'>esse e um link<sup>1</sup></a></p></div>`,
+        report: `<div><p>duplicated word <a href='#duplicated' rel='noopener noreferrer nofollow'>duplicated<sup>1</sup></a></p></div>`,
         verification: "<div><p>teste3</p></div>",
     };
 
@@ -19,8 +19,8 @@ describe("ParserService", () => {
                 href: "https://google.com",
                 props: {
                     field: "report",
-                    textRange: [7, 21],
-                    targetText: "esse e um link",
+                    textRange: [16, 39],
+                    targetText: "duplicated",
                     sup: 1,
                     id: "uniqueId",
                 },
@@ -28,7 +28,7 @@ describe("ParserService", () => {
         ],
         questions: ["teste1", "testekakaka ava"],
         summary: "teste4",
-        report: "teste2 esse e um link",
+        report: "duplicated word {{uniqueId|duplicated}}",
         verification: "teste3",
     };
 
@@ -85,11 +85,11 @@ describe("ParserService", () => {
                         content: [
                             {
                                 type: "text",
-                                text: "teste2 ",
+                                text: "duplicated word ",
                             },
                             {
                                 type: "text",
-                                text: "esse e um link",
+                                text: "duplicated",
                                 marks: [
                                     {
                                         type: "link",
@@ -153,6 +153,21 @@ describe("ParserService", () => {
                 schemaContent
             );
             expect(schemaHtmlResult).toMatchObject(schemaHtml);
+        });
+
+        it("Source from Schema to HTML is parsed in the right position", async () => {
+            const schemaHtmlResult = await editorParseService.schema2html(
+                schemaContent
+            );
+            expect(schemaHtmlResult.report).toEqual(schemaHtml.report);
+        });
+
+        it("Editor content is parsed correctly with markUp source in the right position", async () => {
+            const schemaResult = await editorParseService.editor2schema(
+                editorContent
+            );
+
+            expect(schemaResult.report).toEqual(schemaContent.report);
         });
     });
 });

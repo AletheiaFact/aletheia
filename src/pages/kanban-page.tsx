@@ -15,7 +15,7 @@ import { NameSpaceEnum } from "../types/Namespace";
 const KanbanPage: NextPage<{
     sitekey;
     enableCollaborativeEditor: boolean;
-    enableAgentReview: boolean;
+    enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
     websocketUrl: string;
     nameSpace: NameSpaceEnum;
@@ -25,13 +25,14 @@ const KanbanPage: NextPage<{
     setCurrentNameSpace(props.nameSpace);
     dispatch(actions.setSitekey(props.sitekey));
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
+    dispatch(actions.closeCopilotDrawer());
     dispatch({
         type: ActionTypes.SET_COLLABORATIVE_EDIT,
         enableCollaborativeEdit: props.enableCollaborativeEditor,
     });
     dispatch({
-        type: ActionTypes.SET_AGENT_REVIEW,
-        enableAgentReview: props.enableAgentReview,
+        type: ActionTypes.SET_COPILOT_CHAT_BOT,
+        enableCopilotChatBot: props.enableCopilotChatBot,
     });
     dispatch({
         type: ActionTypes.SET_EDITOR_ANNOTATION,
@@ -58,7 +59,7 @@ export async function getServerSideProps({ locale, locales, req, query }) {
             ...(await serverSideTranslations(locale)),
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
-            enableAgentReview: query?.enableAgentReview,
+            enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
             websocketUrl: query.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,

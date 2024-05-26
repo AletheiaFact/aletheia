@@ -33,7 +33,7 @@ COPY ./next-i18next.config.js /app/next-i18next.config.js
 WORKDIR /app
 
 RUN apk add --no-cache git python3 make g++
-RUN yarn install
+RUN yarn install --production
 RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
     NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT \

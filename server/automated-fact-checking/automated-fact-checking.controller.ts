@@ -12,9 +12,10 @@ export class AutomatedFactCheckingController {
     @ApiTags("automated-fact-checking")
     @Post("api/ai-fact-checking")
     @Header("Cache-Control", "no-cache")
-    async create(@Body() { sentence }: CreateAutomatedFactCheckingDTO) {
-        return this.automatedFactCheckingService.getResponseFromAgents(
-            sentence
-        );
+    async create(@Body() { claim, context }: CreateAutomatedFactCheckingDTO) {
+        return this.automatedFactCheckingService.getResponseFromAgents({
+            claim,
+            context,
+        });
     }
 }

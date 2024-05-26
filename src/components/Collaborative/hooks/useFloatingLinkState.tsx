@@ -35,6 +35,7 @@ function useFloatingLinkState() {
     const { from, to, empty, ranges } = useCurrentSelection();
     const { $to } = ranges[0];
     const url = (useAttrs().link()?.href as string) ?? "https://";
+    const selectedSourceId = useAttrs().link()?.id;
     const [href, setHref] = useState<string>(url);
     const isSelected = !empty;
     const updateReason = useUpdateReason();
@@ -121,14 +122,8 @@ function useFloatingLinkState() {
         setIsEditing,
     ]);
 
-    const areTextRangesEqual = (arr1, arr2) => {
-        for (let i = 0; i < arr1.length; i++) {
-            if (arr1[i] !== arr2[i]) {
-                return false;
-            }
-        }
-        return true;
-    };
+    const areSourcesIdsEqual = (sourceId, selectedSourceId) =>
+        sourceId === selectedSourceId;
 
     const onRemoveLink = useCallback(async () => {
         setIsLoading(true);
@@ -139,7 +134,7 @@ function useFloatingLinkState() {
             },
         ] = editorSources.filter((source) => {
             return (
-                areTextRangesEqual(source.props.textRange, [from, to]) &&
+                areSourcesIdsEqual(source.props.id, selectedSourceId) &&
                 source.props.targetText === targetText
             );
         });

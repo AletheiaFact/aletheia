@@ -28,6 +28,9 @@ import WarningModal from "../../Modal/WarningModal";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
+import { useDispatch } from "react-redux";
+import actions from "../../../store/actions";
+import { useAppSelector } from "../../../store/store";
 
 const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const {
@@ -38,6 +41,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         formState: { errors },
         watch,
     } = useForm();
+    const dispatch = useDispatch();
     const { machineService, events, form, setFormAndEvents } = useContext(
         ReviewTaskMachineContext
     );
@@ -48,7 +52,15 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         CollaborativeEditorContext
     );
     const reviewData = useSelector(machineService, reviewDataSelector);
-
+    const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
+        (state) => ({
+            enableCopilotChatBot: state?.enableCopilotChatBot,
+            reviewDrawerCollapsed:
+                state?.reviewDrawerCollapsed !== undefined
+                    ? state?.reviewDrawerCollapsed
+                    : true,
+        })
+    );
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const [role] = useAtom(currentUserRole);
@@ -75,6 +87,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     useEffect(() => {
         if (isLoggedIn) {
             setFormAndEvents(machineService.machine.config.initial);
+            if (enableCopilotChatBot && reviewDrawerCollapsed) {
+                dispatch(actions.openCopilotDrawer());
+            }
         }
     }, [isLoggedIn]);
 

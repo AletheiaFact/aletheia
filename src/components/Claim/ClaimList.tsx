@@ -7,6 +7,7 @@ import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import ClaimCard from "./ClaimCard";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAtom } from "jotai";
+import ClaimListEmptyFallBack from "./ClaimListEmptyFallBack";
 
 const ClaimList = ({ personality }) => {
     const { i18n, t } = useTranslation();
@@ -27,6 +28,7 @@ const ClaimList = ({ personality }) => {
                 xl: 2,
                 xxl: 2,
             }}
+            emptyFallback={<ClaimListEmptyFallBack personality={personality} />}
             renderItem={(claim) =>
                 claim && (
                     <ClaimCard
