@@ -1,14 +1,13 @@
 import { PromptTemplate } from "@langchain/core/prompts";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { loadSummarizationChain, StuffDocumentsChain } from "langchain/chains";
 import { ChatOpenAI } from "@langchain/openai";
 import { openAI } from "../copilot/openAI.constants";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { WinstonLogger } from "../winstonLogger";
 
 @Injectable()
 export class SummarizationChainService {
-    private logger: WinstonLogger;
+    private readonly logger = new Logger("SummarizationChainLogger");
     constructor() {}
 
     createBulletPointsChain(): StuffDocumentsChain {
