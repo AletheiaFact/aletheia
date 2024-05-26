@@ -13,7 +13,10 @@ const getNextEvents = (
     const eventsMap = {
         [States.unassigned]: [Events.assignUser],
         [Events.assignUser]: [...defaultEvents, Events.finishReport],
-        [States.assigned]: [...defaultEvents, Events.finishReport],
+        [States.assigned]:
+            reportModel === ReportModelEnum.FactChecking
+                ? [...defaultEvents, Events.finishReport]
+                : [Events.draft, Events.finishReport],
 
         [Events.finishReport]: [
             Events.goback,
@@ -28,6 +31,9 @@ const getNextEvents = (
                 ? Events.selectedCrossChecking
                 : [],
             Events.selectedReview,
+            reportModel === ReportModelEnum.InformativeNews
+                ? Events.publish
+                : [],
         ],
         [Events.submitCrossChecking]: [
             Events.goback,
@@ -64,7 +70,10 @@ const getNextEvents = (
         [Events.sendToReview]: [Events.reject, Events.publish],
 
         [States.rejected]: [Events.goback, Events.addRejectionComment],
-        [Events.addRejectionComment]: [...defaultEvents, Events.finishReport],
+        [Events.addRejectionComment]:
+            reportModel === ReportModelEnum.FactChecking
+                ? [...defaultEvents, Events.finishReport]
+                : [Events.draft, Events.finishReport],
 
         [States.published]: [],
         [Events.publish]: [],

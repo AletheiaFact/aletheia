@@ -4,12 +4,14 @@ import { createContext, useEffect, useState } from "react";
 import ClaimReviewApi from "../../api/claimReviewApi";
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
 import Loading from "../../components/Loading";
-import { initialContext } from "./context";
+import { getInitialContext } from "./context";
 import { ReportModelEnum, ReviewTaskEvents, ReviewTaskStates } from "./enums";
 import { createNewMachineService } from "./reviewTaskMachine";
 import getNextForm from "./getNextForm";
 import getNextEvents from "./getNextEvent";
 import { FormField } from "../../components/Form/FormField";
+import { useAtom } from "jotai";
+import { currentUserId } from "../../atoms/currentUser";
 
 interface ContextType {
     machineService: any;
@@ -18,7 +20,7 @@ interface ContextType {
     form?: FormField[];
     events?: ReviewTaskEvents[];
     reportModel?: string;
-    setCurrentReportModel?: (reportModel: string) => void;
+    recreateMachine?: (reportModel: string) => void;
 }
 
 export const ReviewTaskMachineContext = createContext<ContextType>({
@@ -46,6 +48,7 @@ export const ReviewTaskMachineProvider = (
     const [publishedClaimReview, setPublishedClaimReview] = useState(
         props.publishedReview
     );
+    const [userId] = useAtom(currentUserId);
     const [form, setForm] = useState(null);
     const [events, setEvents] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -75,11 +78,10 @@ export const ReviewTaskMachineProvider = (
                         : machine.value;
             }
             const newMachine = machine || {
-                context: initialContext,
+                context: getInitialContext({ usersId: [userId] }),
                 value: ReviewTaskStates.unassigned,
             };
 
-            setReportModel(reportModel);
             setGlobalMachineService(createNewMachineService(newMachine));
             setLoading(false);
         });
@@ -90,12 +92,6 @@ export const ReviewTaskMachineProvider = (
                 }
             );
         } else setPublishedClaimReview(props.publishedReview);
-
-        return () => {
-            setGlobalMachineService(null);
-            setReportModel(null);
-            setLoading(false);
-        };
     }, [props.baseMachine, props.data_hash, props.publishedReview, t]);
 
     const setPreloadAssignedUsers = (form) => {
@@ -131,8 +127,25 @@ export const ReviewTaskMachineProvider = (
         setEvents(getNextEvents(param, isSameLabel, reportModel));
     };
 
-    const setCurrentReportModel = (reportModel: string): void => {
+    const recreateMachine = async (reportModel: string) => {
         setReportModel(reportModel as ReportModelEnum);
+        setLoading(true);
+        const newMachine = {
+            context: getInitialContext(
+                reportModel === ReportModelEnum.FactChecking
+                    ? {}
+                    : { usersId: [userId] }
+            ),
+            value:
+                reportModel === ReportModelEnum.FactChecking
+                    ? ReviewTaskStates.unassigned
+                    : ReviewTaskStates.assigned,
+        };
+
+        await setGlobalMachineService(
+            createNewMachineService(newMachine, reportModel)
+        );
+        setLoading(false);
     };
 
     return (
@@ -142,9 +155,9 @@ export const ReviewTaskMachineProvider = (
                 publishedReview: publishedClaimReview,
                 setFormAndEvents,
                 reportModel,
-                setCurrentReportModel,
                 form,
                 events,
+                recreateMachine,
             }}
         >
             {loading && <Loading />}

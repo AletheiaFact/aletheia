@@ -36,14 +36,16 @@ const ClaimReviewForm = ({
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
-    const { setCurrentReportModel, machineService } = useContext(
+    const { setCurrentReportModel, machineService, reportModel } = useContext(
         ReviewTaskMachineContext
     );
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
-    const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
+    const [formCollapsed, setFormCollapsed] = useState(
+        isUnassigned && !reportModel
+    );
     const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
     const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
         (state) => ({
@@ -67,7 +69,7 @@ const ClaimReviewForm = ({
     };
 
     useEffect(() => {
-        setFormCollapsed(isUnassigned);
+        setFormCollapsed(isUnassigned && !reportModel);
     }, [isUnassigned]);
 
     return (
@@ -115,7 +117,7 @@ const ClaimReviewForm = ({
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}
                                     icon={<PlusOutlined />}
-                                    data-cy={"testAddFactCheckReviewButton"} // Change the cypress test
+                                    data-cy={"testAddFactCheckReviewButton"}
                                     id={ReportModelEnum.FactChecking}
                                 >
                                     {t("claimReviewForm:addReviewButton")}

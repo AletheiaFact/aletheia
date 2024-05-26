@@ -3,189 +3,20 @@ import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContextType } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
-import { saveContext } from "./actions";
-import {
-    CompoundStates,
-    ReviewTaskEvents as Events,
-    ReviewTaskStates as States,
-} from "./enums";
+import { ReviewTaskEvents as Events, ReportModelEnum } from "./enums";
 import sendReviewNotifications from "../../notifications/sendReviewNotifications";
+import { isSameLabel, workflowMachine } from "./workflowMachine";
 
-const draftSubStates = {
-    initial: CompoundStates.undraft,
-    states: {
-        undraft: {
-            on: {
-                SAVE_DRAFT: {
-                    target: CompoundStates.draft,
-                    actions: [saveContext],
-                },
-            },
-        },
-        draft: {
-            on: {
-                SAVE_DRAFT: {
-                    target: CompoundStates.draft,
-                    actions: [saveContext],
-                },
-            },
-        },
-    },
-};
-
-const isSameLabel = (context, event) =>
-    context.reviewData.classification ===
-    event.reviewData.crossCheckingClassification;
-
-const isDifferentLabel = (context, event) =>
-    context.classification !== event.reviewData.crossCheckingClassification;
-
-export const createNewMachine = ({ value, context }) => {
+export const createNewMachine = ({ value, context }, reportModel) => {
     return createMachine<
         ReviewTaskMachineContextType,
         ReviewTaskMachineEvents,
         ReviewTaskMachineState
     >({
+        id: ReportModelEnum[reportModel],
         initial: value,
         context,
-        states: {
-            [States.unassigned]: {
-                on: {
-                    [Events.assignUser]: {
-                        target: States.assigned,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.assigned]: {
-                ...draftSubStates,
-                on: {
-                    [Events.goback]: {
-                        target: States.unassigned,
-                    },
-                    [Events.reAssignUser]: {
-                        target: States.unassigned,
-                    },
-                    [Events.finishReport]: {
-                        target: States.reported,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.reported]: {
-                on: {
-                    [Events.goback]: {
-                        target: States.assigned,
-                    },
-                    [Events.reAssignUser]: {
-                        target: States.unassigned,
-                    },
-                    [Events.selectedCrossChecking]: {
-                        target: States.selectCrossChecker,
-                    },
-                    [Events.selectedReview]: {
-                        target: States.selectReviewer,
-                    },
-                },
-            },
-            [States.selectCrossChecker]: {
-                on: {
-                    [Events.goback]: {
-                        target: States.reported,
-                    },
-                    [Events.reAssignUser]: {
-                        target: States.unassigned,
-                    },
-                    [Events.sendToCrossChecking]: {
-                        target: States.crossChecking,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.selectReviewer]: {
-                on: {
-                    [Events.goback]: {
-                        target: States.reported,
-                    },
-                    [Events.reAssignUser]: {
-                        target: States.unassigned,
-                    },
-                    [Events.sendToReview]: {
-                        target: States.submitted,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.crossChecking]: {
-                on: {
-                    [Events.addComment]: {
-                        target: States.addCommentCrossChecking,
-                        actions: [saveContext],
-                    },
-                    [Events.reAssignUser]: {
-                        target: States.unassigned,
-                    },
-                    [Events.submitCrossChecking]: {
-                        target: States.reported,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.addCommentCrossChecking]: {
-                on: {
-                    [Events.goback]: {
-                        target: States.crossChecking,
-                    },
-                    [Events.reAssignUser]: {
-                        target: States.unassigned,
-                    },
-                    [Events.submitComment]: [
-                        {
-                            target: States.reported,
-                            actions: [saveContext],
-                            cond: isSameLabel,
-                        },
-                        {
-                            target: States.assigned,
-                            actions: [saveContext],
-                            cond: isDifferentLabel,
-                        },
-                    ],
-                },
-            },
-            //TODO: Investigate how to move rejected and addComment crossChecking as substates
-            [States.submitted]: {
-                on: {
-                    [Events.reject]: {
-                        target: States.rejected,
-                    },
-                    [Events.reAssignUser]: {
-                        target: States.unassigned,
-                    },
-                    [Events.publish]: {
-                        target: States.published,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.rejected]: {
-                on: {
-                    [Events.addRejectionComment]: {
-                        target: States.assigned,
-                        actions: [saveContext],
-                    },
-                    [Events.reAssignUser]: {
-                        target: States.unassigned,
-                    },
-                    [Events.goback]: {
-                        target: States.submitted,
-                    },
-                },
-            },
-            [States.published]: {
-                type: "final",
-            },
-        },
+        states: workflowMachine[reportModel],
     });
 };
 
@@ -258,8 +89,11 @@ export const transitionHandler = (state) => {
     );
 };
 
-export const createNewMachineService = (machine: any) => {
-    return interpret(createNewMachine(machine))
+export const createNewMachineService = (
+    machine: any,
+    reportModel: string = ReportModelEnum.FactChecking
+) => {
+    return interpret(createNewMachine(machine, reportModel))
         .onTransition(transitionHandler)
         .start();
 };

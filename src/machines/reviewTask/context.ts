@@ -5,13 +5,9 @@ export type ReviewTaskMachineContextType = {
     claimReview: ClaimReview;
 };
 
-const buildState = ({
-    reviewData,
-}: {
-    reviewData?: any;
-}): ReviewTaskMachineContextType => {
+const buildState = (reviewData): ReviewTaskMachineContextType => {
     return {
-        reviewData: reviewData || {
+        reviewData: {
             usersId: [],
             summary: "",
             questions: [],
@@ -25,6 +21,7 @@ const buildState = ({
             crossCheckingComments: [],
             crossCheckingComment: "",
             crossCheckingClassification: "",
+            ...reviewData,
         },
         claimReview: {
             personality: "",
@@ -35,4 +32,8 @@ const buildState = ({
     };
 };
 
-export const initialContext: ReviewTaskMachineContextType = buildState({});
+export const getInitialContext = (
+    reviewData = {}
+): ReviewTaskMachineContextType => {
+    return buildState(reviewData);
+};
