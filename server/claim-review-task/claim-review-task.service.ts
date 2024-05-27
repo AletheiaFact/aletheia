@@ -19,7 +19,7 @@ import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { Roles } from "../auth/ability/ability.factory";
 import { ImageService } from "../claim/types/image/image.service";
-import { ContentModelEnum, ReportModelEnum } from "../types/enums";
+import { ContentModelEnum } from "../types/enums";
 import lookupUsers from "../mongo-pipelines/lookupUsers";
 import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";

@@ -5,3 +5,9 @@ export async function up(db: Db) {
         .collection("claimreviews")
         .updateMany({}, { $set: { reportModel: "Fact-checking" } });
 }
+
+export async function down(db: Db) {
+    await db
+        .collection("claimreviews")
+        .updateMany({}, { $unset: { reportModel: "" } });
+}

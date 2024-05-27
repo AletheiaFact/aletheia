@@ -82,10 +82,10 @@ const Editor = ({
 
     const actions = [
         {
-            onClick: () => handleInsertNode(getReportContentHtml),
-            disabled: editable || reportDisabled,
-            "data-cy": "testClaimReviewreportAdd",
-            icon: <ReportProblemIcon className="toolbar-item-icon" />,
+            onClick: () => handleInsertNode(getSummaryContentHtml),
+            disabled: editable || summaryDisabled,
+            "data-cy": "testClaimReviewsummarizeAdd",
+            icon: <SummarizeIcon className="toolbar-item-icon" />,
         },
     ];
 
@@ -98,10 +98,10 @@ const Editor = ({
                 icon: <FactCheckIcon className="toolbar-item-icon" />,
             },
             {
-                onClick: () => handleInsertNode(getSummaryContentHtml),
-                disabled: editable || summaryDisabled,
-                "data-cy": "testClaimReviewsummarizeAdd",
-                icon: <SummarizeIcon className="toolbar-item-icon" />,
+                onClick: () => handleInsertNode(getReportContentHtml),
+                disabled: editable || reportDisabled,
+                "data-cy": "testClaimReviewreportAdd",
+                icon: <ReportProblemIcon className="toolbar-item-icon" />,
             },
             {
                 onClick: () => handleInsertNode(getQuestionContentHtml),
@@ -115,7 +115,7 @@ const Editor = ({
     return (
         <EditorStyle>
             <div className="toolbar">
-                {actions &&
+                {actions ? (
                     actions.map(({ icon, ...props }) => (
                         <Button
                             key={props["data-cy"]}
@@ -125,7 +125,10 @@ const Editor = ({
                         >
                             {icon}
                         </Button>
-                    ))}
+                    ))
+                ) : (
+                    <></>
+                )}
             </div>
         </EditorStyle>
     );

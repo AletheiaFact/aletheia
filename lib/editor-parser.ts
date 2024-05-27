@@ -3,9 +3,9 @@ import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/
 import { ReportModelEnum } from "../server/types/enums";
 
 type SchemaType = {
-    summary?: string;
+    summary: string;
     verification?: string;
-    report: string;
+    report?: string;
     sources: any[];
     questions?: any[];
 };
@@ -13,7 +13,7 @@ type SchemaType = {
 const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) =>
     reportModel === ReportModelEnum.FactChecking
         ? ["summary", "report", "verification", "questions"]
-        : ["report"];
+        : ["summary"];
 
 const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
 
@@ -35,7 +35,7 @@ const getDefaultDoc = (reportModel: string): RemirrorJSON => {
     if (reportModel === ReportModelEnum.InformativeNews) {
         return {
             type: "doc",
-            content: [createParagraphBlock("report")],
+            content: [createParagraphBlock("summary")],
         };
     }
 
@@ -166,7 +166,7 @@ export class EditorParser {
 
     editor2schema(data: RemirrorJSON): ReviewTaskMachineContextReviewData {
         const schema: SchemaType = {
-            report: "",
+            summary: "",
             sources: [],
         };
         const questions = [];
@@ -193,7 +193,7 @@ export class EditorParser {
          * Needed to do this conditional because the form validation when the reportModel
          * is equal to Informative news requires the questions field.
          */
-        if (schema.summary || schema.verification) {
+        if (schema.report || schema.verification) {
             schema.questions = questions;
         }
         schema.sources = this.replaceSourceContentToTextRange(schema);

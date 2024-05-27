@@ -7,7 +7,7 @@ import {
 const getNextEvents = (
     param: Events | States,
     isSameLabel = false,
-    reportModel: ReportModelEnum
+    reportModel: ReportModelEnum = ReportModelEnum.FactChecking
 ) => {
     const defaultEvents = [Events.goback, Events.draft];
     const eventsMap = {
@@ -23,17 +23,20 @@ const getNextEvents = (
             reportModel === ReportModelEnum.FactChecking
                 ? Events.selectedCrossChecking
                 : [],
-            Events.selectedReview,
+            reportModel === ReportModelEnum.FactChecking
+                ? Events.selectedReview
+                : [],
+            reportModel === ReportModelEnum.FactChecking ? [] : Events.publish,
         ],
         [States.reported]: [
             Events.goback,
             reportModel === ReportModelEnum.FactChecking
                 ? Events.selectedCrossChecking
                 : [],
-            Events.selectedReview,
-            reportModel === ReportModelEnum.InformativeNews
-                ? Events.publish
+            reportModel === ReportModelEnum.FactChecking
+                ? Events.selectedReview
                 : [],
+            reportModel === ReportModelEnum.FactChecking ? [] : Events.publish,
         ],
         [Events.submitCrossChecking]: [
             Events.goback,

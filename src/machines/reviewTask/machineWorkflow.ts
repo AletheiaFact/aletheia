@@ -212,7 +212,7 @@ const informativeNewsWorkflow: StatesConfig<
     },
 };
 
-export const workflowMachine = {
+export const machineWorkflow = {
     [ReportModelEnum.FactChecking]: factCheckingWorkflow,
     [ReportModelEnum.InformativeNews]: informativeNewsWorkflow,
 };

@@ -132,7 +132,7 @@ export class ClaimReviewController {
     @Header("Cache-Control", "no-cache")
     async getEditorContentByDataHash(
         @Param("data_hash") data_hash: string,
-        @Query() query
+        @Query() query: { reportModel: string }
     ) {
         const claimReviewTask =
             await this.claimReviewTaskService.getClaimReviewTaskByDataHash(

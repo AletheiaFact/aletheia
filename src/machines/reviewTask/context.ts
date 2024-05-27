@@ -34,6 +34,4 @@ const buildState = (reviewData): ReviewTaskMachineContextType => {
 
 export const getInitialContext = (
     reviewData = {}
-): ReviewTaskMachineContextType => {
-    return buildState(reviewData);
-};
+): ReviewTaskMachineContextType => buildState(reviewData);

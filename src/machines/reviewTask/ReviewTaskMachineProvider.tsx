@@ -35,6 +35,17 @@ interface ReviewTaskMachineProviderProps {
     publishedReview?: { review: any };
 }
 
+const getMachineInitialState = (userId: string = ""): any => ({
+    [ReportModelEnum.FactChecking]: {
+        context: getInitialContext({}),
+        value: ReviewTaskStates.unassigned,
+    },
+    [ReportModelEnum.InformativeNews]: {
+        context: getInitialContext({ usersId: [userId] }),
+        value: ReviewTaskStates.assigned,
+    },
+});
+
 /* We chose not to use Jotai as the provider for this machine because we need
  * to recreate the machine service every time the drawer is opened and at the
  * moment the best option seems to be to use context rather than try to get
@@ -62,7 +73,10 @@ export const ReviewTaskMachineProvider = (
     useEffect(() => {
         const fetchReviewTask = (data_hash) => {
             return props.baseMachine
-                ? Promise.resolve({ machine: props.baseMachine, reportModel })
+                ? Promise.resolve({
+                      machine: props.baseMachine,
+                      reportModel: props.baseReportModel,
+                  })
                 : ClaimReviewTaskApi.getMachineByDataHash(data_hash);
         };
         setLoading(true);
@@ -77,12 +91,12 @@ export const ReviewTaskMachineProvider = (
                         ? Object.keys(machine.value)[0]
                         : machine.value;
             }
-            const newMachine = machine || {
-                context: getInitialContext({ usersId: [userId] }),
-                value: ReviewTaskStates.unassigned,
-            };
-
-            setGlobalMachineService(createNewMachineService(newMachine));
+            const newMachine =
+                machine ||
+                getMachineInitialState()[ReportModelEnum.FactChecking];
+            setGlobalMachineService(
+                createNewMachineService(newMachine, reportModel)
+            );
             setLoading(false);
         });
         if (!props.publishedReview) {
@@ -127,22 +141,11 @@ export const ReviewTaskMachineProvider = (
         setEvents(getNextEvents(param, isSameLabel, reportModel));
     };
 
-    const recreateMachine = async (reportModel: string) => {
-        setReportModel(reportModel as ReportModelEnum);
+    const createMachineBasedOnReportModel = (reportModel: string) => {
         setLoading(true);
-        const newMachine = {
-            context: getInitialContext(
-                reportModel === ReportModelEnum.FactChecking
-                    ? {}
-                    : { usersId: [userId] }
-            ),
-            value:
-                reportModel === ReportModelEnum.FactChecking
-                    ? ReviewTaskStates.unassigned
-                    : ReviewTaskStates.assigned,
-        };
-
-        await setGlobalMachineService(
+        setReportModel(reportModel as ReportModelEnum);
+        const newMachine = getMachineInitialState(userId)[reportModel];
+        setGlobalMachineService(
             createNewMachineService(newMachine, reportModel)
         );
         setLoading(false);
@@ -157,7 +160,7 @@ export const ReviewTaskMachineProvider = (
                 reportModel,
                 form,
                 events,
-                recreateMachine,
+                recreateMachine: createMachineBasedOnReportModel,
             }}
         >
             {loading && <Loading />}

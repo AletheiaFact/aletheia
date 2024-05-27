@@ -5,7 +5,7 @@ import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
 import { ReviewTaskEvents as Events, ReportModelEnum } from "./enums";
 import sendReviewNotifications from "../../notifications/sendReviewNotifications";
-import { isSameLabel, workflowMachine } from "./workflowMachine";
+import { isSameLabel, machineWorkflow } from "./machineWorkflow";
 
 export const createNewMachine = ({ value, context }, reportModel) => {
     return createMachine<
@@ -16,7 +16,7 @@ export const createNewMachine = ({ value, context }, reportModel) => {
         id: ReportModelEnum[reportModel],
         initial: value,
         context,
-        states: workflowMachine[reportModel],
+        states: machineWorkflow[reportModel],
     });
 };
 

@@ -29,13 +29,13 @@ export class Report {
     })
     usersId: User[];
 
-    @Prop({ required: false })
+    @Prop({ required: true })
     summary: string;
 
     @Prop({ required: false })
     questions: string[];
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     report: string;
 
     @Prop({ required: false })
