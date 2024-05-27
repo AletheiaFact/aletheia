@@ -10,7 +10,7 @@ export class SummarizationService {
         private claimReviewService: ClaimReviewService
     ) {}
 
-    async generateDailyReport(nameSpace): Promise<string> {
+    async generateDailyReport(nameSpace?: string): Promise<string> {
         const query = {
             page: 0,
             pageSize: 10,

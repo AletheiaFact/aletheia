@@ -13,12 +13,9 @@ export class SummarizationController {
     @Post("api/daily-report")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    //TODO: ADD nameSpace logic
     async createDailyReport() {
-        const nameSpace = "Main";
-        const dailyReport = await this.summarizationService.generateDailyReport(
-            nameSpace
-        );
+        const dailyReport =
+            await this.summarizationService.generateDailyReport();
 
         return dailyReport;
     }
