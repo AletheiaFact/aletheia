@@ -85,6 +85,74 @@ export class ClaimReviewService {
         );
     }
 
+    async listDailyReviews(page, pageSize, order, query, latest = false) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        query.date = {
+            $gte: today,
+            $lt: tomorrow,
+        };
+        const pipeline = this.ClaimReviewModel.find(query)
+            .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
+            .populate({
+                path: "claim",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    model: "ClaimRevision",
+                },
+                match: {
+                    isDeleted: false,
+                    nameSpace:
+                        this.req.params.namespace ||
+                        this.req.query.nameSpace ||
+                        NameSpaceEnum.Main,
+                },
+            })
+            .populate({
+                path: "report",
+                model: "Report",
+                match: {
+                    isDeleted: false,
+                },
+            })
+            .skip(page * pageSize)
+            .limit(parseInt(pageSize));
+
+        const personalityPopulateOptions: any = {
+            path: "personality",
+            model: "Personality",
+            match: {
+                isDeleted: false,
+            },
+        };
+
+        if (!query.isHidden) {
+            personalityPopulateOptions.match = {
+                $or: [
+                    { personality: { $exists: false } },
+                    { isHidden: { $ne: true } },
+                ],
+            };
+        }
+
+        const claimReviews = await pipeline
+            .populate(personalityPopulateOptions)
+            .exec();
+
+        const filteredClaimReviews = claimReviews.filter(
+            (review) => review.claim
+        );
+
+        return Promise.all(
+            filteredClaimReviews.map(async (review) => this.postProcess(review))
+        );
+    }
+
     async agreggateClassification(match: any) {
         const nameSpace = this.req.params.namespace || this.req.query.nameSpace;
 
@@ -302,7 +370,7 @@ export class ClaimReviewService {
     }
 
     private async postProcess(review) {
-        const { personality, data_hash } = review;
+        const { personality, data_hash, report } = review;
         const nameSpace =
             this.req.params.namespace ||
             this.req.query.nameSpace ||
@@ -346,6 +414,7 @@ export class ClaimReviewService {
             personality,
             reviewHref,
             claim,
+            report,
         };
     }
 
