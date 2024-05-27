@@ -90,8 +90,8 @@ export class ClaimReviewService {
         pageSize,
         order,
         query,
-        latest = false,
-        nameSpace
+        nameSpace,
+        latest = false
     ) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
