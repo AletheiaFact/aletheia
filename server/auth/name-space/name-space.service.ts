@@ -57,20 +57,36 @@ export class NameSpaceService {
             lower: true,
             strict: true,
         });
+        const isNameSpaceTopic = await this.notificationService.getTopic(
+            newNameSpace._id
+        );
 
         newNameSpace.users = await this.updateNameSpaceUsers(
             newNameSpace.users,
             nameSpace.slug
         );
-        this.notificationService.addTopicSubscriber(
-            newNameSpace._id,
-            newNameSpace.users
-        );
+        if (isNameSpaceTopic) {
+            await this.notificationService.addTopicSubscriber(
+                newNameSpace._id,
+                newNameSpace.users
+            );
+        } else {
+            await this.notificationService.createTopic(
+                newNameSpace._id,
+                newNameSpace.name
+            );
+            await this.notificationService.addTopicSubscriber(
+                newNameSpace._id,
+                newNameSpace.users
+            );
+        }
         await this.findNameSpaceUsersAndDelete(
             id,
             nameSpace.slug,
             newNameSpace.users,
-            nameSpace.users
+            newNameSpace.name,
+            nameSpace.users,
+            isNameSpaceTopic
         );
 
         return await this.NameSpaceModel.updateOne(
@@ -114,17 +130,27 @@ export class NameSpaceService {
         id,
         nameSpaceSlug,
         users,
-        previousUsersId
+        newNameSpace,
+        previousUsersId,
+        isNameSpaceTopic
     ) {
         const usersIdSet = new Set(users.map((user) => user.toString()));
         const nameSpaceUsersTodelete = previousUsersId.filter(
             (previousUserId) => !usersIdSet.has(previousUserId.toString())
         );
         if (nameSpaceUsersTodelete.length > 0) {
-            this.notificationService.removeTopicSubscriber(
-                id,
-                nameSpaceUsersTodelete
-            );
+            //TODO: Enchance this logic
+            if (isNameSpaceTopic) {
+                this.notificationService.removeTopicSubscriber(
+                    id,
+                    nameSpaceUsersTodelete
+                );
+            } else {
+                await this.notificationService.createTopic(
+                    id,
+                    newNameSpace.name
+                );
+            }
             return await this.deleteUsersNameSpace(
                 nameSpaceUsersTodelete,
                 nameSpaceSlug
