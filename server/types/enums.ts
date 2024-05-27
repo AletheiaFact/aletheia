@@ -5,4 +5,9 @@ enum ContentModelEnum {
     Unattributed = "Unattributed",
 }
 
-export { ContentModelEnum };
+enum ReportModelEnum {
+    FactChecking = "Fact-checking",
+    InformativeNews = "Informative News",
+}
+
+export { ContentModelEnum, ReportModelEnum };

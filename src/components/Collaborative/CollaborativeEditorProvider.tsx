@@ -1,9 +1,10 @@
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../store/store";
 import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
 import { RemirrorJSON } from "remirror";
 import { SourceType } from "../../types/Source";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 
 interface ContextType {
     websocketProvider: any;
@@ -31,6 +32,7 @@ interface CollaborativeEditorProviderProps {
 export const CollaborativeEditorProvider = (
     props: CollaborativeEditorProviderProps
 ) => {
+    const { reportModel } = useContext(ReviewTaskMachineContext);
     const { enableCollaborativeEdit } = useAppSelector((state) => ({
         enableCollaborativeEdit: state?.enableCollaborativeEdit,
     }));
@@ -45,14 +47,19 @@ export const CollaborativeEditorProvider = (
     useEffect(() => {
         const fetchEditorContentObject = (data_hash) => {
             setIsFetchingEditor(true);
-            return ClaimReviewTaskApi.getEditorContentObject(data_hash);
+            return ClaimReviewTaskApi.getEditorContentObject(
+                data_hash,
+                reportModel
+            );
         };
 
-        fetchEditorContentObject(props.data_hash).then((content) => {
-            setEditorContentObject(content);
-            setIsFetchingEditor(false);
-        });
-    }, [props.data_hash]);
+        if (reportModel) {
+            fetchEditorContentObject(props.data_hash).then((content) => {
+                setEditorContentObject(content);
+                setIsFetchingEditor(false);
+            });
+        }
+    }, [props.data_hash, reportModel]);
 
     const websocketProvider = useMemo(() => {
         if (enableCollaborativeEdit) {

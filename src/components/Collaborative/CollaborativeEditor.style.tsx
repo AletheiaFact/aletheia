@@ -13,6 +13,14 @@ const CollaborativeEditorStyle = styled(AllStyledComponent)`
     gap: 16px;
     flex-wrap: wrap;
 
+    .ProseMirror.remirror-editor {
+        min-height: 100%;
+    }
+
+    .ProseMirror.remirror-editor > p {
+        margin: 0;
+    }
+
     .remirror-editor-wrapper {
         flex: 1;
     }

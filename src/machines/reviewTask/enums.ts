@@ -35,4 +35,9 @@ enum CompoundStates {
     draft = "draft",
 }
 
-export { ReviewTaskEvents, ReviewTaskStates, CompoundStates };
+enum ReportModelEnum {
+    FactChecking = "Fact-checking",
+    InformativeNews = "Informative News",
+}
+
+export { ReviewTaskEvents, ReviewTaskStates, CompoundStates, ReportModelEnum };

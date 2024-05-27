@@ -233,11 +233,12 @@ export class ClaimReviewTaskService {
         this.stateEventService.createStateEvent(stateEvent);
     }
 
-    async _createReportAndClaimReview(data_hash, machine) {
+    async _createReportAndClaimReview(data_hash, machine, reportModel) {
         const claimReviewData = machine.context.claimReview;
 
         const newReport = Object.assign(machine.context.reviewData, {
             data_hash,
+            reportModel,
         });
 
         const report = await this.reportService.create(newReport);
@@ -247,7 +248,8 @@ export class ClaimReviewTaskService {
                 ...claimReviewData,
                 report,
             },
-            data_hash
+            data_hash,
+            reportModel
         );
     }
 
@@ -322,7 +324,8 @@ export class ClaimReviewTaskService {
             return this.update(
                 claimReviewTaskBody.data_hash,
                 claimReviewTaskBody,
-                claimReviewTaskBody.nameSpace
+                claimReviewTaskBody.nameSpace,
+                claimReviewTask.reportModel
             );
         } else {
             const newClaimReviewTask = new this.ClaimReviewTaskModel(
@@ -339,6 +342,7 @@ export class ClaimReviewTaskService {
         data_hash: string,
         { machine }: UpdateClaimReviewTaskDTO,
         nameSpace: string,
+        reportModel: string,
         history: boolean = true
     ) {
         const loggedInUser = this.req.user;
@@ -370,7 +374,8 @@ export class ClaimReviewTaskService {
             }
             this._createReportAndClaimReview(
                 data_hash,
-                newClaimReviewTask.machine
+                newClaimReviewTask.machine,
+                reportModel
             );
         }
 
@@ -547,8 +552,8 @@ export class ClaimReviewTaskService {
         }
     }
 
-    getEditorContentObject(schema) {
-        return this.editorParseService.schema2editor(schema);
+    getEditorContentObject(schema, reportModel) {
+        return this.editorParseService.schema2editor(schema, reportModel);
     }
 
     async addComment(data_hash, comment) {

@@ -1,10 +1,11 @@
-import { IsNotEmpty, IsObject, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsObject, IsString } from "class-validator";
 
 import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { Personality } from "../../personality/schemas/personality.schema";
 import { User } from "../../users/schemas/user.schema";
 import { ApiProperty } from "@nestjs/swagger";
+import { ReportModelEnum } from "../../types/enums";
 
 export type ReviewTaskMachineContextReviewData = {
     usersId?: any[];
@@ -56,6 +57,12 @@ export class CreateClaimReviewTaskDTO {
     @IsString()
     @ApiProperty()
     data_hash: string;
+
+    @IsNotEmpty()
+    @IsEnum(ReportModelEnum)
+    @IsString()
+    @ApiProperty()
+    reportModel: string;
 
     @IsNotEmpty()
     @IsString()
