@@ -94,6 +94,8 @@ export const ReviewTaskMachineProvider = (
             const newMachine =
                 machine ||
                 getMachineInitialState()[ReportModelEnum.FactChecking];
+
+            setReportModel(reportModel);
             setGlobalMachineService(
                 createNewMachineService(newMachine, reportModel)
             );
