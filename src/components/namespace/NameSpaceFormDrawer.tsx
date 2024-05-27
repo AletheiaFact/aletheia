@@ -129,7 +129,7 @@ const NameSpacesFormDrawer = () => {
         await NameSpacesApi.updateNameSpace(newItem, t);
 
         finishEditing({
-            newItem: { ...newItem },
+            newItem: { ...newItem, slug: nameSpace.slug },
             listAtom: atomNameSpacesList,
             closeDrawer: true,
         });

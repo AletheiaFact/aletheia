@@ -80,6 +80,7 @@ export class SummarizationService {
             unverifiable: "Inverificável",
         };
 
+        //TODO: Get URL from config
         const baseUrl = "https://aletheiafact.org";
 
         const reportContent = summarizedReviews
