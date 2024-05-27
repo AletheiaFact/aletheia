@@ -10,6 +10,7 @@ import {
     removePersonality,
     saveClaimContext,
     startDebate,
+    startUnattributed,
     startImage,
     startSpeech,
 } from "./actions";
@@ -37,6 +38,10 @@ export const newCreateClaimMachine = ({ value, context }) => {
                     [Events.startDebate]: {
                         target: States.setupDebate,
                         actions: [startDebate],
+                    },
+                    [Events.startUnattributed]: {
+                        target: States.personalityAdded,
+                        actions: [startUnattributed],
                     },
                 },
             },

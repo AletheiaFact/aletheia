@@ -120,6 +120,25 @@ const saveDebate = (t, debate = {}) => {
         });
 };
 
+const saveUnattributed = (t, unattributed = {}) => {
+    return request
+        .post("/unattributed", unattributed)
+        .then((response) => {
+            const { title } = response.data;
+            message.success(
+                `"${title}" ${t("claimForm:successCreateMessage")}`
+            );
+            return response.data;
+        })
+        .catch((err) => {
+            const response = err && err.response;
+            // TODO: Track errors with Sentry
+            if (!response) {
+                console.error(err);
+            }
+        });
+};
+
 const updateDebate = (
     debateId,
     t,
@@ -186,6 +205,7 @@ const claimApi = {
     saveSpeech,
     saveImage,
     saveDebate,
+    saveUnattributed,
     updateDebate,
     deleteClaim,
     updateClaimHiddenStatus,

@@ -7,6 +7,7 @@ import { SentenceModule } from "../types/sentence/sentence.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { TestConfigOptions } from "../../tests/utils/TestConfigOptions";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { UnattributedModule } from "../types/unattributed/unattributed.module";
 
 describe("ParserService", () => {
     let parserService: ParserService;
@@ -26,6 +27,7 @@ describe("ParserService", () => {
                 SpeechModule,
                 ParagraphModule,
                 SentenceModule,
+                UnattributedModule,
             ],
             providers: [ParserService],
         }).compile();

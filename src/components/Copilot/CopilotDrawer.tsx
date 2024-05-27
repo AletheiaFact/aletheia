@@ -52,7 +52,7 @@ const CopilotDrawer = ({ claim, sentence }: CopilotDrawerProps) => {
         () => ({
             claimDate: claim.date,
             sentence: sentence,
-            personalityName: claim.personalities[0].name,
+            personalityName: claim?.personalities[0]?.name || null,
             claimTitle: claim.title,
         }),
         [claim, sentence]

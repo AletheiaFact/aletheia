@@ -46,6 +46,16 @@ const startDebate = assign<CreateClaimContext>((context) => {
     };
 });
 
+const startUnattributed = assign<CreateClaimContext>((context) => {
+    return {
+        claimData: {
+            ...context.claimData,
+            contentModel: ContentModelEnum.Unattributed,
+            personalities: [],
+        },
+    };
+});
+
 const removePersonality = assign<CreateClaimContext, RemovePersonalityEvent>(
     (contex, event) => {
         const { personality } = event;
@@ -78,6 +88,7 @@ const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
             [ContentModelEnum.Speech]: claimApi.saveSpeech,
             [ContentModelEnum.Image]: claimApi.saveImage,
             [ContentModelEnum.Debate]: claimApi.saveDebate,
+            [ContentModelEnum.Unattributed]: claimApi.saveUnattributed,
         };
 
         saveFunctions[claimData.contentModel](t, sendData)
@@ -97,6 +108,7 @@ export {
     startSpeech,
     startImage,
     startDebate,
+    startUnattributed,
     removePersonality,
     persistClaim,
 };
