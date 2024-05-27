@@ -28,8 +28,8 @@ export class SummarizationService {
                     query.pageSize,
                     query.order,
                     { isHidden: query.isHidden, isDeleted: false },
-                    query.latest,
-                    query.nameSpace
+                    query.nameSpace,
+                    query.latest
                 );
 
             const summarizedReviews = await this.getSummarizedReviews(
