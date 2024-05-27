@@ -101,7 +101,9 @@ const Footer = () => {
                                 textAlign: "center",
                             }}
                         >
-                            {t("footer:copyright")}
+                            {t("footer:copyright", {
+                                date: new Date().getFullYear(),
+                            })}
                         </h3>
                     </Row>
                 </Col>
