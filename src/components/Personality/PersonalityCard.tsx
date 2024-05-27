@@ -75,7 +75,7 @@ const PersonalityCard = ({
     const personalityIsSelected = personalities.some(
         (item) => item._id === personality._id
     );
-    const hasReview = personality.stats.reviews.length > 0;
+    const hasReview = personality?.stats?.reviews?.length > 0;
     const { t } = useTranslation();
     const componentStyle = {
         titleSpan: !fullWidth ? 14 : 24,
