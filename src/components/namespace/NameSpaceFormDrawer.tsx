@@ -30,6 +30,7 @@ import {
     atomNameSpacesList,
 } from "../../atoms/namespace";
 import NameSpacesApi from "../../api/namespace";
+import NotificationsApi from "../../api/notificationsApi";
 
 const NameSpacesFormDrawer = () => {
     const [nameSpace] = useAtom(nameSpaceBeeingEdited);
@@ -96,6 +97,21 @@ const NameSpacesFormDrawer = () => {
             }
             setOpen(false);
             resetForm();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleDailyReviews = async () => {
+        setIsLoading(true);
+        try {
+            await NotificationsApi.sendDailyReportEmail(
+                nameSpace._id,
+                nameSpace.slug,
+                t
+            );
         } catch (err) {
             console.error(err);
         } finally {
@@ -194,13 +210,24 @@ const NameSpacesFormDrawer = () => {
                                 }}
                             />
                         </Grid>
-                        <Button
-                            style={{ marginTop: 24 }}
-                            loading={isLoading}
-                            htmlType="submit"
-                        >
-                            {t("admin:saveButtonLabel")}
-                        </Button>
+                        <Grid container spacing={2} style={{ marginTop: 24 }}>
+                            <Grid item>
+                                <Button loading={isLoading} htmlType="submit">
+                                    {t("admin:saveButtonLabel")}
+                                </Button>
+                            </Grid>
+                            {nameSpace?._id && (
+                                <Grid item>
+                                    <Button
+                                        onClick={handleDailyReviews}
+                                        loading={isLoading}
+                                        htmlType="button"
+                                    >
+                                        {t("notification:dailyReportButton")}
+                                    </Button>
+                                </Grid>
+                            )}
+                        </Grid>
                     </form>
                 </Grid>
             </Grid>

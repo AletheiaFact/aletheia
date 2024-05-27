@@ -34,11 +34,11 @@ export class NameSpaceService {
 
         const newNameSpace = await new this.NameSpaceModel(nameSpace).save();
 
-        this.notificationService.createTopic(
+        await this.notificationService.createTopic(
             newNameSpace._id,
             newNameSpace.name
         );
-        this.notificationService.addTopicSubscriber(
+        await this.notificationService.addTopicSubscriber(
             newNameSpace._id,
             newNameSpace.users
         );

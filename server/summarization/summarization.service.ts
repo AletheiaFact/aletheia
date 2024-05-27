@@ -10,7 +10,7 @@ export class SummarizationService {
         private claimReviewService: ClaimReviewService
     ) {}
 
-    async generateDailyReport(): Promise<string> {
+    async generateDailyReport(nameSpace): Promise<string> {
         const query = {
             page: 0,
             pageSize: 10,
@@ -18,6 +18,7 @@ export class SummarizationService {
             isHidden: false,
             latest: false,
             isDailyRange: true,
+            nameSpace: nameSpace,
         };
 
         try {
@@ -27,7 +28,8 @@ export class SummarizationService {
                     query.pageSize,
                     query.order,
                     { isHidden: query.isHidden, isDeleted: false },
-                    query.latest
+                    query.latest,
+                    query.nameSpace
                 );
 
             const summarizedReviews = await this.getSummarizedReviews(
