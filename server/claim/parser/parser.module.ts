@@ -3,14 +3,14 @@ import { Module } from "@nestjs/common";
 import { SpeechModule } from "../types/speech/speech.module";
 import { ParagraphModule } from "../types/paragraph/paragraph.module";
 import { SentenceModule } from "../types/sentence/sentence.module";
-import { GenerativeInformationModule } from "../types/generative-information/generative-information.module";
+import { UnattributedModule } from "../types/unattributed/unattributed.module";
 
 @Module({
     imports: [
         SpeechModule,
         ParagraphModule,
         SentenceModule,
-        GenerativeInformationModule,
+        UnattributedModule,
     ],
     exports: [ParserService],
     providers: [ParserService],

@@ -10,7 +10,7 @@ import {
     removePersonality,
     saveClaimContext,
     startDebate,
-    startGenerativeInformation,
+    startUnattributed,
     startImage,
     startSpeech,
 } from "./actions";
@@ -39,9 +39,9 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         target: States.setupDebate,
                         actions: [startDebate],
                     },
-                    [Events.startGenerativeInformation]: {
+                    [Events.startUnattributed]: {
                         target: States.personalityAdded,
-                        actions: [startGenerativeInformation],
+                        actions: [startUnattributed],
                     },
                 },
             },

@@ -76,7 +76,7 @@ const SentenceReportCard = ({
             title: `"(...) ${content.content}"`,
             speechTypeTranslation: "claim:typeDebate",
         },
-        [ContentModelEnum.GenerativeInformation]: {
+        [ContentModelEnum.Unattributed]: {
             linkText: "claim:cardLinkToFullText",
             contentPath: generateContentPath(nameSpace, personality, claim),
             title: `"(...) ${content.content}"`,

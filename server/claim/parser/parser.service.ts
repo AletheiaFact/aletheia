@@ -4,8 +4,8 @@ import { ParagraphService } from "../types/paragraph/paragraph.service";
 import { SpeechService } from "../types/speech/speech.service";
 import { SpeechDocument } from "../types/speech/schemas/speech.schema";
 import { Types } from "mongoose";
-import { GenerativeInformationService } from "../types/generative-information/generative-information.service";
-import { GenerativeInformationDocument } from "../types/generative-information/schemas/generative-information.schema";
+import { UnattributedService } from "../types/unattributed/unattributed.service";
+import { UnattributedDocument } from "../types/unattributed/schemas/unattributed.schema";
 import { ContentModelEnum } from "../../types/enums";
 const md5 = require("md5");
 const nlp = require("compromise");
@@ -18,7 +18,7 @@ export class ParserService {
         private speechService: SpeechService,
         private paragraphService: ParagraphService,
         private sentenceService: SentenceService,
-        private generativeInformationService: GenerativeInformationService
+        private unattributedService: UnattributedService
     ) {}
     paragraphSequence: number;
     sentenceSequence: number;
@@ -28,7 +28,7 @@ export class ParserService {
         content: string,
         personality = null,
         contentModel = ContentModelEnum.Speech
-    ): Promise<SpeechDocument | GenerativeInformationDocument> {
+    ): Promise<SpeechDocument | UnattributedDocument> {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
         const result = [];
@@ -64,11 +64,9 @@ export class ParserService {
         }
 
         return await Promise.all(result).then(
-            (
-                object
-            ): Promise<SpeechDocument | GenerativeInformationDocument> => {
-                if (contentModel === ContentModelEnum.GenerativeInformation) {
-                    return this.generativeInformationService.create({
+            (object): Promise<SpeechDocument | UnattributedDocument> => {
+                if (contentModel === ContentModelEnum.Unattributed) {
+                    return this.unattributedService.create({
                         content: object,
                     });
                 }

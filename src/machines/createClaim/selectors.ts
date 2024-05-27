@@ -26,11 +26,10 @@ const addDebateSelector = (state) => {
     );
 };
 
-const addGenerativeInformationSelector = (state) => {
+const addUnattributedSelector = (state) => {
     return (
         state.matches(CreateClaimStates.personalityAdded) &&
-        state.context.claimData.contentModel ===
-            ContentModelEnum.GenerativeInformation
+        state.context.claimData.contentModel === ContentModelEnum.Unattributed
     );
 };
 
@@ -39,5 +38,5 @@ export {
     addSpeechSelector,
     stateSelector,
     addDebateSelector,
-    addGenerativeInformationSelector,
+    addUnattributedSelector,
 };

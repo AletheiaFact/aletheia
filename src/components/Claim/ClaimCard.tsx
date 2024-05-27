@@ -37,10 +37,11 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const [nameSpace] = useAtom(currentNameSpace);
     const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
     const isDebate = claim?.contentModel === ContentModelEnum.Debate;
-    const isGenerativeInformation =
-        claim?.contentModel === ContentModelEnum.GenerativeInformation;
+    const isUnattributed =
+        claim?.contentModel === ContentModelEnum.Unattributed;
     const isInsideDebate =
         selectedClaim?.contentModel === ContentModelEnum.Debate;
+    const shouldCreateFirstParagraph = isSpeech || isUnattributed;
 
     const dispatchPersonalityAndClaim = () => {
         if (!isInsideDebate) {
@@ -62,7 +63,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
             });
             setClaimContent(textContent.trim());
         };
-        if (isSpeech || isGenerativeInformation) {
+        if (shouldCreateFirstParagraph) {
             CreateFirstParagraph();
         } else {
             setClaimContent(claim.content);

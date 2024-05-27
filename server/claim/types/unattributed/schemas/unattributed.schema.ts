@@ -2,12 +2,11 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Paragraph } from "../../paragraph/schemas/paragraph.schema";
 
-export type GenerativeInformationDocument = GenerativeInformation &
-    mongoose.Document;
+export type UnattributedDocument = Unattributed & mongoose.Document;
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
-export class GenerativeInformation {
+export class Unattributed {
     @Prop({
-        default: "generative-information",
+        default: "unattributed",
         required: true,
     })
     type: string;
@@ -24,15 +23,13 @@ export class GenerativeInformation {
     content: Paragraph[];
 }
 
-const GenerativeInformationSchemaRaw = SchemaFactory.createForClass(
-    GenerativeInformation
-);
+const UnattributedSchemaRaw = SchemaFactory.createForClass(Unattributed);
 
-GenerativeInformationSchemaRaw.pre("find", function () {
+UnattributedSchemaRaw.pre("find", function () {
     this.populate("content");
 });
-GenerativeInformationSchemaRaw.pre("findOne", function () {
+UnattributedSchemaRaw.pre("findOne", function () {
     this.populate("content");
 });
 
-export const GenerativeInformationSchema = GenerativeInformationSchemaRaw;
+export const UnattributedSchema = UnattributedSchemaRaw;

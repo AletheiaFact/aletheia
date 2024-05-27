@@ -5,7 +5,7 @@ import React from "react";
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import {
     addDebateSelector,
-    addGenerativeInformationSelector,
+    addUnattributedSelector,
     addImageSelector,
     addSpeechSelector,
     stateSelector,
@@ -27,7 +27,7 @@ const CreateClaimView = () => {
     const addImage = addImageSelector(state);
     const addSpeech = addSpeechSelector(state);
     const addDebate = addDebateSelector(state);
-    const addGenerativeInformation = addGenerativeInformationSelector(state);
+    const addUnattributed = addUnattributedSelector(state);
 
     const showPersonality = addSpeech || addImage || addDebate;
     const { claimData } = state.context;
@@ -39,7 +39,7 @@ const CreateClaimView = () => {
         addImage ||
         addSpeech ||
         addDebate ||
-        addGenerativeInformation
+        addUnattributed
     );
 
     return (
@@ -56,7 +56,7 @@ const CreateClaimView = () => {
                 {addSpeech && <ClaimCreate />}
                 {addDebate && <ClaimCreateDebate />}
                 {isLoading && <Loading />}
-                {addGenerativeInformation && <ClaimCreate />}
+                {addUnattributed && <ClaimCreate />}
             </Col>
         </Row>
     );

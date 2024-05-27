@@ -387,12 +387,7 @@ export class ClaimService {
                     claim._id
                 );
 
-            processedClaim.content =
-                processedClaim.contentModel === ContentModelEnum.Speech ||
-                processedClaim.contentModel ===
-                    ContentModelEnum.GenerativeInformation
-                    ? processedClaim.content[0].content
-                    : processedClaim.content[0];
+            processedClaim.content = this.getClaimContent(processedClaim);
 
             if (processedClaim?.content) {
                 if (processedClaim?.contentModel === ContentModelEnum.Debate) {
@@ -509,5 +504,16 @@ export class ClaimService {
         }
 
         return claimContent;
+    }
+
+    private getClaimContent(claim) {
+        if (
+            claim.contentModel === ContentModelEnum.Speech ||
+            claim.contentModel === ContentModelEnum.Unattributed
+        ) {
+            return claim.content[0].content;
+        }
+
+        return claim.content[0];
     }
 }

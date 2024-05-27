@@ -144,7 +144,7 @@ export class ClaimRevisionService {
                 return (await this.imageService.create(claim.content))._id;
             case ContentModelEnum.Debate:
                 return (await this.debateService.create(claim))._id;
-            case ContentModelEnum.GenerativeInformation:
+            case ContentModelEnum.Unattributed:
                 return (
                     await this.parserService.parse(
                         claim.content,

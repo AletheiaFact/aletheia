@@ -65,7 +65,7 @@ const ClaimReviewDrawer = () => {
         [ContentModelEnum.Debate]: {
             href: `${href}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`,
         },
-        [ContentModelEnum.GenerativeInformation]: {
+        [ContentModelEnum.Unattributed]: {
             href: `/claim/${claim?.slug}/sentence/${data_hash}`,
         },
     };

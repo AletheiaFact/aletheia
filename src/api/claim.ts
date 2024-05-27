@@ -120,9 +120,9 @@ const saveDebate = (t, debate = {}) => {
         });
 };
 
-const saveGenerativeInformation = (t, generativeInformation = {}) => {
+const saveUnattributed = (t, unattributed = {}) => {
     return request
-        .post("/generative-information", generativeInformation)
+        .post("/unattributed", unattributed)
         .then((response) => {
             const { title } = response.data;
             message.success(
@@ -205,7 +205,7 @@ const claimApi = {
     saveSpeech,
     saveImage,
     saveDebate,
-    saveGenerativeInformation,
+    saveUnattributed,
     updateDebate,
     deleteClaim,
     updateClaimHiddenStatus,

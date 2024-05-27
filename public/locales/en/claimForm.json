@@ -30,7 +30,7 @@
     "Image": "Image",
     "Speech": "Speech",
     "Debate": "Debate",
-    "GenerativeInformation": "Generative Information",
+    "Unattributed": "General Information",
     "selectPersonalityTitle": "Personality",
     "selectPersonalityText": "Select the personality who made this claim",
     "selectPersonalityButton": "Continue",
