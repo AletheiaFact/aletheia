@@ -66,7 +66,7 @@ const ClaimReviewDrawer = () => {
             href: `${href}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`,
         },
         [ContentModelEnum.Unattributed]: {
-            href: `/claim/${claim?.slug}/sentence/${data_hash}`,
+            href: `${href}/claim/${claim?.slug}/sentence/${data_hash}`,
         },
     };
 
