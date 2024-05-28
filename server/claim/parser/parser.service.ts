@@ -4,6 +4,9 @@ import { ParagraphService } from "../types/paragraph/paragraph.service";
 import { SpeechService } from "../types/speech/speech.service";
 import { SpeechDocument } from "../types/speech/schemas/speech.schema";
 import { Types } from "mongoose";
+import { UnattributedService } from "../types/unattributed/unattributed.service";
+import { UnattributedDocument } from "../types/unattributed/schemas/unattributed.schema";
+import { ContentModelEnum } from "../../types/enums";
 const md5 = require("md5");
 const nlp = require("compromise");
 nlp.extend(require("compromise-sentences"));
@@ -14,13 +17,18 @@ export class ParserService {
     constructor(
         private speechService: SpeechService,
         private paragraphService: ParagraphService,
-        private sentenceService: SentenceService
+        private sentenceService: SentenceService,
+        private unattributedService: UnattributedService
     ) {}
     paragraphSequence: number;
     sentenceSequence: number;
     nlpOptions: object = { trim: true };
 
-    async parse(content: string, personality = null): Promise<SpeechDocument> {
+    async parse(
+        content: string,
+        personality = null,
+        contentModel = ContentModelEnum.Speech
+    ): Promise<SpeechDocument | UnattributedDocument> {
         this.paragraphSequence = 0;
         this.sentenceSequence = 0;
         const result = [];
@@ -56,7 +64,13 @@ export class ParserService {
         }
 
         return await Promise.all(result).then(
-            (object): Promise<SpeechDocument> => {
+            (object): Promise<SpeechDocument | UnattributedDocument> => {
+                if (contentModel === ContentModelEnum.Unattributed) {
+                    return this.unattributedService.create({
+                        content: object,
+                    });
+                }
+
                 return this.speechService.create({
                     content: object,
                     personality,

@@ -81,39 +81,54 @@ export class NotificationService {
         return result.data;
     }
 
-    async addTopicSubscriber(key: string, subscriberId: string) {
+    async getTopic(key: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
+        try {
+            const result = await this.novu.topics.get(key);
+            return result.data;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+
+    async addTopicSubscriber(key: string, subscribersId) {
         if (!this.novuIsConfigured()) {
             return;
         }
 
         const result = await this.novu.topics.addSubscribers(key, {
-            subscribers: [subscriberId],
+            subscribers: subscribersId,
         });
 
         return result.data;
     }
 
-    async removeTopicSubscriber(key: string, subscriberId: string) {
+    async removeTopicSubscriber(key: string, subscribersId) {
         if (!this.novuIsConfigured()) {
             return;
         }
 
         const result = await this.novu.topics.removeSubscribers(key, {
-            subscribers: [subscriberId],
+            subscribers: subscribersId,
         });
 
         return result.data;
     }
 
-    async sendTopicNotification(key: string, description: string) {
+    async sendDailyReviewsEmail(key: string, body) {
         if (!this.novuIsConfigured()) {
             return;
         }
 
-        //TODO: Rename trigger name based on dashboard
-        const result = await this.novu.trigger("email-quickstart", {
+        const result = await this.novu.trigger("daily-report", {
             to: [{ type: TriggerRecipientsTypeEnum.TOPIC, topicKey: key }],
-            payload: { description },
+            payload: {
+                body: body,
+            },
         });
 
         return result.data;

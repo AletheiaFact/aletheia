@@ -9,7 +9,6 @@ import selectCrossCheckerForm from "../../components/ClaimReview/form/fieldLists
 
 const getNextForm = (
     param: ReviewTaskEvents | ReviewTaskStates,
-    enableCollaborativeEdit?: boolean,
     isSameLabel = false
 ) => {
     const formMap = {

@@ -43,11 +43,9 @@ export class ClaimService {
     ) {}
 
     async listAll(page, pageSize, order, query) {
-        if (!query.isHidden) {
+        if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false
-            query.personalities = query.personalities
-                ? Types.ObjectId(query.personalities)
-                : [];
+            query.personalities = Types.ObjectId(query.personalities);
         }
 
         const claims = await this.ClaimModel.find(query)
@@ -270,6 +268,18 @@ export class ClaimService {
         );
     }
 
+    async getByClaimSlug(claimSlug, revisionId = undefined, population = true) {
+        const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            {
+                slug: claimSlug,
+                nameSpace,
+            },
+            this.req
+        );
+        return this._getClaim(queryOptions, revisionId, true, population);
+    }
+
     async getByPersonalityIdAndClaimSlug(
         personalityId,
         claimSlug,
@@ -377,10 +387,7 @@ export class ClaimService {
                     claim._id
                 );
 
-            processedClaim.content =
-                processedClaim.contentModel === ContentModelEnum.Speech
-                    ? processedClaim.content[0].content
-                    : processedClaim.content[0];
+            processedClaim.content = this.getClaimContent(processedClaim);
 
             if (processedClaim?.content) {
                 if (processedClaim?.contentModel === ContentModelEnum.Debate) {
@@ -497,5 +504,16 @@ export class ClaimService {
         }
 
         return claimContent;
+    }
+
+    private getClaimContent(claim) {
+        if (
+            claim.contentModel === ContentModelEnum.Speech ||
+            claim.contentModel === ContentModelEnum.Unattributed
+        ) {
+            return claim.content[0].content;
+        }
+
+        return claim.content[0];
     }
 }

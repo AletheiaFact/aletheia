@@ -22,6 +22,7 @@ import { useSelector } from "@xstate/react";
 import { useTranslation } from "next-i18next";
 import CopilotDrawer from "../Copilot/CopilotDrawer";
 import { useAppSelector } from "../../store/store";
+import { ReportModelEnum } from "../../machines/reviewTask/enums";
 
 const ClaimReviewForm = ({
     claim,
@@ -35,12 +36,16 @@ const ClaimReviewForm = ({
     const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [userId] = useAtom(currentUserId);
-    const { machineService } = useContext(ReviewTaskMachineContext);
+    const { machineService, reportModel, recreateMachine } = useContext(
+        ReviewTaskMachineContext
+    );
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
-    const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
+    const [formCollapsed, setFormCollapsed] = useState(
+        isUnassigned && !reportModel
+    );
     const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
     const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
         (state) => ({
@@ -58,12 +63,13 @@ const ClaimReviewForm = ({
         (userIsAssignee && !isReviewing) ||
         (isReviewing && userIsReviewer);
 
-    const toggleFormCollapse = () => {
+    const toggleFormCollapse = (event) => {
         setFormCollapsed(!formCollapsed);
+        recreateMachine(event.currentTarget.id);
     };
 
     useEffect(() => {
-        setFormCollapsed(isUnassigned);
+        setFormCollapsed(isUnassigned && !reportModel);
     }, [isUnassigned]);
 
     return (
@@ -82,16 +88,42 @@ const ClaimReviewForm = ({
                             justifyContent: "center",
                         }}
                     >
-                        {isLoggedIn && (
-                            <Button
-                                type={ButtonType.blue}
-                                onClick={toggleFormCollapse}
-                                icon={<PlusOutlined />}
-                                data-cy={"testAddReviewButton"}
-                            >
-                                {t("claimReviewForm:addReviewButton")}
-                            </Button>
-                        )}
+                        <Col
+                            span={24}
+                            style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                flexWrap: "wrap",
+                                gap: 16,
+                            }}
+                        >
+                            {isLoggedIn && (
+                                <Button
+                                    type={ButtonType.blue}
+                                    onClick={toggleFormCollapse}
+                                    icon={<PlusOutlined />}
+                                    data-cy={
+                                        "testAddInformativeNewsReviewButton"
+                                    }
+                                    id={ReportModelEnum.InformativeNews}
+                                >
+                                    {t(
+                                        "claimReviewForm:addInformativeNewsButton"
+                                    )}
+                                </Button>
+                            )}
+                            {isLoggedIn && (
+                                <Button
+                                    type={ButtonType.blue}
+                                    onClick={toggleFormCollapse}
+                                    icon={<PlusOutlined />}
+                                    data-cy={"testAddFactCheckReviewButton"}
+                                    id={ReportModelEnum.FactChecking}
+                                >
+                                    {t("claimReviewForm:addReviewButton")}
+                                </Button>
+                            )}
+                        </Col>
                     </Row>
                 )}
                 <Col

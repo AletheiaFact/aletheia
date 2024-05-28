@@ -5,6 +5,7 @@ services:
       cors: '*'
       debug: true
       websocketUrl: wss://testws.aletheiafact.org
+      baseUrl: https://test.aletheiafact.org
       automatedFactCheckingAPIUrl: AGENTS_API_URL
       override_public_routes: true
       recaptcha_secret: RECAPTCHA_SECRET

@@ -15,6 +15,8 @@ import EditorStyle from "./Editor.style";
 import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
 import useCardPresence from "./hooks/useCardPresence";
 import { Node } from "@remirror/pm/model";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import { ReportModelEnum } from "../../machines/reviewTask/enums";
 
 /**
  * Modifies context state to JSON using useHelpers hook
@@ -38,6 +40,7 @@ const Editor = ({
         shouldInsertAIReport,
         setShouldInsertAIReport,
     } = useContext(CollaborativeEditorContext);
+    const { reportModel } = useContext(ReviewTaskMachineContext);
     const { getJSON } = useHelpers();
 
     useEffect(
@@ -77,48 +80,55 @@ const Editor = ({
         [command, state]
     );
 
+    const actions = [
+        {
+            onClick: () => handleInsertNode(getSummaryContentHtml),
+            disabled: editable || summaryDisabled,
+            "data-cy": "testClaimReviewsummarizeAdd",
+            icon: <SummarizeIcon className="toolbar-item-icon" />,
+        },
+    ];
+
+    if (reportModel === ReportModelEnum.FactChecking) {
+        actions.push(
+            {
+                onClick: () => handleInsertNode(getVerificationContentHtml),
+                disabled: editable || verificationDisabled,
+                "data-cy": "testClaimReviewverificationAdd",
+                icon: <FactCheckIcon className="toolbar-item-icon" />,
+            },
+            {
+                onClick: () => handleInsertNode(getReportContentHtml),
+                disabled: editable || reportDisabled,
+                "data-cy": "testClaimReviewreportAdd",
+                icon: <ReportProblemIcon className="toolbar-item-icon" />,
+            },
+            {
+                onClick: () => handleInsertNode(getQuestionContentHtml),
+                disabled: editable,
+                "data-cy": "testClaimReviewquestionsAdd",
+                icon: <QuestionMarkIcon className="toolbar-item-icon" />,
+            }
+        );
+    }
+
     return (
         <EditorStyle>
             <div className="toolbar">
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getQuestionContentHtml)}
-                    disabled={editable}
-                    style={{ outline: "none", border: "none" }}
-                    data-cy="testClaimReviewquestionsAdd"
-                >
-                    <QuestionMarkIcon className="toolbar-item-icon" />
-                </Button>
-
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getSummaryContentHtml)}
-                    disabled={editable || summaryDisabled}
-                    style={{ outline: "none", border: "none" }}
-                    data-cy="testClaimReviewsummarizeAdd"
-                >
-                    <SummarizeIcon className="toolbar-item-icon" />
-                </Button>
-
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getReportContentHtml)}
-                    disabled={editable || reportDisabled}
-                    style={{ outline: "none", border: "none" }}
-                    data-cy="testClaimReviewreportAdd"
-                >
-                    <ReportProblemIcon className="toolbar-item-icon" />
-                </Button>
-
-                <Button
-                    className="toolbar-item"
-                    onClick={() => handleInsertNode(getVerificationContentHtml)}
-                    disabled={editable || verificationDisabled}
-                    style={{ outline: "none", border: "none" }}
-                    data-cy="testClaimReviewverificationAdd"
-                >
-                    <FactCheckIcon className="toolbar-item-icon" />
-                </Button>
+                {actions ? (
+                    actions.map(({ icon, ...props }) => (
+                        <Button
+                            key={props["data-cy"]}
+                            className="toolbar-item"
+                            style={{ outline: "none", border: "none" }}
+                            {...props}
+                        >
+                            {icon}
+                        </Button>
+                    ))
+                ) : (
+                    <></>
+                )}
             </div>
         </EditorStyle>
     );

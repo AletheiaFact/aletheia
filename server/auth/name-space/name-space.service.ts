@@ -6,12 +6,14 @@ import slugify from "slugify";
 import { UsersService } from "../../users/users.service";
 import { Roles } from "../../auth/ability/ability.factory";
 import { UpdateNameSpaceDTO } from "./dto/update-name-space.dto";
+import { NotificationService } from "../../notifications/notifications.service";
 
 @Injectable()
 export class NameSpaceService {
     constructor(
         @InjectModel(NameSpace.name)
         private NameSpaceModel: Model<NameSpaceDocument>,
+        private notificationService: NotificationService,
         private usersService: UsersService
     ) {}
 
@@ -30,7 +32,19 @@ export class NameSpaceService {
             nameSpace.slug
         );
 
-        return new this.NameSpaceModel(nameSpace).save();
+        const newNameSpace = await new this.NameSpaceModel(nameSpace).save();
+
+        await this.notificationService.createTopic(
+            newNameSpace._id,
+            newNameSpace.name
+        );
+        if (newNameSpace.users.length > 0) {
+            await this.notificationService.addTopicSubscriber(
+                newNameSpace._id,
+                newNameSpace.users
+            );
+        }
+        return newNameSpace;
     }
 
     async update(id, nameSpaceBody: UpdateNameSpaceDTO) {
@@ -45,11 +59,24 @@ export class NameSpaceService {
             strict: true,
         });
 
+        const isNameSpaceTopic = await this.notificationService.getTopic(
+            newNameSpace._id
+        );
+
         newNameSpace.users = await this.updateNameSpaceUsers(
             newNameSpace.users,
             nameSpace.slug
         );
+
+        await this.ensureTopicAndSubscribers(
+            id,
+            newNameSpace.name,
+            newNameSpace.users,
+            isNameSpaceTopic
+        );
+
         await this.findNameSpaceUsersAndDelete(
+            id,
             nameSpace.slug,
             newNameSpace.users,
             nameSpace.users
@@ -59,6 +86,21 @@ export class NameSpaceService {
             { _id: nameSpace._id },
             newNameSpace
         );
+    }
+
+    async ensureTopicAndSubscribers(
+        namespaceId,
+        namespaceName,
+        users,
+        isNameSpaceTopic
+    ) {
+        if (!isNameSpaceTopic) {
+            await this.notificationService.createTopic(
+                namespaceId,
+                namespaceName
+            );
+        }
+        await this.notificationService.addTopicSubscriber(namespaceId, users);
     }
 
     async updateNameSpaceUsers(users, key) {
@@ -92,12 +134,21 @@ export class NameSpaceService {
         await Promise.all(updatePromises);
     }
 
-    async findNameSpaceUsersAndDelete(nameSpaceSlug, users, previousUsersId) {
+    async findNameSpaceUsersAndDelete(
+        id,
+        nameSpaceSlug,
+        users,
+        previousUsersId
+    ) {
         const usersIdSet = new Set(users.map((user) => user.toString()));
         const nameSpaceUsersTodelete = previousUsersId.filter(
             (previousUserId) => !usersIdSet.has(previousUserId.toString())
         );
         if (nameSpaceUsersTodelete.length > 0) {
+            this.notificationService.removeTopicSubscriber(
+                id,
+                nameSpaceUsersTodelete
+            );
             return await this.deleteUsersNameSpace(
                 nameSpaceUsersTodelete,
                 nameSpaceSlug

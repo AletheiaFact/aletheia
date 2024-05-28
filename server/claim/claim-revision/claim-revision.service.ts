@@ -56,41 +56,10 @@ export class ClaimRevisionService {
             strict: true, // strip special characters except replacement, defaults to `false`
         });
 
-        if (claim.contentModel === ContentModelEnum.Speech) {
-            const newSpeech = await this.parserService.parse(claim.content);
-            claim.contentId = newSpeech._id;
-        } else if (claim.contentModel === ContentModelEnum.Image) {
-            const newImage = await this.imageService.create(claim.content);
-            claim.contentId = newImage._id;
-        } else if (claim.contentModel === ContentModelEnum.Debate) {
-            const newDebate = await this.debateService.create(claim);
-            claim.contentId = newDebate._id;
-        }
+        claim.contentId = await this._createContentModel(claim);
 
         const newClaimRevision = new this.ClaimRevisionModel(claim);
-
-        if (claim.sources && Array.isArray(claim.sources)) {
-            // TODO: check if source already exists
-            try {
-                for (let source of claim.sources) {
-                    if (typeof source === "string") {
-                        await this.sourceService.create({
-                            href: source,
-                            targetId: claimId,
-                            targetModel: SourceTargetModel.Claim,
-                        });
-                    } else {
-                        await this.sourceService.updateTargetId(
-                            source._id,
-                            claimId
-                        );
-                    }
-                }
-            } catch (e) {
-                this.logger.error(e);
-                throw e;
-            }
-        }
+        await this._createSources(claim.sources, claimId);
         return newClaimRevision.save();
     }
 
@@ -165,5 +134,48 @@ export class ClaimRevisionService {
 
     getByContentId(contentId) {
         return this.ClaimRevisionModel.findOne({ contentId });
+    }
+
+    private async _createContentModel(claim) {
+        switch (claim.contentModel) {
+            case ContentModelEnum.Speech:
+                return (await this.parserService.parse(claim.content))._id;
+            case ContentModelEnum.Image:
+                return (await this.imageService.create(claim.content))._id;
+            case ContentModelEnum.Debate:
+                return (await this.debateService.create(claim))._id;
+            case ContentModelEnum.Unattributed:
+                return (
+                    await this.parserService.parse(
+                        claim.content,
+                        null,
+                        claim.contentModel
+                    )
+                )._id;
+        }
+    }
+
+    private async _createSources(sources, claimId) {
+        if (sources && Array.isArray(sources)) {
+            for (let source of sources) {
+                try {
+                    if (typeof source === "string") {
+                        await this.sourceService.create({
+                            href: source,
+                            targetId: claimId,
+                            targetModel: SourceTargetModel.Claim,
+                        });
+                    } else {
+                        await this.sourceService.updateTargetId(
+                            source._id,
+                            claimId
+                        );
+                    }
+                } catch (e) {
+                    this.logger.error(e);
+                    throw e;
+                }
+            }
+        }
     }
 }

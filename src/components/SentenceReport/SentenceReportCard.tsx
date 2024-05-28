@@ -32,35 +32,29 @@ const SentenceReportCard = ({
 }) => {
     const { t } = useTranslation();
     const isImage = claim?.contentModel === ContentModelEnum.Image;
+    const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
+    const isDebate = claim?.contentModel === ContentModelEnum.Debate;
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
 
     const generateContentPath = (nameSpace, personality, claim) => {
-        const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
-        const isDebate = claim?.contentModel === ContentModelEnum.Debate;
+        const basePath =
+            nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
+        let path = `${basePath}/claim/${
+            claim.contentModel === ContentModelEnum.Debate
+                ? claim._id
+                : claim?.slug
+        }`;
 
-        if (isSpeech) {
-            return nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/personality/${personality?.slug}/claim/${claim?.slug}`
-                : `/personality/${personality?.slug}/claim/${claim?.slug}`;
-        }
-
-        if (isImage) {
-            if (personality) {
-                return nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/personality/${personality.slug}/claim/${claim?.slug}`
-                    : `/personality/${personality.slug}/claim/${claim?.slug}`;
-            }
-            return nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/claim/${claim?._id}`
-                : `/claim/${claim?._id}`;
+        if (isSpeech || (isImage && personality)) {
+            path = `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}`;
         }
 
         if (isDebate) {
-            return nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/claim/${claim?._id}/debate`
-                : `/claim/${claim?._id}/debate`;
+            path += "/debate";
         }
+
+        return path;
     };
 
     const contentProps = {
@@ -81,6 +75,12 @@ const SentenceReportCard = ({
             contentPath: generateContentPath(nameSpace, personality, claim),
             title: `"(...) ${content.content}"`,
             speechTypeTranslation: "claim:typeDebate",
+        },
+        [ContentModelEnum.Unattributed]: {
+            linkText: "claim:cardLinkToFullText",
+            contentPath: generateContentPath(nameSpace, personality, claim),
+            title: `"(...) ${content.content}"`,
+            speechTypeTranslation: "claim:typeSpeech",
         },
     };
 

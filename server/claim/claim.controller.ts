@@ -154,7 +154,7 @@ export class ClaimController {
                 : null;
             const path = personality
                 ? `/personality/${personality.slug}/claim/${claim.slug}`
-                : `/claim/${claim._id}`;
+                : `/claim/${claim.slug}`;
             return {
                 title: claim.title,
                 path:
@@ -188,6 +188,24 @@ export class ClaimController {
                     claim.nameSpace !== NameSpaceEnum.Main
                         ? `/${claim.nameSpace}${path}`
                         : path,
+            };
+        } catch (error) {
+            return error;
+        }
+    }
+
+    @ApiTags("claim")
+    @Post("api/claim/unattributed")
+    async createUnattributedClaim(@Body() createClaimDTO) {
+        try {
+            const claim = await this._createClaim(createClaimDTO);
+
+            return {
+                title: claim.title,
+                path:
+                    claim.nameSpace !== NameSpaceEnum.Main
+                        ? `/${claim.nameSpace}/claim/${claim.slug}`
+                        : `/claim/${claim.slug}`,
             };
         } catch (error) {
             return error;
@@ -524,30 +542,18 @@ export class ClaimController {
     @IsPublic()
     @Redirect()
     @ApiTags("pages")
-    @Get("claim/:claimId")
+    @Get("claim/:claimSlug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async imageClaimPage(@Req() req: BaseRequest, @Res() res: Response) {
-        const { claimId, namespace = NameSpaceEnum.Main } = req.params;
+        const { claimSlug, namespace = NameSpaceEnum.Main } = req.params;
         const parsedUrl = parse(req.url, true);
-        const claim = await this.claimService.getById(
-            claimId,
-            namespace as NameSpaceEnum
-        );
+        const claim = await this.claimService.getByClaimSlug(claimSlug);
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
         const enableCopilotChatBot = this.isEnableCopilotChatBot();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
 
-        if (claim.personalities.length > 0) {
-            const personalitySlug = slugify(claim.personalities[0].name, {
-                lower: true,
-                strict: true,
-            });
-            const redirectUrl =
-                namespace !== NameSpaceEnum.Main
-                    ? `/${namespace}/personality/${personalitySlug}/claim/${claim.slug}`
-                    : `/personality/${personalitySlug}/claim/${claim.slug}`;
-            return res.redirect(redirectUrl);
-        }
+        this.redirectBasedOnPersonality(res, claim, namespace);
+
         await this.viewService.getNextServer().render(
             req,
             res,
@@ -789,6 +795,32 @@ export class ClaimController {
         );
     }
 
+    @IsPublic()
+    @Redirect()
+    @ApiTags("pages")
+    @Get("claim/:claimSlug/sentence/:data_hash")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getClaimReviewPageWithoutPersonality(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const {
+            data_hash,
+            claimSlug,
+            namespace = NameSpaceEnum.Main,
+        } = req.params;
+
+        const claim = await this.claimService.getByClaimSlug(
+            claimSlug,
+            undefined,
+            false
+        );
+        this.redirectBasedOnPersonality(res, claim, namespace, data_hash);
+        const sentence = await this.sentenceService.getByDataHash(data_hash);
+
+        await this.returnClaimReviewPage(data_hash, req, res, claim, sentence);
+    }
+
     private isEnableCollaborativeEditor() {
         const config = this.configService.get<string>("feature_flag");
 
@@ -809,5 +841,33 @@ export class ClaimController {
         return config
             ? this.unleash.isEnabled("enable_editor_annotations")
             : false;
+    }
+
+    private redirectBasedOnPersonality(
+        res,
+        claim,
+        namespace,
+        data_hash = null
+    ) {
+        const { personalities, slug } = claim;
+        if (personalities.length <= 0) {
+            return;
+        }
+
+        const personalitySlug = slugify(personalities[0].name, {
+            lower: true,
+            strict: true,
+        });
+
+        let redirectUrl =
+            namespace !== NameSpaceEnum.Main
+                ? `/${namespace}/personality/${personalitySlug}/claim/${slug}`
+                : `/personality/${personalitySlug}/claim/${slug}`;
+
+        if (data_hash) {
+            redirectUrl += `/sentence/${data_hash}`;
+        }
+
+        return res.redirect(redirectUrl);
     }
 }

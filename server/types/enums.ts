@@ -2,6 +2,12 @@ enum ContentModelEnum {
     Speech = "Speech",
     Image = "Image",
     Debate = "Debate",
+    Unattributed = "Unattributed",
 }
 
-export { ContentModelEnum };
+enum ReportModelEnum {
+    FactChecking = "Fact-checking",
+    InformativeNews = "Informative News",
+}
+
+export { ContentModelEnum, ReportModelEnum };

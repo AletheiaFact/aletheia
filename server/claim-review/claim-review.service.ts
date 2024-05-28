@@ -85,6 +85,81 @@ export class ClaimReviewService {
         );
     }
 
+    async listDailyReviews(
+        page,
+        pageSize,
+        order,
+        query,
+        nameSpace,
+        latest = false
+    ) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        query.date = {
+            $gte: today,
+            $lt: tomorrow,
+        };
+        const pipeline = this.ClaimReviewModel.find(query)
+            .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
+            .populate({
+                path: "claim",
+                model: "Claim",
+                populate: {
+                    path: "latestRevision",
+                    model: "ClaimRevision",
+                },
+                match: {
+                    isDeleted: false,
+                    nameSpace:
+                        this.req.params.namespace ||
+                        nameSpace ||
+                        NameSpaceEnum.Main,
+                },
+            })
+            .populate({
+                path: "report",
+                model: "Report",
+                match: {
+                    isDeleted: false,
+                },
+            })
+            .skip(page * pageSize)
+            .limit(parseInt(pageSize));
+
+        const personalityPopulateOptions: any = {
+            path: "personality",
+            model: "Personality",
+            match: {
+                isDeleted: false,
+            },
+        };
+
+        if (!query.isHidden) {
+            personalityPopulateOptions.match = {
+                $or: [
+                    { personality: { $exists: false } },
+                    { isHidden: { $ne: true } },
+                ],
+            };
+        }
+
+        const claimReviews = await pipeline
+            .populate(personalityPopulateOptions)
+            .exec();
+
+        const filteredClaimReviews = claimReviews.filter(
+            (review) => review.claim
+        );
+
+        return Promise.all(
+            filteredClaimReviews.map(async (review) => this.postProcess(review))
+        );
+    }
+
     async agreggateClassification(match: any) {
         const nameSpace = this.req.params.namespace || this.req.query.nameSpace;
 
@@ -186,7 +261,7 @@ export class ClaimReviewService {
      * @param claimReview ClaimReviewBody received of the client.
      * @returns Return a new claim review object.
      */
-    async create(claimReview, data_hash) {
+    async create(claimReview, data_hash, reportModel) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const review = await this.getReviewByDataHash(data_hash);
 
@@ -204,6 +279,7 @@ export class ClaimReviewService {
             });
             claimReview.report = Types.ObjectId(claimReview.report._id);
             claimReview.data_hash = data_hash;
+            claimReview.reportModel = reportModel;
             claimReview.date = new Date();
             const newClaimReview = new this.ClaimReviewModel(claimReview);
             newClaimReview.isPublished = true;
@@ -238,7 +314,8 @@ export class ClaimReviewService {
 
         if (claimReview?.report) {
             claimReview.report = await this.getHtmlFromSchema(
-                claimReview?.report
+                claimReview?.report,
+                claimReview?.reportModel
             );
         }
 
@@ -302,7 +379,7 @@ export class ClaimReviewService {
     }
 
     private async postProcess(review) {
-        const { personality, data_hash } = review;
+        const { personality, data_hash, report } = review;
         const nameSpace =
             this.req.params.namespace ||
             this.req.query.nameSpace ||
@@ -314,6 +391,8 @@ export class ClaimReviewService {
 
         const isContentImage = claim.contentModel === ContentModelEnum.Image;
         const isContentDebate = claim.contentModel === ContentModelEnum.Debate;
+        const isContentInformativeNews =
+            claim.contentModel === ContentModelEnum.Unattributed;
 
         const content = isContentImage
             ? await this.imageService.getByDataHash(data_hash)
@@ -323,6 +402,13 @@ export class ClaimReviewService {
             nameSpace !== NameSpaceEnum.Main
                 ? `/${nameSpace}/claim/${review.claim.latestRevision.claimId}`
                 : `/claim/${review.claim.latestRevision.claimId}`;
+
+        if (isContentInformativeNews) {
+            reviewHref =
+                nameSpace !== NameSpaceEnum.Main
+                    ? `/${nameSpace}/claim/${review.claim.slug}`
+                    : `/claim/${review.claim.slug}`;
+        }
 
         if (personality) {
             reviewHref =
@@ -346,6 +432,7 @@ export class ClaimReviewService {
             personality,
             reviewHref,
             claim,
+            report,
         };
     }
 
@@ -363,8 +450,11 @@ export class ClaimReviewService {
                 count: count as number,
             }));
     }
-    getHtmlFromSchema(schema) {
-        const htmlContent = this.editorParseService.schema2html(schema);
+    getHtmlFromSchema(schema, reportModel) {
+        const htmlContent = this.editorParseService.schema2html(
+            schema,
+            reportModel
+        );
         return {
             ...schema,
             ...htmlContent,

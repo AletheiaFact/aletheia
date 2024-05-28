@@ -5,6 +5,7 @@ services:
       cors: '*'
       debug: true
       websocketUrl: ws://localhost:5001
+      baseUrl: "http://localhost:3000"
       automatedFactCheckingAPIUrl: AGENTS_API_URL
       #override_public_routes: true
       recaptcha_secret: RECAPTCHA_SECRET

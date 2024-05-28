@@ -1,24 +1,42 @@
 import {
     ReviewTaskEvents as Events,
+    ReportModelEnum,
     ReviewTaskStates as States,
 } from "./enums";
 
-const getNextEvents = (param: Events | States, isSameLabel = false) => {
+const getNextEvents = (
+    param: Events | States,
+    isSameLabel = false,
+    reportModel: ReportModelEnum = ReportModelEnum.FactChecking
+) => {
     const defaultEvents = [Events.goback, Events.draft];
     const eventsMap = {
         [States.unassigned]: [Events.assignUser],
         [Events.assignUser]: [...defaultEvents, Events.finishReport],
-        [States.assigned]: [...defaultEvents, Events.finishReport],
+        [States.assigned]:
+            reportModel === ReportModelEnum.FactChecking
+                ? [...defaultEvents, Events.finishReport]
+                : [Events.draft, Events.finishReport],
 
         [Events.finishReport]: [
             Events.goback,
-            Events.selectedCrossChecking,
-            Events.selectedReview,
+            reportModel === ReportModelEnum.FactChecking
+                ? Events.selectedCrossChecking
+                : [],
+            reportModel === ReportModelEnum.FactChecking
+                ? Events.selectedReview
+                : [],
+            reportModel === ReportModelEnum.FactChecking ? [] : Events.publish,
         ],
         [States.reported]: [
             Events.goback,
-            Events.selectedCrossChecking,
-            Events.selectedReview,
+            reportModel === ReportModelEnum.FactChecking
+                ? Events.selectedCrossChecking
+                : [],
+            reportModel === ReportModelEnum.FactChecking
+                ? Events.selectedReview
+                : [],
+            reportModel === ReportModelEnum.FactChecking ? [] : Events.publish,
         ],
         [Events.submitCrossChecking]: [
             Events.goback,
@@ -55,7 +73,10 @@ const getNextEvents = (param: Events | States, isSameLabel = false) => {
         [Events.sendToReview]: [Events.reject, Events.publish],
 
         [States.rejected]: [Events.goback, Events.addRejectionComment],
-        [Events.addRejectionComment]: [...defaultEvents, Events.finishReport],
+        [Events.addRejectionComment]:
+            reportModel === ReportModelEnum.FactChecking
+                ? [...defaultEvents, Events.finishReport]
+                : [Events.draft, Events.finishReport],
 
         [States.published]: [],
         [Events.publish]: [],

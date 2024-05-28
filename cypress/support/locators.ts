@@ -37,7 +37,7 @@ const locators = {
     },
 
     claimReview: {
-        BTN_START_CLAIM_REVIEW: "[data-cy=testAddReviewButton]",
+        BTN_START_CLAIM_REVIEW: "[data-cy=testAddFactCheckReviewButton]",
         INPUT_USER: "[data-cy=testClaimReviewusersId]",
         BTN_ASSIGN_USER: "[data-cy=testClaimReviewASSIGN_USER]",
         INPUT_SUMMARY: "[data-cy=testClaimReviewsummary]",
