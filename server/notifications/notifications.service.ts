@@ -81,6 +81,20 @@ export class NotificationService {
         return result.data;
     }
 
+    async getTopic(key: string) {
+        if (!this.novuIsConfigured()) {
+            return;
+        }
+
+        try {
+            const result = await this.novu.topics.get(key);
+            return result.data;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    }
+
     async addTopicSubscriber(key: string, subscribersId) {
         if (!this.novuIsConfigured()) {
             return;

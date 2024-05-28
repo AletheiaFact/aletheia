@@ -85,7 +85,14 @@ export class ClaimReviewService {
         );
     }
 
-    async listDailyReviews(page, pageSize, order, query, latest = false) {
+    async listDailyReviews(
+        page,
+        pageSize,
+        order,
+        query,
+        nameSpace,
+        latest = false
+    ) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -109,7 +116,7 @@ export class ClaimReviewService {
                     isDeleted: false,
                     nameSpace:
                         this.req.params.namespace ||
-                        this.req.query.nameSpace ||
+                        nameSpace ||
                         NameSpaceEnum.Main,
                 },
             })

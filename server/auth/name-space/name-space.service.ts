@@ -34,15 +34,16 @@ export class NameSpaceService {
 
         const newNameSpace = await new this.NameSpaceModel(nameSpace).save();
 
-        this.notificationService.createTopic(
+        await this.notificationService.createTopic(
             newNameSpace._id,
             newNameSpace.name
         );
-        this.notificationService.addTopicSubscriber(
-            newNameSpace._id,
-            newNameSpace.users
-        );
-
+        if (newNameSpace.users.length > 0) {
+            await this.notificationService.addTopicSubscriber(
+                newNameSpace._id,
+                newNameSpace.users
+            );
+        }
         return newNameSpace;
     }
 
@@ -58,14 +59,22 @@ export class NameSpaceService {
             strict: true,
         });
 
+        const isNameSpaceTopic = await this.notificationService.getTopic(
+            newNameSpace._id
+        );
+
         newNameSpace.users = await this.updateNameSpaceUsers(
             newNameSpace.users,
             nameSpace.slug
         );
-        this.notificationService.addTopicSubscriber(
-            newNameSpace._id,
-            newNameSpace.users
+
+        this.ensureTopicAndSubscribers(
+            id,
+            newNameSpace.name,
+            newNameSpace.users,
+            isNameSpaceTopic
         );
+
         await this.findNameSpaceUsersAndDelete(
             id,
             nameSpace.slug,
@@ -77,6 +86,21 @@ export class NameSpaceService {
             { _id: nameSpace._id },
             newNameSpace
         );
+    }
+
+    async ensureTopicAndSubscribers(
+        namespaceId,
+        namespaceName,
+        users,
+        isNameSpaceTopic
+    ) {
+        if (!isNameSpaceTopic) {
+            await this.notificationService.createTopic(
+                namespaceId,
+                namespaceName
+            );
+        }
+        await this.notificationService.addTopicSubscriber(namespaceId, users);
     }
 
     async updateNameSpaceUsers(users, key) {

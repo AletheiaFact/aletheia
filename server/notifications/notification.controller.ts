@@ -17,22 +17,15 @@ export class NotificationController {
         private configService: ConfigService
     ) {}
 
-    @Post("api/topic-subscription/:key/send")
+    @Post("api/notification/topic-subscription/:key/send/:nameSpace")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    async sendDailyReport(
-        @Body()
-        body: {
-            key: string;
-        }
-    ) {
-        const dailyReport =
-            await this.summarizationService.generateDailyReport();
-
-        return this.notificationService.sendDailyReviewsEmail(
-            body.key,
-            dailyReport
+    async sendDailyReport(@Param("key") key, @Param("nameSpace") nameSpace) {
+        const dailyReport = await this.summarizationService.generateDailyReport(
+            nameSpace
         );
+
+        return this.notificationService.sendDailyReviewsEmail(key, dailyReport);
     }
 
     @ApiTags("notifications")
