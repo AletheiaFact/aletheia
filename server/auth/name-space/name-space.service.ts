@@ -68,7 +68,7 @@ export class NameSpaceService {
             nameSpace.slug
         );
 
-        this.ensureTopicAndSubscribers(
+        await this.ensureTopicAndSubscribers(
             id,
             newNameSpace.name,
             newNameSpace.users,
