@@ -15,6 +15,7 @@ export class SummarizationChainService {
         const stuffPromptTemplate = `
         ${systemMessage}
         Return your response in one bullet point.
+        You MUST provide you answer in portuguese.
         ---{text}---
         BULLET POINT SUMMARY:`;
 
