@@ -391,6 +391,8 @@ export class ClaimReviewService {
 
         const isContentImage = claim.contentModel === ContentModelEnum.Image;
         const isContentDebate = claim.contentModel === ContentModelEnum.Debate;
+        const isContentInformativeNews =
+            claim.contentModel === ContentModelEnum.Unattributed;
 
         const content = isContentImage
             ? await this.imageService.getByDataHash(data_hash)
@@ -400,6 +402,13 @@ export class ClaimReviewService {
             nameSpace !== NameSpaceEnum.Main
                 ? `/${nameSpace}/claim/${review.claim.latestRevision.claimId}`
                 : `/claim/${review.claim.latestRevision.claimId}`;
+
+        if (isContentInformativeNews) {
+            reviewHref =
+                nameSpace !== NameSpaceEnum.Main
+                    ? `/${nameSpace}/claim/${review.claim.slug}`
+                    : `/claim/${review.claim.slug}`;
+        }
 
         if (personality) {
             reviewHref =
