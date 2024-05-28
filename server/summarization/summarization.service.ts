@@ -1,13 +1,15 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { SummarizationChainService } from "./summarization-chain.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class SummarizationService {
     private readonly logger = new Logger("SummarizationLogger");
     constructor(
         private chainService: SummarizationChainService,
-        private claimReviewService: ClaimReviewService
+        private claimReviewService: ClaimReviewService,
+        private configService: ConfigService
     ) {}
 
     async generateDailyReport(nameSpace?: string): Promise<string> {
@@ -36,7 +38,10 @@ export class SummarizationService {
                 dailyClaimReviews
             );
 
-            const dailyReport = this.generateHTMLReport(summarizedReviews);
+            const dailyReport = this.generateHTMLReport(
+                summarizedReviews,
+                nameSpace
+            );
 
             return dailyReport;
         } catch (error) {
@@ -67,7 +72,10 @@ export class SummarizationService {
         }
     }
 
-    private generateHTMLReport(summarizedReviews: any[]): string {
+    private generateHTMLReport(
+        summarizedReviews: any[],
+        nameSpace: string
+    ): string {
         const classificationTranslations = {
             "not-fact": "Não é fato",
             trustworthy: "Confiável",
@@ -79,9 +87,7 @@ export class SummarizationService {
             exaggerated: "Exagerado",
             unverifiable: "Inverificável",
         };
-
-        //TODO: Get URL from config
-        const baseUrl = "https://aletheiafact.org";
+        const baseUrl = this.configService.get<string>("baseUrl");
 
         const reportContent = summarizedReviews
             .map(
@@ -90,7 +96,7 @@ export class SummarizationService {
                     <p><span class="classification">${
                         classificationTranslations[review.classification]
                     }</span> | ${review.summary}</p>
-                    <p><a href="${baseUrl}${
+                    <p><a href="${baseUrl}/${nameSpace}${
                     review.reviewHref
                 }">Link para Checagem</a></p>
                 </div>

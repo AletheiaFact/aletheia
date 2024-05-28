@@ -38,11 +38,12 @@ export class NameSpaceService {
             newNameSpace._id,
             newNameSpace.name
         );
-        await this.notificationService.addTopicSubscriber(
-            newNameSpace._id,
-            newNameSpace.users
-        );
-
+        if (newNameSpace.users.length > 0) {
+            await this.notificationService.addTopicSubscriber(
+                newNameSpace._id,
+                newNameSpace.users
+            );
+        }
         return newNameSpace;
     }
 
@@ -57,6 +58,7 @@ export class NameSpaceService {
             lower: true,
             strict: true,
         });
+
         const isNameSpaceTopic = await this.notificationService.getTopic(
             newNameSpace._id
         );
@@ -65,34 +67,40 @@ export class NameSpaceService {
             newNameSpace.users,
             nameSpace.slug
         );
-        if (isNameSpaceTopic) {
-            await this.notificationService.addTopicSubscriber(
-                newNameSpace._id,
-                newNameSpace.users
-            );
-        } else {
-            await this.notificationService.createTopic(
-                newNameSpace._id,
-                newNameSpace.name
-            );
-            await this.notificationService.addTopicSubscriber(
-                newNameSpace._id,
-                newNameSpace.users
-            );
-        }
+
+        this.ensureTopicAndSubscribers(
+            id,
+            newNameSpace.name,
+            newNameSpace.users,
+            isNameSpaceTopic
+        );
+
         await this.findNameSpaceUsersAndDelete(
             id,
             nameSpace.slug,
             newNameSpace.users,
-            newNameSpace.name,
-            nameSpace.users,
-            isNameSpaceTopic
+            nameSpace.users
         );
 
         return await this.NameSpaceModel.updateOne(
             { _id: nameSpace._id },
             newNameSpace
         );
+    }
+
+    async ensureTopicAndSubscribers(
+        namespaceId,
+        namespaceName,
+        users,
+        isNameSpaceTopic
+    ) {
+        if (!isNameSpaceTopic) {
+            await this.notificationService.createTopic(
+                namespaceId,
+                namespaceName
+            );
+        }
+        await this.notificationService.addTopicSubscriber(namespaceId, users);
     }
 
     async updateNameSpaceUsers(users, key) {
@@ -130,27 +138,17 @@ export class NameSpaceService {
         id,
         nameSpaceSlug,
         users,
-        newNameSpace,
-        previousUsersId,
-        isNameSpaceTopic
+        previousUsersId
     ) {
         const usersIdSet = new Set(users.map((user) => user.toString()));
         const nameSpaceUsersTodelete = previousUsersId.filter(
             (previousUserId) => !usersIdSet.has(previousUserId.toString())
         );
         if (nameSpaceUsersTodelete.length > 0) {
-            //TODO: Enchance this logic
-            if (isNameSpaceTopic) {
-                this.notificationService.removeTopicSubscriber(
-                    id,
-                    nameSpaceUsersTodelete
-                );
-            } else {
-                await this.notificationService.createTopic(
-                    id,
-                    newNameSpace.name
-                );
-            }
+            this.notificationService.removeTopicSubscriber(
+                id,
+                nameSpaceUsersTodelete
+            );
             return await this.deleteUsersNameSpace(
                 nameSpaceUsersTodelete,
                 nameSpaceSlug
