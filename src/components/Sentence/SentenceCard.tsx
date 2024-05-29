@@ -22,16 +22,12 @@ const SentenceCard = ({ sentence }) => {
     const contentModel = sentence?.claim[0].contentModel;
     const [nameSpace] = useAtom(currentNameSpace);
     const isImage = contentModel === ContentModelEnum.Image;
-    const isSpeech = contentModel === ContentModelEnum.Speech;
     const isDebate = contentModel === ContentModelEnum.Debate;
-    const isUnattributed =
-        contentModel === ContentModelEnum.GenerativeInformation;
 
     const buildReviewHref = (
         nameSpace,
         sentence,
         personality,
-        isUnattributed,
         isImage,
         isDebate
     ) => {
@@ -58,7 +54,6 @@ const SentenceCard = ({ sentence }) => {
         nameSpace,
         sentence,
         personality,
-        isUnattributed,
         isImage,
         isDebate
     );
