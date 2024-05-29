@@ -739,6 +739,57 @@ export class ClaimController {
     }
 
     @ApiTags("pages")
+    @Get("claim/:claimSlug/history")
+    public async claimWithoutPersonalityHistoryPage(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        const { claimSlug, namespace } = req.params;
+        const parsedUrl = parse(req.url, true);
+
+        const claim = await this.claimService.getByClaimSlug(claimSlug);
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/history-page",
+            Object.assign(parsedUrl.query, {
+                targetId: claim._id,
+                targetModel: TargetModel.Claim,
+                nameSpace: namespace,
+            })
+        );
+    }
+
+    @IsPublic()
+    @ApiTags("pages")
+    @Get("claim/:claimSlug/sources")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async claimWithoutPersonalitySourcesPage(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        const { claimSlug, namespace } = req.params;
+        const parsedUrl = parse(req.url, true);
+
+        const claim = await this.claimService.getByClaimSlug(
+            claimSlug,
+            undefined,
+            false
+        );
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/sources-page",
+            Object.assign(parsedUrl.query, {
+                targetId: claim._id,
+                nameSpace: namespace,
+            })
+        );
+    }
+
+    @ApiTags("pages")
     @Get("personality/:personalitySlug/claim/:claimSlug/history")
     public async ClaimHistoryPage(@Req() req: Request, @Res() res: Response) {
         const { personalitySlug, claimSlug, namespace } = req.params;
