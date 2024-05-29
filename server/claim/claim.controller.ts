@@ -570,6 +570,41 @@ export class ClaimController {
         );
     }
 
+    @ApiTags("pages")
+    @Get("claim/:claimSlug/revision/:revisionId")
+    public async ClaimPageWithRevision(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const { claimSlug, revisionId, namespace } = req.params;
+        const parsedUrl = parse(req.url, true);
+
+        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableCopilotChatBot = this.isEnableCopilotChatBot();
+        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+
+        const claim = await this.claimService.getByClaimSlug(
+            claimSlug,
+            revisionId
+        );
+        console.log("claim", claim);
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-page",
+            Object.assign(parsedUrl.query, {
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                enableCollaborativeEditor,
+                enableEditorAnnotations,
+                enableCopilotChatBot: enableCopilotChatBot,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
+                nameSpace: namespace,
+            })
+        );
+    }
+
     @IsPublic()
     @ApiTags("pages")
     @Get("personality/:personalitySlug/claim/:claimSlug")
