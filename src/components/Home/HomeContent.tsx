@@ -35,7 +35,7 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
                     justifyContent: "center",
                 }}
             >
-                <Col xs={18} sm={18} md={18}>
+                <Col xs={22} sm={22} md={18}>
                     <HomeFeed searchResults={results} />
                 </Col>
                 {Array.isArray(debateClaims) && debateClaims.length > 0 && (
@@ -63,8 +63,8 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
                     />
                 </Col>
                 <Col
-                    xs={{ span: 20, order: 1 }}
-                    sm={{ span: 20, order: 1 }}
+                    xs={{ span: 22, order: 1 }}
+                    sm={{ span: 22, order: 1 }}
                     md={{ span: 6, order: 2 }}
                     style={{ paddingLeft: vw?.sm ? 0 : 20 }}
                 >
