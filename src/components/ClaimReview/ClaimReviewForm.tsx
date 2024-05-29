@@ -5,6 +5,7 @@ import {
     reviewingSelector,
     reviewDataSelector,
     reviewNotStartedSelector,
+    crossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import {
     currentUserId,
@@ -41,8 +42,10 @@ const ClaimReviewForm = ({
     );
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
+    const userIsCrossChecker = reviewData.crossCheckerId === userId;
     const [formCollapsed, setFormCollapsed] = useState(
         isUnassigned && !reportModel
     );
@@ -61,7 +64,8 @@ const ClaimReviewForm = ({
         isUnassigned ||
         userIsAdmin ||
         (userIsAssignee && !isReviewing) ||
-        (isReviewing && userIsReviewer);
+        (isReviewing && userIsReviewer) ||
+        (isCrossChecking && userIsCrossChecker);
 
     const toggleFormCollapse = (event) => {
         setFormCollapsed(!formCollapsed);
