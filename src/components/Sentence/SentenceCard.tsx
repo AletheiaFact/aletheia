@@ -9,7 +9,7 @@ import { Comment } from "antd";
 import CardBase from "../CardBase";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
-import { NameSpaceEnum } from "../../types/Namespace";
+import { generateContentPath } from "../../utils/GetContentHref";
 
 const StyledComment = styled(Comment)`
     .ant-comment-actions > li {
@@ -22,41 +22,6 @@ const SentenceCard = ({ sentence }) => {
     const contentModel = sentence?.claim[0].contentModel;
     const [nameSpace] = useAtom(currentNameSpace);
     const isImage = contentModel === ContentModelEnum.Image;
-    const isDebate = contentModel === ContentModelEnum.Debate;
-
-    const buildReviewHref = (
-        nameSpace,
-        sentence,
-        personality,
-        isImage,
-        isDebate
-    ) => {
-        const baseNamespace =
-            nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
-        let pathSegment = "";
-
-        if (isDebate) {
-            pathSegment = `/claim/${sentence?.claim[0]?._id}/debate`;
-        } else if (personality) {
-            pathSegment = `/personality/${personality?.slug}/claim/${sentence?.claim[0]?.slug}`;
-        } else {
-            pathSegment = `/claim/${sentence?.claim[0]?.slug}`;
-        }
-
-        const detailPath = isImage
-            ? `/image/${sentence?.data_hash}`
-            : `/sentence/${sentence?.data_hash}`;
-
-        return `${baseNamespace}${pathSegment}${detailPath}`;
-    };
-
-    let reviewHref = buildReviewHref(
-        nameSpace,
-        sentence,
-        personality,
-        isImage,
-        isDebate
-    );
 
     return (
         <CardBase style={{ width: "fit-content", padding: "16px 32px" }}>
@@ -78,7 +43,13 @@ const SentenceCard = ({ sentence }) => {
                     <TagsList key={0} tags={sentence.topics || []} />,
                     <ClaimReviewCardActions
                         key={1}
-                        href={reviewHref}
+                        href={generateContentPath(
+                            nameSpace,
+                            personality,
+                            claim,
+                            claim.contentModel,
+                            sentence.data_hash
+                        )}
                         content={sentence}
                     />,
                 ]}
