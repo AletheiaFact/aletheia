@@ -587,7 +587,6 @@ export class ClaimController {
             claimSlug,
             revisionId
         );
-        console.log("claim", claim);
 
         await this.viewService.getNextServer().render(
             req,
