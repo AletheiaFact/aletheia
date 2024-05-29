@@ -60,12 +60,16 @@ const ClaimReviewForm = ({
         })
     );
 
-    const showForm =
-        isUnassigned ||
-        userIsAdmin ||
-        (userIsAssignee && !isReviewing) ||
-        (isReviewing && userIsReviewer) ||
-        (isCrossChecking && userIsCrossChecker);
+    const shouldShowForm = () => {
+        if (isUnassigned) return true;
+        if (userIsAdmin) return true;
+        if (userIsAssignee && !isReviewing) return true;
+        if (isReviewing && userIsReviewer) return true;
+        if (isCrossChecking && userIsCrossChecker) return true;
+        return false;
+    };
+
+    const showForm = shouldShowForm();
 
     const toggleFormCollapse = (event) => {
         setFormCollapsed(!formCollapsed);
