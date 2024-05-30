@@ -21,7 +21,11 @@ const KanbanView = () => {
             state !== ReviewTaskStates.addCommentCrossChecking &&
             state !== ReviewTaskStates.rejected
     );
-    const [filterUser, setFilterUser] = useState(false);
+    const [filterUserTasks, setFilterUserTasks] = useState({
+        assigned: false,
+        crossChecked: false,
+        reviewered: false,
+    });
 
     return (
         <Row justify="center" style={{ padding: "3vh 0", height: "100%" }}>
@@ -36,11 +40,47 @@ const KanbanView = () => {
                 <FormControlLabel
                     control={
                         <Switch
-                            checked={filterUser}
-                            onChange={() => setFilterUser(!filterUser)}
+                            checked={filterUserTasks.assigned}
+                            onChange={() =>
+                                setFilterUserTasks((prev) => ({
+                                    reviewered: false,
+                                    crossChecked: false,
+                                    assigned: !prev.assigned,
+                                }))
+                            }
                         />
                     }
                     label={t("kanban:myTasks")}
+                />
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={filterUserTasks.crossChecked}
+                            onChange={() =>
+                                setFilterUserTasks((prev) => ({
+                                    assigned: false,
+                                    reviewered: false,
+                                    crossChecked: !prev.crossChecked,
+                                }))
+                            }
+                        />
+                    }
+                    label={t("kanban:myCrossChecks")}
+                />
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={filterUserTasks.reviewered}
+                            onChange={() =>
+                                setFilterUserTasks((prev) => ({
+                                    assigned: false,
+                                    crossChecked: false,
+                                    reviewered: !prev.reviewered,
+                                }))
+                            }
+                        />
+                    }
+                    label={t("kanban:myReviews")}
                 />
             </Col>
             <Col
@@ -59,7 +99,7 @@ const KanbanView = () => {
                             key={state}
                             nameSpace={nameSpace}
                             state={ReviewTaskStates[state]}
-                            filterUser={filterUser}
+                            filterUser={filterUserTasks}
                         />
                     );
                 })}

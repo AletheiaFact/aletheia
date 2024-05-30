@@ -1,5 +1,7 @@
 {
     "claimBy": "Claim by",
     "assignedTo": "Fact-checkers",
-    "myTasks": "My tasks only"
+    "myTasks": "My tasks only",
+    "myCrossChecks": "My cross-checks only",
+    "myReviews": "My reviews only"
 }

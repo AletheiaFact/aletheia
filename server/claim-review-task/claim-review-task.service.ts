@@ -73,12 +73,19 @@ export class ClaimReviewTaskService {
     _buildPipeline(value, filterUser, nameSpace) {
         const pipeline = [];
         const query = getQueryMatchForMachineValue(value);
+        const fieldMap = {
+            assigned: "machine.context.reviewData.usersId",
+            crossChecked: "machine.context.reviewData.crossCheckerId",
+            reviewered: "machine.context.reviewData.reviewerId",
+        };
 
-        if (filterUser === true) {
-            query["machine.context.reviewData.usersId"] = Types.ObjectId(
-                this.req.user._id
-            );
-        }
+        Object.keys(filterUser).forEach((key) => {
+            const value = filterUser[key];
+            if (value === true || value === "true") {
+                const queryPath = fieldMap[key];
+                query[queryPath] = Types.ObjectId(this.req.user._id);
+            }
+        });
 
         pipeline.push(
             { $match: query },
