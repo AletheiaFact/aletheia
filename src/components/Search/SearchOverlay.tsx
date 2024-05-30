@@ -13,6 +13,7 @@ import OverlaySearchInput from "./OverlaySearchInput";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import { useRouter } from "next/router";
 
 const OverlayCol = styled(Col)`
     .ant-input-lg {
@@ -63,6 +64,7 @@ const OverlayCol = styled(Col)`
 const SearchOverlay = () => {
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
+    const router = useRouter();
     const { vw, isOpen } = useAppSelector((state) => {
         return {
             vw: state.vw,
@@ -77,26 +79,28 @@ const SearchOverlay = () => {
 
     return (
         <OverlayCol namespace={nameSpaceProp} xs={1} sm={8} md={10}>
-            <div
-                className={`input-container ${
-                    vw?.xs && isOpen ? "overlay" : ""
-                }`}
-            >
-                {vw?.xs && isOpen && (
-                    <AletheiaButton
-                        onClick={() => {
-                            dispatch(actions.closeResultsOverlay());
-                        }}
-                    >
-                        <LeftCircleFilled
-                            style={{
-                                fontSize: "24px",
+            {!router.pathname.includes("/home-page") && (
+                <div
+                    className={`input-container ${
+                        vw?.xs && isOpen ? "overlay" : ""
+                    }`}
+                >
+                    {vw?.xs && isOpen && (
+                        <AletheiaButton
+                            onClick={() => {
+                                dispatch(actions.closeResultsOverlay());
                             }}
-                        />
-                    </AletheiaButton>
-                )}
-                {(isOpen || !vw?.xs) && <OverlaySearchInput />}
-            </div>
+                        >
+                            <LeftCircleFilled
+                                style={{
+                                    fontSize: "24px",
+                                }}
+                            />
+                        </AletheiaButton>
+                    )}
+                    {(isOpen || !vw?.xs) && <OverlaySearchInput />}
+                </div>
+            )}
         </OverlayCol>
     );
 };

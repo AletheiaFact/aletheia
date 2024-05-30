@@ -33,11 +33,22 @@ export class ClaimRevisionService {
         };
     }
 
-    /** get ClaimRevision by ID */
     getRevision(match) {
         try {
             return this.ClaimRevisionModel.findOne(match)
                 .populate("personalities")
+                .lean();
+        } catch {
+            throw new NotFoundException();
+        }
+    }
+
+    /** get ClaimRevision by ID */
+    getRevisionById(id) {
+        try {
+            return this.ClaimRevisionModel.findById(id)
+                .populate("personalities")
+                .populate("content")
                 .lean();
         } catch {
             throw new NotFoundException();
