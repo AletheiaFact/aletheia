@@ -59,17 +59,28 @@ const ClaimReviewForm = ({
                     : true,
         })
     );
+    const [showForm, setShowForm] = useState(false);
 
-    const shouldShowForm = () => {
-        if (isUnassigned) return true;
-        if (userIsAdmin) return true;
-        if (userIsAssignee && !isReviewing) return true;
-        if (isReviewing && userIsReviewer) return true;
-        if (isCrossChecking && userIsCrossChecker) return true;
-        return false;
-    };
+    useEffect(() => {
+        const shouldShowForm = () => {
+            if (isUnassigned) return true;
+            if (userIsAdmin) return true;
+            if (userIsAssignee && !isReviewing) return true;
+            if (isReviewing && userIsReviewer) return true;
+            if (isCrossChecking && userIsCrossChecker) return true;
+            return false;
+        };
 
-    const showForm = shouldShowForm();
+        setShowForm(shouldShowForm());
+    }, [
+        isUnassigned,
+        userIsAdmin,
+        userIsAssignee,
+        isReviewing,
+        userIsReviewer,
+        isCrossChecking,
+        userIsCrossChecker,
+    ]);
 
     const toggleFormCollapse = (event) => {
         setFormCollapsed(!formCollapsed);
