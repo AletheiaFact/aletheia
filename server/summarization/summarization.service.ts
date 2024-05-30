@@ -88,11 +88,14 @@ export class SummarizationService {
             summarizedReviews.length > 0
                 ? summarizedReviews
                       .map(
-                          (review) => `
+                          (review, key) => `
                 <div class="claim-review">
-                    <p><span class="classification">${
-                        classificationTranslations[review.classification]
-                    }</span> | ${review.summary}</p>
+                    <h1>${nameSpace}</h1>
+                    <p><span class="classification ${
+                        Object.keys(classificationTranslations)[key]
+                    }">${
+                              classificationTranslations[review.classification]
+                          }</span> | ${review.summary}</p>
                     <p><a href="${baseUrl}/${nameSpace}${
                               review.reviewHref
                           }">Link para Checagem</a></p>
@@ -101,7 +104,9 @@ export class SummarizationService {
                       )
                       .join("")
                 : `<div class="claim-review">
-                <p>Nenhuma checagem criada no dia ${new Date().getDate()}/${new Date().getMonth()}</p>
+                <p>Nenhuma checagem criada no dia ${new Date().getDate()}/${
+                      new Date().getMonth() + 1
+                  }</p>
             </div>`;
 
         return `
@@ -116,6 +121,33 @@ export class SummarizationService {
                         }
                         a {
                             color: rgb(17, 39, 58);
+                        }
+                        .not-fact {
+                            color: #006060;   
+                        }
+                        .trustworthy {
+                            color: #008000;   
+                        }
+                        .trustworthy-but {
+                            color: #5A781D;   
+                        }
+                        .arguable {
+                            color: #9F6B3F;   
+                        }
+                        .misleading {
+                            color: #D6395F;   
+                        }
+                        .false {
+                            color: #D32B20;   
+                        }
+                        .unsustainable {
+                            color: #A74165;   
+                        }
+                        .exaggerated {
+                            color: #B8860B;   
+                        }
+                        .unverifiable {
+                            color: #C9502A;   
                         }
                     </style>
                 </head>
