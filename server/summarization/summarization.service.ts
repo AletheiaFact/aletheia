@@ -38,12 +38,7 @@ export class SummarizationService {
                 dailyClaimReviews
             );
 
-            const dailyReport = this.generateHTMLReport(
-                summarizedReviews,
-                nameSpace
-            );
-
-            return dailyReport;
+            return this.generateHTMLReport(summarizedReviews, nameSpace);
         } catch (error) {
             this.logger.error("Error generating daily report:", error);
             throw new Error("Failed to generate daily report");
@@ -89,20 +84,25 @@ export class SummarizationService {
         };
         const baseUrl = this.configService.get<string>("baseUrl");
 
-        const reportContent = summarizedReviews
-            .map(
-                (review) => `
+        const reportContent =
+            summarizedReviews.length > 0
+                ? summarizedReviews
+                      .map(
+                          (review) => `
                 <div class="claim-review">
                     <p><span class="classification">${
                         classificationTranslations[review.classification]
                     }</span> | ${review.summary}</p>
                     <p><a href="${baseUrl}/${nameSpace}${
-                    review.reviewHref
-                }">Link para Checagem</a></p>
+                              review.reviewHref
+                          }">Link para Checagem</a></p>
                 </div>
             `
-            )
-            .join("");
+                      )
+                      .join("")
+                : `<div class="claim-review">
+                <p>Nenhuma checagem criada no dia ${new Date().getDate()}/${new Date().getMonth()}</p>
+            </div>`;
 
         return `
             <html>
