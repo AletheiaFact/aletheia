@@ -40,7 +40,7 @@ RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_ORY_SDK_URL=$NEXT_PUBLIC_ORY_SDK_URL \
     yarn build
 
-FROM node:18.17.0-alpine
+FROM node:18.19.1-alpine
 
 LABEL maintainer="Giovanni Rossini <giovannijrrossini@gmail.com>"
 
