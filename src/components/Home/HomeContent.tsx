@@ -10,9 +10,16 @@ import { useAppSelector } from "../../store/store";
 import ReviewsCarousel from "../ClaimReview/ReviewsCarousel";
 import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
+import HomeFeed from "./HomeFeed";
+
 const HomeContent = ({ personalities, href, title, debateClaims }) => {
-    const { vw } = useAppSelector((state) => ({
+    const { vw, results } = useAppSelector((state) => ({
         vw: state.vw,
+        results: [
+            state?.search?.searchResults?.personalities || [],
+            state?.search?.searchResults?.claims || [],
+            state?.search?.searchResults?.sentences || [],
+        ],
     }));
 
     const [isLoggedIn] = useAtom(isUserLoggedIn);
@@ -28,6 +35,9 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
                     justifyContent: "center",
                 }}
             >
+                <Col xs={22} sm={22} md={18}>
+                    <HomeFeed searchResults={results} />
+                </Col>
                 {Array.isArray(debateClaims) && debateClaims.length > 0 && (
                     <Col
                         xs={{ span: 20, order: 1 }}
@@ -53,8 +63,8 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
                     />
                 </Col>
                 <Col
-                    xs={{ span: 20, order: 1 }}
-                    sm={{ span: 20, order: 1 }}
+                    xs={{ span: 22, order: 1 }}
+                    sm={{ span: 22, order: 1 }}
                     md={{ span: 6, order: 2 }}
                     style={{ paddingLeft: vw?.sm ? 0 : 20 }}
                 >
