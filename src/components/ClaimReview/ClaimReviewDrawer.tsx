@@ -14,11 +14,12 @@ import AletheiaButton, { ButtonType } from "../Button";
 import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";
 import LargeDrawer from "../LargeDrawer";
+import { ContentModelEnum } from "../../types/enums";
 import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
+import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import colors from "../../styles/colors";
-import { generateContentPath } from "../../utils/GetContentHref";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -33,20 +34,41 @@ const ClaimReviewDrawer = () => {
         content,
         data_hash,
         enableCopilotChatBot,
-    } = useAppSelector((state) => ({
-        reviewDrawerCollapsed:
-            state?.reviewDrawerCollapsed !== undefined
-                ? state?.reviewDrawerCollapsed
-                : true,
-        vw: state?.vw,
-        personality: state?.selectedPersonality,
-        claim: state?.selectedClaim,
-        content: state?.selectedContent,
-        data_hash: state?.selectedDataHash,
-        enableCopilotChatBot: state?.enableCopilotChatBot,
-    }));
+    } = useAppSelector((state) => {
+        return {
+            reviewDrawerCollapsed:
+                state?.reviewDrawerCollapsed !== undefined
+                    ? state?.reviewDrawerCollapsed
+                    : true,
+            vw: state?.vw,
+            personality: state?.selectedPersonality,
+            claim: state?.selectedClaim,
+            content: state?.selectedContent,
+            data_hash: state?.selectedDataHash,
+            enableCopilotChatBot: state?.enableCopilotChatBot,
+        };
+    });
 
     useEffect(() => setIsLoading(false), [claim, data_hash]);
+
+    let href = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
+
+    const contentProps = {
+        [ContentModelEnum.Speech]: {
+            href: `${href}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`,
+        },
+        [ContentModelEnum.Image]: {
+            href: `${href}${
+                personality ? `/personality/${personality?.slug}` : ""
+            }/claim/${claim?.slug}/image/${data_hash}`,
+        },
+        [ContentModelEnum.Debate]: {
+            href: `${href}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`,
+        },
+        [ContentModelEnum.Unattributed]: {
+            href: `${href}/claim/${claim?.slug}/sentence/${data_hash}`,
+        },
+    };
 
     return (
         <LargeDrawer
@@ -78,13 +100,10 @@ const ClaimReviewDrawer = () => {
                                 </AletheiaButton>
                                 <Col span={vw?.xs ? 8 : 14}>
                                     <AletheiaButton
-                                        href={generateContentPath(
-                                            nameSpace,
-                                            personality,
-                                            claim,
-                                            claim.contentModel,
-                                            data_hash
-                                        )}
+                                        href={
+                                            contentProps[claim.contentModel]
+                                                .href
+                                        }
                                         onClick={() => setIsLoading(true)}
                                         type={ButtonType.gray}
                                         style={{

@@ -11,7 +11,6 @@ export enum ButtonType {
     gray = "gray",
     whiteBlue = "whiteBlue",
     whiteBlack = "whiteBlack",
-    lightBlue = "lightBlue",
 }
 
 type AletheiaButtonProps = Omit<ButtonProps, "type">;
@@ -76,14 +75,6 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
                 background: colors.white,
                 borderColor: colors.blackSecondary,
                 color: colors.blackSecondary,
-            };
-            break;
-        case ButtonType.lightBlue:
-            buttonStyle = {
-                ...buttonStyle,
-                background: colors.lightBlueMain,
-                borderColor: colors.lightBlueMain,
-                color: colors.white,
             };
             break;
         case ButtonType.blue:

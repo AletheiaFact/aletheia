@@ -44,32 +44,8 @@ const getResults = (dispatch, options: SearchOptions = {}) => {
         });
 };
 
-const getFeedResults = (options: SearchOptions = {}): any => {
-    const params = {
-        type: options.type,
-        searchText: options.searchText,
-        page: options.page ? options.page : 0,
-        pageSize: options.pageSize ? options.pageSize : 5,
-    };
-
-    return request
-        .get(`/`, { params })
-        .then((response) => {
-            const { personalities, sentences, claims } = response.data;
-            return {
-                personalities,
-                sentences,
-                claims,
-            };
-        })
-        .catch((e) => {
-            console.error(e);
-        });
-};
-
 const SearchApi = {
     getResults,
-    getFeedResults,
 };
 
 export default SearchApi;

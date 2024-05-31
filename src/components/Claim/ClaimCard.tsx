@@ -27,17 +27,12 @@ const CommentStyled = styled(Comment)`
     }
 `;
 
-const ClaimCard = ({
-    personality,
-    claim,
-    collapsed = true,
-    content = null,
-}) => {
+const ClaimCard = ({ personality, claim, collapsed = true }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const { selectedClaim } = useAppSelector((state) => state);
     const review = claim?.stats?.reviews[0];
-    const paragraphs = content || claim.content;
+    const paragraphs = claim.content;
     const [claimContent, setClaimContent] = useState("");
     const [nameSpace] = useAtom(currentNameSpace);
     const isSpeech = claim?.contentModel === ContentModelEnum.Speech;

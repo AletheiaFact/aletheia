@@ -135,7 +135,6 @@ export class SentenceService {
                     "personality.name": 1,
                     "claim.slug": 1,
                     "claim.date": 1,
-                    "claim._id": 1,
                     "claim.contentModel": 1,
                 },
             },

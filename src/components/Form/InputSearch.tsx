@@ -29,15 +29,13 @@ const InputSearch = (props) => {
     let loading = false;
 
     const doSearch = (e) => {
-        if (props.callback) {
-            const searchText = e.target.value;
-            if (timeout) clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                loading = true;
-                props?.callback(searchText);
-                loading = false;
-            }, 1000);
-        }
+        const searchText = e.target.value;
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            loading = true;
+            props.callback(searchText);
+            loading = false;
+        }, 1000);
     };
 
     return (
@@ -49,9 +47,7 @@ const InputSearch = (props) => {
             addonBefore={false}
             onChange={(e) => doSearch(e)}
             suffix={props.suffix || <></>}
-            prefix={props.prefix || <></>}
             data-cy={props["data-cy"] || "testInputSearchPersonality"}
-            {...props}
         />
     );
 };

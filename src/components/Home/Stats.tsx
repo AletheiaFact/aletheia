@@ -2,7 +2,7 @@ import React from "react";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 
-export const Stats = ({ info, title, style = {} }) => {
+export const Stats = ({ info, title }) => {
     const { vw } = useAppSelector((state) => state);
     return (
         <div
@@ -10,9 +10,7 @@ export const Stats = ({ info, title, style = {} }) => {
                 display: "flex",
                 alignItems: "center",
                 width: "33%",
-                gap: "4px",
-                justifyContent: "center",
-                ...style,
+                justifyContent: vw?.sm ? "center" : "flex-start",
             }}
         >
             <h3

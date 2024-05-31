@@ -18,11 +18,9 @@ import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { currentUserId } from "../../atoms/currentUser";
-import { useRouter } from "next/router";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
-    const router = useRouter();
     const { vw } = useAppSelector((state) => state);
     const [userId] = useAtom(currentUserId);
     const hasSession = !!userId;
@@ -68,7 +66,7 @@ const HeaderContent = () => {
             </a>
             <SearchOverlay />
             <HeaderActionsStyle xs={14} sm={10} md={6}>
-                {vw?.xs && !router.pathname.includes("/home-page") && (
+                {vw?.xs && (
                     <AletheiaButton
                         onClick={handleClickSearchIcon}
                         data-cy={"testSearchPersonality"}
