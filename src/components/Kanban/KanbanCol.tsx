@@ -22,7 +22,7 @@ interface KanbanColProps {
     filterUser: {
         assigned: boolean;
         crossChecked: boolean;
-        reviewered: boolean;
+        reviewed: boolean;
     };
 }
 

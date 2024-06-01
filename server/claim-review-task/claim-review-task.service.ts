@@ -76,7 +76,7 @@ export class ClaimReviewTaskService {
         const fieldMap = {
             assigned: "machine.context.reviewData.usersId",
             crossChecked: "machine.context.reviewData.crossCheckerId",
-            reviewered: "machine.context.reviewData.reviewerId",
+            reviewed: "machine.context.reviewData.reviewerId",
         };
 
         Object.keys(filterUser).forEach((key) => {

@@ -24,7 +24,7 @@ const KanbanView = () => {
     const [filterUserTasks, setFilterUserTasks] = useState({
         assigned: false,
         crossChecked: false,
-        reviewered: false,
+        reviewed: false,
     });
 
     return (
@@ -43,7 +43,7 @@ const KanbanView = () => {
                             checked={filterUserTasks.assigned}
                             onChange={() =>
                                 setFilterUserTasks((prev) => ({
-                                    reviewered: false,
+                                    reviewed: false,
                                     crossChecked: false,
                                     assigned: !prev.assigned,
                                 }))
@@ -59,7 +59,7 @@ const KanbanView = () => {
                             onChange={() =>
                                 setFilterUserTasks((prev) => ({
                                     assigned: false,
-                                    reviewered: false,
+                                    reviewed: false,
                                     crossChecked: !prev.crossChecked,
                                 }))
                             }
@@ -70,12 +70,12 @@ const KanbanView = () => {
                 <FormControlLabel
                     control={
                         <Switch
-                            checked={filterUserTasks.reviewered}
+                            checked={filterUserTasks.reviewed}
                             onChange={() =>
                                 setFilterUserTasks((prev) => ({
                                     assigned: false,
                                     crossChecked: false,
-                                    reviewered: !prev.reviewered,
+                                    reviewed: !prev.reviewed,
                                 }))
                             }
                         />
