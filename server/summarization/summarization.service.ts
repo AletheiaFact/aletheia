@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { SummarizationChainService } from "./summarization-chain.service";
 import { ConfigService } from "@nestjs/config";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Injectable()
 export class SummarizationService {
@@ -64,9 +65,7 @@ export class SummarizationService {
                       )
                       .join("")
                 : `<div class="claim-review">
-                <p>Nenhuma checagem criada no dia ${new Date().getDate()}/${
-                      new Date().getMonth() + 1
-                  }</p>
+                <p>Nenhuma informação disponível na atualização de hoje. Caso tenha encontrado um problema, por favor, entre em contato conosco através do email contato@aletheiafact.org</p>
             </div>`;
 
         return `

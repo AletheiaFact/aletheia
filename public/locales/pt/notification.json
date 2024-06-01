@@ -9,5 +9,6 @@
     "reviewRejected": "A revisão na qual você esta atribuido(a) foi rejeitada, faça as alterações necessárias para que seja aceita",
     "reviewPublished": "Sua revisão foi publicada",
     "dailyReportButton": "Enviar Relatório diario",
-    "dailyReportSent": "Relatorio enviado com sucesso"
+    "sendDailyReportSuccess": "Relatorio enviado com sucesso",
+    "sendDailyReportError": "Erro ao enviar o relatorio"
 }
