@@ -38,12 +38,7 @@ export class SummarizationService {
                 dailyClaimReviews
             );
 
-            const dailyReport = this.generateHTMLReport(
-                summarizedReviews,
-                nameSpace
-            );
-
-            return dailyReport;
+            return this.generateHTMLReport(summarizedReviews, nameSpace);
         } catch (error) {
             this.logger.error("Error generating daily report:", error);
             throw new Error("Failed to generate daily report");
@@ -89,20 +84,30 @@ export class SummarizationService {
         };
         const baseUrl = this.configService.get<string>("baseUrl");
 
-        const reportContent = summarizedReviews
-            .map(
-                (review) => `
+        const reportContent =
+            summarizedReviews.length > 0
+                ? summarizedReviews
+                      .map(
+                          (review, key) => `
                 <div class="claim-review">
-                    <p><span class="classification">${
-                        classificationTranslations[review.classification]
-                    }</span> | ${review.summary}</p>
+                    <h1>${nameSpace}</h1>
+                    <p><span class="classification ${
+                        Object.keys(classificationTranslations)[key]
+                    }">${
+                              classificationTranslations[review.classification]
+                          }</span> | ${review.summary}</p>
                     <p><a href="${baseUrl}/${nameSpace}${
-                    review.reviewHref
-                }">Link para Checagem</a></p>
+                              review.reviewHref
+                          }">Link para Checagem</a></p>
                 </div>
             `
-            )
-            .join("");
+                      )
+                      .join("")
+                : `<div class="claim-review">
+                <p>Nenhuma checagem criada no dia ${new Date().getDate()}/${
+                      new Date().getMonth() + 1
+                  }</p>
+            </div>`;
 
         return `
             <html>
@@ -116,6 +121,33 @@ export class SummarizationService {
                         }
                         a {
                             color: rgb(17, 39, 58);
+                        }
+                        .not-fact {
+                            color: #006060;   
+                        }
+                        .trustworthy {
+                            color: #008000;   
+                        }
+                        .trustworthy-but {
+                            color: #5A781D;   
+                        }
+                        .arguable {
+                            color: #9F6B3F;   
+                        }
+                        .misleading {
+                            color: #D6395F;   
+                        }
+                        .false {
+                            color: #D32B20;   
+                        }
+                        .unsustainable {
+                            color: #A74165;   
+                        }
+                        .exaggerated {
+                            color: #B8860B;   
+                        }
+                        .unverifiable {
+                            color: #C9502A;   
                         }
                     </style>
                 </head>
