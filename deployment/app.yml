@@ -92,6 +92,8 @@ spec:
               value: aletheia-ENVIRONMENT 
             - name: NEXT_PUBLIC_ORY_SDK_URL
               value: NEXT_PUBLIC_ORYSDKURL_STUB
+            - name: OPENAI_API_KEY
+              value: OPENAI_API_KEY_STUB
             - name: ENV_NAME_STUB
               value: ENVIRONMENT
           resources:

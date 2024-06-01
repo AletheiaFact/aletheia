@@ -37,3 +37,5 @@ services:
       novu: # Notifications provider
         api_key: NOVU_API_KEY
         application_identifier: NOVU_APPLICATION_IDENTIFIER
+      openai:
+        api_key: OPENAI_API_KEY

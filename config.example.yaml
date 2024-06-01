@@ -41,4 +41,6 @@ services:
         endpoint: http://localhost:4566
       novu: # Notifications provider
         api_key: NOVU_API_KEY
+      openai:
+        api_key: OPENAI_API_KEY
 
