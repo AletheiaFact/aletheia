@@ -511,11 +511,19 @@ export class ClaimReviewTaskService {
 
     async countReviewTasksNotDeleted(query, filterUser, nameSpace) {
         try {
-            if (filterUser === true) {
-                query["machine.context.reviewData.usersId"] = Types.ObjectId(
-                    this.req.user._id
-                );
-            }
+            const fieldMap = {
+                assigned: "machine.context.reviewData.usersId",
+                crossChecked: "machine.context.reviewData.crossCheckerId",
+                reviewed: "machine.context.reviewData.reviewerId",
+            };
+
+            Object.keys(filterUser).forEach((key) => {
+                const value = filterUser[key];
+                if (value === true || value === "true") {
+                    const queryPath = fieldMap[key];
+                    query[queryPath] = Types.ObjectId(this.req.user._id);
+                }
+            });
 
             const pipeline = [
                 { $match: query },
