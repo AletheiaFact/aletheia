@@ -34,3 +34,5 @@ services:
         url: {env(GITLAB_FEATURE_FLAG_URL)}
         appName: Staging
         instanceId: {env(GITLAB_FEATURE_FLAG_INSTANCE_ID)}
+      openai:
+        api_key: {env(OPENAI_API_KEY)}
