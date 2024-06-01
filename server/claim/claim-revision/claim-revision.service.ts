@@ -37,6 +37,7 @@ export class ClaimRevisionService {
         try {
             return this.ClaimRevisionModel.findOne(match)
                 .populate("personalities")
+                .populate("content")
                 .lean();
         } catch {
             throw new NotFoundException();
