@@ -22,7 +22,7 @@ export const generateContentPath = (
     }
 
     if (isDebate) {
-        path += "/debate";
+        path = `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
     }
 
     if (data_hash) {

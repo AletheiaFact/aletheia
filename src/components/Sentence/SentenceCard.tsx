@@ -18,8 +18,12 @@ const StyledComment = styled(Comment)`
 `;
 
 const SentenceCard = ({ sentence }) => {
-    const { content, claim, personality } = sentence;
-    const contentModel = sentence?.claim[0].contentModel;
+    const {
+        content,
+        claim: [claim],
+        personality: [personality],
+    } = sentence;
+    const contentModel = sentence?.claim[0]?.contentModel;
     const [nameSpace] = useAtom(currentNameSpace);
     const isImage = contentModel === ContentModelEnum.Image;
 
@@ -47,7 +51,7 @@ const SentenceCard = ({ sentence }) => {
                             nameSpace,
                             personality,
                             claim,
-                            claim.contentModel,
+                            contentModel,
                             sentence.data_hash
                         )}
                         content={sentence}

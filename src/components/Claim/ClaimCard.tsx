@@ -78,7 +78,7 @@ const ClaimCard = ({
     let href = `/${nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""}`;
 
     if (isDebate) {
-        href += `claim/${claim._id}/debate`;
+        href += `claim/${claim.claimId}/debate`;
     } else if (personality && personality.slug) {
         href += `personality/${personality.slug}/claim/${claim.slug}`;
     } else {

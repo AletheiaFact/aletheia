@@ -99,6 +99,7 @@ export class ClaimRevisionService {
             {
                 $project: {
                     title: 1,
+                    contentModel: 1,
                     "personality.slug": 1,
                     "personality.name": 1,
                     slug: 1,
