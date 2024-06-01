@@ -31,7 +31,7 @@ interface ReviewTaskMachineProviderProps {
     data_hash: string;
     children: React.ReactNode;
     baseMachine?: any;
-    baseReportModel: any;
+    baseReportModel?: any;
     publishedReview?: { review: any };
 }
 
