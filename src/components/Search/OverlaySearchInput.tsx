@@ -6,10 +6,13 @@ import SearchApi from "../../api/searchApi";
 import { useAppSelector } from "../../store/store";
 import { ActionTypes } from "../../store/types";
 import InputSearch from "../Form/InputSearch";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const OverlaySearchInput = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const { page, pageSize } = useAppSelector((state) => {
         return {
@@ -28,6 +31,7 @@ const OverlaySearchInput = () => {
             page,
             pageSize,
             searchText: name,
+            nameSpace: nameSpace,
         });
     };
 

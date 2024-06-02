@@ -11,6 +11,7 @@ interface FindAllOptionsFilters {
     language?: string;
     skipedDocuments?: number;
     filter?: string | string[];
+    nameSpace?: string;
 }
 
 @Injectable()
@@ -56,6 +57,7 @@ export class SentenceService {
         pageSize,
         skipedDocuments,
         filter,
+        nameSpace,
     }: FindAllOptionsFilters) {
         let pipeline: object[] = [];
 
@@ -136,7 +138,7 @@ export class SentenceService {
                     as: "personality",
                 },
             },
-            this.util.getVisibilityMatch(),
+            this.util.getVisibilityMatch(nameSpace),
             // Logic made to filter sentences from debates
             //TODO: Remove this when claim schema is changed
             {

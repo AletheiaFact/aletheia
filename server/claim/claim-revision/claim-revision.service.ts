@@ -76,7 +76,12 @@ export class ClaimRevisionService {
         return newClaimRevision.save();
     }
 
-    async findAll({ searchText, pageSize, skipedDocuments }: FindAllOptions) {
+    async findAll({
+        searchText,
+        pageSize,
+        skipedDocuments,
+        nameSpace,
+    }: FindAllOptions) {
         const aggregationPipeline = [
             {
                 $search: {
@@ -106,7 +111,7 @@ export class ClaimRevisionService {
                     as: "personality",
                 },
             },
-            this.util.getVisibilityMatch(),
+            this.util.getVisibilityMatch(nameSpace),
             {
                 $project: {
                     title: 1,
