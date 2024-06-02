@@ -1,7 +1,7 @@
 import { NameSpaceEnum } from "../types/Namespace";
 import { ContentModelEnum } from "../types/enums";
 
-export const generateContentPath = (
+export const generateSentenceContentPath = (
     nameSpace,
     personality,
     claim,
@@ -22,7 +22,7 @@ export const generateContentPath = (
     }
 
     if (isDebate) {
-        path = `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
+        path += "/debate";
     }
 
     if (data_hash) {

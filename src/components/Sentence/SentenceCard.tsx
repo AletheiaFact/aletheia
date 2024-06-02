@@ -9,7 +9,7 @@ import { Comment } from "antd";
 import CardBase from "../CardBase";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
-import { generateContentPath } from "../../utils/GetContentHref";
+import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref";
 
 const StyledComment = styled(Comment)`
     .ant-comment-actions > li {
@@ -49,7 +49,7 @@ const SentenceCard = ({ sentence }) => {
                     <TagsList key={0} tags={sentence.topics || []} />,
                     <ClaimReviewCardActions
                         key={1}
-                        href={generateContentPath(
+                        href={generateSentenceContentPath(
                             nameSpace,
                             personalityItem,
                             claimItem,

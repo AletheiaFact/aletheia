@@ -18,7 +18,7 @@ import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEdito
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import colors from "../../styles/colors";
-import { generateContentPath } from "../../utils/GetContentHref";
+import { generateClaimContentPath } from "../../utils/GetClaimContentHref";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -78,7 +78,7 @@ const ClaimReviewDrawer = () => {
                                 </AletheiaButton>
                                 <Col span={vw?.xs ? 8 : 14}>
                                     <AletheiaButton
-                                        href={generateContentPath(
+                                        href={generateClaimContentPath(
                                             nameSpace,
                                             personality,
                                             claim,

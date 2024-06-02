@@ -13,7 +13,7 @@ import AletheiaAlert from "../AletheiaAlert";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAppSelector } from "../../store/store";
-import { generateContentPath } from "../../utils/GetContentHref";
+import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref";
 
 const { Title, Paragraph } = Typography;
 
@@ -38,7 +38,7 @@ const SentenceReportCard = ({
     const contentProps = {
         [ContentModelEnum.Speech]: {
             linkText: "claim:cardLinkToFullText",
-            contentPath: generateContentPath(
+            contentPath: generateSentenceContentPath(
                 nameSpace,
                 personality,
                 claim,
@@ -49,7 +49,7 @@ const SentenceReportCard = ({
         },
         [ContentModelEnum.Image]: {
             linkText: "claim:cardLinkToImage",
-            contentPath: generateContentPath(
+            contentPath: generateSentenceContentPath(
                 nameSpace,
                 personality,
                 claim,
@@ -60,7 +60,7 @@ const SentenceReportCard = ({
         },
         [ContentModelEnum.Debate]: {
             linkText: "claim:cardLinkToDebate",
-            contentPath: generateContentPath(
+            contentPath: generateSentenceContentPath(
                 nameSpace,
                 personality,
                 claim,
@@ -71,7 +71,7 @@ const SentenceReportCard = ({
         },
         [ContentModelEnum.Unattributed]: {
             linkText: "claim:cardLinkToFullText",
-            contentPath: generateContentPath(
+            contentPath: generateSentenceContentPath(
                 nameSpace,
                 personality,
                 claim,
