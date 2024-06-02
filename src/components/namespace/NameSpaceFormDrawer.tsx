@@ -30,7 +30,7 @@ import {
     atomNameSpacesList,
 } from "../../atoms/namespace";
 import NameSpacesApi from "../../api/namespace";
-import NotificationsApi from "../../api/notificationsApi";
+import DailyReportApi from "../../api/dailyReport";
 
 const NameSpacesFormDrawer = () => {
     const [nameSpace] = useAtom(nameSpaceBeeingEdited);
@@ -107,7 +107,7 @@ const NameSpacesFormDrawer = () => {
     const handleDailyReviews = async () => {
         setIsLoading(true);
         try {
-            await NotificationsApi.sendDailyReportEmail(
+            await DailyReportApi.sendDailyReportEmail(
                 nameSpace._id,
                 nameSpace.slug,
                 t

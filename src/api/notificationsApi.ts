@@ -1,4 +1,3 @@
-import { message } from "antd";
 import axios from "axios";
 
 const request = axios.create({
@@ -10,18 +9,6 @@ const sendNotification = (subscriberId, payload) => {
     return request
         .post("/", { subscriberId, payload })
         .then((response) => {
-            return response.data;
-        })
-        .catch((err) => {
-            throw err;
-        });
-};
-
-const sendDailyReportEmail = (key, nameSpace, t) => {
-    return request
-        .post(`/topic-subscription/${key}/send/${nameSpace}`)
-        .then((response) => {
-            message.success(t("notification:dailyReportSent"));
             return response.data;
         })
         .catch((err) => {
@@ -46,7 +33,6 @@ const getTokens = (subscriberId) => {
 };
 
 const NotificationsApi = {
-    sendDailyReportEmail,
     sendNotification,
     getTokens,
 };
