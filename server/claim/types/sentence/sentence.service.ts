@@ -120,10 +120,39 @@ export class SentenceService {
             },
             {
                 $lookup: {
+                    from: "claims",
+                    localField: "claim.claimId",
+                    foreignField: "_id",
+                    as: "claimContent",
+                },
+            },
+            {
+                $lookup: {
                     from: "personalities",
                     localField: "claim.personalities",
                     foreignField: "_id",
                     as: "personality",
+                },
+            },
+            {
+                $match: {
+                    $or: [
+                        {
+                            $and: [
+                                { "claimContent.isHidden": { $ne: true } },
+                                { "claimContent.isDeleted": { $ne: true } },
+                                { "personality.isHidden": { $ne: true } },
+                                { "personality.isDeleted": { $ne: true } },
+                            ],
+                        },
+                    ],
+                },
+            },
+            // Logic made to filter sentences from debates
+            //TODO: Remove this when claim schema is changed
+            {
+                $match: {
+                    claim: { $ne: [] },
                 },
             },
             {

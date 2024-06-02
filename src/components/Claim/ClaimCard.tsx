@@ -185,7 +185,7 @@ const ClaimCard = ({
                         <Button
                             type={ButtonType.blue}
                             href={href}
-                            data-cy={personality.name}
+                            data-cy={personality?.name}
                         >
                             <span
                                 style={{

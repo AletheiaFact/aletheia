@@ -90,10 +90,32 @@ export class ClaimRevisionService {
             },
             {
                 $lookup: {
+                    from: "claims",
+                    localField: "claimId",
+                    foreignField: "_id",
+                    as: "claimContent",
+                },
+            },
+            {
+                $lookup: {
                     from: "personalities",
                     localField: "personalities",
                     foreignField: "_id",
                     as: "personality",
+                },
+            },
+            {
+                $match: {
+                    $or: [
+                        {
+                            $and: [
+                                { "claimContent.isHidden": { $ne: true } },
+                                { "claimContent.isDeleted": { $ne: true } },
+                                { "personality.isHidden": { $ne: true } },
+                                { "personality.isDeleted": { $ne: true } },
+                            ],
+                        },
+                    ],
                 },
             },
             {

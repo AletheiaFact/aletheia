@@ -18,11 +18,13 @@ const StyledComment = styled(Comment)`
 `;
 
 const SentenceCard = ({ sentence }) => {
-    const {
-        content,
-        claim: [claim],
-        personality: [personality],
-    } = sentence;
+    const { content, claim, personality } = sentence;
+    const claimItem =
+        Array.isArray(claim) && claim.length > 0 ? claim[0] : claim;
+    const personalityItem =
+        Array.isArray(personality) && personality.length > 0
+            ? personality[0]
+            : personality;
     const contentModel = sentence?.claim[0]?.contentModel;
     const [nameSpace] = useAtom(currentNameSpace);
     const isImage = contentModel === ContentModelEnum.Image;
@@ -32,9 +34,9 @@ const SentenceCard = ({ sentence }) => {
             <StyledComment
                 author={
                     <ClaimCardHeader
-                        personality={personality}
-                        date={claim?.date}
-                        claimType={claim?.contentModel}
+                        personality={personalityItem}
+                        date={claimItem?.date}
+                        claimType={claimItem?.contentModel}
                     />
                 }
                 content={
@@ -49,8 +51,8 @@ const SentenceCard = ({ sentence }) => {
                         key={1}
                         href={generateContentPath(
                             nameSpace,
-                            personality,
-                            claim,
+                            personalityItem,
+                            claimItem,
                             contentModel,
                             sentence.data_hash
                         )}
