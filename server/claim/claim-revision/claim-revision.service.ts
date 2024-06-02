@@ -13,6 +13,7 @@ import { ContentModelEnum } from "../../types/enums";
 import { ImageService } from "../types/image/image.service";
 import { DebateService } from "../types/debate/debate.service";
 import { FindAllOptions } from "../../personality/personality.service";
+import { UtilService } from "../../util";
 
 @Injectable()
 export class ClaimRevisionService {
@@ -25,7 +26,8 @@ export class ClaimRevisionService {
         private sourceService: SourceService,
         private parserService: ParserService,
         private imageService: ImageService,
-        private debateService: DebateService
+        private debateService: DebateService,
+        private util: UtilService
     ) {
         this.optionsToUpdate = {
             new: true,
@@ -104,20 +106,7 @@ export class ClaimRevisionService {
                     as: "personality",
                 },
             },
-            {
-                $match: {
-                    $or: [
-                        {
-                            $and: [
-                                { "claimContent.isHidden": { $ne: true } },
-                                { "claimContent.isDeleted": { $ne: true } },
-                                { "personality.isHidden": { $ne: true } },
-                                { "personality.isDeleted": { $ne: true } },
-                            ],
-                        },
-                    ],
-                },
-            },
+            this.util.getVisibilityMatch(),
             {
                 $project: {
                     title: 1,

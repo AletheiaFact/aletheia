@@ -4,6 +4,7 @@ import { ReportModule } from "../../../report/report.module";
 import { Sentence, SentenceSchema } from "./schemas/sentence.schema";
 import { SentenceController } from "./sentence.controller";
 import { SentenceService } from "./sentence.service";
+import { UtilService } from "../../../util";
 
 const SentenceModel = MongooseModule.forFeature([
     {
@@ -15,7 +16,7 @@ const SentenceModel = MongooseModule.forFeature([
 @Module({
     imports: [SentenceModel, ReportModule],
     controllers: [SentenceController],
-    providers: [SentenceService],
+    providers: [UtilService, SentenceService],
     exports: [SentenceService],
 })
 export class SentenceModule {}

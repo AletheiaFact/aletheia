@@ -3,6 +3,7 @@ import { Model } from "mongoose";
 import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
+import { UtilService } from "../../../util";
 
 interface FindAllOptionsFilters {
     searchText: string;
@@ -17,7 +18,8 @@ export class SentenceService {
     constructor(
         @InjectModel(Sentence.name)
         private SentenceModel: Model<SentenceDocument>,
-        private reportService: ReportService
+        private reportService: ReportService,
+        private util: UtilService
     ) {}
 
     async create(sentenceBody) {
@@ -134,20 +136,7 @@ export class SentenceService {
                     as: "personality",
                 },
             },
-            {
-                $match: {
-                    $or: [
-                        {
-                            $and: [
-                                { "claimContent.isHidden": { $ne: true } },
-                                { "claimContent.isDeleted": { $ne: true } },
-                                { "personality.isHidden": { $ne: true } },
-                                { "personality.isDeleted": { $ne: true } },
-                            ],
-                        },
-                    ],
-                },
-            },
+            this.util.getVisibilityMatch(),
             // Logic made to filter sentences from debates
             //TODO: Remove this when claim schema is changed
             {
