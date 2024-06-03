@@ -9,5 +9,6 @@
     "reviewRejected": "The review you are assigned to has been rejected, make the necessary changes for it to be accepted",
     "reviewPublished": "Your review has been published",
     "dailyReportButton": "Send Daily Report",
-    "dailyReportSent": "Report sent with success"
+    "sendDailyReportSuccess": "Report sent successfully",
+    "sendDailyReportError": "Error while sending report"
 }
