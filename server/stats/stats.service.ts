@@ -29,6 +29,7 @@ export class StatsService {
             this.claimReviewService.count({
                 isHidden: false,
                 isDeleted: false,
+                nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
             }),
         ]).then((values) => {
             return {

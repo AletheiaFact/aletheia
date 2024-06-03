@@ -6,6 +6,7 @@ import { softDeletePlugin } from "mongoose-softdelete-typescript";
 import type { ReportDocument } from "../../report/schemas/report.schema";
 import { User } from "../../users/schemas/user.schema";
 import { ReportModelEnum } from "../../types/enums";
+import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
@@ -64,6 +65,9 @@ export class ClaimReview {
 
     @Prop({ type: Boolean, default: false, required: true })
     isPartialReview: boolean;
+
+    @Prop({ default: NameSpaceEnum.Main, required: true })
+    nameSpace: string;
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);

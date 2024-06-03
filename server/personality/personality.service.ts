@@ -17,6 +17,7 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 export interface FindAllOptions {
     searchText: string;
@@ -263,6 +264,10 @@ export class PersonalityService {
             isDeleted: false,
             isPublished: true,
             isHidden: false,
+            nameSpace:
+                this.req.params.namespace ||
+                this.req.query.nameSpace ||
+                NameSpaceEnum.Main,
         });
         this.logger.log(`Got stats ${reviews}`);
         return this.util.formatStats(reviews);

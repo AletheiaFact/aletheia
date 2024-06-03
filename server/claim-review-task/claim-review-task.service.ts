@@ -233,7 +233,12 @@ export class ClaimReviewTaskService {
         this.stateEventService.createStateEvent(stateEvent);
     }
 
-    async _createReportAndClaimReview(data_hash, machine, reportModel) {
+    async _createReportAndClaimReview(
+        data_hash,
+        machine,
+        reportModel,
+        nameSpace
+    ) {
         const claimReviewData = machine.context.claimReview;
 
         const newReport = Object.assign(machine.context.reviewData, {
@@ -247,6 +252,7 @@ export class ClaimReviewTaskService {
             {
                 ...claimReviewData,
                 report,
+                nameSpace,
             },
             data_hash,
             reportModel
@@ -375,7 +381,8 @@ export class ClaimReviewTaskService {
             this._createReportAndClaimReview(
                 data_hash,
                 newClaimReviewTask.machine,
-                reportModel
+                reportModel,
+                nameSpace
             );
         }
 
