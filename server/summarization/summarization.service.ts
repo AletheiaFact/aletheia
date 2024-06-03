@@ -1,6 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { SummarizationChainService } from "./summarization-chain.service";
-import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
@@ -8,46 +7,10 @@ export class SummarizationService {
     private readonly logger = new Logger("SummarizationLogger");
     constructor(
         private chainService: SummarizationChainService,
-        private claimReviewService: ClaimReviewService,
         private configService: ConfigService
     ) {}
 
-    async generateDailyReport(nameSpace?: string): Promise<string> {
-        const query = {
-            page: 0,
-            pageSize: 10,
-            order: "asc",
-            isHidden: false,
-            latest: false,
-            isDailyRange: true,
-            nameSpace: nameSpace,
-        };
-
-        try {
-            const dailyClaimReviews =
-                await this.claimReviewService.listDailyReviews(
-                    query.page,
-                    query.pageSize,
-                    query.order,
-                    { isHidden: query.isHidden, isDeleted: false },
-                    query.nameSpace,
-                    query.latest
-                );
-
-            const summarizedReviews = await this.getSummarizedReviews(
-                dailyClaimReviews
-            );
-
-            return this.generateHTMLReport(summarizedReviews, nameSpace);
-        } catch (error) {
-            this.logger.error("Error generating daily report:", error);
-            throw new Error("Failed to generate daily report");
-        }
-    }
-
-    private async getSummarizedReviews(
-        dailyClaimReviews: any[]
-    ): Promise<any[]> {
+    async getSummarizedReviews(dailyClaimReviews: any[]): Promise<any[]> {
         try {
             return await Promise.all(
                 dailyClaimReviews.map(async (claimReview) => {
@@ -67,10 +30,7 @@ export class SummarizationService {
         }
     }
 
-    private generateHTMLReport(
-        summarizedReviews: any[],
-        nameSpace: string
-    ): string {
+    generateHTMLReport(summarizedReviews: any[], nameSpace: string): string {
         const classificationTranslations = {
             "not-fact": "Não é fato",
             trustworthy: "Confiável",
