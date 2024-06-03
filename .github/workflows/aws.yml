@@ -187,7 +187,7 @@ jobs:
           sed -i "s%NEW_RELIC_LICENSE_KEY_STUB%${{ env.NEW_RELIC_LICENSE_KEY }}%g" deployment/app.yml
           sed -i "s%NEW_RELIC_APP_NAME_STUB%${{ env.NEW_RELIC_APP_NAME }}%g" deployment/app.yml
           sed -i "s%NEXT_PUBLIC_ORYSDKURL_STUB%${{ env.ORY_SDK_URL }}%g" deployment/app.yml
-          sed -i "s%OPENAI_API_KEY%${{ env.OPENAI_API_KEY }}%g" deployment/app.yml
+          sed -i "s%OPENAI_API_KEY_STUB%${{ env.OPENAI_API_KEY }}%g" deployment/app.yml
 
       - name: Set deployment
         run: |
