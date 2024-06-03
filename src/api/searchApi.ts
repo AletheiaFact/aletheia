@@ -1,12 +1,14 @@
 import axios from "axios";
 import actions from "../store/actions";
 import { ActionTypes, SearchTypes } from "../store/types";
+import { NameSpaceEnum } from "../types/Namespace";
 
 interface SearchOptions {
     type?: SearchTypes;
     searchText?: string;
     page?: number;
     pageSize?: number;
+    nameSpace?: string;
 }
 
 const request = axios.create({
@@ -20,6 +22,7 @@ const getResults = (dispatch, options: SearchOptions = {}) => {
         searchText: options.searchText,
         page: options.page ? options.page : 0,
         pageSize: options.pageSize ? options.pageSize : 5,
+        nameSpace: options.nameSpace ? options.nameSpace : NameSpaceEnum.Main,
     };
 
     return request
@@ -50,6 +53,7 @@ const getFeedResults = (options: SearchOptions = {}): any => {
         searchText: options.searchText,
         page: options.page ? options.page : 0,
         pageSize: options.pageSize ? options.pageSize : 5,
+        nameSpace: options.nameSpace ? options.nameSpace : NameSpaceEnum.Main,
     };
 
     return request

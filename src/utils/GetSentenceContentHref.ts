@@ -1,7 +1,7 @@
 import { NameSpaceEnum } from "../types/Namespace";
 import { ContentModelEnum } from "../types/enums";
 
-export const generateContentPath = (
+export const generateSentenceContentPath = (
     nameSpace,
     personality,
     claim,

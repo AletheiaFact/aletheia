@@ -169,7 +169,7 @@ export class SearchController {
     @Get("api/search")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async listAll(@Query() query, @Req() req) {
-        const { pageSize, searchText } = query;
+        const { pageSize, searchText, nameSpace } = query;
         const parsedPageSize = parseInt(pageSize, 10);
 
         if (this.configService.get<string>("db.atlas")) {
@@ -182,10 +182,12 @@ export class SearchController {
                 this.sentenceService.findAll({
                     searchText,
                     pageSize: parsedPageSize,
+                    nameSpace: nameSpace,
                 }),
                 this.claimRevisionService.findAll({
                     searchText,
                     pageSize: parsedPageSize,
+                    nameSpace: nameSpace,
                 }),
             ])
                 .then(([personalities, sentences, claims]) => {

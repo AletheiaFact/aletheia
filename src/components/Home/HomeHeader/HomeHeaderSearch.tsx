@@ -8,12 +8,15 @@ import { ActionTypes } from "../../../store/types";
 import { useDispatch } from "react-redux";
 import AletheiaButton, { ButtonType } from "../../Button";
 import HomeHeaderSearchStyled from "./HomeHeaderSearch.style";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../../atoms/namespace";
 
 const HomeHeaderSearch = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState("");
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const { vw } = useAppSelector((state) => ({
         vw: state.vw,
@@ -27,6 +30,7 @@ const HomeHeaderSearch = () => {
                     page: 1,
                     pageSize: 5,
                     searchText: name,
+                    nameSpace: nameSpace,
                 });
             dispatch({
                 type: ActionTypes.SEARCH_RESULTS,

@@ -17,12 +17,14 @@ const ClaimReviewCardActions = ({ href, content }) => {
                 width: "100%",
             }}
         >
-            <span>
-                {t("claimReview:claimReview")}
-                <ClassificationText
-                    classification={content.props.classification}
-                />
-            </span>
+            {content.props.classification && (
+                <span>
+                    {t("claimReview:claimReview")}
+                    <ClassificationText
+                        classification={content.props.classification}
+                    />
+                </span>
+            )}
             <AletheiaButton
                 type={ButtonType.blue}
                 href={href}

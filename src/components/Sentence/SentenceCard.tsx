@@ -9,7 +9,7 @@ import { Comment } from "antd";
 import CardBase from "../CardBase";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
-import { generateContentPath } from "../../utils/GetContentHref";
+import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref";
 
 const StyledComment = styled(Comment)`
     .ant-comment-actions > li {
@@ -19,7 +19,13 @@ const StyledComment = styled(Comment)`
 
 const SentenceCard = ({ sentence }) => {
     const { content, claim, personality } = sentence;
-    const contentModel = sentence?.claim[0].contentModel;
+    const claimItem =
+        Array.isArray(claim) && claim.length > 0 ? claim[0] : claim;
+    const personalityItem =
+        Array.isArray(personality) && personality.length > 0
+            ? personality[0]
+            : personality;
+    const contentModel = sentence?.claim[0]?.contentModel;
     const [nameSpace] = useAtom(currentNameSpace);
     const isImage = contentModel === ContentModelEnum.Image;
 
@@ -28,9 +34,9 @@ const SentenceCard = ({ sentence }) => {
             <StyledComment
                 author={
                     <ClaimCardHeader
-                        personality={personality}
-                        date={claim?.date}
-                        claimType={claim?.contentModel}
+                        personality={personalityItem}
+                        date={claimItem?.date}
+                        claimType={claimItem?.contentModel}
                     />
                 }
                 content={
@@ -43,11 +49,11 @@ const SentenceCard = ({ sentence }) => {
                     <TagsList key={0} tags={sentence.topics || []} />,
                     <ClaimReviewCardActions
                         key={1}
-                        href={generateContentPath(
+                        href={generateSentenceContentPath(
                             nameSpace,
-                            personality,
-                            claim,
-                            claim.contentModel,
+                            personalityItem,
+                            claimItem,
+                            contentModel,
                             sentence.data_hash
                         )}
                         content={sentence}
