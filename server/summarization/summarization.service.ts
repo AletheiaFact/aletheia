@@ -1,15 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { SummarizationChainService } from "./summarization-chain.service";
-import { ConfigService } from "@nestjs/config";
-import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Injectable()
 export class SummarizationService {
     private readonly logger = new Logger("SummarizationLogger");
-    constructor(
-        private chainService: SummarizationChainService,
-        private configService: ConfigService
-    ) {}
+    constructor(private chainService: SummarizationChainService) {}
 
     async getSummarizedReviews(dailyClaimReviews: any[]): Promise<any[]> {
         try {
@@ -21,7 +16,7 @@ export class SummarizationService {
                     return {
                         classification: claimReview.report.classification,
                         summary: summary.text,
-                        reviewHref: claimReview.reviewHref,
+                        href: claimReview?.report?.sources[0]?.href,
                     };
                 })
             );
@@ -43,23 +38,17 @@ export class SummarizationService {
             exaggerated: "Exagerado",
             unverifiable: "Inverificável",
         };
-        const baseUrl = this.configService.get<string>("baseUrl");
 
         const reportContent =
             summarizedReviews.length > 0
                 ? summarizedReviews
                       .map(
-                          (review, key) => `
+                          (review) => `
                 <div class="claim-review">
-                    <h1>${nameSpace}</h1>
-                    <p><span class="classification ${
-                        Object.keys(classificationTranslations)[key]
-                    }">${
+                    <p><span class="classification ${review.classification}">${
                               classificationTranslations[review.classification]
                           }</span> | ${review.summary}</p>
-                    <p><a href="${baseUrl}/${nameSpace}${
-                              review.reviewHref
-                          }">Link para Checagem</a></p>
+                    <p><a href="${review.href}">Link para Checagem</a></p>
                 </div>
             `
                       )
@@ -111,6 +100,7 @@ export class SummarizationService {
                     </style>
                 </head>
                 <body>
+                    <h1>${nameSpace}</h1>
                     ${reportContent}
                 </body>
             </html>
