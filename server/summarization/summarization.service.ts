@@ -4,9 +4,7 @@ import { SummarizationChainService } from "./summarization-chain.service";
 @Injectable()
 export class SummarizationService {
     private readonly logger = new Logger("SummarizationLogger");
-    constructor(
-        private chainService: SummarizationChainService,
-    ) {}
+    constructor(private chainService: SummarizationChainService) {}
 
     async getSummarizedReviews(dailyClaimReviews: any[]): Promise<any[]> {
         try {
@@ -45,12 +43,9 @@ export class SummarizationService {
             summarizedReviews.length > 0
                 ? summarizedReviews
                       .map(
-                          (review, key) => `
+                          (review) => `
                 <div class="claim-review">
-                    <h1>${nameSpace}</h1>
-                    <p><span class="classification ${
-                        Object.keys(classificationTranslations)[key]
-                    }">${
+                    <p><span class="classification ${review.classification}">${
                               classificationTranslations[review.classification]
                           }</span> | ${review.summary}</p>
                     <p><a href="${review.href}">Link para Checagem</a></p>
@@ -105,6 +100,7 @@ export class SummarizationService {
                     </style>
                 </head>
                 <body>
+                    <h1>${nameSpace}</h1>
                     ${reportContent}
                 </body>
             </html>

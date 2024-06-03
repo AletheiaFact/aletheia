@@ -25,7 +25,7 @@ export class DailyReportController {
     ) {
         const queryParams: any = { isHidden: false, isDeleted: false };
         const [lastDailyReportSent] =
-            await this.dailyReportService.getLastDailyReportSent();
+            await this.dailyReportService.getLastDailyReportSent({ nameSpace });
 
         if (lastDailyReportSent) {
             queryParams.date = { $gt: lastDailyReportSent?.date };
@@ -45,6 +45,7 @@ export class DailyReportController {
             await this.dailyReportService.create({
                 reports: reportIds,
                 date: new Date(),
+                nameSpace: nameSpace,
             });
         }
 
