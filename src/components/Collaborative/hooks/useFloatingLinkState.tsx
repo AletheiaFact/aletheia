@@ -19,7 +19,7 @@ import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
 
-const URL_PATTERN =
+export const URL_PATTERN =
     /^(ftp|http|https):\/\/[^ "]+\.(br|com|org|net|edu|gov|mil|co|info|io|biz|us|uk)(\/|\?|#|$)/;
 
 function useFloatingLinkState() {

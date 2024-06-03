@@ -1,11 +1,10 @@
 import { List } from "antd";
-
 import React from "react";
-import { useTranslation } from "next-i18next";
 import { EditorSourcesListStyle } from "./EditorSouceList.style";
 import EditorSourceListItem from "./EditorSourceListItem";
 import { ProsemirrorNode } from "remirror";
 import { SourceType } from "../../../../types/Source";
+import EditorAddSources from "./EditorAddSources";
 
 const EditorSourcesList = ({
     node,
@@ -14,8 +13,6 @@ const EditorSourcesList = ({
     node: ProsemirrorNode;
     sources: SourceType[];
 }) => {
-    const { t } = useTranslation();
-
     return (
         <EditorSourcesListStyle>
             {sources.length > 0 ? (
@@ -25,7 +22,7 @@ const EditorSourcesList = ({
                         xs: 1,
                         sm: 2,
                         md: 2,
-                        lg: 3,
+                        lg: 2,
                         xl: 3,
                         xxl: 3,
                     }}
@@ -46,13 +43,11 @@ const EditorSourcesList = ({
                             return <></>;
                         }
                     }}
-                />
+                >
+                    <EditorAddSources />
+                </List>
             ) : (
-                <div className="empty-sources-container">
-                    <p className="empty-text">
-                        {t("sourceForm:editorEmptySources")}
-                    </p>
-                </div>
+                <EditorAddSources />
             )}
         </EditorSourcesListStyle>
     );

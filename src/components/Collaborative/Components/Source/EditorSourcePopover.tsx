@@ -105,6 +105,7 @@ const EditorSourcePopover = ({
             command.removeLink({ from, to });
         } catch (error) {
             console.error("Error handling delete click:", error);
+            removeEditorSource();
         } finally {
             setIsLoading(false);
         }

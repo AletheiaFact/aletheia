@@ -56,6 +56,18 @@ const EditorStyle = styled.div`
     .toolbar-item-icon {
         font-size: 20px;
     }
+
+    @media (max-width: 758px) {
+        order: 0;
+        width: 100%;
+        border: 1px solid ${colors.graySecondary};
+        border-radius: 4px;
+
+        .toolbar {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+    }
 `;
 
 export default EditorStyle;

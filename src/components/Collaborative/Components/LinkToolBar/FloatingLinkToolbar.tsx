@@ -12,7 +12,7 @@ import SourceDialog from "./Dialog/SourceDialog";
 import useFloatingLinkState from "../../hooks/useFloatingLinkState";
 import { useTranslation } from "next-i18next";
 
-const HTTP_PROTOCOL_REGEX = /(https?:\/\/)(https?:\/\/)+/;
+export const HTTP_PROTOCOL_REGEX = /(https?:\/\/)(https?:\/\/)+/;
 
 const FloatingLinkToolbar = () => {
     const {

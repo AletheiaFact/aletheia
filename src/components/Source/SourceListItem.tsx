@@ -10,7 +10,7 @@ const SourceListItem = ({ source, index }) => {
             {typeof source === "object" ? (
                 <List.Item id={source?.props?.targetText || source?.targetText}>
                     <span style={{ marginRight: 4 }}>
-                        {source?.props?.sup || source?.sup}.
+                        {source?.props?.sup || source?.sup || index}.
                     </span>
                     <a href={href} target="_blank" rel="noopener noreferrer">
                         {href}
