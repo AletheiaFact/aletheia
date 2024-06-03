@@ -85,24 +85,29 @@ export class ClaimReviewService {
         );
     }
 
-    async listDailyReviews(
+    /**
+     * FIXME: Claim review should have namespace on it to avoid filtering claim by namespaces
+     */
+    async listDailyClaimReviews({
         page,
         pageSize,
         order,
         query,
         nameSpace,
-        latest = false
-    ) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        latest = false,
+    }) {
+        if (!query.date) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
 
-        query.date = {
-            $gte: today,
-            $lt: tomorrow,
-        };
+            query.date = {
+                $gte: today,
+                $lt: tomorrow,
+            };
+        }
         const pipeline = this.ClaimReviewModel.find(query)
             .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
             .populate({

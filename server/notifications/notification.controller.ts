@@ -1,32 +1,14 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { NotificationService } from "./notifications.service";
 import { ApiTags } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
-import { SummarizationService } from "../summarization/summarization.service";
-import {
-    AdminUserAbility,
-    CheckAbilities,
-} from "../auth/ability/ability.decorator";
-import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 
 @Controller()
 export class NotificationController {
     constructor(
         private readonly notificationService: NotificationService,
-        private summarizationService: SummarizationService,
         private configService: ConfigService
     ) {}
-
-    @Post("api/notification/topic-subscription/:key/send/:nameSpace")
-    @UseGuards(AbilitiesGuard)
-    @CheckAbilities(new AdminUserAbility())
-    async sendDailyReport(@Param("key") key, @Param("nameSpace") nameSpace) {
-        const dailyReport = await this.summarizationService.generateDailyReport(
-            nameSpace
-        );
-
-        return this.notificationService.sendDailyReviewsEmail(key, dailyReport);
-    }
 
     @ApiTags("notifications")
     @Post("api/notification")

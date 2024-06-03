@@ -33,3 +33,5 @@ services:
         bucket: {env(AWS_SDK_BUCKET)}
         accessKeyId: {env(AWS_ACCESS_KEY_ID)}
         secretAccessKey: {env(AWS_SECRET_ACCESS_KEY)}
+      openai:
+        api_key: {env(OPENAI_API_KEY)}

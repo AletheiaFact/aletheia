@@ -59,4 +59,20 @@ export class UtilService {
 
         return (isSelectedSuperAdmin && editingSelf) || !isSelectedSuperAdmin;
     }
+
+    getVisibilityMatch = (nameSpace) => ({
+        $match: {
+            $or: [
+                {
+                    $and: [
+                        { "claimContent.isHidden": { $ne: true } },
+                        { "claimContent.isDeleted": { $ne: true } },
+                        { "claimContent.nameSpace": nameSpace },
+                        { "personality.isHidden": { $ne: true } },
+                        { "personality.isDeleted": { $ne: true } },
+                    ],
+                },
+            ],
+        },
+    });
 }

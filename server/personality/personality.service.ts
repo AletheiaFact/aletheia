@@ -23,6 +23,7 @@ export interface FindAllOptions {
     pageSize: number;
     language?: string;
     skipedDocuments?: number;
+    nameSpace?: string;
 }
 
 @Injectable({ scope: Scope.REQUEST })

@@ -1,24 +1,26 @@
 import { Row } from "antd";
 import styled from "styled-components";
-import { queries } from "../../styles/mediaQueries";
+import { queries } from "../../../styles/mediaQueries";
+import colors from "../../../styles/colors";
 
-const CtaSectionStyle = styled(Row)`
-    display: grid;
-    grid-template-rows: 52px auto;
+const CTASectionStyle = styled(Row)`
+    display: flex;
     width: 100%;
     margin-top: 24px;
-    row-gap: 24px;
+    align-items: center;
 
     .CTA-title {
         font-size: 16px;
+        line-height: 20px;
+        color: ${colors.white};
+        margin-bottom: 0;
     }
 
     .CTA-button-container {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
-        width: 100%;
-        max-width: 385px;
+        justify-content: ${({ isloggedin }) =>
+            isloggedin === "true" ? "flex-end" : "space-between"};
     }
 
     @media ${queries.md} {
@@ -31,17 +33,13 @@ const CtaSectionStyle = styled(Row)`
     }
 
     @media ${queries.xs} {
-        .CTA-button-container {
-            display: flex;
-            justify-content: flex-end;
-        }
-
         .CTA-title {
             font-size: 12px;
             font-weight: 700;
+            margin-bottom: 8px;
             width: 80%;
         }
     }
 `;
 
-export default CtaSectionStyle;
+export default CTASectionStyle;

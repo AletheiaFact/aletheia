@@ -3,6 +3,7 @@ import { Model } from "mongoose";
 import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
+import { UtilService } from "../../../util";
 
 interface FindAllOptionsFilters {
     searchText: string;
@@ -10,6 +11,7 @@ interface FindAllOptionsFilters {
     language?: string;
     skipedDocuments?: number;
     filter?: string | string[];
+    nameSpace?: string;
 }
 
 @Injectable()
@@ -17,7 +19,8 @@ export class SentenceService {
     constructor(
         @InjectModel(Sentence.name)
         private SentenceModel: Model<SentenceDocument>,
-        private reportService: ReportService
+        private reportService: ReportService,
+        private util: UtilService
     ) {}
 
     async create(sentenceBody) {
@@ -54,6 +57,7 @@ export class SentenceService {
         pageSize,
         skipedDocuments,
         filter,
+        nameSpace,
     }: FindAllOptionsFilters) {
         let pipeline: object[] = [];
 
@@ -120,10 +124,26 @@ export class SentenceService {
             },
             {
                 $lookup: {
+                    from: "claims",
+                    localField: "claim.claimId",
+                    foreignField: "_id",
+                    as: "claimContent",
+                },
+            },
+            {
+                $lookup: {
                     from: "personalities",
                     localField: "claim.personalities",
                     foreignField: "_id",
                     as: "personality",
+                },
+            },
+            this.util.getVisibilityMatch(nameSpace),
+            // Logic made to filter sentences from debates
+            //TODO: Remove this when claim schema is changed
+            {
+                $match: {
+                    claim: { $ne: [] },
                 },
             },
             {
@@ -135,6 +155,7 @@ export class SentenceService {
                     "personality.name": 1,
                     "claim.slug": 1,
                     "claim.date": 1,
+                    "claim._id": 1,
                     "claim.contentModel": 1,
                 },
             },

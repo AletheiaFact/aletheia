@@ -1,6 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { SummarizationChainService } from "./summarization-chain.service";
-import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
@@ -8,51 +7,10 @@ export class SummarizationService {
     private readonly logger = new Logger("SummarizationLogger");
     constructor(
         private chainService: SummarizationChainService,
-        private claimReviewService: ClaimReviewService,
         private configService: ConfigService
     ) {}
 
-    async generateDailyReport(nameSpace?: string): Promise<string> {
-        const query = {
-            page: 0,
-            pageSize: 10,
-            order: "asc",
-            isHidden: false,
-            latest: false,
-            isDailyRange: true,
-            nameSpace: nameSpace,
-        };
-
-        try {
-            const dailyClaimReviews =
-                await this.claimReviewService.listDailyReviews(
-                    query.page,
-                    query.pageSize,
-                    query.order,
-                    { isHidden: query.isHidden, isDeleted: false },
-                    query.nameSpace,
-                    query.latest
-                );
-
-            const summarizedReviews = await this.getSummarizedReviews(
-                dailyClaimReviews
-            );
-
-            const dailyReport = this.generateHTMLReport(
-                summarizedReviews,
-                nameSpace
-            );
-
-            return dailyReport;
-        } catch (error) {
-            this.logger.error("Error generating daily report:", error);
-            throw new Error("Failed to generate daily report");
-        }
-    }
-
-    private async getSummarizedReviews(
-        dailyClaimReviews: any[]
-    ): Promise<any[]> {
+    async getSummarizedReviews(dailyClaimReviews: any[]): Promise<any[]> {
         try {
             return await Promise.all(
                 dailyClaimReviews.map(async (claimReview) => {
@@ -72,10 +30,7 @@ export class SummarizationService {
         }
     }
 
-    private generateHTMLReport(
-        summarizedReviews: any[],
-        nameSpace: string
-    ): string {
+    generateHTMLReport(summarizedReviews: any[], nameSpace: string): string {
         const classificationTranslations = {
             "not-fact": "Não é fato",
             trustworthy: "Confiável",
@@ -89,20 +44,30 @@ export class SummarizationService {
         };
         const baseUrl = this.configService.get<string>("baseUrl");
 
-        const reportContent = summarizedReviews
-            .map(
-                (review) => `
+        const reportContent =
+            summarizedReviews.length > 0
+                ? summarizedReviews
+                      .map(
+                          (review, key) => `
                 <div class="claim-review">
-                    <p><span class="classification">${
-                        classificationTranslations[review.classification]
-                    }</span> | ${review.summary}</p>
+                    <h1>${nameSpace}</h1>
+                    <p><span class="classification ${
+                        Object.keys(classificationTranslations)[key]
+                    }">${
+                              classificationTranslations[review.classification]
+                          }</span> | ${review.summary}</p>
                     <p><a href="${baseUrl}/${nameSpace}${
-                    review.reviewHref
-                }">Link para Checagem</a></p>
+                              review.reviewHref
+                          }">Link para Checagem</a></p>
                 </div>
             `
-            )
-            .join("");
+                      )
+                      .join("")
+                : `<div class="claim-review">
+                <p>Nenhuma checagem criada no dia ${new Date().getDate()}/${
+                      new Date().getMonth() + 1
+                  }</p>
+            </div>`;
 
         return `
             <html>
@@ -116,6 +81,33 @@ export class SummarizationService {
                         }
                         a {
                             color: rgb(17, 39, 58);
+                        }
+                        .not-fact {
+                            color: #006060;   
+                        }
+                        .trustworthy {
+                            color: #008000;   
+                        }
+                        .trustworthy-but {
+                            color: #5A781D;   
+                        }
+                        .arguable {
+                            color: #9F6B3F;   
+                        }
+                        .misleading {
+                            color: #D6395F;   
+                        }
+                        .false {
+                            color: #D32B20;   
+                        }
+                        .unsustainable {
+                            color: #A74165;   
+                        }
+                        .exaggerated {
+                            color: #B8860B;   
+                        }
+                        .unverifiable {
+                            color: #C9502A;   
                         }
                     </style>
                 </head>

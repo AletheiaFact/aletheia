@@ -307,9 +307,9 @@ export class ClaimService {
         try {
             let claim;
             if (revisionId) {
-                const rawClaim = await this.ClaimModel.findOne(match).select({
-                    latestRevision: 0,
-                });
+                const rawClaim = await this.ClaimModel.findOne(match)
+                    .populate("sources", "_id href")
+                    .select({ latestRevision: 0 });
 
                 const revision = await this.claimRevisionService.getRevision({
                     _id: revisionId,
@@ -321,8 +321,9 @@ export class ClaimService {
                 }
 
                 claim = {
-                    ...rawClaim,
-                    revision,
+                    ...rawClaim.toObject(),
+                    ...revision,
+                    _id: rawClaim._id,
                 };
             } else {
                 if (population) {

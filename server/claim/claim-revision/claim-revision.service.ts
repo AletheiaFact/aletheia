@@ -13,6 +13,7 @@ import { ContentModelEnum } from "../../types/enums";
 import { ImageService } from "../types/image/image.service";
 import { DebateService } from "../types/debate/debate.service";
 import { FindAllOptions } from "../../personality/personality.service";
+import { UtilService } from "../../util";
 
 @Injectable()
 export class ClaimRevisionService {
@@ -25,7 +26,8 @@ export class ClaimRevisionService {
         private sourceService: SourceService,
         private parserService: ParserService,
         private imageService: ImageService,
-        private debateService: DebateService
+        private debateService: DebateService,
+        private util: UtilService
     ) {
         this.optionsToUpdate = {
             new: true,
@@ -33,11 +35,23 @@ export class ClaimRevisionService {
         };
     }
 
-    /** get ClaimRevision by ID */
     getRevision(match) {
         try {
             return this.ClaimRevisionModel.findOne(match)
                 .populate("personalities")
+                .populate("content")
+                .lean();
+        } catch {
+            throw new NotFoundException();
+        }
+    }
+
+    /** get ClaimRevision by ID */
+    getRevisionById(id) {
+        try {
+            return this.ClaimRevisionModel.findById(id)
+                .populate("personalities")
+                .populate("content")
                 .lean();
         } catch {
             throw new NotFoundException();
@@ -63,7 +77,12 @@ export class ClaimRevisionService {
         return newClaimRevision.save();
     }
 
-    async findAll({ searchText, pageSize, skipedDocuments }: FindAllOptions) {
+    async findAll({
+        searchText,
+        pageSize,
+        skipedDocuments,
+        nameSpace,
+    }: FindAllOptions) {
         const aggregationPipeline = [
             {
                 $search: {
@@ -79,15 +98,25 @@ export class ClaimRevisionService {
             },
             {
                 $lookup: {
+                    from: "claims",
+                    localField: "claimId",
+                    foreignField: "_id",
+                    as: "claimContent",
+                },
+            },
+            {
+                $lookup: {
                     from: "personalities",
                     localField: "personalities",
                     foreignField: "_id",
                     as: "personality",
                 },
             },
+            this.util.getVisibilityMatch(nameSpace),
             {
                 $project: {
                     title: 1,
+                    contentModel: 1,
                     "personality.slug": 1,
                     "personality.name": 1,
                     slug: 1,

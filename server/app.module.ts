@@ -54,6 +54,7 @@ import { NameSpaceGuard } from "./auth/name-space/name-space.guard";
 import { AutomatedFactCheckingModule } from "./automated-fact-checking/automated-fact-checking.module";
 import { CopilotChatModule } from "./copilot/copilot-chat.module";
 import { UnattributedModule } from "./claim/types/unattributed/unattributed.module";
+import { DailyReportModule } from "./daily-report/daily-report.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -113,6 +114,7 @@ export class AppModule implements NestModule {
             AutomatedFactCheckingModule,
             CopilotChatModule,
             UnattributedModule,
+            DailyReportModule,
         ];
         if (options.feature_flag) {
             imports.push(
