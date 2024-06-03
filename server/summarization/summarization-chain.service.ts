@@ -4,11 +4,12 @@ import { loadSummarizationChain, StuffDocumentsChain } from "langchain/chains";
 import { ChatOpenAI } from "@langchain/openai";
 import { openAI } from "../copilot/openAI.constants";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class SummarizationChainService {
     private readonly logger = new Logger("SummarizationChainLogger");
-    constructor() {}
+    constructor(private configService: ConfigService) {}
 
     createBulletPointsChain(): StuffDocumentsChain {
         const systemMessage = `Write a summary of the following text delimited by triple dashes.`;
@@ -27,6 +28,7 @@ export class SummarizationChainService {
         const llm = new ChatOpenAI({
             temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
             modelName: openAI.GPT_3_5_TURBO_1106.toString(),
+            apiKey: this.configService.get<string>("openai.api_key"),
         });
 
         return loadSummarizationChain(llm, {

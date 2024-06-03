@@ -19,6 +19,9 @@ export class DailyReport {
 
     @Prop({ required: true })
     date: Date;
+
+    @Prop({ required: true })
+    nameSpace: string;
 }
 
 export const DailyReportSchema = SchemaFactory.createForClass(DailyReport);

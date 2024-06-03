@@ -23,28 +23,23 @@ export class DailyReportController {
         @Param("topic") topic,
         @Param("nameSpace") nameSpace
     ) {
-        const queryParams: any = { isHidden: false, isDeleted: false };
+        const query: any = { isHidden: false, isDeleted: false, nameSpace };
         const [lastDailyReportSent] =
-            await this.dailyReportService.getLastDailyReportSent();
+            await this.dailyReportService.getLastDailyReportSent({ nameSpace });
 
         if (lastDailyReportSent) {
-            queryParams.date = { $gt: lastDailyReportSent?.date };
+            query.date = { $gt: lastDailyReportSent?.date };
         }
 
         const dailyClaimReviews =
-            await this.claimReviewService.listDailyClaimReviews({
-                page: 0,
-                pageSize: 30,
-                order: "asc",
-                nameSpace,
-                query: queryParams,
-            });
+            await this.claimReviewService.listDailyClaimReviews(query);
 
         if (dailyClaimReviews.length > 0) {
             const reportIds = dailyClaimReviews.map(({ report }) => report._id);
             await this.dailyReportService.create({
                 reports: reportIds,
                 date: new Date(),
+                nameSpace: nameSpace,
             });
         }
 

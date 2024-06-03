@@ -35,13 +35,15 @@ import {
 import { HumanMessage, AIMessage } from "langchain/schema";
 import { AutomatedFactCheckingService } from "../automated-fact-checking/automated-fact-checking.service";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class CopilotChatService {
     private readonly logger = new Logger("CopilotChatService");
     constructor(
         private automatedFactCheckingService: AutomatedFactCheckingService,
-        private editorParseService: EditorParseService
+        private editorParseService: EditorParseService,
+        private configService: ConfigService
     ) {}
     editorReport = null;
 
@@ -154,6 +156,7 @@ export class CopilotChatService {
             const llm = new ChatOpenAI({
                 temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
                 modelName: openAI.GPT_3_5_TURBO_1106.toString(),
+                apiKey: this.configService.get<string>("openai.api_key"),
             });
 
             const agent = await createOpenAIFunctionsAgent({
