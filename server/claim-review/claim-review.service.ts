@@ -46,10 +46,6 @@ export class ClaimReviewService {
                 },
                 match: {
                     isDeleted: false,
-                    nameSpace:
-                        this.req.params.namespace ||
-                        this.req.query.nameSpace ||
-                        NameSpaceEnum.Main,
                 },
             })
             .skip(page * pageSize)
@@ -76,40 +72,14 @@ export class ClaimReviewService {
             .populate(personalityPopulateOptions)
             .exec();
 
-        const filteredClaimReviews = claimReviews.filter(
-            (review) => review.claim
-        );
-
         return Promise.all(
-            filteredClaimReviews.map(async (review) => this.postProcess(review))
+            claimReviews.map(async (review) => this.postProcess(review))
         );
     }
 
-    /**
-     * FIXME: Claim review should have namespace on it to avoid filtering claim by namespaces
-     */
-    async listDailyClaimReviews({
-        page,
-        pageSize,
-        order,
-        query,
-        nameSpace,
-        latest = false,
-    }) {
-        if (!query.date) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-
-            query.date = {
-                $gte: today,
-                $lt: tomorrow,
-            };
-        }
+    async listDailyClaimReviews(query) {
         const pipeline = this.ClaimReviewModel.find(query)
-            .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
+            .sort({ _id: 1 })
             .populate({
                 path: "claim",
                 model: "Claim",
@@ -119,10 +89,6 @@ export class ClaimReviewService {
                 },
                 match: {
                     isDeleted: false,
-                    nameSpace:
-                        this.req.params.namespace ||
-                        nameSpace ||
-                        NameSpaceEnum.Main,
                 },
             })
             .populate({
@@ -131,9 +97,7 @@ export class ClaimReviewService {
                 match: {
                     isDeleted: false,
                 },
-            })
-            .skip(page * pageSize)
-            .limit(parseInt(pageSize));
+            });
 
         const personalityPopulateOptions: any = {
             path: "personality",
@@ -156,24 +120,18 @@ export class ClaimReviewService {
             .populate(personalityPopulateOptions)
             .exec();
 
-        const filteredClaimReviews = claimReviews.filter(
-            (review) => review.claim
-        );
-
         return Promise.all(
-            filteredClaimReviews.map(async (review) => this.postProcess(review))
+            claimReviews.map(async (review) => this.postProcess(review))
         );
     }
 
     async agreggateClassification(match: any) {
-        const nameSpace = this.req.params.namespace || this.req.query.nameSpace;
-
         const claimReviews = await this.ClaimReviewModel.find(match).populate({
             path: "claim",
             model: "Claim",
             match: {
                 "claim.isHidden": false,
-                "claim.nameSpace": nameSpace || NameSpaceEnum.Main,
+                "claim.isDeleted": false,
             },
         });
 
@@ -193,10 +151,6 @@ export class ClaimReviewService {
                     "personality.isDeleted": false,
                     "claim.isHidden": query.isHidden,
                     "claim.isDeleted": false,
-                    "claim.nameSpace":
-                        this.req.params.namespace ||
-                        this.req.query.nameSpace ||
-                        NameSpaceEnum.Main,
                 },
             }
         );
@@ -224,6 +178,7 @@ export class ClaimReviewService {
             isDeleted: false,
             isPublished: true,
             isHidden: false,
+            nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
         });
         const sortedReviews = this.sortReviewStats(reviews);
         return this.util.formatStats(sortedReviews);
@@ -241,6 +196,7 @@ export class ClaimReviewService {
             isDeleted: false,
             isPublished: true,
             isHidden: false,
+            nameSpace: this.req.params.namespace || NameSpaceEnum.Main,
         });
 
         claimReviews.forEach((review) => {

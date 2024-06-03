@@ -50,7 +50,7 @@ export class ClaimReviewController {
                 page,
                 pageSize,
                 order,
-                { isHidden, isDeleted: false },
+                { isHidden, isDeleted: false, nameSpace },
                 latest
             ),
             this.claimReviewService.count({ isHidden, isDeleted: false }),
