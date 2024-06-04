@@ -104,6 +104,7 @@ const EditorAddSources = ({
                         <AletheiaButton
                             type={ButtonType.gray}
                             onClick={() => setShowDialog(true)}
+                            data-cy="testAddEditorSources"
                         >
                             <PlusOutlined style={{ fontSize: "24px" }} />
                         </AletheiaButton>
