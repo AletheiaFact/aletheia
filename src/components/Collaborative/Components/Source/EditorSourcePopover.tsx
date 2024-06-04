@@ -102,7 +102,7 @@ const EditorSourcePopover = ({
         try {
             const [from, to] = findMarkPositions(node, props?.id);
             removeEditorSource();
-            command.removeLink({ from, to });
+            command.removeLink({ from: from - 1, to: to - 1 });
         } catch (error) {
             console.error("Error handling delete click:", error);
             removeEditorSource();

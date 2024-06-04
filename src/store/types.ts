@@ -33,6 +33,7 @@ export enum ActionTypes {
     SET_COLLABORATIVE_EDIT,
     SET_COPILOT_CHAT_BOT,
     SET_EDITOR_ANNOTATION,
+    SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING,
 }
 
 export enum SearchTypes {
@@ -63,6 +64,7 @@ export interface RootState {
     enableCollaborativeEdit: boolean;
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
+    enableAddEditorSourcesWithoutSelecting: boolean;
     websocketUrl: string;
     claimType: string;
     claimPersonality: Personality;

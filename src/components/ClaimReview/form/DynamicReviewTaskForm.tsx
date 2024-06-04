@@ -49,7 +49,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isReported = useSelector(machineService, reportSelector);
-    const { editorContentObject, comments, editorSources } = useContext(
+    const { editorContentObject, comments } = useContext(
         CollaborativeEditorContext
     );
     const reviewData = useSelector(machineService, reviewDataSelector);
@@ -109,7 +109,6 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             reportModel,
             reviewData: {
                 ...formData,
-                sources: editorSources,
                 reviewComments:
                     comments?.filter(
                         (comment) => comment.type === CommentEnum.review

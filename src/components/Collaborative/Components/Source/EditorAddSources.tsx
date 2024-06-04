@@ -7,16 +7,27 @@ import { useTranslation } from "next-i18next";
 import { PlusOutlined } from "@ant-design/icons";
 import { URL_PATTERN } from "../../hooks/useFloatingLinkState";
 import { HTTP_PROTOCOL_REGEX } from "../LinkToolBar/FloatingLinkToolbar";
-import { useChainedCommands } from "@remirror/react";
+import { useCommands } from "@remirror/react";
+import { Node } from "@remirror/pm/model";
+import { useAppSelector } from "../../../../store/store";
 
-const EditorAddSources = () => {
+const EditorAddSources = ({
+    nodeFromJSON,
+    doc,
+}: {
+    nodeFromJSON: (json: any) => Node;
+    doc: Node;
+}) => {
+    const enableAddEditorSourcesWithoutSelecting = useAppSelector(
+        (state) => state?.enableAddEditorSourcesWithoutSelecting
+    );
+    const command = useCommands();
     const { t } = useTranslation();
     const [href, setHref] = useState("https://");
     const [showDialog, setShowDialog] = useState(false);
     const [error, setError] = useState(null);
     const { setEditorSources } = useContext(CollaborativeEditorContext);
     const [isLoading, setIsLoading] = useState(false);
-    const chain = useChainedCommands();
 
     const validateFloatingLink = () => {
         if (!URL_PATTERN.test(href)) {
@@ -24,9 +35,21 @@ const EditorAddSources = () => {
         }
     };
 
-    const updateFloatingLink = (id) => {
-        chain.updateLink({ href, auto: true, id }, undefined).focus(0).run();
-    };
+    const getNodeObject = (id, href) => ({
+        type: "text",
+        marks: [
+            {
+                type: "link",
+                attrs: {
+                    id: id,
+                    href: href,
+                    target: null,
+                    auto: true,
+                },
+            },
+        ],
+        text: " ",
+    });
 
     const submitHref = () => {
         try {
@@ -45,7 +68,10 @@ const EditorAddSources = () => {
             validateFloatingLink();
             setEditorSources((sources) => [...sources, newSource]);
             setShowDialog(false);
-            updateFloatingLink(id);
+            command.insertNode(nodeFromJSON(getNodeObject(id, href)), {
+                selection: doc.content.size,
+                replaceEmptyParentBlock: true,
+            });
             setError(null);
         } catch (error) {
             setError(error.message);
@@ -66,14 +92,22 @@ const EditorAddSources = () => {
             {!showDialog ? (
                 <>
                     <p className="empty-text">
-                        {t("sourceForm:editorEmptySources")}
+                        {t(
+                            `sourceForm:${
+                                enableAddEditorSourcesWithoutSelecting
+                                    ? "editorEmptySourcesWithButton"
+                                    : "editorEmptySources"
+                            }`
+                        )}
                     </p>
-                    <AletheiaButton
-                        type={ButtonType.gray}
-                        onClick={() => setShowDialog(true)}
-                    >
-                        <PlusOutlined style={{ fontSize: "24px" }} />
-                    </AletheiaButton>
+                    {enableAddEditorSourcesWithoutSelecting && (
+                        <AletheiaButton
+                            type={ButtonType.gray}
+                            onClick={() => setShowDialog(true)}
+                        >
+                            <PlusOutlined style={{ fontSize: "24px" }} />
+                        </AletheiaButton>
+                    )}
                 </>
             ) : (
                 <SourceDialog

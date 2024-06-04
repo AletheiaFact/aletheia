@@ -5,13 +5,16 @@ import EditorSourceListItem from "./EditorSourceListItem";
 import { ProsemirrorNode } from "remirror";
 import { SourceType } from "../../../../types/Source";
 import EditorAddSources from "./EditorAddSources";
+import { Node } from "@remirror/pm/model";
 
 const EditorSourcesList = ({
     node,
     sources,
+    nodeFromJSON,
 }: {
     node: ProsemirrorNode;
     sources: SourceType[];
+    nodeFromJSON: (json: any) => Node;
 }) => {
     return (
         <EditorSourcesListStyle>
@@ -27,15 +30,12 @@ const EditorSourcesList = ({
                         xxl: 3,
                     }}
                     renderItem={(source, index) => {
-                        const {
-                            props: { sup },
-                        } = source;
                         if (typeof source === "object") {
                             return (
                                 <EditorSourceListItem
                                     node={node}
                                     key={index}
-                                    sup={sup || index + 1}
+                                    sup={index + 1}
                                     source={source}
                                 />
                             );
@@ -44,10 +44,10 @@ const EditorSourcesList = ({
                         }
                     }}
                 >
-                    <EditorAddSources />
+                    <EditorAddSources nodeFromJSON={nodeFromJSON} doc={node} />
                 </List>
             ) : (
-                <EditorAddSources />
+                <EditorAddSources nodeFromJSON={nodeFromJSON} doc={node} />
             )}
         </EditorSourcesListStyle>
     );

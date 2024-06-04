@@ -6,7 +6,8 @@
     "placeholder": "Cole uma URL",
     "extra": "Nós aceitamos links de website de notícias, links para artigos acadêmicos, documentos oficiais digitalizados e disponíveis online e postagens de mídias sociais criadas pelas próprias personalidades.",
     "sourceModalHeader": "Adicione uma fonte",
-    "editorEmptySources": "Adicione fontes selecionando o texto desejado ou clicando no botão",
+    "editorEmptySourcesWithButton": "Adicione fontes selecionando o texto desejado ou clicando no botão.",
+    "editorEmptySources": "Adicione fontes selecionando o texto desejado.",
     "intertArchiveTooltip": "Internet Archive previne que sua fonte não deixe de existir",
     "deleteSourceButton": "Deletar"
 }
