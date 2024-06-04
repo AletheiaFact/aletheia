@@ -21,6 +21,7 @@ export interface ClaimPageProps {
     enableCollaborativeEditor: boolean;
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
+    enableAddEditorSourcesWithoutSelecting: boolean;
     hideDescriptions: object;
     websocketUrl: string;
     nameSpace: NameSpaceEnum;
@@ -54,6 +55,11 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
     dispatch({
         type: ActionTypes.SET_EDITOR_ANNOTATION,
         enableEditorAnnotations: enableEditorAnnotations,
+    });
+    dispatch({
+        type: ActionTypes.SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING,
+        enableAddEditorSourcesWithoutSelecting:
+            props.enableAddEditorSourcesWithoutSelecting,
     });
 
     const jsonld = {
@@ -104,6 +110,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
+            enableAddEditorSourcesWithoutSelecting:
+                query?.enableAddEditorSourcesWithoutSelecting,
             websocketUrl: query.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

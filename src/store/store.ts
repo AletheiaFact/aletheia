@@ -149,6 +149,12 @@ const reducer = (state, action) => {
                 ...state,
                 enableEditorAnnotations: action.enableEditorAnnotations,
             };
+        case ActionTypes.SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING:
+            return {
+                ...state,
+                enableAddEditorSourcesWithoutSelecting:
+                    action.enableAddEditorSourcesWithoutSelecting,
+            };
         case ActionTypes.SET_USER_ROLE:
             return {
                 ...state,

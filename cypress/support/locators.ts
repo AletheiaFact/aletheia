@@ -58,6 +58,11 @@ const locators = {
         BTN_PUBLISH: "[data-cy=testClaimReviewPUBLISH]",
         BTN_SELECTED_REVIEW: "[data-cy=testClaimReviewSELECTED_REVIEW]",
         TEXT_REVIEWER_ERROR: "[data-cy=testReviewerError]",
+        ADD_EDITOR_SOURCES: "[data-cy=testAddEditorSources]",
+        ADD_EDITOR_SOURCES_DIALOG_INPUT:
+            "[data-cy=testClaimReviewSourcesInput]",
+        ADD_EDITOR_SOURCES_DIALOG_BUTTON:
+            "[data-cy=testClaimReviewSourcesButton]",
     },
 
     menu: {

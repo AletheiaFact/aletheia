@@ -83,6 +83,15 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.INPUT_HOW)
             .should("exist")
             .type(review.process);
+        cy.get(locators.claimReview.ADD_EDITOR_SOURCES)
+            .should("be.visible")
+            .click();
+        cy.get(locators.claimReview.ADD_EDITOR_SOURCES_DIALOG_INPUT)
+            .should("exist")
+            .type(review.source2);
+        cy.get(locators.claimReview.ADD_EDITOR_SOURCES_DIALOG_BUTTON)
+            .should("be.visible")
+            .click();
         cy.checkRecaptcha();
         cy.get(locators.claimReview.BTN_FINISH_REPORT)
             .should("be.enabled")
