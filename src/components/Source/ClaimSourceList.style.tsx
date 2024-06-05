@@ -1,7 +1,7 @@
 import colors from "../../styles/colors";
 import styled from "styled-components";
 
-export const SourcesListStyle = styled.div`
+export const ClaimSourceListStyle = styled.div`
     a {
         overflow-wrap: anywhere;
     }

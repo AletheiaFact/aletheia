@@ -23,7 +23,7 @@ export class Source {
         type: [
             {
                 type: mongoose.Types.ObjectId,
-                required: true,
+                required: false,
                 refPath: "onModel",
             },
         ],

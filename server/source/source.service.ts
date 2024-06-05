@@ -10,8 +10,20 @@ export class SourceService {
         private SourceModel: Model<SourceDocument>
     ) {}
 
+    async listAll({ page, pageSize, order }): Promise<Source[]> {
+        return this.SourceModel.find({
+            "props.classification": { $exists: true },
+        })
+            .skip(page * parseInt(pageSize, 10))
+            .limit(parseInt(pageSize, 10))
+            .sort({ _id: order })
+            .lean();
+    }
+
     async create(data) {
-        data.targetId = [Types.ObjectId(data.targetId)];
+        if (data.targetId) {
+            data.targetId = [Types.ObjectId(data.targetId)];
+        }
         data.user = Types.ObjectId(data.user);
         //TODO: don't create duplicate sources in one claim review task
         return await new this.SourceModel(data).save();
@@ -40,5 +52,11 @@ export class SourceService {
 
     getById(_id) {
         return this.SourceModel.findById(_id, { _id: 1, href: 1 });
+    }
+
+    count() {
+        return this.SourceModel.countDocuments().where({
+            "props.classification": { $exists: true },
+        });
     }
 }

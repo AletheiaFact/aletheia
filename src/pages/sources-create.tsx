@@ -1,27 +1,28 @@
+import { useSetAtom } from "jotai";
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
+import { useDispatch } from "react-redux";
 import Seo from "../components/Seo";
+import actions from "../store/actions";
 import { GetLocale } from "../utils/GetLocale";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
-import { useSetAtom } from "jotai";
-import SourceList from "../components/Source/SourceList";
-import AffixButton from "../components/AffixButton/AffixButton";
+import CreateSourceView from "../components/Claim/CreateSource/CreateSourceView";
 
-const ClaimSourcePage: NextPage<{ nameSpace }> = ({ nameSpace }) => {
+const CreateSourcesPage: NextPage<any> = ({ sitekey, nameSpace }) => {
     const { t } = useTranslation();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
+    const dispatch = useDispatch();
+    dispatch(actions.setSitekey(sitekey));
     return (
         <>
             <Seo
-                title={t("seo:sourcesTitle")}
-                description={t("seo:sourcesDescription")}
+                title={t("seo:createSourceTitle")}
+                description={t("seo:createSourceDescription")}
             />
-            <SourceList />
-            <AffixButton />
+            <CreateSourceView />
         </>
     );
 };
@@ -31,11 +32,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            // Nextjs have problems with client re-hydration for some serialized objects
-            // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
-            href: req.protocol + "://" + req.get("host") + req.originalUrl,
+            sitekey: query.sitekey,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }
-export default ClaimSourcePage;
+export default CreateSourcesPage;

@@ -11,5 +11,7 @@
     "claimReviewDescription": "See sentence reviews {{sentence}} on AletheiaFact.org",
     "siteName": "AletheiaFact.org",
     "noPersonalityClaimListTitle": "Claims",
-    "noPersonalityClaimListDescription": "See claims without a related personality"
+    "noPersonalityClaimListDescription": "See claims without a related personality",
+    "createSourceTitle": "Create source",
+    "createSourceDescription": "Create sources to AletheiaFact.org"
 }

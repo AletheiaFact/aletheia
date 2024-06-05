@@ -2,11 +2,11 @@ import AletheiaButton, { ButtonType } from "../Button";
 import { List, Typography } from "antd";
 
 import React from "react";
-import SourceListItem from "./SourceListItem";
-import { SourcesListStyle } from "./SourcesList.style";
+import ClaimSourceListItem from "./ClaimSourceListItem";
+import { ClaimSourceListStyle } from "./ClaimSourceList.style";
 import { useTranslation } from "next-i18next";
 
-const SourcesList = ({
+const ClaimSourceList = ({
     sources,
     seeMoreHref,
     showAllSources = false,
@@ -19,7 +19,7 @@ const SourcesList = ({
     const sourcesGridColumns = 6;
 
     return (
-        <SourcesListStyle>
+        <ClaimSourceListStyle>
             {sources && (
                 <List
                     dataSource={
@@ -39,7 +39,7 @@ const SourcesList = ({
                     }}
                     renderItem={(source, index) => {
                         return (
-                            <SourceListItem
+                            <ClaimSourceListItem
                                 key={index}
                                 source={source}
                                 index={index + 1}
@@ -59,8 +59,8 @@ const SourcesList = ({
                     </Typography.Title>
                 </AletheiaButton>
             )}
-        </SourcesListStyle>
+        </ClaimSourceListStyle>
     );
 };
 
-export default SourcesList;
+export default ClaimSourceList;
