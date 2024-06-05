@@ -17,33 +17,38 @@ const ClaimReviewCardActions = ({ href, content }) => {
                 width: "100%",
             }}
         >
-            {content.props.classification && (
-                <span>
-                    {t("claimReview:claimReview")}
-                    <ClassificationText
-                        classification={content.props.classification}
-                    />
-                </span>
-            )}
-            <AletheiaButton
-                type={ButtonType.blue}
-                href={href}
-                onClick={() => setIsButtonLoading(true)}
-                loading={isButtonLoading}
-            >
-                <span
-                    style={{
-                        color: colors.white,
-                        fontSize: 12,
-                        fontWeight: 400,
-                        margin: 0,
-                        padding: 0,
-                        lineHeight: "24px",
-                    }}
+            <div style={{ flexGrow: 1 }}>
+                {content.props.classification && (
+                    <span>
+                        {t("claimReview:claimReview")}
+                        <ClassificationText
+                            classification={content.props.classification}
+                        />
+                    </span>
+                )}
+            </div>
+            <div style={{ flexShrink: 0 }}>
+                <AletheiaButton
+                    type={ButtonType.blue}
+                    href={href}
+                    onClick={() => setIsButtonLoading(true)}
+                    loading={isButtonLoading}
+                    style={{ right: 0 }}
                 >
-                    {t("home:reviewsCarouselOpen")}
-                </span>
-            </AletheiaButton>
+                    <span
+                        style={{
+                            color: colors.white,
+                            fontSize: 12,
+                            fontWeight: 400,
+                            margin: 0,
+                            padding: 0,
+                            lineHeight: "24px",
+                        }}
+                    >
+                        {t("home:reviewsCarouselOpen")}
+                    </span>
+                </AletheiaButton>
+            </div>
         </div>
     );
 };
