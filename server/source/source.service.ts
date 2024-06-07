@@ -20,9 +20,19 @@ export class SourceService {
             .lean();
     }
 
+    async listAllDailySourceReviews(query) {
+        return this.SourceModel.find({
+            ...query,
+            "props.classification": { $exists: true },
+        });
+    }
+
     async create(data) {
-        if (data.targetId) {
+        if (data?.targetId) {
             data.targetId = [Types.ObjectId(data.targetId)];
+        }
+        if (data?.props?.date) {
+            data.props.date = new Date(data.props.date);
         }
         data.user = Types.ObjectId(data.user);
         //TODO: don't create duplicate sources in one claim review task

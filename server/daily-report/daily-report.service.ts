@@ -27,13 +27,13 @@ export class DailyReportService {
     }
 
     async generateDailyReport(
-        dailyClaimReviews,
+        dailyReviews,
         nameSpace?: string
     ): Promise<string> {
         try {
             const summarizedReviews =
                 await this.summarizationService.getSummarizedReviews(
-                    dailyClaimReviews
+                    dailyReviews
                 );
 
             return this.summarizationService.generateHTMLReport(

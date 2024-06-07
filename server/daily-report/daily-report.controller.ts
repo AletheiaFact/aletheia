@@ -7,13 +7,24 @@ import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import { DailyReportService } from "../daily-report/daily-report.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NotificationService } from "../notifications/notifications.service";
+import { SourceService } from "../source/source.service";
+import { SourceProps } from "../source/dto/create-source.dto";
+
+interface DailyReportQuery {
+    date?: object;
+    isHidden?: boolean;
+    isDeleted?: boolean;
+    nameSpace: string;
+    props?: SourceProps;
+}
 
 @Controller()
 export class DailyReportController {
     constructor(
         private readonly dailyReportService: DailyReportService,
         private claimReviewService: ClaimReviewService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private sourceService: SourceService
     ) {}
 
     @Post("api/daily-report/topic/:topic/send/:nameSpace")
@@ -23,37 +34,57 @@ export class DailyReportController {
         @Param("topic") topic,
         @Param("nameSpace") nameSpace
     ) {
-        const query: any = { isHidden: false, isDeleted: false, nameSpace };
+        const claimReviewsQuery: DailyReportQuery = {
+            isHidden: false,
+            isDeleted: false,
+            nameSpace,
+        };
+        const sourceReviewsQuery: DailyReportQuery = { nameSpace };
+
         const [lastDailyReportSent] =
             await this.dailyReportService.getLastDailyReportSent({ nameSpace });
 
         if (lastDailyReportSent) {
-            query.date = { $gt: lastDailyReportSent?.date };
+            claimReviewsQuery.date = { $gt: lastDailyReportSent?.date };
+            sourceReviewsQuery["props.date"] = {
+                $gt: lastDailyReportSent?.date,
+            };
         }
 
-        const dailyClaimReviews =
-            await this.claimReviewService.listDailyClaimReviews(query);
+        const dailyReviews = (
+            await Promise.all([
+                this.claimReviewService.listDailyClaimReviews(
+                    claimReviewsQuery
+                ),
+                this.sourceService.listAllDailySourceReviews(
+                    sourceReviewsQuery
+                ),
+            ])
+        ).reduce((acc, current) => [...acc, ...current], []);
 
-        if (dailyClaimReviews.length > 0) {
-            const reportIds = dailyClaimReviews.map(({ report }) => report._id);
+        if (dailyReviews.length > 0) {
+            const reports = dailyReviews.map((review: any) =>
+                review?.report?._id ? review.report._id : review._id
+            );
+
             await this.dailyReportService.create({
-                reports: reportIds,
+                reports,
+                nameSpace,
                 date: new Date(),
-                nameSpace: nameSpace,
             });
         }
 
         const dailyReport = await this.dailyReportService.generateDailyReport(
-            dailyClaimReviews,
+            dailyReviews,
             nameSpace
         );
 
         this.notificationService.sendDailyReviewsEmail(topic, dailyReport);
 
-        if (dailyClaimReviews.length < 1) {
+        if (dailyReviews.length < 1) {
             throw new Error("No daily reports today");
         }
 
-        return dailyClaimReviews;
+        return dailyReviews;
     }
 }

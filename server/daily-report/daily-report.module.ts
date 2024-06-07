@@ -8,6 +8,7 @@ import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { NotificationModule } from "../notifications/notifications.module";
 import { DailyReportController } from "./daily-report.controller";
 import { ConfigModule } from "@nestjs/config";
+import { SourceModule } from "../source/source.module";
 
 export const DailyReportModel = MongooseModule.forFeature([
     {
@@ -20,6 +21,7 @@ export const DailyReportModel = MongooseModule.forFeature([
     imports: [
         DailyReportModel,
         ClaimReviewModule,
+        SourceModule,
         SummarizationModule,
         AbilityModule,
         NotificationModule,

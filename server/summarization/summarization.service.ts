@@ -6,17 +6,22 @@ export class SummarizationService {
     private readonly logger = new Logger("SummarizationLogger");
     constructor(private chainService: SummarizationChainService) {}
 
-    async getSummarizedReviews(dailyClaimReviews: any[]): Promise<any[]> {
+    async getSummarizedReviews(dailyReviews: any[]): Promise<any[]> {
         try {
             return await Promise.all(
-                dailyClaimReviews.map(async (claimReview) => {
+                dailyReviews.map(async (review) => {
+                    const href =
+                        review?.report?.sources[0]?.href || review?.href;
+                    const classification =
+                        review?.report?.classification ||
+                        review?.props?.classification;
                     const summary = await this.bulletPoints(
-                        claimReview.report.summary
+                        review?.report?.summary || review?.props.summary
                     );
                     return {
-                        classification: claimReview.report.classification,
-                        summary: summary.text,
-                        href: claimReview?.report?.sources[0]?.href,
+                        summary,
+                        classification,
+                        href,
                     };
                 })
             );
@@ -109,13 +114,6 @@ export class SummarizationService {
 
     async bulletPoints(content) {
         const stuffChain = this.chainService.createBulletPointsChain();
-        const text = await this.chainService.generateAnswer(
-            stuffChain,
-            content
-        );
-
-        return {
-            text,
-        };
+        return await this.chainService.generateAnswer(stuffChain, content);
     }
 }

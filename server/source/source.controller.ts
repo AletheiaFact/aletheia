@@ -12,7 +12,7 @@ import {
 } from "@nestjs/common";
 import { SourceService } from "./source.service";
 import { ApiTags } from "@nestjs/swagger";
-import { BaseRequest } from "types";
+import { BaseRequest } from "../types";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { ConfigService } from "@nestjs/config";
@@ -21,7 +21,7 @@ import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CreateSourceDTO } from "./dto/create-source.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 
-@Controller()
+@Controller(":namespace?")
 export class SourceController {
     private readonly logger = new Logger("SourceController");
     constructor(

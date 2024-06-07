@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString, IsObject } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "../../users/schemas/user.schema";
 
-interface SourceProps {
+export interface SourceProps {
     textRange?: string[];
     summary: string;
     classification: string;
@@ -10,6 +10,7 @@ interface SourceProps {
     targetText?: string;
     sup?: number;
     id?: string;
+    date?: Date;
 }
 
 export class CreateSourceDTO {
@@ -25,6 +26,10 @@ export class CreateSourceDTO {
     @IsString()
     @ApiProperty()
     user: User;
+
+    @IsString()
+    @ApiProperty()
+    nameSpace: string;
 
     @IsNotEmpty()
     @IsString()

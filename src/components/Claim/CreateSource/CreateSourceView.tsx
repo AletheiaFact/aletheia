@@ -6,11 +6,13 @@ import sourceApi from "../../../api/sourceApi";
 import { useAtom } from "jotai";
 import { currentUserId } from "../../../atoms/currentUser";
 import { useRouter } from "next/router";
+import { currentNameSpace } from "../../../atoms/namespace";
 
 const CreateSourceView = () => {
     const { t } = useTranslation();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [nameSpace] = useAtom(currentNameSpace);
     const [userId] = useAtom(currentUserId);
 
     const handleSubmit = ({ source, summary, classification, recaptcha }) => {
@@ -21,9 +23,11 @@ const CreateSourceView = () => {
                     href: source,
                     user: userId,
                     recaptcha,
+                    nameSpace: nameSpace,
                     props: {
                         summary,
                         classification,
+                        date: new Date(),
                     },
                 })
                 .then(() => {
