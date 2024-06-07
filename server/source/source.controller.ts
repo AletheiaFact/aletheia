@@ -16,7 +16,7 @@ import type { BaseRequest } from "../types";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { ConfigService } from "@nestjs/config";
-import { Response } from "express";
+import type { Response } from "express";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CreateSourceDTO } from "./dto/create-source.dto";
 import { CaptchaService } from "../captcha/captcha.service";
