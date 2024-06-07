@@ -7,9 +7,12 @@ import AletheiaButton from "../Button";
 import { Row } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "next-i18next";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 const SourceList = () => {
     const { t } = useTranslation();
+    const [nameSpace] = useAtom(currentNameSpace);
 
     const SourceCreateCTAButton = (
         <Row
@@ -39,7 +42,7 @@ const SourceList = () => {
     return (
         <BaseList
             apiCall={SourceApi.get}
-            filter={{}}
+            filter={{ nameSpace }}
             renderItem={(source, index) =>
                 source && <SourceListItem key={index} source={source} />
             }

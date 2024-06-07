@@ -10,8 +10,9 @@ export class SourceService {
         private SourceModel: Model<SourceDocument>
     ) {}
 
-    async listAll({ page, pageSize, order }): Promise<Source[]> {
+    async listAll({ page, pageSize, order, nameSpace }): Promise<Source[]> {
         return this.SourceModel.find({
+            nameSpace,
             "props.classification": { $exists: true },
         })
             .skip(page * parseInt(pageSize, 10))
@@ -64,8 +65,9 @@ export class SourceService {
         return this.SourceModel.findById(_id, { _id: 1, href: 1 });
     }
 
-    count() {
+    count(query) {
         return this.SourceModel.countDocuments().where({
+            ...query,
             "props.classification": { $exists: true },
         });
     }

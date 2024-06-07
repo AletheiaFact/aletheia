@@ -12,7 +12,7 @@ import {
 } from "@nestjs/common";
 import { SourceService } from "./source.service";
 import { ApiTags } from "@nestjs/swagger";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
 import { ConfigService } from "@nestjs/config";
@@ -89,7 +89,7 @@ export class SourceController {
     async listAll(@Query() query) {
         return Promise.all([
             this.sourceService.listAll(query),
-            this.sourceService.count(),
+            this.sourceService.count({ nameSpace: query.nameSpace }),
         ]).then(([sources, totalSources]) => {
             const totalPages = Math.ceil(totalSources / query.pageSize);
 

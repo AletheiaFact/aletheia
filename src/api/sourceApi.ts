@@ -1,5 +1,6 @@
 import { message } from "antd";
 import axios from "axios";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
@@ -12,6 +13,7 @@ type optionsType = {
     order: "asc" | "desc";
     pageSize: number;
     i18n: { languages: string[] };
+    nameSpace?: string;
 };
 const getByTargetId = (options: optionsType) => {
     const params = {
@@ -42,6 +44,7 @@ const get = (options: optionsType) => {
         order: options.order || "asc",
         pageSize: options.pageSize ? options.pageSize : 5,
         language: options?.i18n?.languages[0],
+        nameSpace: options?.nameSpace || NameSpaceEnum.Main,
     };
 
     return request
@@ -60,12 +63,17 @@ const get = (options: optionsType) => {
         });
 };
 
-const createSource = (t, router, source = {}) => {
+const createSource = (t, router, source: any = {}) => {
+    const { nameSpace = NameSpaceEnum.Main } = source;
     return request
         .post("/", source)
         .then((response) => {
             message.success(t("sources:sourcesCreateSuccess"));
-            router.push("/sources");
+            router.push(
+                nameSpace === NameSpaceEnum.Main
+                    ? "/sources"
+                    : `/${nameSpace}/sources`
+            );
             return response.data;
         })
         .catch((err) => {
