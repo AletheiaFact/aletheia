@@ -50,8 +50,8 @@ const SourceList = ({ footer = false }) => {
             grid={{
                 gutter: 20,
                 md: 2,
-                lg: 1,
-                xl: 1,
+                lg: 2,
+                xl: 2,
                 xxl: 2,
             }}
             skeleton={<SourceSkeleton />}
