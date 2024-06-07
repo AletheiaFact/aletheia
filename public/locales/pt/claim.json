@@ -22,7 +22,8 @@
     "errorWhileFetching": "Erro ao buscar o Discurso",
     "cardLinkToImage": "veja a imagem completa",
     "cardLinkToDebate": "veja o debate completo",
-    "claimListHeader": "Repositório",
+    "claimListTitle": "Repositório",
+    "claimListHeader": "Afirmações",
     "imageAlreadyExists": "Essa imagem já existe em nossa plataforma",
 
     "hideModalTitle": "Esconder afirmação",
