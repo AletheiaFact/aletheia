@@ -107,6 +107,7 @@ export class SourceController {
         });
     }
 
+    @IsPublic()
     @ApiTags("pages")
     @Get("sources")
     public async sourcesPage(@Req() req: BaseRequest, @Res() res: Response) {

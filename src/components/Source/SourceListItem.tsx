@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
-import { Col } from "antd";
+import { Col, Typography } from "antd";
 import CardBase from "../CardBase";
 import ClassificationText from "../ClassificationText";
 import AletheiaButton from "../Button";
 import { useTranslation } from "next-i18next";
 import SourceListItemStyled from "./SourceListItem.style";
-
+const { Paragraph } = Typography;
 const DOMAIN_PROTOCOL_REGEX = /^(https?:\/\/)?(www\.)?/;
 
 const SourceListItem = ({ source }) => {
@@ -28,7 +28,17 @@ const SourceListItem = ({ source }) => {
             >
                 <h4 className="title">{title}</h4>
 
-                <span className="summary">{source.props.summary}</span>
+                <Paragraph
+                    style={{ marginBottom: 0 }}
+                    ellipsis={{
+                        rows: 4,
+                        expandable: false,
+                    }}
+                >
+                    <cite style={{ fontStyle: "normal" }}>
+                        <p className="summary">{source.props.summary}</p>
+                    </cite>
+                </Paragraph>
 
                 <Col className="footer">
                     <span>

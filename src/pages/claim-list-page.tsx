@@ -3,7 +3,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 import { GetLocale } from "../utils/GetLocale";
 
-import ImageClaimListView from "../components/Claim/ImageClaimListView";
+import ClaimListView from "../components/Claim/ClaimListView";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
@@ -11,7 +11,7 @@ import { currentNameSpace } from "../atoms/namespace";
 const ImageClaimsPage: NextPage<any> = (props) => {
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace);
-    return <ImageClaimListView />;
+    return <ClaimListView />;
 };
 
 export async function getServerSideProps({ query, locale, locales, req }) {

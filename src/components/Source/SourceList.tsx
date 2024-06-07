@@ -10,7 +10,7 @@ import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 
-const SourceList = () => {
+const SourceList = ({ footer = false }) => {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
 
@@ -43,12 +43,20 @@ const SourceList = () => {
         <BaseList
             apiCall={SourceApi.get}
             filter={{ nameSpace }}
+            title={t("sources:sourceListHeader")}
             renderItem={(source, index) =>
                 source && <SourceListItem key={index} source={source} />
             }
+            grid={{
+                gutter: 20,
+                md: 2,
+                lg: 1,
+                xl: 1,
+                xxl: 2,
+            }}
             skeleton={<SourceSkeleton />}
             emptyFallback={SourceCreateCTAButton}
-            footer={SourceCreateCTAButton}
+            footer={footer && SourceCreateCTAButton}
         />
     );
 };

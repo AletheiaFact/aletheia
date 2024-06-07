@@ -535,7 +535,7 @@ export class ClaimController {
         await this.viewService.getNextServer().render(
             req,
             res,
-            "/image-claims-page",
+            "/claim-list-page",
             Object.assign(parsedUrl.query, {
                 nameSpace: req.params.namespace,
             })

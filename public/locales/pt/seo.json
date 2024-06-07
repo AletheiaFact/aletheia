@@ -10,8 +10,8 @@
     "sourcesDescription": "Fontes do discurso {{claimId}}",
     "claimReviewDescription": "Veja as revisões da sentença {{sentence}} na AletheiaFact.org",
     "siteName": "AletheiaFact.org",
-    "noPersonalityClaimListTitle": "Declarações",
-    "noPersonalityClaimListDescription": "Veja declarações sem personalidade associada",
+    "claimListTitle": "Declarações",
+    "claimListDescription": "Veja declarações na AletheiaFact.org",
     "createSourceTitle": "Adicione uma fonte",
     "createSourceDescription": "Adiciona uma fonte na AletheiaFact.org"
 }
