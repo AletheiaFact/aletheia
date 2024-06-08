@@ -75,10 +75,10 @@ const validateSchema = (
 ): boolean | string => {
     for (const key in schema) {
         const value = schema[key];
-        if (Array.isArray(value) && value.length <= 0) {
+        if (Array.isArray(value) && value.length <= 0 && key !== "paragraph") {
             return `common:${key}RequiredFieldError`;
         }
-        if (!Array.isArray(value) && !value.trim()) {
+        if (!Array.isArray(value) && !value.trim() && key !== "paragraph") {
             return `common:${key}RequiredFieldError`;
         }
     }

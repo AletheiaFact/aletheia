@@ -32,6 +32,7 @@ const ContentWrapper = ({ children }) => {
         "kanban-page",
         "personality-page",
         "claim-create",
+        "sources-create",
         "claim",
         "debate-editor",
         "debate-page",

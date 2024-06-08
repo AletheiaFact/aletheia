@@ -1,7 +1,7 @@
 import {
-    IsBoolean,
     IsInt,
     IsNumber,
+    IsObject,
     IsOptional,
     IsString,
     Min,
@@ -23,9 +23,13 @@ export class GetTasksDTO {
     @IsString()
     value: string;
 
-    @IsBoolean()
+    @IsObject()
     @IsOptional()
-    filterUser?: boolean;
+    filterUser?: {
+        assigned: boolean;
+        crossChecked: boolean;
+        reviewerd: boolean;
+    };
 
     @IsString()
     @IsOptional()

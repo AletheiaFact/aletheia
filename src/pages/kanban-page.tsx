@@ -17,6 +17,7 @@ const KanbanPage: NextPage<{
     enableCollaborativeEditor: boolean;
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
+    enableAddEditorSourcesWithoutSelecting: boolean;
     websocketUrl: string;
     nameSpace: NameSpaceEnum;
 }> = (props) => {
@@ -38,7 +39,11 @@ const KanbanPage: NextPage<{
         type: ActionTypes.SET_EDITOR_ANNOTATION,
         enableEditorAnnotations: props.enableEditorAnnotations,
     });
-
+    dispatch({
+        type: ActionTypes.SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING,
+        enableAddEditorSourcesWithoutSelecting:
+            props.enableAddEditorSourcesWithoutSelecting,
+    });
     dispatch({
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: false,
@@ -61,6 +66,8 @@ export async function getServerSideProps({ locale, locales, req, query }) {
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
             enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
+            enableAddEditorSourcesWithoutSelecting:
+                query?.enableAddEditorSourcesWithoutSelecting,
             websocketUrl: query.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

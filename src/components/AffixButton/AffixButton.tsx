@@ -18,6 +18,8 @@ import Fab from "./Fab";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAppSelector } from "../../store/store";
+import SourceIcon from "@mui/icons-material/Source";
+
 interface AffixButtonProps {
     personalitySlug?: string;
 }
@@ -56,15 +58,26 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
         : "";
 
     userRole !== "regular" &&
-        actions.push({
-            icon: <FileAddFilled />,
-            tooltip: t("affix:affixButtonCreateClaim"),
-            href:
-                nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/claim/create${hrefPersonalitySlug}`
-                    : `/claim/create${hrefPersonalitySlug}`,
-            dataCy: "testFloatButtonAddClaim",
-        });
+        actions.push(
+            {
+                icon: <FileAddFilled />,
+                tooltip: t("affix:affixButtonCreateClaim"),
+                href:
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/claim/create${hrefPersonalitySlug}`
+                        : `/claim/create${hrefPersonalitySlug}`,
+                dataCy: "testFloatButtonAddClaim",
+            },
+            {
+                icon: <SourceIcon />,
+                tooltip: t("affix:affixButtonCreateVerifiedSources"),
+                href:
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/sources/create`
+                        : `/sources/create`,
+                dataCy: "testFloatButtonAddVerifiedSources",
+            }
+        );
 
     useEffect(() => {
         const tutorialShown = Cookies.get("tutorial_shown") || false;

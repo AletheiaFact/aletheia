@@ -2,7 +2,7 @@ import { Col, Divider, Typography } from "antd";
 
 import React, { useContext } from "react";
 import SentenceReportContentStyle from "./SentenceReportContent.style";
-import SourcesList from "../Source/SourcesList";
+import ClaimSourceList from "../Source/ClaimSourceList";
 import { useTranslation } from "next-i18next";
 import dompurify from "dompurify";
 import ClassificationText from "../ClassificationText";
@@ -108,7 +108,7 @@ const SentenceReportContent = ({
                         <Typography.Title level={4}>
                             {t("claim:sourceSectionTitle")}
                         </Typography.Title>
-                        <SourcesList
+                        <ClaimSourceList
                             sources={sortedSources}
                             seeMoreHref={`${href}/sources`}
                             showAllSources={showAllSources}

@@ -170,6 +170,8 @@ export class ClaimReviewController {
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
         const enableCopilotChatBot = this.isEnableCopilotChatBot();
         const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableAddEditorSourcesWithoutSelecting =
+            this.isEnableAddEditorSourcesWithoutSelecting();
 
         await this.viewService.getNextServer().render(
             req,
@@ -180,6 +182,7 @@ export class ClaimReviewController {
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
                 enableCopilotChatBot,
+                enableAddEditorSourcesWithoutSelecting,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })
@@ -205,6 +208,16 @@ export class ClaimReviewController {
 
         return config
             ? this.unleash.isEnabled("enable_editor_annotations")
+            : false;
+    }
+
+    private isEnableAddEditorSourcesWithoutSelecting() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled(
+                  "enable_add_editor_sources_without_selecting"
+              )
             : false;
     }
 }

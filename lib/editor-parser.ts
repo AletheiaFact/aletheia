@@ -12,8 +12,8 @@ type SchemaType = {
 
 const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) =>
     reportModel === ReportModelEnum.FactChecking
-        ? ["summary", "report", "verification", "questions"]
-        : ["summary"];
+        ? ["summary", "report", "verification", "questions", "paragraph"]
+        : ["summary", "paragraph"];
 
 const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
 
@@ -184,7 +184,17 @@ export class EditorParser {
                 }
                 schema[cardContent.type] = this.getSchemaContentBasedOnType(
                     schema,
-                    cardContent
+                    cardContent.type !== "paragraph"
+                        ? cardContent
+                        : {
+                              type: cardContent.type,
+                              content: [
+                                  {
+                                      content: cardContent.content,
+                                      type: "paragraph",
+                                  },
+                              ],
+                          }
                 );
             }
         }
@@ -496,6 +506,12 @@ export class EditorParser {
         sourcesRanges,
     }): RemirrorJSON[] {
         const contentArray = Array.isArray(content) ? content : [content];
+
+        if (key === "paragraph") {
+            return contentArray.map((c) =>
+                this.getParagraphFragments(rawSourcesRanges, sourcesRanges, c)
+            );
+        }
 
         return contentArray.map((c) => ({
             type: key,

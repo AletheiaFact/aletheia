@@ -1,9 +1,10 @@
 import colors from "../../../../styles/colors";
 import styled from "styled-components";
+import { queries } from "../../../../styles/mediaQueries";
 
 export const EditorSourcesListStyle = styled.div`
     order: 4;
-    width: calc(100% - 90px);
+    width: 100%;
 
     a {
         overflow-wrap: anywhere;
@@ -30,7 +31,7 @@ export const EditorSourcesListStyle = styled.div`
         padding: 0;
     }
 
-    .empty-sources-container {
+    .add-sources-container {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -38,5 +39,16 @@ export const EditorSourcesListStyle = styled.div`
 
     .empty-text {
         color: rgba(0, 0, 0, 0.5);
+        margin: 0;
+    }
+
+    @media (${queries.sm}) {
+        .add-sources-container {
+            flex-direction: column;
+        }
+
+        .empty-text {
+            text-align: center;
+        }
     }
 `;

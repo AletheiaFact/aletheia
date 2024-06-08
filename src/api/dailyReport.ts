@@ -10,10 +10,11 @@ const sendDailyReportEmail = (topic, nameSpace, t) => {
     return request
         .post(`/topic/${topic}/send/${nameSpace}`)
         .then((response) => {
-            message.success(t("notification:dailyReportSent"));
+            message.success(t("notification:sendDailyReportSuccess"));
             return response.data;
         })
         .catch((err) => {
+            message.error(t("notification:sendDailyReportError"));
             throw err;
         });
 };

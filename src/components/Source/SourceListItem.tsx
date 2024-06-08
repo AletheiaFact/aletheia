@@ -1,31 +1,63 @@
-import { Col, List } from "antd";
+import React, { useMemo } from "react";
+import { Col, Typography } from "antd";
+import CardBase from "../CardBase";
+import ClassificationText from "../ClassificationText";
+import AletheiaButton from "../Button";
+import { useTranslation } from "next-i18next";
+import SourceListItemStyled from "./SourceListItem.style";
+const { Paragraph } = Typography;
+const DOMAIN_PROTOCOL_REGEX = /^(https?:\/\/)?(www\.)?/;
 
-import React from "react";
+const SourceListItem = ({ source }) => {
+    const { t } = useTranslation();
 
-const SourceListItem = ({ source, index }) => {
-    const { href } = source;
+    const title = useMemo(() => {
+        const domainWithoutProtocol = source.href.replace(
+            DOMAIN_PROTOCOL_REGEX,
+            ""
+        );
+        const domainParts = domainWithoutProtocol.split(".");
+        return domainParts[0].charAt(0).toUpperCase() + domainParts[0].slice(1);
+    }, [source.href]);
 
     return (
-        <Col className="source">
-            {typeof source === "object" ? (
-                <List.Item id={source?.props?.targetText || source?.targetText}>
-                    <span style={{ marginRight: 4 }}>
-                        {source?.props?.sup || source?.sup}.
+        <CardBase style={{ padding: "32px" }}>
+            <SourceListItemStyled
+                span={24}
+                classification={source.props.classification}
+            >
+                <h4 className="title">{title}</h4>
+
+                <Paragraph
+                    style={{ marginBottom: 0 }}
+                    ellipsis={{
+                        rows: 4,
+                        expandable: false,
+                    }}
+                >
+                    <cite style={{ fontStyle: "normal" }}>
+                        <p className="summary">{source.props.summary}</p>
+                    </cite>
+                </Paragraph>
+
+                <Col className="footer">
+                    <span>
+                        {t("sources:sourceReview")}
+                        <ClassificationText
+                            classification={source.props.classification}
+                        />
                     </span>
-                    <a href={href} target="_blank" rel="noopener noreferrer">
-                        {href}
-                    </a>
-                </List.Item>
-            ) : (
-                <List.Item id={source}>
-                    {/* TODO: Remove this ternary when source migration is done */}
-                    {index}.{" "}
-                    <a href={source} target="_blank" rel="noopener noreferrer">
-                        {source}
-                    </a>
-                </List.Item>
-            )}
-        </Col>
+                    <AletheiaButton
+                        href={source.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ width: "fit-content" }}
+                    >
+                        {t("sources:sourceCardButton")}
+                    </AletheiaButton>
+                </Col>
+            </SourceListItemStyled>
+        </CardBase>
     );
 };
 

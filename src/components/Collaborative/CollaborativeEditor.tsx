@@ -124,7 +124,11 @@ const CollaborativeEditor = ({
                     state={state}
                 />
                 <CommentContainer readonly={readonly} state={state} />
-                <EditorSourcesList node={state.doc} sources={editorSources} />
+                <EditorSourcesList
+                    nodeFromJSON={manager?.schema.nodeFromJSON}
+                    node={state.doc}
+                    sources={editorSources}
+                />
             </Remirror>
         </CollaborativeEditorStyle>
     );

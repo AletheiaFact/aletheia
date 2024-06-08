@@ -64,6 +64,18 @@ const AletheiaMenu = () => {
                 {t("menu:claimItem")}
             </Menu.Item>
 
+            <Menu.Item
+                key={
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/sources`
+                        : "/sources"
+                }
+                onClick={handleClick}
+                data-cy={"testSourcestItem"}
+            >
+                {t("menu:sourcesItem")}
+            </Menu.Item>
+
             {role !== Roles.Regular && (
                 <Menu.Item
                     key={
