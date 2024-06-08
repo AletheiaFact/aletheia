@@ -19,7 +19,11 @@ const StyledColumn = styled.div`
 interface KanbanColProps {
     nameSpace: string;
     state: ReviewTaskStates;
-    filterUser: boolean;
+    filterUser: {
+        assigned: boolean;
+        crossChecked: boolean;
+        reviewed: boolean;
+    };
 }
 
 const KanbanCol = ({ nameSpace, state, filterUser }: KanbanColProps) => {
