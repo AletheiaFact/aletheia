@@ -10,6 +10,8 @@
     "sourcesDescription": "Claim sources {{claimId}}",
     "claimReviewDescription": "See sentence reviews {{sentence}} on AletheiaFact.org",
     "siteName": "AletheiaFact.org",
-    "noPersonalityClaimListTitle": "Claims",
-    "noPersonalityClaimListDescription": "See claims without a related personality"
+    "claimListTitle": "Claims",
+    "claimListDescription": "See claims on AletheiaFact.org",
+    "createSourceTitle": "Create source",
+    "createSourceDescription": "Create sources to AletheiaFact.org"
 }

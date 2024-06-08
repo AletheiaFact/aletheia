@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
-import SourcesList from "../Source/SourcesList";
+import ClaimSourceList from "../Source/ClaimSourceList";
 import ToggleSection from "../ToggleSection";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
@@ -120,7 +120,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                     <Typography.Title level={4}>
                                         {t("claim:sourceSectionTitle")}
                                     </Typography.Title>
-                                    <SourcesList
+                                    <ClaimSourceList
                                         sources={sources}
                                         seeMoreHref={`${href}/sources`}
                                     />

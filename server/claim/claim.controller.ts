@@ -535,7 +535,7 @@ export class ClaimController {
         await this.viewService.getNextServer().render(
             req,
             res,
-            "/image-claims-page",
+            "/claim-list-page",
             Object.assign(parsedUrl.query, {
                 nameSpace: req.params.namespace,
             })
@@ -740,7 +740,7 @@ export class ClaimController {
         await this.viewService.getNextServer().render(
             req,
             res,
-            "/sources-page",
+            "/claim-sources-page",
             Object.assign(parsedUrl.query, {
                 targetId: claim._id,
                 nameSpace: namespace,
@@ -779,7 +779,7 @@ export class ClaimController {
         await this.viewService.getNextServer().render(
             req,
             res,
-            "/sources-page",
+            "/claim-sources-page",
             Object.assign(parsedUrl.query, {
                 targetId: report._id,
                 nameSpace: req.params.namespace,
