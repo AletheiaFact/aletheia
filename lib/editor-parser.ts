@@ -3,16 +3,24 @@ import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/
 import { ReportModelEnum } from "../server/types/enums";
 
 type SchemaType = {
-    summary: string;
+    summary?: string;
     verification?: string;
     report?: string;
-    sources: any[];
+    sources?: any[];
     questions?: any[];
+    source?: string;
 };
 
 const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) =>
     reportModel === ReportModelEnum.FactChecking
-        ? ["summary", "report", "verification", "questions", "paragraph"]
+        ? [
+              "summary",
+              "report",
+              "verification",
+              "questions",
+              "paragraph",
+              "source",
+          ]
         : ["summary", "paragraph"];
 
 const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
@@ -164,11 +172,13 @@ export class EditorParser {
         return newSchema;
     }
 
-    editor2schema(data: RemirrorJSON): ReviewTaskMachineContextReviewData {
-        const schema: SchemaType = {
-            summary: "",
-            sources: [],
-        };
+    editor2schema(
+        data: RemirrorJSON
+    ): ReviewTaskMachineContextReviewData & {
+        summary?: string;
+        source?: string;
+    } {
+        const schema: SchemaType = {};
         const questions = [];
         for (const cardContent of data?.content) {
             if (getEditorSchemaArray().includes(cardContent?.type)) {
@@ -206,7 +216,10 @@ export class EditorParser {
         if (schema.report || schema.verification) {
             schema.questions = questions;
         }
-        schema.sources = this.replaceSourceContentToTextRange(schema);
+
+        if (!schema.source && schema.source !== "") {
+            schema.sources = this.replaceSourceContentToTextRange(schema);
+        }
 
         return schema;
     }
@@ -220,6 +233,7 @@ export class EditorParser {
             if (content) {
                 for (const { text, marks } of content) {
                     if (marks) {
+                        schema.sources = [];
                         schema.sources.push(
                             ...this.getSourcesFromEditorMarks(text, type, marks)
                         );

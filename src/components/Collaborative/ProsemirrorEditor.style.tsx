@@ -2,7 +2,7 @@ import { AllStyledComponent } from "@remirror/styles/styled-components";
 import colors from "../../styles/colors";
 import styled from "styled-components";
 
-const CollaborativeEditorStyle = styled(AllStyledComponent)`
+const ProsemirrorEditorStyle = styled(AllStyledComponent)`
     background-color: ${colors.lightGray};
     border-radius: 4px;
     border: none;
@@ -30,4 +30,4 @@ const CollaborativeEditorStyle = styled(AllStyledComponent)`
     }
 `;
 
-export default CollaborativeEditorStyle;
+export default ProsemirrorEditorStyle;

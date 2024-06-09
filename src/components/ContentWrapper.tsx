@@ -44,6 +44,7 @@ const ContentWrapper = ({ children }) => {
         "profile",
         "supportive-materials",
         "search-page",
+        "sources",
     ];
 
     const layout = desktopReadyPages.some((page) =>
