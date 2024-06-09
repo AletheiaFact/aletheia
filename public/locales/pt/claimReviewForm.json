@@ -34,6 +34,7 @@
     "collaborativeEditorLabel": "Relatório",
     "collaborativeEditorPlaceholder": "Insira campos do relatório",
     "sourcesLabel": "Forneça ao menos um link de uma fonte confiável",
+    "sourceEditorLabel": "Criar revisão da fonte",
     "sourcesPlaceholder": "Cole uma URL",
     "addSourceLabel": "Incluir outra fonte",
     "reviewerLabel": "Selecione um revisor para a revisão",

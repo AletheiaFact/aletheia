@@ -29,6 +29,7 @@
     "addQuestionLabel": "Add another question",
     "reportLabel": "Verification report",
     "reportPlaceholder": "Insert report content here",
+    "sourceEditorLabel": "Create source review",
     "verificationLabel": "How it was verified",
     "verificationPlaceholder": "Describe how the verification was done",
     "collaborativeEditorLabel": "Report",
