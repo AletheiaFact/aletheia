@@ -2,26 +2,46 @@ import { ObjectMark, RemirrorJSON } from "remirror";
 import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/dto/create-claim-review-task.dto";
 import { ReportModelEnum } from "../server/types/enums";
 
-type SchemaType = {
+type BaseSchemaType = {
     summary?: string;
+};
+
+type ClaimReviewSchemaType = BaseSchemaType & {
     verification?: string;
     report?: string;
     sources?: any[];
-    questions?: any[];
+    questions?: string[];
+};
+
+type SourceReviewSchemaType = BaseSchemaType & {
     source?: string;
 };
 
-const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) =>
-    reportModel === ReportModelEnum.FactChecking
-        ? [
-              "summary",
-              "report",
-              "verification",
-              "questions",
-              "paragraph",
-              "source",
-          ]
-        : ["summary", "paragraph"];
+type ReviewSchemaType = ClaimReviewSchemaType | SourceReviewSchemaType;
+
+const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) => {
+    if (!reportModel) {
+        return [];
+    }
+
+    if (!Object.values(ReportModelEnum).includes(reportModel)) {
+        return [];
+    }
+
+    const editorFields = {
+        [ReportModelEnum.FactChecking]: [
+            "summary",
+            "report",
+            "verification",
+            "questions",
+            "paragraph",
+            "source",
+        ],
+        [ReportModelEnum.InformativeNews]: ["summary", "paragraph"],
+    };
+
+    return editorFields[reportModel];
+};
 
 const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
 
@@ -172,13 +192,14 @@ export class EditorParser {
         return newSchema;
     }
 
-    editor2schema(
-        data: RemirrorJSON
-    ): ReviewTaskMachineContextReviewData & {
+    editor2schema(data: RemirrorJSON): ReviewTaskMachineContextReviewData & {
         summary?: string;
         source?: string;
     } {
-        const schema: SchemaType = {};
+        const schema: Partial<ReviewSchemaType> = {
+            summary: "",
+            sources: [],
+        };
         const questions = [];
         for (const cardContent of data?.content) {
             if (getEditorSchemaArray().includes(cardContent?.type)) {
@@ -213,12 +234,14 @@ export class EditorParser {
          * Needed to do this conditional because the form validation when the reportModel
          * is equal to Informative news requires the questions field.
          */
-        if (schema.report || schema.verification) {
+        if ("report" in schema || "verification" in schema) {
             schema.questions = questions;
         }
 
-        if (!schema.source && schema.source !== "") {
-            schema.sources = this.replaceSourceContentToTextRange(schema);
+        schema.sources = this.replaceSourceContentToTextRange(schema);
+
+        if ("source" in schema && schema.source !== "") {
+            schema.sources.push(schema.source);
         }
 
         return schema;
@@ -233,7 +256,6 @@ export class EditorParser {
             if (content) {
                 for (const { text, marks } of content) {
                     if (marks) {
-                        schema.sources = [];
                         schema.sources.push(
                             ...this.getSourcesFromEditorMarks(text, type, marks)
                         );

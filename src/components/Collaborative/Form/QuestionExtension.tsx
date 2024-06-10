@@ -2,7 +2,7 @@ import createNodeExtension from "./BaseNodeExtesion";
 import QuestionCard from "./QuestionCard";
 
 const QuestionExtension = createNodeExtension({
-    name: "question",
+    name: "questions",
     componentName: QuestionCard,
     dataAttributeName: "question-id",
 });
