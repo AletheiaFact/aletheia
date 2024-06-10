@@ -1,9 +1,9 @@
-import React from "react";
 import createNodeExtension from "./BaseNodeExtesion";
+import ReportCard from "./ReportCard";
 
 const ReportExtension = createNodeExtension({
     name: "report",
-    componentName: React.lazy(() => import("./ReportCard")),
+    componentName: ReportCard,
     dataAttributeName: "report-id",
 });
 

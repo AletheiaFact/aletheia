@@ -1,14 +1,14 @@
 import React, { useCallback, useContext } from "react";
-import { uniqueId } from "remirror";
 import { Col } from "antd";
 import Button from "../../Button";
 import { useCommands } from "@remirror/react";
 import { DeleteOutlined } from "@ant-design/icons";
-import CardStyle from "./CardStyle";
 import { useTranslation } from "next-i18next";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { reviewingSelector } from "../../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
+import EditorCard from "./EditorCard";
+import { uniqueId } from "remirror";
 
 const QuestionCard = ({ forwardRef, node, initialPosition }) => {
     const { t } = useTranslation();
@@ -26,20 +26,13 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
     );
 
     return (
-        <CardStyle>
-            <label>{t("claimReviewForm:questionsLabel")}</label>
-            <Col span={24} style={{ display: "flex", position: "initial" }}>
-                <Col span={21} className="card-container">
-                    <div
-                        className="card-content"
-                        data-cy="testClaimReviewquestions0"
-                        style={{
-                            minHeight: "40px",
-                        }}
-                    >
-                        <p style={{ overflowY: "inherit" }} ref={forwardRef} />
-                    </div>
-                </Col>
+        <EditorCard
+            label={t("claimReviewForm:questionsLabel")}
+            dataCy="testClaimReviewquestions0"
+            span={21}
+            forwardRef={forwardRef}
+            inputSize={40}
+            extra={
                 <Col span={3}>
                     <Button
                         style={{ height: "40px", margin: "0 auto" }}
@@ -50,8 +43,8 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                         <DeleteOutlined />
                     </Button>
                 </Col>
-            </Col>
-        </CardStyle>
+            }
+        />
     );
 };
 

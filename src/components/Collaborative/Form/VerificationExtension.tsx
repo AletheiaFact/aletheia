@@ -1,9 +1,9 @@
-import React from "react";
 import createNodeExtension from "./BaseNodeExtesion";
+import VerificationCard from "./VerificationCard";
 
 const VerificationExtension = createNodeExtension({
     name: "verification",
-    componentName: React.lazy(() => import("./VerificationCard")),
+    componentName: VerificationCard,
     dataAttributeName: "verification-id",
 });
 

@@ -1,9 +1,9 @@
-import React from "react";
 import createNodeExtension from "./BaseNodeExtesion";
+import SourceCard from "./SourceCard";
 
 const SourceExtension = createNodeExtension({
     name: "source",
-    componentName: React.lazy(() => import("./SourceCard")),
+    componentName: SourceCard,
     dataAttributeName: "source-id",
 });
 

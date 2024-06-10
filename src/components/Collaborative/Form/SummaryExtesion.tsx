@@ -1,9 +1,9 @@
-import React from "react";
 import createNodeExtension from "./BaseNodeExtesion";
+import SummaryCard from "./SummaryCard";
 
 const SummaryExtension = createNodeExtension({
     name: "summary",
-    componentName: React.lazy(() => import("./SummaryCard")),
+    componentName: SummaryCard,
     dataAttributeName: "summary-id",
 });
 

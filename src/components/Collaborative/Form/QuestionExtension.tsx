@@ -1,9 +1,9 @@
-import React from "react";
 import createNodeExtension from "./BaseNodeExtesion";
+import QuestionCard from "./QuestionCard";
 
 const QuestionExtension = createNodeExtension({
     name: "question",
-    componentName: React.lazy(() => import("./QuestionCard")),
+    componentName: QuestionCard,
     dataAttributeName: "question-id",
 });
 
