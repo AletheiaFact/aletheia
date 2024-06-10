@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { SummarizationChainService } from "./summarization-chain.service";
+import { SummarizationCrawlerChainService } from "./summarization-crawler-chain.service";
 import { WebBrowser } from "langchain/tools/webbrowser";
 import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import { openAI } from "../copilot/openAI.constants";
@@ -11,10 +11,10 @@ import {
 } from "@langchain/core/prompts";
 
 @Injectable()
-export class SummarizationService {
+export class SummarizationCrawlerService {
     private readonly logger = new Logger("SummarizationLogger");
     constructor(
-        private chainService: SummarizationChainService,
+        private chainService: SummarizationCrawlerChainService,
         private configService: ConfigService
     ) {}
 
