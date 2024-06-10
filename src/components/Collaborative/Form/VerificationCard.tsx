@@ -4,7 +4,7 @@ import { Col } from "antd";
 import CardStyle from "./CardStyle";
 import { useTranslation } from "next-i18next";
 
-export const VerificationCard = ({ forwardRef, node }) => {
+const VerificationCard = ({ forwardRef, node }) => {
     const { t } = useTranslation();
     return (
         <CardStyle>
@@ -25,3 +25,5 @@ export const getVerificationContentHtml = () => `
     <div data-verification-id="${uniqueId()}">
         <p></p>
     </div>`;
+
+export default VerificationCard;

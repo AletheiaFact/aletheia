@@ -10,7 +10,7 @@ import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTas
 import { reviewingSelector } from "../../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
 
-export const QuestionCard = ({ forwardRef, node, initialPosition }) => {
+const QuestionCard = ({ forwardRef, node, initialPosition }) => {
     const { t } = useTranslation();
     const { machineService } = useContext(ReviewTaskMachineContext);
     const editable = useSelector(machineService, reviewingSelector);
@@ -59,3 +59,5 @@ export const getQuestionContentHtml = () => `
     <div data-question-id="${uniqueId()}">
         <p></p>
     </div>`;
+
+export default QuestionCard;

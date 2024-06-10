@@ -1,66 +1,10 @@
-import {
-    DOMCompatibleAttributes,
-    ExtensionTag,
-    NodeExtension,
-    NodeExtensionSpec,
-} from "@remirror/core";
-import React, { ComponentType } from "react";
-import { NodeViewComponentProps } from "@remirror/react";
-import { SummaryCard } from "./SummaryCard";
+import React from "react";
+import createNodeExtension from "./BaseNodeExtesion";
 
-class SummaryExtesion extends NodeExtension {
-    get name() {
-        return "summary" as const;
-    }
+const SummaryExtension = createNodeExtension({
+    name: "summary",
+    componentName: React.lazy(() => import("./SummaryCard")),
+    dataAttributeName: "summary-id",
+});
 
-    ReactComponent: ComponentType<NodeViewComponentProps> = ({
-        node,
-        forwardRef,
-    }) => {
-        return <SummaryCard node={node} forwardRef={forwardRef} />;
-    };
-
-    createTags() {
-        return [ExtensionTag.Block];
-    }
-    createNodeSpec(): NodeExtensionSpec {
-        return {
-            selectable: false,
-            /**
-             * Atom is needed to create a boundary between the card and
-             * others elements in the editor
-             */
-            atom: false,
-            /**
-             * isolating is needed to not allow cards to get deleted
-             * whend deleting lines
-             */
-            isolating: true,
-            content: "block*",
-            toDOM: (node) => {
-                const attrs: DOMCompatibleAttributes = {
-                    "data-summary-id": node.attrs.summaryId,
-                };
-                return ["div", attrs, 0];
-            },
-            parseDOM: [
-                {
-                    attrs: {
-                        summaryId: { default: "" },
-                    },
-                    tag: `div[data-summary-id]`,
-                    getAttrs: (dom) => {
-                        const node = dom as HTMLDivElement;
-                        const summaryId = node.getAttribute("data-summary-id");
-
-                        return {
-                            summaryId,
-                        };
-                    },
-                },
-            ],
-        };
-    }
-}
-
-export default SummaryExtesion;
+export default SummaryExtension;

@@ -6,7 +6,7 @@ import { useTranslation } from "next-i18next";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { ReportModelEnum } from "../../../machines/reviewTask/enums";
 
-export const SummaryCard = ({ forwardRef, node }) => {
+const SummaryCard = ({ forwardRef, node }) => {
     const { reportModel } = useContext(ReviewTaskMachineContext);
     const { t } = useTranslation();
     return (
@@ -29,3 +29,5 @@ export const getSummaryContentHtml = () => `
     <div data-summary-id="${uniqueId()}">
         <p></p>
     </div>`;
+
+export default SummaryCard;

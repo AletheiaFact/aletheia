@@ -4,7 +4,7 @@ import { Col } from "antd";
 import CardStyle from "./CardStyle";
 import { useTranslation } from "next-i18next";
 
-export const SourceCard = ({ forwardRef }) => {
+const SourceCard = ({ forwardRef }) => {
     const { t } = useTranslation();
 
     return (
@@ -31,3 +31,5 @@ export const getSourceContentHtml = () => `
     <div data-source-id="${uniqueId()}">
         <p></p>
     </div>`;
+
+export default SourceCard;

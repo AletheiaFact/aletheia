@@ -4,7 +4,7 @@ import { Col } from "antd";
 import CardStyle from "./CardStyle";
 import { useTranslation } from "next-i18next";
 
-export const ReportCard = ({ forwardRef, node }) => {
+const ReportCard = ({ forwardRef }) => {
     const { t } = useTranslation();
     return (
         <CardStyle>
@@ -24,3 +24,5 @@ export const getReportContentHtml = () => `
     >
         <p></p>
     </div>`;
+
+export default ReportCard;
