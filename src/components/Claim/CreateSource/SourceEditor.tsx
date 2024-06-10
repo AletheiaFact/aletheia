@@ -1,7 +1,9 @@
 import React, { useCallback } from "react";
-import { PlaceholderExtension } from "remirror/extensions";
+import {
+    PlaceholderExtension,
+    TrailingNodeExtension,
+} from "remirror/extensions";
 import { Remirror, useRemirror } from "@remirror/react";
-import { TrailingNodeExtension } from "remirror/extensions";
 import SummaryExtension from "../../Collaborative/Form/SummaryExtesion";
 import SourceExtension from "../../Collaborative/Form/SourceExtesion";
 import ProsemirrorEditorStyle from "../../Collaborative/ProsemirrorEditor.style";

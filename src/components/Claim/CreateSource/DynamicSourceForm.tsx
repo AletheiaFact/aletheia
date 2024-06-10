@@ -57,19 +57,14 @@ const DynamicSourceForm = () => {
             style={{ width: "100%", margin: "64px 0" }}
             onSubmit={handleSubmit(onSubmit)}
         >
-            <>
-                <DynamicForm
-                    currentForm={sourceForm}
-                    machineValues={reviewData}
-                    control={control}
-                    errors={errors}
-                />
+            <DynamicForm
+                currentForm={sourceForm}
+                machineValues={reviewData}
+                control={control}
+                errors={errors}
+            />
 
-                <AletheiaCaptcha
-                    onChange={setRecaptchaString}
-                    ref={recaptchaRef}
-                />
-            </>
+            <AletheiaCaptcha onChange={setRecaptchaString} ref={recaptchaRef} />
             <Row
                 style={{
                     padding: "32px 0 0",

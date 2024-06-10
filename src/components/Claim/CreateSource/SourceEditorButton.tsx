@@ -15,7 +15,7 @@ const SourceEditorButton = ({ manager, state }) => {
         const [cardContent] = state.doc.content.toJSON();
 
         if (cardContent?.content) {
-            const [content] = cardContent?.content;
+            const [content] = cardContent.content;
 
             if (
                 content.content &&
