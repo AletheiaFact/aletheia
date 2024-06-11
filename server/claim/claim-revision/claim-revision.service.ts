@@ -76,7 +76,6 @@ export class ClaimRevisionService {
             claim,
             newclaimRevisionId
         );
-        console.log(newClaimRevision, "newClaimRevision");
 
         await this._createSources(claim.sources, claimId);
         return newClaimRevision.save();
@@ -96,7 +95,7 @@ export class ClaimRevisionService {
                         query: searchText,
                         path: "title",
                         fuzzy: {
-                            maxEdits: 1,
+                            maxEdits: 1, // Using maxEdits: 1 to allow minor typos or spelling errors in search queries.
                         },
                     },
                 },

@@ -69,7 +69,7 @@ export class SentenceService {
                         query: searchText,
                         path: "content",
                         fuzzy: {
-                            maxEdits: 1,
+                            maxEdits: 1, // Using maxEdits: 1 to allow minor typos or spelling errors in search queries.
                         },
                     },
                 },
