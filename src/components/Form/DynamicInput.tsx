@@ -7,6 +7,7 @@ import TextArea from "../TextArea";
 import UserInput from "./UserInput";
 import { useTranslation } from "next-i18next";
 import { CollaborativeEditorContext } from "../Collaborative/CollaborativeEditorProvider";
+import SourceEditor from "../Claim/CreateSource/SourceEditor";
 
 const CollaborativeEditor = lazy(
     () => import("../Collaborative/CollaborativeEditor")
@@ -87,6 +88,14 @@ const DynamicInput = (props: DynamicInputProps) => {
                     </Suspense>
                 );
             }
+        case "sourceEditor":
+            return (
+                <Suspense fallback={<Loading />}>
+                    <SourceEditor
+                        onContentChange={({ doc }) => props.onChange(doc)}
+                    />
+                </Suspense>
+            );
         default:
             return null;
     }

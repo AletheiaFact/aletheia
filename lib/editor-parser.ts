@@ -2,18 +2,46 @@ import { ObjectMark, RemirrorJSON } from "remirror";
 import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/dto/create-claim-review-task.dto";
 import { ReportModelEnum } from "../server/types/enums";
 
-type SchemaType = {
-    summary: string;
-    verification?: string;
-    report?: string;
-    sources: any[];
-    questions?: any[];
+type BaseSchemaType = {
+    summary?: string;
 };
 
-const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) =>
-    reportModel === ReportModelEnum.FactChecking
-        ? ["summary", "report", "verification", "questions", "paragraph"]
-        : ["summary", "paragraph"];
+type ClaimReviewSchemaType = BaseSchemaType & {
+    verification?: string;
+    report?: string;
+    sources?: any[];
+    questions?: string[];
+};
+
+type SourceReviewSchemaType = BaseSchemaType & {
+    source?: string;
+};
+
+type ReviewSchemaType = ClaimReviewSchemaType | SourceReviewSchemaType;
+
+const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) => {
+    if (!reportModel) {
+        return [];
+    }
+
+    if (!Object.values(ReportModelEnum).includes(reportModel)) {
+        return [];
+    }
+
+    const editorFields = {
+        [ReportModelEnum.FactChecking]: [
+            "summary",
+            "report",
+            "verification",
+            "questions",
+            "paragraph",
+            "source",
+        ],
+        [ReportModelEnum.InformativeNews]: ["summary", "paragraph"],
+    };
+
+    return editorFields[reportModel];
+};
 
 const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
 
@@ -164,8 +192,11 @@ export class EditorParser {
         return newSchema;
     }
 
-    editor2schema(data: RemirrorJSON): ReviewTaskMachineContextReviewData {
-        const schema: SchemaType = {
+    editor2schema(data: RemirrorJSON): ReviewTaskMachineContextReviewData & {
+        summary?: string;
+        source?: string;
+    } {
+        const schema: Partial<ReviewSchemaType> = {
             summary: "",
             sources: [],
         };
@@ -203,10 +234,15 @@ export class EditorParser {
          * Needed to do this conditional because the form validation when the reportModel
          * is equal to Informative news requires the questions field.
          */
-        if (schema.report || schema.verification) {
+        if ("report" in schema || "verification" in schema) {
             schema.questions = questions;
         }
+
         schema.sources = this.replaceSourceContentToTextRange(schema);
+
+        if ("source" in schema && schema.source !== "") {
+            schema.sources.push(schema.source);
+        }
 
         return schema;
     }

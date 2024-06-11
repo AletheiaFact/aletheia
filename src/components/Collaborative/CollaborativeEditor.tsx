@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import { Remirror, useRemirror } from "@remirror/react";
 
 import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
-import CollaborativeEditorStyle from "./CollaborativeEditor.style";
+import ProsemirrorEditorStyle from "./ProsemirrorEditor.style";
 import Editor from "./Editor";
 import FloatingLinkToolbar from "./Components/LinkToolBar/FloatingLinkToolbar";
 import SummaryExtension from "./Form/SummaryExtesion";
@@ -108,7 +108,7 @@ const CollaborativeEditor = ({
     );
 
     return (
-        <CollaborativeEditorStyle>
+        <ProsemirrorEditorStyle>
             <Remirror
                 manager={manager}
                 initialContent={state}
@@ -130,7 +130,7 @@ const CollaborativeEditor = ({
                     sources={editorSources}
                 />
             </Remirror>
-        </CollaborativeEditorStyle>
+        </ProsemirrorEditorStyle>
     );
 };
 

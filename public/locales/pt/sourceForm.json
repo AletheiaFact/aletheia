@@ -14,5 +14,6 @@
     "summaryLabel": "Resumo",
     "summaryPlaceholder": "Insira o resumo da fonte",
     "classificationLabel": "Revise essa fonte",
-    "classificationPlaceholder": "Selecione uma classificação"
+    "classificationPlaceholder": "Selecione uma classificação",
+    "summarizeSouce": "Resumo automático"
 }

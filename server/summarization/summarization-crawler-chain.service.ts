@@ -7,7 +7,7 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
-export class SummarizationChainService {
+export class SummarizationCrawlerChainService {
     private readonly logger = new Logger("SummarizationChainLogger");
     constructor(private configService: ConfigService) {}
 

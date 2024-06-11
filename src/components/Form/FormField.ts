@@ -3,6 +3,7 @@ import { RegisterOptions } from "react-hook-form";
 import { EditorParser } from "../../../lib/editor-parser";
 import { ReviewTaskMachineContextReviewData } from "../../../server/claim-review-task/dto/create-claim-review-task.dto";
 import { Roles } from "../../types/enums";
+import { URL_PATTERN } from "../Collaborative/hooks/useFloatingLinkState";
 
 export type FormField = {
     fieldName: string;
@@ -80,6 +81,9 @@ const validateSchema = (
         }
         if (!Array.isArray(value) && !value.trim() && key !== "paragraph") {
             return `common:${key}RequiredFieldError`;
+        }
+        if (key === "source" && !URL_PATTERN.test(schema[key])) {
+            return `sourceForm:errorMessageValidURL`;
         }
     }
     return true;

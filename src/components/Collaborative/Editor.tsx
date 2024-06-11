@@ -2,10 +2,6 @@ import React, { useEffect, useCallback, useContext } from "react";
 
 import { useHelpers } from "@remirror/react";
 import { useCommands } from "@remirror/react";
-import { getSummaryContentHtml } from "./Form/SummaryCard";
-import { getQuestionContentHtml } from "./Form/QuestionCard";
-import { getReportContentHtml } from "./Form/ReportCard";
-import { getVerificationContentHtml } from "./Form/VerificationCard";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
@@ -17,6 +13,7 @@ import useCardPresence from "./hooks/useCardPresence";
 import { Node } from "@remirror/pm/model";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { ReportModelEnum } from "../../machines/reviewTask/enums";
+import { getContentHtml } from "./Form/EditorCard";
 
 /**
  * Modifies context state to JSON using useHelpers hook
@@ -70,9 +67,9 @@ const Editor = ({
     );
 
     const handleInsertNode = useCallback(
-        (insertNodeFunction) => {
+        (insertNode) => {
             const { doc } = state;
-            command.insertHtml(insertNodeFunction(), {
+            command.insertHtml(insertNode, {
                 selection: doc.content.size,
                 replaceEmptyParentBlock: true,
             });
@@ -82,7 +79,7 @@ const Editor = ({
 
     const actions = [
         {
-            onClick: () => handleInsertNode(getSummaryContentHtml),
+            onClick: () => handleInsertNode(getContentHtml("data-summary-id")),
             disabled: editable || summaryDisabled,
             "data-cy": "testClaimReviewsummarizeAdd",
             icon: <SummarizeIcon className="toolbar-item-icon" />,
@@ -92,19 +89,22 @@ const Editor = ({
     if (reportModel === ReportModelEnum.FactChecking) {
         actions.push(
             {
-                onClick: () => handleInsertNode(getVerificationContentHtml),
+                onClick: () =>
+                    handleInsertNode(getContentHtml("data-verification-id")),
                 disabled: editable || verificationDisabled,
                 "data-cy": "testClaimReviewverificationAdd",
                 icon: <FactCheckIcon className="toolbar-item-icon" />,
             },
             {
-                onClick: () => handleInsertNode(getReportContentHtml),
+                onClick: () =>
+                    handleInsertNode(getContentHtml("data-report-id")),
                 disabled: editable || reportDisabled,
                 "data-cy": "testClaimReviewreportAdd",
                 icon: <ReportProblemIcon className="toolbar-item-icon" />,
             },
             {
-                onClick: () => handleInsertNode(getQuestionContentHtml),
+                onClick: () =>
+                    handleInsertNode(getContentHtml("data-question-id")),
                 disabled: editable,
                 "data-cy": "testClaimReviewquestionsAdd",
                 icon: <QuestionMarkIcon className="toolbar-item-icon" />,
