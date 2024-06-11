@@ -1,5 +1,7 @@
 {
     "claimBy": "Afirmação de",
     "assignedTo": "Checadores",
-    "myTasks": "Apenas minhas tarefas"
+    "myTasks": "Apenas minhas tarefas",
+    "myCrossChecks": "Apenas meus cross-checkings",
+    "myReviews": "Minhas revisões"
 }

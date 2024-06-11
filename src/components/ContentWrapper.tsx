@@ -26,30 +26,23 @@ const ContentWrapper = ({ children }) => {
     const router = useRouter();
 
     // TODO: we can remove this when we have desktop layout for all the pages
-    const desktopReadyPages = [
-        "claim-review",
-        "home",
-        "kanban-page",
-        "personality-page",
-        "claim-create",
-        "claim",
-        "debate-editor",
-        "debate-page",
-        "sign-up",
-        "login",
-        "admin-page",
-        "admin-badges",
-        "admin-namespaces",
-        "profile",
-        "supportive-materials",
-        "search-page",
+    const desktopUnReadyPages = [
+        "404-page",
+        "about-page",
+        "access-denied-page",
+        "code-of-conduct",
+        "privacy-policy",
+        "personality-list",
+        "personality-create-search",
+        "claim-sources-page",
+        "history-page",
     ];
 
-    const layout = desktopReadyPages.some((page) =>
+    const layout = desktopUnReadyPages.some((page) =>
         router.pathname.includes(page)
     )
-        ? "desktop"
-        : "mobile";
+        ? "mobile"
+        : "desktop";
 
     return (
         <StyledContent layout={layout}>

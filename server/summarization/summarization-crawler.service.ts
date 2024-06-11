@@ -1,22 +1,39 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { SummarizationChainService } from "./summarization-chain.service";
+import { SummarizationCrawlerChainService } from "./summarization-crawler-chain.service";
+import { WebBrowser } from "langchain/tools/webbrowser";
+import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { openAI } from "../copilot/openAI.constants";
+import { AgentExecutor, createOpenAIToolsAgent } from "langchain/agents";
+import { ConfigService } from "@nestjs/config";
+import {
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+} from "@langchain/core/prompts";
 
 @Injectable()
-export class SummarizationService {
+export class SummarizationCrawlerService {
     private readonly logger = new Logger("SummarizationLogger");
-    constructor(private chainService: SummarizationChainService) {}
+    constructor(
+        private chainService: SummarizationCrawlerChainService,
+        private configService: ConfigService
+    ) {}
 
-    async getSummarizedReviews(dailyClaimReviews: any[]): Promise<any[]> {
+    async getSummarizedReviews(dailyReviews: any[]): Promise<any[]> {
         try {
             return await Promise.all(
-                dailyClaimReviews.map(async (claimReview) => {
+                dailyReviews.map(async (review) => {
+                    const href =
+                        review?.report?.sources[0]?.href || review?.href;
+                    const classification =
+                        review?.report?.classification ||
+                        review?.props?.classification;
                     const summary = await this.bulletPoints(
-                        claimReview.report.summary
+                        review?.report?.summary || review?.props.summary
                     );
                     return {
-                        classification: claimReview.report.classification,
-                        summary: summary.text,
-                        href: claimReview?.report?.sources[0]?.href,
+                        summary,
+                        classification,
+                        href,
                     };
                 })
             );
@@ -109,13 +126,41 @@ export class SummarizationService {
 
     async bulletPoints(content) {
         const stuffChain = this.chainService.createBulletPointsChain();
-        const text = await this.chainService.generateAnswer(
-            stuffChain,
-            content
-        );
+        return await this.chainService.generateAnswer(stuffChain, content);
+    }
 
-        return {
-            text,
-        };
+    async summarizePage(source, language = "pt") {
+        language = language === "pt" ? "Portuguese" : "English";
+        const prompt = ChatPromptTemplate.fromMessages([
+            [
+                "system",
+                `Summarize the content found at the provided URL {source}. Please provide a concise and accurate summary,
+                utilizing your understanding of the content's main points, key information, and essential details. Consider summarizing
+                in 1-2 paragraphs. Compose your responses using formal language and you MUST provide you answer in {language}.`,
+            ],
+            new MessagesPlaceholder({ variableName: "agent_scratchpad" }),
+        ]);
+
+        const llm = new ChatOpenAI({
+            temperature: +openAI.BASIC_CHAT_OPENAI_TEMPERATURE,
+            modelName: openAI.GPT_3_5_TURBO_1106.toString(),
+            apiKey: this.configService.get<string>("openai.api_key"),
+        });
+
+        const embeddings = new OpenAIEmbeddings();
+        const tools = [new WebBrowser({ model: llm, embeddings })];
+
+        const agent = await createOpenAIToolsAgent({
+            llm,
+            tools,
+            prompt,
+        });
+
+        const agentExecutor = new AgentExecutor({
+            agent,
+            tools,
+        });
+
+        return agentExecutor.invoke({ source, language });
     }
 }

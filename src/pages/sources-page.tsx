@@ -2,17 +2,15 @@ import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import ClaimSourceList from "../components/Claim/ClaimSourceList";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
 import { useSetAtom } from "jotai";
+import SourceList from "../components/Source/SourceList";
+import AffixButton from "../components/AffixButton/AffixButton";
 
-const ClaimSourcePage: NextPage<{ targetId; nameSpace }> = ({
-    targetId,
-    nameSpace,
-}) => {
+const ClaimSourcePage: NextPage<{ nameSpace }> = ({ nameSpace }) => {
     const { t } = useTranslation();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
@@ -20,9 +18,10 @@ const ClaimSourcePage: NextPage<{ targetId; nameSpace }> = ({
         <>
             <Seo
                 title={t("seo:sourcesTitle")}
-                description={t("seo:sourcesDescription", { claimId: targetId })}
+                description={t("seo:sourcesDescription")}
             />
-            <ClaimSourceList claimId={targetId} />
+            <SourceList />
+            <AffixButton />
         </>
     );
 };
@@ -34,7 +33,6 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             ...(await serverSideTranslations(locale)),
             // Nextjs have problems with client re-hydration for some serialized objects
             // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
-            targetId: JSON.parse(JSON.stringify(query.targetId)),
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

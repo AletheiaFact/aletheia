@@ -9,5 +9,11 @@
     "editorEmptySourcesWithButton": "Add sources by selecting the desire text or clicking in the button.",
     "editorEmptySources": "Add sources by selecting the desire text.",
     "intertArchiveTooltip": "Internet Archive prevents your source may your source never cease to exist",
-    "deleteSourceButton": "Delete"
+    "deleteSourceButton": "Delete",
+    "sourceLabel": "Source",
+    "summaryLabel": "Summary",
+    "summaryPlaceholder": "Insert the source summary",
+    "classificationLabel": "Review this source",
+    "classificationPlaceholder": "Choose a classification",
+    "summarizeSouce": "Summarize source automatic"
 }

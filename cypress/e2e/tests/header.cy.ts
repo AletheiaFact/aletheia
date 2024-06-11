@@ -11,6 +11,24 @@ describe("Test the header menus", () => {
     });
 
     describe("Test the side drawer routes", () => {
+        it("Open side bar and click personality", () => {
+            cy.get(locators.menu.SIDE_MENU).click();
+            cy.get("[data-cy=testPersonalitytItem]").click();
+            cy.url().should("contains", "personality");
+        });
+
+        it("Open side bar and click claim", () => {
+            cy.get(locators.menu.SIDE_MENU).click();
+            cy.get("[data-cy=testClaimtItem]").click();
+            cy.url().should("contains", "claim");
+        });
+
+        it("Open side bar and click sources", () => {
+            cy.get(locators.menu.SIDE_MENU).click();
+            cy.get("[data-cy=testSourcestItem]").click();
+            cy.url().should("contains", "sources");
+        });
+
         it("Open side bar and click about", () => {
             cy.get(locators.menu.SIDE_MENU).click();
             cy.get("[data-cy=testAboutItem]").click();
@@ -27,6 +45,42 @@ describe("Test the header menus", () => {
             cy.get(locators.menu.SIDE_MENU).click();
             cy.get("[data-cy=testCodeOfConductItem]").click();
             cy.url().should("contains", "code-of-conduct");
+        });
+
+        it("Open side bar and click supportive materials", () => {
+            cy.get(locators.menu.SIDE_MENU).click();
+            cy.get("[data-cy=testSupportiveMaterialsItem]").click();
+            cy.url().should("contains", "supportive-materials");
+        });
+    });
+
+    describe("Test the side drawer routes that requires user permission", () => {
+        it("Should be able to access Kanban page when logged in", () => {
+            cy.login();
+            cy.get(locators.menu.SIDE_MENU).click();
+            cy.get("[data-cy=testKanbantItem]").click();
+            cy.url().should("contains", "kanban");
+        });
+
+        it("Should be able to access Admin page when logged in", () => {
+            cy.login();
+            cy.get(locators.menu.SIDE_MENU).click();
+            cy.get("[data-cy=testadminItem]").click();
+            cy.url().should("contains", "admin");
+        });
+
+        it("Should be able to access Badges page when logged in", () => {
+            cy.login();
+            cy.get(locators.menu.SIDE_MENU).click();
+            cy.get("[data-cy=testadminBadgeItem]").click();
+            cy.url().should("contains", "admin/badges");
+        });
+
+        it("Should be able to access Namespaces page when logged in", () => {
+            cy.login();
+            cy.get(locators.menu.SIDE_MENU).click();
+            cy.get("[data-cy=testadminNameSpaceItem]").click();
+            cy.url().should("contains", "admin/name-spaces");
         });
     });
 

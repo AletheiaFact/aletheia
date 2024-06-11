@@ -25,6 +25,10 @@ export const SelectInput = styled(Select)`
         }
     }
 
+    .ant-select-selection-placeholder {
+        color: ${colors.blackSecondary};
+    }
+
     ::placeholder {
         color: ${colors.blackSecondary};
     }
@@ -43,7 +47,13 @@ export const SelectInput = styled(Select)`
     }
 `;
 
-const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
+const ClaimReviewSelect = ({
+    type,
+    onChange,
+    defaultValue,
+    placeholder,
+    style = {},
+}) => {
     const { vw } = useAppSelector((state) => state);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(defaultValue);
@@ -79,6 +89,7 @@ const ClaimReviewSelect = ({ type, onChange, defaultValue, placeholder }) => {
                 value={value}
                 data-cy={"testClassificationText"}
                 dropdownStyle={vw?.sm && { display: "none" }}
+                style={style}
             >
                 <Option value="" disabled>
                     {placeholder}

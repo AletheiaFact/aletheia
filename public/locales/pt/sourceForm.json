@@ -9,5 +9,11 @@
     "editorEmptySourcesWithButton": "Adicione fontes selecionando o texto desejado ou clicando no botão.",
     "editorEmptySources": "Adicione fontes selecionando o texto desejado.",
     "intertArchiveTooltip": "Internet Archive previne que sua fonte não deixe de existir",
-    "deleteSourceButton": "Deletar"
+    "deleteSourceButton": "Deletar",
+    "sourceLabel": "Fonte",
+    "summaryLabel": "Resumo",
+    "summaryPlaceholder": "Insira o resumo da fonte",
+    "classificationLabel": "Revise essa fonte",
+    "classificationPlaceholder": "Selecione uma classificação",
+    "summarizeSouce": "Resumo automático"
 }
