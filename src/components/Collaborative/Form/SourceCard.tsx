@@ -1,5 +1,4 @@
 import React from "react";
-import { uniqueId } from "remirror";
 import { useTranslation } from "next-i18next";
 import EditorCard from "./EditorCard";
 
@@ -16,10 +15,5 @@ const SourceCard = ({ forwardRef }) => {
         />
     );
 };
-
-export const getSourceContentHtml = () => `
-    <div data-source-id="${uniqueId()}">
-        <p></p>
-    </div>`;
 
 export default SourceCard;
