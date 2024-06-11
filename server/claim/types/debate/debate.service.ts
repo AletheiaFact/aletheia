@@ -32,7 +32,7 @@ export class DebateService {
             .lean();
     }
 
-    async create(claim) {
+    async create(claim, claimRevisionId) {
         let hashString = claim.personalities.join(" ");
         hashString += ` ${claim.title} ${claim.date.toString()}`;
         const data_hash = md5(hashString);
@@ -40,6 +40,7 @@ export class DebateService {
             content: [],
             isLive: false,
             data_hash,
+            claimRevisionId: claimRevisionId,
         };
         const debateCreated = await this.DebateModel.create(debate);
         await this.editorService.create(debateCreated._id);
