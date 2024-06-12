@@ -51,6 +51,8 @@ import { Roles } from "../auth/ability/ability.factory";
 import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
+import { Types } from "mongoose";
 
 @Controller(":namespace?")
 export class ClaimController {
@@ -69,6 +71,7 @@ export class ClaimController {
         private editorService: EditorService,
         private parserService: ParserService,
         private historyService: HistoryService,
+        private claimRevisionService: ClaimRevisionService,
         @Optional() private readonly unleash: UnleashService
     ) {}
 
@@ -220,9 +223,17 @@ export class ClaimController {
     ) {
         const { content, personality, isLive } = updateClaimDebateDto;
         let newSpeech;
+
+        const claimRevision = await this.claimRevisionService.getByContentId(
+            Types.ObjectId(debateId)
+        );
+
+        const claimRevisionId = Types.ObjectId(claimRevision._id);
+
         if (content && personality) {
             newSpeech = await this.parserService.parse(
                 updateClaimDebateDto.content,
+                claimRevisionId,
                 updateClaimDebateDto.personality
             );
 

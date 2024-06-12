@@ -28,6 +28,10 @@ interface ClaimSpec {
      * Any structed data that allows the platform to retrieve a kind of media
      */ 
     content: any;
+    /**
+     * The unique identifier of the claim revision. 
+     */
+    claimRevisionId: objectId;
 }
 ```
 

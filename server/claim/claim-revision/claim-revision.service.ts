@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import slugify from "slugify";
 import { ParserService } from "../parser/parser.service";
 import { SourceService } from "../../source/source.service";
@@ -69,10 +69,14 @@ export class ClaimRevisionService {
             lower: true, // convert to lower case, defaults to `false`
             strict: true, // strip special characters except replacement, defaults to `false`
         });
-
-        claim.contentId = await this._createContentModel(claim);
-
         const newClaimRevision = new this.ClaimRevisionModel(claim);
+        const newclaimRevisionId = Types.ObjectId(newClaimRevision._id);
+
+        newClaimRevision.contentId = await this._createContentModel(
+            claim,
+            newclaimRevisionId
+        );
+
         await this._createSources(claim.sources, claimId);
         return newClaimRevision.save();
     }
@@ -91,7 +95,7 @@ export class ClaimRevisionService {
                         query: searchText,
                         path: "title",
                         fuzzy: {
-                            maxEdits: 2,
+                            maxEdits: 1, // Using maxEdits: 1 to allow minor typos or spelling errors in search queries.
                         },
                     },
                 },
@@ -165,18 +169,30 @@ export class ClaimRevisionService {
         return this.ClaimRevisionModel.findOne({ contentId });
     }
 
-    private async _createContentModel(claim) {
+    private async _createContentModel(claim, claimRevisionId) {
         switch (claim.contentModel) {
             case ContentModelEnum.Speech:
-                return (await this.parserService.parse(claim.content))._id;
+                return (
+                    await this.parserService.parse(
+                        claim.content,
+                        claimRevisionId
+                    )
+                )._id;
             case ContentModelEnum.Image:
-                return (await this.imageService.create(claim.content))._id;
+                return (
+                    await this.imageService.create(
+                        claim.content,
+                        claimRevisionId
+                    )
+                )._id;
             case ContentModelEnum.Debate:
-                return (await this.debateService.create(claim))._id;
+                return (await this.debateService.create(claim, claimRevisionId))
+                    ._id;
             case ContentModelEnum.Unattributed:
                 return (
                     await this.parserService.parse(
                         claim.content,
+                        claimRevisionId,
                         null,
                         claim.contentModel
                     )
