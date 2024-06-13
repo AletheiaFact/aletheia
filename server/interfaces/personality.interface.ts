@@ -9,7 +9,7 @@ const PersonalitySchema = z.object({
     isHidden: z.boolean(),
 });
 
-type IPersonality = z.infer<typeof PersonalitySchema>;
+export type IPersonality = z.infer<typeof PersonalitySchema>;
 
 const FindAllOptionsSchema = z.object({
     searchText: z.string(),
@@ -19,7 +19,7 @@ const FindAllOptionsSchema = z.object({
     nameSpace: z.string().optional(),
 });
 
-type IFindAllOptions = z.infer<typeof FindAllOptionsSchema>;
+export type IFindAllOptions = z.infer<typeof FindAllOptionsSchema>;
 
 const CombinedListResultSchema = z.object({
     personalities: z.array(PersonalitySchema),
@@ -29,18 +29,11 @@ const CombinedListResultSchema = z.object({
     pageSize: z.number(),
 });
 
-type ICombinedListResult = z.infer<typeof CombinedListResultSchema>;
+export type ICombinedListResult = z.infer<typeof CombinedListResultSchema>;
 
 const FindAllResultSchema = z.object({
     totalRows: z.number(),
     processedPersonalities: z.array(PersonalitySchema),
 });
 
-type IFindAllResult = z.infer<typeof FindAllResultSchema>;
-
-export type {
-    IPersonality,
-    IFindAllOptions,
-    ICombinedListResult,
-    IFindAllResult,
-};
+export type IFindAllResult = z.infer<typeof FindAllResultSchema>;

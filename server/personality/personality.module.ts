@@ -1,4 +1,4 @@
-import { DynamicModule, Logger, Module } from "@nestjs/common";
+import { DynamicModule, Module } from "@nestjs/common";
 import { MongoPersonalityService } from "./mongo/personality.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import {
@@ -31,13 +31,18 @@ export class PersonalityModule {
     static register(): DynamicModule {
         const imports = [];
         const providers = [personalityServiceProvider];
-        const logger = new Logger("PersonalityModule");
-
-        logger.log(`Database selected: ${dbConfig.type}`);
 
         if (dbConfig.type === "mongodb") {
-            imports.push(
-                PersonalityModel,
+            imports.push(PersonalityModel);
+            providers.push(MongoPersonalityService);
+        } else {
+            throw new Error("Invalid DB_TYPE in configuration");
+        }
+
+        return {
+            module: PersonalityModule,
+            imports: [
+                ...imports,
                 WikidataModule,
                 ClaimReviewModule,
                 ClaimRevisionModule,
@@ -45,17 +50,9 @@ export class PersonalityModule {
                 ViewModule,
                 ConfigModule,
                 AbilityModule,
-                CaptchaModule
-            );
-            providers.push(UtilService, MongoPersonalityService, WinstonLogger);
-        } else {
-            throw new Error("Invalid DB_TYPE in configuration");
-        }
-
-        return {
-            module: PersonalityModule,
-            imports,
-            providers,
+                CaptchaModule,
+            ],
+            providers: [...providers, UtilService, WinstonLogger],
             controllers: [PersonalityController],
             exports: ["PersonalityService"],
         };

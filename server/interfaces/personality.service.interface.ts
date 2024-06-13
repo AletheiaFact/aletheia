@@ -6,7 +6,6 @@ import {
     IPersonality,
 } from "./personality.interface";
 
-//TODO: Create right types for all the functions
 export type IPersonalityService = {
     getWikidataEntities(regex: string, language: string): Promise<any>;
     getWikidataList(regex: string, language: string): Promise<string[]>;
