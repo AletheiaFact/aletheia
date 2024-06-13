@@ -39,7 +39,7 @@ import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
 import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
-import { IPersonalityService } from "../interfaces/personality.service.interface";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 import {
     AdminUserAbility,
     CheckAbilities,

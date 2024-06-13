@@ -38,4 +38,9 @@ const FindAllResultSchema = z.object({
 
 type IFindAllResult = z.infer<typeof FindAllResultSchema>;
 
-export { IPersonality, IFindAllOptions, ICombinedListResult, IFindAllResult };
+export type {
+    IPersonality,
+    IFindAllOptions,
+    ICombinedListResult,
+    IFindAllResult,
+};

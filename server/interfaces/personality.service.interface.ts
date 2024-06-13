@@ -7,7 +7,7 @@ import {
 } from "./personality.interface";
 
 //TODO: Create right types for all the functions
-export interface IPersonalityService {
+export type IPersonalityService = {
     getWikidataEntities(regex: string, language: string): Promise<any>;
     getWikidataList(regex: string, language: string): Promise<string[]>;
     listAll(
@@ -44,4 +44,4 @@ export interface IPersonalityService {
     verifyInputsQuery(query: any): any;
     combinedListAll(query: any): Promise<ICombinedListResult>;
     findAll(options: IFindAllOptions): Promise<IFindAllResult>;
-}
+};

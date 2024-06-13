@@ -16,7 +16,7 @@ import type { BaseRequest } from "../types";
 import { DebateService } from "../claim/types/debate/debate.service";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
 import { ApiTags } from "@nestjs/swagger";
-import { IPersonalityService } from "../interfaces/personality.service.interface";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Controller("/")
 export class HomeController {
