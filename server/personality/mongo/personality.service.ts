@@ -22,7 +22,6 @@ import {
     ICombinedListResult,
     IFindAllOptions,
     IFindAllResult,
-    IPersonality,
 } from "../../interfaces/personality.interface";
 
 @Injectable({ scope: Scope.REQUEST })
@@ -427,7 +426,7 @@ export class MongoPersonalityService {
             })
             .catch((error) => {
                 this.logger.error(error);
-                return Promise.reject(error);
+                return error;
             });
     }
 
