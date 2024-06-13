@@ -14,13 +14,13 @@ import {
     Header,
     Optional,
     UseGuards,
+    Inject,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ClaimService } from "./claim.service";
 import { ConfigService } from "@nestjs/config";
 import type { Request, Response } from "express";
 import { parse } from "url";
-import { PersonalityService } from "../personality/personality.service";
 import { ViewService } from "../view/view.service";
 import * as mongoose from "mongoose";
 import { CreateClaimDTO } from "./dto/create-claim.dto";
@@ -39,6 +39,7 @@ import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
 import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import { IPersonalityService } from "../interfaces/personality.service.interface";
 import {
     AdminUserAbility,
     CheckAbilities,
@@ -60,7 +61,8 @@ export class ClaimController {
     constructor(
         private claimReviewService: ClaimReviewService,
         private claimReviewTaskService: ClaimReviewTaskService,
-        private personalityService: PersonalityService,
+        @Inject("PersonalityService")
+        private personalityService: IPersonalityService,
         private claimService: ClaimService,
         private sentenceService: SentenceService,
         private configService: ConfigService,

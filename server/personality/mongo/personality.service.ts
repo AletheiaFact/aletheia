@@ -9,26 +9,24 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import slugify from "slugify";
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
-import { WikidataService } from "../wikidata/wikidata.service";
-import { UtilService } from "../util";
-import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { HistoryService } from "../history/history.service";
-import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { WikidataService } from "../../wikidata/wikidata.service";
+import { UtilService } from "../../util";
+import { ClaimReviewService } from "../../claim-review/claim-review.service";
+import { HistoryService } from "../../history/history.service";
+import { HistoryType, TargetModel } from "../../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
-import type { BaseRequest } from "../types";
-import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-
-export interface FindAllOptions {
-    searchText: string;
-    pageSize: number;
-    language?: string;
-    skipedDocuments?: number;
-    nameSpace?: string;
-}
+import type { BaseRequest } from "../../types";
+import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import {
+    ICombinedListResult,
+    IFindAllOptions,
+    IFindAllResult,
+    IPersonality,
+} from "../../interfaces/personality.interface";
 
 @Injectable({ scope: Scope.REQUEST })
-export class PersonalityService {
+export class MongoPersonalityService {
     private readonly logger = new Logger("PersonalityService");
     private readonly optionsToUpdate = {
         new: true,
@@ -45,7 +43,11 @@ export class PersonalityService {
         private wikidata: WikidataService,
         private util: UtilService,
         private historyService: HistoryService
-    ) {}
+    ) {
+        const methods = Object.getOwnPropertyNames(
+            Object.getPrototypeOf(PersonalityModel)
+        );
+    }
 
     async getWikidataEntities(regex, language) {
         return await this.wikidata.queryWikibaseEntities(regex, language);
@@ -80,7 +82,6 @@ export class PersonalityService {
                 query?.name.$regex,
                 language
             );
-
             personalities = await this.PersonalityModel.find({
                 $or: [{ wikidata: { $in: wikidataList } }, { query }],
             })
@@ -172,6 +173,8 @@ export class PersonalityService {
             },
             this.req
         );
+
+        const allPersonalities = await this.PersonalityModel.find().exec();
 
         const personality = await this.PersonalityModel.findOne(
             queryOptions
@@ -366,6 +369,7 @@ export class PersonalityService {
     /**
      * Don't count hide personalities because of cache
      */
+    //TODO: Ask about this one
     count(query: any = {}) {
         return this.PersonalityModel.countDocuments().where({
             ...query,
@@ -395,7 +399,7 @@ export class PersonalityService {
         return queryInputs;
     }
 
-    combinedListAll(query): any {
+    combinedListAll(query): Promise<ICombinedListResult> {
         const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = this.verifyInputsQuery(query);
 
@@ -428,15 +432,18 @@ export class PersonalityService {
                     pageSize,
                 };
             })
-            .catch((error) => this.logger.error(error));
+            .catch((error) => {
+                this.logger.error(error);
+                return Promise.reject(error);
+            });
     }
 
     async findAll({
         searchText,
         pageSize,
         language,
-        skipedDocuments,
-    }: FindAllOptions) {
+        skippedDocuments,
+    }: IFindAllOptions): Promise<IFindAllResult> {
         const personalities = await this.PersonalityModel.aggregate([
             {
                 $search: {
@@ -455,7 +462,7 @@ export class PersonalityService {
                 $facet: {
                     rows: [
                         {
-                            $skip: skipedDocuments || 0,
+                            $skip: skippedDocuments || 0,
                         },
                         {
                             $limit: pageSize,

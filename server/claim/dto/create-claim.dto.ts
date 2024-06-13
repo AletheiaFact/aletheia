@@ -8,7 +8,7 @@ import {
     IsOptional,
 } from "class-validator";
 import { ContentModelEnum } from "../../types/enums";
-import { Personality } from "../../personality/schemas/personality.schema";
+import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateClaimDTO {

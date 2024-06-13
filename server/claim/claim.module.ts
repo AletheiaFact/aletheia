@@ -36,7 +36,7 @@ const ClaimModel = MongooseModule.forFeature([
         ClaimRevisionModule,
         SentenceModule,
         ParserModule,
-        PersonalityModule,
+        PersonalityModule.register(),
         HistoryModule,
         StateEventModule,
         ConfigModule,

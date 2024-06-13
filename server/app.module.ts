@@ -68,56 +68,24 @@ export class AppModule implements NestModule {
     }
 
     static register(options): DynamicModule {
-        const imports = [
-            MongooseModule.forRoot(
-                options.db.connection_uri,
-                options.db.options
-            ),
-            ConfigModule.forRoot({
-                load: [() => options || {}],
-            }),
-            ThrottlerModule.forRoot({
-                ttl: options.throttle.ttl,
-                limit: options.throttle.limit,
-            }),
-            UsersModule,
-            WikidataModule,
-            PersonalityModule,
-            ClaimModule,
-            ClaimReviewModule,
-            ClaimReviewTaskModule,
-            ClaimRevisionModule,
-            HistoryModule,
-            StateEventModule,
-            SourceModule,
-            SpeechModule,
-            ParagraphModule,
-            SentenceModule,
-            StatsModule,
-            ViewModule,
-            HomeModule,
-            EmailModule,
-            SitemapModule,
-            OryModule,
-            ReportModule,
-            CaptchaModule,
-            TopicModule,
-            ImageModule,
-            SearchModule,
-            FileManagementModule,
-            DebateModule,
-            EditorModule,
-            BadgeModule,
-            EditorParseModule,
-            NotificationModule,
-            CommentModule,
-            NameSpaceModule,
-            AutomatedFactCheckingModule,
-            CopilotChatModule,
-            UnattributedModule,
-            DailyReportModule,
-            SummarizationCrawlerModule,
-        ];
+        const imports = [];
+        if (options.db.type === "mongodb") {
+            imports.push(
+                MongooseModule.forRoot(
+                    options.db.connection_uri,
+                    options.db.options
+                ),
+                ConfigModule.forRoot({
+                    load: [() => options || {}],
+                }),
+                ThrottlerModule.forRoot({
+                    ttl: options.throttle.ttl,
+                    limit: options.throttle.limit,
+                })
+            );
+        } else {
+            throw new Error("Invalid DB_TYPE in configuration");
+        }
         if (options.feature_flag) {
             imports.push(
                 UnleashModule.forRoot({
@@ -133,7 +101,46 @@ export class AppModule implements NestModule {
         return {
             module: AppModule,
             global: true,
-            imports,
+            imports: [
+                ...imports,
+                UsersModule,
+                WikidataModule,
+                PersonalityModule.register(),
+                ClaimModule,
+                ClaimReviewModule,
+                ClaimReviewTaskModule,
+                ClaimRevisionModule,
+                HistoryModule,
+                StateEventModule,
+                SourceModule,
+                SpeechModule,
+                ParagraphModule,
+                SentenceModule,
+                StatsModule,
+                ViewModule,
+                HomeModule,
+                EmailModule,
+                SitemapModule,
+                OryModule,
+                ReportModule,
+                CaptchaModule,
+                TopicModule,
+                ImageModule,
+                SearchModule,
+                FileManagementModule,
+                DebateModule,
+                EditorModule,
+                BadgeModule,
+                EditorParseModule,
+                NotificationModule,
+                CommentModule,
+                NameSpaceModule,
+                AutomatedFactCheckingModule,
+                CopilotChatModule,
+                UnattributedModule,
+                DailyReportModule,
+                SummarizationCrawlerModule,
+            ],
             controllers: [RootController],
             providers: [
                 {

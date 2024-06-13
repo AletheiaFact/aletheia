@@ -8,7 +8,7 @@ import { ClaimRevisionModule } from "../claim/claim-revision/claim-revision.modu
 
 @Module({
     imports: [
-        PersonalityModule,
+        PersonalityModule.register(),
         StatsModule,
         ViewModule,
         DebateModule,
