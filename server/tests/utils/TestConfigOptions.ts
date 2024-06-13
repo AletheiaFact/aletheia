@@ -17,7 +17,7 @@ export const TestConfigOptions = {
         },
         db: {
             connection_uri: process.env.CI_MONGODB_URI,
-            type: process.env.DB_TYPE,
+            type: "mongodb",
             options: {
                 useUnifiedTopology: true,
                 useNewUrlParser: true,
