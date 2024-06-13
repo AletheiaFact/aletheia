@@ -2,6 +2,7 @@ import {
     Controller,
     Get,
     Header,
+    Inject,
     Logger,
     Query,
     Req,
@@ -10,20 +11,21 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
-import { PersonalityService } from "../personality/personality.service";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { ViewService } from "../view/view.service";
 import { parse } from "url";
 import type { Response } from "express";
 import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
+import { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Controller()
 export class SearchController {
     private readonly logger = new Logger("SearchController");
     constructor(
         private viewService: ViewService,
-        private personalityService: PersonalityService,
+        @Inject("PersonalityService")
+        private personalityService: IPersonalityService,
         private sentenceService: SentenceService,
         private claimRevisionService: ClaimRevisionService,
         private configService: ConfigService
@@ -47,21 +49,21 @@ export class SearchController {
             if (this.configService.get<string>("db.atlas")) {
                 //This is necessary cause the page and pageSize logic is applied to 3 different collections
                 const processedPageSize = Math.ceil((pageSize || 10) / 3);
-                const skipedDocuments =
+                const skippedDocuments =
                     page > 1 ? processedPageSize * (page - 1) : 0;
 
                 const findPersonalities = async (
                     searchText,
                     processedPageSize,
                     req,
-                    skipedDocuments
+                    skippedDocuments
                 ) => {
                     if (searchText) {
                         return await this.personalityService.findAll({
                             searchText,
                             pageSize: processedPageSize,
                             language: req.language,
-                            skipedDocuments,
+                            skippedDocuments,
                         });
                     } else {
                         return undefined;
@@ -71,14 +73,14 @@ export class SearchController {
                 const findSentences = async (
                     searchText,
                     processedPageSize,
-                    skipedDocuments,
+                    skippedDocuments,
                     filter
                 ) => {
                     if (searchText || filter) {
                         return await this.sentenceService.findAll({
                             searchText,
                             pageSize: processedPageSize,
-                            skipedDocuments,
+                            skippedDocuments,
                             filter,
                         });
                     } else {
@@ -89,13 +91,13 @@ export class SearchController {
                 const findClaims = async (
                     searchText,
                     processedPageSize,
-                    skipedDocuments
+                    skippedDocuments
                 ) => {
                     if (searchText) {
                         return await this.claimRevisionService.findAll({
                             searchText,
                             pageSize: processedPageSize,
-                            skipedDocuments,
+                            skippedDocuments,
                         });
                     } else {
                         return undefined;
@@ -107,15 +109,15 @@ export class SearchController {
                         searchText,
                         processedPageSize,
                         req,
-                        skipedDocuments
+                        skippedDocuments
                     ),
                     findSentences(
                         searchText,
                         processedPageSize,
-                        skipedDocuments,
+                        skippedDocuments,
                         filter
                     ),
-                    findClaims(searchText, processedPageSize, skipedDocuments),
+                    findClaims(searchText, processedPageSize, skippedDocuments),
                 ]);
 
                 const totalPersonalities = personalities?.totalRows || 0;

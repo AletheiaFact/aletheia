@@ -4,6 +4,7 @@ import {
     Delete,
     Get,
     Header,
+    Inject,
     Logger,
     Param,
     Post,
@@ -16,7 +17,6 @@ import {
 import { parse } from "url";
 import type { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
-import { PersonalityService } from "./personality.service";
 import { GetPersonalities } from "./dto/get-personalities.dto";
 import { CreatePersonalityDTO } from "./dto/create-personality.dto";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
@@ -31,12 +31,14 @@ import {
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Controller(":namespace?")
 export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(
-        private personalityService: PersonalityService,
+        @Inject("PersonalityService")
+        private personalityService: IPersonalityService,
         private viewService: ViewService,
         private configService: ConfigService,
         private captchaService: CaptchaService,

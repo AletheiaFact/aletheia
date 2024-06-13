@@ -10,7 +10,7 @@ import { ViewModule } from "../view/view.module";
     imports: [
         ViewModule,
         SentenceModule,
-        PersonalityModule,
+        PersonalityModule.register(),
         ClaimRevisionModule,
         ConfigModule,
     ],

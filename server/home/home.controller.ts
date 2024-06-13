@@ -1,8 +1,15 @@
-import { Controller, Get, Header, Redirect, Req, Res } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Header,
+    Inject,
+    Redirect,
+    Req,
+    Res,
+} from "@nestjs/common";
 import { ViewService } from "../view/view.service";
 import type { Response } from "express";
 import { parse } from "url";
-import { PersonalityService } from "../personality/personality.service";
 import { StatsService } from "../stats/stats.service";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import type { BaseRequest } from "../types";
@@ -11,12 +18,14 @@ import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.ser
 import { ApiTags } from "@nestjs/swagger";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Controller("/")
 export class HomeController {
     constructor(
         private viewService: ViewService,
-        private personalityService: PersonalityService,
+        @Inject("PersonalityService")
+        private personalityService: IPersonalityService,
         private statsService: StatsService,
         private debateService: DebateService,
         private claimRevisionService: ClaimRevisionService,
