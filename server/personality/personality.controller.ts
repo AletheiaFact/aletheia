@@ -31,7 +31,7 @@ import {
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
-import { IPersonalityService } from "../interfaces/personality.service.interface";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Controller(":namespace?")
 export class PersonalityController {

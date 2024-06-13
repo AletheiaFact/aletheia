@@ -17,7 +17,7 @@ import { parse } from "url";
 import type { Response } from "express";
 import type { BaseRequest } from "../types";
 import { ApiTags } from "@nestjs/swagger";
-import { IPersonalityService } from "../interfaces/personality.service.interface";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Controller()
 export class SearchController {

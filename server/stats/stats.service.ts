@@ -4,7 +4,7 @@ import { ClaimService } from "../claim/claim.service";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-import { IPersonalityService } from "../interfaces/personality.service.interface";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Injectable({ scope: Scope.REQUEST })
 export class StatsService {

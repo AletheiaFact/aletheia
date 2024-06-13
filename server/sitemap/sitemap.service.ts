@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger } from "@nestjs/common";
 import { SitemapStream, streamToPromise } from "sitemap";
 import { ClaimService } from "../claim/claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { IPersonalityService } from "../interfaces/personality.service.interface";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 const axios = require("axios");
 
 @Injectable()
