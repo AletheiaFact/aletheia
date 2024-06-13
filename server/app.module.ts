@@ -74,14 +74,7 @@ export class AppModule implements NestModule {
                 MongooseModule.forRoot(
                     options.db.connection_uri,
                     options.db.options
-                ),
-                ConfigModule.forRoot({
-                    load: [() => options || {}],
-                }),
-                ThrottlerModule.forRoot({
-                    ttl: options.throttle.ttl,
-                    limit: options.throttle.limit,
-                })
+                )
             );
         } else {
             throw new Error("Invalid DB_TYPE in configuration");
@@ -103,6 +96,13 @@ export class AppModule implements NestModule {
             global: true,
             imports: [
                 ...imports,
+                ConfigModule.forRoot({
+                    load: [() => options || {}],
+                }),
+                ThrottlerModule.forRoot({
+                    ttl: options.throttle.ttl,
+                    limit: options.throttle.limit,
+                }),
                 UsersModule,
                 WikidataModule,
                 PersonalityModule.register(),

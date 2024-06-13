@@ -12,7 +12,6 @@ export class StatsService {
         @Inject(REQUEST) private req: BaseRequest,
         private claimReviewService: ClaimReviewService,
         @Inject("PersonalityService")
-        @Inject("PersonalityService")
         private personalityService: IPersonalityService,
         private claimService: ClaimService
     ) {}

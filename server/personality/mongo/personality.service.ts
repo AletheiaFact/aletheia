@@ -43,11 +43,7 @@ export class MongoPersonalityService {
         private wikidata: WikidataService,
         private util: UtilService,
         private historyService: HistoryService
-    ) {
-        const methods = Object.getOwnPropertyNames(
-            Object.getPrototypeOf(PersonalityModel)
-        );
-    }
+    ) {}
 
     async getWikidataEntities(regex, language) {
         return await this.wikidata.queryWikibaseEntities(regex, language);
@@ -173,8 +169,6 @@ export class MongoPersonalityService {
             },
             this.req
         );
-
-        const allPersonalities = await this.PersonalityModel.find().exec();
 
         const personality = await this.PersonalityModel.findOne(
             queryOptions
@@ -369,7 +363,6 @@ export class MongoPersonalityService {
     /**
      * Don't count hide personalities because of cache
      */
-    //TODO: Ask about this one
     count(query: any = {}) {
         return this.PersonalityModel.countDocuments().where({
             ...query,
