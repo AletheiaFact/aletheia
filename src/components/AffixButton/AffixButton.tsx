@@ -73,8 +73,8 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 tooltip: t("affix:affixButtonCreateVerifiedSources"),
                 href:
                     nameSpace !== NameSpaceEnum.Main
-                        ? `/${nameSpace}/sources/create`
-                        : `/sources/create`,
+                        ? `/${nameSpace}/source/create`
+                        : `/source/create`,
                 dataCy: "testFloatButtonAddVerifiedSources",
             }
         );

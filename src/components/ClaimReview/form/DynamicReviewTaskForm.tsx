@@ -32,7 +32,7 @@ import { useDispatch } from "react-redux";
 import actions from "../../../store/actions";
 import { useAppSelector } from "../../../store/store";
 
-const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
+const DynamicReviewTaskForm = ({ data_hash, personality, claim, source }) => {
     const {
         handleSubmit,
         control,
@@ -49,9 +49,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isReported = useSelector(machineService, reportSelector);
-    const { editorContentObject, comments } = useContext(
-        CollaborativeEditorContext
-    );
+    const { comments } = useContext(CollaborativeEditorContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
         (state) => ({
@@ -118,6 +116,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             claimReview: {
                 personality,
                 claim,
+                source,
             },
             type: eventName,
             t,
@@ -179,13 +178,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         if (shouldShowFinishReportWarning) {
             setFinishReportWarningModal(!finishReportWarningModal);
         } else {
-            sendEventToMachine(
-                {
-                    ...context,
-                    collaborativeEditor: editorContentObject,
-                },
-                event
-            );
+            sendEventToMachine(context, event);
         }
 
         scrollToTop(event);

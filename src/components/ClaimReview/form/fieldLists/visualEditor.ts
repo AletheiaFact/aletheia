@@ -5,10 +5,10 @@ import {
     fieldValidation,
 } from "../../../Form/FormField";
 
-const assignedCollaborativeForm: FormField[] = [
+const visualEditor: FormField[] = [
     createFormField({
-        fieldName: "collaborativeEditor",
-        type: "collaborative",
+        fieldName: "visualEditor",
+        type: "visualEditor",
         defaultValue: "",
     }),
 
@@ -30,4 +30,4 @@ function isValidClassification(string) {
     return Object.values(ClassificationEnum).includes(string);
 }
 
-export default assignedCollaborativeForm;
+export default visualEditor;

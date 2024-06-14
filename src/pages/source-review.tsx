@@ -1,14 +1,9 @@
-import { ClassificationEnum, ContentModelEnum } from "../types/enums";
-
 import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
-import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { GetLocale } from "../utils/GetLocale";
-import JsonLd from "../components/JsonLd";
 import { NextPage } from "next";
 import React from "react";
 import { ReviewTaskMachineProvider } from "../machines/reviewTask/ReviewTaskMachineProvider";
-import Seo from "../components/Seo";
 import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
@@ -18,14 +13,15 @@ import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
+import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
+import { ClassificationEnum } from "../types/enums";
+import JsonLd from "../components/JsonLd";
 
-export interface ClaimReviewPageProps {
-    personality?: any;
-    claim: any;
-    content: any;
+export interface SourceReviewPageProps {
+    source: any;
     sitekey: string;
     claimReviewTask: any;
-    claimReview: any;
+    sourceReview: any;
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
     enableCopilotChatBot: boolean;
@@ -35,16 +31,14 @@ export interface ClaimReviewPageProps {
     nameSpace: string;
 }
 
-const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
+const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace as NameSpaceEnum);
     const {
-        personality,
-        claim,
-        content,
-        claimReview,
+        source,
+        sourceReview: claimReview,
         sitekey,
         enableCollaborativeEditor,
         enableCopilotChatBot,
@@ -77,12 +71,12 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
             props.enableAddEditorSourcesWithoutSelecting,
     });
 
-    const isImage = claim?.contentModel === ContentModelEnum.Image;
-    const review = content?.props?.classification;
+    const review = source?.props?.classification;
 
+    //TODO: Improve source review schema
     const jsonld = {
         "@context": "https://schema.org",
-        "@type": "ClaimReview",
+        "@type": "MediaReview",
         url: "https://aletheiafact.org",
         author: {
             "@type": "Organization",
@@ -92,7 +86,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 "https://www.instagram.com/aletheiafact",
             ],
         },
-        claimReviewed: content.content,
+        originalMediaLink: source.href,
         reviewRating: {
             "@type": "Rating",
             ratingValue: claimReview?.isHidden ? 0 : ClassificationEnum[review],
@@ -104,45 +98,34 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         },
         itemReviewed: {
             "@type": "CreativeWork",
-            author: {
-                "@type": "Person",
-                name: personality?.name,
-                jobTitle: personality?.description,
-                image: personality?.image,
-            },
-            datePublished: claim.date,
-            name: claim.title,
+            isBasedOnUrl: source.href,
         },
-        datePublished: content.date,
+        datePublished: claimReview?.date,
     };
 
     return (
         <>
             {review && <JsonLd {...jsonld} />}
-            <Seo
-                title={isImage ? claim.title : content.content}
-                description={t("seo:claimReviewDescription", {
-                    sentence: content.content,
-                })}
-            />
 
             <ReviewTaskMachineProvider
-                data_hash={content.data_hash}
+                data_hash={source.data_hash}
                 baseMachine={props.claimReviewTask?.machine}
                 baseReportModel={props?.claimReviewTask?.reportModel}
                 publishedReview={{ review: claimReview }}
-                reviewTaskType={ReviewTaskTypeEnum.Claim}
+                reviewTaskType={ReviewTaskTypeEnum.Source}
             >
-                <CollaborativeEditorProvider data_hash={content.data_hash}>
+                <CollaborativeEditorProvider
+                    data_hash={source.data_hash}
+                    source={source.href}
+                >
                     <ClaimReviewView
-                        personality={personality}
-                        claim={claim}
-                        content={content}
+                        content={source}
                         hideDescriptions={hideDescriptions}
+                        source={source}
                     />
                 </CollaborativeEditorProvider>
             </ReviewTaskMachineProvider>
-            <AffixButton personalitySlug={personality?.slug} />
+            <AffixButton />
         </>
     );
 };
@@ -152,13 +135,9 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            // Nextjs have problems with client re-hydration for some serialized objects
-            // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
-            personality: JSON.parse(JSON.stringify(query.personality)),
-            claim: JSON.parse(JSON.stringify(query.claim)),
-            content: JSON.parse(JSON.stringify(query.content)),
+            source: JSON.parse(JSON.stringify(query.source)),
             claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
-            claimReview: JSON.parse(JSON.stringify(query.claimReview)),
+            sourceReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             hideDescriptions: JSON.parse(
                 JSON.stringify(query.hideDescriptions)
@@ -173,4 +152,4 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         },
     };
 }
-export default ClaimReviewPage;
+export default SourceReviewPage;

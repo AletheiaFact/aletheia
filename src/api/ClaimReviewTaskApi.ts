@@ -68,9 +68,9 @@ const autoSaveDraft = (params, t) => {
         });
 };
 
-const getEditorContentObject = (data_hash, reportModel) => {
+const getEditorContentObject = (data_hash, params) => {
     return request
-        .get(`/editor-content/${data_hash}`, { params: { reportModel } })
+        .get(`/editor-content/${data_hash}`, { params })
         .then((response) => {
             return response.data;
         })

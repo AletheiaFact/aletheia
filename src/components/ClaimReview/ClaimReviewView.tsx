@@ -17,18 +17,22 @@ import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import ReviewTaskAdminToolBar from "../Toolbar/ReviewTaskAdminToolBar";
 import { useAppSelector } from "../../store/store";
-import { ReviewTaskStates } from "../../machines/reviewTask/enums";
+import {
+    ReviewTaskStates,
+    ReviewTaskTypeEnum,
+} from "../../machines/reviewTask/enums";
 
 export interface ClaimReviewViewProps {
-    personality?: any;
-    claim: any;
     content: Content;
     hideDescriptions?: any;
+    personality?: any;
+    claim?: any;
+    source?: any;
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
-    const { personality, claim, content, hideDescriptions } = props;
-    const { machineService, publishedReview } = useContext(
+    const { personality, claim, content, hideDescriptions, source } = props;
+    const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
     const { reviewDrawerCollapsed } = useAppSelector((state) => ({
@@ -47,7 +51,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const userIsReviewer = reviewData.reviewerId === userId;
     const userIsCrossChecker = reviewData.crossCheckerId === userId;
     const userIsAssignee = reviewData.usersId.includes(userId);
-    const isContentImage = claim.contentModel === ContentModelEnum.Image;
+    const isContentImage = claim?.contentModel === ContentModelEnum.Image;
     const hasStartedTask =
         machineService.state.value !== ReviewTaskStates.unassigned;
     const origin = window.location.origin ? window.location.origin : "";
@@ -62,20 +66,33 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
         componentStyle.offset = 1;
     }
 
-    let contentPath =
-        nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/claim` : `/claim`;
+    const getHref = () => {
+        const baseContentPath =
+            nameSpace !== NameSpaceEnum.Main ? `${nameSpace}` : "";
 
-    if (personality) {
-        contentPath =
-            nameSpace !== NameSpaceEnum.Main
-                ? `${nameSpace}/personality/${personality?.slug}/claim`
-                : `/personality/${personality?.slug}/claim`;
-    }
+        switch (reviewTaskType) {
+            case ReviewTaskTypeEnum.Claim:
+                let contentPath = `${baseContentPath}/claim`;
 
-    contentPath += isContentImage
-        ? `/${claim?._id}`
-        : `/${claim?.slug}/sentence/${content.data_hash}`;
-    const href = `${origin}${contentPath}`;
+                if (personality) {
+                    contentPath = `${baseContentPath}/personality/${personality.slug}/claim`;
+                }
+
+                contentPath += isContentImage
+                    ? `/${claim?._id}`
+                    : `/${claim?.slug}/sentence/${content.data_hash}`;
+
+                return `${origin}${contentPath}`;
+
+            case ReviewTaskTypeEnum.Source:
+                return `${origin}${baseContentPath}/source/${content.data_hash}`;
+
+            default:
+                return `${origin}`;
+        }
+    };
+
+    const href = getHref();
 
     return (
         <div>
@@ -88,7 +105,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                             changeHideStatusFunction={
                                 ClaimReviewApi.updateClaimReviewHiddenStatus
                             }
-                            target={TargetModel.ClaimReview}
+                            target={TargetModel.ClaimReview} // TODO: rename to review
                             hideDescriptions={hideDescriptions}
                         />
                     ) : (
@@ -101,9 +118,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                     review?.report?.classification || reviewData?.classification
                 }
                 hideDescription={hideDescriptions}
-                userIsReviewer={userIsReviewer}
                 userIsNotRegular={userIsNotRegular}
-                userIsAssignee={userIsAssignee}
                 componentStyle={componentStyle}
                 {...props}
             />
@@ -124,8 +139,8 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                     personalityId={personality?._id}
                     dataHash={content.data_hash}
                     userIsReviewer={userIsReviewer}
-                    sentenceContent={content.content}
                     componentStyle={componentStyle}
+                    source={source}
                 />
             )}
             {review?.isPublished && (

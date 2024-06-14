@@ -1,6 +1,6 @@
 import { ReviewTaskEvents, ReviewTaskStates } from "./enums";
 
-import assignedCollaborativeForm from "../../components/ClaimReview/form/fieldLists/assignedCollaborativeForm";
+import visualEditor from "../../components/ClaimReview/form/fieldLists/visualEditor";
 import selectReviewer from "../../components/ClaimReview/form/fieldLists/selectReviewerForm";
 import unassignedForm from "../../components/ClaimReview/form/fieldLists/unassignedForm";
 import submittedForm from "../../components/ClaimReview/form/fieldLists/submittedForm";
@@ -13,8 +13,8 @@ const getNextForm = (
 ) => {
     const formMap = {
         [ReviewTaskStates.unassigned]: unassignedForm,
-        [ReviewTaskEvents.assignUser]: assignedCollaborativeForm,
-        [ReviewTaskStates.assigned]: assignedCollaborativeForm,
+        [ReviewTaskEvents.assignUser]: visualEditor,
+        [ReviewTaskStates.assigned]: visualEditor,
 
         [ReviewTaskEvents.finishReport]: [],
         [ReviewTaskStates.reported]: [],
@@ -32,14 +32,12 @@ const getNextForm = (
         [ReviewTaskEvents.addComment]: crossCheckingForm,
         [ReviewTaskStates.addCommentCrossChecking]: crossCheckingForm,
 
-        [ReviewTaskEvents.submitComment]: isSameLabel
-            ? []
-            : assignedCollaborativeForm,
+        [ReviewTaskEvents.submitComment]: isSameLabel ? [] : visualEditor,
 
         [ReviewTaskEvents.sendToReview]: [],
         [ReviewTaskStates.submitted]: [],
         [ReviewTaskStates.rejected]: submittedForm,
-        [ReviewTaskEvents.addRejectionComment]: assignedCollaborativeForm,
+        [ReviewTaskEvents.addRejectionComment]: visualEditor,
         [ReviewTaskStates.published]: [],
         [ReviewTaskEvents.publish]: [],
     };

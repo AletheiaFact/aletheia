@@ -2,55 +2,59 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../store/store";
 import { createWebsocketConnection } from "./utils/createWebsocketConnection";
 import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
-import { RemirrorJSON } from "remirror";
+import { RemirrorContentType } from "remirror";
 import { SourceType } from "../../types/Source";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import { EditorConfig } from "./utils/getEditorConfig";
+import { reviewingSelector } from "../../machines/reviewTask/selectors";
+import { useSelector } from "@xstate/react";
 
 interface ContextType {
-    websocketProvider: any;
-    editorContentObject?: RemirrorJSON;
-    setEditorContentObject?: (data: any) => void;
+    editorConfiguration?: any;
     editorSources?: SourceType[];
     setEditorSources?: (data: any) => void;
     data_hash?: string;
     isFetchingEditor?: boolean;
     comments?: any[];
     setComments?: (data: any) => void;
-    shouldInsertAIReport?: boolean;
-    setShouldInsertAIReport?: (data: any) => void;
+    source?: string;
 }
 
-export const CollaborativeEditorContext = createContext<ContextType>({
-    websocketProvider: null,
-});
+export const CollaborativeEditorContext = createContext<ContextType>({});
 
 interface CollaborativeEditorProviderProps {
     data_hash: string;
     children: React.ReactNode;
+    source?: string;
 }
 
 export const CollaborativeEditorProvider = (
     props: CollaborativeEditorProviderProps
 ) => {
-    const { reportModel } = useContext(ReviewTaskMachineContext);
-    const { enableCollaborativeEdit } = useAppSelector((state) => ({
-        enableCollaborativeEdit: state?.enableCollaborativeEdit,
-    }));
+    const editorConfig = new EditorConfig();
+    const { machineService, reportModel, reviewTaskType } = useContext(
+        ReviewTaskMachineContext
+    );
+    const { enableCollaborativeEdit, enableEditorAnnotations, websocketUrl } =
+        useAppSelector((state) => ({
+            enableCollaborativeEdit: state?.enableCollaborativeEdit,
+            enableEditorAnnotations: state?.enableEditorAnnotations,
+            websocketUrl: state?.websocketUrl,
+        }));
 
     const [editorContentObject, setEditorContentObject] = useState(null);
-    const [editorSources, setEditorSources] = useState([]);
+    const [editorSources, setEditorSources] = useState(
+        machineService.state.context.reviewData.sources
+    );
     const [isFetchingEditor, setIsFetchingEditor] = useState(false);
-    const { websocketUrl } = useAppSelector((state) => state);
     const [comments, setComments] = useState(null);
-    const [shouldInsertAIReport, setShouldInsertAIReport] = useState(false);
+    const readonly = useSelector(machineService, reviewingSelector);
 
     useEffect(() => {
+        const params = { reportModel, reviewTaskType };
         const fetchEditorContentObject = (data_hash) => {
             setIsFetchingEditor(true);
-            return ClaimReviewTaskApi.getEditorContentObject(
-                data_hash,
-                reportModel
-            );
+            return ClaimReviewTaskApi.getEditorContentObject(data_hash, params);
         };
 
         if (reportModel) {
@@ -61,27 +65,53 @@ export const CollaborativeEditorProvider = (
         }
     }, [props.data_hash, reportModel]);
 
-    const websocketProvider = useMemo(() => {
-        if (enableCollaborativeEdit) {
-            return createWebsocketConnection(props.data_hash, websocketUrl);
+    const { websocketProvider, isCollaborative } = useMemo(() => {
+        if (!enableCollaborativeEdit) {
+            return { websocketProvider: null, isCollaborative: null };
         }
-        return null;
+
+        const websocketProvider = createWebsocketConnection(
+            props.data_hash,
+            websocketUrl
+        );
+        return {
+            websocketProvider,
+            isCollaborative: websocketProvider?.awareness?.states?.size > 1,
+        };
     }, [enableCollaborativeEdit, props.data_hash, websocketUrl]);
+
+    const extensions = useMemo(
+        () =>
+            editorConfig.getExtensions(
+                reviewTaskType,
+                websocketProvider,
+                enableEditorAnnotations
+            ),
+        [websocketProvider, reviewTaskType]
+    );
+
+    const editorConfiguration = {
+        readonly,
+        extensions,
+        isCollaborative,
+        core: { excludeExtensions: ["history"] },
+        stringHandler: "html",
+        content: isCollaborative
+            ? undefined
+            : (editorContentObject as RemirrorContentType),
+    };
 
     return (
         <CollaborativeEditorContext.Provider
             value={{
-                websocketProvider,
-                editorContentObject,
-                setEditorContentObject,
+                editorConfiguration,
                 editorSources,
                 setEditorSources,
                 data_hash: props.data_hash,
                 isFetchingEditor,
                 comments,
                 setComments,
-                shouldInsertAIReport,
-                setShouldInsertAIReport,
+                source: props.source,
             }}
         >
             {props.children}

@@ -11,6 +11,8 @@ import { Report } from "../../types/Report";
 import { ChatMessage, ChatResponse, MessageContext } from "../../types/Copilot";
 import { calculatePosition } from "./utils/calculatePositions";
 import Loading from "../Loading";
+import { AnyExtension, RemirrorManager } from "remirror";
+import { ReactExtensions } from "@remirror/react";
 const CopilotConversation = React.lazy(() => import("./CopilotConversation"));
 
 interface Size {
@@ -21,9 +23,10 @@ interface Size {
 interface CopilotDrawerProps {
     claim: Claim;
     sentence: string;
+    manager: RemirrorManager<ReactExtensions<AnyExtension>>;
 }
 
-const CopilotDrawer = ({ claim, sentence }: CopilotDrawerProps) => {
+const CopilotDrawer = ({ manager, claim, sentence }: CopilotDrawerProps) => {
     const { t } = useTranslation();
     const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
         vw: state?.vw,
@@ -117,6 +120,7 @@ const CopilotDrawer = ({ claim, sentence }: CopilotDrawerProps) => {
             >
                 <Suspense fallback={<Loading />}>
                     <CopilotConversation
+                        manager={manager}
                         handleSendMessage={handleSendMessage}
                         messages={messages}
                         isLoading={isLoading}

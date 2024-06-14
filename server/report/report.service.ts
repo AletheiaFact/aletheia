@@ -21,16 +21,37 @@ export class ReportService {
         }
         const newReport = new this.ReportModel(report);
 
-        for (const source of report.sources) {
-            await this.sourceService.create({
-                href: source.href,
-                props: source?.props,
-                targetId: newReport.id,
-            });
+        if (report.sources) {
+            await this.createReportSources(report.sources, newReport.id);
+        } else {
+            await this.updateReportSource(report, newReport.id);
         }
 
         newReport.save();
         return newReport;
+    }
+
+    createReportSources(sources, targetId) {
+        for (const source of sources) {
+            this.sourceService.create({
+                href: source.href,
+                props: source?.props,
+                targetId,
+            });
+        }
+    }
+
+    updateReportSource({ classification, summary, data_hash }, targetId) {
+        const newSourceBody = {
+            props: {
+                classification: classification,
+                summary: summary,
+                date: new Date(),
+            },
+            targetId,
+        };
+
+        return this.sourceService.update(data_hash, newSourceBody);
     }
 
     findByDataHash(data_hash) {

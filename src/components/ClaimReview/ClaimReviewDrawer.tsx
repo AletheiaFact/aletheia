@@ -19,6 +19,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import colors from "../../styles/colors";
 import { generateClaimContentPath } from "../../utils/GetClaimContentHref";
+import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -54,7 +55,10 @@ const ClaimReviewDrawer = () => {
             onClose={() => dispatch(actions.closeReviewDrawer())}
         >
             {claim && data_hash && !isLoading ? (
-                <ReviewTaskMachineProvider data_hash={data_hash}>
+                <ReviewTaskMachineProvider
+                    data_hash={data_hash}
+                    reviewTaskType={ReviewTaskTypeEnum.Claim}
+                >
                     <CollaborativeEditorProvider data_hash={data_hash}>
                         <Row
                             justify="space-between"

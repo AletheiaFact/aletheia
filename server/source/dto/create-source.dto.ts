@@ -18,7 +18,6 @@ export class CreateSourceDTO {
     @ApiProperty()
     href: string;
 
-    @IsNotEmpty()
     @IsObject()
     @ApiProperty()
     props: SourceProps;

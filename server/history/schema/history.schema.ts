@@ -11,6 +11,7 @@ export enum TargetModel {
     ClaimReview = "ClaimReview",
     ClaimReviewTask = "ClaimReviewTask",
     Image = "Image",
+    Source = "Source",
 }
 
 export enum HistoryType {

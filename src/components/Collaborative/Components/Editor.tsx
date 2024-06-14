@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useContext } from "react";
+import React, { useCallback, useContext } from "react";
 
 import { useHelpers } from "@remirror/react";
 import { useCommands } from "@remirror/react";
@@ -8,54 +8,32 @@ import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import { Button } from "antd";
 import EditorStyle from "./Editor.style";
-import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
-import useCardPresence from "./hooks/useCardPresence";
-import { Node } from "@remirror/pm/model";
-import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { ReportModelEnum } from "../../machines/reviewTask/enums";
-import { getContentHtml } from "./Form/EditorCard";
+import useCardPresence from "../hooks/useCardPresence";
+import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
+import {
+    ReportModelEnum,
+    ReviewTaskTypeEnum,
+} from "../../../machines/reviewTask/enums";
+import { getContentHtml } from "../Form/EditorCard";
+import { EditorState } from "remirror";
 
 /**
- * Modifies context state to JSON using useHelpers hook
- * which can only be used inside a remirror component.
- * Also returns a inputs toolbar which can be used for users
- * to add a new input.
+ * @param editable enable or disable buttons
  * @param state remirror state
+ * @returns An toolbar used for users to add a new input.
  */
 const Editor = ({
-    node,
     editable,
     state,
 }: {
-    node: Node;
     editable: boolean;
-    state: any;
+    state: EditorState;
 }) => {
     const command = useCommands();
-    const {
-        setEditorContentObject,
-        shouldInsertAIReport,
-        setShouldInsertAIReport,
-    } = useContext(CollaborativeEditorContext);
-    const { reportModel } = useContext(ReviewTaskMachineContext);
-    const { getJSON } = useHelpers();
-
-    useEffect(
-        () => setEditorContentObject(getJSON()),
-        [state, getJSON, setEditorContentObject]
+    const { reportModel, reviewTaskType } = useContext(
+        ReviewTaskMachineContext
     );
-
-    /**
-     * Deletes current report and insert automated fact-checking generated report.
-     * This solution is need because when we try to update the editorContentObject react state, the remirror state overrides the changes, not applying the generated report into the document.
-     */
-    useEffect(() => {
-        if (shouldInsertAIReport) {
-            command.delete({ from: 0, to: state.doc.content.size });
-            command.insertNode(node);
-        }
-        setShouldInsertAIReport(false);
-    }, [shouldInsertAIReport]);
+    const { getJSON } = useHelpers();
 
     const summaryDisabled = useCardPresence(getJSON, state, "summary", false);
     const reportDisabled = useCardPresence(getJSON, state, "report", false);
@@ -110,6 +88,10 @@ const Editor = ({
                 icon: <QuestionMarkIcon className="toolbar-item-icon" />,
             }
         );
+    }
+
+    if (reviewTaskType !== ReviewTaskTypeEnum.Claim) {
+        return <></>;
     }
 
     return (

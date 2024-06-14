@@ -1,114 +1,58 @@
-import {
-    AnnotationExtension,
-    LinkExtension,
-    PlaceholderExtension,
-    YjsExtension,
-} from "remirror/extensions";
-import React, { useCallback, useContext, useEffect, useMemo } from "react";
+import React, { useCallback, useContext } from "react";
 import { Remirror, useRemirror } from "@remirror/react";
 
 import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
-import ProsemirrorEditorStyle from "./ProsemirrorEditor.style";
-import Editor from "./Editor";
-import FloatingLinkToolbar from "./Components/LinkToolBar/FloatingLinkToolbar";
-import SummaryExtension from "./Form/SummaryExtesion";
-import QuestionExtension from "./Form/QuestionExtension";
-import ReportExtension from "./Form/ReportExtension";
-import VerificationExtesion from "./Form/VerificationExtension";
-import { TrailingNodeExtension } from "remirror/extensions";
-import { RemirrorContentType } from "remirror";
-import EditorSourcesList from "./Components/Source/EditorSourceList";
+import VisualEditorStyled from "./VisualEditor.style";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { reviewingSelector } from "../../machines/reviewTask/selectors";
-import { useSelector } from "@xstate/react";
-import CommentContainer from "./Comment/CommentContainer";
+import { EditorConfig } from "./utils/getEditorConfig";
+import CopilotDrawer from "../Copilot/CopilotDrawer";
 import { useAppSelector } from "../../store/store";
+import Editor from "./Components/Editor";
+import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import CommentContainer from "./Comment/CommentContainer";
 
 interface CollaborativeEditorProps {
-    placeholder: string;
-    onContentChange: (state: any) => void;
+    onContentChange: (state: any, type: string) => void;
 }
 
-const CollaborativeEditor = ({
-    placeholder,
-    onContentChange,
-}: CollaborativeEditorProps) => {
-    const {
-        websocketProvider,
-        editorContentObject,
-        editorSources,
-        setEditorSources,
-    } = useContext(CollaborativeEditorContext);
-    const enableEditorAnnotations = useAppSelector(
-        (state) => state?.enableEditorAnnotations
+const editorConfig = new EditorConfig();
+
+const CollaborativeEditor = ({ onContentChange }: CollaborativeEditorProps) => {
+    const { getComponents } = editorConfig;
+    const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
+        (state) => ({
+            enableCopilotChatBot: state?.enableCopilotChatBot,
+            reviewDrawerCollapsed:
+                state?.reviewDrawerCollapsed !== undefined
+                    ? state?.reviewDrawerCollapsed
+                    : true,
+        })
     );
-    const { machineService } = useContext(ReviewTaskMachineContext);
-    const readonly = useSelector(machineService, reviewingSelector);
-    const users = websocketProvider?.awareness?.states?.size;
-    const isCollaborative = users > 1;
 
-    useEffect(() => {
-        const sources = machineService.state.context.reviewData.sources;
-        setEditorSources(sources);
-    }, [machineService.state.context.reviewData.sources, setEditorSources]);
-
-    function createExtensions() {
-        const extensions: any = [
-            new PlaceholderExtension({ placeholder }),
-            new LinkExtension({
-                extraAttributes: {
-                    id: () => null,
-                },
-                autoLink: true,
-                selectTextOnClick: true,
-            }),
-            new SummaryExtension({ disableExtraAttributes: true }),
-            new QuestionExtension({ disableExtraAttributes: true }),
-            new ReportExtension({ disableExtraAttributes: true }),
-            new VerificationExtesion({ disableExtraAttributes: true }),
-            new TrailingNodeExtension(),
-        ];
-        if (websocketProvider) {
-            extensions.push(
-                new YjsExtension({ getProvider: () => websocketProvider })
-            );
-        }
-
-        if (enableEditorAnnotations) {
-            // TODO: Make annotations shared across documents
-            extensions.push(new AnnotationExtension());
-        }
-
-        return extensions;
-    }
-
-    const { manager, state, setState } = useRemirror({
-        extensions: createExtensions,
-        core: { excludeExtensions: ["history"] },
-        stringHandler: "html",
-        content: isCollaborative
-            ? undefined
-            : (editorContentObject as RemirrorContentType),
-    });
-
-    const editorContentNode = useMemo(() => {
-        if (!editorContentObject) {
-            return null;
-        }
-
-        return manager?.schema?.nodeFromJSON(editorContentObject);
-    }, [editorContentObject]);
+    const { editorConfiguration, editorSources } = useContext(
+        CollaborativeEditorContext
+    );
+    const { reviewTaskType, claim, sentenceContent } = useContext(
+        ReviewTaskMachineContext
+    );
+    const { manager, state, setState } = useRemirror(editorConfiguration);
+    const { readonly } = editorConfiguration;
+    const getComponentsProps = { state, manager, readonly, editorSources };
+    const showCopilot =
+        reviewTaskType === ReviewTaskTypeEnum.Claim &&
+        enableCopilotChatBot &&
+        reviewDrawerCollapsed;
 
     const handleChange = useCallback(
         ({ state }) => {
-            onContentChange(state);
+            onContentChange(state, reviewTaskType);
             setState(state);
         },
-        [setState, onContentChange]
+        [setState, onContentChange, reviewTaskType]
     );
 
     return (
-        <ProsemirrorEditorStyle>
+        <VisualEditorStyled>
             <Remirror
                 manager={manager}
                 initialContent={state}
@@ -117,20 +61,19 @@ const CollaborativeEditor = ({
                 onChange={handleChange}
                 editable={!readonly}
             >
-                <FloatingLinkToolbar />
-                <Editor
-                    node={editorContentNode}
-                    editable={readonly}
-                    state={state}
-                />
+                {getComponents(reviewTaskType, getComponentsProps)}
+
+                {showCopilot && (
+                    <CopilotDrawer
+                        manager={manager}
+                        claim={claim}
+                        sentence={sentenceContent}
+                    />
+                )}
                 <CommentContainer readonly={readonly} state={state} />
-                <EditorSourcesList
-                    nodeFromJSON={manager?.schema.nodeFromJSON}
-                    node={state.doc}
-                    sources={editorSources}
-                />
+                <Editor editable={readonly} state={state} />
             </Remirror>
-        </ProsemirrorEditorStyle>
+        </VisualEditorStyled>
     );
 };
 

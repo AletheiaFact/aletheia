@@ -4,6 +4,7 @@ import {
     Get,
     Header,
     Logger,
+    Optional,
     Param,
     Post,
     Query,
@@ -20,6 +21,11 @@ import type { Response } from "express";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CreateSourceDTO } from "./dto/create-source.dto";
 import { CaptchaService } from "../captcha/captcha.service";
+import { UnleashService } from "nestjs-unleash";
+import { TargetModel } from "../history/schema/history.schema";
+import { HistoryService } from "../history/history.service";
+import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
+import { ClaimReviewService } from "../claim-review/claim-review.service";
 
 @Controller(":namespace?")
 export class SourceController {
@@ -28,7 +34,11 @@ export class SourceController {
         private sourceService: SourceService,
         private viewService: ViewService,
         private configService: ConfigService,
-        private captchaService: CaptchaService
+        private captchaService: CaptchaService,
+        private claimReviewService: ClaimReviewService,
+        private claimReviewTaskService: ClaimReviewTaskService,
+        private historyService: HistoryService,
+        @Optional() private readonly unleash: UnleashService
     ) {}
 
     @ApiTags("source")
@@ -64,7 +74,7 @@ export class SourceController {
     }
 
     @ApiTags("pages")
-    @Get("sources/create")
+    @Get("source/create")
     public async sourceCreatePage(
         @Req() req: BaseRequest,
         @Res() res: Response
@@ -109,7 +119,8 @@ export class SourceController {
 
     @IsPublic()
     @ApiTags("pages")
-    @Get("sources")
+    @Get("source")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     public async sourcesPage(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
@@ -121,5 +132,100 @@ export class SourceController {
                 nameSpace: req.params.namespace,
             })
         );
+    }
+
+    @IsPublic()
+    @ApiTags("pages")
+    @Get("source/:dataHash")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async sourceReviewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const source = await this.sourceService.getByDataHash(
+            req.params.dataHash
+        );
+
+        const claimReviewTask =
+            await this.claimReviewTaskService.getClaimReviewTaskByDataHashWithUsernames(
+                source.data_hash
+            );
+        const claimReview = await this.claimReviewService.getReviewByDataHash(
+            source.data_hash
+        );
+
+        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
+        const enableCopilotChatBot = this.isEnableCopilotChatBot();
+        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableAddEditorSourcesWithoutSelecting =
+            this.isEnableAddEditorSourcesWithoutSelecting();
+
+        const hideDescriptions = {};
+
+        hideDescriptions[TargetModel.Source] =
+            await this.historyService.getDescriptionForHide(
+                source,
+                TargetModel.Claim
+            );
+
+        hideDescriptions[TargetModel.ClaimReview] =
+            await this.historyService.getDescriptionForHide(
+                claimReview,
+                TargetModel.ClaimReview
+            );
+
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/source-review",
+            Object.assign(parsedUrl.query, {
+                source,
+                claimReviewTask,
+                claimReview,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                hideDescriptions,
+                enableCollaborativeEditor,
+                enableEditorAnnotations,
+                enableCopilotChatBot,
+                enableAddEditorSourcesWithoutSelecting,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
+                nameSpace: req.params.namespace,
+            })
+        );
+    }
+
+    //TODO: Create service to get feature flags config
+    private isEnableCollaborativeEditor() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_collaborative_editor")
+            : false;
+    }
+
+    private isEnableCopilotChatBot() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config ? this.unleash.isEnabled("copilot_chat_bot") : false;
+    }
+
+    private isEnableEditorAnnotations() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_editor_annotations")
+            : false;
+    }
+
+    private isEnableAddEditorSourcesWithoutSelecting() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled(
+                  "enable_add_editor_sources_without_selecting"
+              )
+            : false;
     }
 }

@@ -12,7 +12,7 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
             event.type === ReviewTaskEvents.draft
         ) {
             const schema = editorParser.editor2schema(
-                event.reviewData.collaborativeEditor
+                event.reviewData.visualEditor.toJSON()
             );
             const reviewDataHtml = editorParser.schema2html(schema);
             event.reviewData = {
@@ -41,7 +41,7 @@ const savePartialReviewContext = assign<
 >((context, event) => {
     const editorParser = new EditorParser();
     const reviewData = editorParser.editor2schema(
-        event.reviewData.collaborativeEditor
+        event.reviewData.visualEditor.toJSON()
     );
     event.reviewData = {
         ...event.reviewData,
