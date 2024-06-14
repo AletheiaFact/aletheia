@@ -15,7 +15,7 @@ import {
     useUpdateReason,
 } from "@remirror/react";
 import { useTranslation } from "next-i18next";
-import { VisualEditorContext } from "../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
 

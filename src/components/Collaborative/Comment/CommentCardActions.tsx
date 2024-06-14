@@ -6,7 +6,7 @@ import { Popover } from "antd";
 import Button, { ButtonType } from "../../Button";
 import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import CommentApi from "../../../api/comment";
-import { VisualEditorContext } from "../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 import { useCommands } from "@remirror/react";
 import { currentUserRole } from "../../../atoms/currentUser";
 import { useAtom } from "jotai";

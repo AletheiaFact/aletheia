@@ -8,7 +8,7 @@ import {
 } from "../../../machines/reviewTask/selectors";
 
 import AletheiaCaptcha from "../../AletheiaCaptcha";
-import { VisualEditorContext } from "../../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";

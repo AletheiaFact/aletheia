@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { Remirror, useRemirror } from "@remirror/react";
 
-import { VisualEditorContext } from "./CollaborativeEditorProvider";
+import { VisualEditorContext } from "./VisualEditorProvider";
 import VisualEditorStyled from "./VisualEditor.style";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { EditorConfig } from "./utils/getEditorConfig";

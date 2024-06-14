@@ -14,7 +14,7 @@ import AletheiaButton, { ButtonType } from "../Button";
 import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";
 import LargeDrawer from "../LargeDrawer";
-import { VisualEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorProvider } from "../Collaborative/VisualEditorProvider";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import colors from "../../styles/colors";

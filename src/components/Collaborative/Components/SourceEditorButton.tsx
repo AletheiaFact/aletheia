@@ -3,7 +3,7 @@ import AletheiaButton from "../../Button";
 import { Col } from "antd";
 import SummarizationApi from "../../../api/summarizationApi";
 import { useTranslation } from "next-i18next";
-import { VisualEditorContext } from "../../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 
 const SourceEditorButton = ({ manager, state, readonly }) => {
     const { t } = useTranslation();

@@ -6,7 +6,7 @@ import Loading from "../Loading";
 import TextArea from "../TextArea";
 import UserInput from "./UserInput";
 import { useTranslation } from "next-i18next";
-import { VisualEditorContext } from "../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));

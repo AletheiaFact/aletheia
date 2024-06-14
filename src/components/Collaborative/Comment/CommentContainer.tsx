@@ -7,7 +7,7 @@ import {
     useCommands,
     useHelpers,
 } from "@remirror/react";
-import { VisualEditorContext } from "../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 import { Row } from "antd";
 import CommentsList from "./CommentsList";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";

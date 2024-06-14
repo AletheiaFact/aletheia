@@ -13,7 +13,7 @@ import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
-import { VisualEditorProvider } from "../components/Collaborative/CollaborativeEditorProvider";
+import { VisualEditorProvider } from "../components/Collaborative/VisualEditorProvider";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";

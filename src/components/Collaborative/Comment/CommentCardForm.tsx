@@ -3,7 +3,7 @@ import Button, { ButtonType } from "../../Button";
 import AletheiaInput from "../../AletheiaInput";
 import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
-import { VisualEditorContext } from "../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 import CommentApi from "../../../api/comment";
 import { useTranslation } from "next-i18next";
 import colors from "../../../styles/colors";

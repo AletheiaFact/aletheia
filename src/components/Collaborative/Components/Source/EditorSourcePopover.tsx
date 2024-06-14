@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Popover } from "antd";
 import EditorSourcePopoverContent from "./EditorSourcePopoverContent";
 import { useCommands } from "@remirror/react";
-import { VisualEditorContext } from "../../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../../VisualEditorProvider";
 import { ProsemirrorNode } from "remirror";
 
 /**
