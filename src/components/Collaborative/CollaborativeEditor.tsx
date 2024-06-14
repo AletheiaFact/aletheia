@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { Remirror, useRemirror } from "@remirror/react";
 
 import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
@@ -10,6 +10,8 @@ import { useAppSelector } from "../../store/store";
 import Editor from "./Components/Editor";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 import CommentContainer from "./Comment/CommentContainer";
+import { useDispatch } from "react-redux";
+import actions from "../../store/actions";
 
 interface CollaborativeEditorProps {
     onContentChange: (state: any, type: string) => void;
@@ -19,6 +21,7 @@ const editorConfig = new EditorConfig();
 
 const CollaborativeEditor = ({ onContentChange }: CollaborativeEditorProps) => {
     const { getComponents } = editorConfig;
+    const dispatch = useDispatch();
     const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
         (state) => ({
             enableCopilotChatBot: state?.enableCopilotChatBot,
@@ -42,6 +45,16 @@ const CollaborativeEditor = ({ onContentChange }: CollaborativeEditorProps) => {
         reviewTaskType === ReviewTaskTypeEnum.Claim &&
         enableCopilotChatBot &&
         reviewDrawerCollapsed;
+
+    useEffect(() => {
+        if (enableCopilotChatBot && reviewDrawerCollapsed) {
+            dispatch(actions.openCopilotDrawer());
+        }
+
+        return () => {
+            dispatch(actions.closeCopilotDrawer());
+        };
+    }, []);
 
     const handleChange = useCallback(
         ({ state }) => {

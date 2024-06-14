@@ -42,7 +42,9 @@ const CopilotConversation = ({
     }, [messages, showButtons]);
 
     const handleAddReportClick = () => {
-        manager.view.updateState(manager.createState(editorReport));
+        manager.view.updateState(
+            manager.createState({ content: { ...editorReport } })
+        );
         setShowButtons({
             ADD_REPORT: false,
             ADD_RATE: true,

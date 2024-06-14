@@ -132,6 +132,8 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 baseReportModel={props?.claimReviewTask?.reportModel}
                 publishedReview={{ review: claimReview }}
                 reviewTaskType={ReviewTaskTypeEnum.Claim}
+                claim={claim}
+                sentenceContent={content.content}
             >
                 <CollaborativeEditorProvider data_hash={content.data_hash}>
                     <ClaimReviewView

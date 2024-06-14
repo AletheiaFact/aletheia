@@ -53,10 +53,10 @@ const CopilotDrawer = ({ manager, claim, sentence }: CopilotDrawerProps) => {
 
     const context: MessageContext = useMemo(
         () => ({
-            claimDate: claim.date,
+            claimDate: claim?.date,
             sentence: sentence,
             personalityName: claim?.personalities[0]?.name || null,
-            claimTitle: claim.title,
+            claimTitle: claim?.title,
         }),
         [claim, sentence]
     );
