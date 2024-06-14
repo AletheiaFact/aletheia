@@ -2,22 +2,15 @@ import { ObjectMark, RemirrorJSON } from "remirror";
 import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/dto/create-claim-review-task.dto";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../server/types/enums";
 
-type BaseSchemaType = {
+type ClaimReviewSchemaType = {
     summary?: string;
-};
-
-type ClaimReviewSchemaType = BaseSchemaType & {
     verification?: string;
     report?: string;
     sources?: any[];
     questions?: string[];
 };
 
-type SourceReviewSchemaType = BaseSchemaType & {
-    source?: string;
-};
-
-type ReviewSchemaType = ClaimReviewSchemaType | SourceReviewSchemaType;
+type ReviewSchemaType = ClaimReviewSchemaType;
 
 const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) => {
     if (!reportModel) {
@@ -201,10 +194,15 @@ export class EditorParser {
         summary?: string;
         source?: string;
     } {
-        const schema: Partial<ReviewSchemaType> =
-            attrs.reviewTaskType === ReviewTaskTypeEnum.Claim
-                ? { summary: "", sources: [] }
-                : {}; // TODO: improve it
+        let schema: Partial<ReviewSchemaType>;
+        switch (attrs.reviewTaskType) {
+            case ReviewTaskTypeEnum.Claim:
+                schema = { summary: "", sources: [] };
+                break;
+            default:
+                schema = {};
+                break;
+        }
 
         const questions = [];
         for (const cardContent of content) {
