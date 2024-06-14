@@ -3,12 +3,12 @@ import AletheiaButton from "../../Button";
 import { Col } from "antd";
 import SummarizationApi from "../../../api/summarizationApi";
 import { useTranslation } from "next-i18next";
-import { CollaborativeEditorContext } from "../../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorContext } from "../../Collaborative/CollaborativeEditorProvider";
 
 const SourceEditorButton = ({ manager, state, readonly }) => {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
-    const { source } = useContext(CollaborativeEditorContext);
+    const { source } = useContext(VisualEditorContext);
 
     const summarizeSource = useCallback(async () => {
         setIsLoading(true);

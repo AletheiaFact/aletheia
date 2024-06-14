@@ -6,10 +6,10 @@ import Loading from "../Loading";
 import TextArea from "../TextArea";
 import UserInput from "./UserInput";
 import { useTranslation } from "next-i18next";
-import { CollaborativeEditorContext } from "../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorContext } from "../Collaborative/CollaborativeEditorProvider";
 import AletheiaInput from "../AletheiaInput";
 
-const VisualEditor = lazy(() => import("../Collaborative/CollaborativeEditor"));
+const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
 interface DynamicInputProps {
     fieldName: string;
@@ -24,7 +24,7 @@ interface DynamicInputProps {
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
-    const { isFetchingEditor } = useContext(CollaborativeEditorContext);
+    const { isFetchingEditor } = useContext(VisualEditorContext);
 
     const { t } = useTranslation();
     switch (props.type) {

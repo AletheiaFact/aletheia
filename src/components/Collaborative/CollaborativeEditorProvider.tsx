@@ -20,17 +20,15 @@ interface ContextType {
     source?: string;
 }
 
-export const CollaborativeEditorContext = createContext<ContextType>({});
+export const VisualEditorContext = createContext<ContextType>({});
 
-interface CollaborativeEditorProviderProps {
+interface VisualEditorProviderProps {
     data_hash: string;
     children: React.ReactNode;
     source?: string;
 }
 
-export const CollaborativeEditorProvider = (
-    props: CollaborativeEditorProviderProps
-) => {
+export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     const editorConfig = new EditorConfig();
     const { machineService, reportModel, reviewTaskType } = useContext(
         ReviewTaskMachineContext
@@ -102,7 +100,7 @@ export const CollaborativeEditorProvider = (
     };
 
     return (
-        <CollaborativeEditorContext.Provider
+        <VisualEditorContext.Provider
             value={{
                 editorConfiguration,
                 editorSources,
@@ -115,6 +113,6 @@ export const CollaborativeEditorProvider = (
             }}
         >
             {props.children}
-        </CollaborativeEditorContext.Provider>
+        </VisualEditorContext.Provider>
     );
 };

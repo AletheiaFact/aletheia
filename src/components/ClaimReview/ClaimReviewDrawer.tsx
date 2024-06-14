@@ -14,7 +14,7 @@ import AletheiaButton, { ButtonType } from "../Button";
 import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";
 import LargeDrawer from "../LargeDrawer";
-import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import colors from "../../styles/colors";
@@ -59,7 +59,7 @@ const ClaimReviewDrawer = () => {
                     data_hash={data_hash}
                     reviewTaskType={ReviewTaskTypeEnum.Claim}
                 >
-                    <CollaborativeEditorProvider data_hash={data_hash}>
+                    <VisualEditorProvider data_hash={data_hash}>
                         <Row
                             justify="space-between"
                             style={{
@@ -133,7 +133,7 @@ const ClaimReviewDrawer = () => {
                             claim={claim}
                             content={content}
                         />
-                    </CollaborativeEditorProvider>
+                    </VisualEditorProvider>
                 </ReviewTaskMachineProvider>
             ) : (
                 <Loading />

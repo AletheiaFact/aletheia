@@ -13,7 +13,7 @@ import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
-import { CollaborativeEditorProvider } from "../components/Collaborative/CollaborativeEditorProvider";
+import { VisualEditorProvider } from "../components/Collaborative/CollaborativeEditorProvider";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
@@ -135,14 +135,14 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 claim={claim}
                 sentenceContent={content.content}
             >
-                <CollaborativeEditorProvider data_hash={content.data_hash}>
+                <VisualEditorProvider data_hash={content.data_hash}>
                     <ClaimReviewView
                         personality={personality}
                         claim={claim}
                         content={content}
                         hideDescriptions={hideDescriptions}
                     />
-                </CollaborativeEditorProvider>
+                </VisualEditorProvider>
             </ReviewTaskMachineProvider>
             <AffixButton personalitySlug={personality?.slug} />
         </>

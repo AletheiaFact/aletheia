@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { Remirror, useRemirror } from "@remirror/react";
 
-import { CollaborativeEditorContext } from "./CollaborativeEditorProvider";
+import { VisualEditorContext } from "./CollaborativeEditorProvider";
 import VisualEditorStyled from "./VisualEditor.style";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { EditorConfig } from "./utils/getEditorConfig";
@@ -13,13 +13,13 @@ import CommentContainer from "./Comment/CommentContainer";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 
-interface CollaborativeEditorProps {
+interface VisualEditorProps {
     onContentChange: (state: any, type: string) => void;
 }
 
 const editorConfig = new EditorConfig();
 
-const CollaborativeEditor = ({ onContentChange }: CollaborativeEditorProps) => {
+const VisualEditor = ({ onContentChange }: VisualEditorProps) => {
     const { getComponents } = editorConfig;
     const dispatch = useDispatch();
     const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
@@ -32,9 +32,8 @@ const CollaborativeEditor = ({ onContentChange }: CollaborativeEditorProps) => {
         })
     );
 
-    const { editorConfiguration, editorSources } = useContext(
-        CollaborativeEditorContext
-    );
+    const { editorConfiguration, editorSources } =
+        useContext(VisualEditorContext);
     const { reviewTaskType, claim, sentenceContent } = useContext(
         ReviewTaskMachineContext
     );
@@ -90,4 +89,4 @@ const CollaborativeEditor = ({ onContentChange }: CollaborativeEditorProps) => {
     );
 };
 
-export default CollaborativeEditor;
+export default VisualEditor;

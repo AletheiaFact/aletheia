@@ -8,7 +8,7 @@ import {
 } from "../../../machines/reviewTask/selectors";
 
 import AletheiaCaptcha from "../../AletheiaCaptcha";
-import { CollaborativeEditorContext } from "../../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorContext } from "../../Collaborative/CollaborativeEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -45,7 +45,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim, source }) => {
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isReported = useSelector(machineService, reportSelector);
-    const { comments } = useContext(CollaborativeEditorContext);
+    const { comments } = useContext(VisualEditorContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
