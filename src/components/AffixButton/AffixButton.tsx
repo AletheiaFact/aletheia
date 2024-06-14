@@ -75,7 +75,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                     nameSpace !== NameSpaceEnum.Main
                         ? `/${nameSpace}/source/create`
                         : `/source/create`,
-                dataCy: "testFloatButtonAddVerifiedSources",
+                dataCy: "testFloatButtonAddSources",
             }
         );
 
