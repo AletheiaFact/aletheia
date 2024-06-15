@@ -71,7 +71,7 @@ const AletheiaMenu = () => {
                         : "/source"
                 }
                 onClick={handleClick}
-                data-cy={"testSourcestItem"}
+                data-cy={"testSourcetItem"}
             >
                 {t("menu:sourcesItem")}
             </Menu.Item>

@@ -24,9 +24,7 @@ const goToClaimReviewPage = () => {
     cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
 };
 
-const assignUser = () => {
-    cy.login();
-    goToClaimReviewPage();
+export const assignUser = () => {
     cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("exist").click();
     cy.get(locators.claimReview.INPUT_USER)
         .should("exist")
@@ -39,9 +37,7 @@ const assignUser = () => {
     cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
 };
 
-const blockAssignedUserReview = () => {
-    cy.login();
-    goToSourceReviewPage();
+export const blockAssignedUserReview = () => {
     cy.checkRecaptcha();
     cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist").click();
     cy.get(locators.claimReview.INPUT_REVIEWER)
@@ -51,10 +47,6 @@ const blockAssignedUserReview = () => {
     cy.checkRecaptcha();
     cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
     cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
-};
-
-const goToSourceReviewPage = () => {
-    cy.visit(`http://localhost:3000/source/${source.data_hash}`);
 };
 
 describe("Test claim review", () => {
@@ -67,7 +59,11 @@ describe("Test claim review", () => {
         cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("not.exist");
     });
 
-    it("should be able to assign a user", () => assignUser());
+    it("should be able to assign a user", () => {
+        cy.login();
+        goToClaimReviewPage();
+        assignUser();
+    });
 
     it("should be able to submit full review fields", () => {
         cy.login();
@@ -117,40 +113,8 @@ describe("Test claim review", () => {
     });
 
     it("should not be able submit after choosing assigned user as reviewer", () => {
-        blockAssignedUserReview();
-    });
-});
-
-describe("Test source review", () => {
-    it("should not show start source review when not logged in", () => {
-        goToSourceReviewPage();
-        cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("not.exist");
-    });
-
-    it("should be able to assign a user", () => assignUser());
-
-    it("should be able to submit source review fields", () => {
         cy.login();
-        goToSourceReviewPage();
-        cy.get(locators.claimReview.INPUT_CLASSIFICATION)
-            .should("exist")
-            .click();
-        cy.get(`[data-cy=${review.classification}]`)
-            .should("be.visible")
-            .click();
-
-        cy.get(locators.claimReview.INPUT_SUMMARY)
-            .should("exist")
-            .type(review.summary);
-
-        cy.checkRecaptcha();
-        cy.get(locators.claimReview.BTN_FINISH_REPORT)
-            .should("be.enabled")
-            .click();
-        cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist");
-    });
-
-    it("should not be able submit after choosing assigned user as reviewer", () => {
+        goToClaimReviewPage();
         blockAssignedUserReview();
     });
 });
