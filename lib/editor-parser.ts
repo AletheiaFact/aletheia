@@ -189,7 +189,7 @@ export class EditorParser {
 
     editor2schema({
         content,
-        attrs,
+        attrs = { reviewTaskType: ReviewTaskTypeEnum.Claim },
     }: RemirrorJSON): ReviewTaskMachineContextReviewData & {
         summary?: string;
         source?: string;

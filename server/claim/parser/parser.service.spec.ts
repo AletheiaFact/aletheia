@@ -23,7 +23,7 @@ describe("ParserService", () => {
         const testingModule: TestingModule = await Test.createTestingModule({
             imports: [
                 MongooseModule.forRoot(
-                    TestConfigOptions.config.db.connection_uri,
+                    TestConfigOptions.config.db.connection_uri || "",
                     TestConfigOptions.config.db.options
                 ),
                 SpeechModule,
