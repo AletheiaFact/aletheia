@@ -7,8 +7,8 @@ import {
     AnnotationExtension,
     LinkExtension,
     YjsExtension,
+    TrailingNodeExtension,
 } from "remirror/extensions";
-import { TrailingNodeExtension } from "remirror/extensions";
 import SourceReviewEditor from "../Components/SourceReviewEditor";
 import ClaimReviewEditor from "../Components/ClaimReviewEditor";
 import { MarkExtension, NodeExtension, PlainExtension } from "remirror";

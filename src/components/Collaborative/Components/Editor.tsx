@@ -1,7 +1,6 @@
 import React, { useCallback, useContext } from "react";
 
-import { useHelpers } from "@remirror/react";
-import { useCommands } from "@remirror/react";
+import { useHelpers, useCommands } from "@remirror/react";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";

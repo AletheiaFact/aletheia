@@ -2,7 +2,7 @@ import { useSelector } from "@xstate/react";
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
+import { Roles, TargetModel } from "../../types/enums";
 import { reviewDataSelector } from "../../machines/reviewTask/selectors";
 import SentenceReportView from "../SentenceReport/SentenceReportView";
 import SocialMediaShare from "../SocialMediaShare";
@@ -13,14 +13,11 @@ import { currentUserId, currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 import AdminToolBar from "../Toolbar/AdminToolBar";
 import ClaimReviewApi from "../../api/claimReviewApi";
-import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import ReviewTaskAdminToolBar from "../Toolbar/ReviewTaskAdminToolBar";
 import { useAppSelector } from "../../store/store";
-import {
-    ReviewTaskStates,
-    ReviewTaskTypeEnum,
-} from "../../machines/reviewTask/enums";
+import { ReviewTaskStates } from "../../machines/reviewTask/enums";
+import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
 
 export interface ClaimReviewViewProps {
     content: Content;
@@ -42,16 +39,14 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                 : true,
     }));
     const { review } = publishedReview || {};
-    const [nameSpace] = useAtom(currentNameSpace);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const [role] = useAtom(currentUserRole);
     const [userId] = useAtom(currentUserId);
-
+    const [nameSpace] = useAtom(currentNameSpace);
     const userIsNotRegular = !(role === Roles.Regular || role === null);
     const userIsReviewer = reviewData.reviewerId === userId;
     const userIsCrossChecker = reviewData.crossCheckerId === userId;
     const userIsAssignee = reviewData.usersId.includes(userId);
-    const isContentImage = claim?.contentModel === ContentModelEnum.Image;
     const hasStartedTask =
         machineService.state.value !== ReviewTaskStates.unassigned;
     const origin = window.location.origin ? window.location.origin : "";
@@ -66,33 +61,16 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
         componentStyle.offset = 1;
     }
 
-    const getHref = () => {
-        const baseContentPath =
-            nameSpace !== NameSpaceEnum.Main ? `${nameSpace}` : "";
+    const reviewContentPath = generateReviewContentPath(
+        nameSpace,
+        personality,
+        claim,
+        claim?.contentModel,
+        content.data_hash,
+        reviewTaskType
+    );
 
-        switch (reviewTaskType) {
-            case ReviewTaskTypeEnum.Claim:
-                let contentPath = `${baseContentPath}/claim`;
-
-                if (personality) {
-                    contentPath = `${baseContentPath}/personality/${personality.slug}/claim`;
-                }
-
-                contentPath += isContentImage
-                    ? `/${claim?._id}`
-                    : `/${claim?.slug}/sentence/${content.data_hash}`;
-
-                return `${origin}${contentPath}`;
-
-            case ReviewTaskTypeEnum.Source:
-                return `${origin}${baseContentPath}/source/${content.data_hash}`;
-
-            default:
-                return `${origin}`;
-        }
-    };
-
-    const href = getHref();
+    const href = `${origin}${reviewContentPath}`;
 
     return (
         <div>

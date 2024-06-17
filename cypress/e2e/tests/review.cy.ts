@@ -4,7 +4,6 @@
 import claim from "../../fixtures/claim";
 import personality from "../../fixtures/personality";
 import review from "../../fixtures/review";
-import source from "../../fixtures/source";
 import locators from "../../support/locators";
 
 const goToClaimReviewPage = () => {

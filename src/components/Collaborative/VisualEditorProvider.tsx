@@ -99,19 +99,31 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
             : (editorContentObject as RemirrorContentType),
     };
 
+    const value = useMemo(
+        () => ({
+            editorConfiguration,
+            editorSources,
+            setEditorSources,
+            data_hash: props.data_hash,
+            isFetchingEditor,
+            comments,
+            setComments,
+            source: props.source,
+        }),
+        [
+            editorConfiguration,
+            editorSources,
+            setEditorSources,
+            isFetchingEditor,
+            comments,
+            setComments,
+            props.data_hash,
+            props.source,
+        ]
+    );
+
     return (
-        <VisualEditorContext.Provider
-            value={{
-                editorConfiguration,
-                editorSources,
-                setEditorSources,
-                data_hash: props.data_hash,
-                isFetchingEditor,
-                comments,
-                setComments,
-                source: props.source,
-            }}
-        >
+        <VisualEditorContext.Provider value={value}>
             {props.children}
         </VisualEditorContext.Provider>
     );

@@ -13,7 +13,7 @@ export class ReportService {
         private sourceService: SourceService
     ) {}
 
-    async create(report) {
+    create(report) {
         if (
             !Object.values(ClassificationEnum).includes(report.classification)
         ) {
@@ -22,9 +22,9 @@ export class ReportService {
         const newReport = new this.ReportModel(report);
 
         if (report.sources) {
-            await this.createReportSources(report.sources, newReport.id);
+            this.createReportSources(report.sources, newReport.id);
         } else {
-            await this.updateReportSource(report, newReport.id);
+            this.updateReportSource(report, newReport.id);
         }
 
         newReport.save();

@@ -18,7 +18,7 @@ import { VisualEditorProvider } from "../Collaborative/VisualEditorProvider";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import colors from "../../styles/colors";
-import { generateClaimContentPath } from "../../utils/GetClaimContentHref";
+import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 
 const ClaimReviewDrawer = () => {
@@ -82,12 +82,13 @@ const ClaimReviewDrawer = () => {
                                 </AletheiaButton>
                                 <Col span={vw?.xs ? 8 : 14}>
                                     <AletheiaButton
-                                        href={generateClaimContentPath(
+                                        href={generateReviewContentPath(
                                             nameSpace,
                                             personality,
                                             claim,
                                             claim.contentModel,
-                                            data_hash
+                                            data_hash,
+                                            ReviewTaskTypeEnum.Claim
                                         )}
                                         onClick={() => setIsLoading(true)}
                                         type={ButtonType.gray}
