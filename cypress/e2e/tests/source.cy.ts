@@ -3,7 +3,6 @@
 
 import locators from "../../support/locators";
 import source from "../../fixtures/source";
-import { assignUser, blockAssignedUserReview } from "./review.cy";
 import review from "../../fixtures/review";
 
 const goToSourceReviewPage = () => {
@@ -30,7 +29,20 @@ describe("Create source and source review", () => {
 
     it("should be able to assign a user", () => {
         goToSourceReviewPage();
-        assignUser();
+        cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW)
+            .should("exist")
+            .click();
+        cy.get(locators.claimReview.INPUT_USER)
+            .should("exist")
+            .type(review.username, { delay: 200 });
+        cy.get(".ant-select-item-option-active").click();
+        cy.get('[title="reCAPTCHA"]').should("exist");
+        cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
+        cy.checkRecaptcha();
+        cy.get(locators.claimReview.BTN_ASSIGN_USER)
+            .should("be.enabled")
+            .click();
+        cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
     });
 
     it("should be able to submit source review fields", () => {
@@ -55,6 +67,16 @@ describe("Create source and source review", () => {
 
     it("should not be able submit after choosing assigned user as reviewer", () => {
         goToSourceReviewPage();
-        blockAssignedUserReview();
+        cy.checkRecaptcha();
+        cy.get(locators.claimReview.BTN_SELECTED_REVIEW)
+            .should("exist")
+            .click();
+        cy.get(locators.claimReview.INPUT_REVIEWER)
+            .should("exist")
+            .type(review.username, { delay: 200 });
+        cy.get(".ant-select-item-option-active").click();
+        cy.checkRecaptcha();
+        cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
+        cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
     });
 });

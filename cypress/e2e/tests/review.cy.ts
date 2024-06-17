@@ -23,7 +23,7 @@ const goToClaimReviewPage = () => {
     cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
 };
 
-export const assignUser = () => {
+const assignUser = () => {
     cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("exist").click();
     cy.get(locators.claimReview.INPUT_USER)
         .should("exist")
@@ -36,7 +36,7 @@ export const assignUser = () => {
     cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
 };
 
-export const blockAssignedUserReview = () => {
+const blockAssignedUserReview = () => {
     cy.checkRecaptcha();
     cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist").click();
     cy.get(locators.claimReview.INPUT_REVIEWER)
