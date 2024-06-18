@@ -1,12 +1,12 @@
 import * as mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import type { Machine } from "../dto/create-claim-review-task.dto";
+import type { Machine } from "../dto/create-review-task.dto";
 import { ReportModelEnum } from "../../types/enums";
 
-export type ClaimReviewTaskDocument = ClaimReviewTask & mongoose.Document;
+export type ReviewTaskDocument = ReviewTask & mongoose.Document;
 
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
-export class ClaimReviewTask {
+export class ReviewTask {
     @Prop({ type: Object, required: true })
     machine: Machine;
 
@@ -25,5 +25,4 @@ export class ClaimReviewTask {
     reportModel: ReportModelEnum;
 }
 
-export const ClaimReviewTaskSchema =
-    SchemaFactory.createForClass(ClaimReviewTask);
+export const ReviewTaskSchema = SchemaFactory.createForClass(ReviewTask);

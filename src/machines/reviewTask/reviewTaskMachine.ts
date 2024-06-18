@@ -1,4 +1,4 @@
-import api from "../../api/ClaimReviewTaskApi";
+import api from "../../api/reviewTaskApi";
 import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContextType } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
@@ -49,7 +49,7 @@ export const transitionHandler = (state) => {
     ) {
         setFormAndEvents(nextState);
     } else if (event !== Events.init) {
-        api.createClaimReviewTask(
+        api.createReviewTask(
             {
                 data_hash,
                 reportModel,

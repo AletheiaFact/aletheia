@@ -4,7 +4,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CommentPopoverContent from "./CommentPopoverContent";
 import { Popover } from "antd";
 import Button, { ButtonType } from "../../Button";
-import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
+import ReviewTaskApi from "../../../api/reviewTaskApi";
 import CommentApi from "../../../api/comment";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import { useCommands } from "@remirror/react";
@@ -54,7 +54,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
                     )
                 );
             } else {
-                await ClaimReviewTaskApi.deleteComment(data_hash, content._id);
+                await ReviewTaskApi.deleteComment(data_hash, content._id);
                 setComments((comments) =>
                     comments.filter((c) => c._id !== content?._id)
                 );

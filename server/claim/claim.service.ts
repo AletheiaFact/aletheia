@@ -12,7 +12,7 @@ import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ContentModelEnum } from "../types/enums";
-import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
+import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
@@ -38,7 +38,7 @@ export class ClaimService {
         private historyService: HistoryService,
         private stateEventService: StateEventService,
         private claimRevisionService: ClaimRevisionService,
-        private claimReviewTaskService: ClaimReviewTaskService,
+        private reviewTaskService: ReviewTaskService,
         private util: UtilService
     ) {}
 
@@ -383,10 +383,8 @@ export class ClaimService {
             const reviews = await this.claimReviewService.getReviewsByClaimId(
                 claim._id
             );
-            const claimReviewTasks =
-                await this.claimReviewTaskService.getReviewTasksByClaimId(
-                    claim._id
-                );
+            const reviewTasks =
+                await this.reviewTaskService.getReviewTasksByClaimId(claim._id);
 
             processedClaim.content = this.getClaimContent(processedClaim);
 
@@ -397,7 +395,7 @@ export class ClaimService {
                             const content = this.transformContentObject(
                                 speech.content,
                                 reviews,
-                                claimReviewTasks
+                                reviewTasks
                             );
                             return { ...speech, content };
                         });
@@ -405,7 +403,7 @@ export class ClaimService {
                     processedClaim.content = this.transformContentObject(
                         processedClaim.content,
                         reviews,
-                        claimReviewTasks
+                        reviewTasks
                     );
                 }
             }
@@ -447,11 +445,8 @@ export class ClaimService {
         };
     }
 
-    private transformContentObject(claimContent, reviews, claimReviewTasks) {
-        if (
-            !claimContent ||
-            (reviews.length <= 0 && claimReviewTasks.length <= 0)
-        ) {
+    private transformContentObject(claimContent, reviews, reviewTasks) {
+        if (!claimContent || (reviews.length <= 0 && reviewTasks.length <= 0)) {
             return claimContent;
         }
 
@@ -490,11 +485,11 @@ export class ClaimService {
                             );
                         }
 
-                        const claimReviewTask = claimReviewTasks.find(
+                        const reviewTask = reviewTasks.find(
                             (task) => task?.data_hash === sentence.data_hash
                         );
 
-                        if (claimReviewTask) {
+                        if (reviewTask) {
                             return processReview(sentence, "in-progress");
                         }
 

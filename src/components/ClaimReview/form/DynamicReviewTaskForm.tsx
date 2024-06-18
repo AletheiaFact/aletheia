@@ -232,7 +232,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim, source }) => {
                     <div style={{ paddingBottom: 20, marginLeft: 20 }}>
                         {reviewerError && (
                             <Text type="danger" data-cy="testReviewerError">
-                                {t("claimReviewTask:invalidReviewerMessage")}
+                                {t("reviewTask:invalidReviewerMessage")}
                             </Text>
                         )}
                     </div>
@@ -263,7 +263,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim, source }) => {
                                 disabled={!hasCaptcha}
                                 data-cy={`testClaimReview${event}`}
                             >
-                                {t(`claimReviewTask:${event}`)}
+                                {t(`reviewTask:${event}`)}
                             </AletheiaButton>
                         );
                     })}

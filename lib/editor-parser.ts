@@ -1,5 +1,5 @@
 import { ObjectMark, RemirrorJSON } from "remirror";
-import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/dto/create-claim-review-task.dto";
+import { ReviewTaskMachineContextReviewData } from "../server/review-task/dto/create-review-task.dto";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../server/types/enums";
 
 type ClaimReviewSchemaType = {

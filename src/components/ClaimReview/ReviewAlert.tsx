@@ -51,17 +51,17 @@ const ReviewAlert = ({ isHidden, isPublished, hideDescription }) => {
         crossChecking: {
             show: true,
             description: "",
-            title: "claimReviewTask:crossCheckingAlertTitle",
+            title: "reviewTask:crossCheckingAlertTitle",
         },
         reviewing: {
             show: true,
             description: "",
-            title: "claimReviewTask:reviewingAlertTitle",
+            title: "reviewTask:reviewingAlertTitle",
         },
         hasStarted: {
             show: true,
             description: "",
-            title: "claimReviewTask:hasStartedAlertTitle",
+            title: "reviewTask:hasStartedAlertTitle",
         },
         noAlert: {
             show: false,

@@ -8,7 +8,7 @@ import { ConfigModule } from "@nestjs/config";
 import { CaptchaModule } from "../captcha/captcha.module";
 import { HistoryModule } from "../history/history.module";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
-import { ClaimReviewTaskModule } from "../claim-review-task/claim-review-task.module";
+import { ReviewTaskModule } from "../review-task/review-task.module";
 
 const SourceModel = MongooseModule.forFeature([
     {
@@ -25,7 +25,7 @@ const SourceModel = MongooseModule.forFeature([
         CaptchaModule,
         HistoryModule,
         forwardRef(() => ClaimReviewModule),
-        ClaimReviewTaskModule,
+        ReviewTaskModule,
     ],
     providers: [SourceService],
     exports: [SourceService],

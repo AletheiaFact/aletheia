@@ -5,7 +5,7 @@ const request = axios.create({
     baseURL: `/api/ai-fact-checking`,
 });
 
-const createClaimReviewTaskUsingAIAgents = (params) => {
+const createReviewTaskUsingAIAgents = (params) => {
     return request
         .post("/", { ...params })
         .then((response) => {
@@ -17,7 +17,7 @@ const createClaimReviewTaskUsingAIAgents = (params) => {
 };
 
 const AutomatedFactCheckingApi = {
-    createClaimReviewTaskUsingAIAgents,
+    createReviewTaskUsingAIAgents,
 };
 
 export default AutomatedFactCheckingApi;
