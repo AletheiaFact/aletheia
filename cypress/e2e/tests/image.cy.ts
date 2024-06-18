@@ -23,9 +23,9 @@ describe("Create image claim", () => {
 
         cy.get(locators.claim.INPUT_SOURCE)
             .should("be.visible")
-            .type(claim.source);
+            .type(claim.imageSource);
         cy.get(locators.claim.BTN_UPLOAD_IMAGE).should("be.visible");
-        cy.get('input[type="file"]').selectFile(claim.imageSource, {
+        cy.get('input[type="file"]').selectFile(claim.imageSourceFile, {
             force: true,
         });
         cy.get("[data-cy=testCheckboxAcceptTerms]").click();

@@ -1,10 +1,11 @@
 const claim = {
     title: "Speech Claim Title",
     content: "Speech Claim Content Lorem Ipsum Dolor Sit Amet...",
-    source: "https://aletheiafact.org",
+    source: "https://wikimedia.org",
+    imageSource: "https://aletheiafact.org",
     slug: "speech-claim-title",
     imageTitle: "Image Claim Title",
-    imageSource: "cypress/fixtures/imageTest1.png",
+    imageSourceFile: "cypress/fixtures/imageTest1.png",
     imagePersonalitySource: "cypress/fixtures/imageTest2.png",
     imageSlug: "image-claim-title",
 };
