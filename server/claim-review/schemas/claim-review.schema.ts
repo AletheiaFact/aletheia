@@ -27,6 +27,7 @@ export class ClaimReview {
     })
     personality: Personality;
 
+    // TODO: Add targetModel field and use a single field to reference the target instead having source and claim fields
     @Prop({
         type: mongoose.Types.ObjectId,
         required: false,

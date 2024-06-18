@@ -33,7 +33,6 @@ const DynamicSourceForm = () => {
             href: source,
             user: userId,
             recaptcha: recaptchaString,
-            props: {},
         };
 
         SourceApi.createSource(t, router, newSource).then((s) => {
@@ -49,7 +48,6 @@ const DynamicSourceForm = () => {
         >
             <DynamicForm
                 currentForm={createSourceForm}
-                machineValues={{}}
                 control={control}
                 errors={errors}
             />
