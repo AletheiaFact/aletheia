@@ -1,7 +1,8 @@
 {
     "cardAuthor": "{{name}} reviewed this as:",
     "anonymousUserName": "Anonymous",
-    "claimReview": "Claim reviewed as ",
+    "titleClaimReview": "Claim reviewed as ",
+    "titleSourceReview": "Source reviewed as ",
     "listTitle": "Reviews",
     "summarySectionTitle": "Summary of conclusion",
     "questionsSectionTitle": "What questions should the verification answer?",

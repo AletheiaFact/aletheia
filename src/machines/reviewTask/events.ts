@@ -1,4 +1,4 @@
-import { RemirrorJSON } from "remirror";
+import { ProsemirrorNode } from "remirror";
 
 export enum ClassificationEnum {
     "not-fact" = 0,
@@ -21,7 +21,7 @@ export type ReviewData = {
     sources: string[] | object[];
     classification: string | ClassificationEnum;
     reviewerId: string;
-    collaborativeEditor?: RemirrorJSON;
+    visualEditor?: ProsemirrorNode;
     reviewDataHtml?: any;
     crossCheckingComments: any[];
     crossCheckingComment: string;
@@ -32,6 +32,7 @@ export type ClaimReview = {
     personality: string;
     claim: string;
     usersId: string;
+    source: string;
     isPartialReview: boolean;
 };
 

@@ -23,6 +23,31 @@ const goToClaimReviewPage = () => {
     cy.get(locators.claim.BTN_SEE_FULL_REVIEW).should("exist");
 };
 
+const assignUser = () => {
+    cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW).should("exist").click();
+    cy.get(locators.claimReview.INPUT_USER)
+        .should("exist")
+        .type(review.username, { delay: 200 });
+    cy.get(".ant-select-item-option-active").click();
+    cy.get('[title="reCAPTCHA"]').should("exist");
+    cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
+    cy.checkRecaptcha();
+    cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.enabled").click();
+    cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
+};
+
+const blockAssignedUserReview = () => {
+    cy.checkRecaptcha();
+    cy.get(locators.claimReview.BTN_SELECTED_REVIEW).should("exist").click();
+    cy.get(locators.claimReview.INPUT_REVIEWER)
+        .should("exist")
+        .type(review.username, { delay: 200 });
+    cy.get(".ant-select-item-option-active").click();
+    cy.checkRecaptcha();
+    cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
+    cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
+};
+
 describe("Test claim review", () => {
     it("should not show start review when not logged in", () => {
         cy.visit(
@@ -36,20 +61,7 @@ describe("Test claim review", () => {
     it("should be able to assign a user", () => {
         cy.login();
         goToClaimReviewPage();
-        cy.get(locators.claimReview.BTN_START_CLAIM_REVIEW)
-            .should("exist")
-            .click();
-        cy.get(locators.claimReview.INPUT_USER)
-            .should("exist")
-            .type(review.username, { delay: 200 });
-        cy.get(".ant-select-item-option-active").click();
-        cy.get('[title="reCAPTCHA"]').should("exist");
-        cy.get(locators.claimReview.BTN_ASSIGN_USER).should("be.disabled");
-        cy.checkRecaptcha();
-        cy.get(locators.claimReview.BTN_ASSIGN_USER)
-            .should("be.enabled")
-            .click();
-        cy.get(locators.claimReview.INPUT_CLASSIFICATION).should("exist");
+        assignUser();
     });
 
     it("should be able to submit full review fields", () => {
@@ -102,16 +114,6 @@ describe("Test claim review", () => {
     it("should not be able submit after choosing assigned user as reviewer", () => {
         cy.login();
         goToClaimReviewPage();
-        cy.checkRecaptcha();
-        cy.get(locators.claimReview.BTN_SELECTED_REVIEW)
-            .should("exist")
-            .click();
-        cy.get(locators.claimReview.INPUT_REVIEWER)
-            .should("exist")
-            .type(review.username, { delay: 200 });
-        cy.get(".ant-select-item-option-active").click();
-        cy.checkRecaptcha();
-        cy.get(locators.claimReview.BTN_SUBMIT).should("be.enabled").click();
-        cy.get(locators.claimReview.TEXT_REVIEWER_ERROR).should("exist");
+        blockAssignedUserReview();
     });
 });

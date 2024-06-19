@@ -6,7 +6,7 @@ import { Popover } from "antd";
 import Button, { ButtonType } from "../../Button";
 import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
 import CommentApi from "../../../api/comment";
-import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 import { useCommands } from "@remirror/react";
 import { currentUserRole } from "../../../atoms/currentUser";
 import { useAtom } from "jotai";
@@ -20,7 +20,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
-    const { data_hash, setComments } = useContext(CollaborativeEditorContext);
+    const { data_hash, setComments } = useContext(VisualEditorContext);
     const { removeAnnotations } = useCommands();
     const [role] = useAtom(currentUserRole);
     const { machineService } = useContext(ReviewTaskMachineContext);

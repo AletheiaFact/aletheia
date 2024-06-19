@@ -15,33 +15,43 @@ import { currentUserId } from "../../atoms/currentUser";
 
 interface ContextType {
     machineService: any;
+    reviewTaskType: string;
     publishedReview?: { review: any };
     setFormAndEvents?: (param: string, isSameLabel?: boolean) => void;
     form?: FormField[];
     events?: ReviewTaskEvents[];
     reportModel?: string;
     recreateMachine?: (reportModel: string) => void;
+    claim?: any;
+    sentenceContent?: any;
 }
 
 export const ReviewTaskMachineContext = createContext<ContextType>({
     machineService: null,
+    reviewTaskType: null,
 });
 
 interface ReviewTaskMachineProviderProps {
+    reviewTaskType: string;
     data_hash: string;
     children: React.ReactNode;
     baseMachine?: any;
     baseReportModel?: any;
     publishedReview?: { review: any };
+    claim?: any;
+    sentenceContent?: any;
 }
 
-const getMachineInitialState = (userId: string = ""): any => ({
+const getMachineInitialState = (
+    reviewTaskType: string,
+    userId: string = ""
+): any => ({
     [ReportModelEnum.FactChecking]: {
-        context: getInitialContext({}),
+        context: getInitialContext(reviewTaskType),
         value: ReviewTaskStates.unassigned,
     },
     [ReportModelEnum.InformativeNews]: {
-        context: getInitialContext({ usersId: [userId] }),
+        context: getInitialContext(reviewTaskType, { usersId: [userId] }),
         value: ReviewTaskStates.assigned,
     },
 });
@@ -93,7 +103,9 @@ export const ReviewTaskMachineProvider = (
             }
             const newMachine =
                 machine ||
-                getMachineInitialState()[ReportModelEnum.FactChecking];
+                getMachineInitialState(props.reviewTaskType)[
+                    ReportModelEnum.FactChecking
+                ];
 
             setReportModel(reportModel);
             setGlobalMachineService(
@@ -146,7 +158,9 @@ export const ReviewTaskMachineProvider = (
     const createMachineBasedOnReportModel = (reportModel: string) => {
         setLoading(true);
         setReportModel(reportModel as ReportModelEnum);
-        const newMachine = getMachineInitialState(userId)[reportModel];
+        const newMachine = getMachineInitialState(props.reviewTaskType, userId)[
+            reportModel
+        ];
         setGlobalMachineService(
             createNewMachineService(newMachine, reportModel)
         );
@@ -158,11 +172,14 @@ export const ReviewTaskMachineProvider = (
             value={{
                 machineService: globalMachineService,
                 publishedReview: publishedClaimReview,
+                reviewTaskType: props.reviewTaskType,
                 setFormAndEvents,
                 reportModel,
                 form,
                 events,
                 recreateMachine: createMachineBasedOnReportModel,
+                claim: props.claim,
+                sentenceContent: props.sentenceContent,
             }}
         >
             {loading && <Loading />}

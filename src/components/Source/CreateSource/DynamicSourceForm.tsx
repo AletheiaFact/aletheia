@@ -10,8 +10,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { currentUserId } from "../../../atoms/currentUser";
 import SourceApi from "../../../api/sourceApi";
-import sourceForm from "./fieldLists/sourceForm";
-import { EditorParser } from "../../../../lib/editor-parser";
+import createSourceForm from "./fieldLists/createSourceForm";
 
 const DynamicSourceForm = () => {
     const {
@@ -19,11 +18,6 @@ const DynamicSourceForm = () => {
         control,
         formState: { errors },
     } = useForm();
-    const reviewData = {
-        source: "",
-        summary: "",
-        classification: "",
-    };
     const router = useRouter();
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
@@ -33,21 +27,16 @@ const DynamicSourceForm = () => {
     const hasCaptcha = !!recaptchaString;
     const recaptchaRef = useRef(null);
 
-    const onSubmit = async (data) => {
-        const editorParser = new EditorParser();
-
-        const schema = editorParser.editor2schema(data.sourceEditor.toJSON());
-        SourceApi.createSource(t, router, {
-            href: schema?.source,
+    const onSubmit = ({ source }) => {
+        const newSource = {
+            nameSpace,
+            href: source,
             user: userId,
             recaptcha: recaptchaString,
-            nameSpace: nameSpace,
-            props: {
-                summary: schema.summary,
-                classification: data.classification,
-                date: new Date(),
-            },
-        }).then(() => {
+        };
+
+        SourceApi.createSource(t, router, newSource).then((s) => {
+            router.push(`/source/${s.data_hash}`);
             setIsLoading(false);
         });
     };
@@ -58,8 +47,7 @@ const DynamicSourceForm = () => {
             onSubmit={handleSubmit(onSubmit)}
         >
             <DynamicForm
-                currentForm={sourceForm}
-                machineValues={reviewData}
+                currentForm={createSourceForm}
                 control={control}
                 errors={errors}
             />

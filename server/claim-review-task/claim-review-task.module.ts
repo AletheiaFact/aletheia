@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import {
     ClaimReviewTask,
     ClaimReviewTaskSchema,
@@ -28,13 +28,13 @@ export const ClaimReviewTaskModel = MongooseModule.forFeature([
 @Module({
     imports: [
         ClaimReviewTaskModel,
-        ClaimReviewModule,
-        ReportModule,
+        forwardRef(() => ClaimReviewModule),
+        forwardRef(() => ReportModule),
         HistoryModule,
         StateEventModule,
         CaptchaModule,
         ViewModule,
-        SentenceModule,
+        forwardRef(() => SentenceModule),
         ConfigModule,
         ImageModule,
         EditorParseModule,

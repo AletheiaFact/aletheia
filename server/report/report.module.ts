@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigModule } from "@nestjs/config";
 import { Report, ReportSchema } from "./schemas/report.schema";
@@ -14,14 +14,9 @@ const ReportModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [
-        ReportModel,
-        ConfigModule,
-        SourceModule,
-    ],
+    imports: [ReportModel, ConfigModule, forwardRef(() => SourceModule)],
     exports: [ReportService],
     providers: [ReportService],
-    controllers: [ReportController]
+    controllers: [ReportController],
 })
-
 export class ReportModule {}

@@ -8,7 +8,7 @@ import {
 } from "../../../machines/reviewTask/selectors";
 
 import AletheiaCaptcha from "../../AletheiaCaptcha";
-import { CollaborativeEditorContext } from "../../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -28,11 +28,8 @@ import WarningModal from "../../Modal/WarningModal";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
-import { useDispatch } from "react-redux";
-import actions from "../../../store/actions";
-import { useAppSelector } from "../../../store/store";
 
-const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
+const DynamicReviewTaskForm = ({ data_hash, personality, claim, source }) => {
     const {
         handleSubmit,
         control,
@@ -41,7 +38,6 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         formState: { errors },
         watch,
     } = useForm();
-    const dispatch = useDispatch();
     const { reportModel } = useContext(ReviewTaskMachineContext);
     const { machineService, events, form, setFormAndEvents } = useContext(
         ReviewTaskMachineContext
@@ -49,19 +45,8 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isReported = useSelector(machineService, reportSelector);
-    const { editorContentObject, comments } = useContext(
-        CollaborativeEditorContext
-    );
+    const { comments } = useContext(VisualEditorContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
-    const { enableCopilotChatBot, reviewDrawerCollapsed } = useAppSelector(
-        (state) => ({
-            enableCopilotChatBot: state?.enableCopilotChatBot,
-            reviewDrawerCollapsed:
-                state?.reviewDrawerCollapsed !== undefined
-                    ? state?.reviewDrawerCollapsed
-                    : true,
-        })
-    );
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const [role] = useAtom(currentUserRole);
@@ -88,9 +73,6 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
     useEffect(() => {
         if (isLoggedIn) {
             setFormAndEvents(machineService.machine.config.initial);
-            if (enableCopilotChatBot && reviewDrawerCollapsed) {
-                dispatch(actions.openCopilotDrawer());
-            }
         }
     }, [isLoggedIn]);
 
@@ -118,6 +100,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
             claimReview: {
                 personality,
                 claim,
+                source,
             },
             type: eventName,
             t,
@@ -179,13 +162,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim }) => {
         if (shouldShowFinishReportWarning) {
             setFinishReportWarningModal(!finishReportWarningModal);
         } else {
-            sendEventToMachine(
-                {
-                    ...context,
-                    collaborativeEditor: editorContentObject,
-                },
-                event
-            );
+            sendEventToMachine(context, event);
         }
 
         scrollToTop(event);

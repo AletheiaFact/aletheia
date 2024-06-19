@@ -40,4 +40,15 @@ enum ReportModelEnum {
     InformativeNews = "Informative News",
 }
 
-export { ReviewTaskEvents, ReviewTaskStates, CompoundStates, ReportModelEnum };
+enum ReviewTaskTypeEnum {
+    Claim = "Claim",
+    Source = "Source",
+}
+
+export {
+    ReviewTaskEvents,
+    ReviewTaskStates,
+    CompoundStates,
+    ReportModelEnum,
+    ReviewTaskTypeEnum,
+};

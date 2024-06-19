@@ -1,27 +1,24 @@
 import { Col, Row, Typography } from "antd";
 import { useTranslation } from "next-i18next";
-import React from "react";
-import { ContentModelEnum } from "../../types/enums";
+import React, { useContext } from "react";
 
 import ClassificationText from "../ClassificationText";
-import ImageClaim from "../ImageClaim";
-import LocalizedDate from "../LocalizedDate";
 import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import SentenceReportCardStyle from "./SentenceReportCard.style";
-import SentenceReportSummary from "./SentenceReportSummary";
 import AletheiaAlert from "../AletheiaAlert";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../atoms/namespace";
 import { useAppSelector } from "../../store/store";
-import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref";
+import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
+import ClaimSummaryDisplay from "./ClaimSummaryDisplay";
+import SourceSummaryDisplay from "./SourceSummaryDisplay";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 const SentenceReportCard = ({
     claim,
     personality,
     classification,
-    content,
+    content: { content, href },
     hideDescription,
 }: {
     personality?: any;
@@ -31,59 +28,9 @@ const SentenceReportCard = ({
     hideDescription?: string;
 }) => {
     const { t } = useTranslation();
-    const isImage = claim?.contentModel === ContentModelEnum.Image;
-    const [nameSpace] = useAtom(currentNameSpace);
+    const { reviewTaskType } = useContext(ReviewTaskMachineContext);
+    const isClaim = reviewTaskType === ReviewTaskTypeEnum.Claim;
     const { vw } = useAppSelector((state) => state);
-
-    const contentProps = {
-        [ContentModelEnum.Speech]: {
-            linkText: "claim:cardLinkToFullText",
-            contentPath: generateSentenceContentPath(
-                nameSpace,
-                personality,
-                claim,
-                claim?.contentModel
-            ),
-            title: `"(...) ${content.content}"`,
-            speechTypeTranslation: "claim:typeSpeech",
-        },
-        [ContentModelEnum.Image]: {
-            linkText: "claim:cardLinkToImage",
-            contentPath: generateSentenceContentPath(
-                nameSpace,
-                personality,
-                claim,
-                claim?.contentModel
-            ),
-            title: claim.title,
-            speechTypeTranslation: "",
-        },
-        [ContentModelEnum.Debate]: {
-            linkText: "claim:cardLinkToDebate",
-            contentPath: generateSentenceContentPath(
-                nameSpace,
-                personality,
-                claim,
-                claim?.contentModel
-            ),
-            title: `"(...) ${content.content}"`,
-            speechTypeTranslation: "claim:typeDebate",
-        },
-        [ContentModelEnum.Unattributed]: {
-            linkText: "claim:cardLinkToFullText",
-            contentPath: generateSentenceContentPath(
-                nameSpace,
-                personality,
-                claim,
-                claim?.contentModel
-            ),
-            title: `"(...) ${content.content}"`,
-            speechTypeTranslation: "claim:typeSpeech",
-        },
-    };
-
-    const { linkText, contentPath, title, speechTypeTranslation } =
-        contentProps[claim?.contentModel];
 
     return (
         <SentenceReportCardStyle>
@@ -103,37 +50,22 @@ const SentenceReportCard = ({
                         <Title className="classification" level={1}>
                             {
                                 // TODO: Create a more meaningful h1 for this page
-                                t("claimReview:claimReview")
+                                t(`claimReview:title${reviewTaskType}Review`)
                             }
                             <ClassificationText
                                 classification={classification}
                             />
                         </Title>
                     )}
-                    <SentenceReportSummary
-                        className={personality ? "after" : ""}
-                    >
-                        <Paragraph className="sentence-content">
-                            <cite>{title}</cite>
-                            {isImage && (
-                                <ImageClaim
-                                    src={content?.content}
-                                    title={title}
-                                />
-                            )}
-                            <a href={contentPath}>{t(linkText)}</a>
-                        </Paragraph>
-                    </SentenceReportSummary>
-                    <Paragraph className="claim-info">
-                        {isImage
-                            ? t("claim:cardHeader3")
-                            : t("claim:cardHeader1")}
-                        &nbsp;
-                        <LocalizedDate date={claim?.date} />
-                        &nbsp;
-                        {!isImage && t("claim:cardHeader2")}&nbsp;
-                        <strong>{t(speechTypeTranslation)}</strong>
-                    </Paragraph>
+                    {isClaim ? (
+                        <ClaimSummaryDisplay
+                            claim={claim}
+                            content={content}
+                            personality={personality}
+                        />
+                    ) : (
+                        <SourceSummaryDisplay href={href} />
+                    )}
                     {hideDescription && (
                         <AletheiaAlert
                             type="warning"

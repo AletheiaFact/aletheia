@@ -1,3 +1,4 @@
+import { ReviewTaskTypeEnum } from "./enums";
 import { ClaimReview, ReviewData } from "./events";
 
 export type ReviewTaskMachineContextType = {
@@ -5,33 +6,59 @@ export type ReviewTaskMachineContextType = {
     claimReview: ClaimReview;
 };
 
-const buildState = (reviewData): ReviewTaskMachineContextType => {
+const buildState = (
+    reviewTaskType,
+    reviewData
+): ReviewTaskMachineContextType => {
+    const baseReviewData = {
+        usersId: [],
+        summary: "",
+        classification: "",
+        // initial value must be null to be able to use populate before selecting reviewer
+        reviewerId: null,
+        crossCheckerId: null,
+        crossCheckingComments: [],
+        crossCheckingComment: "",
+        crossCheckingClassification: "",
+    };
+
+    const claimReviewData = {
+        questions: [],
+        report: "",
+        verification: "",
+        sources: [],
+    };
+
+    const claimReview = {
+        //TODO: change name to review
+        personality: "",
+        claim: "",
+        source: "",
+        usersId: "",
+        isPartialReview: false,
+    };
+
+    if (reviewTaskType === ReviewTaskTypeEnum.Source) {
+        return {
+            reviewData: {
+                ...baseReviewData,
+                ...reviewData,
+            },
+            claimReview,
+        };
+    }
+
     return {
         reviewData: {
-            usersId: [],
-            summary: "",
-            questions: [],
-            report: "",
-            verification: "",
-            sources: [],
-            classification: "",
-            // initial value must be null to be able to use populate before selecting reviewer
-            reviewerId: null,
-            crossCheckerId: null,
-            crossCheckingComments: [],
-            crossCheckingComment: "",
-            crossCheckingClassification: "",
+            ...baseReviewData,
+            ...claimReviewData,
             ...reviewData,
         },
-        claimReview: {
-            personality: "",
-            claim: "",
-            usersId: "",
-            isPartialReview: false,
-        },
+        claimReview,
     };
 };
 
 export const getInitialContext = (
-    reviewData = {}
-): ReviewTaskMachineContextType => buildState(reviewData);
+    reviewTaskType: string,
+    reviewData: Partial<ReviewData> = {}
+): ReviewTaskMachineContextType => buildState(reviewTaskType, reviewData);

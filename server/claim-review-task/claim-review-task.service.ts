@@ -574,8 +574,12 @@ export class ClaimReviewTaskService {
         }
     }
 
-    getEditorContentObject(schema, reportModel) {
-        return this.editorParseService.schema2editor(schema, reportModel);
+    getEditorContentObject(schema, reportModel, reviewTaskType) {
+        return this.editorParseService.schema2editor(
+            schema,
+            reportModel,
+            reviewTaskType
+        );
     }
 
     async addComment(data_hash, comment) {

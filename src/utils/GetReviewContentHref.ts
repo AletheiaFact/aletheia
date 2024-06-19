@@ -1,14 +1,20 @@
+import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import { NameSpaceEnum } from "../types/Namespace";
 import { ContentModelEnum } from "../types/enums";
 
-export const generateClaimContentPath = (
+export const generateReviewContentPath = (
     nameSpace,
     personality,
     claim,
     contentModel,
-    data_hash
+    data_hash,
+    reviewTaskType
 ) => {
     const basePath = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
+
+    if (reviewTaskType === ReviewTaskTypeEnum.Source) {
+        return `${basePath}/source/${data_hash}`;
+    }
 
     switch (contentModel) {
         case ContentModelEnum.Speech:

@@ -10,7 +10,7 @@ const SourceCreateCTA = () => {
     return (
         <CreateCTAButton>
             <AletheiaButton
-                href={`./sources/create`}
+                href={`./source/create`}
                 data-cy="testButtonCreatePersonality"
             >
                 <PlusOutlined /> {t("sources:sourceCreateCTAButton")}

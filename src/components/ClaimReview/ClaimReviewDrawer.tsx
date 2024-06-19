@@ -14,11 +14,12 @@ import AletheiaButton, { ButtonType } from "../Button";
 import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";
 import LargeDrawer from "../LargeDrawer";
-import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
+import { VisualEditorProvider } from "../Collaborative/VisualEditorProvider";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import colors from "../../styles/colors";
-import { generateClaimContentPath } from "../../utils/GetClaimContentHref";
+import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
+import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -54,8 +55,11 @@ const ClaimReviewDrawer = () => {
             onClose={() => dispatch(actions.closeReviewDrawer())}
         >
             {claim && data_hash && !isLoading ? (
-                <ReviewTaskMachineProvider data_hash={data_hash}>
-                    <CollaborativeEditorProvider data_hash={data_hash}>
+                <ReviewTaskMachineProvider
+                    data_hash={data_hash}
+                    reviewTaskType={ReviewTaskTypeEnum.Claim}
+                >
+                    <VisualEditorProvider data_hash={data_hash}>
                         <Row
                             justify="space-between"
                             style={{
@@ -78,12 +82,13 @@ const ClaimReviewDrawer = () => {
                                 </AletheiaButton>
                                 <Col span={vw?.xs ? 8 : 14}>
                                     <AletheiaButton
-                                        href={generateClaimContentPath(
+                                        href={generateReviewContentPath(
                                             nameSpace,
                                             personality,
                                             claim,
                                             claim.contentModel,
-                                            data_hash
+                                            data_hash,
+                                            ReviewTaskTypeEnum.Claim
                                         )}
                                         onClick={() => setIsLoading(true)}
                                         type={ButtonType.gray}
@@ -129,7 +134,7 @@ const ClaimReviewDrawer = () => {
                             claim={claim}
                             content={content}
                         />
-                    </CollaborativeEditorProvider>
+                    </VisualEditorProvider>
                 </ReviewTaskMachineProvider>
             ) : (
                 <Loading />

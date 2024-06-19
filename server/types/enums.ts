@@ -10,4 +10,9 @@ enum ReportModelEnum {
     InformativeNews = "Informative News",
 }
 
-export { ContentModelEnum, ReportModelEnum };
+enum ReviewTaskTypeEnum {
+    Claim = "Claim",
+    Source = "Source",
+}
+
+export { ContentModelEnum, ReportModelEnum, ReviewTaskTypeEnum };

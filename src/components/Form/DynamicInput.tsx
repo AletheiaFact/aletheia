@@ -6,12 +6,10 @@ import Loading from "../Loading";
 import TextArea from "../TextArea";
 import UserInput from "./UserInput";
 import { useTranslation } from "next-i18next";
-import { CollaborativeEditorContext } from "../Collaborative/CollaborativeEditorProvider";
-import SourceEditor from "../Claim/CreateSource/SourceEditor";
+import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
+import AletheiaInput from "../AletheiaInput";
 
-const CollaborativeEditor = lazy(
-    () => import("../Collaborative/CollaborativeEditor")
-);
+const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
 interface DynamicInputProps {
     fieldName: string;
@@ -26,7 +24,7 @@ interface DynamicInputProps {
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
-    const { isFetchingEditor } = useContext(CollaborativeEditorContext);
+    const { isFetchingEditor } = useContext(VisualEditorContext);
 
     const { t } = useTranslation();
     switch (props.type) {
@@ -54,6 +52,16 @@ const DynamicInput = (props: DynamicInputProps) => {
                     preloadedOptions={props.extraProps.preloadedOptions}
                 />
             );
+        case "text":
+            return (
+                <AletheiaInput
+                    placeholder={t(props.placeholder)}
+                    onChange={(value) => props.onChange(value)}
+                    defaultValue={props.defaultValue}
+                    data-cy={props["data-cy"]}
+                    white="true"
+                />
+            );
         case "textList":
             return (
                 <InputTextList
@@ -75,27 +83,21 @@ const DynamicInput = (props: DynamicInputProps) => {
                     placeholder={t(props.placeholder)}
                 />
             );
-        case "collaborative":
+        case "visualEditor":
             if (isFetchingEditor) {
                 return <Loading />;
             } else {
                 return (
                     <Suspense fallback={<Loading />}>
-                        <CollaborativeEditor
-                            placeholder={t(props.placeholder)}
-                            onContentChange={({ doc }) => props.onChange(doc)}
+                        <VisualEditor
+                            onContentChange={({ doc }, reviewTaskType) => {
+                                doc.attrs = { reviewTaskType };
+                                props.onChange(doc);
+                            }}
                         />
                     </Suspense>
                 );
             }
-        case "sourceEditor":
-            return (
-                <Suspense fallback={<Loading />}>
-                    <SourceEditor
-                        onContentChange={({ doc }) => props.onChange(doc)}
-                    />
-                </Suspense>
-            );
         default:
             return null;
     }

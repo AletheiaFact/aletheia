@@ -1,14 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ParserService } from "./parser.service";
 import * as fs from "fs";
-import { SpeechModule } from "../types/speech/speech.module";
-import { ParagraphModule } from "../types/paragraph/paragraph.module";
-import { SentenceModule } from "../types/sentence/sentence.module";
-import { MongooseModule } from "@nestjs/mongoose";
 import { TestConfigOptions } from "../../tests/utils/TestConfigOptions";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import { UnattributedModule } from "../types/unattributed/unattributed.module";
 import { Types } from "mongoose";
+import { AppModule } from "../../app.module";
 
 describe("ParserService", () => {
     let parserService: ParserService;
@@ -20,20 +16,11 @@ describe("ParserService", () => {
     });
 
     beforeEach(async () => {
-        const testingModule: TestingModule = await Test.createTestingModule({
-            imports: [
-                MongooseModule.forRoot(
-                    TestConfigOptions.config.db.connection_uri,
-                    TestConfigOptions.config.db.options
-                ),
-                SpeechModule,
-                ParagraphModule,
-                SentenceModule,
-                UnattributedModule,
-            ],
-            providers: [ParserService],
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+            imports: [AppModule.register(TestConfigOptions.config)],
         }).compile();
-        parserService = testingModule.get<ParserService>(ParserService);
+
+        parserService = moduleFixture.get<ParserService>(ParserService);
     });
 
     describe("parse()", () => {

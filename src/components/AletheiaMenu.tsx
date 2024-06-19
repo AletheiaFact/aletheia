@@ -67,11 +67,11 @@ const AletheiaMenu = () => {
             <Menu.Item
                 key={
                     nameSpace !== NameSpaceEnum.Main
-                        ? `/${nameSpace}/sources`
-                        : "/sources"
+                        ? `/${nameSpace}/source`
+                        : "/source"
                 }
                 onClick={handleClick}
-                data-cy={"testSourcestItem"}
+                data-cy={"testSourcetItem"}
             >
                 {t("menu:sourcesItem")}
             </Menu.Item>

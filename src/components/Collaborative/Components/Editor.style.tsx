@@ -1,4 +1,4 @@
-import colors from "../../styles/colors";
+import colors from "../../../styles/colors";
 import styled from "styled-components";
 
 const EditorStyle = styled.div`

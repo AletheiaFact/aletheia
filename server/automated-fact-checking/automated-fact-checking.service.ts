@@ -49,7 +49,12 @@ export class AutomatedFactCheckingService {
             .map((line) => JSON.parse(line.substring(5)))
             .reduce((acc, data) => ({ ...acc, ...data }), {});
 
-        const report = JSON.parse(jsonEvents.start_fact_checking.messages);
+        if (jsonEvents.start_fact_checking) {
+            const report = JSON.parse(jsonEvents.start_fact_checking.messages);
+            return { stream: streamResponse, json: { messages: report } };
+        }
+
+        const report = JSON.parse(jsonEvents.create_report.messages);
 
         return { stream: streamResponse, json: { messages: report } };
     }
