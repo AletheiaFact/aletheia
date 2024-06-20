@@ -56,6 +56,8 @@ import { CopilotChatModule } from "./copilot/copilot-chat.module";
 import { UnattributedModule } from "./claim/types/unattributed/unattributed.module";
 import { DailyReportModule } from "./daily-report/daily-report.module";
 import { SummarizationCrawlerModule } from "./summarization/summarization-crawler.module";
+import { ChatbotModule } from "./chat-bot/chat-bot.module";
+import { VerificationRequestModule } from "./verification-request/verification-request.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -117,6 +119,8 @@ export class AppModule implements NestModule {
             UnattributedModule,
             DailyReportModule,
             SummarizationCrawlerModule,
+            ChatbotModule,
+            VerificationRequestModule,
         ];
         if (options.feature_flag) {
             imports.push(
