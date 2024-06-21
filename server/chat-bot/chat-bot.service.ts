@@ -6,6 +6,7 @@ import { Observable, throwError } from "rxjs";
 import chatBotMachineService from "./chat-bot.machine";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ConfigService } from "@nestjs/config";
+
 @Injectable()
 export class ChatbotService {
     private chatBotMachineService = chatBotMachineService;
@@ -24,6 +25,24 @@ export class ChatbotService {
             .toLowerCase();
     }
 
+    handleMachineEventSend(parsedMessage: string) {
+        const messageMap = {
+            sim: "RECEIVE_YES",
+            nao: "RECEIVE_NO",
+        };
+        this.chatBotMachineService.send(
+            messageMap[parsedMessage] || "NOT_UNDERSTOOD"
+        );
+    }
+
+    handleSendingNoMessage(parsedMessage: string) {
+        if (parsedMessage === "denuncia") {
+            this.chatBotMachineService.send("ASK_TO_REPORT");
+        } else {
+            this.chatBotMachineService.send("RECEIVE_NO");
+        }
+    }
+
     handleUserMessage(message: string) {
         const parsedMessage = this.normalizeAndLowercase(message);
         const currentState = this.chatBotMachineService.getSnapshot().value;
@@ -33,13 +52,9 @@ export class ChatbotService {
                 this.chatBotMachineService.send("ASK_IF_VERIFICATION_REQUEST");
                 break;
             case "askingIfVerificationRequest":
-                if (parsedMessage === "sim") {
-                    this.chatBotMachineService.send("RECEIVE_YES");
-                } else if (parsedMessage === "nao") {
-                    this.chatBotMachineService.send("RECEIVE_NO");
-                } else {
-                    this.chatBotMachineService.send("NOT_UNDERSTOOD");
-                }
+            case "askingToRequestMore":
+            case "notUnderstood":
+                this.handleMachineEventSend(parsedMessage);
                 break;
             case "askingForVerificationRequest":
                 this.chatBotMachineService.send({
@@ -47,30 +62,8 @@ export class ChatbotService {
                     verificationRequest: message,
                 });
                 break;
-            case "askingToRequestMore":
-                if (parsedMessage === "sim") {
-                    this.chatBotMachineService.send("RECEIVE_YES");
-                } else if (parsedMessage === "nao") {
-                    this.chatBotMachineService.send("RECEIVE_NO");
-                } else {
-                    this.chatBotMachineService.send("NOT_UNDERSTOOD");
-                }
-                break;
             case "sendingNoMessage":
-                if (parsedMessage === "denuncia") {
-                    this.chatBotMachineService.send("ASK_TO_REPORT");
-                } else {
-                    this.chatBotMachineService.send("RECEIVE_NO");
-                }
-                break;
-            case "notUnderstood":
-                if (parsedMessage === "sim") {
-                    this.chatBotMachineService.send("RECEIVE_YES");
-                } else if (parsedMessage === "nao") {
-                    this.chatBotMachineService.send("RECEIVE_NO");
-                } else {
-                    this.chatBotMachineService.send("NOT_UNDERSTOOD");
-                }
+                this.handleSendingNoMessage(parsedMessage);
                 break;
             default:
                 console.warn(`Unhandled state: ${currentState}`);

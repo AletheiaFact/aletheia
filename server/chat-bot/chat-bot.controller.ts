@@ -7,10 +7,8 @@ export class ChatbotController {
     constructor(private readonly chatBotService: ChatbotService) {}
 
     @Post("api/chat-bot/hook")
-    async handleHook(@Req() req: Request, @Res() res: Response) {
-        const response = await this.chatBotService.sendMessage(
-            req.body.message
-        );
+    handleHook(@Req() req: Request, @Res() res: Response) {
+        const response = this.chatBotService.sendMessage(req.body.message);
 
         res.status(200).json({ message: response });
         return response;
