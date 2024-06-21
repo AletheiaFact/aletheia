@@ -7,6 +7,8 @@ import chatBotMachineService from "./chat-bot.machine";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ConfigService } from "@nestjs/config";
 
+const diacriticsRegex = /[\u0300-\u036f]/g;
+
 @Injectable()
 export class ChatbotService {
     private chatBotMachineService = chatBotMachineService;
@@ -21,7 +23,7 @@ export class ChatbotService {
     normalizeAndLowercase(message: string): string {
         return message
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
+            .replace(diacriticsRegex, "")
             .toLowerCase();
     }
 
