@@ -3,15 +3,19 @@ import { HttpService } from "@nestjs/axios";
 import { AxiosResponse } from "axios";
 import { catchError, map } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
-import chatBotMachineService from "./chat-bot.machine";
+import { createChatBotMachine } from "./chat-bot.machine";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ConfigService } from "@nestjs/config";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
+const MESSAGE_MAP = {
+    sim: "RECEIVE_YES",
+    nao: "RECEIVE_NO",
+};
 
 @Injectable()
 export class ChatbotService {
-    private chatBotMachineService = chatBotMachineService;
+    private chatBotMachineService;
 
     constructor(
         private configService: ConfigService,
@@ -19,33 +23,38 @@ export class ChatbotService {
         private verificationService: VerificationRequestService
     ) {}
 
+    onModuleInit() {
+        this.initializeChatBotMachine();
+    }
+
+    private initializeChatBotMachine() {
+        this.chatBotMachineService = createChatBotMachine(
+            this.verificationService
+        );
+        this.chatBotMachineService.start();
+    }
+
     //TODO: Find a better way to interpret the user's message.
-    normalizeAndLowercase(message: string): string {
+    private normalizeAndLowercase(message: string): string {
         return message
             .normalize("NFD")
             .replace(diacriticsRegex, "")
             .toLowerCase();
     }
 
-    handleMachineEventSend(parsedMessage: string) {
-        const messageMap = {
-            sim: "RECEIVE_YES",
-            nao: "RECEIVE_NO",
-        };
+    private handleMachineEventSend(parsedMessage: string): void {
         this.chatBotMachineService.send(
-            messageMap[parsedMessage] || "NOT_UNDERSTOOD"
+            MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
         );
     }
 
-    handleSendingNoMessage(parsedMessage: string) {
-        if (parsedMessage === "denuncia") {
-            this.chatBotMachineService.send("ASK_TO_REPORT");
-        } else {
-            this.chatBotMachineService.send("RECEIVE_NO");
-        }
+    private handleSendingNoMessage(parsedMessage: string): void {
+        this.chatBotMachineService.send(
+            parsedMessage === "denuncia" ? "ASK_TO_REPORT" : "RECEIVE_NO"
+        );
     }
 
-    handleUserMessage(message: string) {
+    private handleUserMessage(message: string): void {
         const parsedMessage = this.normalizeAndLowercase(message);
         const currentState = this.chatBotMachineService.getSnapshot().value;
 
@@ -54,8 +63,6 @@ export class ChatbotService {
                 this.chatBotMachineService.send("ASK_IF_VERIFICATION_REQUEST");
                 break;
             case "askingIfVerificationRequest":
-            case "askingToRequestMore":
-            case "notUnderstood":
                 this.handleMachineEventSend(parsedMessage);
                 break;
             case "askingForVerificationRequest":
@@ -72,38 +79,22 @@ export class ChatbotService {
         }
     }
 
-    sendMessage(message): Observable<AxiosResponse<any>> {
+    public sendMessage(message): Observable<AxiosResponse<any>> {
         const { api_url, api_token } = this.configService.get("zenvia");
-
         this.handleUserMessage(message.contents[0].text);
 
         const snapshot = this.chatBotMachineService.getSnapshot();
-        const verificationRequest = snapshot.context.verificationRequest;
-
-        if (snapshot.value === "askingToRequestMore") {
-            this.verificationService.createVerificationRequest(
-                verificationRequest
-            );
-        }
-
         const responseMessage = snapshot.context.responseMessage;
 
         const body = {
             from: message.to,
             to: message.from,
-            contents: [
-                {
-                    type: "text",
-                    text: responseMessage,
-                },
-            ],
+            contents: [{ type: "text", text: responseMessage }],
         };
 
         return this.httpService
             .post(api_url, body, {
-                headers: {
-                    "X-API-TOKEN": api_token,
-                },
+                headers: { "X-API-TOKEN": api_token },
             })
             .pipe(
                 map((response) => response),
