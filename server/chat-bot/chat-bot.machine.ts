@@ -1,4 +1,4 @@
-import { createMachine, interpret, assign } from "xstate";
+import { createMachine, interpret } from "xstate";
 import * as actions from "./chat-bot-actions";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
 
