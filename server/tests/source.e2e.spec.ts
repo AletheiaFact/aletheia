@@ -29,6 +29,7 @@ describe("SourceController (e2e)", () => {
             TestConfigOptions.config.db.connection_uri
         );
         userId = user.insertedId;
+
         const { insertedIds } = await SeedTestPersonality(
             TestConfigOptions.config.db.connection_uri
         );
@@ -73,7 +74,7 @@ describe("SourceController (e2e)", () => {
         const sourceData = {
             href: "https://www.wikipedia.org/",
             props: {
-                summary: "mock_summaru",
+                summary: "mock_summary",
                 classification: "mock_classification",
             },
             user: ObjectId(userId),
