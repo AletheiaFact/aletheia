@@ -25,6 +25,13 @@ export const createChatBotMachine = (
                             target: "askingIfVerificationRequest",
                             actions: ["sendGreeting", "setResponseMessage"],
                         },
+                        NON_TEXT_MESSAGE: {
+                            target: "askingIfVerificationRequest",
+                            actions: [
+                                "sendNoTextMessageGreeting",
+                                "setResponseMessage",
+                            ],
+                        },
                     },
                 },
                 askingIfVerificationRequest: {
@@ -47,6 +54,13 @@ export const createChatBotMachine = (
                                 "setResponseMessage",
                             ],
                         },
+                        NON_TEXT_MESSAGE: {
+                            target: "askingIfVerificationRequest",
+                            actions: [
+                                "sendNoTextMessageAskIfForVerificationRequest",
+                                "setResponseMessage",
+                            ],
+                        },
                     },
                 },
                 askingForVerificationRequest: {
@@ -58,6 +72,13 @@ export const createChatBotMachine = (
                                 "sendThanks",
                                 "setResponseMessage",
                                 "saveVerificationRequestToDB",
+                            ],
+                        },
+                        NON_TEXT_MESSAGE: {
+                            target: "askingForVerificationRequest",
+                            actions: [
+                                "sendNoTextMessageAskForVerificationRequest",
+                                "setResponseMessage",
                             ],
                         },
                     },
@@ -74,6 +95,13 @@ export const createChatBotMachine = (
                         RECEIVE_NO: {
                             target: "sendingNoMessage",
                             actions: ["sendNoMessage", "setResponseMessage"],
+                        },
+                        NON_TEXT_MESSAGE: {
+                            target: "sendingNoMessage",
+                            actions: [
+                                "sendNoTextMessageNoMessage",
+                                "setResponseMessage",
+                            ],
                         },
                     },
                 },

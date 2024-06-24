@@ -54,8 +54,16 @@ export class ChatbotService {
         );
     }
 
-    private handleUserMessage(message: string): void {
-        const parsedMessage = this.normalizeAndLowercase(message);
+    private handleUserMessage(message): void {
+        const messageType = message.contents[0].type;
+        const userMessage = message.contents[0].text;
+
+        if (messageType !== "text") {
+            this.chatBotMachineService.send("NON_TEXT_MESSAGE");
+            return;
+        }
+
+        const parsedMessage = this.normalizeAndLowercase(userMessage);
         const currentState = this.chatBotMachineService.getSnapshot().value;
 
         switch (currentState) {
@@ -68,7 +76,7 @@ export class ChatbotService {
             case "askingForVerificationRequest":
                 this.chatBotMachineService.send({
                     type: "RECEIVE_REPORT",
-                    verificationRequest: message,
+                    verificationRequest: userMessage,
                 });
                 break;
             case "sendingNoMessage":
@@ -81,7 +89,7 @@ export class ChatbotService {
 
     public sendMessage(message): Observable<AxiosResponse<any>> {
         const { api_url, api_token } = this.configService.get("zenvia");
-        this.handleUserMessage(message.contents[0].text);
+        this.handleUserMessage(message);
 
         const snapshot = this.chatBotMachineService.getSnapshot();
         const responseMessage = snapshot.context.responseMessage;
