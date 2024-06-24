@@ -16,7 +16,7 @@ import type { BaseRequest } from "../types";
 import { parse } from "url";
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
-import { Response } from "express";
+import type { Response } from "express";
 import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
 import { CreateVerificationRequestDTO } from "./dto/create-verification-request-dto";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
