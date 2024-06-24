@@ -2,7 +2,7 @@ import { IsEnum, IsNotEmpty, IsObject, IsString } from "class-validator";
 
 import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.dto";
 import { Claim } from "../../claim/schemas/claim.schema";
-import { Personality } from "../../personality/schemas/personality.schema";
+import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import { User } from "../../users/schemas/user.schema";
 import { ApiProperty } from "@nestjs/swagger";
 import { ReportModelEnum } from "../../types/enums";

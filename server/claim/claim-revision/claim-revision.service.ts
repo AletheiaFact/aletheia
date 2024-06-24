@@ -12,8 +12,8 @@ import {
 import { ContentModelEnum } from "../../types/enums";
 import { ImageService } from "../types/image/image.service";
 import { DebateService } from "../types/debate/debate.service";
-import { FindAllOptions } from "../../personality/personality.service";
 import { UtilService } from "../../util";
+import { IFindAllOptions } from "../../interfaces/personality.interface";
 
 @Injectable()
 export class ClaimRevisionService {
@@ -84,9 +84,9 @@ export class ClaimRevisionService {
     async findAll({
         searchText,
         pageSize,
-        skipedDocuments,
+        skippedDocuments,
         nameSpace,
-    }: FindAllOptions) {
+    }: IFindAllOptions) {
         const aggregationPipeline = [
             {
                 $search: {
@@ -131,7 +131,7 @@ export class ClaimRevisionService {
                 $facet: {
                     rows: [
                         {
-                            $skip: skipedDocuments || 0,
+                            $skip: skippedDocuments || 0,
                         },
                         {
                             $limit: pageSize,
