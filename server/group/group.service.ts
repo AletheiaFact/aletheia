@@ -91,9 +91,10 @@ export class GroupService {
     > {
         try {
             const group = await this.GroupModel.findById(groupId);
-            const newContent = group.content.filter(
-                (content: any) => !Types.ObjectId(content).equals(contentId)
-            );
+            const newContent = group.content.filter((content: any) => {
+                const contentObjectId = Types.ObjectId(content);
+                return !contentObjectId.equals(contentId);
+            });
 
             if (!newContent.length) {
                 return await this.GroupModel.deleteOne({ _id: group._id });
