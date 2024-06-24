@@ -6,7 +6,7 @@ import type { Request, Response } from "express";
 export class ChatbotController {
     constructor(private readonly chatBotService: ChatbotService) {}
 
-    @Post("api/chat-bot/hook")
+    @Post("api/chatbot/hook")
     handleHook(@Req() req: Request, @Res() res: Response) {
         const response = this.chatBotService.sendMessage(req.body.message);
 
