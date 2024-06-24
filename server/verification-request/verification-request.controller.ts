@@ -12,9 +12,8 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { VerificationRequestService } from "./verification-request.service";
-import type { BaseRequest } from "types";
+import type { BaseRequest } from "../types";
 import { parse } from "url";
-import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import { Response } from "express";
