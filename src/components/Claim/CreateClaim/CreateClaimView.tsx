@@ -78,18 +78,22 @@ const CreateClaimView = () => {
     return (
         <Row justify="center">
             <Col span={18} style={{ marginTop: 32 }}>
-                {claimData?.group && claimData?.group?.content?.length > 0 && (
-                    <span
-                        onClick={() => setOpen(true)}
-                        style={{
-                            color: colors.lightBlueMain,
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                        }}
-                    >
-                        {t("verificationRequest:manageVerificationRequests")}
-                    </span>
-                )}
+                {!isLoading &&
+                    claimData?.group &&
+                    claimData?.group?.content?.length > 0 && (
+                        <span
+                            onClick={() => setOpen(true)}
+                            style={{
+                                color: colors.lightBlueMain,
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                            }}
+                        >
+                            {t(
+                                "verificationRequest:manageVerificationRequests"
+                            )}
+                        </span>
+                    )}
                 {showPersonality && !!claimData.personalities?.length && (
                     <CreateClaimHeader claimData={claimData} />
                 )}

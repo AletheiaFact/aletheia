@@ -1,5 +1,8 @@
 {
     "verificationRequestTitle": "Verification Request",
     "manageVerificationRequests": "Manage selected verification requests",
-    "createClaimFromVerificationRequest": "No claim was created with this verification request, click here to complete the process"
+    "createClaimFromVerificationRequest": "No claim was created with this verification request",
+    "openVerificationRequestClaimLabel": "A claim created was related to this verification request",
+    "openVerificationRequestClaimButton": "Open claim",
+    "agroupVerificationRequest": "Related verification requests"
 }

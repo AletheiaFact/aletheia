@@ -50,23 +50,25 @@ const ClaimReviewHeader = ({
         isPublished && (!isHidden || userIsNotRegular);
 
     return (
-        <Row style={{ background: isPublished ? "none" : colors.lightGray }}>
+        <Row
+            style={{
+                background:
+                    isPublished &&
+                    reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
+                        ? "none"
+                        : colors.lightGray,
+            }}
+        >
             <Col offset={componentStyle.offset} span={componentStyle.span}>
                 <Row>
                     <Col
                         lg={{
                             order: 1,
-                            span:
-                                isPublishedOrCanSeeHidden &&
-                                reviewDrawerCollapsed
-                                    ? 16
-                                    : 24,
+                            span: 24,
                         }}
-                        style={{ padding: 32 }}
                         md={{ order: 2, span: 24 }}
                         sm={{ order: 2, span: 24 }}
                         xs={{ order: 2, span: 24 }}
-                        className="sentence-report-card"
                     >
                         <SentenceReportCard
                             personality={personality}

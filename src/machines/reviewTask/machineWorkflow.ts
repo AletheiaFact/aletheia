@@ -232,6 +232,9 @@ const RequestWorkflow: StatesConfig<
                 target: States.rejectedRequest,
                 actions: [rejectVerificationRequest],
             },
+            [Events.reAssignUser]: {
+                target: States.unassigned,
+            },
             [Events.publish]: {
                 target: States.published,
                 actions: [saveContext],
@@ -240,6 +243,9 @@ const RequestWorkflow: StatesConfig<
     },
     [States.published]: {
         on: {
+            [Events.reAssignUser]: {
+                target: States.unassigned,
+            },
             [Events.reset]: {
                 target: States.assignedRequest,
             },
