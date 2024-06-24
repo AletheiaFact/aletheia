@@ -7,20 +7,15 @@ const VerificationRequestCard = ({ content, actions = [] }) => {
     return (
         <CardBase style={{ padding: 32 }}>
             <Typography.Paragraph
-                style={{ marginBottom: 0 }}
-                ellipsis={{ rows: 4, expandable: false }}
+                style={{
+                    marginBottom: 0,
+                    color: colors.blackPrimary,
+                    margin: 0,
+                    lineHeight: 1.6,
+                }}
+                ellipsis={{ rows: 4, expandable: true }}
             >
-                <cite style={{ fontStyle: "normal" }}>
-                    <p
-                        style={{
-                            color: colors.blackPrimary,
-                            margin: 0,
-                            lineHeight: 1.6,
-                        }}
-                    >
-                        {content}
-                    </p>
-                </cite>
+                {content}
             </Typography.Paragraph>
 
             {actions && actions.map((action) => action)}

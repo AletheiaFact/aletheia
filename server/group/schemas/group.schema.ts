@@ -25,4 +25,14 @@ export class Group {
     targetId: mongoose.Types.ObjectId;
 }
 
-export const GroupSchema = SchemaFactory.createForClass(Group);
+const GroupSchemaRaw = SchemaFactory.createForClass(Group);
+
+GroupSchemaRaw.pre("find", function () {
+    this.populate("content");
+    this.populate({
+        path: "targetId",
+        model: "Claim",
+    });
+});
+
+export const GroupSchema = GroupSchemaRaw;

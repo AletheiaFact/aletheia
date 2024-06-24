@@ -85,7 +85,9 @@ export class VerificationRequestService {
     async findByDataHash(
         data_hash: string
     ): Promise<VerificationRequestDocument> {
-        return this.VerificationRequestModel.findOne({ data_hash });
+        return this.VerificationRequestModel.findOne({ data_hash }).populate(
+            "group"
+        );
     }
 
     /**

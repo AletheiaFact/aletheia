@@ -87,7 +87,7 @@ const DynamicInput = (props: DynamicInputProps) => {
         case "textbox":
             return (
                 <Checkbox
-                    data-cy={"testCheckboxIsSensitive"}
+                    data-cy={props["data-cy"]}
                     defaultChecked={!!props.defaultValue}
                     onChange={(value) => props.onChange(value)}
                     value={props.value}

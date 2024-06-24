@@ -1,4 +1,4 @@
-export type VerificationnRequest = {
+export type VerificationRequest = {
     data_hash: string;
     content: string;
     isSensitive: boolean;

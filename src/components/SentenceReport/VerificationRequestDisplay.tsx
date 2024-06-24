@@ -1,54 +1,56 @@
-import { Col, Row, Typography } from "antd";
-import React, { useContext } from "react";
+import { Col, Typography } from "antd";
+import React from "react";
 import VerificationRequestCard from "../VerificationRequest/VerificationRequestCard";
-import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { publishedSelector } from "../../machines/reviewTask/selectors";
-import { useSelector } from "@xstate/react";
-import AletheiaButton from "../Button";
 import { useTranslation } from "next-i18next";
+import VerificationRequestCardDisplayStyle from "./VerificationRequestDisplay.style";
+import { useAppSelector } from "../../store/store";
+import VerificationRequestAlert from "../VerificationRequest/VerificationRequestAlert";
 
 const VerificationRequestDisplay = ({ content }) => {
     const { t } = useTranslation();
-    const { machineService, publishedReview } = useContext(
-        ReviewTaskMachineContext
+    const { vw } = useAppSelector((state) => state);
+    const { content: contentText, group } = content;
+    const verificationRequestGroup = group.content.filter(
+        (c) => c._id !== content._id
     );
-    const isPublished =
-        useSelector(machineService, publishedSelector) ||
-        publishedReview?.review;
-    const { content: contentText } = content;
 
     return (
-        <Row>
-            {isPublished && (
-                <Col
-                    style={{
-                        display: "flex",
-                        gap: "16px",
-                        flexDirection: "column",
-                        justifyContent: "flex-end",
-                        marginBottom: "32px",
-                    }}
-                >
-                    <span>
-                        {t(
-                            "verificationRequest:createClaimFromVerificationRequest"
-                        )}
-                    </span>
-                    <AletheiaButton
-                        href={`/claim/create?verificationRequest=${content._id}`}
-                        style={{ width: "fit-content" }}
-                    >
-                        {t("seo:claimCreateTitle")}
-                    </AletheiaButton>
-                </Col>
-            )}
-            <Col span={24}>
+        <VerificationRequestCardDisplayStyle>
+            <VerificationRequestAlert
+                targetId={content?.group?.targetId}
+                verificationRequestId={content._id}
+            />
+
+            <Col lg={17} md={24}>
                 <Typography.Title level={3}>
                     {t("verificationRequest:verificationRequestTitle")}
                 </Typography.Title>
                 <VerificationRequestCard content={contentText} />
             </Col>
-        </Row>
+            {!vw.xs && (
+                <Col offset={!vw?.md ? 1 : 0} lg={6} md={24}>
+                    <Typography.Title level={4}>
+                        {t("verificationRequest:agroupVerificationRequest")}
+                    </Typography.Title>
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 32,
+                            justifyContent: "space-between",
+                            flexWrap: "wrap",
+                        }}
+                    >
+                        {verificationRequestGroup.map(({ content }) => (
+                            <div
+                                style={{ flex: "1 1 200px", minWidth: "200px" }}
+                            >
+                                <VerificationRequestCard content={content} />
+                            </div>
+                        ))}
+                    </div>
+                </Col>
+            )}
+        </VerificationRequestCardDisplayStyle>
     );
 };
 

@@ -31,58 +31,57 @@ const SentenceReportCard = ({
     const { t } = useTranslation();
     const { reviewTaskType } = useContext(ReviewTaskMachineContext);
     const isClaim = reviewTaskType === ReviewTaskTypeEnum.Claim;
-    const { vw } = useAppSelector((state) => state);
+    const {
+        vw: { sm, md },
+    } = useAppSelector((state) => state);
     const isSource = reviewTaskType === ReviewTaskTypeEnum.Source;
     const isVerificationRequest =
         reviewTaskType === ReviewTaskTypeEnum.VerificationRequest;
 
     return (
         <SentenceReportCardStyle>
-            <Row className="main-content">
-                {personality && (
-                    <Col md={6} sm={24}>
-                        <PersonalityMinimalCard personality={personality} />
-                    </Col>
-                )}
-                <Col
-                    md={vw?.md && !vw?.sm ? 17 : 18}
-                    offset={vw?.md && !vw?.sm ? 1 : 0}
-                    sm={24}
-                    className="sentence-card"
-                >
-                    {classification && (
-                        <Title className="classification" level={1}>
-                            {
-                                // TODO: Create a more meaningful h1 for this page
-                                t(`claimReview:title${reviewTaskType}Review`)
-                            }
-                            <ClassificationText
-                                classification={classification}
-                            />
-                        </Title>
-                    )}
-                    {isClaim && (
-                        <ClaimSummaryDisplay
-                            claim={claim}
-                            content={content?.content}
-                            personality={personality}
-                        />
-                    )}
-                    {isSource && <SourceSummaryDisplay href={content?.href} />}
-                    {isVerificationRequest && (
-                        <VerificationRequestDisplay content={content} />
-                    )}
-                    {hideDescription && (
-                        <AletheiaAlert
-                            type="warning"
-                            message={t("claim:warningTitle")}
-                            description={hideDescription}
-                            showIcon={true}
-                            style={{ padding: "10px" }}
-                        />
-                    )}
+            {personality && (
+                <Col md={6} sm={24}>
+                    <PersonalityMinimalCard personality={personality} />
                 </Col>
-            </Row>
+            )}
+            <Col
+                lg={personality ? 18 : 24}
+                md={personality ? (md && !sm ? 17 : 18) : 24}
+                offset={personality && md && !sm ? 1 : 0}
+                sm={24}
+                className="sentence-card"
+            >
+                {classification && (
+                    <Title className="classification" level={1}>
+                        {
+                            // TODO: Create a more meaningful h1 for this page
+                            t(`claimReview:title${reviewTaskType}Review`)
+                        }
+                        <ClassificationText classification={classification} />
+                    </Title>
+                )}
+                {isClaim && (
+                    <ClaimSummaryDisplay
+                        claim={claim}
+                        content={content?.content}
+                        personality={personality}
+                    />
+                )}
+                {isSource && <SourceSummaryDisplay href={content?.href} />}
+                {isVerificationRequest && (
+                    <VerificationRequestDisplay content={content} />
+                )}
+                {hideDescription && (
+                    <AletheiaAlert
+                        type="warning"
+                        message={t("claim:warningTitle")}
+                        description={hideDescription}
+                        showIcon={true}
+                        style={{ padding: "10px" }}
+                    />
+                )}
+            </Col>
         </SentenceReportCardStyle>
     );
 };
