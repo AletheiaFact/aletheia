@@ -5,6 +5,7 @@
     "addFactCheckingReviewButton": "Comece uma checagem de fatos",
     "addInformativeNewsButton": "Comece uma noticia informativa",
     "addSourceReviewButton": "Comece uma checagem de fonte",
+    "addVerificationRequestButton": "Comece uma revisão de denúncia",
     "cancelButton": "Cancelar",
     "classificationPlaceholder": "Selecione uma classificação",
     "not-fact": "Não é fato",
@@ -49,5 +50,9 @@
     "rejectionCommentLabel": "Comentário de rejeição",
     "rejectionCommentPlaceholder": "Descreva o que precisa ser alterado",
     "loginButton": "Faça login para continuar",
-    "notReviewed": "Não revisado"
+    "notReviewed": "Não revisado",
+    "groupLabel": "Agrupar denúncias",
+    "groupPlaceholder": "Selecione denúncias",
+    "isSensitiveLabel": "Conteúdo confidencial",
+    "isSensitive": "Esta denúncia contém conteúdo confidencial"
 }

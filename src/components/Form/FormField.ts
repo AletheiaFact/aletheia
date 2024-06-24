@@ -58,7 +58,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         rules: {
             required: required && "common:requiredFieldError",
             ...rules,
-            validate: {
+            validate: required && {
                 notBlank: (v) =>
                     validateBlank(v) || "common:requiredFieldError",
                 ...rules?.validate,

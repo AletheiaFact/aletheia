@@ -1,6 +1,8 @@
 {
     "ASSIGN_USER_SUCCESS": "Usuário atribuído com sucesso",
     "ASSIGN_USER_ERROR": "Erro ao atribuir usuário",
+    "ASSIGN_REQUEST_SUCCESS": "Usuário atribuído com sucesso",
+    "ASSIGN_REQUEST_ERROR": "Erro ao atribuir usuário",
     "FINISH_REPORT_SUCCESS": "Relatório salvo com sucesso",
     "FINISH_REPORT_ERROR": "Erro ao salvar o relatório",
     "ADD_COMMENT_SUCCESS": "Passo avançado com sucesso",
@@ -25,9 +27,14 @@
     "FULL_REVIEW_ERROR": "Erro ao salvar resumo",
     "GO_BACK_SUCCESS": "Passo voltado com sucesso",
     "GO_BACK_ERROR": "Não foi possível voltar",
+    "REJECT_SUCCESS": "Denúncia rejeitada com sucesso",
+    "REJECT_ERROR": "Não foi possível rejeitar a denúncia",
+    "RESET_SUCCESS": "Fluxo reiniciado com sucesso",
+    "RESET_ERROR": "Não foi possível reiniciar o fluxo",
 
     "ADD_REJECTION_COMMENT": "Enviar comentário",
     "ASSIGN_USER": "Atribuir",
+    "ASSIGN_REQUEST": "Atribuir",
     "FINISH_REPORT": "Concluir Relatório",
     "SELECTED_CROSS_CHECKING": "Selecione um cross-checker",
     "SELECTED_REVIEW": "Selecione um revisor",
@@ -42,6 +49,8 @@
     "FULL_REVIEW": "Completar relatório",
     "GO_BACK": "Voltar",
     "SAVE_DRAFT": "Salvar rascunho",
+    "REJECT_REQUEST": "Rejeitar",
+    "RESET": "Resetar",
 
     "errorWhileFetching": "Erro ao buscar a máquina",
     "assigned": "Usuário atribuído",

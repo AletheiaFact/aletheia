@@ -11,6 +11,7 @@ import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import ClaimSummaryDisplay from "./ClaimSummaryDisplay";
 import SourceSummaryDisplay from "./SourceSummaryDisplay";
+import VerificationRequestDisplay from "./VerificationRequestDisplay";
 
 const { Title } = Typography;
 
@@ -18,7 +19,7 @@ const SentenceReportCard = ({
     claim,
     personality,
     classification,
-    content: { content, href },
+    content,
     hideDescription,
 }: {
     personality?: any;
@@ -31,6 +32,9 @@ const SentenceReportCard = ({
     const { reviewTaskType } = useContext(ReviewTaskMachineContext);
     const isClaim = reviewTaskType === ReviewTaskTypeEnum.Claim;
     const { vw } = useAppSelector((state) => state);
+    const isSource = reviewTaskType === ReviewTaskTypeEnum.Source;
+    const isVerificationRequest =
+        reviewTaskType === ReviewTaskTypeEnum.VerificationRequest;
 
     return (
         <SentenceReportCardStyle>
@@ -57,14 +61,16 @@ const SentenceReportCard = ({
                             />
                         </Title>
                     )}
-                    {isClaim ? (
+                    {isClaim && (
                         <ClaimSummaryDisplay
                             claim={claim}
-                            content={content}
+                            content={content?.content}
                             personality={personality}
                         />
-                    ) : (
-                        <SourceSummaryDisplay href={href} />
+                    )}
+                    {isSource && <SourceSummaryDisplay href={content?.href} />}
+                    {isVerificationRequest && (
+                        <VerificationRequestDisplay content={content} />
                     )}
                     {hideDescription && (
                         <AletheiaAlert

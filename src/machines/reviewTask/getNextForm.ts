@@ -6,6 +6,7 @@ import unassignedForm from "../../components/ClaimReview/form/fieldLists/unassig
 import submittedForm from "../../components/ClaimReview/form/fieldLists/submittedForm";
 import crossCheckingForm from "../../components/ClaimReview/form/fieldLists/crossCheckingForm";
 import selectCrossCheckerForm from "../../components/ClaimReview/form/fieldLists/selectCrossCheckerForm";
+import verificationRequestForm from "../../components/ClaimReview/form/fieldLists/verificationRequestForm";
 
 const getNextForm = (
     param: ReviewTaskEvents | ReviewTaskStates,
@@ -15,6 +16,8 @@ const getNextForm = (
         [ReviewTaskStates.unassigned]: unassignedForm,
         [ReviewTaskEvents.assignUser]: visualEditor,
         [ReviewTaskStates.assigned]: visualEditor,
+        [ReviewTaskEvents.assignRequest]: verificationRequestForm,
+        [ReviewTaskStates.assignedRequest]: verificationRequestForm,
 
         [ReviewTaskEvents.finishReport]: [],
         [ReviewTaskStates.reported]: [],
@@ -40,6 +43,10 @@ const getNextForm = (
         [ReviewTaskEvents.addRejectionComment]: visualEditor,
         [ReviewTaskStates.published]: [],
         [ReviewTaskEvents.publish]: [],
+
+        [ReviewTaskEvents.reset]: verificationRequestForm,
+        [ReviewTaskStates.rejectedRequest]: [],
+        [ReviewTaskEvents.rejectRequest]: [],
     };
 
     return formMap[param];

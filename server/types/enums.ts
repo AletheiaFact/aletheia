@@ -8,11 +8,13 @@ enum ContentModelEnum {
 enum ReportModelEnum {
     FactChecking = "Fact-checking",
     InformativeNews = "Informative News",
+    Request = "Request",
 }
 
 enum ReviewTaskTypeEnum {
     Claim = "Claim",
     Source = "Source",
+    VerificationRequest = "VerificationRequest",
 }
 
 export { ContentModelEnum, ReportModelEnum, ReviewTaskTypeEnum };

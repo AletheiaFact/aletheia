@@ -18,6 +18,9 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
         ReviewTaskMachineContext
     );
     const isClaim = reviewTaskType === ReviewTaskTypeEnum.Claim;
+    const isSource = reviewTaskType === ReviewTaskTypeEnum.Source;
+    const isVerificationRequest =
+        reviewTaskType === ReviewTaskTypeEnum.VerificationRequest;
 
     const toggleFormCollapse = (event) => {
         setFormCollapsed((prev) => !prev);
@@ -41,38 +44,63 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                     gap: 16,
                 }}
             >
-                {isClaim && isLoggedIn && (
+                {isLoggedIn && (
                     <>
-                        <Button
-                            type={ButtonType.blue}
-                            onClick={toggleFormCollapse}
-                            icon={<PlusOutlined />}
-                            data-cy={"testAddInformativeNewsReviewButton"}
-                            id={ReportModelEnum.InformativeNews}
-                        >
-                            {t("claimReviewForm:addInformativeNewsButton")}
-                        </Button>
-                        <Button
-                            type={ButtonType.blue}
-                            onClick={toggleFormCollapse}
-                            icon={<PlusOutlined />}
-                            data-cy={"testAddFactCheckReviewButton"}
-                            id={ReportModelEnum.FactChecking}
-                        >
-                            {t("claimReviewForm:addFactCheckingReviewButton")}
-                        </Button>
+                        {isClaim && (
+                            <>
+                                <Button
+                                    type={ButtonType.blue}
+                                    onClick={toggleFormCollapse}
+                                    icon={<PlusOutlined />}
+                                    data-cy={
+                                        "testAddInformativeNewsReviewButton"
+                                    }
+                                    id={ReportModelEnum.InformativeNews}
+                                >
+                                    {t(
+                                        "claimReviewForm:addInformativeNewsButton"
+                                    )}
+                                </Button>
+                                <Button
+                                    type={ButtonType.blue}
+                                    onClick={toggleFormCollapse}
+                                    icon={<PlusOutlined />}
+                                    data-cy={"testAddFactCheckReviewButton"}
+                                    id={ReportModelEnum.FactChecking}
+                                >
+                                    {t(
+                                        "claimReviewForm:addFactCheckingReviewButton"
+                                    )}
+                                </Button>
+                            </>
+                        )}
+                        {isSource && (
+                            <Button
+                                type={ButtonType.blue}
+                                onClick={toggleFormCollapse}
+                                icon={<PlusOutlined />}
+                                data-cy={"testAddFactCheckReviewButton"}
+                                id={ReportModelEnum.FactChecking}
+                            >
+                                {t("claimReviewForm:addSourceReviewButton")}
+                            </Button>
+                        )}
+                        {isVerificationRequest && (
+                            <Button
+                                type={ButtonType.blue}
+                                onClick={toggleFormCollapse}
+                                icon={<PlusOutlined />}
+                                data-cy={
+                                    "testAddVerificationRequestReviewButton"
+                                }
+                                id={ReportModelEnum.Request}
+                            >
+                                {t(
+                                    "claimReviewForm:addVerificationRequestButton"
+                                )}
+                            </Button>
+                        )}
                     </>
-                )}
-                {!isClaim && isLoggedIn && (
-                    <Button
-                        type={ButtonType.blue}
-                        onClick={toggleFormCollapse}
-                        icon={<PlusOutlined />}
-                        data-cy={"testAddFactCheckReviewButton"}
-                        id={ReportModelEnum.FactChecking}
-                    >
-                        {t("claimReviewForm:addSourceReviewButton")}
-                    </Button>
                 )}
             </Col>
         </Row>

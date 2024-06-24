@@ -1,5 +1,5 @@
 import { BaseActionObject, StatesConfig } from "xstate/lib/types";
-import { saveContext } from "./actions";
+import { rejectVerificationRequest, saveContext } from "./actions";
 import {
     CompoundStates,
     ReviewTaskEvents as Events,
@@ -212,7 +212,46 @@ const informativeNewsWorkflow: StatesConfig<
     },
 };
 
+const RequestWorkflow: StatesConfig<
+    ReviewTaskMachineContextType,
+    any,
+    SaveEvent,
+    BaseActionObject
+> = {
+    [States.unassigned]: {
+        on: {
+            [Events.assignRequest]: {
+                target: States.assignedRequest,
+                actions: [saveContext],
+            },
+        },
+    },
+    [States.assignedRequest]: {
+        on: {
+            [Events.rejectRequest]: {
+                target: States.rejectedRequest,
+                actions: [rejectVerificationRequest],
+            },
+            [Events.publish]: {
+                target: States.published,
+                actions: [saveContext],
+            },
+        },
+    },
+    [States.published]: {
+        on: {
+            [Events.reset]: {
+                target: States.assignedRequest,
+            },
+        },
+    },
+    [States.rejectedRequest]: {
+        type: "final",
+    },
+};
+
 export const machineWorkflow = {
     [ReportModelEnum.FactChecking]: factCheckingWorkflow,
     [ReportModelEnum.InformativeNews]: informativeNewsWorkflow,
+    [ReportModelEnum.Request]: RequestWorkflow,
 };
