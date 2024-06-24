@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import SelectOptions from "./SelectOptions";
 import userApi from "../../api/userApi";
+import verificationRequestApi from "../../api/verificationRequestApi";
 
-interface UserInputProps {
+interface FetchInputProps {
     fieldName: string;
     placeholder: string;
     onChange: any;
@@ -14,7 +15,7 @@ interface UserInputProps {
     preloadedOptions?: string[];
 }
 
-const UserInput = ({
+const FetchInput = ({
     fieldName,
     placeholder,
     onChange,
@@ -24,23 +25,27 @@ const UserInput = ({
     style = {},
     value = null,
     preloadedOptions = [],
-}: UserInputProps) => {
+}: FetchInputProps) => {
     const [treatedValue, setTreatedValue] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const apiFunction =
+        fieldName === "usersId"
+            ? userApi.getById
+            : verificationRequestApi.getById;
 
     useEffect(() => {
-        const fetchUserNames = async () => {
+        const fetchSelectedContent = async () => {
             if (
                 Array.isArray(value) ? value.length > 0 : value !== "" && value
             ) {
                 try {
                     setIsLoading(true);
-                    const userPromises = Array.isArray(value)
-                        ? value.map((id) => userApi.getById(id))
-                        : [userApi.getById(value)];
-                    const users = await Promise.all(userPromises);
-                    const treatedValues = users.map((user) => ({
-                        label: user?.name,
+                    const Promises = Array.isArray(value)
+                        ? value.map((id) => apiFunction(id))
+                        : [apiFunction(value)];
+                    const results = await Promise.all(Promises);
+                    const treatedValues = results.map((user) => ({
+                        label: user?.name || user?.content,
                         value: user?._id,
                     }));
                     setTreatedValue(treatedValues);
@@ -54,7 +59,7 @@ const UserInput = ({
             }
         };
 
-        fetchUserNames().catch((error) => {
+        fetchSelectedContent().catch((error) => {
             console.error(error);
             setIsLoading(false);
         });
@@ -76,4 +81,4 @@ const UserInput = ({
     );
 };
 
-export default UserInput;
+export default FetchInput;

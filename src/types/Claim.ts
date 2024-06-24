@@ -12,4 +12,5 @@ export type Claim = {
     personalities?: Personality[];
     recaptcha?: string;
     nameSpace?: NameSpaceEnum;
+    group: any;
 };

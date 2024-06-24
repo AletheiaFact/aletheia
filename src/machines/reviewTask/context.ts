@@ -35,8 +35,21 @@ const buildState = (
         claim: "",
         source: "",
         usersId: "",
+        targetId: "",
         isPartialReview: false,
     };
+
+    if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
+        return {
+            reviewData: {
+                usersId: [],
+                isSensitive: false,
+                group: [],
+                rejected: false,
+            },
+            claimReview,
+        };
+    }
 
     if (reviewTaskType === ReviewTaskTypeEnum.Source) {
         return {

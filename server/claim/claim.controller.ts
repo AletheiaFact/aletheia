@@ -12,7 +12,6 @@ import {
     Req,
     Res,
     Header,
-    Optional,
     UseGuards,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
@@ -33,7 +32,6 @@ import { TargetModel } from "../history/schema/history.schema";
 import { SentenceService } from "./types/sentence/sentence.service";
 import type { BaseRequest } from "../types";
 import slugify from "slugify";
-import { UnleashService } from "nestjs-unleash";
 import { SentenceDocument } from "./types/sentence/schemas/sentence.schema";
 import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
@@ -52,7 +50,9 @@ import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { Types } from "mongoose";
+import { GroupService } from "../group/group.service";
 
 @Controller(":namespace?")
 export class ClaimController {
@@ -72,7 +72,8 @@ export class ClaimController {
         private parserService: ParserService,
         private historyService: HistoryService,
         private claimRevisionService: ClaimRevisionService,
-        @Optional() private readonly unleash: UnleashService
+        private featureFlagService: FeatureFlagService,
+        private groupService: GroupService
     ) {}
 
     _verifyInputsQuery(query) {
@@ -350,11 +351,14 @@ export class ClaimController {
             data_hash
         );
 
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableCopilotChatBot = this.isEnableCopilotChatBot();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
-            this.isEnableAddEditorSourcesWithoutSelecting();
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
 
         hideDescriptions[TargetModel.Claim] =
             await this.historyService.getDescriptionForHide(
@@ -505,11 +509,15 @@ export class ClaimController {
     @ApiTags("pages")
     @Get("claim/create")
     public async claimCreatePage(
-        @Query() query: { personality?: string },
+        @Query() query: { personality?: string; verificationRequest?: string },
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+
+        const verificationRequestGroup = query.verificationRequest
+            ? await this.groupService.getByContentId(query.verificationRequest)
+            : null;
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
@@ -529,6 +537,7 @@ export class ClaimController {
                 personality,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 nameSpace: req.params.namespace,
+                verificationRequestGroup,
             })
         );
     }
@@ -562,11 +571,14 @@ export class ClaimController {
         const { claimSlug, namespace = NameSpaceEnum.Main } = req.params;
         const parsedUrl = parse(req.url, true);
         const claim = await this.claimService.getByClaimSlug(claimSlug);
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableCopilotChatBot = this.isEnableCopilotChatBot();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
-            this.isEnableAddEditorSourcesWithoutSelecting();
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
 
         this.redirectBasedOnPersonality(res, claim, namespace);
 
@@ -596,11 +608,14 @@ export class ClaimController {
         const { claimSlug, revisionId, namespace } = req.params;
         const parsedUrl = parse(req.url, true);
 
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableCopilotChatBot = this.isEnableCopilotChatBot();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
-            this.isEnableAddEditorSourcesWithoutSelecting();
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
 
         const claim = await this.claimService.getByClaimSlug(
             claimSlug,
@@ -636,11 +651,14 @@ export class ClaimController {
         const { personalitySlug, claimSlug, namespace } = req.params;
         const parsedUrl = parse(req.url, true);
 
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableCopilotChatBot = this.isEnableCopilotChatBot();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
-            this.isEnableAddEditorSourcesWithoutSelecting();
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
@@ -699,11 +717,14 @@ export class ClaimController {
                 req.language
             );
 
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableCopilotChatBot = this.isEnableCopilotChatBot();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
-            this.isEnableAddEditorSourcesWithoutSelecting();
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
@@ -929,38 +950,6 @@ export class ClaimController {
         const sentence = await this.sentenceService.getByDataHash(data_hash);
 
         await this.returnClaimReviewPage(data_hash, req, res, claim, sentence);
-    }
-
-    private isEnableCollaborativeEditor() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config
-            ? this.unleash.isEnabled("enable_collaborative_editor")
-            : false;
-    }
-
-    private isEnableCopilotChatBot() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config ? this.unleash.isEnabled("copilot_chat_bot") : false;
-    }
-
-    private isEnableEditorAnnotations() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config
-            ? this.unleash.isEnabled("enable_editor_annotations")
-            : false;
-    }
-
-    private isEnableAddEditorSourcesWithoutSelecting() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config
-            ? this.unleash.isEnabled(
-                  "enable_add_editor_sources_without_selecting"
-              )
-            : false;
     }
 
     private redirectBasedOnPersonality(

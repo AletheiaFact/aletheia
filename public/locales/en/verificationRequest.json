@@ -1,0 +1,5 @@
+{
+    "verificationRequestTitle": "Verification Request",
+    "manageVerificationRequests": "Manage selected verification requests",
+    "createClaimFromVerificationRequest": "No claim was created with this verification request, click here to complete the process"
+}

@@ -29,7 +29,13 @@ import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 
-const DynamicReviewTaskForm = ({ data_hash, personality, claim, source }) => {
+const DynamicReviewTaskForm = ({
+    data_hash,
+    personality,
+    claim,
+    source,
+    targetId,
+}) => {
     const {
         handleSubmit,
         control,
@@ -101,6 +107,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, claim, source }) => {
                 personality,
                 claim,
                 source,
+                targetId,
             },
             type: eventName,
             t,

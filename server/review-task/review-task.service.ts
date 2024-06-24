@@ -16,7 +16,7 @@ import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { Roles } from "../auth/ability/ability.factory";
 import { ImageService } from "../claim/types/image/image.service";
-import { ContentModelEnum } from "../types/enums";
+import { ContentModelEnum, ReportModelEnum } from "../types/enums";
 import lookupUsers from "../mongo-pipelines/lookupUsers";
 import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";
@@ -291,6 +291,9 @@ export class ReviewTaskService {
         reviewTaskBody.machine.context.reviewData.usersId =
             this._returnObjectId(reviewDataBody.usersId);
 
+        reviewTaskBody.machine.context.reviewData.group =
+            this._returnObjectId(reviewDataBody.group);
+
         if (reviewDataBody.reviewerId) {
             reviewTaskBody.machine.context.reviewData.reviewerId =
                 Types.ObjectId(reviewDataBody.reviewerId) || "";
@@ -348,7 +351,6 @@ export class ReviewTaskService {
         reportModel: string,
         history: boolean = true
     ) {
-        const loggedInUser = this.req.user;
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
         const reviewTask = await this.getReviewTaskByDataHash(data_hash);
 
@@ -362,24 +364,13 @@ export class ReviewTaskService {
             machine: newReviewTaskMachine,
         };
 
-        if (newReviewTaskMachine.value === "published") {
-            if (
-                loggedInUser.role[nameSpace] !== Roles.Admin &&
-                loggedInUser.role[nameSpace] !== Roles.SuperAdmin &&
-                loggedInUser._id !==
-                    machine.context.reviewData.reviewerId.toString()
-            ) {
-                throw new ForbiddenException(
-                    "This user does not have permission to publish the report"
-                );
-            }
-            this._createReportAndClaimReview(
-                data_hash,
-                newReviewTask.machine,
-                reportModel,
-                nameSpace
-            );
-        }
+        this._publishReviewTask(
+            newReviewTask,
+            nameSpace,
+            machine,
+            data_hash,
+            reportModel
+        );
 
         if (history) {
             this._createReviewTaskHistory(newReviewTask, reviewTask);
@@ -615,5 +606,37 @@ export class ReviewTaskService {
             ...schema,
             ...htmlContent,
         };
+    }
+
+    private _publishReviewTask(
+        reviewTaskMachine,
+        nameSpace,
+        machine,
+        data_hash,
+        reportModel
+    ) {
+        const loggedInUser = this.req.user;
+
+        if (
+            reviewTaskMachine.value === "published" &&
+            reportModel !== ReportModelEnum.Request
+        ) {
+            if (
+                loggedInUser.role[nameSpace] !== Roles.Admin &&
+                loggedInUser.role[nameSpace] !== Roles.SuperAdmin &&
+                loggedInUser._id !==
+                    machine.context.reviewData.reviewerId.toString()
+            ) {
+                throw new ForbiddenException(
+                    "This user does not have permission to publish the report"
+                );
+            }
+            this._createReportAndClaimReview(
+                data_hash,
+                reviewTaskMachine.machine,
+                reportModel,
+                nameSpace
+            );
+        }
     }
 }

@@ -15,6 +15,7 @@ import { ContentModelEnum } from "../types/enums";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { GroupService } from "../group/group.service";
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
@@ -39,7 +40,8 @@ export class ClaimService {
         private stateEventService: StateEventService,
         private claimRevisionService: ClaimRevisionService,
         private reviewTaskService: ReviewTaskService,
-        private util: UtilService
+        private util: UtilService,
+        private groupService: GroupService
     ) {}
 
     async listAll(page, pageSize, order, query) {
@@ -126,6 +128,10 @@ export class ClaimService {
             return Types.ObjectId(personality);
         });
 
+        if (claim.group) {
+            claim.group = Types.ObjectId(claim.group);
+        }
+
         const newClaim = new this.ClaimModel(claim);
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,
@@ -150,6 +156,9 @@ export class ClaimService {
 
         this.historyService.createHistory(history);
         this.stateEventService.createStateEvent(stateEvent);
+        if (claim.group) {
+            this.groupService.updateWithTargetId(claim.group, newClaim._id);
+        }
 
         newClaim.save();
         return {

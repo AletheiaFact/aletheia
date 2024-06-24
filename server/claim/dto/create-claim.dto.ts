@@ -10,6 +10,7 @@ import {
 import { ContentModelEnum } from "../../types/enums";
 import { Personality } from "../../personality/schemas/personality.schema";
 import { ApiProperty } from "@nestjs/swagger";
+import { Group } from "../../group/schemas/group.schema";
 
 export class CreateClaimDTO {
     @IsNotEmpty()
@@ -52,4 +53,8 @@ export class CreateClaimDTO {
     @IsString()
     @ApiProperty()
     nameSpace: string;
+
+    @IsString()
+    @ApiProperty()
+    group: Group;
 }

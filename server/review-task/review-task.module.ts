@@ -14,6 +14,8 @@ import { ConfigModule } from "@nestjs/config";
 import { ImageModule } from "../claim/types/image/image.module";
 import { EditorParseModule } from "../editor-parse/editor-parse.module";
 import { CommentModule } from "./comment/comment.module";
+import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
+import { GroupModule } from "../group/group.module";
 
 export const ReviewTaskModel = MongooseModule.forFeature([
     {
@@ -36,6 +38,8 @@ export const ReviewTaskModel = MongooseModule.forFeature([
         ImageModule,
         EditorParseModule,
         CommentModule,
+        FeatureFlagModule,
+        GroupModule,
     ],
     providers: [ReviewTaskService],
     exports: [ReviewTaskService],
