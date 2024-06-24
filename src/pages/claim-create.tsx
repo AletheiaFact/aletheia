@@ -39,12 +39,7 @@ const ClaimCreatePage: NextPage<any> = ({
                 //@ts-ignore
                 initialValues={[
                     [claimPersonalities, personality ? [personality] : []],
-                    [
-                        claimVerificationRequests,
-                        verificationRequestGroup
-                            ? verificationRequestGroup
-                            : null,
-                    ],
+                    [claimVerificationRequests, verificationRequestGroup],
                     [currentNameSpace, nameSpace],
                 ]}
             >

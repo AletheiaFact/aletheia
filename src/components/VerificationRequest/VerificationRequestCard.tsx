@@ -18,7 +18,7 @@ const VerificationRequestCard = ({ content, actions = [] }) => {
                 {content}
             </Typography.Paragraph>
 
-            {actions && actions.map((action) => action)}
+            {actions ? actions.map((action) => action) : <></>}
         </CardBase>
     );
 };
