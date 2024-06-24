@@ -83,6 +83,15 @@ const CreateClaimView = () => {
                     claimData?.group?.content?.length > 0 && (
                         <span
                             onClick={() => setOpen(true)}
+                            role="button"
+                            aria-pressed="false"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === "Space") {
+                                    setOpen(true);
+                                    e.preventDefault();
+                                }
+                            }}
                             style={{
                                 color: colors.lightBlueMain,
                                 textDecoration: "underline",
@@ -115,12 +124,14 @@ const CreateClaimView = () => {
             >
                 <Col style={{ margin: "32px 64px" }}>
                     <h3>{t("verificationRequest:verificationRequestTitle")}</h3>
-                    {claimData.group &&
+                    {claimData?.group ? (
                         claimData.group.content.map(({ _id, content }) => (
                             <VerificationRequestCard
+                                key={_id}
                                 content={content}
                                 actions={[
                                     <AletheiaButton
+                                        key="remove"
                                         onClick={() => onRemove(_id)}
                                         loading={isLoading}
                                     >
@@ -128,7 +139,10 @@ const CreateClaimView = () => {
                                     </AletheiaButton>,
                                 ]}
                             />
-                        ))}
+                        ))
+                    ) : (
+                        <></>
+                    )}
                 </Col>
             </LargeDrawer>
         </Row>
