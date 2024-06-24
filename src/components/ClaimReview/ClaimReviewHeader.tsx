@@ -66,6 +66,7 @@ const ClaimReviewHeader = ({
                             order: 1,
                             span: 24,
                         }}
+                        style={{ padding: 32 }}
                         md={{ order: 2, span: 24 }}
                         sm={{ order: 2, span: 24 }}
                         xs={{ order: 2, span: 24 }}
