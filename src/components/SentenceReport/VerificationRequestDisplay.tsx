@@ -42,6 +42,7 @@ const VerificationRequestDisplay = ({ content }) => {
                     >
                         {verificationRequestGroup.map(({ content }) => (
                             <div
+                                key={content}
                                 style={{ flex: "1 1 200px", minWidth: "200px" }}
                             >
                                 <VerificationRequestCard content={content} />
