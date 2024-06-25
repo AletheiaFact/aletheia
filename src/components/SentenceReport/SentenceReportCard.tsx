@@ -1,4 +1,4 @@
-import { Col, Row, Typography } from "antd";
+import { Col, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useContext } from "react";
 

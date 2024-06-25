@@ -55,6 +55,7 @@ export class CreateClaimDTO {
     nameSpace: string;
 
     @IsString()
+    @IsOptional()
     @ApiProperty()
     group: Group;
 }
