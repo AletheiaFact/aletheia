@@ -1,6 +1,8 @@
 {
     "ASSIGN_USER_SUCCESS": "User assigned successfully",
     "ASSIGN_USER_ERROR": "Error when assigning the user",
+    "ASSIGN_REQUEST_SUCCESS": "User assigned successfully",
+    "ASSIGN_REQUEST_ERROR": "Error when assigning the user",
     "FINISH_REPORT_SUCCESS": "Report saved succesfully",
     "FINISH_REPORT_ERROR": "Error when saving the report",
     "ADD_COMMENT_SUCCESS": "Successfully advanced step",
@@ -25,9 +27,14 @@
     "FULL_REVIEW_ERROR": "Error when saving the summary",
     "GO_BACK_SUCCESS": "Successfully turned step",
     "GO_BACK_ERROR": "It was not possible to return",
+    "REJECT_SUCCESS": "Successfully rejected verification request",
+    "REJECT_ERROR": "It was not possible to reject",
+    "RESET_SUCCESS": "Successfully reset workflow",
+    "RESET_ERROR": "It was not possible to reset",
 
     "ADD_REJECTION_COMMENT": "Send comment",
     "ASSIGN_USER": "Assign",
+    "ASSIGN_REQUEST": "Assign",
     "FINISH_REPORT": "Finish Report",
     "SELECTED_CROSS_CHECKING": "Select cross-checker",
     "SELECTED_REVIEW": "Select reviewer",
@@ -42,6 +49,8 @@
     "FULL_REVIEW": "Complete report",
     "GO_BACK": "Go Back",
     "SAVE_DRAFT": "Save Draft",
+    "REJECT_REQUEST": "Reject",
+    "RESET": "Reset",
 
     "errorWhileFetching": "Error while fetching machine",
     "assigned": "User assigned",

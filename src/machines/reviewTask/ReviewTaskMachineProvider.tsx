@@ -54,6 +54,10 @@ const getMachineInitialState = (
         context: getInitialContext(reviewTaskType, { usersId: [userId] }),
         value: ReviewTaskStates.assigned,
     },
+    [ReportModelEnum.Request]: {
+        context: getInitialContext(reviewTaskType),
+        value: ReviewTaskStates.unassigned,
+    },
 });
 
 /* We chose not to use Jotai as the provider for this machine because we need

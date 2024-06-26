@@ -5,6 +5,7 @@
     "addFactCheckingReviewButton": "Start a fact-check",
     "addInformativeNewsButton": "Start an informative news",
     "addSourceReviewButton": "Start a source review",
+    "addVerificationRequestButton": "Start a verification request review",
     "cancelButton": "Cancel",
     "classificationPlaceholder": "Choose a classification",
     "not-fact": "Not fact",
@@ -49,5 +50,9 @@
     "rejectionCommentLabel": "Rejection comment",
     "rejectionCommentPlaceholder": "Describe what needs to be changed",
     "loginButton": "Login to continue",
-    "notReviewed": "Not reviewed"
+    "notReviewed": "Not reviewed",
+    "groupLabel": "Group verification requests",
+    "groupPlaceholder": "Select verification requests",
+    "isSensitiveLabel": "Sensitve content",
+    "isSensitive": "This verification request contains sensitve content"
 }

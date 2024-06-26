@@ -58,6 +58,8 @@ import { DailyReportModule } from "./daily-report/daily-report.module";
 import { SummarizationCrawlerModule } from "./summarization/summarization-crawler.module";
 import { ChatbotModule } from "./chat-bot/chat-bot.module";
 import { VerificationRequestModule } from "./verification-request/verification-request.module";
+import { FeatureFlagModule } from "./feature-flag/feature-flag.module";
+import { GroupModule } from "./group/group.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -121,6 +123,8 @@ export class AppModule implements NestModule {
             SummarizationCrawlerModule,
             ChatbotModule,
             VerificationRequestModule,
+            FeatureFlagModule,
+            GroupModule,
         ];
         if (options.feature_flag) {
             imports.push(

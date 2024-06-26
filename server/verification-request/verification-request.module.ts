@@ -1,10 +1,17 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import {
-    VerificationRequest,
     VerificationRequestSchema,
-} from "./schema/verification-request.schema";
+    VerificationRequest,
+} from "./schemas/verification-request.schema";
 import { VerificationRequestService } from "./verification-request.service";
+import { VerificationRequestController } from "./verification-request.controller";
+import { SourceModule } from "../source/source.module";
+import { ViewModule } from "../view/view.module";
+import { ConfigModule } from "@nestjs/config";
+import { ClaimReviewTaskModule } from "../claim-review-task/claim-review-task.module";
+import { HistoryModule } from "../history/history.module";
+import { GroupModule } from "../group/group.module";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -14,8 +21,17 @@ const VerificationRequestModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [VerificationRequestModel],
-    providers: [VerificationRequestService],
+    imports: [
+        VerificationRequestModel,
+        SourceModule,
+        ViewModule,
+        ConfigModule,
+        ClaimReviewTaskModule,
+        HistoryModule,
+        GroupModule,
+    ],
     exports: [VerificationRequestService],
+    providers: [VerificationRequestService],
+    controllers: [VerificationRequestController],
 })
 export class VerificationRequestModule {}

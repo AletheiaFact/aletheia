@@ -4,10 +4,11 @@ import ClaimReviewSelect from "./ClaimReviewSelect";
 import InputTextList from "../InputTextList";
 import Loading from "../Loading";
 import TextArea from "../TextArea";
-import UserInput from "./UserInput";
+import FetchInput from "./FetchInput";
 import { useTranslation } from "next-i18next";
 import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
+import { Checkbox } from "antd";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
@@ -41,7 +42,7 @@ const DynamicInput = (props: DynamicInputProps) => {
             );
         case "inputSearch":
             return (
-                <UserInput
+                <FetchInput
                     fieldName={props.fieldName}
                     placeholder={t(props.placeholder)}
                     onChange={props.onChange}
@@ -82,6 +83,17 @@ const DynamicInput = (props: DynamicInputProps) => {
                     defaultValue={props.defaultValue}
                     placeholder={t(props.placeholder)}
                 />
+            );
+        case "textbox":
+            return (
+                <Checkbox
+                    data-cy={props["data-cy"]}
+                    defaultChecked={!!props.defaultValue}
+                    onChange={(value) => props.onChange(value)}
+                    value={props.value}
+                >
+                    {t(`claimReviewForm:${props.fieldName}`)}
+                </Checkbox>
             );
         case "visualEditor":
             if (isFetchingEditor) {
