@@ -111,9 +111,14 @@ export const createChatBotMachine = (
             actions: {
                 ...actions,
                 saveVerificationRequestToDB: (context) => {
-                    verificationRequestService.createVerificationRequest(
-                        context.verificationRequest
-                    );
+                    const verificationRequestBody = {
+                        content: context.verificationRequest,
+                        date: new Date(),
+                        sources: [],
+                        data_hash: "",
+                    };
+
+                    verificationRequestService.create(verificationRequestBody);
                 },
             },
         }
