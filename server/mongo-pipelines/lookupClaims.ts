@@ -1,7 +1,7 @@
 import { TargetModel } from "../history/schema/history.schema";
 
 export default function lookupClaims(target, params: any = {}) {
-    if (target === TargetModel.ClaimReviewTask) {
+    if (target === TargetModel.ReviewTask) {
         const { pipeline, as } = params;
         return {
             $lookup: {

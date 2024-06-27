@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../store/store";
 import { createWebsocketConnection } from "./utils/createWebsocketConnection";
-import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
+import ReviewTaskApi from "../../api/reviewTaskApi";
 import { RemirrorContentType } from "remirror";
 import { SourceType } from "../../types/Source";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -52,7 +52,7 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
         const params = { reportModel, reviewTaskType };
         const fetchEditorContentObject = (data_hash) => {
             setIsFetchingEditor(true);
-            return ClaimReviewTaskApi.getEditorContentObject(data_hash, params);
+            return ReviewTaskApi.getEditorContentObject(data_hash, params);
         };
 
         if (reportModel) {

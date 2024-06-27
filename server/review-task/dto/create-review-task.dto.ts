@@ -47,7 +47,7 @@ export type Machine = {
     value: string;
 };
 
-export class CreateClaimReviewTaskDTO {
+export class CreateReviewTaskDTO {
     @IsNotEmpty()
     @IsObject()
     @ApiProperty()

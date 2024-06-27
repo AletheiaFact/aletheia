@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../../../../store/store";
-import reviewTaskApi from "../../../../api/ClaimReviewTaskApi";
+import reviewTaskApi from "../../../../api/reviewTaskApi";
 import { useTranslation } from "next-i18next";
 
 const useAutoSaveDraft = (data_hash, personality, claim, watch) => {

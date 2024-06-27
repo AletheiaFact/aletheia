@@ -11,9 +11,9 @@ import {
     Header,
     Optional,
 } from "@nestjs/common";
-import { ClaimReviewTaskService } from "./claim-review-task.service";
-import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
-import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
+import { ReviewTaskService } from "./review-task.service";
+import { CreateReviewTaskDTO } from "./dto/create-review-task.dto";
+import { UpdateReviewTaskDTO } from "./dto/update-review-task.dto";
 import { CaptchaService } from "../captcha/captcha.service";
 import { parse } from "url";
 import type { Request, Response } from "express";
@@ -26,17 +26,17 @@ import { ApiTags } from "@nestjs/swagger";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Controller(":namespace?")
-export class ClaimReviewController {
+export class ReviewTaskController {
     constructor(
-        private claimReviewTaskService: ClaimReviewTaskService,
+        private reviewTaskService: ReviewTaskService,
         private captchaService: CaptchaService,
         private viewService: ViewService,
         private configService: ConfigService,
         @Optional() private readonly unleash: UnleashService
     ) {}
 
-    @ApiTags("claim-review-task")
-    @Get("api/claimreviewtask")
+    @ApiTags("review-task")
+    @Get("api/reviewtask")
     @Header("Cache-Control", "no-cache")
     public async getByMachineValue(@Query() getTasksDTO: GetTasksDTO) {
         const {
@@ -48,7 +48,7 @@ export class ClaimReviewController {
             nameSpace = NameSpaceEnum.Main,
         } = getTasksDTO;
         return Promise.all([
-            this.claimReviewTaskService.listAll(
+            this.reviewTaskService.listAll(
                 page,
                 pageSize,
                 order,
@@ -56,7 +56,7 @@ export class ClaimReviewController {
                 filterUser,
                 nameSpace
             ),
-            this.claimReviewTaskService.countReviewTasksNotDeleted(
+            this.reviewTaskService.countReviewTasksNotDeleted(
                 getQueryMatchForMachineValue(value),
                 filterUser,
                 nameSpace
@@ -74,43 +74,43 @@ export class ClaimReviewController {
         });
     }
 
-    @ApiTags("claim-review-task")
-    @Get("api/claimreviewtask/:id")
+    @ApiTags("review-task")
+    @Get("api/reviewtask/:id")
     @Header("Cache-Control", "no-cache")
     async getById(@Param("id") id: string) {
-        return this.claimReviewTaskService.getById(id);
+        return this.reviewTaskService.getById(id);
     }
 
-    @ApiTags("claim-review-task")
-    @Post("api/claimreviewtask")
+    @ApiTags("review-task")
+    @Post("api/reviewtask")
     @Header("Cache-Control", "no-cache")
-    async create(@Body() createClaimReviewTask: CreateClaimReviewTaskDTO) {
+    async create(@Body() createReviewTask: CreateReviewTaskDTO) {
         const validateCaptcha = await this.captchaService.validate(
-            createClaimReviewTask.recaptcha
+            createReviewTask.recaptcha
         );
         if (!validateCaptcha) {
             throw new Error("Error validating captcha");
         }
-        return this.claimReviewTaskService.create(createClaimReviewTask);
+        return this.reviewTaskService.create(createReviewTask);
     }
 
-    @ApiTags("claim-review-task")
-    @Put("api/claimreviewtask/:data_hash")
+    @ApiTags("review-task")
+    @Put("api/reviewtask/:data_hash")
     @Header("Cache-Control", "no-cache")
     async autoSaveDraft(
         @Param("data_hash") data_hash,
-        @Body() claimReviewTaskBody: UpdateClaimReviewTaskDTO
+        @Body() reviewTaskBody: UpdateReviewTaskDTO
     ) {
         const history = false;
-        return this.claimReviewTaskService
-            .getClaimReviewTaskByDataHash(data_hash)
+        return this.reviewTaskService
+            .getReviewTaskByDataHash(data_hash)
             .then((review) => {
                 if (review) {
-                    return this.claimReviewTaskService.update(
+                    return this.reviewTaskService.update(
                         data_hash,
-                        claimReviewTaskBody,
-                        claimReviewTaskBody.nameSpace,
-                        claimReviewTaskBody.reportModel,
+                        reviewTaskBody,
+                        reviewTaskBody.nameSpace,
+                        reviewTaskBody.reportModel,
                         history
                     );
                 }
@@ -118,55 +118,49 @@ export class ClaimReviewController {
     }
 
     // TODO: remove hash from the url
-    @ApiTags("claim-review-task")
-    @Get("api/claimreviewtask/hash/:data_hash")
+    @ApiTags("review-task")
+    @Get("api/reviewtask/hash/:data_hash")
     @Header("Cache-Control", "no-cache")
     async getByDataHash(@Param("data_hash") data_hash: string) {
-        return this.claimReviewTaskService.getClaimReviewTaskByDataHash(
-            data_hash
-        );
+        return this.reviewTaskService.getReviewTaskByDataHash(data_hash);
     }
 
-    @ApiTags("claim-review-task")
-    @Get("api/claimreviewtask/editor-content/:data_hash")
+    @ApiTags("review-task")
+    @Get("api/reviewtask/editor-content/:data_hash")
     @Header("Cache-Control", "no-cache")
     async getEditorContentByDataHash(
         @Param("data_hash") data_hash: string,
         @Query() query: { reportModel: string; reviewTaskType: string }
     ) {
-        const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskByDataHash(
-                data_hash
-            );
+        const reviewTask = await this.reviewTaskService.getReviewTaskByDataHash(
+            data_hash
+        );
 
-        return this.claimReviewTaskService.getEditorContentObject(
-            claimReviewTask?.machine?.context?.reviewData,
+        return this.reviewTaskService.getEditorContentObject(
+            reviewTask?.machine?.context?.reviewData,
             query.reportModel,
             query.reviewTaskType
         );
     }
 
-    @ApiTags("claim-review-task")
-    @Put("api/claimreviewtask/add-comment/:data_hash")
+    @ApiTags("review-task")
+    @Put("api/reviewtask/add-comment/:data_hash")
     @Header("Cache-Control", "no-cache")
     async addComment(@Param("data_hash") data_hash: string, @Body() body) {
-        return this.claimReviewTaskService.addComment(data_hash, body.comment);
+        return this.reviewTaskService.addComment(data_hash, body.comment);
     }
 
-    @ApiTags("claim-review-task")
-    @Put("api/claimreviewtask/delete-comment/:data_hash")
+    @ApiTags("review-task")
+    @Put("api/reviewtask/delete-comment/:data_hash")
     @Header("Cache-Control", "no-cache")
     async deleteComment(@Param("data_hash") data_hash: string, @Body() body) {
-        return this.claimReviewTaskService.deleteComment(
-            data_hash,
-            body.commentId
-        );
+        return this.reviewTaskService.deleteComment(data_hash, body.commentId);
     }
 
     @ApiTags("pages")
     @Get("kanban")
     @Header("Cache-Control", "no-cache")
-    public async personalityList(@Req() req: Request, @Res() res: Response) {
+    public async kanbanList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
         const enableCopilotChatBot = this.isEnableCopilotChatBot();

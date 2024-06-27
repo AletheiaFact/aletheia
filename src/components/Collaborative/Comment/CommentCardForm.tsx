@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from "react";
 import Button, { ButtonType } from "../../Button";
 import AletheiaInput from "../../AletheiaInput";
-import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
+import ReviewTaskApi from "../../../api/reviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import CommentApi from "../../../api/comment";
@@ -70,7 +70,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                 );
             } else {
                 const { comment: createdComment } =
-                    await ClaimReviewTaskApi.addComment(data_hash, newComment);
+                    await ReviewTaskApi.addComment(data_hash, newComment);
 
                 if (
                     enableEditorAnnotations &&

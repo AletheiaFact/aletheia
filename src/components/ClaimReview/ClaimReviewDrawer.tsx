@@ -98,7 +98,7 @@ const ClaimReviewDrawer = () => {
                                         }}
                                         data-cy="testSeeFullReview"
                                     >
-                                        {t("claimReviewTask:seeFullPage")}
+                                        {t("reviewTask:seeFullPage")}
                                     </AletheiaButton>
                                 </Col>
                             </Col>

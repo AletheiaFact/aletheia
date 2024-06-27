@@ -9,7 +9,7 @@ export enum TargetModel {
     Debate = "Debate",
     Personality = "Personality",
     ClaimReview = "ClaimReview",
-    ClaimReviewTask = "ClaimReviewTask",
+    ReviewTask = "ReviewTask",
     Image = "Image",
     Source = "Source",
 }

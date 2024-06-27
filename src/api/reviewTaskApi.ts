@@ -4,10 +4,10 @@ import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
-    baseURL: `/api/claimreviewtask`,
+    baseURL: `/api/reviewtask`,
 });
 
-const getClaimReviewTasks = (options) => {
+const getReviewTasks = (options) => {
     const params = {
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
@@ -43,15 +43,15 @@ const getMachineByDataHash = (params) => {
         });
 };
 
-const createClaimReviewTask = (params, t, type) => {
+const createReviewTask = (params, t, type) => {
     return request
         .post("/", { ...params })
         .then((response) => {
-            message.success(t(`claimReviewTask:${type}_SUCCESS`));
+            message.success(t(`reviewTask:${type}_SUCCESS`));
             return response.data;
         })
         .catch((err) => {
-            message.error(t(`claimReviewTask:${type}_ERROR`));
+            message.error(t(`reviewTask:${type}_ERROR`));
             throw err;
         });
 };
@@ -60,7 +60,7 @@ const autoSaveDraft = (params, t) => {
     return request
         .put(`/${params.data_hash}`, { ...params })
         .then((response) => {
-            message.success(t(`claimReviewTask:SAVE_DRAFT_SUCCESS`));
+            message.success(t(`reviewTask:SAVE_DRAFT_SUCCESS`));
             return response.data;
         })
         .catch((err) => {
@@ -101,14 +101,14 @@ const deleteComment = (hash, commentId) => {
         });
 };
 
-const ClaimReviewTaskApi = {
+const ReviewTaskApi = {
     getMachineByDataHash,
-    createClaimReviewTask,
-    getClaimReviewTasks,
+    createReviewTask,
+    getReviewTasks,
     autoSaveDraft,
     getEditorContentObject,
     addComment,
     deleteComment,
 };
 
-export default ClaimReviewTaskApi;
+export default ReviewTaskApi;
