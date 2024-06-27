@@ -291,8 +291,9 @@ export class ReviewTaskService {
         reviewTaskBody.machine.context.reviewData.usersId =
             this._returnObjectId(reviewDataBody.usersId);
 
-        reviewTaskBody.machine.context.reviewData.group =
-            this._returnObjectId(reviewDataBody.group);
+        reviewTaskBody.machine.context.reviewData.group = this._returnObjectId(
+            reviewDataBody.group
+        );
 
         if (reviewDataBody.reviewerId) {
             reviewTaskBody.machine.context.reviewData.reviewerId =

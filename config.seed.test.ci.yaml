@@ -36,3 +36,6 @@ services:
         instanceId: {env(GITLAB_FEATURE_FLAG_INSTANCE_ID)}
       openai:
         api_key: {env(OPENAI_API_KEY)}
+      zenvia:
+        api_url: {env(ZENVIA_API_URL)}
+        api_token: {env(ZENVIA_API_TOKEN)}

@@ -56,6 +56,7 @@ import { CopilotChatModule } from "./copilot/copilot-chat.module";
 import { UnattributedModule } from "./claim/types/unattributed/unattributed.module";
 import { DailyReportModule } from "./daily-report/daily-report.module";
 import { SummarizationCrawlerModule } from "./summarization/summarization-crawler.module";
+import { ChatbotModule } from "./chat-bot/chat-bot.module";
 import { VerificationRequestModule } from "./verification-request/verification-request.module";
 import { FeatureFlagModule } from "./feature-flag/feature-flag.module";
 import { GroupModule } from "./group/group.module";
@@ -120,6 +121,7 @@ export class AppModule implements NestModule {
             UnattributedModule,
             DailyReportModule,
             SummarizationCrawlerModule,
+            ChatbotModule,
             VerificationRequestModule,
             FeatureFlagModule,
             GroupModule,

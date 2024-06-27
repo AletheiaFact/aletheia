@@ -38,6 +38,8 @@ env:
   NEXT_PUBLIC_RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
   AGENTS_API_URL: ${{ secrets.DEVELOPMENT_AGENTS_API_URL }}
   OPENAI_API_KEY: ${{ secrets.DEVELOPMENT_OPENAI_API_KEY }}
+  ZENVIA_API_URL: ${{ secrets.DEVELOPMENT_ZENVIA_API_URL }}
+  ZENVIA_API_TOKEN: ${{ secrets.DEVELOPMENT_ZENVIA_API_URL }}
 
 jobs:
   setup-build-publish:
@@ -71,6 +73,8 @@ jobs:
           echo "NEXT_PUBLIC_ORY_SDK_URL=${{ secrets.ORY_SDK_URL }}" >> $GITHUB_ENV
           echo "AGENTS_API_URL=${{ secrets.PRODUCTION_AGENTS_API_URL }}" >> $GITHUB_ENV
           echo "OPENAI_API_KEY=${{ secrets.PRODUCTION_OPENAI_API_KEY }}" >> $GITHUB_ENV
+          echo "ZENVIA_API_URL=${{ secrets.PRODUCTION_ZENVIA_API_URL }}" >> $GITHUB_ENV
+          echo "ZENVIA_API_TOKEN=${{ secrets.PRODUCTION_ZENVIA_API_TOKEN }}" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -103,6 +107,8 @@ jobs:
             sed -i "s%NOVU_APPLICATION_IDENTIFIER%$NOVU_APPLICATION_IDENTIFIER%g" config.$ENVIRONMENT.yaml
             sed -i "s%AGENTS_API_URL%$AGENTS_API_URL%g" config.$ENVIRONMENT.yaml
             sed -i "s%OPENAI_API_KEY%$OPENAI_API_KEY%g" config.$ENVIRONMENT.yaml
+            sed -i "s%ZENVIA_API_URL%$ZENVIA_API_URL%g" config.$ENVIRONMENT.yaml
+            sed -i "s%ZENVIA_API_TOKEN%$ZENVIA_API_TOKEN%g" config.$ENVIRONMENT.yaml
 
       - name: Set migrate-mongo-config.ts
         run: |
@@ -174,6 +180,8 @@ jobs:
           echo "NOVU_API_KEY=${{ secrets.PRODUCTION_NOVU_API_KEY }}" >> $GITHUB_ENV
           echo "NOVU_APPLICATION_IDENTIFIER=${{ secrets.PRODUCTION_NOVU_APPLICATION_IDENTIFIER }}" >> $GITHUB_ENV
           echo "OPENAI_API_KEY=${{ secrets.PRODUCTION_OPENAI_API_KEY }}" >> $GITHUB_ENV
+          echo "ZENVIA_API_URL=${{ secrets.PRODUCTION_ZENVIA_API_URL }}" >> $GITHUB_ENV
+          echo "ZENVIA_API_TOKEN=${{ secrets.PRODUCTION_ZENVIA_API_TOKEN }}" >> $GITHUB_ENV
 
       - name: Set environment
         run: |
@@ -188,6 +196,8 @@ jobs:
           sed -i "s%NEW_RELIC_APP_NAME_STUB%${{ env.NEW_RELIC_APP_NAME }}%g" deployment/app.yml
           sed -i "s%NEXT_PUBLIC_ORYSDKURL_STUB%${{ env.ORY_SDK_URL }}%g" deployment/app.yml
           sed -i "s%OPENAI_API_KEY%${{ env.OPENAI_API_KEY }}%g" deployment/app.yml
+          sed -i "s%ZENVIA_API_URL%${{ env.ZENVIA_API_URL }}%g" deployment/app.yml
+          sed -i "s%ZENVIA_API_TOKEN%${{ env.ZENVIA_API_TOKEN }}%g" deployment/app.yml
 
       - name: Set deployment
         run: |
