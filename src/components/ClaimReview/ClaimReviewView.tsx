@@ -25,10 +25,12 @@ export interface ClaimReviewViewProps {
     personality?: any;
     claim?: any;
     source?: any;
+    targetId?: string;
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
-    const { personality, claim, content, hideDescriptions, source } = props;
+    const { personality, claim, content, hideDescriptions, source, targetId } =
+        props;
     const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
@@ -119,6 +121,7 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                     userIsReviewer={userIsReviewer}
                     componentStyle={componentStyle}
                     source={source}
+                    targetId={targetId}
                 />
             )}
             {review?.isPublished && (

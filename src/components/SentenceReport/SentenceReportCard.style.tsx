@@ -1,11 +1,10 @@
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { queries } from "../../styles/mediaQueries";
+import { Row } from "antd";
 
-const SentenceReportCardStyle = styled.div`
-    .main-content {
-        padding-top: 32px;
-    }
+const SentenceReportCardStyle = styled(Row)`
+    padding-top: 32px;
 
     .sentence-card {
         padding-left: 10px;
@@ -25,9 +24,7 @@ const SentenceReportCardStyle = styled.div`
     }
 
     @media ${queries.md} {
-        .main-content {
-            padding-top: 16px;
-        }
+        padding-top: 16px;
     }
 
     @media ${queries.sm} {

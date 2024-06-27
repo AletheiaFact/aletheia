@@ -28,6 +28,7 @@ const ClaimReviewForm = ({
     personalityId = null,
     claim = null,
     source = null,
+    targetId = null,
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
@@ -90,6 +91,7 @@ const ClaimReviewForm = ({
                         personality={personalityId}
                         claim={claim?._id}
                         source={source?._id}
+                        targetId={targetId}
                     />
                 )}
             </Col>

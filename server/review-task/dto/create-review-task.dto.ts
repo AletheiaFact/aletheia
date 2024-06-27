@@ -24,6 +24,7 @@ export type ReviewTaskMachineContextReviewData = {
     crossCheckingClassification?: string;
     crossCheckingComments?: any[];
     crossCheckerId?: any;
+    group?: any[];
 };
 
 export type ReviewTaskMachineContext = {
@@ -34,6 +35,7 @@ export type ReviewTaskMachineContext = {
         personality: Personality;
         claim: Claim;
         isPartialReview: boolean;
+        targetId: string;
     };
     preloadedOptions: {
         usersId?: any[];
