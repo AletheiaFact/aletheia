@@ -90,7 +90,7 @@ const DynamicInput = (props: DynamicInputProps) => {
                     data-cy={props["data-cy"]}
                     defaultChecked={!!props.defaultValue}
                     onChange={(value) => props.onChange(value)}
-                    value={props.value}
+                    checked={!!props.value}
                 >
                     {t(`claimReviewForm:${props.fieldName}`)}
                 </Checkbox>
