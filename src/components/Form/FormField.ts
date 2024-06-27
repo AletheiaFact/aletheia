@@ -1,8 +1,9 @@
 import { Node } from "@remirror/pm/model";
 import { RegisterOptions } from "react-hook-form";
 import { EditorParser } from "../../../lib/editor-parser";
-import { ReviewTaskMachineContextReviewData } from "../../../server/claim-review-task/dto/create-claim-review-task.dto";
+import { ReviewTaskMachineContextReviewData } from "../../../server/review-task/dto/create-review-task.dto";
 import { Roles } from "../../types/enums";
+import { URL_PATTERN } from "../Collaborative/hooks/useFloatingLinkState";
 
 export type FormField = {
     fieldName: string;
@@ -57,7 +58,7 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         rules: {
             required: required && "common:requiredFieldError",
             ...rules,
-            validate: {
+            validate: required && {
                 notBlank: (v) =>
                     validateBlank(v) || "common:requiredFieldError",
                 ...rules?.validate,
@@ -80,6 +81,9 @@ const validateSchema = (
         }
         if (!Array.isArray(value) && !value.trim() && key !== "paragraph") {
             return `common:${key}RequiredFieldError`;
+        }
+        if (key === "source" && !URL_PATTERN.test(schema[key])) {
+            return `sourceForm:errorMessageValidURL`;
         }
     }
     return true;

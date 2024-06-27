@@ -2,8 +2,8 @@ import { createFormField, FormField } from "../../../Form/FormField";
 
 const submittedForm: FormField[] = [
     createFormField({
-        fieldName: "collaborativeEditor",
-        type: "collaborative",
+        fieldName: "visualEditor",
+        type: "visualEditor",
         defaultValue: "",
     }),
 ];

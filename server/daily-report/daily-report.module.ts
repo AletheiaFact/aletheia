@@ -3,7 +3,7 @@ import { DailyReport, DailyReportSchema } from "./schemas/daily-report.schema";
 import { DailyReportService } from "./daily-report.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { AbilityModule } from "../auth/ability/ability.module";
-import { SummarizationModule } from "../summarization/summarization.module";
+import { SummarizationCrawlerModule } from "../summarization/summarization-crawler.module";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { NotificationModule } from "../notifications/notifications.module";
 import { DailyReportController } from "./daily-report.controller";
@@ -22,7 +22,7 @@ export const DailyReportModel = MongooseModule.forFeature([
         DailyReportModel,
         ClaimReviewModule,
         SourceModule,
-        SummarizationModule,
+        SummarizationCrawlerModule,
         AbilityModule,
         NotificationModule,
         ConfigModule,

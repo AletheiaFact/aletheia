@@ -19,7 +19,7 @@ const SentencePopover = () => {
             }}
         >
             <SecurityScanOutlined style={{ fontSize: 20 }} />
-            {t("claimReviewTask:sentenceInfo")}
+            {t("reviewTask:sentenceInfo")}
         </span>
     );
 

@@ -445,7 +445,7 @@ export class PersonalityService {
                         query: searchText,
                         path: "name",
                         fuzzy: {
-                            maxEdits: 2,
+                            maxEdits: 1, // Using maxEdits: 1 to allow minor typos or spelling errors in search queries.
                         },
                     },
                 },

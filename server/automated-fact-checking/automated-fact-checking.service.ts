@@ -12,7 +12,6 @@ export class AutomatedFactCheckingService {
     }
 
     async getResponseFromAgents(data): Promise<{ stream: string; json: any }> {
-        console.log(this.agenciaURL);
         const params = {
             input: {
                 claim: data.claim,
@@ -50,8 +49,13 @@ export class AutomatedFactCheckingService {
             .map((line) => JSON.parse(line.substring(5)))
             .reduce((acc, data) => ({ ...acc, ...data }), {});
 
-        jsonEvents.__end__.messages = JSON.parse(jsonEvents.__end__.messages);
+        if (jsonEvents.start_fact_checking) {
+            const report = JSON.parse(jsonEvents.start_fact_checking.messages);
+            return { stream: streamResponse, json: { messages: report } };
+        }
 
-        return { stream: streamResponse, json: jsonEvents.__end__ };
+        const report = JSON.parse(jsonEvents.create_report.messages);
+
+        return { stream: streamResponse, json: { messages: report } };
     }
 }

@@ -82,6 +82,7 @@ const persistClaim = assign<CreateClaimContext, PersistClaimEvent>(
         const sendData = {
             ...claimData,
             personalities: claimData.personalities.map((p) => p._id),
+            group: claimData.group._id,
         };
 
         const saveFunctions = {

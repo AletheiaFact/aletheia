@@ -93,9 +93,11 @@ const TopicInput = ({ contentModel, data_hash, topics }) => {
         <>
             <Col
                 style={{
+                    margin: "16px 16px 12px 16px",
                     marginBottom: 12,
                     display: "flex",
                     alignItems: "center",
+                    width: "calc(100% - 16px)",
                 }}
             >
                 <TagsList

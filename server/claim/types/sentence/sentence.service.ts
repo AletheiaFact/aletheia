@@ -69,7 +69,7 @@ export class SentenceService {
                         query: searchText,
                         path: "content",
                         fuzzy: {
-                            maxEdits: 2,
+                            maxEdits: 1, // Using maxEdits: 1 to allow minor typos or spelling errors in search queries.
                         },
                     },
                 },
@@ -100,25 +100,9 @@ export class SentenceService {
         pipeline.push(
             {
                 $lookup: {
-                    from: "paragraphs",
-                    localField: "_id",
-                    foreignField: "content",
-                    as: "claim",
-                },
-            },
-            {
-                $lookup: {
-                    from: "speeches",
-                    localField: "claim._id",
-                    foreignField: "content",
-                    as: "claim",
-                },
-            },
-            {
-                $lookup: {
                     from: "claimrevisions",
-                    localField: "claim._id",
-                    foreignField: "contentId",
+                    localField: "claimRevisionId",
+                    foreignField: "_id",
                     as: "claim",
                 },
             },
@@ -139,13 +123,6 @@ export class SentenceService {
                 },
             },
             this.util.getVisibilityMatch(nameSpace),
-            // Logic made to filter sentences from debates
-            //TODO: Remove this when claim schema is changed
-            {
-                $match: {
-                    claim: { $ne: [] },
-                },
-            },
             {
                 $project: {
                     content: 1,

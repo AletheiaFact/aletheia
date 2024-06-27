@@ -10,14 +10,18 @@ const claimPersonalities = atom<Personality[]>([]) as PrimitiveAtom<
     Personality[]
 >;
 
+const claimVerificationRequestsGroup = atom<any>(null) as PrimitiveAtom<any>; // type
+
 const machineConfig = atom((get) => {
     const value = CreateClaimStates.notStarted;
     const personalities = get(claimPersonalities);
+    const group = get(claimVerificationRequestsGroup);
     const nameSpace = get(currentNameSpace);
     const context: CreateClaimContext = {
         ...initialContext,
         claimData: {
             personalities,
+            group,
             contentModel: null,
             nameSpace,
         },
@@ -30,4 +34,8 @@ const createClaimMachineAtom = atomWithMachine((get) =>
     newCreateClaimMachine(get(machineConfig))
 );
 
-export { claimPersonalities, createClaimMachineAtom };
+export {
+    claimPersonalities,
+    createClaimMachineAtom,
+    claimVerificationRequestsGroup as claimVerificationRequests,
+};

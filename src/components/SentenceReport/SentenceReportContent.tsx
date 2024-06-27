@@ -18,12 +18,12 @@ const SentenceReportContent = ({
     href,
 }) => {
     const { t } = useTranslation();
-    const { machineService, publishedReview } = useContext(
+    const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
     const { summary, questions, report, verification, sources } = context;
     const sanitizer = dompurify.sanitize;
-    const sortedSources = sources.sort((a, b) => a.props.sup - b.props.sup);
+    const sortedSources = sources?.sort((a, b) => a.props.sup - b.props.sup);
     const showAllSources = !(
         useSelector(machineService, publishedSelector) ||
         publishedReview?.review
@@ -34,7 +34,7 @@ const SentenceReportContent = ({
             {showClassification && classification && (
                 <Col span={24}>
                     <Paragraph className="title">
-                        {t("claimReview:claimReview")}
+                        {t(`claimReview:title${reviewTaskType}Review`)}
                     </Paragraph>
                     <Paragraph className="paragraph">
                         <ClassificationText classification={classification} />
@@ -103,7 +103,7 @@ const SentenceReportContent = ({
                 </Col>
             )}
             <Col span={24}>
-                {sources && (
+                {sources && sources?.length > 0 && (
                     <>
                         <Typography.Title level={4}>
                             {t("claim:sourceSectionTitle")}

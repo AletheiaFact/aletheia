@@ -7,7 +7,7 @@ import Text from "antd/lib/typography/Text";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 
-const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
+const DynamicForm = ({ currentForm, control, errors, machineValues = {} }) => {
     const { t } = useTranslation();
     return (
         <div>

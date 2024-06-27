@@ -5,7 +5,7 @@ import {
     DailyReportDocument,
 } from "./schemas/daily-report.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { SummarizationService } from "../summarization/summarization.service";
+import { SummarizationCrawlerService } from "../summarization/summarization-crawler.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class DailyReportService {
@@ -13,7 +13,7 @@ export class DailyReportService {
     constructor(
         @InjectModel(DailyReport.name)
         private DailyReportModel: Model<DailyReportDocument>,
-        private summarizationService: SummarizationService
+        private summarizationCrawlerService: SummarizationCrawlerService
     ) {}
 
     async create(dailyReportBody: DailyReport): Promise<DailyReport> {
@@ -32,11 +32,11 @@ export class DailyReportService {
     ): Promise<string> {
         try {
             const summarizedReviews =
-                await this.summarizationService.getSummarizedReviews(
+                await this.summarizationCrawlerService.getSummarizedReviews(
                     dailyReviews
                 );
 
-            return this.summarizationService.generateHTMLReport(
+            return this.summarizationCrawlerService.generateHTMLReport(
                 summarizedReviews,
                 nameSpace
             );

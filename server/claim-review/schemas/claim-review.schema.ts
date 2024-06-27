@@ -7,6 +7,7 @@ import type { ReportDocument } from "../../report/schemas/report.schema";
 import { User } from "../../users/schemas/user.schema";
 import { ReportModelEnum } from "../../types/enums";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import { Source } from "../../source/schemas/source.schema";
 
 export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 
@@ -14,7 +15,7 @@ export type ClaimReviewDocument = ClaimReview & mongoose.Document;
 export class ClaimReview {
     @Prop({
         type: mongoose.Types.ObjectId,
-        required: true,
+        required: false,
         ref: "Claim",
     })
     claim: Claim;
@@ -25,6 +26,14 @@ export class ClaimReview {
         ref: "Personality",
     })
     personality: Personality;
+
+    // TODO: Add targetModel field and use a single field to reference the target instead having source and claim fields
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "Source",
+    })
+    source: Source;
 
     @Prop({
         type: mongoose.Types.ObjectId,

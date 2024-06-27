@@ -9,5 +9,6 @@ export const initialContext: CreateClaimContext = {
         title: "",
         date: new Date().toLocaleDateString(),
         sources: [],
+        group: null,
     },
 };

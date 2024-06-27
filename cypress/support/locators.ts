@@ -30,10 +30,16 @@ const locators = {
         INPUT_SOURCE: "[data-cy=testSource1]",
     },
 
+    source: {
+        INPUT_SOURCE: "[data-cy=testClaimReviewsource]",
+        BTN_SUBMIT_SOURCE: "[data-cy=testSaveButton]",
+    },
+
     floatButton: {
         FLOAT_BUTTON: "[data-cy=testFloatButton]",
         ADD_CLAIM: "[data-cy=testFloatButtonAddClaim]",
         ADD_PERSONALITY: "[data-cy=testFloatButtonAddPersonality]",
+        ADD_SOURCE: "[data-cy=testFloatButtonAddSources]",
     },
 
     claimReview: {

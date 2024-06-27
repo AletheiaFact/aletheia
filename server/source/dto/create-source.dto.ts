@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsObject } from "class-validator";
+import { IsNotEmpty, IsString, IsObject, IsOptional } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "../../users/schemas/user.schema";
 
@@ -18,8 +18,8 @@ export class CreateSourceDTO {
     @ApiProperty()
     href: string;
 
-    @IsNotEmpty()
     @IsObject()
+    @IsOptional()
     @ApiProperty()
     props: SourceProps;
 

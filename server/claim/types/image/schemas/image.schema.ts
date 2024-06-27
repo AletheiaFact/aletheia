@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ContentModelEnum } from "../../../../types/enums";
 import * as mongoose from "mongoose";
 import { Topic } from "../../../../topic/schemas/topic.schema";
+import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-revision.schema";
 
 export type ImageDocument = Image & mongoose.Document;
 
@@ -24,6 +25,13 @@ export class Image {
 
     @Prop({ required: false })
     topics: Topic[];
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "ClaimRevision",
+    })
+    claimRevisionId: ClaimRevision;
 }
 
 const ImageSchemaRaw = SchemaFactory.createForClass(Image);

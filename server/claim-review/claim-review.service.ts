@@ -35,7 +35,11 @@ export class ClaimReviewService {
     ) {}
 
     async listAll(page, pageSize, order, query, latest = false) {
-        const pipeline = this.ClaimReviewModel.find(query)
+        // Currently only list claim reviews
+        const pipeline = this.ClaimReviewModel.find({
+            ...query,
+            source: { $exists: false },
+        })
             .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
             .populate({
                 path: "claim",
@@ -220,44 +224,45 @@ export class ClaimReviewService {
      * This function creates a new claim review.
      * Also creates a History Module that tracks creation of claim reviews.
      * @param claimReview ClaimReviewBody received of the client.
+     * @param data_hash unique claim review task hash
+     * @param reportModel FactChecking or InformativeNews
      * @returns Return a new claim review object.
      */
     async create(claimReview, data_hash, reportModel) {
-        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const review = await this.getReviewByDataHash(data_hash);
-
-        if (review) {
-            throw new Error("This Claim already has a review");
-            //TODO: verify if already start a review and isn't published
-        } else {
-            // Cast ObjectId
-            claimReview.personality = claimReview.personality
-                ? Types.ObjectId(claimReview.personality)
-                : null;
-            claimReview.claim = Types.ObjectId(claimReview.claim);
-            claimReview.usersId = claimReview.report.usersId.map((userId) => {
-                return Types.ObjectId(userId);
-            });
-            claimReview.report = Types.ObjectId(claimReview.report._id);
-            claimReview.data_hash = data_hash;
-            claimReview.reportModel = reportModel;
-            claimReview.date = new Date();
-            const newClaimReview = new this.ClaimReviewModel(claimReview);
-            newClaimReview.isPublished = true;
-            newClaimReview.isPartialReview = claimReview.isPartialReview;
-
-            const history = this.historyService.getHistoryParams(
-                newClaimReview._id,
-                TargetModel.ClaimReview,
-                claimReview.usersId,
-                HistoryType.Create,
-                newClaimReview
-            );
-
-            this.historyService.createHistory(history);
-
-            return newClaimReview.save();
+        if (claimReview.personality) {
+            claimReview.personality = Types.ObjectId(claimReview.personality);
         }
+
+        if (claimReview.claim) {
+            claimReview.claim = Types.ObjectId(claimReview.claim);
+        }
+
+        if (claimReview.source) {
+            claimReview.source = Types.ObjectId(claimReview.source);
+        }
+
+        claimReview.usersId = claimReview.report.usersId.map((userId) => {
+            return Types.ObjectId(userId);
+        });
+        claimReview.report = Types.ObjectId(claimReview.report._id);
+        claimReview.data_hash = data_hash;
+        claimReview.reportModel = reportModel;
+        claimReview.date = new Date();
+        const newClaimReview = new this.ClaimReviewModel(claimReview);
+        newClaimReview.isPublished = true;
+        newClaimReview.isPartialReview = claimReview.isPartialReview;
+
+        const history = this.historyService.getHistoryParams(
+            newClaimReview._id,
+            TargetModel.ClaimReview,
+            claimReview.usersId,
+            HistoryType.Create,
+            newClaimReview
+        );
+
+        this.historyService.createHistory(history);
+
+        return newClaimReview.save();
     }
 
     getById(claimReviewId) {

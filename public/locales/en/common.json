@@ -8,6 +8,7 @@
     "questionsRequiredFieldError": "Questions field is required",
     "verificationRequiredFieldError": "Verification field is required",
     "sourcesRequiredFieldError": "Source is required",
+    "sourceRequiredFieldError": "Source is required",
     "supportEmail": "support@aletheifact.org",
     "contactEmail": "contact@aletheiafact.org",
     "captchaError": "There was an error validating the captcha",

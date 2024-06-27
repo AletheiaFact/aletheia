@@ -26,6 +26,7 @@ export class ParserService {
 
     async parse(
         content: string,
+        claimRevisionId: object,
         personality = null,
         contentModel = ContentModelEnum.Speech
     ): Promise<SpeechDocument | UnattributedDocument> {
@@ -51,8 +52,13 @@ export class ParserService {
                         props: {
                             id: paragraphId,
                         },
+                        claimRevisionId: claimRevisionId,
                         content: sentences.map((sentence) =>
-                            this.parseSentence(sentence, paragraphDataHash)
+                            this.parseSentence(
+                                sentence,
+                                paragraphDataHash,
+                                claimRevisionId
+                            )
                         ),
                     })
                 );
@@ -73,6 +79,7 @@ export class ParserService {
 
                 return this.speechService.create({
                     content: object,
+                    claimRevisionId: claimRevisionId,
                     personality,
                 });
             }
@@ -99,7 +106,7 @@ export class ParserService {
         return newSentences;
     }
 
-    parseSentence(sentenceContent, paragraphDataHash) {
+    parseSentence(sentenceContent, paragraphDataHash, claimRevisionId) {
         const sentenceId = this.createSentenceId();
         const sentenceDataHash = md5(
             `${paragraphDataHash}${this.sentenceSequence}${sentenceContent}`
@@ -111,6 +118,7 @@ export class ParserService {
                 id: sentenceId,
             },
             content: sentenceContent,
+            claimRevisionId: claimRevisionId,
         });
     }
 

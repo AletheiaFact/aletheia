@@ -16,6 +16,12 @@ import {
 } from "./actions";
 import { CreateClaimContext } from "./context";
 
+const updateGroupEvent = {
+    [Events.updateGroup]: {
+        actions: [saveClaimContext],
+    },
+};
+
 export const newCreateClaimMachine = ({ value, context }) => {
     return createMachine<
         CreateClaimContext,
@@ -43,6 +49,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         target: States.personalityAdded,
                         actions: [startUnattributed],
                     },
+                    ...updateGroupEvent,
                 },
             },
             [States.setupSpeech]: {
@@ -58,6 +65,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         target: States.setupSpeech,
                         actions: [removePersonality],
                     },
+                    ...updateGroupEvent,
                 },
             },
             [States.setupImage]: {
@@ -73,6 +81,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                     [Events.savePersonality]: {
                         target: States.personalityAdded,
                     },
+                    ...updateGroupEvent,
                 },
             },
             [States.setupDebate]: {
@@ -88,6 +97,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         target: States.setupDebate,
                         actions: [removePersonality],
                     },
+                    ...updateGroupEvent,
                 },
             },
             [States.personalityAdded]: {
@@ -96,6 +106,7 @@ export const newCreateClaimMachine = ({ value, context }) => {
                         target: States.persisted,
                         actions: [persistClaim],
                     },
+                    ...updateGroupEvent,
                 },
             },
             [States.persisted]: {

@@ -1,7 +1,7 @@
 import { TargetModel } from "../history/schema/history.schema";
 
 export default function lookupPersonalities(target) {
-    if (target === TargetModel.ClaimReviewTask) {
+    if (target === TargetModel.ReviewTask) {
         return {
             $lookup: {
                 from: "personalities",

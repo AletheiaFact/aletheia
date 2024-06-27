@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { SourceDocument, Source } from "./schemas/source.schema";
 import { InjectModel } from "@nestjs/mongoose";
+const md5 = require("md5");
 
 @Injectable()
 export class SourceService {
@@ -35,6 +36,7 @@ export class SourceService {
         if (data?.props?.date) {
             data.props.date = new Date(data.props.date);
         }
+        data.data_hash = md5(data.href);
         data.user = Types.ObjectId(data.user);
         //TODO: don't create duplicate sources in one claim review task
         return await new this.SourceModel(data).save();
@@ -63,6 +65,32 @@ export class SourceService {
 
     getById(_id) {
         return this.SourceModel.findById(_id, { _id: 1, href: 1 });
+    }
+
+    async getByDataHash(data_hash) {
+        const source = await this.SourceModel.findOne({ data_hash });
+
+        if (source) {
+            return source;
+        } else {
+            throw new NotFoundException();
+        }
+    }
+
+    async update(data_hash, sourceBodyUpdate) {
+        const source = await this.getByDataHash(data_hash);
+
+        const newSource = Object.assign(source, sourceBodyUpdate);
+        const sourceUpdated = await this.SourceModel.findByIdAndUpdate(
+            source._id,
+            newSource,
+            {
+                new: true,
+                upsert: true,
+            }
+        );
+
+        return sourceUpdated;
     }
 
     count(query) {

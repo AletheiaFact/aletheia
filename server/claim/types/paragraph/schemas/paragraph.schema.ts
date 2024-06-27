@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Sentence } from "../../sentence/schemas/sentence.schema";
+import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-revision.schema";
 
 export type ParagraphDocument = Paragraph & mongoose.Document;
 
@@ -29,6 +30,13 @@ export class Paragraph {
         ],
     })
     content: Sentence[];
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "ClaimRevision",
+    })
+    claimRevisionId: ClaimRevision;
 }
 
 const ParagraphSchemaRaw = SchemaFactory.createForClass(Paragraph);

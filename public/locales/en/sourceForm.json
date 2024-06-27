@@ -14,5 +14,6 @@
     "summaryLabel": "Summary",
     "summaryPlaceholder": "Insert the source summary",
     "classificationLabel": "Review this source",
-    "classificationPlaceholder": "Choose a classification"
+    "classificationPlaceholder": "Choose a classification",
+    "summarizeSouce": "Summarize source automatic"
 }

@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
+import ReviewTaskApi from "../../api/reviewTaskApi";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import KanbanSkeleton from "../Skeleton/KanbanSkeleton";
 import colors from "../../styles/colors";
@@ -39,8 +39,8 @@ const KanbanCol = ({ nameSpace, state, filterUser }: KanbanColProps) => {
             }}
         >
             <BaseList
-                title={t(`claimReviewTask:${state}`)}
-                apiCall={ClaimReviewTaskApi.getClaimReviewTasks}
+                title={t(`reviewTask:${state}`)}
+                apiCall={ReviewTaskApi.getReviewTasks}
                 filter={{
                     value: state,
                     filterUser: filterUser,
@@ -48,7 +48,7 @@ const KanbanCol = ({ nameSpace, state, filterUser }: KanbanColProps) => {
                 }}
                 renderItem={(task) => <KanbanCard reviewTask={task} />}
                 emptyFallback={
-                    <EmptyKanbanCol title={t(`claimReviewTask:${state}`)} />
+                    <EmptyKanbanCol title={t(`reviewTask:${state}`)} />
                 }
                 showDividers={false}
                 skeleton={<KanbanSkeleton />}

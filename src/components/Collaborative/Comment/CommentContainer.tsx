@@ -7,7 +7,7 @@ import {
     useCommands,
     useHelpers,
 } from "@remirror/react";
-import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 import { Row } from "antd";
 import CommentsList from "./CommentsList";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -24,7 +24,7 @@ const CommentContainer = ({ readonly, state }) => {
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
-    const { comments, setComments } = useContext(CollaborativeEditorContext);
+    const { comments, setComments } = useContext(VisualEditorContext);
     const { machineService } = useContext(ReviewTaskMachineContext);
     const reviewData = useSelector(machineService, reviewDataSelector);
     const [role] = useAtom(currentUserRole);

@@ -8,11 +8,12 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
     (context, event) => {
         const editorParser = new EditorParser();
         if (
-            event.type === ReviewTaskEvents.finishReport ||
-            event.type === ReviewTaskEvents.draft
+            (event.type === ReviewTaskEvents.finishReport ||
+                event.type === ReviewTaskEvents.draft) &&
+            "visualEditor" in event.reviewData
         ) {
             const schema = editorParser.editor2schema(
-                event.reviewData.collaborativeEditor
+                event.reviewData.visualEditor.toJSON()
             );
             const reviewDataHtml = editorParser.schema2html(schema);
             event.reviewData = {
@@ -35,29 +36,17 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
     }
 );
 
-const savePartialReviewContext = assign<
+const rejectVerificationRequest = assign<
     ReviewTaskMachineContextType,
     SaveEvent
->((context, event) => {
-    const editorParser = new EditorParser();
-    const reviewData = editorParser.editor2schema(
-        event.reviewData.collaborativeEditor
-    );
-    event.reviewData = {
-        ...event.reviewData,
-        ...reviewData,
-    };
+>((context) => {
     return {
         reviewData: {
             ...context.reviewData,
-            ...event.reviewData,
+            rejected: true,
         },
-        claimReview: {
-            ...context.claimReview,
-            ...event.claimReview,
-            isPartialReview: true,
-        },
+        claimReview: context.claimReview,
     };
 });
 
-export { saveContext, savePartialReviewContext };
+export { saveContext, rejectVerificationRequest };

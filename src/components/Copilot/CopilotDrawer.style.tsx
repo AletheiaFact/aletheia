@@ -8,6 +8,7 @@ const CopilotDrawerStyled = styled(Drawer)`
     zindex: 999999;
     max-height: 100vh;
     overflow: hidden;
+    position: absolute;
 
     & .MuiDrawer-paper {
         width: ${(props) => props.width};

@@ -8,6 +8,7 @@
     "questionsRequiredFieldError": "Campo de perguntas obrigatório",
     "verificationRequiredFieldError": "Campo de verificação obrigatório",
     "sourcesRequiredFieldError": "Fonte obrigatória",
+    "sourceRequiredFieldError": "Fonte obrigatória",
     "supportEmail": "support@aletheifact.org",
     "contactEmail": "contato@aletheiafact.org",
     "captchaError": "Erro na validação do captcha",

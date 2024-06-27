@@ -3,6 +3,8 @@
 # dependencies
 /node_modules
 
+.yarn/install-state.gz
+
 # testing
 /coverage
 /cypress.env.json

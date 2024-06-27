@@ -1,15 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CopilotConversationCard from "./CopilotConversationCard";
 import CopilotConversationLoading from "./CopilotConversationLoading";
 import { SenderEnum } from "../../types/enums";
 import CopilotConversationSuggestions from "./CopilotConversationSuggestions";
 import AletheiaButton from "../Button";
-import { CollaborativeEditorContext } from "../Collaborative/CollaborativeEditorProvider";
-import { RemirrorContentType } from "remirror";
 import { useTranslation } from "next-i18next";
 import CopilotFeedback from "./CopilotFeedback";
 
 const CopilotConversation = ({
+    manager,
     handleSendMessage,
     isLoading,
     messages,
@@ -17,9 +16,6 @@ const CopilotConversation = ({
 }) => {
     const { t } = useTranslation();
     const CopilotConversationRef = useRef(null);
-    const { setEditorContentObject, setShouldInsertAIReport } = useContext(
-        CollaborativeEditorContext
-    );
     const [showButtons, setShowButtons] = useState({
         ADD_REPORT: true,
         ADD_RATE: false,
@@ -46,8 +42,9 @@ const CopilotConversation = ({
     }, [messages, showButtons]);
 
     const handleAddReportClick = () => {
-        setShouldInsertAIReport(true);
-        setEditorContentObject(editorReport as RemirrorContentType);
+        manager.view.updateState(
+            manager.createState({ content: { ...editorReport } })
+        );
         setShowButtons({
             ADD_REPORT: false,
             ADD_RATE: true,

@@ -7,7 +7,6 @@ const CardStyle = styled(Row)`
     display: flex;
     justify-content: space-between;
     padding: 8px 0px;
-    gap: 8px;
 
     .card-container {
         width: 100%;
@@ -23,7 +22,6 @@ const CardStyle = styled(Row)`
         border-radius: 4px;
         border: none;
         width: 100%;
-        min-height: 100px;
         height: auto;
         padding: 10px;
     }

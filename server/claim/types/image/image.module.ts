@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ReportModule } from "../../../report/report.module";
 import { HistoryModule } from "../../../history/history.module";
@@ -14,7 +14,7 @@ const ImageModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [ImageModel, HistoryModule, ReportModule],
+    imports: [ImageModel, HistoryModule, forwardRef(() => ReportModule)],
     controllers: [ImageController],
     providers: [ImageService],
     exports: [ImageService],
