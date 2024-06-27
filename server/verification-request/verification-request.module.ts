@@ -9,7 +9,7 @@ import { VerificationRequestController } from "./verification-request.controller
 import { SourceModule } from "../source/source.module";
 import { ViewModule } from "../view/view.module";
 import { ConfigModule } from "@nestjs/config";
-import { ClaimReviewTaskModule } from "../claim-review-task/claim-review-task.module";
+import { ReviewTaskModule } from "../review-task/review-task.module";
 import { HistoryModule } from "../history/history.module";
 import { GroupModule } from "../group/group.module";
 
@@ -26,7 +26,7 @@ const VerificationRequestModel = MongooseModule.forFeature([
         SourceModule,
         ViewModule,
         ConfigModule,
-        ClaimReviewTaskModule,
+        ReviewTaskModule,
         HistoryModule,
         GroupModule,
     ],

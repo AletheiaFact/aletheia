@@ -1,4 +1,4 @@
-import api from "../../api/ClaimReviewTaskApi";
+import api from "../../api/reviewTaskApi";
 import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContextType } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
@@ -72,7 +72,7 @@ export const transitionHandler = (state) => {
         nameSpace,
     };
 
-    api.createClaimReviewTask(reviewTask, t, event)
+    api.createReviewTask(reviewTask, t, event)
         .then(async () => {
             if (shouldUpdateVerificationRequest) {
                 const redirectUrl = `/claim/create?verificationRequest=${claimReview.targetId}`;

@@ -20,7 +20,7 @@ import JsonLd from "../components/JsonLd";
 export interface SourceReviewPageProps {
     source: any;
     sitekey: string;
-    claimReviewTask: any;
+    reviewTask: any;
     sourceReview: any;
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
@@ -109,8 +109,8 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
 
             <ReviewTaskMachineProvider
                 data_hash={source.data_hash}
-                baseMachine={props.claimReviewTask?.machine}
-                baseReportModel={props?.claimReviewTask?.reportModel}
+                baseMachine={props.reviewTask?.machine}
+                baseReportModel={props?.reviewTask?.reportModel}
                 publishedReview={{ review: claimReview }}
                 reviewTaskType={ReviewTaskTypeEnum.Source}
             >
@@ -136,7 +136,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
         props: {
             ...(await serverSideTranslations(locale)),
             source: JSON.parse(JSON.stringify(query.source)),
-            claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
+            reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             sourceReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             hideDescriptions: JSON.parse(

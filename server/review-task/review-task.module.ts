@@ -1,11 +1,8 @@
 import { Module, forwardRef } from "@nestjs/common";
-import {
-    ClaimReviewTask,
-    ClaimReviewTaskSchema,
-} from "./schemas/claim-review-task.schema";
-import { ClaimReviewTaskService } from "./claim-review-task.service";
+import { ReviewTask, ReviewTaskSchema } from "./schemas/review-task.schema";
+import { ReviewTaskService } from "./review-task.service";
 import { MongooseModule } from "@nestjs/mongoose";
-import { ClaimReviewController } from "./claim-review-task.controller";
+import { ReviewTaskController } from "./review-task.controller";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ReportModule } from "../report/report.module";
 import { CaptchaModule } from "../captcha/captcha.module";
@@ -20,16 +17,16 @@ import { CommentModule } from "./comment/comment.module";
 import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 import { GroupModule } from "../group/group.module";
 
-export const ClaimReviewTaskModel = MongooseModule.forFeature([
+export const ReviewTaskModel = MongooseModule.forFeature([
     {
-        name: ClaimReviewTask.name,
-        schema: ClaimReviewTaskSchema,
+        name: ReviewTask.name,
+        schema: ReviewTaskSchema,
     },
 ]);
 
 @Module({
     imports: [
-        ClaimReviewTaskModel,
+        ReviewTaskModel,
         forwardRef(() => ClaimReviewModule),
         forwardRef(() => ReportModule),
         HistoryModule,
@@ -44,8 +41,8 @@ export const ClaimReviewTaskModel = MongooseModule.forFeature([
         FeatureFlagModule,
         GroupModule,
     ],
-    providers: [ClaimReviewTaskService],
-    exports: [ClaimReviewTaskService],
-    controllers: [ClaimReviewController],
+    providers: [ReviewTaskService],
+    exports: [ReviewTaskService],
+    controllers: [ReviewTaskController],
 })
-export class ClaimReviewTaskModule {}
+export class ReviewTaskModule {}

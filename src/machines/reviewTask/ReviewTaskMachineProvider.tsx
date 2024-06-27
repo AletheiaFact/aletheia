@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import { createContext, useEffect, useState } from "react";
 
 import ClaimReviewApi from "../../api/claimReviewApi";
-import ClaimReviewTaskApi from "../../api/ClaimReviewTaskApi";
+import ReviewTaskApi from "../../api/reviewTaskApi";
 import Loading from "../../components/Loading";
 import { getInitialContext } from "./context";
 import { ReportModelEnum, ReviewTaskEvents, ReviewTaskStates } from "./enums";
@@ -91,7 +91,7 @@ export const ReviewTaskMachineProvider = (
                       machine: props.baseMachine,
                       reportModel: props.baseReportModel,
                   })
-                : ClaimReviewTaskApi.getMachineByDataHash(data_hash);
+                : ReviewTaskApi.getMachineByDataHash(data_hash);
         };
         setLoading(true);
         fetchReviewTask(props.data_hash).then(({ machine, reportModel }) => {

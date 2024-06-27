@@ -1,12 +1,9 @@
 import { ForbiddenException, Inject, Injectable, Scope } from "@nestjs/common";
 import { Model, Types } from "mongoose";
-import {
-    ClaimReviewTask,
-    ClaimReviewTaskDocument,
-} from "./schemas/claim-review-task.schema";
+import { ReviewTask, ReviewTaskDocument } from "./schemas/review-task.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { CreateClaimReviewTaskDTO } from "./dto/create-claim-review-task.dto";
-import { UpdateClaimReviewTaskDTO } from "./dto/update-claim-review-task.dto";
+import { CreateReviewTaskDTO } from "./dto/create-review-task.dto";
+import { UpdateReviewTaskDTO } from "./dto/update-review-task.dto";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { ReportService } from "../report/report.service";
 import { HistoryType, TargetModel } from "../history/schema/history.schema";
@@ -31,11 +28,11 @@ import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { CommentEnum } from "./comment/schema/comment.schema";
 
 @Injectable({ scope: Scope.REQUEST })
-export class ClaimReviewTaskService {
+export class ReviewTaskService {
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
-        @InjectModel(ClaimReviewTask.name)
-        private ClaimReviewTaskModel: Model<ClaimReviewTaskDocument>,
+        @InjectModel(ReviewTask.name)
+        private ReviewTaskModel: Model<ReviewTaskDocument>,
         private claimReviewService: ClaimReviewService,
         private reportService: ReportService,
         private historyService: HistoryService,
@@ -90,11 +87,11 @@ export class ClaimReviewTaskService {
         pipeline.push(
             { $match: query },
             lookupUsers(),
-            lookUpPersonalityties(TargetModel.ClaimReviewTask),
-            lookupClaims(TargetModel.ClaimReviewTask, {
+            lookUpPersonalityties(TargetModel.ReviewTask),
+            lookupClaims(TargetModel.ReviewTask, {
                 pipeline: [
                     { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
-                    lookupClaimRevisions(TargetModel.ClaimReviewTask),
+                    lookupClaimRevisions(TargetModel.ReviewTask),
                     { $unwind: "$latestRevision" },
                 ],
                 as: "machine.context.claimReview.claim",
@@ -119,7 +116,7 @@ export class ClaimReviewTaskService {
             { $limit: pageSize }
         );
 
-        const reviewTasks = await this.ClaimReviewTaskModel.aggregate(
+        const reviewTasks = await this.ReviewTaskModel.aggregate(
             pipeline
         ).exec();
 
@@ -172,69 +169,64 @@ export class ClaimReviewTaskService {
         );
     }
 
-    getById(claimReviewTaskId: string) {
-        return this.ClaimReviewTaskModel.findById(claimReviewTaskId);
+    getById(reviewTaskId: string) {
+        return this.ReviewTaskModel.findById(reviewTaskId);
     }
 
-    _createReviewTaskHistory(
-        newClaimReviewTask,
-        previousClaimReviewTask = null
-    ) {
+    _createReviewTaskHistory(newReviewTask, previousReviewTask = null) {
         let historyType;
 
-        if (typeof newClaimReviewTask.machine.value === "object") {
+        if (typeof newReviewTask.machine.value === "object") {
             historyType =
-                newClaimReviewTask.machine.value?.[
-                    Object.keys(newClaimReviewTask.machine.value)[0]
+                newReviewTask.machine.value?.[
+                    Object.keys(newReviewTask.machine.value)[0]
                 ] === "draft"
                     ? HistoryType.Draft
-                    : Object.keys(newClaimReviewTask.machine.value)[0];
+                    : Object.keys(newReviewTask.machine.value)[0];
         }
 
         const user = this.req.user;
 
         const history = this.historyService.getHistoryParams(
-            newClaimReviewTask._id,
-            TargetModel.ClaimReviewTask,
+            newReviewTask._id,
+            TargetModel.ReviewTask,
             user,
             historyType || HistoryType.Published,
             {
-                ...newClaimReviewTask.machine.context.reviewData,
-                ...newClaimReviewTask.machine.context.claimReview.claim,
-                value: newClaimReviewTask.machine.value,
+                ...newReviewTask.machine.context.reviewData,
+                ...newReviewTask.machine.context.claimReview.claim,
+                value: newReviewTask.machine.value,
             },
-            previousClaimReviewTask && {
-                ...previousClaimReviewTask.machine.context.reviewData,
-                ...previousClaimReviewTask.machine.context.claimReview.claim,
-                value: previousClaimReviewTask.machine.value,
+            previousReviewTask && {
+                ...previousReviewTask.machine.context.reviewData,
+                ...previousReviewTask.machine.context.claimReview.claim,
+                value: previousReviewTask.machine.value,
             }
         );
 
         this.historyService.createHistory(history);
     }
 
-    _createStateEvent(newClaimReviewTask) {
+    _createStateEvent(newReviewTask) {
         let typeModel;
         let draft = false;
 
-        if (typeof newClaimReviewTask.machine.value === "object") {
+        if (typeof newReviewTask.machine.value === "object") {
             draft =
-                newClaimReviewTask.machine.value?.[
-                    Object.keys(newClaimReviewTask.machine.value)[0]
+                newReviewTask.machine.value?.[
+                    Object.keys(newReviewTask.machine.value)[0]
                 ] === "draft"
                     ? true
                     : false;
 
-            typeModel = Object.keys(newClaimReviewTask.machine.value)[0];
+            typeModel = Object.keys(newReviewTask.machine.value)[0];
         }
 
         const stateEvent = this.stateEventService.getStateEventParams(
-            Types.ObjectId(
-                newClaimReviewTask?.machine?.context?.claimReview?.claim
-            ),
+            Types.ObjectId(newReviewTask.machine.context.claimReview.claim),
             typeModel || TypeModel.Published,
             draft,
-            newClaimReviewTask._id
+            newReviewTask._id
         );
 
         this.stateEventService.createStateEvent(stateEvent);
@@ -285,30 +277,31 @@ export class ClaimReviewTaskService {
         return this.commentService.create(newCrossCheckingComment);
     }
 
-    async create(claimReviewTaskBody: CreateClaimReviewTaskDTO) {
-        const reviewDataBody = claimReviewTaskBody.machine.context.reviewData;
-        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
-            claimReviewTaskBody.data_hash
+    async create(reviewTaskBody: CreateReviewTaskDTO) {
+        const reviewDataBody = reviewTaskBody.machine.context.reviewData;
+        const reviewTask = await this.getReviewTaskByDataHash(
+            reviewTaskBody.data_hash
         );
 
         const createCrossCheckingComment =
-            claimReviewTask?.machine?.value === "addCommentCrossChecking" &&
+            reviewTask?.machine?.value === "addCommentCrossChecking" &&
             reviewDataBody.crossCheckingClassification &&
             reviewDataBody.crossCheckingComment;
 
-        claimReviewTaskBody.machine.context.reviewData.usersId =
+        reviewTaskBody.machine.context.reviewData.usersId =
             this._returnObjectId(reviewDataBody.usersId);
 
-        claimReviewTaskBody.machine.context.reviewData.group =
-            this._returnObjectId(reviewDataBody.group);
+        reviewTaskBody.machine.context.reviewData.group = this._returnObjectId(
+            reviewDataBody.group
+        );
 
         if (reviewDataBody.reviewerId) {
-            claimReviewTaskBody.machine.context.reviewData.reviewerId =
+            reviewTaskBody.machine.context.reviewData.reviewerId =
                 Types.ObjectId(reviewDataBody.reviewerId) || "";
         }
 
         if (reviewDataBody.crossCheckerId) {
-            claimReviewTaskBody.machine.context.reviewData.crossCheckerId =
+            reviewTaskBody.machine.context.reviewData.crossCheckerId =
                 Types.ObjectId(reviewDataBody.crossCheckerId) || "";
         }
 
@@ -316,12 +309,12 @@ export class ClaimReviewTaskService {
             this.commentService.updateManyComments(
                 reviewDataBody.reviewComments
             );
-            claimReviewTaskBody.machine.context.reviewData.reviewComments =
+            reviewTaskBody.machine.context.reviewData.reviewComments =
                 this._returnObjectId(reviewDataBody.reviewComments);
         }
 
         if (reviewDataBody.crossCheckingComments) {
-            claimReviewTaskBody.machine.context.reviewData.crossCheckingComments =
+            reviewTaskBody.machine.context.reviewData.crossCheckingComments =
                 this._returnObjectId(reviewDataBody.crossCheckingComments);
         }
 
@@ -329,55 +322,51 @@ export class ClaimReviewTaskService {
             const crossCheckingComment = await this._createCrossCheckingComment(
                 reviewDataBody.crossCheckingComment,
                 reviewDataBody.crossCheckingClassification,
-                claimReviewTask._id
+                reviewTask._id
             );
-            claimReviewTaskBody.machine.context.reviewData.crossCheckingComments.push(
+            reviewTaskBody.machine.context.reviewData.crossCheckingComments.push(
                 crossCheckingComment._id
             );
         }
 
-        if (claimReviewTask) {
+        if (reviewTask) {
             return this.update(
-                claimReviewTaskBody.data_hash,
-                claimReviewTaskBody,
-                claimReviewTaskBody.nameSpace,
-                claimReviewTask.reportModel
+                reviewTaskBody.data_hash,
+                reviewTaskBody,
+                reviewTaskBody.nameSpace,
+                reviewTask.reportModel
             );
         } else {
-            const newClaimReviewTask = new this.ClaimReviewTaskModel(
-                claimReviewTaskBody
-            );
-            newClaimReviewTask.save();
-            this._createReviewTaskHistory(newClaimReviewTask);
-            this._createStateEvent(newClaimReviewTask);
-            return newClaimReviewTask;
+            const newReviewTask = new this.ReviewTaskModel(reviewTaskBody);
+            newReviewTask.save();
+            this._createReviewTaskHistory(newReviewTask);
+            this._createStateEvent(newReviewTask);
+            return newReviewTask;
         }
     }
 
     async update(
         data_hash: string,
-        { machine }: UpdateClaimReviewTaskDTO,
+        { machine }: UpdateReviewTaskDTO,
         nameSpace: string,
         reportModel: string,
         history: boolean = true
     ) {
         // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
-            data_hash
-        );
+        const reviewTask = await this.getReviewTaskByDataHash(data_hash);
 
-        const newClaimReviewTaskMachine = {
-            ...claimReviewTask.machine,
+        const newReviewTaskMachine = {
+            ...reviewTask.machine,
             ...machine,
         };
 
-        const newClaimReviewTask = {
-            ...claimReviewTask.toObject(),
-            machine: newClaimReviewTaskMachine,
+        const newReviewTask = {
+            ...reviewTask.toObject(),
+            machine: newReviewTaskMachine,
         };
 
         this._publishReviewTask(
-            newClaimReviewTask,
+            newReviewTask,
             nameSpace,
             machine,
             data_hash,
@@ -385,17 +374,17 @@ export class ClaimReviewTaskService {
         );
 
         if (history) {
-            this._createReviewTaskHistory(newClaimReviewTask, claimReviewTask);
-            this._createStateEvent(newClaimReviewTask);
+            this._createReviewTaskHistory(newReviewTask, reviewTask);
+            this._createStateEvent(newReviewTask);
         }
 
-        return this.ClaimReviewTaskModel.updateOne(
-            { _id: newClaimReviewTask._id },
-            newClaimReviewTask
+        return this.ReviewTaskModel.updateOne(
+            { _id: newReviewTask._id },
+            newReviewTask
         );
     }
 
-    getClaimReviewTaskByDataHash(data_hash: string) {
+    getReviewTaskByDataHash(data_hash: string) {
         const commentPopulation = [
             {
                 path: "user",
@@ -410,7 +399,7 @@ export class ClaimReviewTaskService {
             },
         ];
 
-        return this.ClaimReviewTaskModel.findOne({ data_hash })
+        return this.ReviewTaskModel.findOne({ data_hash })
             .populate({
                 path: "machine.context.reviewData.reviewComments",
                 model: "Comment",
@@ -424,7 +413,7 @@ export class ClaimReviewTaskService {
     }
 
     async getReviewTasksByClaimId(claimId: string) {
-        return await this.ClaimReviewTaskModel.aggregate([
+        return await this.ReviewTaskModel.aggregate([
             {
                 $match: {
                     "machine.context.claimReview.claim": claimId.toString(),
@@ -434,11 +423,9 @@ export class ClaimReviewTaskService {
         ]);
     }
 
-    async getClaimReviewTaskByDataHashWithUsernames(data_hash: string) {
+    async getReviewTaskByDataHashWithUsernames(data_hash: string) {
         // This may cause a false positive in sonarCloud
-        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
-            data_hash
-        )
+        const reviewTask = await this.getReviewTaskByDataHash(data_hash)
             .populate({
                 path: "machine.context.reviewData.usersId",
                 model: "User",
@@ -455,10 +442,10 @@ export class ClaimReviewTaskService {
                 select: "name",
             });
 
-        if (claimReviewTask) {
+        if (reviewTask) {
             const preloadedAsignees = [];
             const usersId = [];
-            claimReviewTask.machine.context.reviewData.usersId.forEach(
+            reviewTask.machine.context.reviewData.usersId.forEach(
                 (assignee) => {
                     preloadedAsignees.push({
                         value: assignee._id,
@@ -467,44 +454,43 @@ export class ClaimReviewTaskService {
                     usersId.push(assignee._id);
                 }
             );
-            claimReviewTask.machine.context.reviewData.usersId = usersId;
-            claimReviewTask.machine.context.preloadedOptions = {
+            reviewTask.machine.context.reviewData.usersId = usersId;
+            reviewTask.machine.context.preloadedOptions = {
                 usersId: preloadedAsignees,
             };
 
-            if (claimReviewTask.machine.context.reviewData.crossCheckerId) {
+            if (reviewTask.machine.context.reviewData.crossCheckerId) {
                 const crossCheckerUser =
-                    claimReviewTask.machine.context.reviewData.crossCheckerId;
-                claimReviewTask.machine.context.preloadedOptions.crossCheckerId =
-                    [
-                        {
-                            value: crossCheckerUser._id,
-                            label: crossCheckerUser.name,
-                        },
-                    ];
-                claimReviewTask.machine.context.reviewData.crossCheckerId =
+                    reviewTask.machine.context.reviewData.crossCheckerId;
+                reviewTask.machine.context.preloadedOptions.crossCheckerId = [
+                    {
+                        value: crossCheckerUser._id,
+                        label: crossCheckerUser.name,
+                    },
+                ];
+                reviewTask.machine.context.reviewData.crossCheckerId =
                     crossCheckerUser._id;
             }
 
-            if (claimReviewTask.machine.context.reviewData.reviewerId) {
+            if (reviewTask.machine.context.reviewData.reviewerId) {
                 const reviewerUser =
-                    claimReviewTask.machine.context.reviewData.reviewerId;
-                claimReviewTask.machine.context.preloadedOptions.reviewerId = [
+                    reviewTask.machine.context.reviewData.reviewerId;
+                reviewTask.machine.context.preloadedOptions.reviewerId = [
                     {
                         value: reviewerUser._id,
                         label: reviewerUser.name,
                     },
                 ];
-                claimReviewTask.machine.context.reviewData.reviewerId =
+                reviewTask.machine.context.reviewData.reviewerId =
                     reviewerUser._id;
             }
         }
 
-        return claimReviewTask;
+        return reviewTask;
     }
 
     count(query: any = {}) {
-        return this.ClaimReviewTaskModel.countDocuments().where(query);
+        return this.ReviewTaskModel.countDocuments().where(query);
     }
 
     async countReviewTasksNotDeleted(query, filterUser, nameSpace) {
@@ -528,7 +514,7 @@ export class ClaimReviewTaskService {
                 lookupClaimReviews({
                     as: "machine.context.claimReview.claimReview",
                 }),
-                lookupClaims(TargetModel.ClaimReviewTask, {
+                lookupClaims(TargetModel.ReviewTask, {
                     pipeline: [
                         { $match: { $expr: { $eq: ["$_id", "$$claimId"] } } },
                         { $project: { isDeleted: 1, nameSpace: 1 } },
@@ -550,7 +536,7 @@ export class ClaimReviewTaskService {
                 { $count: "count" },
             ];
 
-            const result = await this.ClaimReviewTaskModel.aggregate(
+            const result = await this.ReviewTaskModel.aggregate(
                 pipeline
             ).exec();
 
@@ -574,13 +560,11 @@ export class ClaimReviewTaskService {
     }
 
     async addComment(data_hash, comment) {
-        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
-            data_hash
-        );
-        const reviewData = claimReviewTask.machine.context.reviewData;
+        const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+        const reviewData = reviewTask.machine.context.reviewData;
         const newComment = await this.commentService.create({
             ...comment,
-            targetId: claimReviewTask._id,
+            targetId: reviewTask._id,
         });
 
         if (!reviewData.reviewComments) {
@@ -589,8 +573,8 @@ export class ClaimReviewTaskService {
 
         reviewData.reviewComments.push(Types.ObjectId(newComment?._id));
 
-        const { machine } = await this.ClaimReviewTaskModel.findOneAndUpdate(
-            { _id: claimReviewTask._id },
+        const { machine } = await this.ReviewTaskModel.findOneAndUpdate(
+            { _id: reviewTask._id },
             { "machine.context.reviewData": reviewData },
             { new: true }
         );
@@ -603,10 +587,8 @@ export class ClaimReviewTaskService {
 
     async deleteComment(data_hash, commentId) {
         const commentIdObject = Types.ObjectId(commentId);
-        const claimReviewTask = await this.getClaimReviewTaskByDataHash(
-            data_hash
-        );
-        const reviewData = claimReviewTask.machine.context.reviewData;
+        const reviewTask = await this.getReviewTaskByDataHash(data_hash);
+        const reviewData = reviewTask.machine.context.reviewData;
         reviewData.reviewComments = reviewData.reviewComments.filter(
             (comment) => !comment._id.equals(commentIdObject)
         );
@@ -614,10 +596,9 @@ export class ClaimReviewTaskService {
             (comment) => !comment._id.equals(commentIdObject)
         );
 
-        return this.ClaimReviewTaskModel.findByIdAndUpdate(
-            claimReviewTask._id,
-            { "machine.context.reviewData": reviewData }
-        );
+        return this.ReviewTaskModel.findByIdAndUpdate(reviewTask._id, {
+            "machine.context.reviewData": reviewData,
+        });
     }
 
     async getHtmlFromSchema(schema) {

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Claim } from "../../claim/schemas/claim.schema";
-import { ClaimReviewTask } from "../../claim-review-task/schemas/claim-review-task.schema";
+import { ReviewTask } from "../../review-task/schemas/review-task.schema";
 
 export type StateEventDocument = StateEvent & mongoose.Document;
 
@@ -29,9 +29,9 @@ export class StateEvent {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: false,
-        ref: "ClaimReviewTask",
+        ref: "ReviewTask",
     })
-    taskId: ClaimReviewTask;
+    taskId: ReviewTask;
 
     @Prop({
         type: Boolean,

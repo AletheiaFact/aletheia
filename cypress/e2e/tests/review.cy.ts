@@ -66,7 +66,7 @@ describe("Test claim review", () => {
 
     it("should be able to submit full review fields", () => {
         cy.login();
-        cy.intercept("GET", "/api/claimreviewtask/editor-content/*", (req) => {
+        cy.intercept("GET", "/api/reviewtask/editor-content/*", (req) => {
             req.reply({
                 statusCode: 200,
                 body: review.editorContent,

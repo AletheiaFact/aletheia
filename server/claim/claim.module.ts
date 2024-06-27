@@ -11,7 +11,7 @@ import { ViewModule } from "../view/view.module";
 import { ClaimRevisionModule } from "./claim-revision/claim-revision.module";
 import { HistoryModule } from "../history/history.module";
 import { CaptchaModule } from "../captcha/captcha.module";
-import { ClaimReviewTaskModule } from "../claim-review-task/claim-review-task.module";
+import { ReviewTaskModule } from "../review-task/review-task.module";
 import { SentenceModule } from "./types/sentence/sentence.module";
 import { StateEventModule } from "../state-event/state-event.module";
 import { ImageModule } from "./types/image/image.module";
@@ -33,7 +33,7 @@ const ClaimModel = MongooseModule.forFeature([
     imports: [
         ClaimModel,
         ClaimReviewModule,
-        ClaimReviewTaskModule,
+        ReviewTaskModule,
         ClaimRevisionModule,
         SentenceModule,
         ParserModule,

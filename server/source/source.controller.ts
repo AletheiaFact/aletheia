@@ -24,7 +24,7 @@ import { CaptchaService } from "../captcha/captcha.service";
 import { UnleashService } from "nestjs-unleash";
 import { TargetModel } from "../history/schema/history.schema";
 import { HistoryService } from "../history/history.service";
-import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
+import { ReviewTaskService } from "../review-task/review-task.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 
 @Controller(":namespace?")
@@ -36,7 +36,7 @@ export class SourceController {
         private configService: ConfigService,
         private captchaService: CaptchaService,
         private claimReviewService: ClaimReviewService,
-        private claimReviewTaskService: ClaimReviewTaskService,
+        private reviewTaskService: ReviewTaskService,
         private historyService: HistoryService,
         @Optional() private readonly unleash: UnleashService
     ) {}
@@ -146,8 +146,8 @@ export class SourceController {
             req.params.dataHash
         );
 
-        const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskByDataHashWithUsernames(
+        const reviewTask =
+            await this.reviewTaskService.getReviewTaskByDataHashWithUsernames(
                 source.data_hash
             );
         const claimReview = await this.claimReviewService.getReviewByDataHash(
@@ -182,7 +182,7 @@ export class SourceController {
             "/source-review",
             Object.assign(parsedUrl.query, {
                 source,
-                claimReviewTask,
+                reviewTask,
                 claimReview,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 hideDescriptions,

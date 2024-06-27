@@ -24,7 +24,7 @@ export interface ClaimReviewPageProps {
     claim: any;
     content: any;
     sitekey: string;
-    claimReviewTask: any;
+    reviewTask: any;
     claimReview: any;
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
@@ -128,8 +128,8 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
 
             <ReviewTaskMachineProvider
                 data_hash={content.data_hash}
-                baseMachine={props.claimReviewTask?.machine}
-                baseReportModel={props?.claimReviewTask?.reportModel}
+                baseMachine={props.reviewTask?.machine}
+                baseReportModel={props?.reviewTask?.reportModel}
                 publishedReview={{ review: claimReview }}
                 reviewTaskType={ReviewTaskTypeEnum.Claim}
                 claim={claim}
@@ -159,7 +159,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personality: JSON.parse(JSON.stringify(query.personality)),
             claim: JSON.parse(JSON.stringify(query.claim)),
             content: JSON.parse(JSON.stringify(query.content)),
-            claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
+            reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             hideDescriptions: JSON.parse(
