@@ -15,7 +15,7 @@ import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 export interface SourceReviewPageProps {
     verificationRequest: any;
     sitekey: string;
-    claimReviewTask: any;
+    reviewTask: any;
     hideDescriptions: object;
     websocketUrl: string;
     nameSpace: string;
@@ -33,8 +33,8 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
         <>
             <ReviewTaskMachineProvider
                 data_hash={verificationRequest.data_hash}
-                baseMachine={props.claimReviewTask?.machine}
-                baseReportModel={props?.claimReviewTask?.reportModel}
+                baseMachine={props.reviewTask?.machine}
+                baseReportModel={props?.reviewTask?.reportModel}
                 reviewTaskType={ReviewTaskTypeEnum.VerificationRequest}
             >
                 <ClaimReviewView
@@ -56,7 +56,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             verificationRequest: JSON.parse(
                 JSON.stringify(query.verificationRequest)
             ),
-            claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
+            reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             sitekey: query.sitekey,
             hideDescriptions: JSON.parse(
                 JSON.stringify(query.hideDescriptions)

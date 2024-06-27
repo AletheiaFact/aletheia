@@ -17,7 +17,7 @@ import { parse } from "url";
 import { ConfigService } from "@nestjs/config";
 import { ViewService } from "../view/view.service";
 import type { Response } from "express";
-import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
+import { ReviewTaskService } from "../review-task/review-task.service";
 import { CreateVerificationRequestDTO } from "./dto/create-verification-request-dto";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 
@@ -27,7 +27,7 @@ export class VerificationRequestController {
         private verificationRequestService: VerificationRequestService,
         private configService: ConfigService,
         private viewService: ViewService,
-        private claimReviewTaskService: ClaimReviewTaskService
+        private reviewTaskService: ReviewTaskService
     ) {}
 
     @ApiTags("verification-request")
@@ -87,8 +87,8 @@ export class VerificationRequestController {
         const verificationRequest =
             await this.verificationRequestService.findByDataHash(dataHash);
 
-        const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskByDataHashWithUsernames(
+        const reviewTask =
+            await this.reviewTaskService.getReviewTaskByDataHashWithUsernames(
                 dataHash
             );
 
@@ -97,7 +97,7 @@ export class VerificationRequestController {
             res,
             "/verification-request-page",
             Object.assign(parsedUrl.query, {
-                claimReviewTask,
+                reviewTask,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 hideDescriptions: {},
                 websocketUrl: this.configService.get<string>("websocketUrl"),
