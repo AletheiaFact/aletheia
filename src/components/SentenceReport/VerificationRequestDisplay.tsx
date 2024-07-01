@@ -40,20 +40,17 @@ const VerificationRequestDisplay = ({ content }) => {
                             flexWrap: "wrap",
                         }}
                     >
-                        {verificationRequestGroup &&
-                            verificationRequestGroup.map(({ content }) => (
-                                <div
-                                    key={content}
-                                    style={{
-                                        flex: "1 1 200px",
-                                        minWidth: "200px",
-                                    }}
-                                >
-                                    <VerificationRequestCard
-                                        content={content}
-                                    />
-                                </div>
-                            ))}
+                        {verificationRequestGroup?.map(({ content }) => (
+                            <div
+                                key={content}
+                                style={{
+                                    flex: "1 1 200px",
+                                    minWidth: "200px",
+                                }}
+                            >
+                                <VerificationRequestCard content={content} />
+                            </div>
+                        ))}
                     </div>
                 </Col>
             )}
