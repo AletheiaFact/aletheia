@@ -9,9 +9,8 @@ import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import claimApi from "../../api/claim";
 import ClaimCard from "../Claim/ClaimCard";
 import claimReviewApi from "../../api/claimReviewApi";
-import CardBase from "../CardBase";
-import ReviewCardComment from "../ClaimReview/ReviewCardComment";
 import DashboardViewStyle from "./DashboardView.style";
+import ReviewCard from "../ClaimReview/ReviewCard";
 
 const DashboardView = () => {
     const { t, i18n } = useTranslation();
@@ -70,14 +69,11 @@ const DashboardView = () => {
                     emptyFallback={<></>}
                     renderItem={(review) =>
                         review && (
-                            <CardBase
-                                style={{ width: "fit-content", padding: 12 }}
-                            >
-                                <ReviewCardComment
-                                    key={review._id}
-                                    review={review}
-                                />
-                            </CardBase>
+                            <ReviewCard
+                                key={review._id}
+                                review={review}
+                                summarized={true}
+                            />
                         )
                     }
                     skeleton={<ClaimSkeleton />}

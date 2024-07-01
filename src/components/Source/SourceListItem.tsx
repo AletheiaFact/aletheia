@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { Col, Typography } from "antd";
 import CardBase from "../CardBase";
-import ClassificationText from "../ClassificationText";
 import AletheiaButton from "../Button";
 import { useTranslation } from "next-i18next";
 import SourceListItemStyled from "./SourceListItem.style";
+import ReviewClassification from "../ClaimReview/ReviewClassification";
 const { Paragraph } = Typography;
 const DOMAIN_PROTOCOL_REGEX = /^(https?:\/\/)?(www\.)?/;
 
@@ -41,12 +41,10 @@ const SourceListItem = ({ source }) => {
                 </Paragraph>
 
                 <Col className="footer">
-                    <span>
-                        {t("sources:sourceReview")}
-                        <ClassificationText
-                            classification={source.props.classification}
-                        />
-                    </span>
+                    <ReviewClassification
+                        label={t("sources:sourceReview")}
+                        classification={source.props.classification}
+                    />
                     <AletheiaButton
                         href={source.href}
                         target="_blank"

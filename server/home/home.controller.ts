@@ -9,6 +9,8 @@ import type { BaseRequest } from "../types";
 import { DebateService } from "../claim/types/debate/debate.service";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
 import { ApiTags } from "@nestjs/swagger";
+import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Controller("/")
 export class HomeController {
@@ -17,7 +19,8 @@ export class HomeController {
         private personalityService: PersonalityService,
         private statsService: StatsService,
         private debateService: DebateService,
-        private claimRevisionService: ClaimRevisionService
+        private claimRevisionService: ClaimRevisionService,
+        private claimReviewService: ClaimReviewService
     ) {}
 
     @ApiTags("pages")
@@ -33,6 +36,18 @@ export class HomeController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const reviews = await this.claimReviewService.listAll({
+            page: 1,
+            pageSize: 6,
+            order: "asc",
+            query: {
+                isHidden: false,
+                isDeleted: false,
+                nameSpace: req.params.namespace || NameSpaceEnum.Main,
+            },
+            latest: true,
+        });
+
         const { personalities } = await this.personalityService.combinedListAll(
             {
                 language: req.language,
@@ -78,6 +93,7 @@ export class HomeController {
                 personalities,
                 stats,
                 claims,
+                reviews,
                 nameSpace: req.params.namespace,
             })
         );

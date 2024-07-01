@@ -1,8 +1,8 @@
 {
     "cardAuthor": "{{name}} avaliou essa afirmação como:",
     "anonymousUserName": "Anônimo",
-    "titleClaimReview": "Afirmação avaliada como ",
-    "titleSourceReview": "Fonte avaliada como ",
+    "titleClaimReview": "Afirmação avaliada como: ",
+    "titleSourceReview": "Fonte avaliada como: ",
     "listTitle": "Avaliações",
     "summarySectionTitle": "Resumo da conclusão",
     "questionsSectionTitle": "Quais perguntas a verificação deverá responder?",

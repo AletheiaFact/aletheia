@@ -11,6 +11,7 @@ import { CaptchaModule } from "../captcha/captcha.module";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { ImageModule } from "../claim/types/image/image.module";
 import { EditorParseModule } from "../editor-parse/editor-parse.module";
+import { WikidataModule } from "../wikidata/wikidata.module";
 
 export const ClaimReviewModel = MongooseModule.forFeature([
     {
@@ -29,6 +30,7 @@ export const ClaimReviewModel = MongooseModule.forFeature([
         AbilityModule,
         ImageModule,
         EditorParseModule,
+        WikidataModule,
     ],
     providers: [UtilService, ClaimReviewService],
     exports: [ClaimReviewService],
