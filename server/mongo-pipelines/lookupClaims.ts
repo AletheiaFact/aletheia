@@ -8,7 +8,7 @@ export default function lookupClaims(target, params: any = {}) {
                 from: "claims",
                 let: {
                     claimId: {
-                        $toObjectId: "$machine.context.claimReview.claim",
+                        $toObjectId: "$target",
                     },
                 },
                 pipeline,

@@ -29,13 +29,7 @@ import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 
-const DynamicReviewTaskForm = ({
-    data_hash,
-    personality,
-    claim,
-    source,
-    targetId,
-}) => {
+const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
     const {
         handleSubmit,
         control,
@@ -88,7 +82,7 @@ const DynamicReviewTaskForm = ({
         setReviewerError(false);
     }, [events]);
 
-    useAutoSaveDraft(data_hash, personality, claim, watch);
+    useAutoSaveDraft(data_hash, personality, target, watch);
 
     const sendEventToMachine = (formData, eventName) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
@@ -103,12 +97,10 @@ const DynamicReviewTaskForm = ({
                     ) || reviewData.reviewComments,
                 crossCheckingComments: reviewData.crossCheckingComments,
             },
-            claimReview: {
+            review: {
                 personality,
-                claim,
-                source,
-                targetId,
             },
+            target,
             type: eventName,
             t,
             recaptchaString,

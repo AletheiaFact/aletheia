@@ -1,9 +1,9 @@
 import { ReviewTaskTypeEnum } from "./enums";
-import { ClaimReview, ReviewData } from "./events";
+import { Review, ReviewData } from "./events";
 
 export type ReviewTaskMachineContextType = {
     reviewData: ReviewData;
-    claimReview: ClaimReview;
+    review: Review;
 };
 
 const buildState = (
@@ -29,11 +29,8 @@ const buildState = (
         sources: [],
     };
 
-    const claimReview = {
-        //TODO: change name to review
+    const review = {
         personality: "",
-        claim: "",
-        source: "",
         usersId: "",
         targetId: "",
         isPartialReview: false,
@@ -47,7 +44,7 @@ const buildState = (
                 group: [],
                 rejected: false,
             },
-            claimReview,
+            review,
         };
     }
 
@@ -57,7 +54,7 @@ const buildState = (
                 ...baseReviewData,
                 ...reviewData,
             },
-            claimReview,
+            review,
         };
     }
 
@@ -67,7 +64,7 @@ const buildState = (
             ...claimReviewData,
             ...reviewData,
         },
-        claimReview,
+        review,
     };
 };
 

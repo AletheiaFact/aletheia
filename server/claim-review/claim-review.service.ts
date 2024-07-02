@@ -233,12 +233,8 @@ export class ClaimReviewService {
             claimReview.personality = Types.ObjectId(claimReview.personality);
         }
 
-        if (claimReview.claim) {
-            claimReview.claim = Types.ObjectId(claimReview.claim);
-        }
-
-        if (claimReview.source) {
-            claimReview.source = Types.ObjectId(claimReview.source);
+        if (claimReview.target) {
+            claimReview.target = Types.ObjectId(claimReview.target);
         }
 
         claimReview.usersId = claimReview.report.usersId.map((userId) => {

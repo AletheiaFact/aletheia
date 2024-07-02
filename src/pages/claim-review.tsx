@@ -138,7 +138,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                 <VisualEditorProvider data_hash={content.data_hash}>
                     <ClaimReviewView
                         personality={personality}
-                        claim={claim}
+                        target={claim}
                         content={content}
                         hideDescriptions={hideDescriptions}
                     />

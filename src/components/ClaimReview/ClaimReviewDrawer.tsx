@@ -131,7 +131,7 @@ const ClaimReviewDrawer = () => {
                         </Row>
                         <ClaimReviewView
                             personality={personality}
-                            claim={claim}
+                            target={claim}
                             content={content}
                         />
                     </VisualEditorProvider>
