@@ -59,7 +59,7 @@ const CollaborativeEditor = ({
                 extraAttributes: {
                     id: () => null,
                 },
-                autoLink: false,
+                autoLink: true,
                 selectTextOnClick: true,
             }),
             new SummaryExtension({ disableExtraAttributes: true }),
