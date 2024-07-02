@@ -19,6 +19,7 @@ import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
 import lookupClaims from "../mongo-pipelines/lookupClaims";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
+import { WikidataService } from "../wikidata/wikidata.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -31,10 +32,11 @@ export class ClaimReviewService {
         private util: UtilService,
         private sentenceService: SentenceService,
         private imageService: ImageService,
-        private editorParseService: EditorParseService
+        private editorParseService: EditorParseService,
+        private wikidata: WikidataService
     ) {}
 
-    async listAll(page, pageSize, order, query, latest = false) {
+    async listAll({ page, pageSize, order, query, latest = false }) {
         // Currently only list claim reviews
         const pipeline = this.ClaimReviewModel.find({
             ...query,
@@ -345,7 +347,11 @@ export class ClaimReviewService {
     }
 
     private async postProcess(review) {
-        const { personality, data_hash, report } = review;
+        const { data_hash, report } = review;
+        const personality = await this.personalityPostProcess(
+            review.personality
+        );
+
         const nameSpace =
             this.req.params.namespace ||
             this.req.query.nameSpace ||
@@ -353,6 +359,8 @@ export class ClaimReviewService {
         const claim = {
             contentModel: review.claim.latestRevision.contentModel,
             date: review.claim.latestRevision.date,
+            slug: review.claim.latestRevision.slug,
+            title: review.claim.latestRevision.title,
         };
 
         const isContentImage = claim.contentModel === ContentModelEnum.Image;
@@ -425,5 +433,24 @@ export class ClaimReviewService {
             ...schema,
             ...htmlContent,
         };
+    }
+
+    async personalityPostProcess(personality) {
+        if (personality) {
+            const wikidataExtract = await this.wikidata.fetchProperties({
+                wikidataId: personality.wikidata,
+                language: this.req.language || "en",
+            });
+
+            if (wikidataExtract.isAllowedProp === false) {
+                return;
+            }
+
+            return {
+                ...personality.toObject(),
+                ...wikidataExtract,
+            };
+        }
+        return personality;
     }
 }

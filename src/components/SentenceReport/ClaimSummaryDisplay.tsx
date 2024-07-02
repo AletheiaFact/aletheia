@@ -3,11 +3,11 @@ import { ContentModelEnum } from "../../types/enums";
 import SentenceReportSummary from "./SentenceReportSummary";
 import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref";
 import { Typography } from "antd";
-import ImageClaim from "../ImageClaim";
 import ClaimInfo from "../Claim/ClaimInfo";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useTranslation } from "next-i18next";
+import ReviewContent from "../ClaimReview/ReviewContent";
 
 const { Paragraph } = Typography;
 
@@ -77,16 +77,13 @@ const ClaimSummaryDisplay = ({
     return (
         <>
             <SentenceReportSummary className={personality ? "after" : ""}>
-                <Paragraph className="sentence-content">
-                    <cite>{title}</cite>
-                    {isImage && (
-                        <ImageClaim
-                            src={content?.content}
-                            title={claim?.title}
-                        />
-                    )}
-                    <a href={contentPath}>{t(linkText)}</a>
-                </Paragraph>
+                <ReviewContent
+                    title={isImage ? claim?.title : title}
+                    content={content?.content}
+                    contentPath={contentPath}
+                    isImage={isImage}
+                    linkText={t(linkText)}
+                />
             </SentenceReportSummary>
             <ClaimInfo
                 date={claim.date}

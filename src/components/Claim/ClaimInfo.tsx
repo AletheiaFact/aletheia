@@ -21,13 +21,14 @@ const ClaimInfo = ({
     isImage,
     date,
     speechTypeTranslation = "claim:typeSpeech",
+    style = {},
 }) => {
     const { t } = useTranslation();
 
     return (
         <>
             {!isImage ? (
-                <ClaimInfoParagraph>
+                <ClaimInfoParagraph style={style}>
                     {t("claim:cardHeader1")}&nbsp;
                     <LocalizedDate date={date || new Date()} />
                     &nbsp;
@@ -35,7 +36,7 @@ const ClaimInfo = ({
                     <strong>{t(speechTypeTranslation)}</strong>
                 </ClaimInfoParagraph>
             ) : (
-                <ClaimInfoParagraph>
+                <ClaimInfoParagraph style={style}>
                     {t("claim:cardHeader3")}&nbsp;
                     <LocalizedDate date={date || new Date()} />
                 </ClaimInfoParagraph>

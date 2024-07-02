@@ -3,18 +3,16 @@ import CTARegistration from "./CTARegistration";
 import { Row, Col } from "antd";
 import SocialMediaShare from "../SocialMediaShare";
 import { isUserLoggedIn } from "../../atoms/currentUser";
-import SectionTitle from "../SectionTitle";
 import { useAtom } from "jotai";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
-import ReviewsCarousel from "../ClaimReview/ReviewsCarousel";
 import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
 import HomeFeed from "./HomeFeed";
+import ReviewsGrid from "../ClaimReview/ReviewsGrid";
 
-const HomeContent = ({ personalities, href, title, debateClaims }) => {
-    const { vw, results } = useAppSelector((state) => ({
-        vw: state.vw,
+const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
+    const { results } = useAppSelector((state) => ({
         results: [
             state?.search?.searchResults?.personalities || [],
             state?.search?.searchResults?.claims || [],
@@ -38,6 +36,12 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
                 <Col xs={22} sm={22} md={18}>
                     <HomeFeed searchResults={results} />
                 </Col>
+                <Col xs={22} sm={22} md={18} style={{ marginBottom: 32 }}>
+                    <ReviewsGrid
+                        reviews={reviews}
+                        title={t("home:latestReviewsTitle")}
+                    />
+                </Col>
                 {Array.isArray(debateClaims) && debateClaims.length > 0 && (
                     <Col
                         xs={{ span: 20, order: 1 }}
@@ -52,24 +56,11 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
                         <DebateGrid debates={debateClaims} />
                     </Col>
                 )}
-                <Col
-                    xs={{ span: 22, order: 2 }}
-                    sm={{ span: 22, order: 2 }}
-                    md={{ span: 12, order: 1 }}
-                >
+                <Col xs={22} sm={22} md={18}>
                     <PersonalitiesGrid
                         personalities={personalities}
                         title={title}
                     />
-                </Col>
-                <Col
-                    xs={{ span: 22, order: 1 }}
-                    sm={{ span: 22, order: 1 }}
-                    md={{ span: 6, order: 2 }}
-                    style={{ paddingLeft: vw?.sm ? 0 : 20 }}
-                >
-                    <SectionTitle>{t("home:latestReviewsTitle")}</SectionTitle>
-                    <ReviewsCarousel />
                 </Col>
 
                 {!isLoggedIn && (

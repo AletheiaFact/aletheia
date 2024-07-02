@@ -2,7 +2,7 @@ import { Col, Typography } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useContext } from "react";
 
-import ClassificationText from "../ClassificationText";
+import ReviewClassification from "../ClaimReview/ReviewClassification";
 import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import SentenceReportCardStyle from "./SentenceReportCard.style";
 import AletheiaAlert from "../AletheiaAlert";
@@ -54,11 +54,13 @@ const SentenceReportCard = ({
             >
                 {classification && (
                     <Title className="classification" level={1}>
-                        {
+                        <ReviewClassification
                             // TODO: Create a more meaningful h1 for this page
-                            t(`claimReview:title${reviewTaskType}Review`)
-                        }
-                        <ClassificationText classification={classification} />
+                            label={t(
+                                `claimReview:title${reviewTaskType}Review`
+                            )}
+                            classification={classification}
+                        />
                     </Title>
                 )}
                 {isClaim && (
