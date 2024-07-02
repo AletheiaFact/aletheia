@@ -215,6 +215,7 @@ export class EditorParser {
         schema,
         { type, content: cardContent }: RemirrorJSON
     ) {
+        let sourceCounter = 0;
         const sourceContent = [];
         for (const { content } of cardContent) {
             if (content) {
@@ -224,7 +225,7 @@ export class EditorParser {
                             ...this.getSourcesFromEditorMarks(text, type, marks)
                         );
                         const markId = marks.map(
-                            ({ attrs }: ObjectMark) => attrs.id
+                            () => `source${sourceCounter++}`
                         );
 
                         // Pushing the text into content with markup based on its source id
@@ -263,7 +264,7 @@ export class EditorParser {
                             textRange: this.findTextRange(
                                 schema[field],
                                 textRange,
-                                id
+                                index
                             ),
                             targetText: textRange,
                             sup: index + 1,
@@ -276,9 +277,9 @@ export class EditorParser {
         return newSources.sort((a, b) => a.sup - b.sup);
     }
 
-    findTextRange(content, textTarget, sourceId) {
+    findTextRange(content, textTarget, index) {
         const contentArray = Array.isArray(content) ? content : [content];
-        const markUpText = `{{${sourceId}|${textTarget}}}`;
+        const markUpText = `{{source${index}|${textTarget}}}`;
 
         // Looks for the specific text with the right markup and returns the range of the marked-up text
         return contentArray.flatMap((c) => {
