@@ -10,7 +10,7 @@ const VerificationRequestDisplay = ({ content }) => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
     const { content: contentText, group } = content;
-    const verificationRequestGroup = group.content.filter(
+    const verificationRequestGroup = group?.content.filter(
         (c) => c._id !== content._id
     );
 
@@ -40,10 +40,13 @@ const VerificationRequestDisplay = ({ content }) => {
                             flexWrap: "wrap",
                         }}
                     >
-                        {verificationRequestGroup.map(({ content }) => (
+                        {verificationRequestGroup?.map(({ content }) => (
                             <div
                                 key={content}
-                                style={{ flex: "1 1 200px", minWidth: "200px" }}
+                                style={{
+                                    flex: "1 1 200px",
+                                    minWidth: "200px",
+                                }}
                             >
                                 <VerificationRequestCard content={content} />
                             </div>
