@@ -82,10 +82,22 @@ const createSource = (t, router, source: any = {}) => {
         });
 };
 
+const getById = (id, t, params = {}) => {
+    return request
+        .get(`/${id}`, { params })
+        .then((response) => {
+            return response.data;
+        })
+        .catch(() => {
+            message.error("error"); //TODO: Improve feedback message
+        });
+};
+
 const SourceApi = {
     getByTargetId,
     createSource,
     get,
+    getById,
 };
 
 export default SourceApi;

@@ -20,7 +20,7 @@ export enum ActionTypes {
     SET_CLAIM_CREATE_TYPE,
     SET_CLAIM_CREATE_PERSONALITY,
     SET_SELECTED_PERSONALITY,
-    SET_SELECTED_CLAIM,
+    SET_SELECTED_TARGET,
     SET_SELECTED_CONTENT,
     SET_USER_ID,
     SET_SITEKEY,
@@ -71,7 +71,7 @@ export interface RootState {
     vw: WidthBreakpoints;
     selectedDataHash: string;
     selectedPersonality: any;
-    selectedClaim: any;
+    selectedTarget: any;
     selectedContent: Content;
     sitekey: string;
 }

@@ -34,6 +34,8 @@ export const transitionHandler = (state) => {
         resetIsLoading,
         currentUserId,
         nameSpace,
+        reviewTaskType,
+        target,
     } = state.event;
     const event = state.event.type;
     const { value } = state;
@@ -58,6 +60,7 @@ export const transitionHandler = (state) => {
         return setFormAndEvents(nextState);
     }
 
+    
     const reviewTask = {
         data_hash,
         reportModel,
@@ -70,6 +73,8 @@ export const transitionHandler = (state) => {
         },
         recaptcha: recaptchaString,
         nameSpace,
+        reviewTaskType,
+        target,
     };
 
     api.createReviewTask(reviewTask, t, event)

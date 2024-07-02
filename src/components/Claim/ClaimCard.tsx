@@ -35,7 +35,7 @@ const ClaimCard = ({
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { selectedClaim } = useAppSelector((state) => state);
+    const { selectedTarget } = useAppSelector((state) => state);
     const review = claim?.stats?.reviews[0];
     const paragraphs = content || claim.content;
     const [claimContent, setClaimContent] = useState("");
@@ -45,7 +45,7 @@ const ClaimCard = ({
     const isUnattributed =
         claim?.contentModel === ContentModelEnum.Unattributed;
     const isInsideDebate =
-        selectedClaim?.contentModel === ContentModelEnum.Debate;
+        selectedTarget?.contentModel === ContentModelEnum.Debate;
     const shouldCreateFirstParagraph = isSpeech || isUnattributed;
 
     const dispatchPersonalityAndClaim = () => {
@@ -53,7 +53,7 @@ const ClaimCard = ({
             // when selecting a claim from the debate page to review or to read,
             // we don't want to change the selected claim
             // se we can keep reference to the debate
-            dispatch(actions.setSelectClaim(claim));
+            dispatch(actions.setSelectTarget(claim));
         }
         dispatch(actions.setSelectPersonality(personality));
     };

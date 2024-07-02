@@ -11,7 +11,7 @@ import BadgesApi from "../api/badgesApi";
 import { Grid } from "@mui/material";
 import DashboardView from "../components/Dashboard/DashboardView";
 import AdminTabNavigator from "../components/adminArea/AdminTabNavigator";
-import AdminScreens from "../components/adminArea/AdminScreens";
+import TabPanel from "../components/TabPanel";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
 
@@ -43,13 +43,13 @@ const Admin: NextPage<{ users: string; nameSpace: string }> = ({
             <Grid sx={{ width: "100%" }}>
                 <AdminTabNavigator value={value} handleChange={handleChange} />
 
-                <AdminScreens value={value} index={0}>
+                <TabPanel value={value} index={0}>
                     <AdminView />
-                </AdminScreens>
+                </TabPanel>
 
-                <AdminScreens value={value} index={1}>
+                <TabPanel value={value} index={1}>
                     <DashboardView />
-                </AdminScreens>
+                </TabPanel>
             </Grid>
 
             <UserEditDrawer />

@@ -5,4 +5,5 @@ export interface Content {
     data_hash: string;
     props: any;
     content: string;
+    reviewTaskType: string;
 }

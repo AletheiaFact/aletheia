@@ -180,10 +180,10 @@ const reducer = (state, action) => {
                 ...state,
                 selectedPersonality: action.selectedPersonality,
             };
-        case ActionTypes.SET_SELECTED_CLAIM:
+        case ActionTypes.SET_SELECTED_TARGET:
             return {
                 ...state,
-                selectedClaim: action.selectedClaim,
+                selectedTarget: action.selectedTarget,
             };
         case ActionTypes.SET_SELECTED_CONTENT:
             return {

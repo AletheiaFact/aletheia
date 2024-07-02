@@ -39,9 +39,8 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         watch,
     } = useForm();
     const { reportModel } = useContext(ReviewTaskMachineContext);
-    const { machineService, events, form, setFormAndEvents } = useContext(
-        ReviewTaskMachineContext
-    );
+    const { machineService, events, form, setFormAndEvents, reviewTaskType } =
+        useContext(ReviewTaskMachineContext);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isReported = useSelector(machineService, reportSelector);
@@ -100,6 +99,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
             review: {
                 personality,
             },
+            reviewTaskType,
             target,
             type: eventName,
             t,

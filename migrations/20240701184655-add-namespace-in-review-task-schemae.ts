@@ -7,34 +7,38 @@ export async function up(db: Db) {
     while (await reviewTasksCursor.hasNext()) {
         const reviewTask = await reviewTasksCursor.next();
         if (reviewTask.machine.context.claimReview.claim) {
-            const claim = await db
-                .collection("claims")
-                .findOne({
-                    _id: ObjectId(reviewTask.machine.context.claimReview.claim),
-                });
+            const claim = await db.collection("claims").findOne({
+                _id: ObjectId(reviewTask.machine.context.claimReview.claim),
+            });
 
             await db
                 .collection("reviewtasks")
                 .updateOne(
                     { _id: reviewTask._id },
-                    { $set: { nameSpace: claim?.nameSpace } }
+                    {
+                        $set: {
+                            nameSpace: claim?.nameSpace,
+                            reviewTaskType: "Claim",
+                        },
+                    }
                 );
         }
 
         if (reviewTask.machine.context.claimReview.source) {
-            const source = await db
-                .collection("sources")
-                .findOne({
-                    _id: ObjectId(
-                        reviewTask.machine.context.claimReview.source
-                    ),
-                });
+            const source = await db.collection("sources").findOne({
+                _id: ObjectId(reviewTask.machine.context.claimReview.source),
+            });
 
             await db
                 .collection("reviewtasks")
                 .updateOne(
                     { _id: reviewTask._id },
-                    { $set: { nameSpace: source?.nameSpace } }
+                    {
+                        $set: {
+                            nameSpace: source?.nameSpace,
+                            reviewTaskType: "Source",
+                        },
+                    }
                 );
         }
     }
@@ -43,5 +47,5 @@ export async function up(db: Db) {
 export async function down(db: Db) {
     await db
         .collection("reviewtasks")
-        .updateMany({}, { $unset: { nameSpace: "" } });
+        .updateMany({}, { $unset: { nameSpace: "", reviewTaskType: "" } });
 }

@@ -1,7 +1,10 @@
 {
     "claimBy": "Claim by",
     "assignedTo": "Fact-checkers",
-    "myTasks": "My tasks only",
-    "myCrossChecks": "My cross-checks only",
-    "myReviews": "My reviews only"
+    "myAssigned": "My tasks only",
+    "myCrossChecked": "My cross-checks only",
+    "myReviewed": "My reviews only",
+    "tabClaimTitle": "Claims",
+    "tabSourceTitle": "Sources",
+    "tabVerificationRequestTitle": "Verification Requests"
 }

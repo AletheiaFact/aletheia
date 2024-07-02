@@ -15,8 +15,6 @@ import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ImageService } from "../claim/types/image/image.service";
 import { ContentModelEnum } from "../types/enums";
-import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
-import lookupClaims from "../mongo-pipelines/lookupClaims";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 
@@ -147,8 +145,22 @@ export class ClaimReviewService {
 
         aggregation.push(
             { $match: query },
-            lookUpPersonalityties(TargetModel.ClaimReview),
-            lookupClaims(TargetModel.ClaimReview),
+            {
+                $lookup: {
+                    from: "personalities",
+                    localField: "personality",
+                    foreignField: "_id",
+                    as: "personality",
+                },
+            },
+            {
+                $lookup: {
+                    from: "claims",
+                    localField: "claim",
+                    foreignField: "_id",
+                    as: "claim",
+                },
+            },
             { $unwind: "$claim" },
             {
                 $match: {

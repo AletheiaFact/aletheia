@@ -42,6 +42,12 @@ export class SourceController {
     ) {}
 
     @ApiTags("source")
+    @Get("api/source/:id")
+    async getById(@Param("id") sourceId: string) {
+        return this.sourceService.getById(sourceId);
+    }
+
+    @ApiTags("source")
     @Get("api/source/:targetId")
     public async getSourcesClaim(@Param() params, @Query() getSources: any) {
         const { targetId } = params;

@@ -18,7 +18,6 @@ import { parse } from "url";
 import type { Request, Response } from "express";
 import { ViewService } from "../view/view.service";
 import { GetTasksDTO } from "./dto/get-tasks.dto";
-import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { ConfigService } from "@nestjs/config";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 import { ApiTags } from "@nestjs/swagger";
@@ -44,21 +43,24 @@ export class ReviewTaskController {
             order = 1,
             value,
             filterUser,
+            reviewTaskType,
             nameSpace = NameSpaceEnum.Main,
         } = getTasksDTO;
         return Promise.all([
-            this.reviewTaskService.listAll(
+            this.reviewTaskService.listAll({
                 page,
                 pageSize,
                 order,
                 value,
                 filterUser,
-                nameSpace
-            ),
+                nameSpace,
+                reviewTaskType,
+            }),
             this.reviewTaskService.countReviewTasksNotDeleted(
-                getQueryMatchForMachineValue(value),
+                value,
                 filterUser,
-                nameSpace
+                nameSpace,
+                reviewTaskType
             ),
         ]).then(([tasks, totalTasks]) => {
             const totalPages = Math.ceil(totalTasks / pageSize);

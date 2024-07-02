@@ -1,7 +1,7 @@
 import * as mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import type { Machine } from "../dto/create-review-task.dto";
-import { ReportModelEnum } from "../../types/enums";
+import { ReportModelEnum, ReviewTaskTypeEnum } from "../../types/enums";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 
 export type ReviewTaskDocument = ReviewTask &
@@ -35,6 +35,17 @@ export class ReviewTask {
         refPath: "onModel",
     })
     target: mongoose.Types.ObjectId;
+
+    @Prop({
+        required: true,
+        validate: {
+            validator: (v) => {
+                return Object.values(ReviewTaskTypeEnum).includes(v);
+            },
+        },
+        message: (tag) => `${tag} is not a valid review task type.`,
+    })
+    reviewTaskType: ReviewTaskTypeEnum;
 }
 
 const ReviewTaskSchemaRaw = SchemaFactory.createForClass(ReviewTask);

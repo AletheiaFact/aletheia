@@ -4,7 +4,7 @@ import { ClassificationEnum } from "../../claim-review/dto/create-claim-review.d
 import { Personality } from "../../personality/schemas/personality.schema";
 import { User } from "../../users/schemas/user.schema";
 import { ApiProperty } from "@nestjs/swagger";
-import { ReportModelEnum } from "../../types/enums";
+import { ReportModelEnum, ReviewTaskTypeEnum } from "../../types/enums";
 
 export type ReviewTaskMachineContextReviewData = {
     usersId?: any[];
@@ -75,4 +75,10 @@ export class CreateReviewTaskDTO {
     @IsString()
     @ApiProperty()
     target: string;
+
+    @IsNotEmpty()
+    @IsEnum(ReviewTaskTypeEnum)
+    @IsString()
+    @ApiProperty()
+    reviewTaskType: string;
 }

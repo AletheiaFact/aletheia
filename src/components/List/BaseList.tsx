@@ -63,6 +63,8 @@ const BaseList = ({
     // TODO: use TimerCallback to refresh the list
 
     useEffect(() => {
+        setLoading(true);
+        setExecLoadMore(false);
         apiCall(query).then((newItems) => {
             setInitLoading(false);
             setLoading(false);
@@ -73,16 +75,6 @@ const BaseList = ({
             );
         });
     }, [query]);
-
-    useEffect(() => {
-        setLoading(true);
-        setExecLoadMore(false);
-        setQuery({
-            ...query,
-            ...filter,
-            page: 1,
-        });
-    }, [filter]);
 
     const loadMoreData = () => {
         if (execLoadMore !== true) {
