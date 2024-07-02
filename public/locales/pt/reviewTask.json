@@ -59,6 +59,8 @@
     "submitted": "Em revisão",
     "published": "Publicado",
     "draft": "Rascunho",
+    "assignedRequest": "Usuário atribuído",
+    "rejectedRequest": "Rejeitado",
     "crossCheckingAlertTitle": "Este relatório está em processo de cross-checking",
     "reviewingAlertTitle": "Este relatório está em processo de revisão",
     "rejectionAlertTitle": "A revisão foi rejeitada com o seguinte comentário",

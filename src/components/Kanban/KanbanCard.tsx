@@ -15,6 +15,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import SourceApi from "../../api/sourceApi";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import verificationRequestApi from "../../api/verificationRequestApi";
 
 const { Text, Paragraph } = Typography;
 
@@ -22,14 +23,21 @@ const KanbanCard = ({ reviewTask, reviewTaskType }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
+    const apiCallFunctions = {
+        [ReviewTaskTypeEnum.Claim]: claimApi.getById,
+        [ReviewTaskTypeEnum.Source]: SourceApi.getById,
+        [ReviewTaskTypeEnum.VerificationRequest]:
+            verificationRequestApi.getById,
+    };
+
     const goToClaimReview = () => {
         dispatch(actions.setSelectTarget(null));
         dispatch(actions.setSelectPersonality(null));
         dispatch(actions.setSelectContent(null));
         Promise.all([
-            reviewTaskType === ReviewTaskTypeEnum.Claim
-                ? claimApi.getById(reviewTask.targetId, t, { nameSpace })
-                : SourceApi.getById(reviewTask.targetId, t, { nameSpace }),
+            apiCallFunctions[reviewTaskType](reviewTask.targetId, t, {
+                nameSpace,
+            }),
             personalityApy.getPersonality(reviewTask.personalityId, {}, t),
         ]).then(([target, personality]) => {
             dispatch(actions.setSelectTarget(target));

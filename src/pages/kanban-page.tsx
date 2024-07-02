@@ -69,13 +69,12 @@ const KanbanPage: NextPage<{
             <Grid>
                 <KanbanTabNavigator value={value} handleChange={handleChange} />
 
-                <TabPanel value={value} index={0}>
-                    <KanbanView reviewTaskType={ReviewTaskTypeEnum.Claim} />
-                </TabPanel>
-
-                <TabPanel value={value} index={1}>
-                    <KanbanView reviewTaskType={ReviewTaskTypeEnum.Source} />
-                </TabPanel>
+                {value !== null &&
+                    Object.keys(ReviewTaskTypeEnum).map((key, index) => (
+                        <TabPanel value={value} index={index} key={key}>
+                            <KanbanView reviewTaskType={key} />
+                        </TabPanel>
+                    ))}
             </Grid>
             <AffixButton />
         </>

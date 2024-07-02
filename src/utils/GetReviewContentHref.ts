@@ -16,6 +16,10 @@ export const generateReviewContentPath = (
         return `${basePath}/source/${data_hash}`;
     }
 
+    if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
+        return `${basePath}/verification-request/${data_hash}`;
+    }
+
     switch (contentModel) {
         case ContentModelEnum.Speech:
             return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;

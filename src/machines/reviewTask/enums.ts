@@ -20,6 +20,28 @@ enum ReviewTaskEvents {
     assignRequest = "ASSIGN_REQUEST",
 }
 
+enum KanbanVerificationRequestStates {
+    assignedRequest = "assignedRequest",
+    rejectedRequest = "rejectedRequest",
+    published = "published",
+}
+
+enum KanbanSourceState {
+    assigned = "assigned",
+    reported = "reported",
+    crossChecking = "cross-checking",
+    submitted = "submitted",
+    published = "published",
+}
+
+enum KanbanClaimState {
+    assigned = "assigned",
+    reported = "reported",
+    crossChecking = "cross-checking",
+    submitted = "submitted",
+    published = "published",
+}
+
 enum ReviewTaskStates {
     unassigned = "unassigned",
     assigned = "assigned",
@@ -58,4 +80,7 @@ export {
     CompoundStates,
     ReportModelEnum,
     ReviewTaskTypeEnum,
+    KanbanVerificationRequestStates,
+    KanbanSourceState,
+    KanbanClaimState,
 };

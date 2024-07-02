@@ -1,7 +1,13 @@
 import { Col } from "antd";
 import React, { useMemo, useState } from "react";
 
-import { ReviewTaskStates } from "../../machines/reviewTask/enums";
+import {
+    KanbanClaimState,
+    KanbanSourceState,
+    KanbanVerificationRequestStates,
+    ReviewTaskStates,
+    ReviewTaskTypeEnum,
+} from "../../machines/reviewTask/enums";
 import KanbanCol from "./KanbanCol";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
@@ -15,20 +21,14 @@ const KanbanView = ({ reviewTaskType }) => {
         crossChecked: false,
         reviewed: false,
     });
-    // Don't show unassigned, rejected, selectCrossChecker and selectReviewer column
-    // because we don't save tasks in these states
-    const states = useMemo(
-        () =>
-            Object.keys(ReviewTaskStates).filter(
-                (state) =>
-                    state !== ReviewTaskStates.unassigned &&
-                    state !== ReviewTaskStates.selectCrossChecker &&
-                    state !== ReviewTaskStates.selectReviewer &&
-                    state !== ReviewTaskStates.addCommentCrossChecking &&
-                    state !== ReviewTaskStates.rejected
-            ),
-        []
-    );
+    const kanbanStates = {
+        [ReviewTaskTypeEnum.Claim]: KanbanClaimState,
+        [ReviewTaskTypeEnum.Source]: KanbanSourceState,
+        [ReviewTaskTypeEnum.VerificationRequest]:
+            KanbanVerificationRequestStates,
+    };
+
+    const states = Object.keys(kanbanStates[reviewTaskType]);
 
     return (
         <KanbanViewStyled>

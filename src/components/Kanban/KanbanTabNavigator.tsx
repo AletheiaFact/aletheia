@@ -1,10 +1,11 @@
 import React from "react";
 import Tab from "@mui/material/Tab";
 import { Grid } from "@mui/material";
-import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
+import ReportIcon from "@mui/icons-material/Report";
 import { useTranslation } from "next-i18next";
 import TabsNavigatorStyle from "../adminArea/TabsNavigator.style";
+import SourceIcon from "@mui/icons-material/Source";
+import { FileAddFilled } from "@ant-design/icons";
 
 const KanbanTabNavigator = ({ value, handleChange }) => {
     const { t } = useTranslation();
@@ -26,7 +27,7 @@ const KanbanTabNavigator = ({ value, handleChange }) => {
                 <Tab
                     label={
                         <div className="tab-label">
-                            <ManageAccountsOutlinedIcon />
+                            <FileAddFilled />
                             <span>{t("kanban:tabClaimTitle")}</span>
                         </div>
                     }
@@ -35,7 +36,7 @@ const KanbanTabNavigator = ({ value, handleChange }) => {
                 <Tab
                     label={
                         <div className="tab-label">
-                            <DashboardOutlinedIcon />
+                            <SourceIcon />
                             <span>{t("kanban:tabSourceTitle")}</span>
                         </div>
                     }
@@ -44,7 +45,7 @@ const KanbanTabNavigator = ({ value, handleChange }) => {
                 <Tab
                     label={
                         <div className="tab-label">
-                            <DashboardOutlinedIcon />
+                            <ReportIcon />
                             <span>
                                 {t("kanban:tabVerificationRequestTitle")}
                             </span>

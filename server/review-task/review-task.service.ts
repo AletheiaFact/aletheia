@@ -16,7 +16,11 @@ import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { getQueryMatchForMachineValue } from "./mongo-utils";
 import { Roles } from "../auth/ability/ability.factory";
 import { ImageService } from "../claim/types/image/image.service";
-import { ContentModelEnum, ReportModelEnum, ReviewTaskTypeEnum } from "../types/enums";
+import {
+    ContentModelEnum,
+    ReportModelEnum,
+    ReviewTaskTypeEnum,
+} from "../types/enums";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { CommentService } from "./comment/comment.service";
 import { CommentEnum } from "./comment/schema/comment.schema";
@@ -90,8 +94,11 @@ export class ReviewTaskService {
         return query;
     }
 
-    _verifyMachineValueAndAddMatchPipeline(pipeline, value) {
-        if (value === "published") {
+    _verifyMachineValueAndAddMatchPipeline(pipeline, value, reviewTaskType) {
+        if (
+            value === "published" &&
+            reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
+        ) {
             return pipeline.push(
                 {
                     $lookup: {
@@ -189,20 +196,27 @@ export class ReviewTaskService {
                 },
             },
             {
+                $unwind: {
+                    path: "$machine.context.review.personality",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
                 $lookup: {
-                    from:
-                        reviewTaskType === ReviewTaskTypeEnum.Claim
-                            ? "claims"
-                            : "sources",
+                    from: `${reviewTaskType.toLowerCase()}s`,
                     let: { targetId: { $toObjectId: "$target" } },
                     pipeline: this.buildLookupPipeline(reviewTaskType),
                     as: "target",
                 },
             },
-            { $unwind: "$target" }
+            { $unwind: { path: "$target", preserveNullAndEmptyArrays: true } }
         );
 
-        this._verifyMachineValueAndAddMatchPipeline(pipeline, value);
+        this._verifyMachineValueAndAddMatchPipeline(
+            pipeline,
+            value,
+            reviewTaskType
+        );
 
         return pipeline;
     }

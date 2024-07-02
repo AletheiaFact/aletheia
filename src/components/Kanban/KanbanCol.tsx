@@ -48,7 +48,7 @@ const KanbanCol = ({
                 filter={{
                     value: state,
                     reviewTaskType,
-                    filterUser: filterUser,
+                    filterUser,
                     nameSpace,
                 }}
                 renderItem={(task) => (
