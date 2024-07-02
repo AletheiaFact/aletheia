@@ -19,7 +19,6 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import colors from "../../styles/colors";
 import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
-import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
