@@ -19,7 +19,7 @@ const args = process.argv.slice(2);
 
 if (args.length < 2) {
     console.error(
-        "Usage: node createNovuSubscriber.js <topicKey> <email1,email2,...>"
+        "Usage: yarn create-novu-subscribers <topicKey> <email1,email2,...>"
     );
     process.exit(1);
 }
