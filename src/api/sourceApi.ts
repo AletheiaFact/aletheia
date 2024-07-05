@@ -23,7 +23,7 @@ const getByTargetId = (options: optionsType) => {
         language: options?.i18n?.languages[0],
     };
     return request
-        .get(`${options.targetId}`, { params })
+        .get(`/target/${options.targetId}`, { params })
         .then((response) => {
             const { sources, totalPages, totalSources } = response.data;
             return {
