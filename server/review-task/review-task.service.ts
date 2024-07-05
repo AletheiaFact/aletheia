@@ -727,7 +727,7 @@ export class ReviewTaskService {
         const loggedInUser = this.req.user;
 
         if (
-            reviewTaskMachine.value === "published" &&
+            reviewTaskMachine.machine.value === "published" &&
             reportModel !== ReportModelEnum.Request
         ) {
             if (
