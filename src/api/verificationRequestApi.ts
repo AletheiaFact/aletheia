@@ -16,7 +16,7 @@ const getVerificationRequests = (params) => {
         });
 };
 
-const getById = (id, t, params = {}) => {
+const getById = (id, _t = null, params = {}) => {
     return request
         .get(`/${id}`, { params })
         .then((response) => {

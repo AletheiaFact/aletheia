@@ -12,4 +12,10 @@ export const getQueryMatchForMachineValue = (value) => {
         : { [`machine.value.${value}`]: { $exists: true } };
 };
 
-const plainValues = ["published", "submitted", "reported"];
+const plainValues = [
+    "published",
+    "submitted",
+    "reported",
+    "assignedRequest",
+    "rejectedRequest",
+];
