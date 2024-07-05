@@ -49,18 +49,16 @@ export type ReviewData =
     | InformativeNewsReviewData
     | RequestReviewData;
 
-export type ClaimReview = {
+export type Review = {
     personality: string;
-    claim: string;
     usersId: string;
-    source: string;
     isPartialReview: boolean;
 };
 
 export type SaveEvent = {
     type: string;
     reviewData: ReviewData;
-    claimReview: ClaimReview;
+    review: Review;
 };
 
 export type ReviewTaskMachineEvents = SaveEvent;

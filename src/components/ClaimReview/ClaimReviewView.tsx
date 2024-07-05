@@ -23,14 +23,11 @@ export interface ClaimReviewViewProps {
     content: Content;
     hideDescriptions?: any;
     personality?: any;
-    claim?: any;
-    source?: any;
-    targetId?: string;
+    target?: any;
 }
 
 const ClaimReviewView = (props: ClaimReviewViewProps) => {
-    const { personality, claim, content, hideDescriptions, source, targetId } =
-        props;
+    const { personality, target, content, hideDescriptions } = props;
     const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
@@ -66,8 +63,8 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const reviewContentPath = generateReviewContentPath(
         nameSpace,
         personality,
-        claim,
-        claim?.contentModel,
+        target,
+        target?.contentModel,
         content.data_hash,
         reviewTaskType
     );
@@ -115,20 +112,18 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
 
             {!review?.isPublished && (
                 <ClaimReviewForm
-                    claim={claim}
                     personalityId={personality?._id}
                     dataHash={content.data_hash}
                     userIsReviewer={userIsReviewer}
                     componentStyle={componentStyle}
-                    source={source}
-                    targetId={targetId}
+                    target={target}
                 />
             )}
             {review?.isPublished && (
                 <SocialMediaShare
                     quote={personality?.name}
                     href={href}
-                    claim={claim?.title}
+                    claim={target?.title}
                 />
             )}
         </div>

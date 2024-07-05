@@ -34,10 +34,12 @@ export const transitionHandler = (state) => {
         resetIsLoading,
         currentUserId,
         nameSpace,
+        reviewTaskType,
+        target,
     } = state.event;
     const event = state.event.type;
     const { value } = state;
-    const { reviewData, claimReview } = state.context;
+    const { reviewData, review } = state.context;
     const nextState = typeof value !== "string" ? Object.keys(value)[0] : value;
 
     const shouldUpdateVerificationRequest =
@@ -58,26 +60,29 @@ export const transitionHandler = (state) => {
         return setFormAndEvents(nextState);
     }
 
+    
     const reviewTask = {
         data_hash,
         reportModel,
         machine: {
             context: {
-                reviewData: reviewData,
-                claimReview: claimReview,
+                reviewData,
+                review,
             },
             value: value,
         },
         recaptcha: recaptchaString,
         nameSpace,
+        reviewTaskType,
+        target,
     };
 
     api.createReviewTask(reviewTask, t, event)
         .then(async () => {
             if (shouldUpdateVerificationRequest) {
-                const redirectUrl = `/claim/create?verificationRequest=${claimReview.targetId}`;
+                const redirectUrl = `/claim/create?verificationRequest=${review.targetId}`;
                 await verificationRequestApi.updateVerificationRequest(
-                    claimReview.targetId,
+                    review.targetId,
                     { ...reviewData }
                 );
 

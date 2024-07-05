@@ -29,14 +29,14 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const sources = claim?.sources?.map((source) => source.href);
 
     const dispatchPersonalityAndClaim = () => {
-        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectTarget(claim));
         dispatch(actions.setSelectPersonality(personality));
     };
 
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
-        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectTarget(claim));
         dispatch(actions.setSelectPersonality(personality));
         if (isImage) {
             dispatch(actions.setSelectContent(claimContent));

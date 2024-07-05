@@ -93,9 +93,9 @@ describe("SourceController (e2e)", () => {
             });
     });
 
-    it("/api/source/:targetId (GET) - Should get sources by targetId", () => {
+    it("/api/source/target/:targetId (GET) - Should get sources by targetId", () => {
         return request(app.getHttpServer())
-            .get(`/api/source/${targetId}`)
+            .get(`/api/source/target/${targetId}`)
             .query({
                 page: 0,
                 order: "asc",

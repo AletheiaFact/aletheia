@@ -10,7 +10,7 @@ const VerificationRequestDisplay = ({ content }) => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
     const { content: contentText, group } = content;
-    const verificationRequestGroup = group?.content.filter(
+    const verificationRequestGroup = group?.content?.filter(
         (c) => c._id !== content._id
     );
 

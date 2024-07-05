@@ -36,8 +36,8 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
     });
 
     dispatch({
-        type: ActionTypes.SET_SELECTED_CLAIM,
-        selectedClaim: claim,
+        type: ActionTypes.SET_SELECTED_TARGET,
+        selectedTarget: claim,
     });
     dispatch({
         type: ActionTypes.SET_SITEKEY,

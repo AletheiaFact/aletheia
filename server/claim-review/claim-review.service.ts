@@ -15,8 +15,6 @@ import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ImageService } from "../claim/types/image/image.service";
 import { ContentModelEnum } from "../types/enums";
-import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
-import lookupClaims from "../mongo-pipelines/lookupClaims";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
@@ -149,8 +147,22 @@ export class ClaimReviewService {
 
         aggregation.push(
             { $match: query },
-            lookUpPersonalityties(TargetModel.ClaimReview),
-            lookupClaims(TargetModel.ClaimReview),
+            {
+                $lookup: {
+                    from: "personalities",
+                    localField: "personality",
+                    foreignField: "_id",
+                    as: "personality",
+                },
+            },
+            {
+                $lookup: {
+                    from: "claims",
+                    localField: "claim",
+                    foreignField: "_id",
+                    as: "claim",
+                },
+            },
             { $unwind: "$claim" },
             {
                 $match: {
@@ -235,12 +247,8 @@ export class ClaimReviewService {
             claimReview.personality = Types.ObjectId(claimReview.personality);
         }
 
-        if (claimReview.claim) {
-            claimReview.claim = Types.ObjectId(claimReview.claim);
-        }
-
-        if (claimReview.source) {
-            claimReview.source = Types.ObjectId(claimReview.source);
+        if (claimReview.target) {
+            claimReview.target = Types.ObjectId(claimReview.target);
         }
 
         claimReview.usersId = claimReview.report.usersId.map((userId) => {

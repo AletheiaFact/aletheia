@@ -25,10 +25,8 @@ const ClaimReviewForm = ({
     dataHash,
     userIsReviewer,
     componentStyle,
+    target,
     personalityId = null,
-    claim = null,
-    source = null,
-    targetId = null,
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
@@ -89,9 +87,7 @@ const ClaimReviewForm = ({
                     <DynamicReviewTaskForm
                         data_hash={dataHash}
                         personality={personalityId}
-                        claim={claim?._id}
-                        source={source?._id}
-                        targetId={targetId}
+                        target={target?._id}
                     />
                 )}
             </Col>

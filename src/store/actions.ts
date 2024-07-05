@@ -38,14 +38,15 @@ const actions = {
         type: ActionTypes.SET_SELECTED_PERSONALITY,
         selectedPersonality: personality,
     }),
-    setSelectClaim: (claim) => ({
-        type: ActionTypes.SET_SELECTED_CLAIM,
-        selectedClaim: claim,
+    setSelectTarget: (target) => ({
+        type: ActionTypes.SET_SELECTED_TARGET,
+        selectedTarget: target,
     }),
     setSelectContent: (content: Content) => ({
         type: ActionTypes.SET_SELECTED_CONTENT,
         selectedContent: content,
         selectedDataHash: content?.data_hash || "",
+        selectedReviewTaskType: content?.reviewTaskType,
     }),
     setSitekey: (sitekey) => ({
         type: ActionTypes.SET_SITEKEY,

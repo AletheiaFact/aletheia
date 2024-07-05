@@ -27,10 +27,7 @@ const reviewingSelector = (state) => {
 };
 
 const reviewNotStartedSelector = (state) => {
-    return (
-        state.matches(ReviewTaskStates.unassigned) &&
-        state.context.claimReview.claim === ""
-    );
+    return state.matches(ReviewTaskStates.unassigned);
 };
 
 const reviewDataSelector = (state) => {

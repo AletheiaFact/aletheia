@@ -29,13 +29,7 @@ import { currentNameSpace } from "../../../atoms/namespace";
 import { CommentEnum, Roles } from "../../../types/enums";
 import useAutoSaveDraft from "./hooks/useAutoSaveDraft";
 
-const DynamicReviewTaskForm = ({
-    data_hash,
-    personality,
-    claim,
-    source,
-    targetId,
-}) => {
+const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
     const {
         handleSubmit,
         control,
@@ -45,9 +39,8 @@ const DynamicReviewTaskForm = ({
         watch,
     } = useForm();
     const { reportModel } = useContext(ReviewTaskMachineContext);
-    const { machineService, events, form, setFormAndEvents } = useContext(
-        ReviewTaskMachineContext
-    );
+    const { machineService, events, form, setFormAndEvents, reviewTaskType } =
+        useContext(ReviewTaskMachineContext);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isReported = useSelector(machineService, reportSelector);
@@ -88,7 +81,7 @@ const DynamicReviewTaskForm = ({
         setReviewerError(false);
     }, [events]);
 
-    useAutoSaveDraft(data_hash, personality, claim, watch);
+    useAutoSaveDraft(data_hash, personality, target, watch);
 
     const sendEventToMachine = (formData, eventName) => {
         setIsLoading((current) => ({ ...current, [eventName]: true }));
@@ -103,12 +96,11 @@ const DynamicReviewTaskForm = ({
                     ) || reviewData.reviewComments,
                 crossCheckingComments: reviewData.crossCheckingComments,
             },
-            claimReview: {
+            review: {
                 personality,
-                claim,
-                source,
-                targetId,
             },
+            reviewTaskType,
+            target,
             type: eventName,
             t,
             recaptchaString,

@@ -27,9 +27,9 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
                 ...context.reviewData,
                 ...event.reviewData,
             },
-            claimReview: {
-                ...context.claimReview,
-                ...event.claimReview,
+            review: {
+                ...context.review,
+                ...event.review,
                 isPartialReview: false,
             },
         };
@@ -45,7 +45,7 @@ const rejectVerificationRequest = assign<
             ...context.reviewData,
             rejected: true,
         },
-        claimReview: context.claimReview,
+        review: context.review,
     };
 });
 

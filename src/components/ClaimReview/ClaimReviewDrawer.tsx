@@ -30,7 +30,7 @@ const ClaimReviewDrawer = () => {
         reviewDrawerCollapsed,
         vw,
         personality,
-        claim,
+        target,
         content,
         data_hash,
         enableCopilotChatBot,
@@ -41,23 +41,25 @@ const ClaimReviewDrawer = () => {
                 : true,
         vw: state?.vw,
         personality: state?.selectedPersonality,
-        claim: state?.selectedClaim,
+        target: state?.selectedTarget,
         content: state?.selectedContent,
         data_hash: state?.selectedDataHash,
         enableCopilotChatBot: state?.enableCopilotChatBot,
     }));
 
-    useEffect(() => setIsLoading(false), [claim, data_hash]);
+    useEffect(() => setIsLoading(false), [target, data_hash]);
 
     return (
         <LargeDrawer
             open={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
         >
-            {claim && data_hash && !isLoading ? (
+            {target && data_hash && !isLoading ? (
                 <ReviewTaskMachineProvider
                     data_hash={data_hash}
-                    reviewTaskType={ReviewTaskTypeEnum.Claim}
+                    reviewTaskType={
+                        content?.reviewTaskType || ReviewTaskTypeEnum.Claim
+                    }
                 >
                     <VisualEditorProvider data_hash={data_hash}>
                         <Row
@@ -85,10 +87,10 @@ const ClaimReviewDrawer = () => {
                                         href={generateReviewContentPath(
                                             nameSpace,
                                             personality,
-                                            claim,
-                                            claim.contentModel,
+                                            target,
+                                            target?.contentModel,
                                             data_hash,
-                                            ReviewTaskTypeEnum.Claim
+                                            content?.reviewTaskType
                                         )}
                                         onClick={() => setIsLoading(true)}
                                         type={ButtonType.gray}
@@ -131,7 +133,7 @@ const ClaimReviewDrawer = () => {
                         </Row>
                         <ClaimReviewView
                             personality={personality}
-                            claim={claim}
+                            target={target}
                             content={content}
                         />
                     </VisualEditorProvider>

@@ -16,14 +16,14 @@ import VerificationRequestDisplay from "./VerificationRequestDisplay";
 const { Title } = Typography;
 
 const SentenceReportCard = ({
-    claim,
+    target,
     personality,
     classification,
     content,
     hideDescription,
 }: {
     personality?: any;
-    claim: any;
+    target: any;
     content: any;
     classification?: any;
     hideDescription?: string;
@@ -65,7 +65,7 @@ const SentenceReportCard = ({
                 )}
                 {isClaim && (
                     <ClaimSummaryDisplay
-                        claim={claim}
+                        claim={target}
                         content={content?.content}
                         personality={personality}
                     />

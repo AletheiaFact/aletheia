@@ -59,6 +59,8 @@
     "submitted": "In review",
     "published": "Published",
     "draft": "Draft",
+    "assignedRequest": "User assigned",
+    "rejectedRequest": "Rejected",
     "crossCheckingAlertTitle": "This report is beeing cross-checked",
     "reviewingAlertTitle": "This report is beeing reviewed",
     "rejectionAlertTitle": "This review was rejected with the following comment",

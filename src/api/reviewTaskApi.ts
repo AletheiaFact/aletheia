@@ -14,6 +14,7 @@ const getReviewTasks = (options) => {
         pageSize: options.pageSize ? options.pageSize : 5,
         value: options.value,
         filterUser: options.filterUser,
+        reviewTaskType: options.reviewTaskType,
         nameSpace: options.nameSpace ? options.nameSpace : NameSpaceEnum.Main,
     };
     return request

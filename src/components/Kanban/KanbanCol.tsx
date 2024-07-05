@@ -11,6 +11,11 @@ import KanbanCard from "./KanbanCard";
 import styled from "styled-components";
 
 const StyledColumn = styled.div`
+    padding: 0 10px;
+    width: 400px;
+    background-color: ${colors.lightGraySecondary};
+    border-radius: 4px;
+
     .ant-list-item {
         padding: 6px 0;
     }
@@ -19,6 +24,7 @@ const StyledColumn = styled.div`
 interface KanbanColProps {
     nameSpace: string;
     state: ReviewTaskStates;
+    reviewTaskType: string;
     filterUser: {
         assigned: boolean;
         crossChecked: boolean;
@@ -26,27 +32,31 @@ interface KanbanColProps {
     };
 }
 
-const KanbanCol = ({ nameSpace, state, filterUser }: KanbanColProps) => {
+const KanbanCol = ({
+    nameSpace,
+    state,
+    filterUser,
+    reviewTaskType,
+}: KanbanColProps) => {
     const { t } = useTranslation();
 
     return (
-        <StyledColumn
-            style={{
-                padding: "0 10px",
-                width: "400px",
-                backgroundColor: colors.lightGraySecondary,
-                borderRadius: 4,
-            }}
-        >
+        <StyledColumn>
             <BaseList
                 title={t(`reviewTask:${state}`)}
                 apiCall={ReviewTaskApi.getReviewTasks}
                 filter={{
                     value: state,
-                    filterUser: filterUser,
+                    reviewTaskType,
+                    filterUser,
                     nameSpace,
                 }}
-                renderItem={(task) => <KanbanCard reviewTask={task} />}
+                renderItem={(task) => (
+                    <KanbanCard
+                        reviewTask={task}
+                        reviewTaskType={reviewTaskType}
+                    />
+                )}
                 emptyFallback={
                     <EmptyKanbanCol title={t(`reviewTask:${state}`)} />
                 }

@@ -121,7 +121,7 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
                     <ClaimReviewView
                         content={source}
                         hideDescriptions={hideDescriptions}
-                        source={source}
+                        target={source}
                     />
                 </VisualEditorProvider>
             </ReviewTaskMachineProvider>

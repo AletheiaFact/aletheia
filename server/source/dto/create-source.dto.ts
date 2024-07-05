@@ -35,4 +35,9 @@ export class CreateSourceDTO {
     @IsString()
     @ApiProperty()
     recaptcha: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    targetId: string;
 }

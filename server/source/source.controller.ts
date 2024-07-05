@@ -42,8 +42,17 @@ export class SourceController {
     ) {}
 
     @ApiTags("source")
-    @Get("api/source/:targetId")
-    public async getSourcesClaim(@Param() params, @Query() getSources: any) {
+    @Get("api/source/:id")
+    async getById(@Param("id") sourceId: string) {
+        return this.sourceService.getById(sourceId);
+    }
+
+    @ApiTags("source")
+    @Get("api/source/target/:targetId")
+    public async getSourcesByTargetId(
+        @Param() params,
+        @Query() getSources: any
+    ) {
         const { targetId } = params;
         const { page, order } = getSources;
         const pageSize = parseInt(getSources.pageSize, 10);

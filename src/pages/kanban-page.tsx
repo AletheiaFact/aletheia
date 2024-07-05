@@ -3,7 +3,7 @@ import AffixButton from "../components/AffixButton/AffixButton";
 import { GetLocale } from "../utils/GetLocale";
 import KanbanView from "../components/Kanban/KanbanView";
 import { NextPage } from "next";
-import React from "react";
+import React, { useEffect } from "react";
 import Seo from "../components/Seo";
 import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -11,6 +11,11 @@ import { useDispatch } from "react-redux";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
+import { Grid } from "@mui/material";
+import KanbanTabNavigator from "../components/Kanban/KanbanTabNavigator";
+import TabPanel from "../components/TabPanel";
+import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
+import Cookies from "js-cookie";
 
 const KanbanPage: NextPage<{
     sitekey;
@@ -21,6 +26,7 @@ const KanbanPage: NextPage<{
     websocketUrl: string;
     nameSpace: NameSpaceEnum;
 }> = (props) => {
+    const kanban_tab = Number(Cookies.get("kanban_tab")) || 0;
     const dispatch = useDispatch();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace);
@@ -48,10 +54,28 @@ const KanbanPage: NextPage<{
         type: ActionTypes.SET_AUTO_SAVE,
         autoSave: false,
     });
+
+    const [value, setValue] = React.useState(null);
+    const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+        document.cookie = `kanban_tab=${newValue}`;
+        setValue(newValue);
+    };
+
+    useEffect(() => setValue(kanban_tab), [kanban_tab]);
+
     return (
         <>
             <Seo title="Kanban" />
-            <KanbanView />
+            <Grid>
+                <KanbanTabNavigator value={value} handleChange={handleChange} />
+
+                {value !== null &&
+                    Object.keys(ReviewTaskTypeEnum).map((key, index) => (
+                        <TabPanel value={value} index={index} key={key}>
+                            <KanbanView reviewTaskType={key} />
+                        </TabPanel>
+                    ))}
+            </Grid>
             <AffixButton />
         </>
     );

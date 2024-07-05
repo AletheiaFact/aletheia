@@ -64,7 +64,7 @@ export class SourceService {
     }
 
     getById(_id) {
-        return this.SourceModel.findById(_id, { _id: 1, href: 1 });
+        return this.SourceModel.findById(_id);
     }
 
     async getByDataHash(data_hash) {

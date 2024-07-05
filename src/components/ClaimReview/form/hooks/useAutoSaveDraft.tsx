@@ -3,7 +3,7 @@ import { useAppSelector } from "../../../../store/store";
 import reviewTaskApi from "../../../../api/reviewTaskApi";
 import { useTranslation } from "next-i18next";
 
-const useAutoSaveDraft = (data_hash, personality, claim, watch) => {
+const useAutoSaveDraft = (data_hash, personality, target, watch) => {
     const autoSave = useAppSelector((state) => state.autoSave);
     const { t } = useTranslation();
 
@@ -21,9 +21,9 @@ const useAutoSaveDraft = (data_hash, personality, claim, watch) => {
                             machine: {
                                 context: {
                                     reviewData: value,
-                                    claimReview: {
+                                    review: {
                                         personality,
-                                        claim,
+                                        target,
                                         isPartialReview: true,
                                     },
                                 },

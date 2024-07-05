@@ -15,7 +15,7 @@ import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 
 interface ClaimReviewHeaderProps {
     personality?: string;
-    claim?: any;
+    target?: any;
     content: Content;
     classification?: ClassificationEnum;
     hideDescription: string;
@@ -30,7 +30,7 @@ const ClaimReviewHeader = ({
     hideDescription,
     userIsNotRegular,
     componentStyle,
-    claim,
+    target,
 }: ClaimReviewHeaderProps) => {
     const { reviewDrawerCollapsed } = useAppSelector((state) => ({
         reviewDrawerCollapsed:
@@ -72,7 +72,7 @@ const ClaimReviewHeader = ({
                     >
                         <SentenceReportCard
                             personality={personality}
-                            claim={claim}
+                            target={target}
                             content={content}
                             classification={
                                 isPublishedOrCanSeeHidden ? classification : ""
@@ -83,7 +83,7 @@ const ClaimReviewHeader = ({
                         />
                         {reviewTaskType === ReviewTaskTypeEnum.Claim && (
                             <TopicInput
-                                contentModel={claim.contentModel}
+                                contentModel={target.contentModel}
                                 data_hash={content.data_hash}
                                 topics={content.topics}
                             />
