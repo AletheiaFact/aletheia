@@ -60,7 +60,6 @@ export const transitionHandler = (state) => {
         return setFormAndEvents(nextState);
     }
 
-    
     const reviewTask = {
         data_hash,
         reportModel,
@@ -80,11 +79,10 @@ export const transitionHandler = (state) => {
     api.createReviewTask(reviewTask, t, event)
         .then(async () => {
             if (shouldUpdateVerificationRequest) {
-                const redirectUrl = `/claim/create?verificationRequest=${review.targetId}`;
-                await verificationRequestApi.updateVerificationRequest(
-                    review.targetId,
-                    { ...reviewData }
-                );
+                const redirectUrl = `/claim/create?verificationRequest=${target}`;
+                await verificationRequestApi.updateVerificationRequest(target, {
+                    ...reviewData,
+                });
 
                 if (value === "published") {
                     window.location.href = redirectUrl;

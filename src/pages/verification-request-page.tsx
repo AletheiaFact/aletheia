@@ -38,7 +38,7 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
                 reviewTaskType={ReviewTaskTypeEnum.VerificationRequest}
             >
                 <ClaimReviewView
-                    targetId={verificationRequest._id}
+                    target={verificationRequest}
                     content={verificationRequest}
                     hideDescriptions={hideDescriptions}
                 />
