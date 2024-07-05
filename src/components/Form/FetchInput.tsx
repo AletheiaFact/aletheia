@@ -28,10 +28,10 @@ const FetchInput = ({
 }: FetchInputProps) => {
     const [treatedValue, setTreatedValue] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const apiFunction =
-        fieldName === "usersId"
-            ? userApi.getById
-            : verificationRequestApi.getById;
+    const userFields = ["usersId", "crossCheckerId", "reviewerId"];
+    const apiFunction = userFields.includes(fieldName)
+        ? userApi.getById
+        : verificationRequestApi.getById;
 
     useEffect(() => {
         const fetchSelectedContent = async () => {
