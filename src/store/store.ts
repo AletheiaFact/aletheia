@@ -124,36 +124,22 @@ const reducer = (state, action) => {
                 ...state,
                 login: action.login,
             };
-        case ActionTypes.SET_AUTO_SAVE:
-            return {
-                ...state,
-                autoSave: action.autoSave,
-            };
         case ActionTypes.SET_WEBSOCKET_URL:
             return {
                 ...state,
                 websocketUrl: action.websocketUrl,
             };
-        case ActionTypes.SET_COLLABORATIVE_EDIT:
-            return {
-                ...state,
-                enableCollaborativeEdit: action.enableCollaborativeEdit,
-            };
-        case ActionTypes.SET_COPILOT_CHAT_BOT:
-            return {
-                ...state,
-                enableCopilotChatBot: action.enableCopilotChatBot,
-            };
-        case ActionTypes.SET_EDITOR_ANNOTATION:
-            return {
-                ...state,
-                enableEditorAnnotations: action.enableEditorAnnotations,
-            };
-        case ActionTypes.SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING:
+        case ActionTypes.SET_VISUAL_EDITOR_ENVIRONEMNT:
             return {
                 ...state,
                 enableAddEditorSourcesWithoutSelecting:
                     action.enableAddEditorSourcesWithoutSelecting,
+                enableEditorAnnotations: action.enableEditorAnnotations,
+                enableCopilotChatBot: action.enableCopilotChatBot,
+                enableCollaborativeEdit: action.enableCollaborativeEdit,
+                autoSave: action.autoSave,
+                enableReviewersUpdateReport: action.enableReviewersUpdateReport,
+                enableViewReportPreview: action.enableViewReportPreview,
             };
         case ActionTypes.SET_USER_ROLE:
             return {

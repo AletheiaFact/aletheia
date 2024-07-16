@@ -23,6 +23,8 @@ const KanbanPage: NextPage<{
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
     enableAddEditorSourcesWithoutSelecting: boolean;
+    enableReviewersUpdateReport: boolean;
+    enableViewReportPreview: boolean;
     websocketUrl: string;
     nameSpace: NameSpaceEnum;
 }> = (props) => {
@@ -33,27 +35,17 @@ const KanbanPage: NextPage<{
     dispatch(actions.setSitekey(props.sitekey));
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.closeCopilotDrawer());
-    dispatch({
-        type: ActionTypes.SET_COLLABORATIVE_EDIT,
-        enableCollaborativeEdit: props.enableCollaborativeEditor,
-    });
-    dispatch({
-        type: ActionTypes.SET_COPILOT_CHAT_BOT,
-        enableCopilotChatBot: props.enableCopilotChatBot,
-    });
-    dispatch({
-        type: ActionTypes.SET_EDITOR_ANNOTATION,
-        enableEditorAnnotations: props.enableEditorAnnotations,
-    });
-    dispatch({
-        type: ActionTypes.SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING,
-        enableAddEditorSourcesWithoutSelecting:
+    dispatch(
+        actions.setEditorEnvironment(
+            props.enableCollaborativeEditor,
             props.enableAddEditorSourcesWithoutSelecting,
-    });
-    dispatch({
-        type: ActionTypes.SET_AUTO_SAVE,
-        autoSave: false,
-    });
+            props.enableEditorAnnotations,
+            props.enableCopilotChatBot,
+            false,
+            props.enableReviewersUpdateReport,
+            props.enableViewReportPreview
+        )
+    );
 
     const [value, setValue] = React.useState(null);
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -92,6 +84,8 @@ export async function getServerSideProps({ locale, locales, req, query }) {
             enableEditorAnnotations: query?.enableEditorAnnotations,
             enableAddEditorSourcesWithoutSelecting:
                 query?.enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
+            enableViewReportPreview: query?.enableViewReportPreview,
             websocketUrl: query.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

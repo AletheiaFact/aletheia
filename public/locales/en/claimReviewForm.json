@@ -54,5 +54,7 @@
     "groupLabel": "Group verification requests",
     "groupPlaceholder": "Select verification requests",
     "isSensitiveLabel": "Sensitve content",
-    "isSensitive": "This verification request contains sensitve content"
+    "isSensitive": "This verification request contains sensitve content",
+    "viewPreview": "View preview",
+    "hidePreview": "Hide preview"
 }

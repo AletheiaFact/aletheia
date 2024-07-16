@@ -42,7 +42,10 @@ const SentenceReportCard = ({
         <SentenceReportCardStyle>
             {personality && (
                 <Col md={6} sm={24}>
-                    <PersonalityMinimalCard personality={personality} />
+                    <PersonalityMinimalCard
+                        personality={personality}
+                        avatarSize={80}
+                    />
                 </Col>
             )}
             <Col

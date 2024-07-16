@@ -40,4 +40,20 @@ export class FeatureFlagService {
               )
             : false;
     }
+
+    isEnableReviewersUpdateReport() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_reviewers_update_report")
+            : false;
+    }
+
+    isEnableViewReportPreview() {
+        const config = this.configService.get<string>("feature_flag");
+
+        return config
+            ? this.unleash.isEnabled("enable_view_report_preview")
+            : false;
+    }
 }

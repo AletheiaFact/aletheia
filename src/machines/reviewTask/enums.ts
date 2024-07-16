@@ -18,6 +18,7 @@ enum ReviewTaskEvents {
     reset = "RESET",
     rejectRequest = "REJECT_REQUEST",
     assignRequest = "ASSIGN_REQUEST",
+    viewPreview = "VIEW_PREVIEW",
 }
 
 enum KanbanVerificationRequestStates {

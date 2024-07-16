@@ -9,6 +9,7 @@ import { CaptchaModule } from "../captcha/captcha.module";
 import { HistoryModule } from "../history/history.module";
 import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { ReviewTaskModule } from "../review-task/review-task.module";
+import { FeatureFlagModule } from "../feature-flag/feature-flag.module";
 
 const SourceModel = MongooseModule.forFeature([
     {
@@ -26,6 +27,7 @@ const SourceModel = MongooseModule.forFeature([
         HistoryModule,
         forwardRef(() => ClaimReviewModule),
         ReviewTaskModule,
+        FeatureFlagModule,
     ],
     providers: [SourceService],
     exports: [SourceService],

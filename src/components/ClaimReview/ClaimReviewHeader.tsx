@@ -5,7 +5,6 @@ import React, { useContext } from "react";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { ClassificationEnum, TargetModel } from "../../types/enums";
 import { publishedSelector } from "../../machines/reviewTask/selectors";
-import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import SentenceReportCard from "../SentenceReport/SentenceReportCard";
 import TopicInput from "./TopicInput";
@@ -32,13 +31,6 @@ const ClaimReviewHeader = ({
     componentStyle,
     target,
 }: ClaimReviewHeaderProps) => {
-    const { reviewDrawerCollapsed } = useAppSelector((state) => ({
-        reviewDrawerCollapsed:
-            state?.reviewDrawerCollapsed !== undefined
-                ? state?.reviewDrawerCollapsed
-                : true,
-    }));
-
     const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );

@@ -24,6 +24,8 @@ interface ContextType {
     recreateMachine?: (reportModel: string) => void;
     claim?: any;
     sentenceContent?: any;
+    viewPreview?: boolean;
+    handleClickViewPreview?: () => void;
 }
 
 export const ReviewTaskMachineContext = createContext<ContextType>({
@@ -77,6 +79,7 @@ export const ReviewTaskMachineProvider = (
     const [form, setForm] = useState(null);
     const [events, setEvents] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [viewPreview, setViewPreview] = useState(false);
     const [reportModel, setReportModel] = useState<ReportModelEnum | null>(
         props.baseReportModel
     );
@@ -171,6 +174,8 @@ export const ReviewTaskMachineProvider = (
         setLoading(false);
     };
 
+    const handleClickViewPreview = () => setViewPreview((prev) => !prev);
+
     return (
         <ReviewTaskMachineContext.Provider
             value={{
@@ -184,6 +189,8 @@ export const ReviewTaskMachineProvider = (
                 recreateMachine: createMachineBasedOnReportModel,
                 claim: props.claim,
                 sentenceContent: props.sentenceContent,
+                viewPreview,
+                handleClickViewPreview,
             }}
         >
             {loading && <Loading />}

@@ -5,7 +5,8 @@ import VisualEditorStyled from "./VisualEditor.style";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { EditorConfig } from "./utils/getEditorConfig";
 import Editor from "./Components/Editor";
-import CommentContainer from "./Comment/CommentContainer";
+import FloatingMenu from "./Components/FloatingMenu";
+import AffixPreviewButton from "./Components/AffixPreviewButton";
 
 interface VisualEditorProps {
     onContentChange: (state: any, type: string) => void;
@@ -41,9 +42,10 @@ const VisualEditor = ({ onContentChange }: VisualEditorProps) => {
                 editable={!readonly}
             >
                 {getComponents(reviewTaskType, getComponentsProps)}
-                <CommentContainer readonly={readonly} state={state} />
+                <FloatingMenu readonly={readonly} state={state} />
                 <Editor editable={readonly} state={state} />
             </Remirror>
+            <AffixPreviewButton doc={state.doc} />
         </VisualEditorStyled>
     );
 };
