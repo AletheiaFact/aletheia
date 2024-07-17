@@ -1,13 +1,42 @@
 import axios from "axios";
+import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
     withCredentials: true,
     baseURL: `/api/verification-request`,
 });
 
-const getVerificationRequests = (params) => {
+const get = (options) => {
+    const params = {
+        page: options.page ? options.page - 1 : 0,
+        order: options.order || "asc",
+        pageSize: options.pageSize ? options.pageSize : 10,
+        nameSpace: options?.nameSpace || NameSpaceEnum.Main,
+    };
+
     return request
         .get(`/`, { params })
+        .then((response) => {
+            const {
+                verificationRequests,
+                totalPages,
+                totalVerificationRequests,
+            } = response.data;
+
+            return {
+                data: verificationRequests,
+                total: totalVerificationRequests,
+                totalPages,
+            };
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+};
+
+const getVerificationRequests = (params) => {
+    return request
+        .get(`/search`, { params })
         .then((response) => {
             return response?.data;
         })
@@ -50,6 +79,7 @@ const removeVerificationRequestFromGroup = (id, params) => {
 };
 
 const verificationRequestApi = {
+    get,
     getVerificationRequests,
     getById,
     updateVerificationRequest,

@@ -1,48 +1,26 @@
-import AffixButton from "../components/AffixButton/AffixButton";
-import { GetLocale } from "../utils/GetLocale";
 import { NextPage } from "next";
-import React from "react";
-import { ReviewTaskMachineProvider } from "../machines/reviewTask/ReviewTaskMachineProvider";
-import actions from "../store/actions";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useDispatch } from "react-redux";
+
+import Seo from "../components/Seo";
+import { GetLocale } from "../utils/GetLocale";
 import { NameSpaceEnum } from "../types/Namespace";
-import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
-import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
-import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
+import { useSetAtom } from "jotai";
+import AffixButton from "../components/AffixButton/AffixButton";
+import VerificationRequestList from "../components/VerificationRequest/VerificationRequestList";
 
-export interface SourceReviewPageProps {
-    verificationRequest: any;
-    sitekey: string;
-    reviewTask: any;
-    hideDescriptions: object;
-    websocketUrl: string;
-    nameSpace: string;
-}
-
-const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
-    const { verificationRequest, sitekey, hideDescriptions } = props;
-    const dispatch = useDispatch();
+const VerificationRequestPage: NextPage<{ nameSpace }> = ({ nameSpace }) => {
+    const { t } = useTranslation();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
-    setCurrentNameSpace(props.nameSpace as NameSpaceEnum);
-    dispatch(actions.setWebsocketUrl(props.websocketUrl));
-    dispatch(actions.setSitekey(sitekey));
-
+    setCurrentNameSpace(nameSpace);
     return (
         <>
-            <ReviewTaskMachineProvider
-                data_hash={verificationRequest.data_hash}
-                baseMachine={props.reviewTask?.machine}
-                baseReportModel={props?.reviewTask?.reportModel}
-                reviewTaskType={ReviewTaskTypeEnum.VerificationRequest}
-            >
-                <ClaimReviewView
-                    target={verificationRequest}
-                    content={verificationRequest}
-                    hideDescriptions={hideDescriptions}
-                />
-            </ReviewTaskMachineProvider>
+            <Seo
+                title={t("seo:verificationRequestTitle")}
+                description={t("seo:verificationRequestDescription")}
+            />
+            <VerificationRequestList />
             <AffixButton />
         </>
     );
@@ -53,17 +31,11 @@ export async function getServerSideProps({ query, locale, locales, req }) {
     return {
         props: {
             ...(await serverSideTranslations(locale)),
-            verificationRequest: JSON.parse(
-                JSON.stringify(query.verificationRequest)
-            ),
-            reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
-            sitekey: query.sitekey,
-            hideDescriptions: JSON.parse(
-                JSON.stringify(query.hideDescriptions)
-            ),
-            websocketUrl: query?.websocketUrl,
+            // Nextjs have problems with client re-hydration for some serialized objects
+            // This is a hack until a better solution https://github.com/vercel/next.js/issues/11993
+            href: req.protocol + "://" + req.get("host") + req.originalUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },
     };
 }
-export default SourceReviewPage;
+export default VerificationRequestPage;
