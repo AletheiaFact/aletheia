@@ -37,7 +37,7 @@ export class HomeController {
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const reviews = await this.claimReviewService.listAll({
-            page: 1,
+            page: 0,
             pageSize: 6,
             order: "asc",
             query: {

@@ -16,24 +16,16 @@ export class ClaimReview {
     @Prop({
         type: mongoose.Types.ObjectId,
         required: false,
-        ref: "Claim",
-    })
-    claim: Claim;
-
-    @Prop({
-        type: mongoose.Types.ObjectId,
-        required: false,
         ref: "Personality",
     })
     personality: Personality;
 
-    // TODO: Add targetModel field and use a single field to reference the target instead having source and claim fields
     @Prop({
         type: mongoose.Types.ObjectId,
         required: false,
         ref: "Source",
     })
-    source: Source;
+    target: mongoose.Types.ObjectId;
 
     @Prop({
         type: mongoose.Types.ObjectId,
@@ -77,6 +69,9 @@ export class ClaimReview {
 
     @Prop({ default: NameSpaceEnum.Main, required: true })
     nameSpace: string;
+
+    @Prop({ required: true, type: String })
+    targetModel: string;
 }
 
 const ClaimReviewSchemaRaw = SchemaFactory.createForClass(ClaimReview);
