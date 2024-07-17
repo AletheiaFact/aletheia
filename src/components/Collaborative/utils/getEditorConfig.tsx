@@ -19,9 +19,16 @@ export class EditorConfig {
         websocketProvider: any,
         enableEditorAnnotations: boolean
     ): Partial<NodeExtension | PlainExtension | MarkExtension>[] {
-        const baseExtensions: Partial<NodeExtension | PlainExtension>[] = [
+        const baseExtensions: Partial<
+            NodeExtension | PlainExtension | LinkExtension
+        >[] = [
             new SummaryExtension({ disableExtraAttributes: true }),
             new TrailingNodeExtension(),
+            new LinkExtension({
+                extraAttributes: { id: () => null },
+                autoLink: type === ReviewTaskTypeEnum.Claim,
+                selectTextOnClick: true,
+            }),
         ];
 
         if (websocketProvider) {
@@ -41,11 +48,6 @@ export class EditorConfig {
             case ReviewTaskTypeEnum.Claim:
                 return [
                     ...baseExtensions,
-                    new LinkExtension({
-                        extraAttributes: { id: () => null },
-                        autoLink: true,
-                        selectTextOnClick: true,
-                    }),
                     new QuestionExtension({ disableExtraAttributes: true }),
                     new ReportExtension({ disableExtraAttributes: true }),
                     new VerificationExtension({ disableExtraAttributes: true }),

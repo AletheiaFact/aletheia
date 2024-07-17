@@ -1,6 +1,7 @@
 import React from "react";
 import CommentContainer from "../Comment/CommentContainer";
 import FloatingLinkToolbar from "./LinkToolBar/FloatingLinkToolbar";
+import { ReviewTaskTypeEnum } from "../../../machines/reviewTask/enums";
 
 const FloatingMenuContent = ({
     state,
@@ -14,6 +15,7 @@ const FloatingMenuContent = ({
     cancelHref,
     error,
     isLoading,
+    reviewTaskType,
 }) => {
     return (
         <>
@@ -22,16 +24,19 @@ const FloatingMenuContent = ({
                 isCommentVisible={isCommentVisible}
                 setIsCommentVisible={setIsCommentVisible}
             />
-            <FloatingLinkToolbar
-                isEditing={isEditing}
-                onRemoveLink={onRemoveLink}
-                submitHref={submitHref}
-                href={href}
-                setHref={setHref}
-                cancelHref={cancelHref}
-                error={error}
-                isLoading={isLoading}
-            />
+
+            {reviewTaskType === ReviewTaskTypeEnum.Claim && (
+                <FloatingLinkToolbar
+                    isEditing={isEditing}
+                    onRemoveLink={onRemoveLink}
+                    submitHref={submitHref}
+                    href={href}
+                    setHref={setHref}
+                    cancelHref={cancelHref}
+                    error={error}
+                    isLoading={isLoading}
+                />
+            )}
         </>
     );
 };
