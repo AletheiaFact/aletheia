@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import colors from "../styles/colors";
-import { TextareaAutosize } from "@mui/base";
+import { TextareaAutosize } from "@mui/material";
 
 const AletheiaTextAreaAutoSize = styled(TextareaAutosize)`
     background: ${(props) => (props.white ? colors.white : colors.lightGray)};
