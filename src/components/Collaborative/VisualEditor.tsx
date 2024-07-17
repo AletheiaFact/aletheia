@@ -42,7 +42,11 @@ const VisualEditor = ({ onContentChange }: VisualEditorProps) => {
                 editable={!readonly}
             >
                 {getComponents(reviewTaskType, getComponentsProps)}
-                <FloatingMenu readonly={readonly} state={state} />
+                <FloatingMenu
+                    readonly={readonly}
+                    state={state}
+                    reviewTaskType={reviewTaskType}
+                />
                 <Editor editable={readonly} state={state} />
             </Remirror>
             <AffixPreviewButton doc={state.doc} />

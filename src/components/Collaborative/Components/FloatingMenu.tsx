@@ -2,8 +2,9 @@ import React, { useCallback, useState } from "react";
 import useFloatingLinkState from "../hooks/useFloatingLinkState";
 import FloatingMenuIcons from "./FloatingMenuIcons";
 import FloatingMenuContent from "./FloatingMenuContent";
+import { ReviewTaskTypeEnum } from "../../../machines/reviewTask/enums";
 
-const FloatingMenu = ({ readonly, state }) => {
+const FloatingMenu = ({ readonly, state, reviewTaskType }) => {
     const [isCommentVisible, setIsCommentVisible] = useState<boolean>(false);
     const {
         isEditing,
@@ -27,14 +28,16 @@ const FloatingMenu = ({ readonly, state }) => {
 
     return (
         <>
-            <FloatingMenuIcons
-                readonly={readonly}
-                handleClickEditLink={handleClickEditLink}
-                isEditing={isEditing}
-                isSelected={isSelected}
-                linkPositioner={linkPositioner}
-                onSelect={onSelect}
-            />
+            {reviewTaskType === ReviewTaskTypeEnum.Claim && (
+                <FloatingMenuIcons
+                    readonly={readonly}
+                    handleClickEditLink={handleClickEditLink}
+                    isEditing={isEditing}
+                    isSelected={isSelected}
+                    linkPositioner={linkPositioner}
+                    onSelect={onSelect}
+                />
+            )}
 
             <FloatingMenuContent
                 state={state}
