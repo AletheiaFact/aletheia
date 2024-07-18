@@ -20,6 +20,14 @@ export class VerificationRequestService {
         private groupService: GroupService
     ) {}
 
+    async listAll({ page, pageSize, order }): Promise<VerificationRequest[]> {
+        return this.VerificationRequestModel.find({})
+            .skip(page * parseInt(pageSize, 10))
+            .limit(parseInt(pageSize, 10))
+            .sort({ _id: order })
+            .lean();
+    }
+
     /**
      * Find all verification requests that query matches
      * @param verifiedRequestQuery query parameter
@@ -269,5 +277,9 @@ export class VerificationRequestService {
         }
 
         return groupId;
+    }
+
+    count(query) {
+        return this.VerificationRequestModel.countDocuments().where(query);
     }
 }

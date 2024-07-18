@@ -1,9 +1,13 @@
-import { Typography } from "antd";
+import { Col, Typography } from "antd";
 import React from "react";
 import colors from "../../styles/colors";
 import CardBase from "../CardBase";
 
-const VerificationRequestCard = ({ content, actions = [] }) => {
+const VerificationRequestCard = ({
+    content,
+    actions = [],
+    expandable = true,
+}) => {
     return (
         <CardBase style={{ padding: 32 }}>
             <Typography.Paragraph
@@ -13,12 +17,21 @@ const VerificationRequestCard = ({ content, actions = [] }) => {
                     margin: 0,
                     lineHeight: 1.6,
                 }}
-                ellipsis={{ rows: 4, expandable: true }}
+                ellipsis={{ rows: 4, expandable }}
             >
                 {content}
             </Typography.Paragraph>
 
-            {actions ? actions.map((action) => action) : <></>}
+            <Col
+                style={{
+                    marginTop: 32,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    width: "100%",
+                }}
+            >
+                {actions ? actions.map((action) => action) : <></>}
+            </Col>
         </CardBase>
     );
 };

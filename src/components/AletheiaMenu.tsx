@@ -76,6 +76,18 @@ const AletheiaMenu = () => {
                 {t("menu:sourcesItem")}
             </Menu.Item>
 
+            <Menu.Item
+                key={
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/verification-request`
+                        : "/verification-request"
+                }
+                onClick={handleClick}
+                data-cy={"testVerificationRequestItem"}
+            >
+                {t("menu:verificationRequestItem")}
+            </Menu.Item>
+
             {role !== Roles.Regular && (
                 <Menu.Item
                     key={

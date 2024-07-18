@@ -13,5 +13,7 @@
     "claimListTitle": "Declarações",
     "claimListDescription": "Veja declarações na AletheiaFact.org",
     "createSourceTitle": "Adicione uma fonte",
-    "createSourceDescription": "Adiciona uma fonte na AletheiaFact.org"
+    "createSourceDescription": "Adiciona uma fonte na AletheiaFact.org",
+    "verificationRequestTitle": "Denúncias",
+    "verificationRequestDescription": "Veja as denúncias na AletheiaFact.org"
 }
