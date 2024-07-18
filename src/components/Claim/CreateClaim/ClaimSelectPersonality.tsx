@@ -113,7 +113,12 @@ const ClaimSelectPersonality = () => {
                     personalities.map((personality) => (
                         <Col span={12} key={personality._id}>
                             <Card variant="elevation" style={{ margin: "8px" }}>
-                                <CardContent>
+                                <CardContent
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                    }}
+                                >
                                     <PersonalityMinimalCard
                                         personality={personality}
                                     />

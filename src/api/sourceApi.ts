@@ -23,7 +23,7 @@ const getByTargetId = (options: optionsType) => {
         language: options?.i18n?.languages[0],
     };
     return request
-        .get(`${options.targetId}`, { params })
+        .get(`/target/${options.targetId}`, { params })
         .then((response) => {
             const { sources, totalPages, totalSources } = response.data;
             return {
@@ -82,10 +82,22 @@ const createSource = (t, router, source: any = {}) => {
         });
 };
 
+const getById = (id, t, params = {}) => {
+    return request
+        .get(`/${id}`, { params })
+        .then((response) => {
+            return response.data;
+        })
+        .catch(() => {
+            message.error("error"); //TODO: Improve feedback message
+        });
+};
+
 const SourceApi = {
     getByTargetId,
     createSource,
     get,
+    getById,
 };
 
 export default SourceApi;

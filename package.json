@@ -39,7 +39,8 @@
     "ory-kratos:cy": "docker compose up -d --build --force-recreate kratos kratos-migrate",
     "test:e2e:cy": "env-cmd --silent concurrently -p \"[{name}]\" -n \"MongoDB,Ory,Server\" \"yarn test:e2e:mongo-server\" \"yarn ory-kratos:cy\" \"wait-on tcp:127.0.0.1:35025 tcp:127.0.0.1:4433 tcp:127.0.0.1:4434 && yarn test:e2e:app-server\"",
     "test:e2e:mongo-server": "node dist/server/mongodb.server.js",
-    "test:e2e:app-server": "yarn seed:ci && yarn start -c config.test.ci.yaml"
+    "test:e2e:app-server": "yarn seed:ci && yarn start -c config.test.ci.yaml",
+    "create-novu-subscribers": "env-cmd ts-node scripts/createNovuSubscribers.ts"
   },
   "nodemonConfig": {
     "ignore": [
@@ -107,7 +108,7 @@
     "ai": "^3.1.1",
     "antd": "^4.18.5",
     "aws-sdk": "^2.1154.0",
-    "axios": "^1.5.0",
+    "axios": "^1.6.0",
     "babel-jest": "^29.7.0",
     "babel-plugin-styled-components": "^1.13.2",
     "class-transformer": "^0.5.1",
@@ -259,7 +260,11 @@
     "ip": "1.1.9",
     "tar": "6.2.1",
     "@types/react": "^17.0.38",
-    "@types/react-dom": "17.0.2"
+    "@types/react-dom": "17.0.2",
+    "ejs": "3.1.10",
+    "@grpc/grpc-js": "1.10.9",
+    "braces": "3.0.3",
+    "ws": "8.17.1"
   },
   "packageManager": "yarn@3.6.3"
 }

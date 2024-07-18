@@ -37,3 +37,6 @@ services:
         api_key: NOVU_API_KEY
       openai:
         api_key: OPENAI_API_KEY
+      zenvia:
+        api_url: ZENVIA_API_URL
+        api_token: ZENVIA_API_TOKEN

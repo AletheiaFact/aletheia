@@ -16,6 +16,7 @@ import SentenceReportContent from "./SentenceReportContent";
 import { useAtom } from "jotai";
 import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
 import SentenceReportComments from "./SentenceReportComments";
+import { ReviewTaskTypeEnum } from "../../../server/types/enums";
 
 const SentenceReportView = ({
     context,
@@ -29,7 +30,7 @@ const SentenceReportView = ({
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
-    const { machineService, publishedReview } = useContext(
+    const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
     const isReport = useSelector(machineService, reportSelector);
@@ -50,7 +51,8 @@ const SentenceReportView = ({
         canShowClassificationAndCrossChecking;
 
     return (
-        canShowReport && (
+        canShowReport &&
+        reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
             <Row
                 style={
                     (isCrossChecking || isReport || isReviewing) && {

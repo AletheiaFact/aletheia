@@ -23,10 +23,16 @@ describe("Test the header menus", () => {
             cy.url().should("contains", "claim");
         });
 
-        it("Open side bar and click sources", () => {
+        it("Open side bar and click source", () => {
             cy.get(locators.menu.SIDE_MENU).click();
-            cy.get("[data-cy=testSourcestItem]").click();
-            cy.url().should("contains", "sources");
+            cy.get("[data-cy=testSourcetItem]").click();
+            cy.url().should("contains", "source");
+        });
+
+        it("Open side bar and click source", () => {
+            cy.get(locators.menu.SIDE_MENU).click();
+            cy.get("[data-cy=testVerificationRequestItem]").click();
+            cy.url().should("contains", "verification-request");
         });
 
         it("Open side bar and click about", () => {

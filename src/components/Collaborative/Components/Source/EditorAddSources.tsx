@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import AletheiaButton, { ButtonType } from "../../../Button";
 import { uniqueId } from "remirror";
 import SourceDialog from "../LinkToolBar/Dialog/SourceDialog";
-import { CollaborativeEditorContext } from "../../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../../VisualEditorProvider";
 import { useTranslation } from "next-i18next";
 import { PlusOutlined } from "@ant-design/icons";
 import { URL_PATTERN } from "../../hooks/useFloatingLinkState";
@@ -26,7 +26,7 @@ const EditorAddSources = ({
     const [href, setHref] = useState("https://");
     const [showDialog, setShowDialog] = useState(false);
     const [error, setError] = useState(null);
-    const { setEditorSources } = useContext(CollaborativeEditorContext);
+    const { setEditorSources } = useContext(VisualEditorContext);
     const [isLoading, setIsLoading] = useState(false);
 
     const validateFloatingLink = () => {

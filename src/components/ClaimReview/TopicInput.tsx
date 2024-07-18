@@ -12,9 +12,11 @@ import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../atoms/currentUser";
 import { ContentModelEnum } from "../../types/enums";
 import ImageApi from "../../api/image";
+import { useDispatch } from "react-redux";
 
 const TopicInput = ({ contentModel, data_hash, topics }) => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [showTopicsInput, setShowTopicsInput] = useState<boolean>(false);
     const [topicsArray, setTopicsArray] = useState<string[]>(topics);
@@ -30,6 +32,7 @@ const TopicInput = ({ contentModel, data_hash, topics }) => {
         const topicSearchResults = await topicApi.getTopics({
             topicName: topic,
             t: t,
+            dispatch: dispatch,
         });
         return topicSearchResults.map((topic) => ({
             value: topic.name,
@@ -93,9 +96,11 @@ const TopicInput = ({ contentModel, data_hash, topics }) => {
         <>
             <Col
                 style={{
+                    margin: "16px 16px 12px 16px",
                     marginBottom: 12,
                     display: "flex",
                     alignItems: "center",
+                    width: "calc(100% - 16px)",
                 }}
             >
                 <TagsList

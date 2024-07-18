@@ -1,10 +1,9 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { ClaimReview, ClaimReviewSchema } from "./schemas/claim-review.schema";
 import { ClaimReviewService } from "./claim-review.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ClaimReviewController } from "./claim-review.controller";
 import { UtilService } from "../util";
-import { SourceModule } from "../source/source.module";
 import { ConfigModule } from "@nestjs/config";
 import { HistoryModule } from "../history/history.module";
 import { SentenceModule } from "../claim/types/sentence/sentence.module";
@@ -12,6 +11,7 @@ import { CaptchaModule } from "../captcha/captcha.module";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { ImageModule } from "../claim/types/image/image.module";
 import { EditorParseModule } from "../editor-parse/editor-parse.module";
+import { WikidataModule } from "../wikidata/wikidata.module";
 
 export const ClaimReviewModel = MongooseModule.forFeature([
     {
@@ -24,13 +24,13 @@ export const ClaimReviewModel = MongooseModule.forFeature([
     imports: [
         ClaimReviewModel,
         HistoryModule,
-        SourceModule,
         ConfigModule,
-        SentenceModule,
+        forwardRef(() => SentenceModule),
         CaptchaModule,
         AbilityModule,
         ImageModule,
         EditorParseModule,
+        WikidataModule,
     ],
     providers: [UtilService, ClaimReviewService],
     exports: [ClaimReviewService],

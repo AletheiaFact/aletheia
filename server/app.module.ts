@@ -23,7 +23,7 @@ import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { SitemapModule } from "./sitemap/sitemap.module";
 import { ClaimRevisionModule } from "./claim/claim-revision/claim-revision.module";
 import { HistoryModule } from "./history/history.module";
-import { ClaimReviewTaskModule } from "./claim-review-task/claim-review-task.module";
+import { ReviewTaskModule } from "./review-task/review-task.module";
 import { LoggerMiddleware } from "./middleware/logger.middleware";
 import { ReportModule } from "./report/report.module";
 import OryModule from "./auth/ory/ory.module";
@@ -48,13 +48,18 @@ import { EditorModule } from "./editor/editor.module";
 import { BadgeModule } from "./badge/badge.module";
 import { EditorParseModule } from "./editor-parse/editor-parse.module";
 import { NotificationModule } from "./notifications/notifications.module";
-import { CommentModule } from "./claim-review-task/comment/comment.module";
+import { CommentModule } from "./review-task/comment/comment.module";
 import { NameSpaceModule } from "./auth/name-space/name-space.module";
 import { NameSpaceGuard } from "./auth/name-space/name-space.guard";
 import { AutomatedFactCheckingModule } from "./automated-fact-checking/automated-fact-checking.module";
 import { CopilotChatModule } from "./copilot/copilot-chat.module";
 import { UnattributedModule } from "./claim/types/unattributed/unattributed.module";
 import { DailyReportModule } from "./daily-report/daily-report.module";
+import { SummarizationCrawlerModule } from "./summarization/summarization-crawler.module";
+import { ChatbotModule } from "./chat-bot/chat-bot.module";
+import { VerificationRequestModule } from "./verification-request/verification-request.module";
+import { FeatureFlagModule } from "./feature-flag/feature-flag.module";
+import { GroupModule } from "./group/group.module";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -84,7 +89,7 @@ export class AppModule implements NestModule {
             PersonalityModule,
             ClaimModule,
             ClaimReviewModule,
-            ClaimReviewTaskModule,
+            ReviewTaskModule,
             ClaimRevisionModule,
             HistoryModule,
             StateEventModule,
@@ -115,6 +120,11 @@ export class AppModule implements NestModule {
             CopilotChatModule,
             UnattributedModule,
             DailyReportModule,
+            SummarizationCrawlerModule,
+            ChatbotModule,
+            VerificationRequestModule,
+            FeatureFlagModule,
+            GroupModule,
         ];
         if (options.feature_flag) {
             imports.push(

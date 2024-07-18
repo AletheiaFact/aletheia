@@ -1,0 +1,10 @@
+{
+    "verificationRequestListHeader": "Denúncias",
+    "verificationRequestTitle": "Denúncia",
+    "manageVerificationRequests": "Gerenciar denúncias selecionadas",
+    "createClaimFromVerificationRequest": "Nenhuma afirmação foi criada com esta denúncia",
+    "openVerificationRequestClaimLabel": "Uma afirmação criada foi relacionada com essa denúncia",
+    "openVerificationRequestClaimButton": "Abrir afirmação",
+    "agroupVerificationRequest": "Denúncias relacionadas",
+    "openVerificationRequest": "Abrir"
+}

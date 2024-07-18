@@ -17,21 +17,26 @@ const ClaimInfoParagraph = styled(Paragraph)`
     color: ${colors.blackSecondary};
 `;
 
-const ClaimInfo = ({ isImage, date }) => {
+const ClaimInfo = ({
+    isImage,
+    date,
+    speechTypeTranslation = "claim:typeSpeech",
+    style = {},
+}) => {
     const { t } = useTranslation();
 
     return (
         <>
             {!isImage ? (
-                <ClaimInfoParagraph>
+                <ClaimInfoParagraph style={style}>
                     {t("claim:cardHeader1")}&nbsp;
                     <LocalizedDate date={date || new Date()} />
                     &nbsp;
                     {t("claim:cardHeader2")}&nbsp;
-                    <strong>{t("claim:typeSpeech")}</strong>
+                    <strong>{t(speechTypeTranslation)}</strong>
                 </ClaimInfoParagraph>
             ) : (
-                <ClaimInfoParagraph>
+                <ClaimInfoParagraph style={style}>
                     {t("claim:cardHeader3")}&nbsp;
                     <LocalizedDate date={date || new Date()} />
                 </ClaimInfoParagraph>

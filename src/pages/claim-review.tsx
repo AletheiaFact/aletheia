@@ -13,17 +13,18 @@ import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
-import { CollaborativeEditorProvider } from "../components/Collaborative/CollaborativeEditorProvider";
+import { VisualEditorProvider } from "../components/Collaborative/VisualEditorProvider";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
+import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 
 export interface ClaimReviewPageProps {
     personality?: any;
     claim: any;
     content: any;
     sitekey: string;
-    claimReviewTask: any;
+    reviewTask: any;
     claimReview: any;
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
@@ -127,18 +128,21 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
 
             <ReviewTaskMachineProvider
                 data_hash={content.data_hash}
-                baseMachine={props.claimReviewTask?.machine}
-                baseReportModel={props?.claimReviewTask?.reportModel}
+                baseMachine={props.reviewTask?.machine}
+                baseReportModel={props?.reviewTask?.reportModel}
                 publishedReview={{ review: claimReview }}
+                reviewTaskType={ReviewTaskTypeEnum.Claim}
+                claim={claim}
+                sentenceContent={content.content}
             >
-                <CollaborativeEditorProvider data_hash={content.data_hash}>
+                <VisualEditorProvider data_hash={content.data_hash}>
                     <ClaimReviewView
                         personality={personality}
-                        claim={claim}
+                        target={claim}
                         content={content}
                         hideDescriptions={hideDescriptions}
                     />
-                </CollaborativeEditorProvider>
+                </VisualEditorProvider>
             </ReviewTaskMachineProvider>
             <AffixButton personalitySlug={personality?.slug} />
         </>
@@ -155,7 +159,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personality: JSON.parse(JSON.stringify(query.personality)),
             claim: JSON.parse(JSON.stringify(query.claim)),
             content: JSON.parse(JSON.stringify(query.content)),
-            claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
+            reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             hideDescriptions: JSON.parse(

@@ -1,4 +1,4 @@
-import { RemirrorJSON } from "remirror";
+import { ProsemirrorNode } from "remirror";
 
 export enum ClassificationEnum {
     "not-fact" = 0,
@@ -12,7 +12,7 @@ export enum ClassificationEnum {
     "trustworthy",
 }
 
-export type ReviewData = {
+type FactCheckingReviewData = {
     usersId: string[];
     summary: string;
     questions: string[];
@@ -21,16 +21,36 @@ export type ReviewData = {
     sources: string[] | object[];
     classification: string | ClassificationEnum;
     reviewerId: string;
-    collaborativeEditor?: RemirrorJSON;
+    visualEditor?: ProsemirrorNode;
     reviewDataHtml?: any;
     crossCheckingComments: any[];
     crossCheckingComment: string;
     crossCheckingClassification: string;
 };
 
-export type ClaimReview = {
+type InformativeNewsReviewData = {
+    usersId: string[];
+    summary: string;
+    sources: string[] | object[];
+    classification: string | ClassificationEnum;
+    visualEditor?: ProsemirrorNode;
+    reviewDataHtml?: any;
+};
+
+type RequestReviewData = {
+    usersId: string[];
+    isSensitive: boolean;
+    group: any[];
+    rejected: boolean;
+};
+
+export type ReviewData =
+    | FactCheckingReviewData
+    | InformativeNewsReviewData
+    | RequestReviewData;
+
+export type Review = {
     personality: string;
-    claim: string;
     usersId: string;
     isPartialReview: boolean;
 };
@@ -38,7 +58,7 @@ export type ClaimReview = {
 export type SaveEvent = {
     type: string;
     reviewData: ReviewData;
-    claimReview: ClaimReview;
+    review: Review;
 };
 
 export type ReviewTaskMachineEvents = SaveEvent;

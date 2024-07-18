@@ -38,6 +38,9 @@ export class Source {
     })
     user: User;
 
+    @Prop({ unique: true, required: true })
+    data_hash: string;
+
     @Prop({ default: NameSpaceEnum.Main, required: false })
     nameSpace: string;
 }

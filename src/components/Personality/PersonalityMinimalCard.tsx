@@ -8,21 +8,18 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
 
-const PersonalityMinimalCard = ({ personality }) => {
+const PersonalityMinimalCard = ({ personality, avatarSize = 117 }) => {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     return (
-        <PersonalityMinimalCardStyle
-            className="personality-card"
-            justify="center"
-        >
+        <PersonalityMinimalCardStyle className="personality-card">
             <Col>
                 <PersonalityCardAvatar
                     hoistAvatar={false}
                     personality={personality}
                     header={true}
                     componentStyle={{
-                        avatarSize: 117,
+                        avatarSize: avatarSize,
                         avatarSpan: 8,
                         hiddenIconSize: 16,
                     }}

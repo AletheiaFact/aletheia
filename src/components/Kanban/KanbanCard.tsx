@@ -13,24 +13,41 @@ import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import SourceApi from "../../api/sourceApi";
+import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import verificationRequestApi from "../../api/verificationRequestApi";
 
 const { Text, Paragraph } = Typography;
 
-const KanbanCard = ({ reviewTask }) => {
+const KanbanCard = ({ reviewTask, reviewTaskType }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
+    const apiCallFunctions = {
+        [ReviewTaskTypeEnum.Claim]: claimApi.getById,
+        [ReviewTaskTypeEnum.Source]: SourceApi.getById,
+        [ReviewTaskTypeEnum.VerificationRequest]:
+            verificationRequestApi.getById,
+    };
+
     const goToClaimReview = () => {
-        dispatch(actions.setSelectClaim(null));
+        dispatch(actions.setSelectTarget(null));
         dispatch(actions.setSelectPersonality(null));
         dispatch(actions.setSelectContent(null));
         Promise.all([
-            claimApi.getById(reviewTask.claimId, t, { nameSpace }),
+            apiCallFunctions[reviewTaskType](reviewTask.targetId, t, {
+                nameSpace,
+            }),
             personalityApy.getPersonality(reviewTask.personalityId, {}, t),
-        ]).then(([claim, personality]) => {
-            dispatch(actions.setSelectClaim(claim));
+        ]).then(([target, personality]) => {
+            dispatch(actions.setSelectTarget(target));
             dispatch(actions.setSelectPersonality(personality));
-            dispatch(actions.setSelectContent(reviewTask?.content));
+            dispatch(
+                actions.setSelectContent({
+                    ...reviewTask?.content,
+                    reviewTaskType,
+                })
+            );
         });
         dispatch(actions.openReviewDrawer());
     };
@@ -73,7 +90,7 @@ const KanbanCard = ({ reviewTask }) => {
                                 fontWeight: "bold",
                             }}
                         >
-                            {title}
+                            {title || reviewTask.content.href}
                         </Paragraph>
                         <Text>{reviewTask.personalityName}</Text>
                     </Col>

@@ -1,9 +1,8 @@
 import React from "react";
 import { useTranslation } from "next-i18next";
-import reviewColors from "../../constants/reviewColors";
 import { Typography } from "antd";
 import LocalizedDate from "../LocalizedDate";
-import ClassificationText from "../ClassificationText";
+import ReviewClassification from "../ClaimReview/ReviewClassification";
 
 const { Paragraph } = Typography;
 
@@ -22,19 +21,10 @@ const SearchDescription = ({ personalityName, claimDate, sentence = null }) => {
             {sentence?.props?.classification && (
                 <>
                     {", "}
-                    <span>{t("claimReview:claimReview")}</span>
-                    <span
-                        style={{
-                            color: reviewColors[
-                                sentence?.props?.classification
-                            ],
-                            fontWeight: "900",
-                        }}
-                    >
-                        <ClassificationText
-                            classification={sentence?.props?.classification}
-                        />
-                    </span>
+                    <ReviewClassification
+                        label={t("claimReview:titleClaimReview")}
+                        classification={sentence?.props?.classification}
+                    />
                 </>
             )}
         </Paragraph>

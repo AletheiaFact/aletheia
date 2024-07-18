@@ -17,7 +17,7 @@ const MetricsOverview = ({ stats }) => {
                 offset={2}
                 span={18}
             >
-                {stats?.reviews && stats?.reviews.lenght && (
+                {stats?.reviews && stats?.reviews.length && (
                     <div>
                         <p
                             style={{

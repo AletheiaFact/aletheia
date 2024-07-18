@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Personality } from "../../../../personality/schemas/personality.schema";
 import { Paragraph } from "../../paragraph/schemas/paragraph.schema";
+import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-revision.schema";
 
 export type SpeechDocument = Speech & mongoose.Document;
 @Schema({ toObject: { virtuals: true }, toJSON: { virtuals: true } })
@@ -29,6 +30,13 @@ export class Speech {
         ref: "personality",
     })
     personality: Personality;
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "ClaimRevision",
+    })
+    claimRevisionId: ClaimRevision;
 }
 
 const SpeechSchemaRaw = SchemaFactory.createForClass(Speech);

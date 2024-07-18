@@ -15,6 +15,31 @@ enum ReviewTaskEvents {
     selectedReview = "SELECTED_REVIEW",
     selectedCrossChecking = "SELECTED_CROSS_CHECKING",
     reAssignUser = "RE_ASSIGN_USER",
+    reset = "RESET",
+    rejectRequest = "REJECT_REQUEST",
+    assignRequest = "ASSIGN_REQUEST",
+}
+
+enum KanbanVerificationRequestStates {
+    assignedRequest = "assignedRequest",
+    rejectedRequest = "rejectedRequest",
+    published = "published",
+}
+
+enum KanbanSourceState {
+    assigned = "assigned",
+    reported = "reported",
+    crossChecking = "cross-checking",
+    submitted = "submitted",
+    published = "published",
+}
+
+enum KanbanClaimState {
+    assigned = "assigned",
+    reported = "reported",
+    crossChecking = "cross-checking",
+    submitted = "submitted",
+    published = "published",
 }
 
 enum ReviewTaskStates {
@@ -28,6 +53,8 @@ enum ReviewTaskStates {
     rejected = "rejected",
     addCommentCrossChecking = "addCommentCrossChecking",
     published = "published",
+    rejectedRequest = "rejectedRequest",
+    assignedRequest = "assignedRequest",
 }
 
 enum CompoundStates {
@@ -38,6 +65,22 @@ enum CompoundStates {
 enum ReportModelEnum {
     FactChecking = "Fact-checking",
     InformativeNews = "Informative News",
+    Request = "Request",
 }
 
-export { ReviewTaskEvents, ReviewTaskStates, CompoundStates, ReportModelEnum };
+enum ReviewTaskTypeEnum {
+    Claim = "Claim",
+    Source = "Source",
+    VerificationRequest = "VerificationRequest",
+}
+
+export {
+    ReviewTaskEvents,
+    ReviewTaskStates,
+    CompoundStates,
+    ReportModelEnum,
+    ReviewTaskTypeEnum,
+    KanbanVerificationRequestStates,
+    KanbanSourceState,
+    KanbanClaimState,
+};

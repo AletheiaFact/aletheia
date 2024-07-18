@@ -1,4 +1,4 @@
-import api from "../../api/ClaimReviewTaskApi";
+import api from "../../api/reviewTaskApi";
 import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContextType } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
@@ -6,6 +6,7 @@ import { ReviewTaskMachineState } from "./states";
 import { ReviewTaskEvents as Events, ReportModelEnum } from "./enums";
 import sendReviewNotifications from "../../notifications/sendReviewNotifications";
 import { isSameLabel, machineWorkflow } from "./machineWorkflow";
+import verificationRequestApi from "../../api/verificationRequestApi";
 
 export const createNewMachine = ({ value, context }, reportModel) => {
     return createMachine<
@@ -33,60 +34,74 @@ export const transitionHandler = (state) => {
         resetIsLoading,
         currentUserId,
         nameSpace,
+        reviewTaskType,
+        target,
     } = state.event;
     const event = state.event.type;
+    const { value } = state;
+    const { reviewData, review } = state.context;
+    const nextState = typeof value !== "string" ? Object.keys(value)[0] : value;
 
-    const nextState =
-        typeof state.value !== "string"
-            ? Object.keys(state.value)[0]
-            : state.value;
+    const shouldUpdateVerificationRequest =
+        (value === "published" || value === "rejectedRequest") &&
+        reportModel === ReportModelEnum.Request;
 
-    if (
+    const shouldNotUpdateReviewTask =
         event === Events.reject ||
         event === Events.selectedCrossChecking ||
         event === Events.selectedReview ||
-        event === Events.reAssignUser
-    ) {
-        setFormAndEvents(nextState);
-    } else if (event !== Events.init) {
-        api.createClaimReviewTask(
-            {
-                data_hash,
-                reportModel,
-                machine: {
-                    context: {
-                        reviewData: state.context.reviewData,
-                        claimReview: state.context.claimReview,
-                    },
-                    value: state.value,
-                },
-                recaptcha: recaptchaString,
-                nameSpace,
-            },
-            t,
-            event
-        )
-            .then(() => {
-                return event === Events.goback
-                    ? setFormAndEvents(nextState)
-                    : setFormAndEvents(
-                          event,
-                          isSameLabel(state.context, state.event)
-                      );
-            })
-            .catch((e) => {
-                // TODO: Track errors with Sentry
-            })
-            .finally(() => resetIsLoading());
+        event === Events.reAssignUser;
+
+    if (event === Events.init) {
+        return;
     }
 
-    sendReviewNotifications(
+    if (shouldNotUpdateReviewTask) {
+        return setFormAndEvents(nextState);
+    }
+
+    const reviewTask = {
         data_hash,
-        event,
-        state.context.reviewData,
-        currentUserId,
-        t
-    );
+        reportModel,
+        machine: {
+            context: {
+                reviewData,
+                review,
+            },
+            value: value,
+        },
+        recaptcha: recaptchaString,
+        nameSpace,
+        reviewTaskType,
+        target,
+    };
+
+    api.createReviewTask(reviewTask, t, event)
+        .then(async () => {
+            if (shouldUpdateVerificationRequest) {
+                const redirectUrl = `/claim/create?verificationRequest=${target}`;
+                await verificationRequestApi.updateVerificationRequest(target, {
+                    ...reviewData,
+                });
+
+                if (value === "published") {
+                    window.location.href = redirectUrl;
+                }
+            }
+
+            return event === Events.goback
+                ? setFormAndEvents(nextState)
+                : setFormAndEvents(
+                      event,
+                      isSameLabel(state.context, state.event)
+                  );
+        })
+        .catch((e) => {
+            // TODO: Track errors with Sentry
+        })
+        .finally(() => resetIsLoading());
+
+    sendReviewNotifications(data_hash, event, reviewData, currentUserId, t);
 };
 
 export const createNewMachineService = (

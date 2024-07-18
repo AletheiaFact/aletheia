@@ -16,7 +16,7 @@ const DebateView = ({ claim }) => {
     const speeches = debate.content;
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
-    dispatch(actions.setSelectClaim(claim));
+    dispatch(actions.setSelectTarget(claim));
 
     // the new debate data will in the callbackResult of the state
     const updateTimeline = useCallback(() => {
