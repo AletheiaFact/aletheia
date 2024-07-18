@@ -12,4 +12,9 @@ export class CreateNameSpaceDTO {
     @IsOptional()
     @ApiProperty()
     users: User[];
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    slug: string;
 }
