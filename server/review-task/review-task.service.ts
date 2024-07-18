@@ -340,7 +340,9 @@ export class ReviewTaskService {
         data_hash,
         machine,
         reportModel,
-        nameSpace
+        nameSpace,
+        target,
+        targetModel
     ) {
         const reviewData = machine.context.review;
 
@@ -356,6 +358,8 @@ export class ReviewTaskService {
                 ...reviewData,
                 report,
                 nameSpace,
+                target,
+                targetModel,
             },
             data_hash,
             reportModel
@@ -744,7 +748,9 @@ export class ReviewTaskService {
                 data_hash,
                 reviewTaskMachine.machine,
                 reportModel,
-                nameSpace
+                nameSpace,
+                reviewTaskMachine.target,
+                reviewTaskMachine.reviewTaskType
             );
         }
     }

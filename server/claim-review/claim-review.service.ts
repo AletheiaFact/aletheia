@@ -14,7 +14,7 @@ import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ImageService } from "../claim/types/image/image.service";
-import { ContentModelEnum } from "../types/enums";
+import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { WikidataService } from "../wikidata/wikidata.service";
@@ -38,11 +38,11 @@ export class ClaimReviewService {
         // Currently only list claim reviews
         const pipeline = this.ClaimReviewModel.find({
             ...query,
-            source: { $exists: false },
+            targetModel: ReviewTaskTypeEnum.Claim,
         })
             .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
             .populate({
-                path: "claim",
+                path: "target",
                 model: "Claim",
                 populate: {
                     path: "latestRevision",
@@ -82,10 +82,13 @@ export class ClaimReviewService {
     }
 
     async listDailyClaimReviews(query) {
-        const pipeline = this.ClaimReviewModel.find(query)
+        const pipeline = this.ClaimReviewModel.find({
+            ...query,
+            targetModel: ReviewTaskTypeEnum.Claim,
+        })
             .sort({ _id: 1 })
             .populate({
-                path: "claim",
+                path: "target",
                 model: "Claim",
                 populate: {
                     path: "latestRevision",
@@ -131,7 +134,7 @@ export class ClaimReviewService {
 
     async agreggateClassification(match: any) {
         const claimReviews = await this.ClaimReviewModel.find(match).populate({
-            path: "claim",
+            path: "target",
             model: "Claim",
             match: {
                 "claim.isHidden": false,
@@ -158,17 +161,17 @@ export class ClaimReviewService {
             {
                 $lookup: {
                     from: "claims",
-                    localField: "claim",
+                    localField: "target",
                     foreignField: "_id",
-                    as: "claim",
+                    as: "target",
                 },
             },
-            { $unwind: "$claim" },
+            { $unwind: "$target" },
             {
                 $match: {
                     "personality.isDeleted": false,
-                    "claim.isHidden": query.isHidden,
-                    "claim.isDeleted": false,
+                    "target.isHidden": query.isHidden,
+                    "target.isDeleted": false,
                 },
             }
         );
@@ -192,7 +195,7 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.find({
-            claim: claimId,
+            target: claimId,
             isDeleted: false,
             isPublished: true,
             isHidden: false,
@@ -210,7 +213,7 @@ export class ClaimReviewService {
     async getReviewsByClaimId(claimId) {
         const classificationCounts = {};
         const claimReviews = await this.ClaimReviewModel.find({
-            claim: claimId,
+            target: claimId,
             isDeleted: false,
             isPublished: true,
             isHidden: false,
@@ -365,10 +368,10 @@ export class ClaimReviewService {
             this.req.query.nameSpace ||
             NameSpaceEnum.Main;
         const claim = {
-            contentModel: review.claim.latestRevision.contentModel,
-            date: review.claim.latestRevision.date,
-            slug: review.claim.latestRevision.slug,
-            title: review.claim.latestRevision.title,
+            contentModel: review.target.latestRevision.contentModel,
+            date: review.target.latestRevision.date,
+            slug: review.target.latestRevision.slug,
+            title: review.target.latestRevision.title,
         };
 
         const isContentImage = claim.contentModel === ContentModelEnum.Image;
@@ -382,21 +385,21 @@ export class ClaimReviewService {
 
         let reviewHref =
             nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/claim/${review.claim.latestRevision.claimId}`
-                : `/claim/${review.claim.latestRevision.claimId}`;
+                ? `/${nameSpace}/claim/${review.target.latestRevision.claimId}`
+                : `/claim/${review.target.latestRevision.claimId}`;
 
         if (isContentInformativeNews) {
             reviewHref =
                 nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/claim/${review.claim.slug}`
-                    : `/claim/${review.claim.slug}`;
+                    ? `/${nameSpace}/claim/${review.target.slug}`
+                    : `/claim/${review.target.slug}`;
         }
 
         if (personality) {
             reviewHref =
                 nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/personality/${personality?.slug}/claim/${review.claim.slug}`
-                    : `/personality/${personality?.slug}/claim/${review.claim.slug}`;
+                    ? `/${nameSpace}/personality/${personality?.slug}/claim/${review.target.slug}`
+                    : `/personality/${personality?.slug}/claim/${review.target.slug}`;
         }
 
         reviewHref += isContentImage
@@ -405,8 +408,8 @@ export class ClaimReviewService {
         if (isContentDebate) {
             reviewHref =
                 nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/claim/${review.claim.latestRevision.claimId}/debate`
-                    : `/claim/${review.claim.latestRevision.claimId}/debate`;
+                    ? `/${nameSpace}/claim/${review.target.latestRevision.claimId}/debate`
+                    : `/claim/${review.target.latestRevision.claimId}/debate`;
         }
 
         return {

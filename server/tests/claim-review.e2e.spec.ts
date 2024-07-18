@@ -134,7 +134,7 @@ describe("ClaimReviewController (e2e)", () => {
             .expect(200)
             .expect(({ body }) => {
                 claimReviewId = body.review._id;
-                expect(body.review.claim).toEqual(claimId.toString());
+                expect(body.review.target).toEqual(claimId.toString());
                 expect(body.review.personality).toEqual(
                     personalitiesId[0].toString()
                 );
