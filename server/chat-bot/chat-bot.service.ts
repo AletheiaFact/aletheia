@@ -6,6 +6,7 @@ import { Observable, throwError } from "rxjs";
 import { createChatBotMachine } from "./chat-bot.machine";
 import { VerificationRequestService } from "../verification-request/verification-request.service";
 import { ConfigService } from "@nestjs/config";
+import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP = {
@@ -15,83 +16,63 @@ const MESSAGE_MAP = {
 
 @Injectable()
 export class ChatbotService {
-    private chatBotMachineService;
-
     constructor(
         private configService: ConfigService,
         private readonly httpService: HttpService,
-        private verificationService: VerificationRequestService
+        private verificationService: VerificationRequestService,
+        private chatBotStateService: ChatBotStateService
     ) {}
 
-    onModuleInit() {
-        this.initializeChatBotMachine();
+    private async getOrCreateChatBotMachine(from: string, channel: string) {
+        const id = `${channel}-${from}`;
+        let chatbotState = await this.chatBotStateService.getById(id);
+
+        if (!chatbotState) {
+            const newMachine = createChatBotMachine(this.verificationService);
+            newMachine.start();
+            chatbotState = await this.chatBotStateService.create(
+                newMachine.getSnapshot().value,
+                id
+            );
+        } else {
+            const rehydratedMachine = createChatBotMachine(
+                this.verificationService
+            );
+            rehydratedMachine.start(chatbotState.state);
+            chatbotState.state = rehydratedMachine.getSnapshot();
+        }
+
+        return chatbotState;
     }
 
-    private initializeChatBotMachine() {
-        this.chatBotMachineService = createChatBotMachine(
+    private async saveChatBotState(chatbotState) {
+        await this.chatBotStateService.updateState(
+            chatbotState._id,
+            chatbotState.state
+        );
+    }
+
+    public async sendMessage(message): Promise<Observable<AxiosResponse<any>>> {
+        const { api_url, api_token } = this.configService.get("zenvia");
+        const { from, channel, contents } = message;
+
+        const chatbotState = await this.getOrCreateChatBotMachine(
+            from,
+            channel
+        );
+        const chatBotMachineService = createChatBotMachine(
             this.verificationService
         );
-        this.chatBotMachineService.start();
-    }
+        chatBotMachineService.start(chatbotState.state);
 
-    //TODO: Find a better way to interpret the user's message.
-    private normalizeAndLowercase(message: string): string {
-        return message
-            .normalize("NFD")
-            .replace(diacriticsRegex, "")
-            .toLowerCase();
-    }
+        const userMessage = contents[0].text;
+        this.handleUserMessage(userMessage, chatBotMachineService);
 
-    private handleMachineEventSend(parsedMessage: string): void {
-        this.chatBotMachineService.send(
-            MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
-        );
-    }
+        const snapshot = chatBotMachineService.getSnapshot();
+        chatbotState.state = snapshot.value;
 
-    private handleSendingNoMessage(parsedMessage: string): void {
-        this.chatBotMachineService.send(
-            parsedMessage === "denuncia" ? "ASK_TO_REPORT" : "RECEIVE_NO"
-        );
-    }
+        await this.saveChatBotState(chatbotState);
 
-    private handleUserMessage(message): void {
-        const messageType = message.contents[0].type;
-        const userMessage = message.contents[0].text;
-
-        if (messageType !== "text") {
-            this.chatBotMachineService.send("NON_TEXT_MESSAGE");
-            return;
-        }
-
-        const parsedMessage = this.normalizeAndLowercase(userMessage);
-        const currentState = this.chatBotMachineService.getSnapshot().value;
-
-        switch (currentState) {
-            case "greeting":
-                this.chatBotMachineService.send("ASK_IF_VERIFICATION_REQUEST");
-                break;
-            case "askingIfVerificationRequest":
-                this.handleMachineEventSend(parsedMessage);
-                break;
-            case "askingForVerificationRequest":
-                this.chatBotMachineService.send({
-                    type: "RECEIVE_REPORT",
-                    verificationRequest: userMessage,
-                });
-                break;
-            case "sendingNoMessage":
-                this.handleSendingNoMessage(parsedMessage);
-                break;
-            default:
-                console.warn(`Unhandled state: ${currentState}`);
-        }
-    }
-
-    public sendMessage(message): Observable<AxiosResponse<any>> {
-        const { api_url, api_token } = this.configService.get("zenvia");
-        this.handleUserMessage(message);
-
-        const snapshot = this.chatBotMachineService.getSnapshot();
         const responseMessage = snapshot.context.responseMessage;
 
         const body = {
@@ -108,5 +89,61 @@ export class ChatbotService {
                 map((response) => response),
                 catchError((error) => throwError(() => new Error(error)))
             );
+    }
+
+    private handleUserMessage(message: string, chatBotMachineService) {
+        const parsedMessage = this.normalizeAndLowercase(message);
+        const currentState = chatBotMachineService.getSnapshot().value;
+
+        switch (currentState) {
+            case "greeting":
+                chatBotMachineService.send("ASK_IF_VERIFICATION_REQUEST");
+                break;
+            case "askingIfVerificationRequest":
+                this.handleMachineEventSend(
+                    parsedMessage,
+                    chatBotMachineService
+                );
+                break;
+            case "askingForVerificationRequest":
+                chatBotMachineService.send({
+                    type: "RECEIVE_REPORT",
+                    verificationRequest: message,
+                });
+                break;
+            case "sendingNoMessage":
+                this.handleSendingNoMessage(
+                    parsedMessage,
+                    chatBotMachineService
+                );
+                break;
+            default:
+                console.warn(`Unhandled state: ${currentState}`);
+        }
+    }
+
+    private normalizeAndLowercase(message: string): string {
+        return message
+            .normalize("NFD")
+            .replace(diacriticsRegex, "")
+            .toLowerCase();
+    }
+
+    private handleMachineEventSend(
+        parsedMessage: string,
+        chatBotMachineService
+    ): void {
+        chatBotMachineService.send(
+            MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
+        );
+    }
+
+    private handleSendingNoMessage(
+        parsedMessage: string,
+        chatBotMachineService
+    ): void {
+        chatBotMachineService.send(
+            parsedMessage === "denuncia" ? "ASK_TO_REPORT" : "RECEIVE_NO"
+        );
     }
 }
