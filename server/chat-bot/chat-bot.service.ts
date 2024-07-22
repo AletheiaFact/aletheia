@@ -45,7 +45,7 @@ export class ChatbotService {
         return chatbotState;
     }
 
-    private async saveChatBotState(chatbotState) {
+    private async updateChatBotState(chatbotState) {
         await this.chatBotStateService.updateState(
             chatbotState._id,
             chatbotState.state
@@ -54,7 +54,7 @@ export class ChatbotService {
 
     public async sendMessage(message): Promise<Observable<AxiosResponse<any>>> {
         const { api_url, api_token } = this.configService.get("zenvia");
-        const { from, channel, contents } = message;
+        const { from, to, channel, contents } = message;
 
         const chatbotState = await this.getOrCreateChatBotMachine(
             from,
@@ -71,13 +71,13 @@ export class ChatbotService {
         const snapshot = chatBotMachineService.getSnapshot();
         chatbotState.state = snapshot.value;
 
-        await this.saveChatBotState(chatbotState);
+        await this.updateChatBotState(chatbotState);
 
         const responseMessage = snapshot.context.responseMessage;
 
         const body = {
-            from: message.to,
-            to: message.from,
+            from: to,
+            to: from,
             contents: [{ type: "text", text: responseMessage }],
         };
 
