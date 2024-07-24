@@ -117,6 +117,12 @@ export class ChatbotService {
                     chatBotMachineService
                 );
                 break;
+            case "finishedReport":
+                this.handleMachineFinishEventSend(
+                    parsedMessage,
+                    chatBotMachineService
+                );
+                break;
             default:
                 console.warn(`Unhandled state: ${currentState}`);
         }
@@ -135,6 +141,15 @@ export class ChatbotService {
     ): void {
         chatBotMachineService.send(
             MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
+        );
+    }
+
+    private handleMachineFinishEventSend(
+        parsedMessage: string,
+        chatBotMachineService
+    ): void {
+        chatBotMachineService.send(
+            parsedMessage === "sim" ? "RECEIVE_YES" : "ANY_TEXT_MESSAGE"
         );
     }
 
