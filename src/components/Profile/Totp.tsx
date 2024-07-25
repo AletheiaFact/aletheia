@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import AletheiaButton, { ButtonType } from "../Button";
 import colors from "../../styles/colors";
 import userApi from "../../api/userApi";
+import { Content } from "antd/lib/layout/layout";
 
 export const Totp = ({ flow, setFlow }) => {
     const [imgSource, setImgSource] = useState("");
@@ -207,10 +208,12 @@ export const Totp = ({ flow, setFlow }) => {
                             width: "100%",
                             marginTop: "21px",
                             marginBottom: "21px",
+                            height: "max-content",
+                            padding: "8px 15px",
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            paddingBottom: 0,
+                            whiteSpace: "normal",
                         }}
                         type={ButtonType.blue}
                     >
@@ -220,6 +223,7 @@ export const Totp = ({ flow, setFlow }) => {
                                 fontSize: 14,
                                 color: colors.white,
                                 fontWeight: 400,
+                                margin: 0,
                             }}
                         >
                             {t("profile:totpUnLinkSubmit")}
