@@ -10,9 +10,15 @@ import { HttpModule } from "@nestjs/axios";
 import { VerificationRequestModule } from "../verification-request/verification-request.module";
 import { ConfigModule } from "@nestjs/config";
 import { AuthZenviaWebHookMiddleware } from "../middleware/auth-zenvia-webhook.middleware";
+import { ChatBotStateModule } from "../chat-bot-state/chat-bot-state.module";
 
 @Module({
-    imports: [HttpModule, VerificationRequestModule, ConfigModule],
+    imports: [
+        HttpModule,
+        VerificationRequestModule,
+        ConfigModule,
+        ChatBotStateModule,
+    ],
     providers: [ChatbotService],
     controllers: [ChatbotController],
 })
