@@ -66,7 +66,7 @@ export const createChatBotMachine = (
                 askingForVerificationRequest: {
                     on: {
                         RECEIVE_REPORT: {
-                            target: "askingIfVerificationRequest",
+                            target: "finishedReport",
                             actions: [
                                 "saveVerificationRequest",
                                 "sendThanks",
@@ -80,6 +80,21 @@ export const createChatBotMachine = (
                                 "sendNoTextMessageAskForVerificationRequest",
                                 "setResponseMessage",
                             ],
+                        },
+                    },
+                },
+                finishedReport: {
+                    on: {
+                        RECEIVE_YES: {
+                            target: "askingForVerificationRequest",
+                            actions: [
+                                "askForVerificationRequest",
+                                "setResponseMessage",
+                            ],
+                        },
+                        ANY_TEXT_MESSAGE: {
+                            target: "askingIfVerificationRequest",
+                            actions: ["sendGreeting", "setResponseMessage"],
                         },
                     },
                 },
