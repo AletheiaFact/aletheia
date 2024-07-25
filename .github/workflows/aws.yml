@@ -92,6 +92,8 @@ jobs:
         env:
           RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
         run: |
+          sed -i "s%ZENVIA_API_URL%$ZENVIA_API_URL%g" config.$ENVIRONMENT.yaml
+          sed -i "s%ZENVIA_API_TOKEN%$ZENVIA_API_TOKEN%g" config.$ENVIRONMENT.yaml
           sed -i "s/ENV/$ENVIRONMENT/g" config.$ENVIRONMENT.yaml
           sed -i "s%RECAPTCHA_SECRET%$RECAPTCHA_SECRET%g" config.$ENVIRONMENT.yaml
           sed -i "s%MONGODB_URI%$MONGODB_URI%g" config.$ENVIRONMENT.yaml
@@ -107,8 +109,6 @@ jobs:
           sed -i "s%NOVU_APPLICATION_IDENTIFIER%$NOVU_APPLICATION_IDENTIFIER%g" config.$ENVIRONMENT.yaml
           sed -i "s%AGENTS_API_URL%$AGENTS_API_URL%g" config.$ENVIRONMENT.yaml
           sed -i "s%OPENAI_API_KEY%$OPENAI_API_KEY%g" config.$ENVIRONMENT.yaml
-          sed -i "s%ZENVIA_API_URL%$ZENVIA_API_URL%g" config.$ENVIRONMENT.yaml
-          sed -i "s%ZENVIA_API_TOKEN%$ZENVIA_API_TOKEN%g" config.$ENVIRONMENT.yaml
 
       - name: Set migrate-mongo-config.ts
         run: |
