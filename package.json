@@ -23,7 +23,7 @@
     "lint:fix": "tsc --noEmit && eslint \"**/*.{js,ts,tsx}\" --quiet --fix",
     "copy-static-assets": "ts-node scripts/copyStaticAssets.ts",
     "watch-debug": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn serve-debug\"",
-    "watch-node": "nodemon --config nodemon.json",
+    "watch-node": "nodemon dist/server/main.js --signal SIGTERM",
     "serve-debug": "nodemon --inspect dist/server/main.js  --signal SIGTERM",
     "clean": "rimraf **/{node_modules,dist}",
     "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs/compodoc",
@@ -43,14 +43,9 @@
     "create-novu-subscribers": "env-cmd ts-node scripts/createNovuSubscribers.ts"
   },
   "nodemonConfig": {
-    "watch": ["dist/server"],
-    "ext": "js,ts,json",
-    "exec": "node dist/server/main.js",
-    "delay": "1000",
     "ignore": [
       "test/**/*",
       "src/**/*",
-      "dist/**/*",
       "docs/**/*"
     ]
   },
