@@ -9,6 +9,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { GroupService } from "../group/group.service";
 import { CreateVerificationRequestDTO } from "./dto/create-verification-request-dto";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
+import { OpenAIEmbeddings } from "@langchain/openai";
 const md5 = require("md5");
 
 @Injectable()
@@ -21,7 +22,7 @@ export class VerificationRequestService {
     ) {}
 
     async listAll({ page, pageSize, order }): Promise<VerificationRequest[]> {
-        return this.VerificationRequestModel.find({})
+        return this.VerificationRequestModel.find({}, { embedding: 0 })
             .skip(page * parseInt(pageSize, 10))
             .limit(parseInt(pageSize, 10))
             .sort({ _id: order })
@@ -36,12 +37,15 @@ export class VerificationRequestService {
     async findAll(verifiedRequestQuery: {
         searchContent: string;
     }): Promise<VerificationRequest[]> {
-        return this.VerificationRequestModel.find({
-            content: {
-                $regex: verifiedRequestQuery.searchContent || "",
-                $options: "i",
+        return this.VerificationRequestModel.find(
+            {
+                content: {
+                    $regex: verifiedRequestQuery.searchContent || "",
+                    $options: "i",
+                },
             },
-        });
+            { embedding: 0 }
+        );
     }
 
     /**
@@ -50,26 +54,30 @@ export class VerificationRequestService {
      * @returns the verification request document
      */
     async getById(verificationRequestId: string): Promise<VerificationRequest> {
-        return this.VerificationRequestModel.findById(
-            verificationRequestId
-        ).populate("group");
+        return this.VerificationRequestModel.findById(verificationRequestId, {
+            embedding: 0,
+        }).populate("group");
     }
 
     /**
      * Creates a new verification request document
+     * Executes the createEmbed function to store the verification request content embedding
      * For each sources in verification request, creates a new source document
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
-    create(
+    async create(
         verificationRequest: CreateVerificationRequestDTO
     ): Promise<VerificationRequestDocument> {
         try {
             verificationRequest.data_hash = md5(verificationRequest.content);
+            verificationRequest.embedding = await this.createEmbedContent(
+                verificationRequest.content
+            );
             const newVerificationRequest = new this.VerificationRequestModel(
                 verificationRequest
             );
-            if (verificationRequest.sources.length) {
+            if (verificationRequest?.sources?.length) {
                 for (const source of verificationRequest.sources) {
                     this.sourceService.create({
                         href: source,
@@ -93,9 +101,10 @@ export class VerificationRequestService {
     async findByDataHash(
         data_hash: string
     ): Promise<VerificationRequestDocument> {
-        return this.VerificationRequestModel.findOne({ data_hash }).populate(
-            "group"
-        );
+        return this.VerificationRequestModel.findOne(
+            { data_hash },
+            { embedding: 0 }
+        ).populate("group");
     }
 
     /**
@@ -281,5 +290,79 @@ export class VerificationRequestService {
 
     count(query) {
         return this.VerificationRequestModel.countDocuments().where(query);
+    }
+
+    /**
+     * Creates an embedding based on a query parameter
+     * @param content verification request content
+     * @returns verification request content embedding
+     */
+    createEmbedContent(content: string): Promise<number[]> {
+        const embeddings = new OpenAIEmbeddings();
+
+        return embeddings.embedQuery(content);
+    }
+
+    /**
+     * Find similar verification requests related to the embedding content
+     * @param content verification request content
+     * @param filter verification requests IDs to filter, does not recommend verification requests those are part of the same group
+     * @param pageSize limit of documents
+     * @returns Verification requests with the similarity score greater than 0.80
+     */
+    async findSimilarRequests(
+        content,
+        filter,
+        pageSize
+    ): Promise<VerificationRequest[]> {
+        const queryEmbedding = await this.createEmbedContent(content);
+        const filterIds = filter.map((verificationRequestId) =>
+            Types.ObjectId(verificationRequestId)
+        );
+
+        return await this.VerificationRequestModel.aggregate([
+            { $match: { _id: { $nin: filterIds } } },
+            {
+                $addFields: {
+                    similarity: {
+                        $reduce: {
+                            input: {
+                                $zip: {
+                                    inputs: ["$embedding", queryEmbedding],
+                                },
+                            },
+                            initialValue: 0,
+                            in: {
+                                $add: [
+                                    "$$value",
+                                    {
+                                        $multiply: [
+                                            { $arrayElemAt: ["$$this", 0] },
+                                            { $arrayElemAt: ["$$this", 1] },
+                                        ],
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                $match: {
+                    similarity: { $gte: 0.8, $type: "number" },
+                },
+            },
+            {
+                $project: {
+                    embedding: 0,
+                },
+            },
+            {
+                $sort: { similarity: -1 },
+            },
+            {
+                $limit: parseInt(pageSize),
+            },
+        ]);
     }
 }

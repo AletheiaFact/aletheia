@@ -17,14 +17,11 @@ import ClaimSelectPersonality from "./ClaimSelectPersonality";
 import ClaimSelectType from "./ClaimSelectType";
 import ClaimUploadImage from "./ClaimUploadImage";
 import { CreateClaimHeader } from "./CreateClaimHeader";
-import colors from "../../../styles/colors";
-import LargeDrawer from "../../LargeDrawer";
-import VerificationRequestCard from "../../VerificationRequest/VerificationRequestCard";
-import AletheiaButton from "../../Button";
-import { DeleteOutlined } from "@ant-design/icons";
 import { CreateClaimEvents } from "../../../machines/createClaim/types";
 import verificationRequestApi from "../../../api/verificationRequestApi";
 import { useTranslation } from "next-i18next";
+import VerificationRequestDrawer from "../../VerificationRequest/VerificationRequestDrawer";
+import ManageVerificationRequestGroup from "../../VerificationRequest/ManageVerificationRequestGroup";
 
 const CreateClaimView = () => {
     const { t } = useTranslation();
@@ -81,27 +78,12 @@ const CreateClaimView = () => {
                 {!isLoading &&
                     claimData?.group &&
                     claimData?.group?.content?.length > 0 && (
-                        <span
-                            onClick={() => setOpen(true)}
-                            role="button"
-                            aria-pressed="false"
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === "Space") {
-                                    setOpen(true);
-                                    e.preventDefault();
-                                }
-                            }}
-                            style={{
-                                color: colors.lightBlueMain,
-                                textDecoration: "underline",
-                                cursor: "pointer",
-                            }}
-                        >
-                            {t(
+                        <ManageVerificationRequestGroup
+                            label={t(
                                 "verificationRequest:manageVerificationRequests"
                             )}
-                        </span>
+                            openDrawer={() => setOpen(true)}
+                        />
                     )}
                 {showPersonality && !!claimData.personalities?.length && (
                     <CreateClaimHeader claimData={claimData} />
@@ -117,34 +99,13 @@ const CreateClaimView = () => {
                 {addUnattributed && <ClaimCreate />}
             </Col>
 
-            <LargeDrawer
+            <VerificationRequestDrawer
+                groupContent={claimData.group.content}
                 open={open}
-                onClose={onCloseDrawer}
-                backgroundColor={colors.lightGraySecondary}
-            >
-                <Col style={{ margin: "32px 64px" }}>
-                    <h3>{t("verificationRequest:verificationRequestTitle")}</h3>
-                    {claimData?.group ? (
-                        claimData.group.content.map(({ _id, content }) => (
-                            <VerificationRequestCard
-                                key={_id}
-                                content={content}
-                                actions={[
-                                    <AletheiaButton
-                                        key="remove"
-                                        onClick={() => onRemove(_id)}
-                                        loading={isLoading}
-                                    >
-                                        <DeleteOutlined />
-                                    </AletheiaButton>,
-                                ]}
-                            />
-                        ))
-                    ) : (
-                        <></>
-                    )}
-                </Col>
-            </LargeDrawer>
+                isLoading={isLoading}
+                onCloseDrawer={onCloseDrawer}
+                onRemove={onRemove}
+            />
         </Row>
     );
 };

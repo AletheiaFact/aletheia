@@ -11,18 +11,21 @@ import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
+import { VerificationRequestProvider } from "../components/VerificationRequest/VerificationRequestProvider";
 
 export interface SourceReviewPageProps {
-    verificationRequest: any;
+    verificationRequest: any; //TODO: Create Verification Request type
     sitekey: string;
     reviewTask: any;
     hideDescriptions: object;
     websocketUrl: string;
     nameSpace: string;
+    recommendations: any[];
 }
 
 const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
-    const { verificationRequest, sitekey, hideDescriptions } = props;
+    const { verificationRequest, sitekey, hideDescriptions, recommendations } =
+        props;
     const dispatch = useDispatch();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace as NameSpaceEnum);
@@ -37,11 +40,16 @@ const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {
                 baseReportModel={props?.reviewTask?.reportModel}
                 reviewTaskType={ReviewTaskTypeEnum.VerificationRequest}
             >
-                <ClaimReviewView
-                    target={verificationRequest}
-                    content={verificationRequest}
-                    hideDescriptions={hideDescriptions}
-                />
+                <VerificationRequestProvider
+                    verificationRequest={verificationRequest}
+                    baseRecommendations={recommendations}
+                >
+                    <ClaimReviewView
+                        target={verificationRequest}
+                        content={verificationRequest}
+                        hideDescriptions={hideDescriptions}
+                    />
+                </VerificationRequestProvider>
             </ReviewTaskMachineProvider>
             <AffixButton />
         </>
@@ -56,6 +64,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             verificationRequest: JSON.parse(
                 JSON.stringify(query.verificationRequest)
             ),
+            recommendations: JSON.parse(JSON.stringify(query.recommendations)),
             reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             sitekey: query.sitekey,
             hideDescriptions: JSON.parse(

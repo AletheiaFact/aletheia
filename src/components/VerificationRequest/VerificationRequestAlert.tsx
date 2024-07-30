@@ -22,9 +22,21 @@ const VerificationRequestAlert = ({ targetId, verificationRequestId }) => {
         message: !targetId ? (
             t("verificationRequest:createClaimFromVerificationRequest")
         ) : (
-            <div style={{ display: "flex", gap: 32 }}>
+            <div
+                style={{
+                    display: "flex",
+                    gap: 16,
+                    flexWrap: "wrap",
+                    justifyContent: "space-around",
+                }}
+            >
                 <span
-                    style={{ height: "auto", fontSize: 18, lineHeight: "40px" }}
+                    style={{
+                        height: "auto",
+                        fontSize: 18,
+                        lineHeight: "40px",
+                        textAlign: "center",
+                    }}
                 >
                     {t("verificationRequest:openVerificationRequestClaimLabel")}
                 </span>

@@ -28,6 +28,9 @@ export class VerificationRequest {
 
     @Prop({ required: false, type: Boolean })
     isSensitive: boolean;
+
+    @Prop({ required: true, type: [Number] })
+    embedding: number[];
 }
 
 export const VerificationRequestSchema =

@@ -20,4 +20,9 @@ export class CreateVerificationRequestDTO {
     @IsOptional()
     @ApiProperty()
     data_hash: string;
+
+    @IsOptional()
+    @IsArray()
+    @ApiProperty()
+    embedding?: number[];
 }
