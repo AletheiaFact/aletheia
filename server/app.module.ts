@@ -99,7 +99,6 @@ export class AppModule implements NestModule {
             SentenceModule,
             StatsModule,
             ViewModule,
-            HomeModule,
             EmailModule,
             SitemapModule,
             OryModule,
@@ -125,6 +124,7 @@ export class AppModule implements NestModule {
             VerificationRequestModule,
             FeatureFlagModule,
             GroupModule,
+            HomeModule,
         ];
         if (options.feature_flag) {
             imports.push(
