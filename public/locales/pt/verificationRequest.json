@@ -10,5 +10,9 @@
     "agroupVerificationRequest": "Denúncias relacionadas",
     "openVerificationRequest": "Abrir",
     "recommendationTitle": "Recomendações",
-    "addInGroupButton": "Adicionar no grupo"
+    "addInGroupButton": "Adicionar no grupo",
+    "alreadyInGroupMessage": "Já adicionado ao grupo",
+    "searchResultsTitle": "Resultados",
+    "noResultsMessage": "Nenhum resultado",
+    "searchPlaceholder": "Busque denúncias"
 }

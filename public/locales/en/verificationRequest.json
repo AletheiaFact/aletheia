@@ -10,5 +10,9 @@
     "agroupVerificationRequest": "Related verification requests",
     "openVerificationRequest": "Open",
     "recommendationTitle": "Recommedations",
-    "addInGroupButton": "Add in group"
+    "addInGroupButton": "Add in group",
+    "alreadyInGroupMessage": "Already in group",
+    "searchResultsTitle": "Results",
+    "noResultsMessage": "No results",
+    "searchPlaceholder": "Search verification requests"
 }

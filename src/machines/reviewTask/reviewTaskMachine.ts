@@ -42,10 +42,6 @@ export const transitionHandler = (state) => {
     const { reviewData, review } = state.context;
     const nextState = typeof value !== "string" ? Object.keys(value)[0] : value;
 
-    const shouldUpdateVerificationRequest =
-        (value === "published" || value === "rejectedRequest") &&
-        reportModel === ReportModelEnum.Request;
-
     const shouldNotUpdateReviewTask =
         event === Events.reject ||
         event === Events.selectedCrossChecking ||
@@ -77,16 +73,12 @@ export const transitionHandler = (state) => {
     };
 
     api.createReviewTask(reviewTask, t, event)
-        .then(async () => {
-            if (shouldUpdateVerificationRequest) {
-                const redirectUrl = `/claim/create?verificationRequest=${target}`;
-                await verificationRequestApi.updateVerificationRequest(target, {
-                    ...reviewData,
-                });
-
-                if (value === "published") {
-                    window.location.href = redirectUrl;
-                }
+        .then(() => {
+            if (
+                reportModel === ReportModelEnum.Request &&
+                value === "published"
+            ) {
+                window.location.href = `/claim/create?verificationRequest=${target}`;
             }
 
             return event === Events.goback

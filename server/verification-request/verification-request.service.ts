@@ -21,8 +21,18 @@ export class VerificationRequestService {
         private groupService: GroupService
     ) {}
 
-    async listAll({ page, pageSize, order }): Promise<VerificationRequest[]> {
-        return this.VerificationRequestModel.find({}, { embedding: 0 })
+    async listAll({
+        content,
+        page,
+        pageSize,
+        order,
+    }): Promise<VerificationRequest[]> {
+        const query: any = {};
+        if (content) {
+            query.content = { $regex: content, $options: "i" };
+        }
+
+        return this.VerificationRequestModel.find(query, { embedding: 0 })
             .skip(page * parseInt(pageSize, 10))
             .limit(parseInt(pageSize, 10))
             .sort({ _id: order })

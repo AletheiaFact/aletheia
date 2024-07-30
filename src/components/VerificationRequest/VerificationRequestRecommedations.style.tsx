@@ -1,39 +1,35 @@
 import styled from "styled-components";
 import colors from "../../styles/colors";
 
-const VerificationRequestRecommendationsStyled = styled.section`
-    width: 100%;
+const VerificationRequestResultListStyled = styled.section`
+    padding: 16px 0;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 16px;
 
-    .recommendation-list {
-        padding: 16px 0;
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-        gap: 16px;
-    }
-
-    .recommendation-list::-webkit-scrollbar {
+    ::-webkit-scrollbar {
         height: 4px;
         width: 4px;
         background: ${colors.grayTertiary};
     }
 
-    .recommendation-list::-webkit-scrollbar-thumb {
+    ::-webkit-scrollbar-thumb {
         background: ${colors.blackTertiary};
         border-radius: 4px;
     }
 
-    .recommendation-list::-moz-scrollbar {
+    ::-moz-scrollbar {
         height: 4px;
         width: 4px;
         background: ${colors.grayTertiary};
     }
 
-    .recommendation-list::-mz-scrollbar {
+    ::-mz-scrollbar {
         height: 4px;
         width: 4px;
         background: ${colors.grayTertiary};
     }
 `;
 
-export default VerificationRequestRecommendationsStyled;
+export default VerificationRequestResultListStyled;

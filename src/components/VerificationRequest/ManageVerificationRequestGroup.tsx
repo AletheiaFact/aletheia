@@ -1,7 +1,11 @@
 import React from "react";
 import colors from "../../styles/colors";
 
-const ManageVerificationRequestGroup = ({ label, openDrawer }) => {
+const ManageVerificationRequestGroup = ({
+    label,
+    openDrawer,
+    suffix = null,
+}) => {
     const onKeyDown = (e) => {
         if (e.key === "Enter" || e.key === "Space") {
             e.preventDefault();
@@ -24,6 +28,7 @@ const ManageVerificationRequestGroup = ({ label, openDrawer }) => {
             }}
         >
             {label}
+            {suffix && suffix}
         </span>
     );
 };
