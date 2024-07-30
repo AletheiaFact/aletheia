@@ -52,7 +52,7 @@ export const transitionHandler = (state) => {
         event === Events.selectedReview ||
         event === Events.reAssignUser;
 
-    if (event === Events.init) {
+    if (event === Events.init || event === Events.viewPreview) {
         return;
     }
 

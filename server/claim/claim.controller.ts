@@ -359,6 +359,10 @@ export class ClaimController {
             this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
             this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
         hideDescriptions[TargetModel.Claim] =
             await this.historyService.getDescriptionForHide(
@@ -390,6 +394,8 @@ export class ClaimController {
                 enableEditorAnnotations,
                 enableCopilotChatBot,
                 enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })
@@ -579,6 +585,10 @@ export class ClaimController {
             this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
             this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
         this.redirectBasedOnPersonality(res, claim, namespace);
 
@@ -593,6 +603,8 @@ export class ClaimController {
                 enableEditorAnnotations,
                 enableCopilotChatBot,
                 enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -616,6 +628,10 @@ export class ClaimController {
             this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
             this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
         const claim = await this.claimService.getByClaimSlug(
             claimSlug,
@@ -633,6 +649,8 @@ export class ClaimController {
                 enableEditorAnnotations,
                 enableCopilotChatBot: enableCopilotChatBot,
                 enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -659,6 +677,10 @@ export class ClaimController {
             this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
             this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
@@ -692,6 +714,8 @@ export class ClaimController {
                 enableEditorAnnotations,
                 enableCopilotChatBot,
                 enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 hideDescriptions,
                 nameSpace: namespace,
@@ -725,6 +749,10 @@ export class ClaimController {
             this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
             this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
@@ -743,6 +771,8 @@ export class ClaimController {
                 enableEditorAnnotations,
                 enableCopilotChatBot: enableCopilotChatBot,
                 enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })

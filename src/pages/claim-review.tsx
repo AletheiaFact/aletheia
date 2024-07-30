@@ -31,6 +31,8 @@ export interface ClaimReviewPageProps {
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
     enableAddEditorSourcesWithoutSelecting: boolean;
+    enableReviewersUpdateReport: boolean;
+    enableViewReportPreview: boolean;
     websocketUrl: string;
     nameSpace: string;
 }
@@ -49,33 +51,26 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         enableCollaborativeEditor,
         enableCopilotChatBot,
         enableEditorAnnotations,
+        enableAddEditorSourcesWithoutSelecting,
+        enableReviewersUpdateReport,
+        enableViewReportPreview,
         hideDescriptions,
     } = props;
 
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
     dispatch(actions.closeCopilotDrawer());
-    dispatch({
-        type: ActionTypes.SET_AUTO_SAVE,
-        autoSave: false,
-    });
-    dispatch({
-        type: ActionTypes.SET_COLLABORATIVE_EDIT,
-        enableCollaborativeEdit: enableCollaborativeEditor,
-    });
-    dispatch({
-        type: ActionTypes.SET_COPILOT_CHAT_BOT,
-        enableCopilotChatBot: enableCopilotChatBot,
-    });
-    dispatch({
-        type: ActionTypes.SET_EDITOR_ANNOTATION,
-        enableEditorAnnotations: enableEditorAnnotations,
-    });
-    dispatch({
-        type: ActionTypes.SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING,
-        enableAddEditorSourcesWithoutSelecting:
-            props.enableAddEditorSourcesWithoutSelecting,
-    });
+    dispatch(
+        actions.setEditorEnvironment(
+            enableCollaborativeEditor,
+            enableAddEditorSourcesWithoutSelecting,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            false,
+            enableReviewersUpdateReport,
+            enableViewReportPreview
+        )
+    );
 
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     const review = content?.props?.classification;
@@ -170,6 +165,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableEditorAnnotations: query?.enableEditorAnnotations,
             enableAddEditorSourcesWithoutSelecting:
                 query?.enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
+            enableViewReportPreview: query?.enableViewReportPreview,
             websocketUrl: query?.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

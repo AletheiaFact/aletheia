@@ -171,6 +171,10 @@ export class ReviewTaskController {
             this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
             this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
         await this.viewService.getNextServer().render(
             req,
@@ -182,6 +186,8 @@ export class ReviewTaskController {
                 enableEditorAnnotations,
                 enableCopilotChatBot,
                 enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })

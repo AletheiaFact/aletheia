@@ -76,10 +76,9 @@ const getNextEvents = (
             ? [Events.goback, Events.sendToCrossChecking, Events.selectedReview]
             : [...defaultEvents, Events.finishReport],
 
-        [States.submitted]: [Events.reject, Events.publish],
-        [Events.sendToReview]: [Events.reject, Events.publish],
+        [States.submitted]: [Events.addRejectionComment, Events.publish],
+        [Events.sendToReview]: [Events.addRejectionComment, Events.publish],
 
-        [States.rejected]: [Events.goback, Events.addRejectionComment],
         [Events.addRejectionComment]:
             reportModel === ReportModelEnum.FactChecking
                 ? [...defaultEvents, Events.finishReport]
