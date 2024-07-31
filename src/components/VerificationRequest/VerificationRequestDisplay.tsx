@@ -6,10 +6,14 @@ import { VerificationRequestContext } from "./VerificationRequestProvider";
 import VerificationRequestDrawer from "./VerificationRequestDrawer";
 import VerificationRequestMainContent from "./VerificationRequestMainContent";
 import VerificationRequestSearch from "./VerificationRequestSearch";
+import { Roles } from "../../types/enums";
+import { currentUserRole } from "../../atoms/currentUser";
+import { useAtom } from "jotai";
 
 const VerificationRequestDisplay = ({ content }) => {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [role] = useAtom(currentUserRole);
     const { group, onRemoveVerificationRequest } = useContext(
         VerificationRequestContext
     );
@@ -37,17 +41,21 @@ const VerificationRequestDisplay = ({ content }) => {
                 openDrawer={() => setOpen(true)}
             />
 
-            <VerificationRequestSearch />
+            {role !== Roles.Regular && (
+                <>
+                    <VerificationRequestSearch />
 
-            <VerificationRequestRecommendations />
+                    <VerificationRequestRecommendations />
 
-            <VerificationRequestDrawer
-                groupContent={verificationRequestGroup}
-                open={open}
-                isLoading={isLoading}
-                onCloseDrawer={() => setOpen(false)}
-                onRemove={onRemove}
-            />
+                    <VerificationRequestDrawer
+                        groupContent={verificationRequestGroup}
+                        open={open}
+                        isLoading={isLoading}
+                        onCloseDrawer={() => setOpen(false)}
+                        onRemove={onRemove}
+                    />
+                </>
+            )}
         </VerificationRequestDisplayStyle>
     );
 };
