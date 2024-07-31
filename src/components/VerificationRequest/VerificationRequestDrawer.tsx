@@ -26,8 +26,8 @@ const VerificationRequestDrawer = ({
                 <Typography.Title level={3}>
                     {t("verificationRequest:verificationRequestTitle")}s
                 </Typography.Title>
-                {groupContent.length > 0 ? (
-                    groupContent.map(({ _id, content }) => (
+                {groupContent?.length > 0 ? (
+                    groupContent?.map(({ _id, content }) => (
                         <VerificationRequestCard
                             key={_id}
                             content={content}
