@@ -5,6 +5,10 @@ import { VerificationRequestService } from "../verification-request/verification
 export interface ChatBotContext {
     verificationRequest: string;
     responseMessage: string;
+    link?: string;
+    publicationDate?: string;
+    sources?: string;
+    email?: string;
 }
 
 export const createChatBotMachine = (
@@ -17,6 +21,10 @@ export const createChatBotMachine = (
             context: {
                 verificationRequest: "",
                 responseMessage: "",
+                link: "",
+                publicationDate: "",
+                sources: "",
+                email: "",
             },
             states: {
                 greeting: {
@@ -66,18 +74,127 @@ export const createChatBotMachine = (
                 askingForVerificationRequest: {
                     on: {
                         RECEIVE_REPORT: {
-                            target: "finishedReport",
+                            target: "askingForLink",
                             actions: [
                                 "saveVerificationRequest",
-                                "sendThanks",
+                                "askForLink",
                                 "setResponseMessage",
-                                "saveVerificationRequestToDB",
                             ],
                         },
                         NON_TEXT_MESSAGE: {
                             target: "askingForVerificationRequest",
                             actions: [
                                 "sendNoTextMessageAskForVerificationRequest",
+                                "setResponseMessage",
+                            ],
+                        },
+                    },
+                },
+                askingForLink: {
+                    on: {
+                        RECEIVE_LINK: {
+                            target: "askingForPublicationDate",
+                            actions: [
+                                "saveLink",
+                                "askForPublicationDate",
+                                "setResponseMessage",
+                            ],
+                        },
+                        RECEIVE_NO: {
+                            target: "askingForPublicationDate",
+                            actions: [
+                                "saveEmptyLink",
+                                "askForPublicationDate",
+                                "setResponseMessage",
+                            ],
+                        },
+                        NON_TEXT_MESSAGE: {
+                            target: "askingForLink",
+                            actions: [
+                                "noTextMessageAskForLink",
+                                "setResponseMessage",
+                            ],
+                        },
+                    },
+                },
+                askingForPublicationDate: {
+                    on: {
+                        RECEIVE_PUBLICATION_DATE: {
+                            target: "askingForSource",
+                            actions: [
+                                "savePublicationDate",
+                                "askForSource",
+                                "setResponseMessage",
+                            ],
+                        },
+                        RECEIVE_NO: {
+                            target: "askingForSource",
+                            actions: [
+                                "saveEmptyPublicationDate",
+                                "askForSource",
+                                "setResponseMessage",
+                            ],
+                        },
+                        NON_TEXT_MESSAGE: {
+                            target: "askingForPublicationDate",
+                            actions: [
+                                "noTextMessageAskForPublicationDate",
+                                "setResponseMessage",
+                            ],
+                        },
+                    },
+                },
+                askingForSource: {
+                    on: {
+                        RECEIVE_SOURCE: {
+                            target: "askingForEmail",
+                            actions: [
+                                "saveSource",
+                                "askForEmail",
+                                "setResponseMessage",
+                            ],
+                        },
+                        RECEIVE_NO: {
+                            target: "askingForEmail",
+                            actions: [
+                                "saveEmptySource",
+                                "askForEmail",
+                                "setResponseMessage",
+                            ],
+                        },
+                        NON_TEXT_MESSAGE: {
+                            target: "askingForSource",
+                            actions: [
+                                "noTextMessageAskForSource",
+                                "setResponseMessage",
+                            ],
+                        },
+                    },
+                },
+                askingForEmail: {
+                    on: {
+                        RECEIVE_EMAIL: {
+                            target: "finishedReport",
+                            actions: [
+                                "saveEmail",
+                                "sendThanks",
+                                "setResponseMessage",
+                                "saveVerificationRequestToDB",
+                            ],
+                        },
+                        RECEIVE_NO: {
+                            target: "finishedReport",
+                            actions: [
+                                "saveEmptyEmail",
+                                "sendThanks",
+                                "setResponseMessage",
+                                "saveVerificationRequestToDB",
+                            ],
+                        },
+                        NON_TEXT_MESSAGE: {
+                            target: "askingForEmail",
+                            actions: [
+                                "noTextMessageAskForEmail",
                                 "setResponseMessage",
                             ],
                         },
@@ -107,7 +224,7 @@ export const createChatBotMachine = (
                                 "setResponseMessage",
                             ],
                         },
-                        RECEIVE_NO: {
+                        ANY_TEXT_MESSAGE: {
                             target: "sendingNoMessage",
                             actions: ["sendNoMessage", "setResponseMessage"],
                         },
@@ -128,8 +245,11 @@ export const createChatBotMachine = (
                 saveVerificationRequestToDB: (context) => {
                     const verificationRequestBody = {
                         content: context.verificationRequest,
+                        link: context.link || "",
+                        publicationDate: context.publicationDate || "",
+                        email: context.email || "",
                         date: new Date(),
-                        sources: [],
+                        sources: [context.sources || ""],
                         data_hash: "",
                     };
 

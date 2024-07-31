@@ -66,7 +66,8 @@ export class ChatbotService {
         chatBotMachineService.start(chatbotState.state);
 
         const userMessage = contents[0].text;
-        this.handleUserMessage(userMessage, chatBotMachineService);
+        const messageType = message.contents[0].type;
+        this.handleUserMessage(userMessage, messageType, chatBotMachineService);
 
         const snapshot = chatBotMachineService.getSnapshot();
         chatbotState.state = snapshot.value;
@@ -91,9 +92,18 @@ export class ChatbotService {
             );
     }
 
-    private handleUserMessage(message: string, chatBotMachineService) {
+    private handleUserMessage(
+        message: string,
+        messageType,
+        chatBotMachineService
+    ) {
         const parsedMessage = this.normalizeAndLowercase(message);
         const currentState = chatBotMachineService.getSnapshot().value;
+
+        if (messageType !== "text") {
+            chatBotMachineService.send("NON_TEXT_MESSAGE");
+            return;
+        }
 
         switch (currentState) {
             case "greeting":
@@ -110,6 +120,17 @@ export class ChatbotService {
                     type: "RECEIVE_REPORT",
                     verificationRequest: message,
                 });
+                break;
+            case "askingForLink":
+            case "askingForPublicationDate":
+            case "askingForSource":
+            case "askingForEmail":
+                this.handleOptionalInfoState(
+                    parsedMessage,
+                    currentState,
+                    message,
+                    chatBotMachineService
+                );
                 break;
             case "sendingNoMessage":
                 this.handleSendingNoMessage(
@@ -158,7 +179,44 @@ export class ChatbotService {
         chatBotMachineService
     ): void {
         chatBotMachineService.send(
-            parsedMessage === "denuncia" ? "ASK_TO_REPORT" : "RECEIVE_NO"
+            parsedMessage === "denuncia" ? "ASK_TO_REPORT" : "ANY_TEXT_MESSAGE"
         );
+    }
+
+    private handleOptionalInfoState(
+        parsedMessage: string,
+        currentState: string,
+        message: string,
+        chatBotMachineService
+    ): void {
+        const stateMapping = {
+            askingForLink: {
+                receive: "RECEIVE_LINK",
+                empty: "RECEIVE_NO",
+                field: "link",
+            },
+            askingForPublicationDate: {
+                receive: "RECEIVE_PUBLICATION_DATE",
+                empty: "RECEIVE_NO",
+                field: "publicationDate",
+            },
+            askingForSource: {
+                receive: "RECEIVE_SOURCE",
+                empty: "RECEIVE_NO",
+                field: "sources",
+            },
+            askingForEmail: {
+                receive: "RECEIVE_EMAIL",
+                empty: "RECEIVE_NO",
+                field: "email",
+            },
+        };
+
+        const { receive, empty, field } = stateMapping[currentState];
+
+        chatBotMachineService.send({
+            type: parsedMessage === "no" ? empty : receive,
+            [field]: message,
+        });
     }
 }
