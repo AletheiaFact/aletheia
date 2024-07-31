@@ -12,15 +12,16 @@ import { currentNameSpace } from "../atoms/namespace";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 import { VerificationRequestProvider } from "../components/VerificationRequest/VerificationRequestProvider";
+import { VerificationRequest } from "../types/VerificationRequest";
 
 export interface SourceReviewPageProps {
-    verificationRequest: any; //TODO: Create Verification Request type
+    verificationRequest: VerificationRequest;
     sitekey: string;
     reviewTask: any;
     hideDescriptions: object;
     websocketUrl: string;
     nameSpace: string;
-    recommendations: any[];
+    recommendations: VerificationRequest[];
 }
 
 const SourceReviewPage: NextPage<SourceReviewPageProps> = (props) => {

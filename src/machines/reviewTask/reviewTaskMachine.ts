@@ -6,7 +6,6 @@ import { ReviewTaskMachineState } from "./states";
 import { ReviewTaskEvents as Events, ReportModelEnum } from "./enums";
 import sendReviewNotifications from "../../notifications/sendReviewNotifications";
 import { isSameLabel, machineWorkflow } from "./machineWorkflow";
-import verificationRequestApi from "../../api/verificationRequestApi";
 
 export const createNewMachine = ({ value, context }, reportModel) => {
     return createMachine<

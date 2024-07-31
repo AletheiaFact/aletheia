@@ -28,7 +28,7 @@ const ManageVerificationRequestGroup = ({
             }}
         >
             {label}
-            {suffix && suffix}
+            {suffix}
         </span>
     );
 };

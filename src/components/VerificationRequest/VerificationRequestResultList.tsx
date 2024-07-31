@@ -15,8 +15,6 @@ const VerificationRequestResultList = ({ results }) => {
             if (verificationRequest._id === verificationRequestId) {
                 return true;
             }
-
-            continue;
         }
 
         return false;
@@ -36,6 +34,7 @@ const VerificationRequestResultList = ({ results }) => {
                             style={{ minHeight: "100%" }}
                             actions={[
                                 <AletheiaButton
+                                    key={`add-${verificationRequest._id}`}
                                     disabled={checkIfIsInGroup(
                                         verificationRequest._id
                                     )}

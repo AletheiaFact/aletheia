@@ -1,12 +1,20 @@
-import { createContext, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 import verificationRequestApi from "../../api/verificationRequestApi";
+import { VerificationRequest } from "../../types/VerificationRequest";
+import { Group } from "../../types/Group";
 
 interface IVerificationRequestContext {
-    recommendations?: any;
-    addRecommendation?: any;
-    group?: any;
-    removeFromGroup?: any;
-    onRemoveVerificationRequest?: any;
+    recommendations?: VerificationRequest[];
+    addRecommendation?: (verificationRequest: VerificationRequest) => void;
+    group?: Group;
+    removeFromGroup?: (id: string) => void;
+    onRemoveVerificationRequest?: (id: string) => void;
+}
+
+interface IVerificationRequestProvider {
+    verificationRequest: VerificationRequest;
+    baseRecommendations: VerificationRequest[];
+    children: React.ReactNode;
 }
 
 export const VerificationRequestContext =
@@ -16,11 +24,14 @@ export const VerificationRequestProvider = ({
     verificationRequest,
     baseRecommendations,
     children,
-}) => {
-    const [recommendations, setRecommendations] = useState(baseRecommendations);
-    const [group, setGroup] = useState(verificationRequest.group);
+}: IVerificationRequestProvider) => {
+    const [recommendations, setRecommendations] =
+        useState<VerificationRequest[]>(baseRecommendations);
+    const [group, setGroup] = useState<Group>(verificationRequest.group);
 
-    const addRecommendation = (verificationRequestLiked) => {
+    const addRecommendation = (
+        newVerificationRequest: VerificationRequest
+    ): void => {
         const groupContent = group.content.filter(
             (v) => v._id !== verificationRequest._id
         );
@@ -28,23 +39,23 @@ export const VerificationRequestProvider = ({
         verificationRequestApi.updateVerificationRequest(
             verificationRequest._id,
             {
-                group: [...groupContent, verificationRequestLiked],
+                group: [...groupContent, newVerificationRequest],
             }
         );
         setRecommendations((prev) =>
-            prev.filter((v) => v._id !== verificationRequestLiked._id)
+            prev.filter((v) => v._id !== newVerificationRequest._id)
         );
-        addInGroup(verificationRequestLiked);
+        addInGroup(newVerificationRequest);
     };
 
-    const addInGroup = (newVerificationRequest) => {
+    const addInGroup = (newVerificationRequest: VerificationRequest): void => {
         setGroup((prev) => ({
             ...prev,
             content: [...prev.content, newVerificationRequest],
         }));
     };
 
-    const removeFromGroup = (verificationRequestId) => {
+    const removeFromGroup = (verificationRequestId: string): void => {
         const contentGroup = group.content.filter(
             (verificationRequest) =>
                 verificationRequest?._id !== verificationRequestId
@@ -56,16 +67,18 @@ export const VerificationRequestProvider = ({
         }));
     };
 
-    const onRemoveVerificationRequest = async (id) => {
+    const onRemoveVerificationRequest = async (
+        verificationRequestId: string
+    ): Promise<void> => {
         try {
             await verificationRequestApi.removeVerificationRequestFromGroup(
-                id,
+                verificationRequestId,
                 {
                     group: group._id,
                 }
             );
 
-            removeFromGroup(id);
+            removeFromGroup(verificationRequestId);
         } catch (e) {
             console.error(
                 "Error while removing verification request from group",
@@ -74,16 +87,25 @@ export const VerificationRequestProvider = ({
         }
     };
 
+    const value = useMemo(
+        () => ({
+            recommendations,
+            group,
+            addRecommendation,
+            removeFromGroup,
+            onRemoveVerificationRequest,
+        }),
+        [
+            recommendations,
+            group,
+            addRecommendation,
+            removeFromGroup,
+            onRemoveVerificationRequest,
+        ]
+    );
+
     return (
-        <VerificationRequestContext.Provider
-            value={{
-                recommendations,
-                group,
-                addRecommendation,
-                removeFromGroup,
-                onRemoveVerificationRequest,
-            }}
-        >
+        <VerificationRequestContext.Provider value={value}>
             {children}
         </VerificationRequestContext.Provider>
     );

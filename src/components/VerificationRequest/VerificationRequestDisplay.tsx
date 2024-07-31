@@ -18,9 +18,10 @@ const VerificationRequestDisplay = ({ content }) => {
         (c) => c._id !== content._id
     );
 
-    const onRemove = (id) => {
+    const onRemove = async (id: string) => {
         setIsLoading(true);
-        onRemoveVerificationRequest(id).then(() => setIsLoading(false));
+        await onRemoveVerificationRequest(id);
+        setIsLoading(false);
     };
 
     return (
