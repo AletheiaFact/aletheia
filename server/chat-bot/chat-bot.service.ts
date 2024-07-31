@@ -66,7 +66,8 @@ export class ChatbotService {
         chatBotMachineService.start(chatbotState.state);
 
         const userMessage = contents[0].text;
-        this.handleUserMessage(userMessage, chatBotMachineService);
+        const messageType = message.contents[0].type;
+        this.handleUserMessage(userMessage, messageType, chatBotMachineService);
 
         const snapshot = chatBotMachineService.getSnapshot();
         chatbotState.state = snapshot.value;
@@ -91,7 +92,16 @@ export class ChatbotService {
             );
     }
 
-    private handleUserMessage(message: string, chatBotMachineService) {
+    private handleUserMessage(
+        message: string,
+        messageType,
+        chatBotMachineService
+    ) {
+        if (messageType !== "text") {
+            chatBotMachineService.send("NON_TEXT_MESSAGE");
+            return;
+        }
+
         const parsedMessage = this.normalizeAndLowercase(message);
         const currentState = chatBotMachineService.getSnapshot().value;
 
