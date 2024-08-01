@@ -96,12 +96,24 @@ const removeVerificationRequestFromGroup = (id, params) => {
         });
 };
 
+const deleteVerificationRequestTopic = (topics, data_hash) => {
+    return request
+        .put(`/${data_hash}/topics`, topics)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            throw err;
+        });
+};
+
 const verificationRequestApi = {
     get,
     getVerificationRequests,
     getById,
     updateVerificationRequest,
     removeVerificationRequestFromGroup,
+    deleteVerificationRequestTopic,
 };
 
 export default verificationRequestApi;

@@ -13,8 +13,15 @@ import { isUserLoggedIn } from "../../atoms/currentUser";
 import { ContentModelEnum } from "../../types/enums";
 import ImageApi from "../../api/image";
 import { useDispatch } from "react-redux";
+import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
+import verificationRequestApi from "../../api/verificationRequestApi";
 
-const TopicInput = ({ contentModel, data_hash, topics }) => {
+const TopicInput = ({
+    data_hash,
+    topics,
+    reviewTaskType,
+    contentModel = null,
+}) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [isLoggedIn] = useAtom(isUserLoggedIn);
@@ -48,7 +55,14 @@ const TopicInput = ({ contentModel, data_hash, topics }) => {
         setInputValue(newInputValue);
         setCurrentInputValue(newInputValue);
 
-        contentModel === ContentModelEnum.Image
+        if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
+            return await verificationRequestApi.deleteVerificationRequestTopic(
+                newTopics,
+                data_hash
+            );
+        }
+
+        return contentModel === ContentModelEnum.Image
             ? await ImageApi.deleteImageTopic(newTopics, data_hash)
             : await sentenceApi.deleteSentenceTopic(newTopics, data_hash);
     };
@@ -70,7 +84,10 @@ const TopicInput = ({ contentModel, data_hash, topics }) => {
             setTopicsArray(tags);
             setCurrentInputValue([]);
             topicApi
-                .createTopics({ contentModel, topics: tags, data_hash }, t)
+                .createTopics(
+                    { contentModel, topics: tags, data_hash, reviewTaskType },
+                    t
+                )
                 .catch((e) => e);
         } else {
             setShowErrorMessage(!showErrorMessage);

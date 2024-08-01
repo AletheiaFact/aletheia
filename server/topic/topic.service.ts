@@ -4,8 +4,9 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
 import slugify from "slugify";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
-import { ContentModelEnum } from "../types/enums";
+import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { ImageService } from "../claim/types/image/image.service";
+import { VerificationRequestService } from "../verification-request/verification-request.service";
 
 @Injectable()
 export class TopicService {
@@ -13,7 +14,8 @@ export class TopicService {
         @InjectModel(Topic.name)
         private TopicModel: Model<TopicDocument>,
         private sentenceService: SentenceService,
-        private imageService: ImageService
+        private imageService: ImageService,
+        private verificationRequestService: VerificationRequestService
     ) {}
 
     /**
@@ -41,10 +43,12 @@ export class TopicService {
             contentModel,
             topics,
             data_hash,
+            reviewTaskType,
         }: {
             contentModel: ContentModelEnum;
             topics: string[];
             data_hash: string;
+            reviewTaskType: ReviewTaskTypeEnum;
         },
         language: string = "pt"
     ) {
@@ -65,6 +69,13 @@ export class TopicService {
                 }
             })
         );
+
+        if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
+            return this.verificationRequestService.updateVerificationRequestWithTopics(
+                createdTopics,
+                data_hash
+            );
+        }
 
         return contentModel === ContentModelEnum.Image
             ? this.imageService.updateImageWithTopics(createdTopics, data_hash)

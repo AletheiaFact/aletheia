@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Group } from "../../group/schemas/group.schema";
+import { Topic } from "../../topic/schemas/topic.schema";
 
 export type VerificationRequestDocument = VerificationRequest &
     mongoose.Document;
@@ -31,6 +32,9 @@ export class VerificationRequest {
 
     @Prop({ required: true, type: [Number] })
     embedding: number[];
+
+    @Prop({ type: Array, required: false })
+    topics: Topic[];
 }
 
 export const VerificationRequestSchema =
