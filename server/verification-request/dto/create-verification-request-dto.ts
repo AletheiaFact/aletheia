@@ -6,15 +6,30 @@ export class CreateVerificationRequestDTO {
     @ApiProperty()
     content: string;
 
+    @IsArray()
+    @ApiProperty()
+    @IsOptional()
+    source: string;
+
+    @IsString()
+    @ApiProperty()
+    @IsOptional()
+    publicationDate: string;
+
+    @IsString()
+    @ApiProperty()
+    @IsOptional()
+    email: string;
+
     @IsDate()
     @ApiProperty()
     @IsOptional()
     date: Date;
 
-    @IsArray()
+    @IsString()
     @ApiProperty()
     @IsOptional()
-    sources: string[];
+    heardFrom: string;
 
     @IsString()
     @IsOptional()

@@ -6,5 +6,9 @@
     "openVerificationRequestClaimLabel": "Uma afirmação criada foi relacionada com essa denúncia",
     "openVerificationRequestClaimButton": "Abrir afirmação",
     "agroupVerificationRequest": "Denúncias relacionadas",
-    "openVerificationRequest": "Abrir"
+    "openVerificationRequest": "Abrir",
+    "verificationRequestTagPublicationDate": "Visto Em:",
+    "verificationRequestTagDate": "Denunciado Em:",
+    "verificationRequestTagHeardFrom": "Origem:",
+    "verificationRequestTagSource": "Fonte:"
 }

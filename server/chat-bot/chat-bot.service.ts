@@ -14,6 +14,15 @@ const MESSAGE_MAP = {
     nao: "RECEIVE_NO",
 };
 
+interface ChatBotContext {
+    verificationRequest?: string;
+    responseMessage?: string;
+    source?: string;
+    publicationDate?: string;
+    heardFrom?: string;
+    email?: string;
+}
+
 @Injectable()
 export class ChatbotService {
     constructor(
@@ -29,26 +38,37 @@ export class ChatbotService {
 
         if (!chatbotState) {
             const newMachine = createChatBotMachine(this.verificationService);
-            newMachine.start();
+            const snapshot = newMachine.getSnapshot();
             chatbotState = await this.chatBotStateService.create(
-                newMachine.getSnapshot().value,
+                {
+                    value: snapshot.value,
+                    context: snapshot.context as ChatBotContext,
+                },
                 id
             );
+            console.log(chatbotState, "chatbotStatechatbotStatechatbotState");
         } else {
             const rehydratedMachine = createChatBotMachine(
-                this.verificationService
+                this.verificationService,
+                chatbotState.machine.value,
+                chatbotState.machine.context
             );
-            rehydratedMachine.start(chatbotState.state);
-            chatbotState.state = rehydratedMachine.getSnapshot();
+            const snapshot = rehydratedMachine.getSnapshot();
+            chatbotState.machine.value = snapshot.value;
+            chatbotState.machine.context = snapshot.context as ChatBotContext;
         }
 
         return chatbotState;
     }
 
     private async updateChatBotState(chatbotState) {
-        await this.chatBotStateService.updateState(
+        const snapshot = {
+            value: chatbotState.machine.value,
+            context: chatbotState.machine.context,
+        };
+        await this.chatBotStateService.updateSnapshot(
             chatbotState._id,
-            chatbotState.state
+            snapshot
         );
     }
 
@@ -61,16 +81,20 @@ export class ChatbotService {
             channel
         );
         const chatBotMachineService = createChatBotMachine(
-            this.verificationService
+            this.verificationService,
+            chatbotState.machine.value,
+            chatbotState.machine.context
         );
-        chatBotMachineService.start(chatbotState.state);
+
+        chatBotMachineService.start(chatbotState.machine.value);
 
         const userMessage = contents[0].text;
         const messageType = message.contents[0].type;
         this.handleUserMessage(userMessage, messageType, chatBotMachineService);
 
         const snapshot = chatBotMachineService.getSnapshot();
-        chatbotState.state = snapshot.value;
+        chatbotState.machine.value = snapshot.value;
+        chatbotState.machine.context = snapshot.context;
 
         await this.updateChatBotState(chatbotState);
 
@@ -97,13 +121,13 @@ export class ChatbotService {
         messageType,
         chatBotMachineService
     ) {
-        const parsedMessage = this.normalizeAndLowercase(message);
-        const currentState = chatBotMachineService.getSnapshot().value;
-
         if (messageType !== "text") {
             chatBotMachineService.send("NON_TEXT_MESSAGE");
             return;
         }
+
+        const parsedMessage = this.normalizeAndLowercase(message);
+        const currentState = chatBotMachineService.getSnapshot().value;
 
         switch (currentState) {
             case "greeting":
@@ -121,9 +145,9 @@ export class ChatbotService {
                     verificationRequest: message,
                 });
                 break;
-            case "askingForLink":
-            case "askingForPublicationDate":
             case "askingForSource":
+            case "askingForPublicationDate":
+            case "askingForHeardFrom":
             case "askingForEmail":
                 this.handleOptionalInfoState(
                     parsedMessage,
@@ -190,20 +214,20 @@ export class ChatbotService {
         chatBotMachineService
     ): void {
         const stateMapping = {
-            askingForLink: {
-                receive: "RECEIVE_LINK",
+            askingForSource: {
+                receive: "RECEIVE_SOURCE",
                 empty: "RECEIVE_NO",
-                field: "link",
+                field: "source",
             },
             askingForPublicationDate: {
                 receive: "RECEIVE_PUBLICATION_DATE",
                 empty: "RECEIVE_NO",
                 field: "publicationDate",
             },
-            askingForSource: {
-                receive: "RECEIVE_SOURCE",
+            askingForHeardFrom: {
+                receive: "RECEIVE_HEARD_FROM",
                 empty: "RECEIVE_NO",
-                field: "sources",
+                field: "heardFrom",
             },
             askingForEmail: {
                 receive: "RECEIVE_EMAIL",
@@ -215,7 +239,7 @@ export class ChatbotService {
         const { receive, empty, field } = stateMapping[currentState];
 
         chatBotMachineService.send({
-            type: parsedMessage === "no" ? empty : receive,
+            type: parsedMessage === "nao" ? empty : receive,
             [field]: message,
         });
     }

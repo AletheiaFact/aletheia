@@ -9,7 +9,7 @@ import VerificationRequestAlert from "../VerificationRequest/VerificationRequest
 const VerificationRequestDisplay = ({ content }) => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
-    const { content: contentText, group } = content;
+    const { group } = content;
     const verificationRequestGroup = group?.content?.filter(
         (c) => c._id !== content._id
     );
@@ -25,7 +25,7 @@ const VerificationRequestDisplay = ({ content }) => {
                 <Typography.Title level={3}>
                     {t("verificationRequest:verificationRequestTitle")}
                 </Typography.Title>
-                <VerificationRequestCard content={contentText} />
+                <VerificationRequestCard content={content} t={t} />
             </Col>
             {!vw.xs && (
                 <Col offset={!vw?.md ? 1 : 0} lg={6} md={24}>
@@ -48,7 +48,10 @@ const VerificationRequestDisplay = ({ content }) => {
                                     minWidth: "200px",
                                 }}
                             >
-                                <VerificationRequestCard content={content} />
+                                <VerificationRequestCard
+                                    content={content}
+                                    t={t}
+                                />
                             </div>
                         ))}
                     </div>

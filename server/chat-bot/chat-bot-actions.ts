@@ -5,16 +5,16 @@ interface VerificationRequestEvent extends EventObject {
     verificationRequest: string;
 }
 
-interface LinkEvent extends EventObject {
-    link: string;
+interface SourceEvent extends EventObject {
+    source: string;
 }
 
 interface PublicationDateEvent extends EventObject {
     publicationDate: string;
 }
 
-interface SourceEvent extends EventObject {
-    sources: string;
+interface HeardFromEvent extends EventObject {
+    heardFrom: string;
 }
 
 interface EmailEvent extends EventObject {
@@ -38,17 +38,17 @@ const MESSAGES = {
         "Por favor, me conte com detalhes o que você gostaria de denunciar.\n\nPor favor, inclua todas as informações que considerar relevantes para que possamos verificar a denúncia de forma eficiente 👀",
     noTextMessageAskForVerificationRequest:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nPor favor, me conte com detalhes o que você gostaria de denunciar.\n\nPor favor, inclua todas as informações que considerar relevantes para que possamos verificar a denúncia de forma eficiente 👀",
-    askForLink:
+    askForSource:
         "A publicação que você está denunciando possui um link? Se sim, por favor, envie-o para nós. Se você não tem um link ou prefere não compartilhar, responda 'Não'.",
-    noTextMessageAskForLink:
+    noTextMessageAskForSource:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nA publicação que você está denunciando possui um link? Se sim, por favor, envie-o para nós. Se você não tem um link ou prefere não compartilhar, responda 'Não'.",
     askForPublicationDate:
         "Por favor, informe a data em que você viu ou leu a publicação. Se você não tem essa informação ou prefere não compartilhar, responda 'Não'.",
     noTextMessageAskForPublicationDate:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nPor favor, informe a data em que você viu ou leu a publicação. Se você não tem essa informação ou prefere não compartilhar, responda 'Não'.",
-    askForSource:
+    askForHeardFrom:
         "Você pode nos dizer onde encontrou ou recebeu a publicação? Se preferir não fornecer essa informação, responda 'Não'.",
-    noTextMessageAskForSource:
+    noTextMessageAskForHeardFrom:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nVocê pode nos dizer onde encontrou ou recebeu a publicação? Se preferir não fornecer essa informação, responda 'Não'.",
     askForEmail:
         "Para que possamos enviar a verificação, por favor, forneça seu e-mail abaixo. Se você prefere não deixar seu e-mail ou não deseja receber a verificação, responda 'Não'.",
@@ -92,12 +92,12 @@ export const sendNoTextMessageAskForVerificationRequest =
         responseMessage: () => MESSAGES.noTextMessageAskForVerificationRequest,
     });
 
-export const askForLink = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.askForLink,
+export const askForSource = assign<ChatBotContext>({
+    responseMessage: () => MESSAGES.askForSource,
 });
 
-export const sendNoTextMessageAskForLink = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.noTextMessageAskForLink,
+export const sendNoTextMessageAskForSource = assign<ChatBotContext>({
+    responseMessage: () => MESSAGES.noTextMessageAskForSource,
 });
 
 export const askForPublicationDate = assign<ChatBotContext>({
@@ -108,12 +108,12 @@ export const sendNoTextMessageAskForPublicationDate = assign<ChatBotContext>({
     responseMessage: () => MESSAGES.noTextMessageAskForPublicationDate,
 });
 
-export const askForSource = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.askForSource,
+export const askForHeardFrom = assign<ChatBotContext>({
+    responseMessage: () => MESSAGES.askForHeardFrom,
 });
 
-export const sendNoTextMessageAskForSource = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.noTextMessageAskForSource,
+export const sendNoTextMessageAskForHeardFrom = assign<ChatBotContext>({
+    responseMessage: () => MESSAGES.noTextMessageAskForHeardFrom,
 });
 
 export const askForEmail = assign<ChatBotContext>({
@@ -131,12 +131,12 @@ export const saveVerificationRequest = assign<
     verificationRequest: (context, event) => event.verificationRequest,
 });
 
-export const saveLink = assign<ChatBotContext, LinkEvent>({
-    link: (context, event) => event.link,
+export const saveSource = assign<ChatBotContext, SourceEvent>({
+    source: (context, event) => event.source,
 });
 
-export const saveEmptyLink = assign<ChatBotContext>({
-    link: () => "",
+export const saveEmptySource = assign<ChatBotContext>({
+    source: () => "",
 });
 
 export const savePublicationDate = assign<ChatBotContext, PublicationDateEvent>(
@@ -149,12 +149,12 @@ export const saveEmptyPublicationDate = assign<ChatBotContext>({
     publicationDate: () => "",
 });
 
-export const saveSource = assign<ChatBotContext, SourceEvent>({
-    sources: (context, event) => event.sources,
+export const saveHeardFrom = assign<ChatBotContext, HeardFromEvent>({
+    heardFrom: (context, event) => event.heardFrom,
 });
 
-export const saveEmptySource = assign<ChatBotContext>({
-    sources: () => "",
+export const saveEmptyHeardFrom = assign<ChatBotContext>({
+    heardFrom: () => "",
 });
 
 export const saveEmail = assign<ChatBotContext, EmailEvent>({

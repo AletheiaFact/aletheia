@@ -125,14 +125,15 @@ const CreateClaimView = () => {
                 <Col style={{ margin: "32px 64px" }}>
                     <h3>{t("verificationRequest:verificationRequestTitle")}</h3>
                     {claimData?.group ? (
-                        claimData.group.content.map(({ _id, content }) => (
+                        claimData.group.content.map((item) => (
                             <VerificationRequestCard
-                                key={_id}
-                                content={content}
+                                key={item._id}
+                                content={item}
+                                t={t}
                                 actions={[
                                     <AletheiaButton
                                         key="remove"
-                                        onClick={() => onRemove(_id)}
+                                        onClick={() => onRemove(item._id)}
                                         loading={isLoading}
                                     >
                                         <DeleteOutlined />

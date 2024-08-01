@@ -6,5 +6,8 @@
     "openVerificationRequestClaimLabel": "A claim created was related to this verification request",
     "openVerificationRequestClaimButton": "Open claim",
     "agroupVerificationRequest": "Related verification requests",
-    "openVerificationRequest": "Open"
+    "verificationRequestTagPublicationDate": "Seen On:",
+    "verificationRequestTagDate": "Reported On:",
+    "verificationRequestTagHeardFrom": "Received On:",
+    "verificationRequestTagSource": "Source:"
 }

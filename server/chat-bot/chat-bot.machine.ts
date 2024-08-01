@@ -5,25 +5,27 @@ import { VerificationRequestService } from "../verification-request/verification
 export interface ChatBotContext {
     verificationRequest: string;
     responseMessage: string;
-    link?: string;
+    source?: string;
     publicationDate?: string;
-    sources?: string;
+    heardFrom?: string;
     email?: string;
 }
 
 export const createChatBotMachine = (
-    verificationRequestService: VerificationRequestService
+    verificationRequestService: VerificationRequestService,
+    value?,
+    context?
 ) => {
     const chatBotMachine = createMachine<ChatBotContext>(
         {
             id: "chatBot",
-            initial: "greeting",
-            context: {
+            initial: value || "greeting",
+            context: context || {
                 verificationRequest: "",
                 responseMessage: "",
-                link: "",
+                source: "",
                 publicationDate: "",
-                sources: "",
+                heardFrom: "",
                 email: "",
             },
             states: {
@@ -74,10 +76,10 @@ export const createChatBotMachine = (
                 askingForVerificationRequest: {
                     on: {
                         RECEIVE_REPORT: {
-                            target: "askingForLink",
+                            target: "askingForSource",
                             actions: [
                                 "saveVerificationRequest",
-                                "askForLink",
+                                "askForSource",
                                 "setResponseMessage",
                             ],
                         },
@@ -90,12 +92,12 @@ export const createChatBotMachine = (
                         },
                     },
                 },
-                askingForLink: {
+                askingForSource: {
                     on: {
-                        RECEIVE_LINK: {
+                        RECEIVE_SOURCE: {
                             target: "askingForPublicationDate",
                             actions: [
-                                "saveLink",
+                                "saveSource",
                                 "askForPublicationDate",
                                 "setResponseMessage",
                             ],
@@ -103,15 +105,15 @@ export const createChatBotMachine = (
                         RECEIVE_NO: {
                             target: "askingForPublicationDate",
                             actions: [
-                                "saveEmptyLink",
+                                "saveEmptySource",
                                 "askForPublicationDate",
                                 "setResponseMessage",
                             ],
                         },
                         NON_TEXT_MESSAGE: {
-                            target: "askingForLink",
+                            target: "askingForSource",
                             actions: [
-                                "noTextMessageAskForLink",
+                                "sendNoTextMessageAskForSource",
                                 "setResponseMessage",
                             ],
                         },
@@ -120,36 +122,36 @@ export const createChatBotMachine = (
                 askingForPublicationDate: {
                     on: {
                         RECEIVE_PUBLICATION_DATE: {
-                            target: "askingForSource",
+                            target: "askingForHeardFrom",
                             actions: [
                                 "savePublicationDate",
-                                "askForSource",
+                                "askForHeardFrom",
                                 "setResponseMessage",
                             ],
                         },
                         RECEIVE_NO: {
-                            target: "askingForSource",
+                            target: "askingForHeardFrom",
                             actions: [
                                 "saveEmptyPublicationDate",
-                                "askForSource",
+                                "askForHeardFrom",
                                 "setResponseMessage",
                             ],
                         },
                         NON_TEXT_MESSAGE: {
                             target: "askingForPublicationDate",
                             actions: [
-                                "noTextMessageAskForPublicationDate",
+                                "sendNoTextMessageAskForPublicationDate",
                                 "setResponseMessage",
                             ],
                         },
                     },
                 },
-                askingForSource: {
+                askingForHeardFrom: {
                     on: {
-                        RECEIVE_SOURCE: {
+                        RECEIVE_HEARD_FROM: {
                             target: "askingForEmail",
                             actions: [
-                                "saveSource",
+                                "saveHeardFrom",
                                 "askForEmail",
                                 "setResponseMessage",
                             ],
@@ -157,15 +159,15 @@ export const createChatBotMachine = (
                         RECEIVE_NO: {
                             target: "askingForEmail",
                             actions: [
-                                "saveEmptySource",
+                                "saveEmptyHeardFrom",
                                 "askForEmail",
                                 "setResponseMessage",
                             ],
                         },
                         NON_TEXT_MESSAGE: {
-                            target: "askingForSource",
+                            target: "askingForHeardFrom",
                             actions: [
-                                "noTextMessageAskForSource",
+                                "sendNoTextMessageAskForHeardFrom",
                                 "setResponseMessage",
                             ],
                         },
@@ -194,7 +196,7 @@ export const createChatBotMachine = (
                         NON_TEXT_MESSAGE: {
                             target: "askingForEmail",
                             actions: [
-                                "noTextMessageAskForEmail",
+                                "sendNoTextMessageAskForEmail",
                                 "setResponseMessage",
                             ],
                         },
@@ -245,11 +247,11 @@ export const createChatBotMachine = (
                 saveVerificationRequestToDB: (context) => {
                     const verificationRequestBody = {
                         content: context.verificationRequest,
-                        link: context.link || "",
+                        source: context.source || "",
                         publicationDate: context.publicationDate || "",
                         email: context.email || "",
                         date: new Date(),
-                        sources: [context.sources || ""],
+                        heardFrom: context.heardFrom || "",
                         data_hash: "",
                     };
 
@@ -259,5 +261,5 @@ export const createChatBotMachine = (
         }
     );
 
-    return interpret(chatBotMachine);
+    return interpret(chatBotMachine).start();
 };
