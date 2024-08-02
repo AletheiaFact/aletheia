@@ -11,7 +11,7 @@ import { ChatBotStateService } from "../chat-bot-state/chat-bot-state.service";
 const diacriticsRegex = /[\u0300-\u036f]/g;
 const MESSAGE_MAP = {
     sim: "RECEIVE_YES",
-    nao: "RECEIVE_NO",
+    nao: "RECEIVE_PAUSE_MACHINE",
 };
 
 interface ChatBotContext {
@@ -46,7 +46,6 @@ export class ChatbotService {
                 },
                 id
             );
-            console.log(chatbotState, "chatbotStatechatbotStatechatbotState");
         } else {
             const rehydratedMachine = createChatBotMachine(
                 this.verificationService,
@@ -93,6 +92,12 @@ export class ChatbotService {
         this.handleUserMessage(userMessage, messageType, chatBotMachineService);
 
         const snapshot = chatBotMachineService.getSnapshot();
+        if (
+            chatbotState.machine.value === "pausedMachine" &&
+            snapshot.value === "pausedMachine"
+        ) {
+            return;
+        }
         chatbotState.machine.value = snapshot.value;
         chatbotState.machine.context = snapshot.context;
 
@@ -121,13 +126,14 @@ export class ChatbotService {
         messageType,
         chatBotMachineService
     ) {
-        if (messageType !== "text") {
+        const currentState = chatBotMachineService.getSnapshot().value;
+
+        if (messageType !== "text" && currentState !== "pausedMachine") {
             chatBotMachineService.send("NON_TEXT_MESSAGE");
             return;
         }
 
         const parsedMessage = this.normalizeAndLowercase(message);
-        const currentState = chatBotMachineService.getSnapshot().value;
 
         switch (currentState) {
             case "greeting":
@@ -138,6 +144,11 @@ export class ChatbotService {
                     parsedMessage,
                     chatBotMachineService
                 );
+                break;
+            case "pausedMachine":
+                if (parsedMessage === "denuncia") {
+                    chatBotMachineService.send("RETURN_TO_CHAT");
+                }
                 break;
             case "askingForVerificationRequest":
                 chatBotMachineService.send({
@@ -153,12 +164,6 @@ export class ChatbotService {
                     parsedMessage,
                     currentState,
                     message,
-                    chatBotMachineService
-                );
-                break;
-            case "sendingNoMessage":
-                this.handleSendingNoMessage(
-                    parsedMessage,
                     chatBotMachineService
                 );
                 break;
@@ -193,18 +198,15 @@ export class ChatbotService {
         parsedMessage: string,
         chatBotMachineService
     ): void {
-        chatBotMachineService.send(
-            parsedMessage === "sim" ? "RECEIVE_YES" : "ANY_TEXT_MESSAGE"
-        );
-    }
+        let event = "ANY_TEXT_MESSAGE";
 
-    private handleSendingNoMessage(
-        parsedMessage: string,
-        chatBotMachineService
-    ): void {
-        chatBotMachineService.send(
-            parsedMessage === "denuncia" ? "ASK_TO_REPORT" : "ANY_TEXT_MESSAGE"
-        );
+        if (parsedMessage === "sim") {
+            event = "RECEIVE_YES";
+        } else if (parsedMessage === "conversa") {
+            event = "RECEIVE_PAUSE_MACHINE";
+        }
+
+        chatBotMachineService.send(event);
     }
 
     private handleOptionalInfoState(

@@ -53,9 +53,12 @@ export const createChatBotMachine = (
                                 "setResponseMessage",
                             ],
                         },
-                        RECEIVE_NO: {
-                            target: "sendingNoMessage",
-                            actions: ["sendNoMessage", "setResponseMessage"],
+                        RECEIVE_PAUSE_MACHINE: {
+                            target: "pausedMachine",
+                            actions: [
+                                "sendPausedMachineMessage",
+                                "setResponseMessage",
+                            ],
                         },
                         NOT_UNDERSTOOD: {
                             target: "askingIfVerificationRequest",
@@ -68,6 +71,17 @@ export const createChatBotMachine = (
                             target: "askingIfVerificationRequest",
                             actions: [
                                 "sendNoTextMessageAskIfForVerificationRequest",
+                                "setResponseMessage",
+                            ],
+                        },
+                    },
+                },
+                pausedMachine: {
+                    on: {
+                        RETURN_TO_CHAT: {
+                            target: "askingForVerificationRequest",
+                            actions: [
+                                "askForVerificationRequest",
                                 "setResponseMessage",
                             ],
                         },
@@ -211,31 +225,16 @@ export const createChatBotMachine = (
                                 "setResponseMessage",
                             ],
                         },
+                        RECEIVE_PAUSE_MACHINE: {
+                            target: "pausedMachine",
+                            actions: [
+                                "sendPausedMachineMessage",
+                                "setResponseMessage",
+                            ],
+                        },
                         ANY_TEXT_MESSAGE: {
                             target: "askingIfVerificationRequest",
                             actions: ["sendGreeting", "setResponseMessage"],
-                        },
-                    },
-                },
-                sendingNoMessage: {
-                    on: {
-                        ASK_TO_REPORT: {
-                            target: "askingForVerificationRequest",
-                            actions: [
-                                "askForVerificationRequest",
-                                "setResponseMessage",
-                            ],
-                        },
-                        ANY_TEXT_MESSAGE: {
-                            target: "sendingNoMessage",
-                            actions: ["sendNoMessage", "setResponseMessage"],
-                        },
-                        NON_TEXT_MESSAGE: {
-                            target: "sendingNoMessage",
-                            actions: [
-                                "sendNoTextMessageNoMessage",
-                                "setResponseMessage",
-                            ],
                         },
                     },
                 },

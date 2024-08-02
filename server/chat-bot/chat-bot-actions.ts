@@ -23,13 +23,13 @@ interface EmailEvent extends EventObject {
 
 const MESSAGES = {
     greeting:
-        "Olá! Sou o assistente virtual da AletheiaFact.org, estou aqui para ajudá-lo(a) a combater desinformações 🙂 Você gostaria de fazer uma denúncia agora?\n\nResponda SIM para continuar ou NÃO se não deseja denunciar.",
+        "Olá! Sou o assistente virtual da AletheiaFact.org, estou aqui para ajudá-lo(a) a combater desinformações 🙂 Você gostaria de fazer uma denúncia agora?\n\nResponda SIM para continuar ou NÃO se deseja falar com uma pessoa real.",
     noTextMessageAskIfForVerificationRequest:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto.\n\nVocê gostaria de fazer uma denúncia agora? Responda SIM para continuar ou NÃO se não deseja.",
     noTextMessageGreeting:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto.\n\nOlá! Sou o assistente virtual da AletheiaFact.org, estou aqui para ajudá-lo(a) a combater desinformações 🙂 Você gostaria de fazer uma denúncia agora?\n\nResponda SIM para continuar ou NÃO se não deseja denunciar.",
-    noMessage:
-        "Entendi. Nosso trabalho é verificar informações falsas.\n\nSe quiser saber mais sobre o que fazemos, visite: https://aletheiafact.org. Se mudar de ideia e desejar fazer uma denúncia, basta digitar DENÚNCIA a qualquer momento.",
+    pausedMachineMessage:
+        "Entendi. No momento, o bot não irá responder mais. Se mudar de ideia e desejar fazer uma denúncia com a assistência do chatbot, basta digitar DENÚNCIA a qualquer momento.",
     noTextMessageNoMessage:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto.\n\nNosso trabalho é verificar informações falsas.\n\nSe quiser saber mais sobre o que fazemos, visite: https://aletheiafact.org. Se mudar de ideia e desejar fazer uma denúncia, basta digitar DENÚNCIA a qualquer momento.",
     notUnderstood:
@@ -71,8 +71,8 @@ export const sendNoTextMessageGreeting = assign<ChatBotContext>({
     responseMessage: () => MESSAGES.noTextMessageGreeting,
 });
 
-export const sendNoMessage = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.noMessage,
+export const sendPausedMachineMessage = assign<ChatBotContext>({
+    responseMessage: () => MESSAGES.pausedMachineMessage,
 });
 
 export const sendNoTextMessageNoMessage = assign<ChatBotContext>({
