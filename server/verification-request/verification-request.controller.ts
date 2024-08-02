@@ -136,8 +136,9 @@ export class VerificationRequestController {
                 dataHash
             );
 
-        const recommendationFilter =
-            verificationRequest.group.content.map((v: any) => v._id) || [];
+        const recommendationFilter = verificationRequest.group?.content?.map(
+            (v: any) => v._id
+        ) || [verificationRequest?._id];
 
         const recommendations =
             await this.verificationRequestService.findSimilarRequests(

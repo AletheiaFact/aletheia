@@ -11,9 +11,11 @@ const VerificationRequestResultList = ({ results }) => {
     const { group, addRecommendation } = useContext(VerificationRequestContext);
 
     const checkIfIsInGroup = (verificationRequestId): boolean => {
-        for (const verificationRequest of group.content) {
-            if (verificationRequest._id === verificationRequestId) {
-                return true;
+        if (group?.content) {
+            for (const verificationRequest of group?.content) {
+                if (verificationRequest?._id === verificationRequestId) {
+                    return true;
+                }
             }
         }
 
