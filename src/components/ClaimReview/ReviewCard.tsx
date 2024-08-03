@@ -4,7 +4,7 @@ import CardBase from "../CardBase";
 import { Col } from "antd";
 import { useTranslation } from "next-i18next";
 import reviewColors from "../../constants/reviewColors";
-import TagsList from "./TagsList";
+import TagsList from "../topics/TagsList";
 import AletheiaButton, { ButtonType } from "../Button";
 import { ContentModelEnum } from "../../types/enums";
 import { generateSentenceContentPath } from "../../utils/GetSentenceContentHref";
