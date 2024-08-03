@@ -40,7 +40,7 @@ const TopicForm = ({
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
     const rules = {
-        required: true && t("common:requiredFieldError"),
+        required: t("common:requiredFieldError"),
         validate: { duplicated: (v) => validateDuplication(v) },
     };
 

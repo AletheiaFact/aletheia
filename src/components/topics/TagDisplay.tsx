@@ -1,4 +1,4 @@
-import { Button, Col } from "antd";
+import { Button } from "antd";
 import React from "react";
 import colors from "../../styles/colors";
 import { EditFilled, PlusOutlined } from "@ant-design/icons";
