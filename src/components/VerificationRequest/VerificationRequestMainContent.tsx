@@ -22,7 +22,7 @@ const VerificationRequestMainContent = ({
             <Typography.Title level={3}>
                 {t("verificationRequest:verificationRequestTitle")}
             </Typography.Title>
-            <VerificationRequestCard content={content} />
+            <VerificationRequestCard content={content} t={t} />
             {!vw.xs &&
                 role !== Roles.Regular &&
                 verificationRequestGroup?.length > 0 && (

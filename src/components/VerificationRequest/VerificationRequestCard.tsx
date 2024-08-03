@@ -70,7 +70,10 @@ const VerificationRequestCard = ({
         const tags = [];
         if (content.publicationDate) {
             tags.push(
-                <CustomTag color={colors.blueSecondary} key="publicationDate">
+                <CustomTag
+                    color={colors.blueSecondary}
+                    key={`${content._id}|publicationDate`}
+                >
                     <strong>
                         {t(
                             "verificationRequest:verificationRequestTagPublicationDate"
@@ -82,7 +85,10 @@ const VerificationRequestCard = ({
         }
         if (content.date) {
             tags.push(
-                <CustomTag color={colors.graySecondary} key="date">
+                <CustomTag
+                    color={colors.graySecondary}
+                    key={`${content._id}|date`}
+                >
                     <strong>
                         {t("verificationRequest:verificationRequestTagDate")}
                     </strong>{" "}
@@ -92,7 +98,10 @@ const VerificationRequestCard = ({
         }
         if (content.heardFrom) {
             tags.push(
-                <CustomTag color={colors.blueTertiary} key="heardFrom">
+                <CustomTag
+                    color={colors.blueTertiary}
+                    key={`${content._id}|heardFrom`}
+                >
                     <strong>
                         {t(
                             "verificationRequest:verificationRequestTagHeardFrom"
@@ -104,7 +113,10 @@ const VerificationRequestCard = ({
         }
         if (content.source) {
             tags.push(
-                <CustomTag color={colors.lightBlueMain} key="source">
+                <CustomTag
+                    color={colors.lightBlueMain}
+                    key={`${content._id}|source`}
+                >
                     <strong>
                         {t("verificationRequest:verificationRequestTagSource")}
                     </strong>

@@ -32,8 +32,9 @@ const VerificationRequestResultList = ({ results }) => {
                         key={verificationRequest._id}
                     >
                         <VerificationRequestCard
-                            content={verificationRequest.content}
+                            content={verificationRequest}
                             expandable={false}
+                            t={t}
                             style={{ minHeight: "100%" }}
                             actions={[
                                 <AletheiaButton
