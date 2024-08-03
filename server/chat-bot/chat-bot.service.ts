@@ -37,26 +37,35 @@ export class ChatbotService {
         let chatbotState = await this.chatBotStateService.getById(id);
 
         if (!chatbotState) {
-            const newMachine = createChatBotMachine(this.verificationService);
-            const snapshot = newMachine.getSnapshot();
-            chatbotState = await this.chatBotStateService.create(
-                {
-                    value: snapshot.value,
-                    context: snapshot.context as ChatBotContext,
-                },
-                id
-            );
+            chatbotState = await this.createNewChatBotState(id);
         } else {
-            const rehydratedMachine = createChatBotMachine(
-                this.verificationService,
-                chatbotState.machine.value,
-                chatbotState.machine.context
-            );
-            const snapshot = rehydratedMachine.getSnapshot();
-            chatbotState.machine.value = snapshot.value;
-            chatbotState.machine.context = snapshot.context as ChatBotContext;
+            chatbotState = this.rehydrateChatBotState(chatbotState);
         }
 
+        return chatbotState;
+    }
+
+    private async createNewChatBotState(id: string) {
+        const newMachine = createChatBotMachine(this.verificationService);
+        const snapshot = newMachine.getSnapshot();
+        return await this.chatBotStateService.create(
+            {
+                value: snapshot.value,
+                context: snapshot.context as ChatBotContext,
+            },
+            id
+        );
+    }
+
+    private rehydrateChatBotState(chatbotState) {
+        const rehydratedMachine = createChatBotMachine(
+            this.verificationService,
+            chatbotState.machine.value,
+            chatbotState.machine.context
+        );
+        const snapshot = rehydratedMachine.getSnapshot();
+        chatbotState.machine.value = snapshot.value;
+        chatbotState.machine.context = snapshot.context as ChatBotContext;
         return chatbotState;
     }
 
@@ -92,10 +101,7 @@ export class ChatbotService {
         this.handleUserMessage(userMessage, messageType, chatBotMachineService);
 
         const snapshot = chatBotMachineService.getSnapshot();
-        if (
-            chatbotState.machine.value === "pausedMachine" &&
-            snapshot.value === "pausedMachine"
-        ) {
+        if (this.shouldPauseMachine(chatbotState, snapshot)) {
             return;
         }
         chatbotState.machine.value = snapshot.value;
@@ -105,12 +111,31 @@ export class ChatbotService {
 
         const responseMessage = snapshot.context.responseMessage;
 
-        const body = {
+        const body = this.createResponseBody(to, from, responseMessage);
+
+        return this.sendHttpPost(api_url, api_token, body);
+    }
+
+    private shouldPauseMachine(chatbotState, snapshot) {
+        return (
+            chatbotState.machine.value === "pausedMachine" &&
+            snapshot.value === "pausedMachine"
+        );
+    }
+
+    private createResponseBody(to, from, responseMessage) {
+        return {
             from: to,
             to: from,
             contents: [{ type: "text", text: responseMessage }],
         };
+    }
 
+    private sendHttpPost(
+        api_url,
+        api_token,
+        body
+    ): Observable<AxiosResponse<any>> {
         return this.httpService
             .post(api_url, body, {
                 headers: { "X-API-TOKEN": api_token },
@@ -128,7 +153,7 @@ export class ChatbotService {
     ) {
         const currentState = chatBotMachineService.getSnapshot().value;
 
-        if (messageType !== "text" && currentState !== "pausedMachine") {
+        if (this.isNonTextMessage(messageType, currentState)) {
             chatBotMachineService.send("NON_TEXT_MESSAGE");
             return;
         }
@@ -146,9 +171,10 @@ export class ChatbotService {
                 );
                 break;
             case "pausedMachine":
-                if (parsedMessage === "denuncia") {
-                    chatBotMachineService.send("RETURN_TO_CHAT");
-                }
+                this.handlePausedMachineState(
+                    parsedMessage,
+                    chatBotMachineService
+                );
                 break;
             case "askingForVerificationRequest":
                 chatBotMachineService.send({
@@ -178,6 +204,10 @@ export class ChatbotService {
         }
     }
 
+    private isNonTextMessage(messageType, currentState) {
+        return messageType !== "text" && currentState !== "pausedMachine";
+    }
+
     private normalizeAndLowercase(message: string): string {
         return message
             .normalize("NFD")
@@ -192,6 +222,15 @@ export class ChatbotService {
         chatBotMachineService.send(
             MESSAGE_MAP[parsedMessage] || "NOT_UNDERSTOOD"
         );
+    }
+
+    private handlePausedMachineState(
+        parsedMessage: string,
+        chatBotMachineService
+    ): void {
+        if (parsedMessage === "denuncia") {
+            chatBotMachineService.send("RETURN_TO_CHAT");
+        }
     }
 
     private handleMachineFinishEventSend(
