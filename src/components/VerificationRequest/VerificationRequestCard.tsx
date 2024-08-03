@@ -64,6 +64,7 @@ const VerificationRequestCard = ({
     actions = [],
     expandable = true,
     t,
+    style = {},
 }) => {
     const getTags = (content) => {
         const tags = [];
@@ -117,7 +118,7 @@ const VerificationRequestCard = ({
     };
 
     return (
-        <CardBase style={{ padding: 32, overflow: "hidden" }}>
+        <CardBase style={{ padding: 32, ...style }}>
             <ContentWrapper>
                 <Typography.Paragraph
                     style={{
@@ -125,22 +126,22 @@ const VerificationRequestCard = ({
                         color: colors.blackPrimary,
                         margin: 0,
                         lineHeight: 1.6,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        wordBreak: "break-word",
                     }}
                     ellipsis={{ rows: 4, expandable }}
                 >
-                    {content.content}
+                    {content}
                 </Typography.Paragraph>
                 <TagContainer>{getTags(content)}</TagContainer>
             </ContentWrapper>
 
             <Col
                 style={{
-                    marginTop: 32,
+                    marginTop: 16,
                     display: "flex",
-                    justifyContent: "flex-end",
+                    justifyContent:
+                        actions.length > 1 ? "space-around" : "flex-end",
+                    alignItems: "center",
+                    flexWrap: "wrap",
                     width: "100%",
                 }}
             >

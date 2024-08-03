@@ -2,7 +2,10 @@ import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
 import { Row } from "antd";
 
-const VerificationRequestCardDisplayStyle = styled(Row)`
+const VerificationRequestDisplayStyle = styled(Row)`
+    display: flex;
+    gap: 16px;
+
     .cta-create-claim {
         display: flex;
         gap: 32px;
@@ -18,4 +21,4 @@ const VerificationRequestCardDisplayStyle = styled(Row)`
     }
 `;
 
-export default VerificationRequestCardDisplayStyle;
+export default VerificationRequestDisplayStyle;

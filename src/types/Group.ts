@@ -1,6 +1,6 @@
-import { VerificationnRequest } from "./VerificationRequest";
+import { VerificationRequest } from "./VerificationRequest";
 
 export type Group = {
     _id: string;
-    content: VerificationnRequest[];
+    content: VerificationRequest[];
 };
