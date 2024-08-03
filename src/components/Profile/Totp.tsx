@@ -210,7 +210,9 @@ export const Totp = ({ flow, setFlow }) => {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            paddingBottom: 0,
+                            padding: "8px 15px",
+                            height: "max-content",
+                            whiteSpace: "normal",
                         }}
                         type={ButtonType.blue}
                     >
@@ -220,6 +222,7 @@ export const Totp = ({ flow, setFlow }) => {
                                 fontSize: 14,
                                 color: colors.white,
                                 fontWeight: 400,
+                                margin: 0,
                             }}
                         >
                             {t("profile:totpUnLinkSubmit")}
