@@ -86,6 +86,18 @@ export class VerificationRequestController {
     }
 
     @ApiTags("verification-request")
+    @Put("api/verification-request/:data_hash/topics")
+    async updateVerificationRequestWithTopics(
+        @Param("data_hash") data_hash: string,
+        @Body() topics
+    ) {
+        return this.verificationRequestService.updateVerificationRequestWithTopics(
+            topics,
+            data_hash
+        );
+    }
+
+    @ApiTags("verification-request")
     @Put("api/verification-request/:verificationRequestId/group")
     async removeVerificationRequestFromGroup(
         @Param("verificationRequestId") verificationRequestId: string,

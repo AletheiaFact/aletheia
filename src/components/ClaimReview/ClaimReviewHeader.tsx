@@ -40,6 +40,9 @@ const ClaimReviewHeader = ({
         publishedReview?.review;
     const isPublishedOrCanSeeHidden =
         isPublished && (!isHidden || userIsNotRegular);
+    const showTopicInput =
+        reviewTaskType === ReviewTaskTypeEnum.Claim ||
+        reviewTaskType === ReviewTaskTypeEnum.VerificationRequest;
 
     return (
         <Row
@@ -73,11 +76,12 @@ const ClaimReviewHeader = ({
                                 hideDescription?.[TargetModel.Claim]
                             }
                         />
-                        {reviewTaskType === ReviewTaskTypeEnum.Claim && (
+                        {showTopicInput && (
                             <TopicInput
                                 contentModel={target.contentModel}
                                 data_hash={content.data_hash}
-                                topics={content.topics}
+                                reviewTaskType={reviewTaskType}
+                                topics={content?.topics || []}
                             />
                         )}
                     </Col>

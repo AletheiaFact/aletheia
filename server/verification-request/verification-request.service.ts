@@ -109,12 +109,16 @@ export class VerificationRequestService {
      * @returns the verification request document
      */
     async findByDataHash(
-        data_hash: string
+        data_hash: string,
+        populate = true
     ): Promise<VerificationRequestDocument> {
-        return this.VerificationRequestModel.findOne(
-            { data_hash },
-            { embedding: 0 }
-        ).populate("group");
+        if (populate) {
+            return this.VerificationRequestModel.findOne({
+                data_hash,
+            }).populate("group");
+        }
+
+        return this.VerificationRequestModel.findOne({ data_hash });
     }
 
     /**
@@ -374,5 +378,18 @@ export class VerificationRequestService {
                 $limit: parseInt(pageSize),
             },
         ]);
+    }
+
+    async updateVerificationRequestWithTopics(topics, data_hash) {
+        const verificationRequest = await this.findByDataHash(data_hash, false);
+
+        const newVerificationRequest = {
+            ...verificationRequest.toObject(),
+            topics,
+        };
+        return this.VerificationRequestModel.updateOne(
+            { _id: verificationRequest._id },
+            newVerificationRequest
+        );
     }
 }
