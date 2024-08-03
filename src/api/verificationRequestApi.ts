@@ -1,17 +1,24 @@
 import axios from "axios";
-import { NameSpaceEnum } from "../types/Namespace";
+import { ActionTypes } from "../store/types";
+
+interface SearchOptions {
+    searchText?: string;
+    page?: number;
+    pageSize?: number;
+    order?: string;
+}
 
 const request = axios.create({
     withCredentials: true,
     baseURL: `/api/verification-request`,
 });
 
-const get = (options) => {
+const get = (options: SearchOptions, dispatch = null) => {
     const params = {
+        content: options.searchText,
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
         pageSize: options.pageSize ? options.pageSize : 10,
-        nameSpace: options?.nameSpace || NameSpaceEnum.Main,
     };
 
     return request
@@ -23,11 +30,22 @@ const get = (options) => {
                 totalVerificationRequests,
             } = response.data;
 
-            return {
-                data: verificationRequests,
-                total: totalVerificationRequests,
+            if (!dispatch) {
+                return {
+                    data: verificationRequests,
+                    total: totalVerificationRequests,
+                    totalPages,
+                };
+            }
+
+            dispatch({
+                type: ActionTypes.SEARCH_RESULTS,
+                results: verificationRequests,
+            });
+            dispatch({
+                type: ActionTypes.SET_TOTAL_PAGES,
                 totalPages,
-            };
+            });
         })
         .catch((err) => {
             console.log(err);

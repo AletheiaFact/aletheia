@@ -2,9 +2,17 @@
     "verificationRequestListHeader": "Denúncias",
     "verificationRequestTitle": "Denúncia",
     "manageVerificationRequests": "Gerenciar denúncias selecionadas",
+    "noVerificationRequestsMessage": "Nenhuma denúncia",
+    "manageVerificationRequestsGroup": "Gerenciar grupo de denúncias",
     "createClaimFromVerificationRequest": "Nenhuma afirmação foi criada com esta denúncia",
     "openVerificationRequestClaimLabel": "Uma afirmação criada foi relacionada com essa denúncia",
     "openVerificationRequestClaimButton": "Abrir afirmação",
     "agroupVerificationRequest": "Denúncias relacionadas",
-    "openVerificationRequest": "Abrir"
+    "openVerificationRequest": "Abrir",
+    "recommendationTitle": "Recomendações",
+    "addInGroupButton": "Adicionar no grupo",
+    "alreadyInGroupMessage": "Já adicionado ao grupo",
+    "searchResultsTitle": "Resultados",
+    "noResultsMessage": "Nenhum resultado",
+    "searchPlaceholder": "Busque denúncias"
 }

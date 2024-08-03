@@ -136,12 +136,24 @@ export class VerificationRequestController {
                 dataHash
             );
 
+        const recommendationFilter = verificationRequest.group?.content?.map(
+            (v: any) => v._id
+        ) || [verificationRequest?._id];
+
+        const recommendations =
+            await this.verificationRequestService.findSimilarRequests(
+                verificationRequest.content,
+                recommendationFilter,
+                5
+            );
+
         await this.viewService.getNextServer().render(
             req,
             res,
             "/verification-request-review-page",
             Object.assign(parsedUrl.query, {
                 reviewTask,
+                recommendations,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 hideDescriptions: {},
                 websocketUrl: this.configService.get<string>("websocketUrl"),

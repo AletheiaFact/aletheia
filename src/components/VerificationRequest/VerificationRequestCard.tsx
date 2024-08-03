@@ -7,9 +7,10 @@ const VerificationRequestCard = ({
     content,
     actions = [],
     expandable = true,
+    style = {},
 }) => {
     return (
-        <CardBase style={{ padding: 32 }}>
+        <CardBase style={{ padding: 32, ...style }}>
             <Typography.Paragraph
                 style={{
                     marginBottom: 0,
@@ -24,9 +25,12 @@ const VerificationRequestCard = ({
 
             <Col
                 style={{
-                    marginTop: 32,
+                    marginTop: 16,
                     display: "flex",
-                    justifyContent: "flex-end",
+                    justifyContent:
+                        actions.length > 1 ? "space-around" : "flex-end",
+                    alignItems: "center",
+                    flexWrap: "wrap",
                     width: "100%",
                 }}
             >

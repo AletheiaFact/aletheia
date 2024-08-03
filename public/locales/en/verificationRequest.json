@@ -2,9 +2,17 @@
     "verificationRequestListHeader": "Verification Requests",
     "verificationRequestTitle": "Verification Request",
     "manageVerificationRequests": "Manage selected verification requests",
+    "noVerificationRequestsMessage": "No verification requests",
+    "manageVerificationRequestsGroup": "Manage verification request's group",
     "createClaimFromVerificationRequest": "No claim was created with this verification request",
     "openVerificationRequestClaimLabel": "A claim created was related to this verification request",
     "openVerificationRequestClaimButton": "Open claim",
     "agroupVerificationRequest": "Related verification requests",
-    "openVerificationRequest": "Open"
+    "openVerificationRequest": "Open",
+    "recommendationTitle": "Recommedations",
+    "addInGroupButton": "Add in group",
+    "alreadyInGroupMessage": "Already in group",
+    "searchResultsTitle": "Results",
+    "noResultsMessage": "No results",
+    "searchPlaceholder": "Search verification requests"
 }

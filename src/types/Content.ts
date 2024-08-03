@@ -1,9 +1,9 @@
 export interface Content {
     _id?: string;
     topics?: any[];
-    type: string;
+    type?: string;
     data_hash: string;
-    props: any;
+    props?: any;
     content: string;
-    reviewTaskType: string;
+    reviewTaskType?: string;
 }

@@ -14,14 +14,6 @@ export const fetchVerificationRequestList = async (content) => {
 
 const verificationRequestForm: FormField[] = [
     createFormField({
-        fieldName: "group",
-        type: "inputSearch",
-        i18nKey: "group",
-        required: false,
-        extraProps: { dataLoader: fetchVerificationRequestList },
-    }),
-
-    createFormField({
         fieldName: "isSensitive",
         type: "textbox",
         required: false,
