@@ -4,9 +4,9 @@ import CheckIcon from "@mui/icons-material/Check";
 import CommentPopoverContent from "./CommentPopoverContent";
 import { Popover } from "antd";
 import Button, { ButtonType } from "../../Button";
-import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
+import ReviewTaskApi from "../../../api/reviewTaskApi";
 import CommentApi from "../../../api/comment";
-import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 import { useCommands } from "@remirror/react";
 import { currentUserRole } from "../../../atoms/currentUser";
 import { useAtom } from "jotai";
@@ -20,7 +20,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
-    const { data_hash, setComments } = useContext(CollaborativeEditorContext);
+    const { data_hash, setComments } = useContext(VisualEditorContext);
     const { removeAnnotations } = useCommands();
     const [role] = useAtom(currentUserRole);
     const { machineService } = useContext(ReviewTaskMachineContext);
@@ -54,7 +54,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
                     )
                 );
             } else {
-                await ClaimReviewTaskApi.deleteComment(data_hash, content._id);
+                await ReviewTaskApi.deleteComment(data_hash, content._id);
                 setComments((comments) =>
                     comments.filter((c) => c._id !== content?._id)
                 );

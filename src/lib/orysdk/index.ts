@@ -20,5 +20,4 @@ if (process.env.NEXT_PUBLIC_ENVIRONMENT === "production") {
 export const ory = {
     identity: new IdentityApi(oryConfig),
     frontend: new FrontendApi(oryConfig),
-    oauth2: new OAuth2Api(oryConfig),
 };

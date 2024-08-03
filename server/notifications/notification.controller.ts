@@ -11,21 +11,6 @@ export class NotificationController {
     ) {}
 
     @ApiTags("notifications")
-    @Post("api/emails")
-    sendEmail(
-        @Body()
-        body: {
-            subscriberId: string;
-            email: string;
-        }
-    ) {
-        return this.notificationService.sendEmail(
-            body.subscriberId,
-            body.email
-        );
-    }
-
-    @ApiTags("notifications")
     @Post("api/notification")
     sendNotification(@Body() body) {
         const { subscriberId, payload } = body;
@@ -43,14 +28,6 @@ export class NotificationController {
         @Body("subscriberId") subscriberId: string
     ) {
         return this.notificationService.addTopicSubscriber(key, subscriberId);
-    }
-
-    @Post("api/topic-subscription/:key/send")
-    sendTopicNotification(
-        @Param("key") key: string,
-        @Body("description") description: string
-    ) {
-        return this.notificationService.sendTopicNotification(key, description);
     }
 
     @Get("api/notification/token/:subscriberId")

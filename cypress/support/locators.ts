@@ -30,14 +30,20 @@ const locators = {
         INPUT_SOURCE: "[data-cy=testSource1]",
     },
 
+    source: {
+        INPUT_SOURCE: "[data-cy=testClaimReviewsource]",
+        BTN_SUBMIT_SOURCE: "[data-cy=testSaveButton]",
+    },
+
     floatButton: {
         FLOAT_BUTTON: "[data-cy=testFloatButton]",
         ADD_CLAIM: "[data-cy=testFloatButtonAddClaim]",
         ADD_PERSONALITY: "[data-cy=testFloatButtonAddPersonality]",
+        ADD_SOURCE: "[data-cy=testFloatButtonAddSources]",
     },
 
     claimReview: {
-        BTN_START_CLAIM_REVIEW: "[data-cy=testAddReviewButton]",
+        BTN_START_CLAIM_REVIEW: "[data-cy=testAddFactCheckReviewButton]",
         INPUT_USER: "[data-cy=testClaimReviewusersId]",
         BTN_ASSIGN_USER: "[data-cy=testClaimReviewASSIGN_USER]",
         INPUT_SUMMARY: "[data-cy=testClaimReviewsummary]",
@@ -58,6 +64,11 @@ const locators = {
         BTN_PUBLISH: "[data-cy=testClaimReviewPUBLISH]",
         BTN_SELECTED_REVIEW: "[data-cy=testClaimReviewSELECTED_REVIEW]",
         TEXT_REVIEWER_ERROR: "[data-cy=testReviewerError]",
+        ADD_EDITOR_SOURCES: "[data-cy=testAddEditorSources]",
+        ADD_EDITOR_SOURCES_DIALOG_INPUT:
+            "[data-cy=testClaimReviewSourcesInput]",
+        ADD_EDITOR_SOURCES_DIALOG_BUTTON:
+            "[data-cy=testClaimReviewSourcesButton]",
     },
 
     menu: {

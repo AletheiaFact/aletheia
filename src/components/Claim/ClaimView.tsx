@@ -1,10 +1,10 @@
 import { Affix, Col, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 
-import { ContentModelEnum, TargetModel } from "../../types/enums";
+import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
 import MetricsOverview from "../Metrics/MetricsOverview";
 import PersonalityCard from "../Personality/PersonalityCard";
-import SourcesList from "../Source/SourcesList";
+import ClaimSourceList from "../Source/ClaimSourceList";
 import ToggleSection from "../ToggleSection";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
@@ -14,26 +14,29 @@ import ClaimContentDisplay from "./ClaimContentDisplay";
 import SocialMediaShare from "../SocialMediaShare";
 import AdminToolBar from "../Toolbar/AdminToolBar";
 import claimApi from "../../api/claim";
+import { currentUserRole } from "../../atoms/currentUser";
+import { useAtom } from "jotai";
 
 const { Title } = Typography;
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
+    const [role] = useAtom(currentUserRole);
     const { title, stats, content: claimContent } = claim;
 
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     const sources = claim?.sources?.map((source) => source.href);
 
     const dispatchPersonalityAndClaim = () => {
-        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectTarget(claim));
         dispatch(actions.setSelectPersonality(personality));
     };
 
     const [showHighlights, setShowHighlights] = useState(true);
 
     useEffect(() => {
-        dispatch(actions.setSelectClaim(claim));
+        dispatch(actions.setSelectTarget(claim));
         dispatch(actions.setSelectPersonality(personality));
         if (isImage) {
             dispatch(actions.setSelectContent(claimContent));
@@ -42,13 +45,15 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
 
     return (
         <>
-            <AdminToolBar
-                content={claim}
-                deleteApiFunction={claimApi.deleteClaim}
-                changeHideStatusFunction={claimApi.updateClaimHiddenStatus}
-                target={TargetModel.Claim}
-                hideDescriptions={hideDescriptions}
-            />
+            {(role === Roles.Admin || role === Roles.SuperAdmin) && (
+                <AdminToolBar
+                    content={claim}
+                    deleteApiFunction={claimApi.deleteClaim}
+                    changeHideStatusFunction={claimApi.updateClaimHiddenStatus}
+                    target={TargetModel.Claim}
+                    hideDescriptions={hideDescriptions}
+                />
+            )}
 
             <Row justify="center">
                 <Col xs={22} sm={22} md={18}>
@@ -115,7 +120,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                     <Typography.Title level={4}>
                                         {t("claim:sourceSectionTitle")}
                                     </Typography.Title>
-                                    <SourcesList
+                                    <ClaimSourceList
                                         sources={sources}
                                         seeMoreHref={`${href}/sources`}
                                     />

@@ -16,17 +16,6 @@ const sendNotification = (subscriberId, payload) => {
         });
 };
 
-const sendEmail = (subscriberId, email, description) => {
-    return axios
-        .post("/api/emails", { subscriberId, email, description })
-        .then((response) => {
-            return response.data;
-        })
-        .catch((err) => {
-            throw err;
-        });
-};
-
 const getTokens = (subscriberId) => {
     return request
         .get(`/token/${subscriberId}`)
@@ -44,7 +33,6 @@ const getTokens = (subscriberId) => {
 };
 
 const NotificationsApi = {
-    sendEmail,
     sendNotification,
     getTokens,
 };

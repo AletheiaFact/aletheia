@@ -1,4 +1,4 @@
-FROM node:18.17.0-alpine AS package
+FROM node:18.19.1-alpine AS package
 
 ARG NEXT_PUBLIC_UMAMI_SITE_ID
 ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
@@ -33,14 +33,14 @@ COPY ./next-i18next.config.js /app/next-i18next.config.js
 WORKDIR /app
 
 RUN apk add --no-cache git python3 make g++
-RUN yarn install
+RUN yarn install --production
 RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
     NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT \
     NEXT_PUBLIC_ORY_SDK_URL=$NEXT_PUBLIC_ORY_SDK_URL \
     yarn build
 
-FROM node:18.17.0-alpine
+FROM node:18.19.1-alpine
 
 LABEL maintainer="Giovanni Rossini <giovannijrrossini@gmail.com>"
 

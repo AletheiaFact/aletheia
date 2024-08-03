@@ -1,10 +1,10 @@
-import Button, { ButtonType } from "../Button";
 import { Col, Row } from "antd";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     reviewingSelector,
     reviewDataSelector,
     reviewNotStartedSelector,
+    crossCheckingSelector,
 } from "../../machines/reviewTask/selectors";
 import {
     currentUserId,
@@ -13,55 +13,62 @@ import {
 } from "../../atoms/currentUser";
 
 import DynamicReviewTaskForm from "./form/DynamicReviewTaskForm";
-import { PlusOutlined } from "@ant-design/icons";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { Roles } from "../../types/enums";
 import colors from "../../styles/colors";
 import { useAtom } from "jotai";
 import { useSelector } from "@xstate/react";
-import { useTranslation } from "next-i18next";
-import AgentReviewModal from "../Modal/AgentReviewModal";
-import { useAppSelector } from "../../store/store";
-import AletheiaCaptcha from "../AletheiaCaptcha";
+import ReportModelButtons from "./ReportModelButtons";
+import LoginButton from "../LoginButton";
 
 const ClaimReviewForm = ({
-    claimId,
-    personalityId,
     dataHash,
     userIsReviewer,
-    sentenceContent,
+    componentStyle,
+    target,
+    personalityId = null,
 }) => {
-    const { t } = useTranslation();
-    const [role] = useAtom(currentUserRole);
     const [isLoggedIn] = useAtom(isUserLoggedIn);
+    const [role] = useAtom(currentUserRole);
     const [userId] = useAtom(currentUserId);
-    const { enableAgentReview } = useAppSelector((state) => ({
-        enableAgentReview: state?.enableAgentReview,
-    }));
-    const { machineService } = useContext(ReviewTaskMachineContext);
+    const { machineService, reportModel } = useContext(
+        ReviewTaskMachineContext
+    );
     const reviewData = useSelector(machineService, reviewDataSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isUnassigned = useSelector(machineService, reviewNotStartedSelector);
     const userIsAssignee = reviewData.usersId.includes(userId);
-    const [formCollapsed, setFormCollapsed] = useState(isUnassigned);
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [recaptchaString, setRecaptchaString] = useState<string>("");
-    const hasCaptcha: boolean = !!recaptchaString;
-    const recaptchaRef = useRef(null);
-    const userIsAdmin = role === Roles.Admin || Roles.SuperAdmin;
-
-    const showForm =
-        isUnassigned ||
-        userIsAdmin ||
-        (userIsAssignee && !isReviewing) ||
-        (isReviewing && userIsReviewer);
-
-    const toggleFormCollapse = () => {
-        setFormCollapsed(!formCollapsed);
-    };
+    const userIsCrossChecker = reviewData.crossCheckerId === userId;
+    const [formCollapsed, setFormCollapsed] = useState(
+        isUnassigned && !reportModel
+    );
+    const userIsAdmin = role === Roles.Admin || role === Roles.SuperAdmin;
+    const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {
-        setFormCollapsed(isUnassigned);
+        const shouldShowForm = () => {
+            if (isUnassigned) return true;
+            if (userIsAdmin) return true;
+            if (userIsAssignee && !isReviewing) return true;
+            if (isReviewing && userIsReviewer) return true;
+            if (isCrossChecking && userIsCrossChecker) return true;
+            return false;
+        };
+
+        setShowForm(shouldShowForm());
+    }, [
+        isUnassigned,
+        userIsAdmin,
+        userIsAssignee,
+        isReviewing,
+        userIsReviewer,
+        isCrossChecking,
+        userIsCrossChecker,
+    ]);
+
+    useEffect(() => {
+        setFormCollapsed(isUnassigned && !reportModel);
     }, [isUnassigned]);
 
     return (
@@ -71,90 +78,19 @@ const ClaimReviewForm = ({
                 padding: "20px 15px",
             }}
         >
-            <Col offset={3} span={18}>
+            <Col span={componentStyle.span} offset={componentStyle.offset}>
                 {formCollapsed && (
-                    <Row
-                        style={{
-                            width: "100%",
-                            padding: "0px 0px 15px 0px",
-                            justifyContent: "center",
-                        }}
-                    >
-                        {isLoggedIn && (
-                            <>
-                                <AletheiaCaptcha
-                                    onChange={setRecaptchaString}
-                                    ref={recaptchaRef}
-                                />
-                                <Col
-                                    style={{
-                                        display: "flex",
-                                        gap: 32,
-                                        flexWrap: "wrap",
-                                        flexDirection: "row",
-                                        justifyContent: "center",
-                                        marginTop: 16,
-                                    }}
-                                >
-                                    {enableAgentReview && (
-                                        <Button
-                                            type={ButtonType.blue}
-                                            icon={<PlusOutlined />}
-                                            data-cy={"testAddAgentReviewButton"}
-                                            disabled={!hasCaptcha}
-                                            onClick={() =>
-                                                setIsModalVisible(true)
-                                            }
-                                        >
-                                            {t(
-                                                "claimReviewForm:addAgentReview"
-                                            )}
-                                        </Button>
-                                    )}
-                                    <Button
-                                        type={ButtonType.blue}
-                                        onClick={toggleFormCollapse}
-                                        icon={<PlusOutlined />}
-                                        data-cy={"testAddReviewButton"}
-                                        disabled={!hasCaptcha}
-                                    >
-                                        {t("claimReviewForm:addReviewButton")}
-                                    </Button>
-                                </Col>
-                            </>
-                        )}
-                    </Row>
+                    <ReportModelButtons setFormCollapsed={setFormCollapsed} />
                 )}
-                <Col
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        padding: "0px 0px 15px 0px",
-                    }}
-                >
-                    {!isLoggedIn && (
-                        <Button href="/login">
-                            {t("claimReviewForm:loginButton")}
-                        </Button>
-                    )}
-                </Col>
+                {!isLoggedIn && <LoginButton />}
                 {!formCollapsed && showForm && (
                     <DynamicReviewTaskForm
                         data_hash={dataHash}
                         personality={personalityId}
-                        claim={claimId}
+                        target={target?._id}
                     />
                 )}
             </Col>
-
-            <AgentReviewModal
-                sentence={sentenceContent}
-                visible={isModalVisible}
-                handleCancel={() => setIsModalVisible(false)}
-                claimId={claimId}
-                personalityId={personalityId}
-                dataHash={dataHash}
-            />
         </Row>
     );
 };

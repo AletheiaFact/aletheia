@@ -1,33 +1,76 @@
 import { ObjectMark, RemirrorJSON } from "remirror";
-import { ReviewTaskMachineContextReviewData } from "../server/claim-review-task/dto/create-claim-review-task.dto";
+import { ReviewTaskMachineContextReviewData } from "../server/review-task/dto/create-review-task.dto";
+import { ReportModelEnum, ReviewTaskTypeEnum } from "../server/types/enums";
 
-const EditorSchemaArray = ["summary", "report", "verification", "questions"];
+type ClaimReviewSchemaType = {
+    summary?: string;
+    verification?: string;
+    report?: string;
+    sources?: any[];
+    questions?: string[];
+};
 
-const defaultDoc: RemirrorJSON = {
-    type: "doc",
-    content: [
-        {
-            type: "summary",
-            content: [{ type: "paragraph" }],
-        },
-        {
-            type: "questions",
-            content: [{ type: "paragraph" }],
-        },
-        {
-            type: "report",
-            content: [{ type: "paragraph" }],
-        },
-        {
-            type: "verification",
-            content: [{ type: "paragraph" }],
-        },
-    ],
+type ReviewSchemaType = ClaimReviewSchemaType;
+
+const getEditorSchemaArray = (reportModel = ReportModelEnum.FactChecking) => {
+    if (!reportModel) {
+        return [];
+    }
+
+    if (!Object.values(ReportModelEnum).includes(reportModel)) {
+        return [];
+    }
+
+    const editorFields = {
+        [ReportModelEnum.FactChecking]: [
+            "summary",
+            "report",
+            "verification",
+            "questions",
+            "paragraph",
+        ],
+        [ReportModelEnum.InformativeNews]: ["summary", "paragraph"],
+    };
+
+    return editorFields[reportModel];
+};
+
+const MarkupCleanerRegex = /{{[^|]+\|([^}]+)}}/;
+
+const createParagraphBlock = (
+    type: string
+): { type: string; content: [{ type: "paragraph" }] } => ({
+    type: type,
+    content: [{ type: "paragraph" }],
+});
+
+const getDefaultDoc = (reviewTaskType, reportModel: string): RemirrorJSON => {
+    const baseContent = [
+        createParagraphBlock("summary"),
+        createParagraphBlock("questions"),
+        createParagraphBlock("report"),
+        createParagraphBlock("verification"),
+    ];
+
+    if (
+        reportModel === ReportModelEnum.InformativeNews ||
+        reviewTaskType === ReviewTaskTypeEnum.Source
+    ) {
+        return {
+            type: "doc",
+            content: [createParagraphBlock("summary")],
+        };
+    }
+
+    return {
+        type: "doc",
+        content: baseContent,
+    };
 };
 
 export class EditorParser {
     hasSources(sources): boolean {
-        return sources.length > 0;
+        return sources?.length > 0;
     }
 
     getSourceByProperty(sources, property) {
@@ -54,8 +97,10 @@ export class EditorParser {
             return fragmentText;
         }
 
-        if (type === "source" && fragmentText === targetText) {
-            return `<a href='#${fragmentText}' rel='noopener noreferrer nofollow'>${fragmentText}<sup>${sup}</sup></a>`;
+        const parsedFragmentText = this.extractTextFromMarkUp(fragmentText);
+
+        if (type === "source" && parsedFragmentText === targetText) {
+            return `<a href='#${parsedFragmentText}' rel='noopener noreferrer nofollow'>${parsedFragmentText}<sup>${sup}</sup></a>`;
         }
         return fragmentText;
     }
@@ -105,7 +150,8 @@ export class EditorParser {
     }
 
     schema2html(
-        schema: ReviewTaskMachineContextReviewData
+        schema: ReviewTaskMachineContextReviewData,
+        reportModel = ReportModelEnum.FactChecking
     ): ReviewTaskMachineContextReviewData {
         const newSchema = {
             ...schema,
@@ -114,7 +160,7 @@ export class EditorParser {
         const hasSources = this.hasSources(newSchema?.sources);
 
         for (const key in newSchema) {
-            if (EditorSchemaArray.includes(key)) {
+            if (getEditorSchemaArray(reportModel).includes(key)) {
                 const content = newSchema[key];
                 if (!hasSources) {
                     newSchema[key] =
@@ -141,17 +187,26 @@ export class EditorParser {
         return newSchema;
     }
 
-    editor2schema(data: RemirrorJSON): ReviewTaskMachineContextReviewData {
-        const schema = {
-            summary: "",
-            verification: "",
-            report: "",
-            sources: [],
-            questions: [],
-        };
+    editor2schema({
+        content,
+        attrs = { reviewTaskType: ReviewTaskTypeEnum.Claim },
+    }: RemirrorJSON): ReviewTaskMachineContextReviewData & {
+        summary?: string;
+        source?: string;
+    } {
+        let schema: Partial<ReviewSchemaType>;
+        switch (attrs.reviewTaskType) {
+            case ReviewTaskTypeEnum.Claim:
+                schema = { summary: "", sources: [] };
+                break;
+            default:
+                schema = {};
+                break;
+        }
+
         const questions = [];
-        for (const cardContent of data?.content) {
-            if (EditorSchemaArray?.includes(cardContent?.type)) {
+        for (const cardContent of content) {
+            if (getEditorSchemaArray().includes(cardContent?.type)) {
                 if (cardContent?.type === "questions") {
                     for (const { content } of cardContent.content) {
                         if (content) {
@@ -164,13 +219,32 @@ export class EditorParser {
                 }
                 schema[cardContent.type] = this.getSchemaContentBasedOnType(
                     schema,
-                    cardContent
+                    cardContent.type !== "paragraph"
+                        ? cardContent
+                        : {
+                              type: cardContent.type,
+                              content: [
+                                  {
+                                      content: cardContent.content,
+                                      type: "paragraph",
+                                  },
+                              ],
+                          }
                 );
             }
         }
 
-        schema.questions = questions;
-        schema.sources = this.replaceSourceContentToTextRange(schema);
+        /**
+         * Needed to do this conditional because the form validation when the reportModel
+         * is equal to Informative news requires the questions field.
+         */
+        if ("report" in schema || "verification" in schema) {
+            schema.questions = questions;
+        }
+
+        if ("sources" in schema) {
+            schema.sources = this.replaceSourceContentToTextRange(schema);
+        }
 
         return schema;
     }
@@ -187,8 +261,15 @@ export class EditorParser {
                         schema.sources.push(
                             ...this.getSourcesFromEditorMarks(text, type, marks)
                         );
+                        const markId = marks.map(
+                            ({ attrs }: ObjectMark) => attrs.id
+                        );
+
+                        // Pushing the text into content with markup based on its source id
+                        sourceContent.push(`{{${markId}|${text}}}`);
+                    } else {
+                        sourceContent.push(text);
                     }
-                    sourceContent.push(text);
                 }
             }
         }
@@ -219,7 +300,8 @@ export class EditorParser {
                             field,
                             textRange: this.findTextRange(
                                 schema[field],
-                                textRange
+                                textRange,
+                                id
                             ),
                             targetText: textRange,
                             sup: index + 1,
@@ -232,13 +314,15 @@ export class EditorParser {
         return newSources.sort((a, b) => a.sup - b.sup);
     }
 
-    findTextRange(content, textTarget) {
+    findTextRange(content, textTarget, sourceId) {
         const contentArray = Array.isArray(content) ? content : [content];
+        const markUpText = `{{${sourceId}|${textTarget}}}`;
 
+        // Looks for the specific text with the right markup and returns the range of the marked-up text
         return contentArray.flatMap((c) => {
-            const start = c.indexOf(textTarget);
+            const start = c.indexOf(markUpText);
             if (start !== -1) {
-                const end = start + textTarget.length;
+                const end = start + markUpText.length;
                 return [start, end];
             }
             return [];
@@ -246,10 +330,12 @@ export class EditorParser {
     }
 
     async schema2editor(
-        schema: ReviewTaskMachineContextReviewData
+        schema: ReviewTaskMachineContextReviewData,
+        reportModel = ReportModelEnum.FactChecking,
+        reviewTaskType: string = ReviewTaskTypeEnum.Claim
     ): Promise<RemirrorJSON> {
         if (!schema) {
-            return defaultDoc;
+            return getDefaultDoc(reviewTaskType, reportModel);
         }
 
         const doc: RemirrorJSON = {
@@ -257,7 +343,7 @@ export class EditorParser {
             content: [],
         };
         for (const key of Object.keys(schema).filter((key) =>
-            EditorSchemaArray.includes(key)
+            getEditorSchemaArray(reportModel).includes(key)
         )) {
             const content = schema[key];
             if (!this.hasSources(schema?.sources)) {
@@ -305,6 +391,8 @@ export class EditorParser {
         const { textRange, targetText, id } = props;
         const fragmentText = content.slice(...textRange);
 
+        const parsedFragmentText = this.extractTextFromMarkUp(fragmentText);
+
         switch (type) {
             case "text":
                 if (fragmentText) {
@@ -312,9 +400,9 @@ export class EditorParser {
                 }
                 break;
             case "source":
-                if (fragmentText === targetText) {
+                if (parsedFragmentText === targetText) {
                     return this.getContentObjectWithMarks(
-                        fragmentText,
+                        parsedFragmentText,
                         href,
                         id
                     );
@@ -458,11 +546,22 @@ export class EditorParser {
     }): RemirrorJSON[] {
         const contentArray = Array.isArray(content) ? content : [content];
 
+        if (key === "paragraph") {
+            return contentArray.map((c) =>
+                this.getParagraphFragments(rawSourcesRanges, sourcesRanges, c)
+            );
+        }
+
         return contentArray.map((c) => ({
             type: key,
             content: [
                 this.getParagraphFragments(rawSourcesRanges, sourcesRanges, c),
             ],
         }));
+    }
+
+    extractTextFromMarkUp(fragmentText) {
+        const match = fragmentText.match(MarkupCleanerRegex);
+        return match ? match[1] : "";
     }
 }

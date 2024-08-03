@@ -3,6 +3,7 @@ import { Model } from "mongoose";
 import { SentenceDocument, Sentence } from "./schemas/sentence.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { ReportService } from "../../../report/report.service";
+import { UtilService } from "../../../util";
 
 interface FindAllOptionsFilters {
     searchText: string;
@@ -10,6 +11,7 @@ interface FindAllOptionsFilters {
     language?: string;
     skipedDocuments?: number;
     filter?: string | string[];
+    nameSpace?: string;
 }
 
 @Injectable()
@@ -17,7 +19,8 @@ export class SentenceService {
     constructor(
         @InjectModel(Sentence.name)
         private SentenceModel: Model<SentenceDocument>,
-        private reportService: ReportService
+        private reportService: ReportService,
+        private util: UtilService
     ) {}
 
     async create(sentenceBody) {
@@ -54,6 +57,7 @@ export class SentenceService {
         pageSize,
         skipedDocuments,
         filter,
+        nameSpace,
     }: FindAllOptionsFilters) {
         let pipeline: object[] = [];
 
@@ -65,7 +69,7 @@ export class SentenceService {
                         query: searchText,
                         path: "content",
                         fuzzy: {
-                            maxEdits: 2,
+                            maxEdits: 1, // Using maxEdits: 1 to allow minor typos or spelling errors in search queries.
                         },
                     },
                 },
@@ -96,26 +100,18 @@ export class SentenceService {
         pipeline.push(
             {
                 $lookup: {
-                    from: "paragraphs",
-                    localField: "_id",
-                    foreignField: "content",
-                    as: "claim",
-                },
-            },
-            {
-                $lookup: {
-                    from: "speeches",
-                    localField: "claim._id",
-                    foreignField: "content",
-                    as: "claim",
-                },
-            },
-            {
-                $lookup: {
                     from: "claimrevisions",
-                    localField: "claim._id",
-                    foreignField: "contentId",
+                    localField: "claimRevisionId",
+                    foreignField: "_id",
                     as: "claim",
+                },
+            },
+            {
+                $lookup: {
+                    from: "claims",
+                    localField: "claim.claimId",
+                    foreignField: "_id",
+                    as: "claimContent",
                 },
             },
             {
@@ -126,6 +122,7 @@ export class SentenceService {
                     as: "personality",
                 },
             },
+            this.util.getVisibilityMatch(nameSpace),
             {
                 $project: {
                     content: 1,
@@ -135,6 +132,7 @@ export class SentenceService {
                     "personality.name": 1,
                     "claim.slug": 1,
                     "claim.date": 1,
+                    "claim._id": 1,
                     "claim.contentModel": 1,
                 },
             },

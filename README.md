@@ -11,7 +11,7 @@
   git clone https://github.com/<your-username>/aletheia
   cd aletheia
   ```
-- Startup Mongo DB via Docker:
+- Startup Mongo DB via Docker and Ory Kratos:
   ``` sh
   docker-compose up -d
   ```
@@ -38,7 +38,39 @@
 yarn build
 ```
 ## Configuring Ory 
+### Local environment
+Execute the following command to start Ory Kratos using Docker Compose:
+```sh
+docker-compose up kratos kratos-migrate
+```
 
+You can also use the self-service-ui-node and maisluper images to have a better experience debugging Ory.
+
+#### 3. Verify the Ory Kratos Installation
+After starting the service, you can verify that it's running by accessing the admin panel:
+- Open your web browser and go to [http://localhost:4434/admin](http://localhost:4434/admin)
+- You should see a `404 page not found` message, which indicates that the server is running but the requested endpoint does not exist.
+
+#### 4. Configuration Setup
+- Configuring YAML Files
+Copy the Ory configurations from `config.example.yaml` to your `config.yaml` and `config.seed.yaml`:
+- - Replace the values for `url`, `admin_url`, `admin_endpoint`, and `schema_id` with the appropriate values based on your setup in `config.example.yaml`.
+
+- Configuring Environment Variables
+Copy the Ory configurations from `.env.example` to your `.env` file:
+- - Update the `NEXT_PUBLIC_ORY_SDK_URL` and `ORY_SDK_URL` variables as specified in the `.env.example` file.
+
+#### 5. Seed the Database
+Run the following command to seed the database with initial data:
+```sh
+yarn seed
+```
+
+#### 6. Verify User Creation
+Check if users were created successfully by accessing the identities page:
+- Open [http://localhost:4434/admin/identities](http://localhost:4434/admin/identities) in your browser.
+
+### Ory Cloud
 #### Taking What You Need:
 - Create an account and a project on https://console.ory.sh/login.
 - Copy the SDK Configuration url and save it.

@@ -19,9 +19,12 @@ services:
         limit: 1000
       authentication_type: ory
       ory:
-        url: {env(ORY_SDK_URL)}
-        access_token: {env(ORY_ACCESS_TOKEN)}
-        schema_id: {env(ALETHEIA_SCHEMA_ID)}
+        url: http://localhost:4433
+        admin_url: http://localhost:4434
+        admin_endpoint: admin
+        # url: {env(ORY_SDK_URL)}
+        # access_token: {env(ORY_ACCESS_TOKEN)}
+        # schema_id: {env(ALETHEIA_SCHEMA_ID)}
       feature_flag:
         url: {env(GITLAB_FEATURE_FLAG_URL)}
         appName: Staging
@@ -30,3 +33,8 @@ services:
         bucket: {env(AWS_SDK_BUCKET)}
         accessKeyId: {env(AWS_ACCESS_KEY_ID)}
         secretAccessKey: {env(AWS_SECRET_ACCESS_KEY)}
+      openai:
+        api_key: {env(OPENAI_API_KEY)}
+      zenvia:
+        api_url: {env(ZENVIA_API_URL)}
+        api_token: {env(ZENVIA_API_TOKEN)}

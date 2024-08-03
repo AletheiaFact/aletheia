@@ -19,8 +19,10 @@ export interface ClaimPageProps {
     sitekey: string;
     href: string;
     enableCollaborativeEditor: boolean;
-    enableAgentReview: boolean;
+    enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
+    enableAddEditorSourcesWithoutSelecting: boolean;
+    enableReviewersUpdateReport: boolean;
     hideDescriptions: object;
     websocketUrl: string;
     nameSpace: NameSpaceEnum;
@@ -32,8 +34,10 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
         claim,
         sitekey,
         enableCollaborativeEditor,
-        enableAgentReview,
+        enableCopilotChatBot,
         enableEditorAnnotations,
+        enableAddEditorSourcesWithoutSelecting,
+        enableReviewersUpdateReport,
     } = props;
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     const { t } = useTranslation();
@@ -42,18 +46,17 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
 
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
-    dispatch({
-        type: ActionTypes.SET_COLLABORATIVE_EDIT,
-        enableCollaborativeEdit: enableCollaborativeEditor,
-    });
-    dispatch({
-        type: ActionTypes.SET_AGENT_REVIEW,
-        enableAgentReview: enableAgentReview,
-    });
-    dispatch({
-        type: ActionTypes.SET_EDITOR_ANNOTATION,
-        enableEditorAnnotations: enableEditorAnnotations,
-    });
+    dispatch(actions.closeCopilotDrawer());
+    dispatch(
+        actions.setEditorEnvironment(
+            enableCollaborativeEditor,
+            enableAddEditorSourcesWithoutSelecting,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            false,
+            enableReviewersUpdateReport
+        )
+    );
 
     const jsonld = {
         "@context": "https://schema.org",
@@ -101,8 +104,11 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             href: req.protocol + "://" + req.get("host") + req.originalUrl,
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
-            enableAgentReview: query?.enableAgentReview,
+            enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
+            enableAddEditorSourcesWithoutSelecting:
+                query?.enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
             websocketUrl: query.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

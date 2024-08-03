@@ -37,6 +37,8 @@ export class SessionGuard implements CanActivate {
                 });
                 request.user = {
                     _id: session?.identity?.traits?.user_id,
+                    // Needed to enable feature flag for specific users
+                    id: session?.identity?.traits?.user_id,
                     role: session?.identity?.traits?.role,
                     status: session?.identity.state,
                 };

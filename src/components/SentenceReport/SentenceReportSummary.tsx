@@ -8,7 +8,11 @@ const SentenceReportSummary = styled(Row)`
     margin: 8px 0 16px 4px;
     padding: 16px 24px;
     border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background-color: ${colors.lightYellow};
+    width: fit-content;
 
     // small triangle pointing to the avatar on the side
     &.after:after {

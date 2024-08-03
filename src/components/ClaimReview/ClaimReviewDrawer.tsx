@@ -1,4 +1,7 @@
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import {
+    ArrowLeftOutlined,
+    ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import { Col, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
@@ -11,11 +14,12 @@ import AletheiaButton, { ButtonType } from "../Button";
 import ClaimReviewView from "./ClaimReviewView";
 import Loading from "../Loading";
 import LargeDrawer from "../LargeDrawer";
-import { ContentModelEnum } from "../../types/enums";
-import { CollaborativeEditorProvider } from "../Collaborative/CollaborativeEditorProvider";
-import { NameSpaceEnum } from "../../types/Namespace";
+import { VisualEditorProvider } from "../Collaborative/VisualEditorProvider";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import colors from "../../styles/colors";
+import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
+import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
 
 const ClaimReviewDrawer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -26,57 +30,48 @@ const ClaimReviewDrawer = () => {
         reviewDrawerCollapsed,
         vw,
         personality,
-        claim,
+        target,
         content,
         data_hash,
-    } = useAppSelector((state) => {
-        return {
-            reviewDrawerCollapsed:
-                state?.reviewDrawerCollapsed !== undefined
-                    ? state?.reviewDrawerCollapsed
-                    : true,
-            vw: state?.vw,
-            personality: state?.selectedPersonality,
-            claim: state?.selectedClaim,
-            content: state?.selectedContent,
-            data_hash: state?.selectedDataHash,
-        };
-    });
+        enableCopilotChatBot,
+    } = useAppSelector((state) => ({
+        reviewDrawerCollapsed:
+            state?.reviewDrawerCollapsed !== undefined
+                ? state?.reviewDrawerCollapsed
+                : true,
+        vw: state?.vw,
+        personality: state?.selectedPersonality,
+        target: state?.selectedTarget,
+        content: state?.selectedContent,
+        data_hash: state?.selectedDataHash,
+        enableCopilotChatBot: state?.enableCopilotChatBot,
+    }));
 
-    useEffect(() => setIsLoading(false), [claim, data_hash]);
-
-    const isContentImage = claim?.contentModel === ContentModelEnum.Image;
-
-    const getHref = () => {
-        const hrefContent = isContentImage
-            ? `/image/${data_hash}`
-            : `/sentence/${data_hash}`;
-        let href = nameSpace !== NameSpaceEnum.Main ? `/${nameSpace}` : "";
-        if (personality) {
-            href += `/personality/${personality.slug}/claim/${claim.slug}`;
-        } else {
-            href += `/claim/${claim?._id}`;
-        }
-
-        return `${href}${hrefContent}`;
-    };
+    useEffect(() => setIsLoading(false), [target, data_hash]);
 
     return (
         <LargeDrawer
             open={!reviewDrawerCollapsed}
             onClose={() => dispatch(actions.closeReviewDrawer())}
         >
-            {claim && data_hash && !isLoading ? (
-                <ReviewTaskMachineProvider data_hash={data_hash}>
-                    <CollaborativeEditorProvider data_hash={data_hash}>
+            {target && data_hash && !isLoading ? (
+                <ReviewTaskMachineProvider
+                    data_hash={data_hash}
+                    reviewTaskType={
+                        content?.reviewTaskType || ReviewTaskTypeEnum.Claim
+                    }
+                >
+                    <VisualEditorProvider data_hash={data_hash}>
                         <Row
                             justify="space-between"
                             style={{
-                                width: vw?.sm ? "100%" : "55%",
+                                width: "100%",
                                 padding: "1rem",
+                                display: "flex",
+                                flexDirection: "column",
                             }}
                         >
-                            <Col>
+                            <Col style={{ display: "flex", gap: 32 }}>
                                 <AletheiaButton
                                     icon={<ArrowLeftOutlined />}
                                     onClick={() =>
@@ -87,28 +82,61 @@ const ClaimReviewDrawer = () => {
                                 >
                                     {t("common:back_button")}
                                 </AletheiaButton>
+                                <Col span={vw?.xs ? 8 : 14}>
+                                    <AletheiaButton
+                                        href={generateReviewContentPath(
+                                            nameSpace,
+                                            personality,
+                                            target,
+                                            target?.contentModel,
+                                            data_hash,
+                                            content?.reviewTaskType
+                                        )}
+                                        onClick={() => setIsLoading(true)}
+                                        type={ButtonType.gray}
+                                        style={{
+                                            textDecoration: "underline",
+                                            fontWeight: "bold",
+                                        }}
+                                        data-cy="testSeeFullReview"
+                                    >
+                                        {t("reviewTask:seeFullPage")}
+                                    </AletheiaButton>
+                                </Col>
                             </Col>
-                            <Col>
-                                <AletheiaButton
-                                    href={getHref()}
-                                    onClick={() => setIsLoading(true)}
-                                    type={ButtonType.gray}
+                            {enableCopilotChatBot && (
+                                <Col
                                     style={{
-                                        textDecoration: "underline",
-                                        fontWeight: "bold",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        gap: 8,
+                                        alignItems: "center",
                                     }}
-                                    data-cy="testSeeFullReview"
                                 >
-                                    {t("claimReviewTask:seeFullPage")}
-                                </AletheiaButton>
-                            </Col>
+                                    <ExclamationCircleOutlined
+                                        style={{
+                                            fontSize: 16,
+                                            color: colors.blueSecondary,
+                                            paddingBottom: 4,
+                                        }}
+                                    />
+                                    <span
+                                        style={{
+                                            color: colors.blueSecondary,
+                                            lineHeight: "16px",
+                                        }}
+                                    >
+                                        {t("copilotChatBot:copilotWarning")}
+                                    </span>
+                                </Col>
+                            )}
                         </Row>
                         <ClaimReviewView
                             personality={personality}
-                            claim={claim}
+                            target={target}
                             content={content}
                         />
-                    </CollaborativeEditorProvider>
+                    </VisualEditorProvider>
                 </ReviewTaskMachineProvider>
             ) : (
                 <Loading />

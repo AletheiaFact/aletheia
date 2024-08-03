@@ -7,8 +7,9 @@ import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import ClaimCard from "./ClaimCard";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAtom } from "jotai";
+import ClaimListEmptyFallBack from "./ClaimListEmptyFallBack";
 
-const ClaimList = ({ personality }) => {
+const ClaimList = ({ personality, columns = 2 }) => {
     const { i18n, t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
 
@@ -22,11 +23,12 @@ const ClaimList = ({ personality }) => {
             grid={{
                 gutter: 20,
                 // sizes not declared will show 1 column (xs and sm)
-                md: 2,
-                lg: 2,
-                xl: 2,
-                xxl: 2,
+                md: columns,
+                lg: columns,
+                xl: columns,
+                xxl: columns,
             }}
+            emptyFallback={<ClaimListEmptyFallBack personality={personality} />}
             renderItem={(claim) =>
                 claim && (
                     <ClaimCard

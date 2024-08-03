@@ -18,9 +18,11 @@
     "cardHeader3": "Registered in",
     "typeSpeech": "an Oficial Speech",
     "typeDebate": "a debate",
+    "typeUnattributed": "General information",
     "errorWhileFetching": "Error while fetching Claim",
     "cardLinkToImage": "see full image",
     "cardLinkToDebate": "see full debate",
+    "claimListTitle": "Repository",
     "claimListHeader": "Claims",
     "imageAlreadyExists": "Image already exists in the platform",
 

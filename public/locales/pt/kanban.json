@@ -1,5 +1,10 @@
 {
     "claimBy": "Afirmação de",
     "assignedTo": "Checadores",
-    "myTasks": "Apenas minhas tarefas"
+    "myAssigned": "Apenas minhas tarefas",
+    "myCrossChecked": "Apenas meus cross-checkings",
+    "myReviewed": "Minhas revisões",
+    "tabClaimTitle": "Afirmações",
+    "tabSourceTitle": "Fontes",
+    "tabVerificationRequestTitle": "Denúncias"
 }

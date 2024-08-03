@@ -13,24 +13,10 @@ const EmptyKanbanCol = ({ title }) => {
                 flexDirection: "column",
             }}
         >
-            <span
-                style={{
-                    fontSize: 24,
-                }}
-            >
-                {title}
-            </span>
+            <span style={{ fontSize: 24 }}>{title}</span>
 
-            <span>
-                {t("list:totalItems", {
-                    total: 0,
-                })}
-            </span>
-            <Divider
-                style={{
-                    marginTop: 12,
-                }}
-            />
+            <span>{t("list:totalItems", { total: 0 })}</span>
+            <Divider style={{ marginTop: 12 }} />
         </div>
     );
 };

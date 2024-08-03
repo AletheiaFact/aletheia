@@ -1,30 +1,40 @@
 import { Col, Divider, Typography } from "antd";
 
-import React from "react";
+import React, { useContext } from "react";
 import SentenceReportContentStyle from "./SentenceReportContent.style";
-import SourcesList from "../Source/SourcesList";
-import { useRouter } from "next/router";
+import ClaimSourceList from "../Source/ClaimSourceList";
 import { useTranslation } from "next-i18next";
 import dompurify from "dompurify";
 import ClassificationText from "../ClassificationText";
+import { useSelector } from "@xstate/react";
+import { publishedSelector } from "../../machines/reviewTask/selectors";
+import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 
 const { Paragraph } = Typography;
 const SentenceReportContent = ({
     context,
     classification,
     showClassification,
+    href,
 }) => {
     const { t } = useTranslation();
+    const { machineService, publishedReview, reviewTaskType } = useContext(
+        ReviewTaskMachineContext
+    );
     const { summary, questions, report, verification, sources } = context;
-    const router = useRouter();
     const sanitizer = dompurify.sanitize;
+    const sortedSources = sources?.sort((a, b) => a.props.sup - b.props.sup);
+    const showAllSources = !(
+        useSelector(machineService, publishedSelector) ||
+        publishedReview?.review
+    );
 
     return (
         <SentenceReportContentStyle>
             {showClassification && classification && (
                 <Col span={24}>
                     <Paragraph className="title">
-                        {t("claimReview:claimReview")}
+                        {t(`claimReview:title${reviewTaskType}Review`)}
                     </Paragraph>
                     <Paragraph className="paragraph">
                         <ClassificationText classification={classification} />
@@ -32,18 +42,22 @@ const SentenceReportContent = ({
                     <Divider />
                 </Col>
             )}
-            <Col span={24}>
-                <Paragraph className="title">
-                    {t("claimReview:summarySectionTitle")}
-                </Paragraph>
-                <Paragraph className="paragraph">
-                    <p
-                        dangerouslySetInnerHTML={{ __html: sanitizer(summary) }}
-                    />
-                </Paragraph>
-                <Divider />
-            </Col>
-            {questions.length > 0 && (
+            {summary && (
+                <Col span={24}>
+                    <Paragraph className="title">
+                        {t("claimReview:summarySectionTitle")}
+                    </Paragraph>
+                    <Paragraph className="paragraph">
+                        <p
+                            dangerouslySetInnerHTML={{
+                                __html: sanitizer(summary),
+                            }}
+                        />
+                    </Paragraph>
+                    <Divider />
+                </Col>
+            )}
+            {questions && questions.length > 0 && (
                 <Col span={24}>
                     <Paragraph className="title">
                         {t("claimReview:questionsSectionTitle")}
@@ -89,14 +103,15 @@ const SentenceReportContent = ({
                 </Col>
             )}
             <Col span={24}>
-                {sources && (
+                {sources && sources?.length > 0 && (
                     <>
                         <Typography.Title level={4}>
                             {t("claim:sourceSectionTitle")}
                         </Typography.Title>
-                        <SourcesList
-                            sources={sources}
-                            seeMoreHref={`${router.asPath}/sources`}
+                        <ClaimSourceList
+                            sources={sortedSources}
+                            seeMoreHref={`${href}/sources`}
+                            showAllSources={showAllSources}
                         />
                     </>
                 )}

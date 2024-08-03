@@ -27,47 +27,36 @@ const CommentStyled = styled(Comment)`
     }
 `;
 
-const ClaimCard = ({ personality, claim, collapsed = true }) => {
+const ClaimCard = ({
+    personality,
+    claim,
+    collapsed = true,
+    content = null,
+}) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { selectedClaim } = useAppSelector((state) => state);
+    const { selectedTarget } = useAppSelector((state) => state);
     const review = claim?.stats?.reviews[0];
-    const paragraphs = claim.content;
+    const paragraphs = content || claim.content;
     const [claimContent, setClaimContent] = useState("");
     const [nameSpace] = useAtom(currentNameSpace);
     const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
     const isDebate = claim?.contentModel === ContentModelEnum.Debate;
-
+    const isUnattributed =
+        claim?.contentModel === ContentModelEnum.Unattributed;
     const isInsideDebate =
-        selectedClaim?.contentModel === ContentModelEnum.Debate;
+        selectedTarget?.contentModel === ContentModelEnum.Debate;
+    const shouldCreateFirstParagraph = isSpeech || isUnattributed;
+
     const dispatchPersonalityAndClaim = () => {
         if (!isInsideDebate) {
             // when selecting a claim from the debate page to review or to read,
             // we don't want to change the selected claim
             // se we can keep reference to the debate
-            dispatch(actions.setSelectClaim(claim));
+            dispatch(actions.setSelectTarget(claim));
         }
         dispatch(actions.setSelectPersonality(personality));
     };
-
-    let href =
-        nameSpace !== NameSpaceEnum.Main
-            ? `/${nameSpace}/claim/${claim._id}`
-            : `/claim/${claim._id}`;
-
-    if (personality.slug) {
-        href =
-            nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/personality/${personality.slug}/claim/${claim.slug}`
-                : `/personality/${personality.slug}/claim/${claim.slug}`;
-    }
-
-    if (isDebate) {
-        href =
-            nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/claim/${claim._id}/debate`
-                : `/claim/${claim._id}/debate`;
-    }
 
     useEffect(() => {
         const CreateFirstParagraph = () => {
@@ -79,15 +68,21 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
             });
             setClaimContent(textContent.trim());
         };
-        if (isSpeech) {
+        if (shouldCreateFirstParagraph) {
             CreateFirstParagraph();
         } else {
             setClaimContent(claim.content);
         }
     }, [claim.content, isSpeech, paragraphs]);
 
-    if (!claim) {
-        return <div></div>;
+    let href = `/${nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""}`;
+
+    if (isDebate) {
+        href += `claim/${claim.claimId}/debate`;
+    } else if (personality && personality.slug) {
+        href += `personality/${personality.slug}/claim/${claim.slug}`;
+    } else {
+        href += `claim/${claim.slug}`;
     }
 
     return (
@@ -190,7 +185,7 @@ const ClaimCard = ({ personality, claim, collapsed = true }) => {
                         <Button
                             type={ButtonType.blue}
                             href={href}
-                            data-cy={personality.name}
+                            data-cy={personality?.name}
                         >
                             <span
                                 style={{

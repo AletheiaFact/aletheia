@@ -15,25 +15,27 @@ import {
     useUpdateReason,
 } from "@remirror/react";
 import { useTranslation } from "next-i18next";
-import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
 
+export const URL_PATTERN =
+    /^(ftp|http|https):\/\/[^ "]+\.(br|com|org|net|edu|gov|mil|co|info|io|biz|us|uk)(\/|\?|#|$)/;
+
 function useFloatingLinkState() {
     const { t } = useTranslation();
-    const { editorSources, setEditorSources } = useContext(
-        CollaborativeEditorContext
-    );
+    const { editorSources, setEditorSources } = useContext(VisualEditorContext);
 
     const [error, setError] = useState(null);
     const chain = useChainedCommands();
     const { isEditing, linkShortcut, setIsEditing, isLoading, setIsLoading } =
         useLinkShortcut();
     const { from, to, empty, ranges } = useCurrentSelection();
+    const { $to } = ranges[0];
     const url = (useAttrs().link()?.href as string) ?? "https://";
+    const selectedSourceId = useAttrs().link()?.id;
     const [href, setHref] = useState<string>(url);
     const isSelected = !empty;
-
     const updateReason = useUpdateReason();
     const floatingLinkPositioner = useMemo(
         () => createMarkPositioner({ type: "link" }),
@@ -45,7 +47,7 @@ function useFloatingLinkState() {
             return;
         }
 
-        if (updateReason.doc || updateReason.selection) {
+        if (updateReason.doc || !isSelected) {
             setIsEditing(false);
         }
     }, [isEditing, setIsEditing, updateReason.doc, updateReason.selection]);
@@ -53,8 +55,8 @@ function useFloatingLinkState() {
     useEffect(() => setHref(url), [url]);
 
     const validateFloatingLink = useCallback(() => {
-        const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/;
-        if (!urlPattern.test(href)) {
+        // TODO: use a library or service that maintains a comprehensive list of valid TLDs
+        if (!URL_PATTERN.test(href)) {
             throw new Error(t("sourceForm:errorMessageValidURL"));
         }
     }, [href, t]);
@@ -78,8 +80,6 @@ function useFloatingLinkState() {
 
         try {
             const id = uniqueId();
-            updateFloatingLink(id);
-            const { $to } = ranges[0];
             //@ts-ignore
             const field = $to?.path[3]?.type?.name;
             const targetText = $to.doc.textBetween(from, to);
@@ -89,6 +89,7 @@ function useFloatingLinkState() {
                     field,
                     targetText,
                     id,
+                    textRange: [from, to],
                 },
             };
 
@@ -99,12 +100,13 @@ function useFloatingLinkState() {
                 }
                 return [...sources, newSource];
             });
+            updateFloatingLink(id);
+            setIsEditing(false);
         } catch (error) {
             setError(error.message);
         } finally {
             setHref("https://");
             setIsLoading(false);
-            setIsEditing(false);
         }
     }, [
         setIsLoading,
@@ -118,14 +120,25 @@ function useFloatingLinkState() {
         setIsEditing,
     ]);
 
+    const areSourcesIdsEqual = (sourceId, selectedSourceId) =>
+        sourceId === selectedSourceId;
+
     const onRemoveLink = useCallback(async () => {
         setIsLoading(true);
-        setEditorSources((sources) => {
-            const index = editorSources.findIndex(
-                (source: any) => source.href === href
+        const targetText = $to.doc.textBetween(from, to);
+        const [
+            {
+                props: { id: deletedSourceId },
+            },
+        ] = editorSources.filter((source) => {
+            return (
+                areSourcesIdsEqual(source.props.id, selectedSourceId) &&
+                source.props.targetText === targetText
             );
-            return sources.filter((_, i) => i !== index);
         });
+        setEditorSources((sources) =>
+            sources.filter(({ props }) => props.id !== deletedSourceId)
+        );
         chain.removeLink().focus().run();
         setIsLoading(false);
     }, [chain, editorSources, href, setEditorSources, setIsLoading]);

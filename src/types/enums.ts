@@ -27,6 +27,7 @@ enum ContentModelEnum {
     Speech = "Speech",
     Image = "Image",
     Debate = "Debate",
+    Unattributed = "Unattributed",
 }
 
 export enum TargetModel {
@@ -34,7 +35,7 @@ export enum TargetModel {
     Debate = "Debate",
     Personality = "Personality",
     ClaimReview = "ClaimReview",
-    ClaimReviewTask = "ClaimReviewTask",
+    ReviewTask = "ReviewTask",
     Image = "Image",
 }
 
@@ -43,4 +44,16 @@ enum CommentEnum {
     review = "review",
 }
 
-export { ClassificationEnum, Roles, Status, ContentModelEnum, CommentEnum };
+enum SenderEnum {
+    Assistant = "Assistant",
+    User = "You",
+}
+
+export {
+    ClassificationEnum,
+    Roles,
+    Status,
+    ContentModelEnum,
+    CommentEnum,
+    SenderEnum,
+};

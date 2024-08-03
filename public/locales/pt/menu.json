@@ -8,8 +8,10 @@
     "badgesItem": "Insígnias",
     "adminItem": "Admin",
     "personalityItem": "Personalidades",
-    "claimItem": "Afirmações",
-    "kanbanItem": "Kanban",
+    "claimItem": "Repositório",
+    "kanbanItem": "Meu Trabalho",
     "nameSpaceItem": "Namespace",
-    "supportiveMaterials": "Materiais de Apoio"
+    "supportiveMaterials": "Materiais de Apoio",
+    "sourcesItem": "Fontes",
+    "verificationRequestItem": "Denúncias"
 }

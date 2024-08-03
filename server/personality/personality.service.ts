@@ -17,12 +17,14 @@ import { HistoryType, TargetModel } from "../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 export interface FindAllOptions {
     searchText: string;
     pageSize: number;
     language?: string;
     skipedDocuments?: number;
+    nameSpace?: string;
 }
 
 @Injectable({ scope: Scope.REQUEST })
@@ -272,6 +274,10 @@ export class PersonalityService {
             isDeleted: false,
             isPublished: true,
             isHidden: false,
+            nameSpace:
+                this.req.params.namespace ||
+                this.req.query.nameSpace ||
+                NameSpaceEnum.Main,
         });
         this.logger.log(`Got stats ${reviews}`);
         return this.util.formatStats(reviews);
@@ -450,7 +456,7 @@ export class PersonalityService {
                         query: searchText,
                         path: "name",
                         fuzzy: {
-                            maxEdits: 2,
+                            maxEdits: 1, // Using maxEdits: 1 to allow minor typos or spelling errors in search queries.
                         },
                     },
                 },

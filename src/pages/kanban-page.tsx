@@ -3,7 +3,7 @@ import AffixButton from "../components/AffixButton/AffixButton";
 import { GetLocale } from "../utils/GetLocale";
 import KanbanView from "../components/Kanban/KanbanView";
 import { NextPage } from "next";
-import React from "react";
+import React, { useEffect } from "react";
 import Seo from "../components/Seo";
 import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -11,41 +11,63 @@ import { useDispatch } from "react-redux";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
 import { NameSpaceEnum } from "../types/Namespace";
+import { Grid } from "@mui/material";
+import KanbanTabNavigator from "../components/Kanban/KanbanTabNavigator";
+import TabPanel from "../components/TabPanel";
+import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
+import Cookies from "js-cookie";
 
 const KanbanPage: NextPage<{
     sitekey;
     enableCollaborativeEditor: boolean;
-    enableAgentReview: boolean;
+    enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
+    enableAddEditorSourcesWithoutSelecting: boolean;
+    enableReviewersUpdateReport: boolean;
+    enableViewReportPreview: boolean;
     websocketUrl: string;
     nameSpace: NameSpaceEnum;
 }> = (props) => {
+    const kanban_tab = Number(Cookies.get("kanban_tab")) || 0;
     const dispatch = useDispatch();
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(props.nameSpace);
     dispatch(actions.setSitekey(props.sitekey));
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
-    dispatch({
-        type: ActionTypes.SET_COLLABORATIVE_EDIT,
-        enableCollaborativeEdit: props.enableCollaborativeEditor,
-    });
-    dispatch({
-        type: ActionTypes.SET_AGENT_REVIEW,
-        enableAgentReview: props.enableAgentReview,
-    });
-    dispatch({
-        type: ActionTypes.SET_EDITOR_ANNOTATION,
-        enableEditorAnnotations: props.enableEditorAnnotations,
-    });
+    dispatch(actions.closeCopilotDrawer());
+    dispatch(
+        actions.setEditorEnvironment(
+            props.enableCollaborativeEditor,
+            props.enableAddEditorSourcesWithoutSelecting,
+            props.enableEditorAnnotations,
+            props.enableCopilotChatBot,
+            false,
+            props.enableReviewersUpdateReport,
+            props.enableViewReportPreview
+        )
+    );
 
-    dispatch({
-        type: ActionTypes.SET_AUTO_SAVE,
-        autoSave: false,
-    });
+    const [value, setValue] = React.useState(null);
+    const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+        document.cookie = `kanban_tab=${newValue}`;
+        setValue(newValue);
+    };
+
+    useEffect(() => setValue(kanban_tab), [kanban_tab]);
+
     return (
         <>
             <Seo title="Kanban" />
-            <KanbanView />
+            <Grid>
+                <KanbanTabNavigator value={value} handleChange={handleChange} />
+
+                {value !== null &&
+                    Object.keys(ReviewTaskTypeEnum).map((key, index) => (
+                        <TabPanel value={value} index={index} key={key}>
+                            <KanbanView reviewTaskType={key} />
+                        </TabPanel>
+                    ))}
+            </Grid>
             <AffixButton />
         </>
     );
@@ -58,8 +80,12 @@ export async function getServerSideProps({ locale, locales, req, query }) {
             ...(await serverSideTranslations(locale)),
             sitekey: query.sitekey,
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
-            enableAgentReview: query?.enableAgentReview,
+            enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
+            enableAddEditorSourcesWithoutSelecting:
+                query?.enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
+            enableViewReportPreview: query?.enableViewReportPreview,
             websocketUrl: query.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

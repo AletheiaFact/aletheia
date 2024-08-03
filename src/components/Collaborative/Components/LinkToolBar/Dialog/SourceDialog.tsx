@@ -9,9 +9,9 @@ const SourceDialog = ({
     handleClickButton,
     error,
     onCloseModal,
-    activeLink,
-    onRemoveLink,
     isLoading,
+    activeLink = null,
+    onRemoveLink = () => {},
     ...rest
 }) => {
     const inputRef = useRef<HTMLInputElement>();

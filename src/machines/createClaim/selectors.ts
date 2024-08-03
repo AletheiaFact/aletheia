@@ -26,9 +26,17 @@ const addDebateSelector = (state) => {
     );
 };
 
+const addUnattributedSelector = (state) => {
+    return (
+        state.matches(CreateClaimStates.personalityAdded) &&
+        state.context.claimData.contentModel === ContentModelEnum.Unattributed
+    );
+};
+
 export {
     addImageSelector,
     addSpeechSelector,
     stateSelector,
     addDebateSelector,
+    addUnattributedSelector,
 };

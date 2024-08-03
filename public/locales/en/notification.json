@@ -7,5 +7,8 @@
     "crossChecker": "You have been selected as a cross-checker",
     "reviewer": "You have been selected as a reviewer",
     "reviewRejected": "The review you are assigned to has been rejected, make the necessary changes for it to be accepted",
-    "reviewPublished": "Your review has been published"
+    "reviewPublished": "Your review has been published",
+    "dailyReportButton": "Send Daily Report",
+    "sendDailyReportSuccess": "Report sent successfully",
+    "sendDailyReportError": "Error while sending report"
 }

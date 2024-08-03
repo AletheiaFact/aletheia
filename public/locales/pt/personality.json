@@ -23,5 +23,8 @@
     "hideError": "Erro ao esconder a personalidade",
     "unhideSuccess": "Personalidade pública com sucesso",
     "unhideError": "Erro ao mostrar a personalidade",
-    "hiddenPersonalityAvatarTooltip": "Personalidade oculta"
+    "hiddenPersonalityAvatarTooltip": "Personalidade oculta",
+    "personalityCardWikidataTooltip": "As informações dessa personalidade são retiradas da Wikidata",
+    "claimListEmptyFallBackPersonality": "A personalidade não possui nenhuma reivindicação criada",
+    "claimListEmptyFallBack": "Criar uma nova afirmação"
 }

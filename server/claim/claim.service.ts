@@ -12,9 +12,10 @@ import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ContentModelEnum } from "../types/enums";
-import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
+import { ReviewTaskService } from "../review-task/review-task.service";
 import { UtilService } from "../util";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { GroupService } from "../group/group.service";
 
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
@@ -38,16 +39,15 @@ export class ClaimService {
         private historyService: HistoryService,
         private stateEventService: StateEventService,
         private claimRevisionService: ClaimRevisionService,
-        private claimReviewTaskService: ClaimReviewTaskService,
-        private util: UtilService
+        private reviewTaskService: ReviewTaskService,
+        private util: UtilService,
+        private groupService: GroupService
     ) {}
 
     async listAll(page, pageSize, order, query) {
-        if (!query.isHidden) {
+        if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false
-            query.personalities = query.personalities
-                ? Types.ObjectId(query.personalities)
-                : [];
+            query.personalities = Types.ObjectId(query.personalities);
         }
 
         const claims = await this.ClaimModel.find(query)
@@ -128,6 +128,10 @@ export class ClaimService {
             return Types.ObjectId(personality);
         });
 
+        if (claim.group) {
+            claim.group = Types.ObjectId(claim.group);
+        }
+
         const newClaim = new this.ClaimModel(claim);
         const newClaimRevision = await this.claimRevisionService.create(
             newClaim._id,
@@ -152,6 +156,9 @@ export class ClaimService {
 
         this.historyService.createHistory(history);
         this.stateEventService.createStateEvent(stateEvent);
+        if (claim.group) {
+            this.groupService.updateWithTargetId(claim.group, newClaim._id);
+        }
 
         newClaim.save();
         return {
@@ -270,6 +277,18 @@ export class ClaimService {
         );
     }
 
+    async getByClaimSlug(claimSlug, revisionId = undefined, population = true) {
+        const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
+        const queryOptions = this.util.getParamsBasedOnUserRole(
+            {
+                slug: claimSlug,
+                nameSpace,
+            },
+            this.req
+        );
+        return this._getClaim(queryOptions, revisionId, true, population);
+    }
+
     async getByPersonalityIdAndClaimSlug(
         personalityId,
         claimSlug,
@@ -297,9 +316,9 @@ export class ClaimService {
         try {
             let claim;
             if (revisionId) {
-                const rawClaim = await this.ClaimModel.findOne(match).select({
-                    latestRevision: 0,
-                });
+                const rawClaim = await this.ClaimModel.findOne(match)
+                    .populate("sources", "_id href")
+                    .select({ latestRevision: 0 });
 
                 const revision = await this.claimRevisionService.getRevision({
                     _id: revisionId,
@@ -311,8 +330,9 @@ export class ClaimService {
                 }
 
                 claim = {
-                    ...rawClaim,
-                    revision,
+                    ...rawClaim.toObject(),
+                    ...revision,
+                    _id: rawClaim._id,
                 };
             } else {
                 if (population) {
@@ -372,15 +392,10 @@ export class ClaimService {
             const reviews = await this.claimReviewService.getReviewsByClaimId(
                 claim._id
             );
-            const claimReviewTasks =
-                await this.claimReviewTaskService.getReviewTasksByClaimId(
-                    claim._id
-                );
+            const reviewTasks =
+                await this.reviewTaskService.getReviewTasksByClaimId(claim._id);
 
-            processedClaim.content =
-                processedClaim.contentModel === ContentModelEnum.Speech
-                    ? processedClaim.content[0].content
-                    : processedClaim.content[0];
+            processedClaim.content = this.getClaimContent(processedClaim);
 
             if (processedClaim?.content) {
                 if (processedClaim?.contentModel === ContentModelEnum.Debate) {
@@ -389,7 +404,7 @@ export class ClaimService {
                             const content = this.transformContentObject(
                                 speech.content,
                                 reviews,
-                                claimReviewTasks
+                                reviewTasks
                             );
                             return { ...speech, content };
                         });
@@ -397,7 +412,7 @@ export class ClaimService {
                     processedClaim.content = this.transformContentObject(
                         processedClaim.content,
                         reviews,
-                        claimReviewTasks
+                        reviewTasks
                     );
                 }
             }
@@ -439,11 +454,8 @@ export class ClaimService {
         };
     }
 
-    private transformContentObject(claimContent, reviews, claimReviewTasks) {
-        if (
-            !claimContent ||
-            (reviews.length <= 0 && claimReviewTasks.length <= 0)
-        ) {
+    private transformContentObject(claimContent, reviews, reviewTasks) {
+        if (!claimContent || (reviews.length <= 0 && reviewTasks.length <= 0)) {
             return claimContent;
         }
 
@@ -482,11 +494,11 @@ export class ClaimService {
                             );
                         }
 
-                        const claimReviewTask = claimReviewTasks.find(
+                        const reviewTask = reviewTasks.find(
                             (task) => task?.data_hash === sentence.data_hash
                         );
 
-                        if (claimReviewTask) {
+                        if (reviewTask) {
                             return processReview(sentence, "in-progress");
                         }
 
@@ -497,5 +509,16 @@ export class ClaimService {
         }
 
         return claimContent;
+    }
+
+    private getClaimContent(claim) {
+        if (
+            claim.contentModel === ContentModelEnum.Speech ||
+            claim.contentModel === ContentModelEnum.Unattributed
+        ) {
+            return claim.content[0].content;
+        }
+
+        return claim.content[0];
     }
 }

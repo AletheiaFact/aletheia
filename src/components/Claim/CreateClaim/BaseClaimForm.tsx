@@ -57,7 +57,12 @@ const BaseClaimForm = ({
     };
 
     return (
-        <Form layout="vertical" id="createClaim" onFinish={onFinish}>
+        <Form
+            layout="vertical"
+            id="createClaim"
+            onFinish={onFinish}
+            style={{ padding: "32px 0" }}
+        >
             <Form.Item
                 name="title"
                 label={t("claimForm:titleField")}

@@ -27,18 +27,11 @@ const reviewingSelector = (state) => {
 };
 
 const reviewNotStartedSelector = (state) => {
-    return (
-        state.matches(ReviewTaskStates.unassigned) &&
-        state.context.claimReview.claim === ""
-    );
+    return state.matches(ReviewTaskStates.unassigned);
 };
 
 const reviewDataSelector = (state) => {
     return state.context.reviewData;
-};
-
-const preloadedOptionsSelector = (state) => {
-    return state.context.preloadedOptions;
 };
 
 export {
@@ -47,6 +40,5 @@ export {
     reviewingSelector,
     reviewNotStartedSelector,
     reviewDataSelector,
-    preloadedOptionsSelector,
     reportSelector,
 };

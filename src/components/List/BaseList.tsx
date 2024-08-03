@@ -57,13 +57,14 @@ const BaseList = ({
         pageSize: 10,
         fetchOnly: true,
         order: sortByOrder,
-        ...filter,
     });
 
     // TODO: use TimerCallback to refresh the list
 
     useEffect(() => {
-        apiCall(query).then((newItems) => {
+        setLoading(true);
+        setExecLoadMore(false);
+        apiCall({ ...query, ...filter }).then((newItems) => {
             setInitLoading(false);
             setLoading(false);
             setTotalPages(newItems.totalPages);
@@ -72,17 +73,7 @@ const BaseList = ({
                 execLoadMore ? [...items, ...newItems.data] : newItems.data
             );
         });
-    }, [query]);
-
-    useEffect(() => {
-        setLoading(true);
-        setExecLoadMore(false);
-        setQuery({
-            ...query,
-            ...filter,
-            page: 1,
-        });
-    }, [filter]);
+    }, [query, filter]);
 
     const loadMoreData = () => {
         if (execLoadMore !== true) {

@@ -1,35 +1,26 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ParserService } from "./parser.service";
 import * as fs from "fs";
-import { SpeechModule } from "../types/speech/speech.module";
-import { ParagraphModule } from "../types/paragraph/paragraph.module";
-import { SentenceModule } from "../types/sentence/sentence.module";
-import { MongooseModule } from "@nestjs/mongoose";
 import { TestConfigOptions } from "../../tests/utils/TestConfigOptions";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import { Types } from "mongoose";
+import { AppModule } from "../../app.module";
 
 describe("ParserService", () => {
     let parserService: ParserService;
     let db: any;
+    const claimRevisionIdMock = new Types.ObjectId("66684a2a763175559d119818");
 
     beforeAll(async () => {
         db = await MongoMemoryServer.create({ instance: { port: 35025 } });
     });
 
     beforeEach(async () => {
-        const testingModule: TestingModule = await Test.createTestingModule({
-            imports: [
-                MongooseModule.forRoot(
-                    TestConfigOptions.config.db.connection_uri,
-                    TestConfigOptions.config.db.options
-                ),
-                SpeechModule,
-                ParagraphModule,
-                SentenceModule,
-            ],
-            providers: [ParserService],
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+            imports: [AppModule.register(TestConfigOptions.config)],
         }).compile();
-        parserService = testingModule.get<ParserService>(ParserService);
+
+        parserService = moduleFixture.get<ParserService>(ParserService);
     });
 
     describe("parse()", () => {
@@ -38,7 +29,7 @@ describe("ParserService", () => {
                 "Pellentesque auctor neque nec urna. Nulla facilisi. Praesent nec nisl a purus blandit viverra." +
                 "\n\nNam at tortor in tellus interdum sagittis. Ut leo. Praesent adipiscing. Curabitur nisi.";
             const parseOutput = await (
-                await parserService.parse(claimText)
+                await parserService.parse(claimText, claimRevisionIdMock)
             )
                 .populate({
                     path: "content",
@@ -62,7 +53,7 @@ describe("ParserService", () => {
             );
             const parseOutput = (
                 await (
-                    await parserService.parse(claimText)
+                    await parserService.parse(claimText, claimRevisionIdMock)
                 )
                     .populate({
                         path: "content",
@@ -81,7 +72,7 @@ describe("ParserService", () => {
             const claimText = "Nulla facilisi.\n\nUt leo.";
             const parseOutput = (
                 await (
-                    await parserService.parse(claimText)
+                    await parserService.parse(claimText, claimRevisionIdMock)
                 )
                     .populate({
                         path: "content",
@@ -100,7 +91,7 @@ describe("ParserService", () => {
         it("Ph.D word is not confused with end of sentence", async () => {
             const claimText = "Jose is Ph.D. and Maria is a Ph.D.";
             const parseOutput = await (
-                await parserService.parse(claimText)
+                await parserService.parse(claimText, claimRevisionIdMock)
             )
                 .populate({
                     path: "content",
@@ -118,7 +109,7 @@ describe("ParserService", () => {
             const claimText =
                 "Mr. Jose and Mrs. Maria lives in St. Monica with Ms. Butterfly their Dr. of the year";
             const parseOutput = await (
-                await parserService.parse(claimText)
+                await parserService.parse(claimText, claimRevisionIdMock)
             )
                 .populate({
                     path: "content",

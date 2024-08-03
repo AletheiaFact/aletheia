@@ -5,7 +5,8 @@ services:
       cors: '*'
       debug: true
       websocketUrl: ws://localhost:5001
-      agentsUrl: http://localhost:8000
+      baseUrl: "http://localhost:3000"
+      automatedFactCheckingAPIUrl: AGENTS_API_URL
       #override_public_routes: true
       recaptcha_secret: RECAPTCHA_SECRET
       recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
@@ -22,6 +23,9 @@ services:
       authentication_type: ory
       ory:
         url: ORY_SDK_URL
+        # Use "admin" as the endpoint when running locally.
+        # When using the cloud, the endpoint should be "api/kratos/admin".
+        admin_endpoint:
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
       feature_flag:
@@ -37,4 +41,9 @@ services:
         endpoint: http://localhost:4566
       novu: # Notifications provider
         api_key: NOVU_API_KEY
+      openai:
+        api_key: OPENAI_API_KEY
+      zenvia:
+        api_url: ZENVIA_API_URL
+        api_token: ZENVIA_API_TOKEN
 

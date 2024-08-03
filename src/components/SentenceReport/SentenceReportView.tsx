@@ -14,22 +14,30 @@ import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
 import SentenceReportContent from "./SentenceReportContent";
 import { useAtom } from "jotai";
-import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
+import {
+    currentUserId,
+    currentUserRole,
+    isUserLoggedIn,
+} from "../../atoms/currentUser";
 import SentenceReportComments from "./SentenceReportComments";
+import { ReviewTaskTypeEnum } from "../../../server/types/enums";
 
 const SentenceReportView = ({
     context,
     userIsNotRegular,
     userIsReviewer,
     isHidden,
-    userIsAssignee,
-    userIsCrossChecker,
+    href,
+    componentStyle,
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
-    const { machineService, publishedReview } = useContext(
+    const [userId] = useAtom(currentUserId);
+    const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
+    const userIsCrossChecker = context.crossCheckerId === userId;
+    const userIsAssignee = context.usersId.includes(userId);
     const isReport = useSelector(machineService, reportSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
@@ -48,7 +56,8 @@ const SentenceReportView = ({
         canShowClassificationAndCrossChecking;
 
     return (
-        canShowReport && (
+        canShowReport &&
+        reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
             <Row
                 style={
                     (isCrossChecking || isReport || isReviewing) && {
@@ -56,7 +65,7 @@ const SentenceReportView = ({
                     }
                 }
             >
-                <Col offset={3} span={18}>
+                <Col span={componentStyle.span} offset={componentStyle.offset}>
                     {canShowClassificationAndCrossChecking && (
                         <SentenceReportComments context={context} />
                     )}
@@ -66,6 +75,7 @@ const SentenceReportView = ({
                         showClassification={
                             canShowClassificationAndCrossChecking
                         }
+                        href={href}
                     />
                     {!isLoggedIn && <CTARegistration />}
                 </Col>

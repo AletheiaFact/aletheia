@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { User } from "../../users/schemas/user.schema";
+import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
 
 export type SourceDocument = Source & mongoose.Document;
 
@@ -23,7 +24,7 @@ export class Source {
         type: [
             {
                 type: mongoose.Types.ObjectId,
-                required: true,
+                required: false,
                 refPath: "onModel",
             },
         ],
@@ -36,6 +37,12 @@ export class Source {
         ref: "User",
     })
     user: User;
+
+    @Prop({ unique: true, required: true })
+    data_hash: string;
+
+    @Prop({ default: NameSpaceEnum.Main, required: false })
+    nameSpace: string;
 }
 
 export const SourceSchema = SchemaFactory.createForClass(Source);

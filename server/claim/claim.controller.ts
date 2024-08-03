@@ -12,7 +12,6 @@ import {
     Req,
     Res,
     Header,
-    Optional,
     UseGuards,
 } from "@nestjs/common";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
@@ -28,12 +27,11 @@ import { GetClaimsDTO } from "./dto/get-claims.dto";
 import { UpdateClaimDTO } from "./dto/update-claim.dto";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CaptchaService } from "../captcha/captcha.service";
-import { ClaimReviewTaskService } from "../claim-review-task/claim-review-task.service";
+import { ReviewTaskService } from "../review-task/review-task.service";
 import { TargetModel } from "../history/schema/history.schema";
 import { SentenceService } from "./types/sentence/sentence.service";
 import type { BaseRequest } from "../types";
 import slugify from "slugify";
-import { UnleashService } from "nestjs-unleash";
 import { SentenceDocument } from "./types/sentence/schemas/sentence.schema";
 import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
@@ -51,13 +49,17 @@ import { Roles } from "../auth/ability/ability.factory";
 import { ApiTags } from "@nestjs/swagger";
 import { HistoryService } from "../history/history.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { ClaimRevisionService } from "./claim-revision/claim-revision.service";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
+import { Types } from "mongoose";
+import { GroupService } from "../group/group.service";
 
 @Controller(":namespace?")
 export class ClaimController {
     private readonly logger = new Logger("ClaimController");
     constructor(
         private claimReviewService: ClaimReviewService,
-        private claimReviewTaskService: ClaimReviewTaskService,
+        private reviewTaskService: ReviewTaskService,
         private personalityService: PersonalityService,
         private claimService: ClaimService,
         private sentenceService: SentenceService,
@@ -69,7 +71,9 @@ export class ClaimController {
         private editorService: EditorService,
         private parserService: ParserService,
         private historyService: HistoryService,
-        @Optional() private readonly unleash: UnleashService
+        private claimRevisionService: ClaimRevisionService,
+        private featureFlagService: FeatureFlagService,
+        private groupService: GroupService
     ) {}
 
     _verifyInputsQuery(query) {
@@ -154,7 +158,7 @@ export class ClaimController {
                 : null;
             const path = personality
                 ? `/personality/${personality.slug}/claim/${claim.slug}`
-                : `/claim/${claim._id}`;
+                : `/claim/${claim.slug}`;
             return {
                 title: claim.title,
                 path:
@@ -195,6 +199,24 @@ export class ClaimController {
     }
 
     @ApiTags("claim")
+    @Post("api/claim/unattributed")
+    async createUnattributedClaim(@Body() createClaimDTO) {
+        try {
+            const claim = await this._createClaim(createClaimDTO);
+
+            return {
+                title: claim.title,
+                path:
+                    claim.nameSpace !== NameSpaceEnum.Main
+                        ? `/${claim.nameSpace}/claim/${claim.slug}`
+                        : `/claim/${claim.slug}`,
+            };
+        } catch (error) {
+            return error;
+        }
+    }
+
+    @ApiTags("claim")
     @Put("api/claim/debate/:debateId")
     async updateClaimDebate(
         @Param("debateId") debateId,
@@ -202,9 +224,17 @@ export class ClaimController {
     ) {
         const { content, personality, isLive } = updateClaimDebateDto;
         let newSpeech;
+
+        const claimRevision = await this.claimRevisionService.getByContentId(
+            Types.ObjectId(debateId)
+        );
+
+        const claimRevisionId = Types.ObjectId(claimRevision._id);
+
         if (content && personality) {
             newSpeech = await this.parserService.parse(
                 updateClaimDebateDto.content,
+                claimRevisionId,
                 updateClaimDebateDto.personality
             );
 
@@ -312,8 +342,8 @@ export class ClaimController {
     ) {
         const hideDescriptions = {};
 
-        const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskByDataHashWithUsernames(
+        const reviewTask =
+            await this.reviewTaskService.getReviewTaskByDataHashWithUsernames(
                 data_hash
             );
 
@@ -321,16 +351,18 @@ export class ClaimController {
             data_hash
         );
 
-        if (claimReview?.report) {
-            claimReview.report =
-                await this.claimReviewTaskService.getHtmlFromSchema(
-                    claimReview?.report
-                );
-        }
-
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableAgentReview = this.isEnableAgentReview();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
+        const enableAddEditorSourcesWithoutSelecting =
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
         hideDescriptions[TargetModel.Claim] =
             await this.historyService.getDescriptionForHide(
@@ -354,13 +386,16 @@ export class ClaimController {
                 personality,
                 claim,
                 content,
-                claimReviewTask,
+                reviewTask,
                 claimReview,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 hideDescriptions,
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
-                enableAgentReview,
+                enableCopilotChatBot,
+                enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })
@@ -480,11 +515,15 @@ export class ClaimController {
     @ApiTags("pages")
     @Get("claim/create")
     public async claimCreatePage(
-        @Query() query: { personality?: string },
+        @Query() query: { personality?: string; verificationRequest?: string },
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+
+        const verificationRequestGroup = query.verificationRequest
+            ? await this.groupService.getByContentId(query.verificationRequest)
+            : null;
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
@@ -504,6 +543,7 @@ export class ClaimController {
                 personality,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 nameSpace: req.params.namespace,
+                verificationRequestGroup,
             })
         );
     }
@@ -521,7 +561,7 @@ export class ClaimController {
         await this.viewService.getNextServer().render(
             req,
             res,
-            "/image-claims-page",
+            "/claim-list-page",
             Object.assign(parsedUrl.query, {
                 nameSpace: req.params.namespace,
             })
@@ -531,30 +571,27 @@ export class ClaimController {
     @IsPublic()
     @Redirect()
     @ApiTags("pages")
-    @Get("claim/:claimId")
+    @Get("claim/:claimSlug")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async imageClaimPage(@Req() req: BaseRequest, @Res() res: Response) {
-        const { claimId, namespace = NameSpaceEnum.Main } = req.params;
+        const { claimSlug, namespace = NameSpaceEnum.Main } = req.params;
         const parsedUrl = parse(req.url, true);
-        const claim = await this.claimService.getById(
-            claimId,
-            namespace as NameSpaceEnum
-        );
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableAgentReview = this.isEnableAgentReview();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const claim = await this.claimService.getByClaimSlug(claimSlug);
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
+        const enableAddEditorSourcesWithoutSelecting =
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
-        if (claim.personalities.length > 0) {
-            const personalitySlug = slugify(claim.personalities[0].name, {
-                lower: true,
-                strict: true,
-            });
-            const redirectUrl =
-                namespace !== NameSpaceEnum.Main
-                    ? `/${namespace}/personality/${personalitySlug}/claim/${claim.slug}`
-                    : `/personality/${personalitySlug}/claim/${claim.slug}`;
-            return res.redirect(redirectUrl);
-        }
+        this.redirectBasedOnPersonality(res, claim, namespace);
+
         await this.viewService.getNextServer().render(
             req,
             res,
@@ -564,7 +601,56 @@ export class ClaimController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
-                enableAgentReview,
+                enableCopilotChatBot,
+                enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
+                websocketUrl: this.configService.get<string>("websocketUrl"),
+                nameSpace: namespace,
+            })
+        );
+    }
+
+    @ApiTags("pages")
+    @Get("claim/:claimSlug/revision/:revisionId")
+    public async ClaimPageWithRevision(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const { claimSlug, revisionId, namespace } = req.params;
+        const parsedUrl = parse(req.url, true);
+
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
+        const enableAddEditorSourcesWithoutSelecting =
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
+
+        const claim = await this.claimService.getByClaimSlug(
+            claimSlug,
+            revisionId
+        );
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/claim-page",
+            Object.assign(parsedUrl.query, {
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                enableCollaborativeEditor,
+                enableEditorAnnotations,
+                enableCopilotChatBot: enableCopilotChatBot,
+                enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -583,9 +669,18 @@ export class ClaimController {
         const { personalitySlug, claimSlug, namespace } = req.params;
         const parsedUrl = parse(req.url, true);
 
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableAgentReview = this.isEnableAgentReview();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
+        const enableAddEditorSourcesWithoutSelecting =
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
         const personality =
             await this.personalityService.getClaimsByPersonalitySlug(
@@ -617,7 +712,10 @@ export class ClaimController {
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
-                enableAgentReview,
+                enableCopilotChatBot,
+                enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 hideDescriptions,
                 nameSpace: namespace,
@@ -643,9 +741,18 @@ export class ClaimController {
                 req.language
             );
 
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableAgentReview = this.isEnableAgentReview();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
+        const enableAddEditorSourcesWithoutSelecting =
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
 
         const claim = await this.claimService.getByPersonalityIdAndClaimSlug(
             personality._id,
@@ -662,7 +769,10 @@ export class ClaimController {
                 claim,
                 enableCollaborativeEditor,
                 enableEditorAnnotations,
-                enableAgentReview,
+                enableCopilotChatBot: enableCopilotChatBot,
+                enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: namespace,
             })
@@ -692,7 +802,7 @@ export class ClaimController {
         await this.viewService.getNextServer().render(
             req,
             res,
-            "/sources-page",
+            "/claim-sources-page",
             Object.assign(parsedUrl.query, {
                 targetId: claim._id,
                 nameSpace: namespace,
@@ -731,10 +841,61 @@ export class ClaimController {
         await this.viewService.getNextServer().render(
             req,
             res,
-            "/sources-page",
+            "/claim-sources-page",
             Object.assign(parsedUrl.query, {
                 targetId: report._id,
                 nameSpace: req.params.namespace,
+            })
+        );
+    }
+
+    @ApiTags("pages")
+    @Get("claim/:claimSlug/history")
+    public async claimWithoutPersonalityHistoryPage(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        const { claimSlug, namespace } = req.params;
+        const parsedUrl = parse(req.url, true);
+
+        const claim = await this.claimService.getByClaimSlug(claimSlug);
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/history-page",
+            Object.assign(parsedUrl.query, {
+                targetId: claim._id,
+                targetModel: TargetModel.Claim,
+                nameSpace: namespace,
+            })
+        );
+    }
+
+    @IsPublic()
+    @ApiTags("pages")
+    @Get("claim/:claimSlug/sources")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async claimWithoutPersonalitySourcesPage(
+        @Req() req: Request,
+        @Res() res: Response
+    ) {
+        const { claimSlug, namespace } = req.params;
+        const parsedUrl = parse(req.url, true);
+
+        const claim = await this.claimService.getByClaimSlug(
+            claimSlug,
+            undefined,
+            false
+        );
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/sources-page",
+            Object.assign(parsedUrl.query, {
+                targetId: claim._id,
+                nameSpace: namespace,
             })
         );
     }
@@ -779,42 +940,73 @@ export class ClaimController {
         const { data_hash } = req.params;
         const parsedUrl = parse(req.url, true);
 
-        const claimReviewTask =
-            await this.claimReviewTaskService.getClaimReviewTaskByDataHash(
-                data_hash
-            );
+        const reviewTask = await this.reviewTaskService.getReviewTaskByDataHash(
+            data_hash
+        );
 
         await this.viewService.getNextServer().render(
             req,
             res,
             "/history-page",
             Object.assign(parsedUrl.query, {
-                targetId: claimReviewTask._id,
-                targetModel: TargetModel.ClaimReviewTask,
+                targetId: reviewTask._id,
+                targetModel: TargetModel.ReviewTask,
                 nameSpace: req.params.namespace,
             })
         );
     }
 
-    private isEnableCollaborativeEditor() {
-        const config = this.configService.get<string>("feature_flag");
+    @IsPublic()
+    @Redirect()
+    @ApiTags("pages")
+    @Get("claim/:claimSlug/sentence/:data_hash")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getClaimReviewPageWithoutPersonality(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const {
+            data_hash,
+            claimSlug,
+            namespace = NameSpaceEnum.Main,
+        } = req.params;
 
-        return config
-            ? this.unleash.isEnabled("enable_collaborative_editor")
-            : false;
+        const claim = await this.claimService.getByClaimSlug(
+            claimSlug,
+            undefined,
+            false
+        );
+        this.redirectBasedOnPersonality(res, claim, namespace, data_hash);
+        const sentence = await this.sentenceService.getByDataHash(data_hash);
+
+        await this.returnClaimReviewPage(data_hash, req, res, claim, sentence);
     }
 
-    private isEnableAgentReview() {
-        const config = this.configService.get<string>("feature_flag");
+    private redirectBasedOnPersonality(
+        res,
+        claim,
+        namespace,
+        data_hash = null
+    ) {
+        const { personalities, slug } = claim;
+        if (personalities.length <= 0) {
+            return;
+        }
 
-        return config ? this.unleash.isEnabled("agent_review") : false;
-    }
+        const personalitySlug = slugify(personalities[0].name, {
+            lower: true,
+            strict: true,
+        });
 
-    private isEnableEditorAnnotations() {
-        const config = this.configService.get<string>("feature_flag");
+        let redirectUrl =
+            namespace !== NameSpaceEnum.Main
+                ? `/${namespace}/personality/${personalitySlug}/claim/${slug}`
+                : `/personality/${personalitySlug}/claim/${slug}`;
 
-        return config
-            ? this.unleash.isEnabled("enable_editor_annotations")
-            : false;
+        if (data_hash) {
+            redirectUrl += `/sentence/${data_hash}`;
+        }
+
+        return res.redirect(redirectUrl);
     }
 }

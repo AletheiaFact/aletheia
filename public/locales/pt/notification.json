@@ -7,5 +7,8 @@
     "crossChecker": "Você foi selecionado como cross-checker de uma checagem",
     "reviewer": "Você foi selecionado como revisor de uma checagem",
     "reviewRejected": "A revisão na qual você esta atribuido(a) foi rejeitada, faça as alterações necessárias para que seja aceita",
-    "reviewPublished": "Sua revisão foi publicada"
+    "reviewPublished": "Sua revisão foi publicada",
+    "dailyReportButton": "Enviar Relatório diario",
+    "sendDailyReportSuccess": "Relatorio enviado com sucesso",
+    "sendDailyReportError": "Erro ao enviar o relatorio"
 }

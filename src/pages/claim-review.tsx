@@ -13,22 +13,26 @@ import actions from "../store/actions";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "next-i18next";
-import { CollaborativeEditorProvider } from "../components/Collaborative/CollaborativeEditorProvider";
+import { VisualEditorProvider } from "../components/Collaborative/VisualEditorProvider";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useSetAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
+import { ReviewTaskTypeEnum } from "../machines/reviewTask/enums";
 
 export interface ClaimReviewPageProps {
     personality?: any;
     claim: any;
     content: any;
     sitekey: string;
-    claimReviewTask: any;
+    reviewTask: any;
     claimReview: any;
     hideDescriptions: object;
     enableCollaborativeEditor: boolean;
-    enableAgentReview: boolean;
+    enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
+    enableAddEditorSourcesWithoutSelecting: boolean;
+    enableReviewersUpdateReport: boolean;
+    enableViewReportPreview: boolean;
     websocketUrl: string;
     nameSpace: string;
 }
@@ -45,29 +49,28 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
         claimReview,
         sitekey,
         enableCollaborativeEditor,
-        enableAgentReview,
+        enableCopilotChatBot,
         enableEditorAnnotations,
+        enableAddEditorSourcesWithoutSelecting,
+        enableReviewersUpdateReport,
+        enableViewReportPreview,
         hideDescriptions,
     } = props;
 
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
-    dispatch({
-        type: ActionTypes.SET_AUTO_SAVE,
-        autoSave: false,
-    });
-    dispatch({
-        type: ActionTypes.SET_COLLABORATIVE_EDIT,
-        enableCollaborativeEdit: enableCollaborativeEditor,
-    });
-    dispatch({
-        type: ActionTypes.SET_AGENT_REVIEW,
-        enableAgentReview: enableAgentReview,
-    });
-    dispatch({
-        type: ActionTypes.SET_EDITOR_ANNOTATION,
-        enableEditorAnnotations: enableEditorAnnotations,
-    });
+    dispatch(actions.closeCopilotDrawer());
+    dispatch(
+        actions.setEditorEnvironment(
+            enableCollaborativeEditor,
+            enableAddEditorSourcesWithoutSelecting,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            false,
+            enableReviewersUpdateReport,
+            enableViewReportPreview
+        )
+    );
 
     const isImage = claim?.contentModel === ContentModelEnum.Image;
     const review = content?.props?.classification;
@@ -120,17 +123,21 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
 
             <ReviewTaskMachineProvider
                 data_hash={content.data_hash}
-                baseMachine={props.claimReviewTask?.machine}
+                baseMachine={props.reviewTask?.machine}
+                baseReportModel={props?.reviewTask?.reportModel}
                 publishedReview={{ review: claimReview }}
+                reviewTaskType={ReviewTaskTypeEnum.Claim}
+                claim={claim}
+                sentenceContent={content.content}
             >
-                <CollaborativeEditorProvider data_hash={content.data_hash}>
+                <VisualEditorProvider data_hash={content.data_hash}>
                     <ClaimReviewView
                         personality={personality}
-                        claim={claim}
+                        target={claim}
                         content={content}
                         hideDescriptions={hideDescriptions}
                     />
-                </CollaborativeEditorProvider>
+                </VisualEditorProvider>
             </ReviewTaskMachineProvider>
             <AffixButton personalitySlug={personality?.slug} />
         </>
@@ -147,15 +154,19 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             personality: JSON.parse(JSON.stringify(query.personality)),
             claim: JSON.parse(JSON.stringify(query.claim)),
             content: JSON.parse(JSON.stringify(query.content)),
-            claimReviewTask: JSON.parse(JSON.stringify(query.claimReviewTask)),
+            reviewTask: JSON.parse(JSON.stringify(query.reviewTask)),
             claimReview: JSON.parse(JSON.stringify(query.claimReview)),
             sitekey: query.sitekey,
             hideDescriptions: JSON.parse(
                 JSON.stringify(query.hideDescriptions)
             ),
             enableCollaborativeEditor: query?.enableCollaborativeEditor,
-            enableAgentReview: query?.enableAgentReview,
+            enableCopilotChatBot: query?.enableCopilotChatBot,
             enableEditorAnnotations: query?.enableEditorAnnotations,
+            enableAddEditorSourcesWithoutSelecting:
+                query?.enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
+            enableViewReportPreview: query?.enableViewReportPreview,
             websocketUrl: query?.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

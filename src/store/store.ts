@@ -18,6 +18,11 @@ const reducer = (state, action) => {
                 ...state,
                 reviewDrawerCollapsed: action.reviewDrawerCollapsed,
             };
+        case ActionTypes.TOGGLE_COPILOT_DRAWER:
+            return {
+                ...state,
+                copilotDrawerCollapsed: action.copilotDrawerCollapsed,
+            };
         case ActionTypes.SET_TOTAL_RESULTS:
             return {
                 ...state,
@@ -119,30 +124,22 @@ const reducer = (state, action) => {
                 ...state,
                 login: action.login,
             };
-        case ActionTypes.SET_AUTO_SAVE:
-            return {
-                ...state,
-                autoSave: action.autoSave,
-            };
         case ActionTypes.SET_WEBSOCKET_URL:
             return {
                 ...state,
                 websocketUrl: action.websocketUrl,
             };
-        case ActionTypes.SET_COLLABORATIVE_EDIT:
+        case ActionTypes.SET_VISUAL_EDITOR_ENVIRONEMNT:
             return {
                 ...state,
-                enableCollaborativeEdit: action.enableCollaborativeEdit,
-            };
-        case ActionTypes.SET_AGENT_REVIEW:
-            return {
-                ...state,
-                enableAgentReview: action.enableAgentReview,
-            };
-        case ActionTypes.SET_EDITOR_ANNOTATION:
-            return {
-                ...state,
+                enableAddEditorSourcesWithoutSelecting:
+                    action.enableAddEditorSourcesWithoutSelecting,
                 enableEditorAnnotations: action.enableEditorAnnotations,
+                enableCopilotChatBot: action.enableCopilotChatBot,
+                enableCollaborativeEdit: action.enableCollaborativeEdit,
+                autoSave: action.autoSave,
+                enableReviewersUpdateReport: action.enableReviewersUpdateReport,
+                enableViewReportPreview: action.enableViewReportPreview,
             };
         case ActionTypes.SET_USER_ROLE:
             return {
@@ -169,10 +166,10 @@ const reducer = (state, action) => {
                 ...state,
                 selectedPersonality: action.selectedPersonality,
             };
-        case ActionTypes.SET_SELECTED_CLAIM:
+        case ActionTypes.SET_SELECTED_TARGET:
             return {
                 ...state,
-                selectedClaim: action.selectedClaim,
+                selectedTarget: action.selectedTarget,
             };
         case ActionTypes.SET_SELECTED_CONTENT:
             return {

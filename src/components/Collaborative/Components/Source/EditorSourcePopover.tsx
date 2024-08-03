@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Popover } from "antd";
 import EditorSourcePopoverContent from "./EditorSourcePopoverContent";
 import { useCommands } from "@remirror/react";
-import { CollaborativeEditorContext } from "../../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../../VisualEditorProvider";
 import { ProsemirrorNode } from "remirror";
 
 /**
@@ -25,7 +25,7 @@ const EditorSourcePopover = ({
     children: React.ReactNode;
 }) => {
     const command = useCommands();
-    const { setEditorSources } = useContext(CollaborativeEditorContext);
+    const { setEditorSources } = useContext(VisualEditorContext);
     const { props, href } = source;
 
     function findMarkPositions(
@@ -102,18 +102,19 @@ const EditorSourcePopover = ({
         try {
             const [from, to] = findMarkPositions(node, props?.id);
             removeEditorSource();
-            command.removeLink({ from, to });
+            command.removeLink({ from: from - 1, to: to - 1 });
         } catch (error) {
             console.error("Error handling delete click:", error);
+            removeEditorSource();
         } finally {
             setIsLoading(false);
         }
     };
 
     const removeEditorSource = () => {
-        setEditorSources((sources) => {
-            return sources.filter((src) => src.href !== href);
-        });
+        setEditorSources((sources) =>
+            sources.filter(({ props: { id } }) => id !== props.id)
+        );
     };
 
     return (

@@ -19,7 +19,10 @@ describe("ClaimController (e2e)", () => {
     let db: any;
     let personalitiesId: string[];
     let claimId: string;
-    const sources: string[] = ["http://wikipedia.org"];
+    const speechSources: string[] = ["http://wikipedia.org"];
+    const imageSources1: string[] = ["http://wikimedia.org"];
+    const imageSources2: string[] = ["http://wikidata.org"];
+    const debateSources: string[] = ["http://aletheiafact.org"];
     const date: string = "2023-11-25T14:49:30.992Z";
 
     beforeAll(async () => {
@@ -69,7 +72,7 @@ describe("ClaimController (e2e)", () => {
                 content: "Speech Claim Content Lorem Ipsum Dolor Sit Amet...",
                 slug: "speech-claim-title",
                 date,
-                sources,
+                speechSources,
             })
             .expect(201)
             .expect(({ body }) => {
@@ -102,7 +105,7 @@ describe("ClaimController (e2e)", () => {
                 nameSpace: NameSpaceEnum.Main,
                 title: "Image Claim Title With Personality",
                 date,
-                sources,
+                imageSources1,
                 content: {
                     FileURL: "http://localhost:4566/aletheia/imageTest1.png",
                     Key: "imageTest1.png",
@@ -127,7 +130,7 @@ describe("ClaimController (e2e)", () => {
                 nameSpace: NameSpaceEnum.Main,
                 title: "Image Claim Title Without Personality",
                 date,
-                sources,
+                imageSources2,
                 content: {
                     FileURL: "http://localhost:4566/aletheia/imageTest2.png",
                     Key: "imageTest2.png",
@@ -152,7 +155,7 @@ describe("ClaimController (e2e)", () => {
                 nameSpace: NameSpaceEnum.Main,
                 title: "Debate Claim Title",
                 date,
-                sources,
+                debateSources,
             })
             .expect(201)
             .expect(({ body }) =>

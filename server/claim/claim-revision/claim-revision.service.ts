@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import slugify from "slugify";
 import { ParserService } from "../parser/parser.service";
 import { SourceService } from "../../source/source.service";
@@ -13,6 +13,7 @@ import { ContentModelEnum } from "../../types/enums";
 import { ImageService } from "../types/image/image.service";
 import { DebateService } from "../types/debate/debate.service";
 import { FindAllOptions } from "../../personality/personality.service";
+import { UtilService } from "../../util";
 
 @Injectable()
 export class ClaimRevisionService {
@@ -25,7 +26,8 @@ export class ClaimRevisionService {
         private sourceService: SourceService,
         private parserService: ParserService,
         private imageService: ImageService,
-        private debateService: DebateService
+        private debateService: DebateService,
+        private util: UtilService
     ) {
         this.optionsToUpdate = {
             new: true,
@@ -33,11 +35,23 @@ export class ClaimRevisionService {
         };
     }
 
-    /** get ClaimRevision by ID */
     getRevision(match) {
         try {
             return this.ClaimRevisionModel.findOne(match)
                 .populate("personalities")
+                .populate("content")
+                .lean();
+        } catch {
+            throw new NotFoundException();
+        }
+    }
+
+    /** get ClaimRevision by ID */
+    getRevisionById(id) {
+        try {
+            return this.ClaimRevisionModel.findById(id)
+                .populate("personalities")
+                .populate("content")
                 .lean();
         } catch {
             throw new NotFoundException();
@@ -55,46 +69,24 @@ export class ClaimRevisionService {
             lower: true, // convert to lower case, defaults to `false`
             strict: true, // strip special characters except replacement, defaults to `false`
         });
-
-        if (claim.contentModel === ContentModelEnum.Speech) {
-            const newSpeech = await this.parserService.parse(claim.content);
-            claim.contentId = newSpeech._id;
-        } else if (claim.contentModel === ContentModelEnum.Image) {
-            const newImage = await this.imageService.create(claim.content);
-            claim.contentId = newImage._id;
-        } else if (claim.contentModel === ContentModelEnum.Debate) {
-            const newDebate = await this.debateService.create(claim);
-            claim.contentId = newDebate._id;
-        }
-
         const newClaimRevision = new this.ClaimRevisionModel(claim);
+        const newclaimRevisionId = Types.ObjectId(newClaimRevision._id);
 
-        if (claim.sources && Array.isArray(claim.sources)) {
-            // TODO: check if source already exists
-            try {
-                for (let source of claim.sources) {
-                    if (typeof source === "string") {
-                        await this.sourceService.create({
-                            href: source,
-                            targetId: claimId,
-                            targetModel: SourceTargetModel.Claim,
-                        });
-                    } else {
-                        await this.sourceService.updateTargetId(
-                            source._id,
-                            claimId
-                        );
-                    }
-                }
-            } catch (e) {
-                this.logger.error(e);
-                throw e;
-            }
-        }
+        newClaimRevision.contentId = await this._createContentModel(
+            claim,
+            newclaimRevisionId
+        );
+
+        await this._createSources(claim.sources, claimId);
         return newClaimRevision.save();
     }
 
-    async findAll({ searchText, pageSize, skipedDocuments }: FindAllOptions) {
+    async findAll({
+        searchText,
+        pageSize,
+        skipedDocuments,
+        nameSpace,
+    }: FindAllOptions) {
         const aggregationPipeline = [
             {
                 $search: {
@@ -103,9 +95,17 @@ export class ClaimRevisionService {
                         query: searchText,
                         path: "title",
                         fuzzy: {
-                            maxEdits: 2,
+                            maxEdits: 1, // Using maxEdits: 1 to allow minor typos or spelling errors in search queries.
                         },
                     },
+                },
+            },
+            {
+                $lookup: {
+                    from: "claims",
+                    localField: "claimId",
+                    foreignField: "_id",
+                    as: "claimContent",
                 },
             },
             {
@@ -116,9 +116,11 @@ export class ClaimRevisionService {
                     as: "personality",
                 },
             },
+            this.util.getVisibilityMatch(nameSpace),
             {
                 $project: {
                     title: 1,
+                    contentModel: 1,
                     "personality.slug": 1,
                     "personality.name": 1,
                     slug: 1,
@@ -165,5 +167,60 @@ export class ClaimRevisionService {
 
     getByContentId(contentId) {
         return this.ClaimRevisionModel.findOne({ contentId });
+    }
+
+    private async _createContentModel(claim, claimRevisionId) {
+        switch (claim.contentModel) {
+            case ContentModelEnum.Speech:
+                return (
+                    await this.parserService.parse(
+                        claim.content,
+                        claimRevisionId
+                    )
+                )._id;
+            case ContentModelEnum.Image:
+                return (
+                    await this.imageService.create(
+                        claim.content,
+                        claimRevisionId
+                    )
+                )._id;
+            case ContentModelEnum.Debate:
+                return (await this.debateService.create(claim, claimRevisionId))
+                    ._id;
+            case ContentModelEnum.Unattributed:
+                return (
+                    await this.parserService.parse(
+                        claim.content,
+                        claimRevisionId,
+                        null,
+                        claim.contentModel
+                    )
+                )._id;
+        }
+    }
+
+    private async _createSources(sources, claimId) {
+        if (sources && Array.isArray(sources)) {
+            for (let source of sources) {
+                try {
+                    if (typeof source === "string") {
+                        await this.sourceService.create({
+                            href: source,
+                            targetId: claimId,
+                            targetModel: SourceTargetModel.Claim,
+                        });
+                    } else {
+                        await this.sourceService.updateTargetId(
+                            source._id,
+                            claimId
+                        );
+                    }
+                } catch (e) {
+                    this.logger.error(e);
+                    throw e;
+                }
+            }
+        }
     }
 }

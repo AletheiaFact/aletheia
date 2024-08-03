@@ -1,167 +1,22 @@
-import api from "../../api/ClaimReviewTaskApi";
+import api from "../../api/reviewTaskApi";
 import { createMachine, interpret } from "xstate";
-import { ReviewTaskMachineContext } from "./context";
+import { ReviewTaskMachineContextType } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
 import { ReviewTaskMachineState } from "./states";
-import { saveContext } from "./actions";
-import {
-    CompoundStates,
-    ReviewTaskEvents as Events,
-    ReviewTaskStates as States,
-} from "./enums";
+import { ReviewTaskEvents as Events, ReportModelEnum } from "./enums";
 import sendReviewNotifications from "../../notifications/sendReviewNotifications";
+import { isSameLabel, machineWorkflow } from "./machineWorkflow";
 
-const draftSubStates = {
-    initial: CompoundStates.undraft,
-    states: {
-        undraft: {
-            on: {
-                SAVE_DRAFT: {
-                    target: CompoundStates.draft,
-                    actions: [saveContext],
-                },
-            },
-        },
-        draft: {
-            on: {
-                SAVE_DRAFT: {
-                    target: CompoundStates.draft,
-                    actions: [saveContext],
-                },
-            },
-        },
-    },
-};
-
-const isSameLabel = (context, event) =>
-    context.reviewData.classification ===
-    event.reviewData.crossCheckingClassification;
-
-const isDifferentLabel = (context, event) =>
-    context.classification !== event.reviewData.crossCheckingClassification;
-
-export const createNewMachine = ({ value, context }) => {
+export const createNewMachine = ({ value, context }, reportModel) => {
     return createMachine<
-        ReviewTaskMachineContext,
+        ReviewTaskMachineContextType,
         ReviewTaskMachineEvents,
         ReviewTaskMachineState
     >({
+        id: ReportModelEnum[reportModel],
         initial: value,
         context,
-        states: {
-            [States.unassigned]: {
-                on: {
-                    [Events.assignUser]: {
-                        target: States.assigned,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.assigned]: {
-                ...draftSubStates,
-                on: {
-                    [Events.goback]: {
-                        target: States.unassigned,
-                    },
-                    [Events.finishReport]: {
-                        target: States.reported,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.reported]: {
-                on: {
-                    [Events.goback]: {
-                        target: States.assigned,
-                    },
-                    [Events.selectedCrossChecking]: {
-                        target: States.selectCrossChecker,
-                    },
-                    [Events.selectedReview]: {
-                        target: States.selectReviewer,
-                    },
-                },
-            },
-            [States.selectCrossChecker]: {
-                on: {
-                    [Events.goback]: {
-                        target: States.reported,
-                    },
-                    [Events.sendToCrossChecking]: {
-                        target: States.crossChecking,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.selectReviewer]: {
-                on: {
-                    [Events.goback]: {
-                        target: States.reported,
-                    },
-                    [Events.sendToReview]: {
-                        target: States.submitted,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.crossChecking]: {
-                on: {
-                    [Events.addComment]: {
-                        target: States.addCommentCrossChecking,
-                        actions: [saveContext],
-                    },
-                    [Events.submitCrossChecking]: {
-                        target: States.reported,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.addCommentCrossChecking]: {
-                on: {
-                    [Events.goback]: {
-                        target: States.crossChecking,
-                    },
-                    [Events.submitComment]: [
-                        {
-                            target: States.reported,
-                            actions: [saveContext],
-                            cond: isSameLabel,
-                        },
-                        {
-                            target: States.assigned,
-                            actions: [saveContext],
-                            cond: isDifferentLabel,
-                        },
-                    ],
-                },
-            },
-            //TODO: Investigate how to move rejected and addComment crossChecking as substates
-            [States.submitted]: {
-                on: {
-                    [Events.reject]: {
-                        target: States.rejected,
-                    },
-                    [Events.publish]: {
-                        target: States.published,
-                        actions: [saveContext],
-                    },
-                },
-            },
-            [States.rejected]: {
-                on: {
-                    [Events.addRejectionComment]: {
-                        target: States.assigned,
-                        actions: [saveContext],
-                    },
-                    [Events.goback]: {
-                        target: States.submitted,
-                    },
-                },
-            },
-            [States.published]: {
-                type: "final",
-            },
-        },
+        states: machineWorkflow[reportModel],
     });
 };
 
@@ -171,68 +26,80 @@ export const createNewMachine = ({ value, context }) => {
 export const transitionHandler = (state) => {
     const {
         data_hash,
+        reportModel,
         t,
         recaptchaString,
-        setCurrentFormAndNextEvents,
+        setFormAndEvents,
         resetIsLoading,
         currentUserId,
         nameSpace,
+        reviewTaskType,
+        target,
     } = state.event;
     const event = state.event.type;
+    const { value } = state;
+    const { reviewData, review } = state.context;
+    const nextState = typeof value !== "string" ? Object.keys(value)[0] : value;
 
-    const nextState =
-        typeof state.value !== "string"
-            ? Object.keys(state.value)[0]
-            : state.value;
-
-    if (
+    const shouldNotUpdateReviewTask =
         event === Events.reject ||
         event === Events.selectedCrossChecking ||
-        event === Events.selectedReview
-    ) {
-        setCurrentFormAndNextEvents(nextState);
-    } else if (event !== Events.init) {
-        api.createClaimReviewTask(
-            {
-                data_hash,
-                machine: {
-                    context: {
-                        reviewData: state.context.reviewData,
-                        claimReview: state.context.claimReview,
-                    },
-                    value: state.value,
-                },
-                recaptcha: recaptchaString,
-                nameSpace,
-            },
-            t,
-            event
-        )
-            .then(() => {
-                return event === Events.goback
-                    ? setCurrentFormAndNextEvents(nextState)
-                    : setCurrentFormAndNextEvents(
-                          event,
-                          isSameLabel(state.context, state.event)
-                      );
-            })
-            .catch((e) => {
-                // TODO: Track errors with Sentry
-            })
-            .finally(() => resetIsLoading());
+        event === Events.selectedReview ||
+        event === Events.reAssignUser;
+
+    if (event === Events.init || event === Events.viewPreview) {
+        return;
     }
 
-    sendReviewNotifications(
+    if (shouldNotUpdateReviewTask) {
+        return setFormAndEvents(nextState);
+    }
+
+    const reviewTask = {
         data_hash,
-        event,
-        state.context.reviewData,
-        currentUserId,
-        t
-    );
+        reportModel,
+        machine: {
+            context: {
+                reviewData,
+                review,
+            },
+            value: value,
+        },
+        recaptcha: recaptchaString,
+        nameSpace,
+        reviewTaskType,
+        target,
+    };
+
+    api.createReviewTask(reviewTask, t, event)
+        .then(() => {
+            if (
+                reportModel === ReportModelEnum.Request &&
+                value === "published"
+            ) {
+                window.location.href = `/claim/create?verificationRequest=${target}`;
+            }
+
+            return event === Events.goback
+                ? setFormAndEvents(nextState)
+                : setFormAndEvents(
+                      event,
+                      isSameLabel(state.context, state.event)
+                  );
+        })
+        .catch((e) => {
+            // TODO: Track errors with Sentry
+        })
+        .finally(() => resetIsLoading());
+
+    sendReviewNotifications(data_hash, event, reviewData, currentUserId, t);
 };
 
-export const createNewMachineService = (machine: any) => {
-    return interpret(createNewMachine(machine))
+export const createNewMachineService = (
+    machine: any,
+    reportModel: string = ReportModelEnum.FactChecking
+) => {
+    return interpret(createNewMachine(machine, reportModel))
         .onTransition(transitionHandler)
         .start();
 };

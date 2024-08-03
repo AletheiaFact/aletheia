@@ -5,10 +5,12 @@ import {
     IsDateString,
     IsNotEmpty,
     IsString,
+    IsOptional,
 } from "class-validator";
 import { ContentModelEnum } from "../../types/enums";
 import { Personality } from "../../personality/schemas/personality.schema";
 import { ApiProperty } from "@nestjs/swagger";
+import { Group } from "../../group/schemas/group.schema";
 
 export class CreateClaimDTO {
     @IsNotEmpty()
@@ -45,9 +47,15 @@ export class CreateClaimDTO {
     @IsArray()
     @ArrayNotEmpty()
     @ApiProperty()
-    personalities: Personality[];
+    @IsOptional()
+    personalities?: Personality[];
 
     @IsString()
     @ApiProperty()
     nameSpace: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    group: Group;
 }

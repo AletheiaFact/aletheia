@@ -46,13 +46,13 @@ export class ClaimReviewController {
         } = getClaimReviewsDto;
 
         return Promise.all([
-            this.claimReviewService.listAll(
+            this.claimReviewService.listAll({
                 page,
                 pageSize,
                 order,
-                { isHidden, isDeleted: false },
-                latest
-            ),
+                query: { isHidden, isDeleted: false, nameSpace },
+                latest,
+            }),
             this.claimReviewService.count({ isHidden, isDeleted: false }),
         ]).then(([reviews, totalReviews]) => {
             const totalPages = Math.ceil(totalReviews / pageSize);
@@ -101,6 +101,7 @@ export class ClaimReviewController {
         const review = await this.claimReviewService.getReviewByDataHash(
             data_hash
         );
+
         const descriptionForHide =
             await this.historyService.getDescriptionForHide(
                 review,

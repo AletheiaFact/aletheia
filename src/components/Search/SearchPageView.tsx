@@ -14,10 +14,13 @@ import PaginationOptions from "./PaginationOptions";
 import topicApi from "../../api/topicsApi";
 import AdvancedSearch from "./AdvancedSearch";
 import SearchIcon from "@mui/icons-material/Search";
+import { useAtom } from "jotai";
+import { currentNameSpace } from "../../atoms/namespace";
 
 function SearchPageView({ searchText }) {
     const dispatch = useDispatch();
     const router = useRouter();
+    const [nameSpace] = useAtom(currentNameSpace);
     const { t } = useTranslation();
 
     const {
@@ -81,6 +84,7 @@ function SearchPageView({ searchText }) {
                 page: page,
                 pageSize: pageSize,
                 searchText: term,
+                nameSpace: nameSpace,
             });
         } catch (error) {
             console.log(`Error: ${error.message}`);

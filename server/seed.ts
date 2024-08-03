@@ -18,7 +18,7 @@ async function initApp() {
     logger.log(`AppModule loaded`);
     const emailService = app.get(EmailService);
     const configService = app.get(ConfigService);
-    const userService = app.get(UsersService);
+    const userService = await app.resolve(UsersService);
     const utilService = app.get(UtilService);
     const users = configService.get<any>("users");
 
@@ -50,17 +50,10 @@ async function initApp() {
     console.log(users, "seed users");
     // Using await Promise.all to force loop to finish before continuing
     await Promise.all(
-        users.map(async (userData) => {
-            const password = utilService.generatePassword(
-                userData.isTestUser,
-                userData.password
-            );
-            return seedSingleUser(userData, password);
-        })
-    ).catch((e) => {
-        options.logger.log("error", e);
-        options.logger.log("info", "Error while seeding users");
-    });
+        users.map(async (userData) =>
+            seedSingleUser(userData, userData.password)
+        )
+    );
 
     logger.log("Seed is finished");
     await app.close();

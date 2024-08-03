@@ -21,7 +21,7 @@ export class ImageService {
         private reportService: ReportService
     ) {}
 
-    async create(image) {
+    async create(image, claimRevisionId = null) {
         const imageSchema = {
             data_hash: image.DataHash,
             props: {
@@ -29,6 +29,7 @@ export class ImageService {
                 extension: image.Extension,
             },
             content: image.FileURL,
+            claimRevisionId: claimRevisionId,
         };
 
         const newImage = await new this.ImageModel(imageSchema).save();
