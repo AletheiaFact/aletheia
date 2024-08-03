@@ -14,5 +14,9 @@
     "alreadyInGroupMessage": "Já adicionado ao grupo",
     "searchResultsTitle": "Resultados",
     "noResultsMessage": "Nenhum resultado",
-    "searchPlaceholder": "Busque denúncias"
+    "searchPlaceholder": "Busque denúncias",
+    "removeVerificationRequestSuccess": "Denúncia removida ao grupo com sucesso",
+    "removeVerificationRequestError": "Erro ao remover denúncia do grupo",
+    "addVerificationRequestSuccess": "Denúncia adicionada ao grupo com sucesso",
+    "addVerificationRequestError": "Erro ao adicionar ao grupo"
 }

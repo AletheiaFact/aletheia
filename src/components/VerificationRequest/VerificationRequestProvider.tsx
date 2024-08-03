@@ -2,6 +2,7 @@ import { createContext, useMemo, useState } from "react";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import { VerificationRequest } from "../../types/VerificationRequest";
 import { Group } from "../../types/Group";
+import { useTranslation } from "next-i18next";
 
 interface IVerificationRequestContext {
     recommendations?: VerificationRequest[];
@@ -25,22 +26,24 @@ export const VerificationRequestProvider = ({
     baseRecommendations,
     children,
 }: IVerificationRequestProvider) => {
+    const { t } = useTranslation();
     const [recommendations, setRecommendations] =
         useState<VerificationRequest[]>(baseRecommendations);
     const [group, setGroup] = useState<Group>(verificationRequest.group);
 
-    const addRecommendation = (
+    const addRecommendation = async (
         newVerificationRequest: VerificationRequest
-    ): void => {
+    ): Promise<void> => {
         const groupContent = group.content.filter(
             (v) => v._id !== verificationRequest._id
         );
 
-        verificationRequestApi.updateVerificationRequest(
+        await verificationRequestApi.updateVerificationRequest(
             verificationRequest._id,
             {
                 group: [...groupContent, newVerificationRequest],
-            }
+            },
+            t
         );
         setRecommendations((prev) =>
             prev.filter((v) => v._id !== newVerificationRequest._id)
@@ -75,7 +78,8 @@ export const VerificationRequestProvider = ({
                 verificationRequestId,
                 {
                     group: group._id,
-                }
+                },
+                t
             );
 
             removeFromGroup(verificationRequestId);
