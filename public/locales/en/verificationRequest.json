@@ -14,5 +14,9 @@
     "alreadyInGroupMessage": "Already in group",
     "searchResultsTitle": "Results",
     "noResultsMessage": "No results",
-    "searchPlaceholder": "Search verification requests"
+    "searchPlaceholder": "Search verification requests",
+    "removeVerificationRequestSuccess": "Verification Request remove from group successfully",
+    "removeVerificationRequestError": "Error while removing verification request from group",
+    "addVerificationRequestSuccess": "Verification Request added to the group successfully",
+    "addVerificationRequestError": "Error while updating group"
 }

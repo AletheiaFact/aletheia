@@ -1,5 +1,5 @@
 import { Col } from "antd";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import VerificationRequestCard from "./VerificationRequestCard";
 import AletheiaButton from "../Button";
 import { VerificationRequestContext } from "./VerificationRequestProvider";
@@ -8,6 +8,7 @@ import VerificationRequestResultListStyled from "./VerificationRequestRecommedat
 
 const VerificationRequestResultList = ({ results }) => {
     const { t } = useTranslation();
+    const [isLoading, setIsLoading] = useState(false);
     const { group, addRecommendation } = useContext(VerificationRequestContext);
 
     const checkIfIsInGroup = (verificationRequestId): boolean => {
@@ -40,9 +41,14 @@ const VerificationRequestResultList = ({ results }) => {
                                     disabled={checkIfIsInGroup(
                                         verificationRequest._id
                                     )}
-                                    onClick={() =>
-                                        addRecommendation(verificationRequest)
-                                    }
+                                    loading={isLoading}
+                                    onClick={async () => {
+                                        setIsLoading(true);
+                                        await addRecommendation(
+                                            verificationRequest
+                                        );
+                                        setIsLoading(false);
+                                    }}
                                 >
                                     {checkIfIsInGroup(verificationRequest._id)
                                         ? t(

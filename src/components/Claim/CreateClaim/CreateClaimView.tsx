@@ -59,9 +59,13 @@ const CreateClaimView = () => {
             (verificationRequest) => verificationRequest?._id !== id
         );
         verificationRequestApi
-            .removeVerificationRequestFromGroup(id, {
-                group: claimData.group._id,
-            })
+            .removeVerificationRequestFromGroup(
+                id,
+                {
+                    group: claimData.group._id,
+                },
+                t
+            )
             .then(() => {
                 send({
                     type: CreateClaimEvents.updateGroup,

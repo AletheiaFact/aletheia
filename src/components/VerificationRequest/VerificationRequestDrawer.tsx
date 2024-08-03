@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import LargeDrawer from "../LargeDrawer";
 import { Col, Typography } from "antd";
 import colors from "../../styles/colors";
@@ -6,6 +6,7 @@ import VerificationRequestCard from "./VerificationRequestCard";
 import AletheiaButton from "../Button";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useTranslation } from "next-i18next";
+import WarningModal from "../Modal/WarningModal";
 
 const VerificationRequestDrawer = ({
     groupContent,
@@ -15,6 +16,7 @@ const VerificationRequestDrawer = ({
     onRemove,
 }) => {
     const { t } = useTranslation();
+    const [removeWarningModal, setRemoveWarningModal] = useState(false);
 
     return (
         <LargeDrawer
@@ -28,19 +30,39 @@ const VerificationRequestDrawer = ({
                 </Typography.Title>
                 {groupContent?.length > 0 ? (
                     groupContent?.map(({ _id, content }) => (
-                        <VerificationRequestCard
-                            key={_id}
-                            content={content}
-                            actions={[
-                                <AletheiaButton
-                                    key="remove"
-                                    onClick={() => onRemove(_id)}
-                                    loading={isLoading}
-                                >
-                                    <DeleteOutlined />
-                                </AletheiaButton>,
-                            ]}
-                        />
+                        <>
+                            <VerificationRequestCard
+                                key={_id}
+                                content={content}
+                                actions={[
+                                    <AletheiaButton
+                                        key="remove"
+                                        onClick={() =>
+                                            setRemoveWarningModal(true)
+                                        }
+                                        loading={isLoading}
+                                    >
+                                        <DeleteOutlined />
+                                    </AletheiaButton>,
+                                ]}
+                            />
+                            <WarningModal
+                                open={removeWarningModal}
+                                title={t("warningModal:title", {
+                                    warning: t(
+                                        "warningModal:removeVerificationRequest"
+                                    ),
+                                })}
+                                width={400}
+                                handleOk={() => {
+                                    onRemove(_id);
+                                    setRemoveWarningModal(!removeWarningModal);
+                                }}
+                                handleCancel={() =>
+                                    setRemoveWarningModal(!removeWarningModal)
+                                }
+                            />
+                        </>
                     ))
                 ) : (
                     <span>
