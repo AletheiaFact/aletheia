@@ -14,7 +14,7 @@ const TopicDisplay = ({
     data_hash,
     topics,
     reviewTaskType,
-    contentModel = null
+    contentModel = null,
 }) => {
     const [showTopicsForm, setShowTopicsForm] = useState<boolean>(false);
     const [topicsArray, setTopicsArray] = useState<any[]>(topics);
@@ -56,7 +56,7 @@ const TopicDisplay = ({
         return (
             topicSearchResults?.map((topic) => ({
                 label: topic.name,
-                value: topic.wikidataId,
+                value: topic.wikidata,
             })) || []
         );
     };
@@ -77,7 +77,7 @@ const TopicDisplay = ({
                 data_hash
             );
         }
-        
+
         return contentModel === ContentModelEnum.Image
             ? await ImageApi.deleteImageTopic(newTopicsArray, data_hash)
             : await SentenceApi.deleteSentenceTopic(newTopicsArray, data_hash);
