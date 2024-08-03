@@ -125,9 +125,7 @@ export class VerificationRequestService {
                 .populate("source");
         }
 
-        return this.VerificationRequestModel.findOne({ data_hash }).populate(
-            "source"
-        );
+        return this.VerificationRequestModel.findOne({ data_hash });
     }
 
     /**
