@@ -15,12 +15,16 @@ const CTAButton = ({ type }) => {
             style={{
                 alignItems: "center",
                 justifyContent: "center",
-                height: "40px",
-                padding: "0 15px",
+                height: "max-content",
                 fontWeight: 700,
+                whiteSpace: "normal",
+                lineHeight: "20px",
+
             }}
         >
-            {t("CTARegistration:button")}
+            <span style={{ padding: "6px 0px" }}>
+                {t("CTARegistration:button")}
+            </span>
         </Button>
     );
 };
