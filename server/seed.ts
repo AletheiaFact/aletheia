@@ -1,7 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { EmailService } from "./email/email.service";
 import { ConfigService } from "@nestjs/config";
 import { UsersService } from "./users/users.service";
 import { UtilService } from "./util";
@@ -22,7 +21,6 @@ async function initApp() {
     const userService = await app.resolve(UsersService);
     const utilService = app.get(UtilService);
     const users = configService.get<any>("users");
-    const disableSMTP = configService.get<any>("disable_smtp");
 
     const seedSingleUser = async (userData, password) => {
         return userService
@@ -48,6 +46,8 @@ async function initApp() {
                 return null;
             });
     };
+
+    console.log(users, "seed users");
     // Using await Promise.all to force loop to finish before continuing
     await Promise.all(
         users.map(async (userData) =>
