@@ -53,6 +53,7 @@ jobs:
         if: endsWith(github.ref, '/master')
         run: |
           sed -i '11{s/test.//}' deployment/app.yml
+          sed -i '21{s/test.//}' deployment/app.yml
           sed -i '11{s/testws./ws./}' deployment/websocket.yml
           sed -i '11{s/test.//}' config.seed.example.yaml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
