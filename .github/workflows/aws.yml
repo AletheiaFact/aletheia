@@ -165,6 +165,7 @@ jobs:
         if: endsWith(github.ref, '/master')
         run: |
           sed -i '11{s/test.//}' deployment/app.yml
+          sed -i '21{s/test.//}' deployment/app.yml
           sed -i '11{s/testws./ws./}' deployment/websocket.yml
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
           echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
