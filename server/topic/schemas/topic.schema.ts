@@ -18,6 +18,9 @@ export class Topic {
     })
     name: string;
 
+    @Prop({ required: false })
+    wikidataId?: string;
+
     @Prop({
         required: true,
     })
