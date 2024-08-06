@@ -44,6 +44,9 @@ export class ClaimService {
         private groupService: GroupService
     ) {}
 
+    /**
+     * @coverage product: http://test
+     */
     async listAll(page, pageSize, order, query) {
         if (!query.isHidden && query.personalities) {
             // Modify query.personalities only if isHidden is false

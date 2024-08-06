@@ -125,6 +125,7 @@ export class MongoPersonalityService {
      * @returns Return a new personality.
      */
     async create(personality) {
+        console.log("test");
         try {
             const personalityExists =
                 await this.getDeletedPersonalityByWikidata(
