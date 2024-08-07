@@ -29,11 +29,12 @@ const VerificationRequestDrawer = ({
                     {t("verificationRequest:verificationRequestTitle")}s
                 </Typography.Title>
                 {groupContent?.length > 0 ? (
-                    groupContent?.map(({ _id, content }) => (
+                    groupContent?.map((item) => (
                         <>
                             <VerificationRequestCard
-                                key={_id}
-                                content={content}
+                                key={item._id}
+                                content={item}
+                                t={t}
                                 actions={[
                                     <AletheiaButton
                                         key="remove"
@@ -55,7 +56,7 @@ const VerificationRequestDrawer = ({
                                 })}
                                 width={400}
                                 handleOk={() => {
-                                    onRemove(_id);
+                                    onRemove(item._id);
                                     setRemoveWarningModal(!removeWarningModal);
                                 }}
                                 handleCancel={() =>
