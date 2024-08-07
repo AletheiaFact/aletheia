@@ -21,7 +21,7 @@ const TopicModel = MongooseModule.forFeature([
         SentenceModule,
         ImageModule,
         VerificationRequestModule,
-        WikidataModule
+        WikidataModule,
     ],
     controllers: [TopicController],
     providers: [TopicService],

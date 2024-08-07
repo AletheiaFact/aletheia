@@ -4,6 +4,10 @@ const publishedSelector = (state) => {
     return state.matches(ReviewTaskStates.published);
 };
 
+const assignedSelector = (state) => {
+    return state.matches(ReviewTaskStates.assigned);
+};
+
 const reportSelector = (state) => {
     return (
         state.matches(ReviewTaskStates.reported) ||
@@ -41,4 +45,5 @@ export {
     reviewNotStartedSelector,
     reviewDataSelector,
     reportSelector,
+    assignedSelector,
 };

@@ -1,10 +1,11 @@
 import { Select } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAppSelector } from "../../store/store";
 import colors from "../../styles/colors";
 import ClassificationText from "../ClassificationText";
 import ClassificationModal from "./ClassificationModal";
+import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 
 const { Option } = Select;
 
@@ -57,6 +58,7 @@ const ClaimReviewSelect = ({
     const { vw } = useAppSelector((state) => state);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(defaultValue);
+    const { editorConfiguration } = useContext(VisualEditorContext);
 
     const onChangeSelect = (e) => {
         setValue(e);
@@ -87,6 +89,7 @@ const ClaimReviewSelect = ({
                 onChange={onChangeSelect}
                 onClick={handleOnClick}
                 value={value}
+                disabled={editorConfiguration?.readonly}
                 data-cy={"testClassificationText"}
                 dropdownStyle={vw?.sm && { display: "none" }}
                 style={style}

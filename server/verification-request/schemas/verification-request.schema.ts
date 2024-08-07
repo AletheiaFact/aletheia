@@ -14,7 +14,23 @@ export class VerificationRequest {
     @Prop({ required: true, type: String })
     content: string;
 
-    @Prop({ required: false, default: new Date() })
+    @Prop({ required: false, type: String })
+    publicationDate: string;
+
+    @Prop({ required: false, type: String })
+    email: string;
+
+    @Prop({ required: false, type: String })
+    heardFrom: string;
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "Source",
+    })
+    source: mongoose.Types.ObjectId;
+
+    @Prop({ required: true, default: new Date() })
     date: Date;
 
     @Prop({

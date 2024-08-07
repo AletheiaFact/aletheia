@@ -87,13 +87,18 @@ export class VerificationRequestService {
             const newVerificationRequest = new this.VerificationRequestModel(
                 verificationRequest
             );
-            if (verificationRequest?.sources?.length) {
-                for (const source of verificationRequest.sources) {
-                    this.sourceService.create({
-                        href: source,
-                        targetId: newVerificationRequest.id,
-                    });
-                }
+
+            if (
+                verificationRequest.source &&
+                verificationRequest.source.trim() !== ""
+            ) {
+                const newSource = await this.sourceService.create({
+                    href: verificationRequest.source,
+                    targetId: newVerificationRequest.id,
+                });
+                newVerificationRequest.source = Types.ObjectId(newSource.id);
+            } else {
+                newVerificationRequest.source = null;
             }
 
             return newVerificationRequest.save();
@@ -115,7 +120,9 @@ export class VerificationRequestService {
         if (populate) {
             return this.VerificationRequestModel.findOne({
                 data_hash,
-            }).populate("group");
+            })
+                .populate("group")
+                .populate("source");
         }
 
         return this.VerificationRequestModel.findOne({ data_hash });

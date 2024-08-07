@@ -7,6 +7,7 @@ import { EditorConfig } from "./utils/getEditorConfig";
 import Editor from "./Components/Editor";
 import FloatingMenu from "./Components/FloatingMenu";
 import AffixPreviewButton from "./Components/AffixPreviewButton";
+import { useAppSelector } from "../../store/store";
 
 interface VisualEditorProps {
     onContentChange: (state: any, type: string) => void;
@@ -22,6 +23,9 @@ const VisualEditor = ({ onContentChange }: VisualEditorProps) => {
     const { manager, state, setState } = useRemirror(editorConfiguration);
     const { readonly } = editorConfiguration;
     const getComponentsProps = { state, manager, readonly, editorSources };
+    const enableViewReportPreview = useAppSelector(
+        (state) => state?.enableViewReportPreview
+    );
 
     const handleChange = useCallback(
         ({ state }) => {
@@ -49,7 +53,11 @@ const VisualEditor = ({ onContentChange }: VisualEditorProps) => {
                 />
                 <Editor editable={readonly} state={state} />
             </Remirror>
-            <AffixPreviewButton doc={state.doc} />
+            {enableViewReportPreview ? (
+                <AffixPreviewButton doc={state.doc} />
+            ) : (
+                <></>
+            )}
         </VisualEditorStyled>
     );
 };
