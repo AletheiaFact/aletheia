@@ -18,5 +18,11 @@
     "removeVerificationRequestSuccess": "Verification Request remove from group successfully",
     "removeVerificationRequestError": "Error while removing verification request from group",
     "addVerificationRequestSuccess": "Verification Request added to the group successfully",
-    "addVerificationRequestError": "Error while updating group"
+    "addVerificationRequestError": "Error while updating group",
+    "verificationRequestTagPublicationDate": "Seen On:",
+    "verificationRequestTagDate": "Reported On:",
+    "verificationRequestTagHeardFrom": "Received On:",
+    "verificationRequestTagSource": "Source:",
+    "verificationRequestTagContent": "Content:",
+    "verificationRequestViewRequest": "View Verification Request"
 }

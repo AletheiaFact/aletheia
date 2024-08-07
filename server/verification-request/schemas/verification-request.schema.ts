@@ -24,6 +24,13 @@ export class VerificationRequest {
     })
     group: Group;
 
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "Source",
+    })
+    source: mongoose.Types.ObjectId;
+
     @Prop({ required: false, type: Boolean })
     rejected: boolean;
 
@@ -37,5 +44,11 @@ export class VerificationRequest {
     topics: Topic[];
 }
 
-export const VerificationRequestSchema =
+const VerificationRequestSchema =
     SchemaFactory.createForClass(VerificationRequest);
+
+VerificationRequestSchema.pre("find", function () {
+    this.populate("source");
+});
+
+export { VerificationRequestSchema };

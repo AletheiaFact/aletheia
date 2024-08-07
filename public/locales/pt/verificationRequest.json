@@ -18,5 +18,11 @@
     "removeVerificationRequestSuccess": "Denúncia removida ao grupo com sucesso",
     "removeVerificationRequestError": "Erro ao remover denúncia do grupo",
     "addVerificationRequestSuccess": "Denúncia adicionada ao grupo com sucesso",
-    "addVerificationRequestError": "Erro ao adicionar ao grupo"
+    "addVerificationRequestError": "Erro ao adicionar ao grupo",
+    "verificationRequestTagPublicationDate": "Visto Em:",
+    "verificationRequestTagDate": "Denunciado Em:",
+    "verificationRequestTagHeardFrom": "Origem:",
+    "verificationRequestTagSource": "Fonte:",
+    "verificationRequestTagContent": "Conteúdo:",
+    "verificationRequestViewRequest": "Ver Denúncia"
 }
