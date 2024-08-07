@@ -1,21 +1,24 @@
+import React from "react";
+import { useTranslation } from "next-i18next";
+import { Avatar, Button, Grid } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { useAtom } from "jotai";
 import {
     DataGrid,
     GridActionsCellItem,
-    GridColumns,
+    GridColDef,
     GridRowParams,
 } from "@mui/x-data-grid";
-import { useTranslation } from "next-i18next";
-import React from "react";
-import { Badge } from "../../types/Badge";
-import EditIcon from "@mui/icons-material/Edit";
-import { Avatar, Button, Grid } from "@mui/material";
-import { useAtom } from "jotai";
 import { isEditDrawerOpen, startEditingItem } from "../../atoms/editDrawer";
 import { atomBadgesList } from "../../atoms/badges";
+import { Badge } from "../../types/Badge";
 
 const BadgesView = () => {
     const { t } = useTranslation();
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [paginationModel, setPaginationModel] = React.useState({
+        pageSize: 10,
+        page: 0,
+    });
     const [, setVisible] = useAtom(isEditDrawerOpen);
     const [badges] = useAtom(atomBadgesList);
     const [, setBadgeToEdit] = useAtom(startEditingItem);
@@ -32,7 +35,7 @@ const BadgesView = () => {
         setVisible(true);
     };
 
-    const columns = React.useMemo<GridColumns<Badge>>(
+    const columns = React.useMemo<GridColDef<Badge>[]>(
         () => [
             {
                 field: "image",
@@ -72,6 +75,7 @@ const BadgesView = () => {
         ],
         [handleEdit, t]
     );
+
     return (
         <Grid
             container
@@ -88,9 +92,9 @@ const BadgesView = () => {
                     <DataGrid
                         rows={badges}
                         columns={columns}
-                        pageSize={rowsPerPage}
-                        rowsPerPageOptions={[5, 10, 50]}
-                        onPageSizeChange={setRowsPerPage}
+                        paginationModel={paginationModel}
+                        pageSizeOptions={[5, 10, 50]}
+                        onPaginationModelChange={setPaginationModel}
                         getRowId={(row) => row._id}
                         autoHeight
                         sx={{
