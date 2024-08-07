@@ -23,6 +23,7 @@ export interface ClaimPageProps {
     enableEditorAnnotations: boolean;
     enableAddEditorSourcesWithoutSelecting: boolean;
     enableReviewersUpdateReport: boolean;
+    enableViewReportPreview: boolean;
     hideDescriptions: object;
     websocketUrl: string;
     nameSpace: NameSpaceEnum;
@@ -38,6 +39,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
         enableEditorAnnotations,
         enableAddEditorSourcesWithoutSelecting,
         enableReviewersUpdateReport,
+        enableViewReportPreview,
     } = props;
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     const { t } = useTranslation();
@@ -54,7 +56,8 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
             enableEditorAnnotations,
             enableCopilotChatBot,
             false,
-            enableReviewersUpdateReport
+            enableReviewersUpdateReport,
+            enableViewReportPreview
         )
     );
 
@@ -108,6 +111,7 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableEditorAnnotations: query?.enableEditorAnnotations,
             enableAddEditorSourcesWithoutSelecting:
                 query?.enableAddEditorSourcesWithoutSelecting,
+            enableViewReportPreview: query?.enableViewReportPreview,
             enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
             websocketUrl: query.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,

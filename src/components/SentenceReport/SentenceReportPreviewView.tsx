@@ -9,6 +9,7 @@ import {
     publishedSelector,
     crossCheckingSelector,
     reportSelector,
+    assignedSelector,
 } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
 import { useAtom } from "jotai";
@@ -62,6 +63,7 @@ const SentenceReportPreviewView = ({
     } = useContext(ReviewTaskMachineContext);
     const isReport = useSelector(machineService, reportSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const isAssigned = useSelector(machineService, assignedSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
     const isPublished =
         useSelector(machineService, publishedSelector) ||
@@ -74,12 +76,15 @@ const SentenceReportPreviewView = ({
         isCrossChecking && (userIsAdmin || userIsCrossChecker);
     const isReviewingAndUserHasPermission =
         isReviewing && (userIsAdmin || userIsReviewer);
+    const isAssignedAndUserHasPermission =
+        isAssigned && (userIsAdmin || userIsAssignee || userIsCrossChecker);
     const isReportedAndUserHasPermission =
         isReport && (userIsAdmin || userIsAssignee || userIsCrossChecker);
     const canShowReportPreview =
         isCrossCheckingAndUserHasPermission ||
         isReviewingAndUserHasPermission ||
-        isReportedAndUserHasPermission;
+        isReportedAndUserHasPermission ||
+        isAssignedAndUserHasPermission;
     const canShowReport =
         (isPublished && (!isHidden || userIsNotRegular)) ||
         (canShowReportPreview && viewPreview && !reviewDrawerCollapsed);

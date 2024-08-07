@@ -17,7 +17,6 @@ const VerificationRequestDisplay = ({ content }) => {
     const { group, onRemoveVerificationRequest } = useContext(
         VerificationRequestContext
     );
-    const { content: contentText } = content;
     const verificationRequestGroup = group?.content?.filter(
         (c) => c._id !== content._id
     );
@@ -36,7 +35,7 @@ const VerificationRequestDisplay = ({ content }) => {
             />
 
             <VerificationRequestMainContent
-                content={contentText}
+                content={content}
                 verificationRequestGroup={verificationRequestGroup}
                 openDrawer={() => setOpen(true)}
             />
