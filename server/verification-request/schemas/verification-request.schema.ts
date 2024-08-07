@@ -40,6 +40,11 @@ export class VerificationRequest {
     })
     group: Group;
 
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "Source",
+    })
     @Prop({ required: false, type: Boolean })
     rejected: boolean;
 
