@@ -45,8 +45,6 @@ export class VerificationRequest {
         required: false,
         ref: "Source",
     })
-    source: mongoose.Types.ObjectId;
-
     @Prop({ required: false, type: Boolean })
     rejected: boolean;
 
