@@ -27,6 +27,11 @@ const VisualEditorStyled = styled(AllStyledComponent)`
     .remirror-floating-popover {
         z-index: 2;
     }
+
+    .ant-affix {
+        display: flex;
+        justify-content: center;
+    }
 `;
 
 export default VisualEditorStyled;

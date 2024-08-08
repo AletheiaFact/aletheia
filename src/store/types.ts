@@ -14,7 +14,6 @@ export enum ActionTypes {
     SET_CUR_PAGE,
     SET_SEARCH_NAME,
     SET_LOGIN_STATUS,
-    SET_AUTO_SAVE,
     SET_BREAKPOINTS,
     SET_USER_ROLE,
     SET_CLAIM_CREATE_TYPE,
@@ -30,10 +29,7 @@ export enum ActionTypes {
     RESULTS_TOPICS_AUTOCOMPLETE,
     SET_SEARCH_FILTER,
     SET_SEARCH_FILTER_USED,
-    SET_COLLABORATIVE_EDIT,
-    SET_COPILOT_CHAT_BOT,
-    SET_EDITOR_ANNOTATION,
-    SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING,
+    SET_VISUAL_EDITOR_ENVIRONEMNT,
 }
 
 export enum SearchTypes {
@@ -65,6 +61,8 @@ export interface RootState {
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
     enableAddEditorSourcesWithoutSelecting: boolean;
+    enableReviewersUpdateReport: boolean;
+    enableViewReportPreview: boolean;
     websocketUrl: string;
     claimType: string;
     claimPersonality: Personality;

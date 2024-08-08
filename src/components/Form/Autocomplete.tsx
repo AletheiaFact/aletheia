@@ -3,13 +3,15 @@ import SelectOptions from "./SelectOptions";
 
 interface AutocompleteProps {
     placeholder: string;
-    onChange: any;
+    onChange?: any;
     dataCy: string;
     dataLoader: any;
     mode?: string;
     style?: {};
     value?: string | string[];
     preloadedTopics?: string[];
+    onSelect?: any;
+    onDeselect?: any;
 }
 
 const Autocomplete = ({
@@ -21,6 +23,8 @@ const Autocomplete = ({
     style = {},
     value = [],
     preloadedTopics = [],
+    onSelect = () => {},
+    onDeselect = () => {},
 }: AutocompleteProps) => {
     return (
         <SelectOptions
@@ -32,6 +36,8 @@ const Autocomplete = ({
             mode={mode}
             value={value}
             preloadedTopics={preloadedTopics}
+            onSelect={onSelect}
+            onDeselect={onDeselect}
         />
     );
 };

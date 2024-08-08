@@ -7,9 +7,15 @@ import { ReviewTaskEvents } from "./enums";
 const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
     (context, event) => {
         const editorParser = new EditorParser();
+        const supportedEvents = [
+            ReviewTaskEvents.finishReport,
+            ReviewTaskEvents.draft,
+            ReviewTaskEvents.addRejectionComment,
+            ReviewTaskEvents.viewPreview,
+        ];
+
         if (
-            (event.type === ReviewTaskEvents.finishReport ||
-                event.type === ReviewTaskEvents.draft) &&
+            supportedEvents.includes(event.type as ReviewTaskEvents) &&
             "visualEditor" in event.reviewData
         ) {
             const schema = editorParser.editor2schema(

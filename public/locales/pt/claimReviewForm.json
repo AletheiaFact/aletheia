@@ -54,5 +54,7 @@
     "groupLabel": "Agrupar denúncias",
     "groupPlaceholder": "Selecione denúncias",
     "isSensitiveLabel": "Conteúdo confidencial",
-    "isSensitive": "Esta denúncia contém conteúdo confidencial"
+    "isSensitive": "Esta denúncia contém conteúdo confidencial",
+    "viewPreview": "Visualizar pré-visualização",
+    "hidePreview": "Ocultar pré-visualização"
 }

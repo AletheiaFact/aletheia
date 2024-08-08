@@ -35,7 +35,6 @@ const ClaimReviewEditor = ({ manager, state, editorSources }) => {
 
     return (
         <>
-            <FloatingLinkToolbar />
             <EditorSourcesList
                 nodeFromJSON={manager?.schema.nodeFromJSON}
                 node={state.doc}

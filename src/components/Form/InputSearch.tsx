@@ -8,7 +8,8 @@ const InputSearchStyled = styled(Input.Search)`
         display: none;
     }
     span.ant-input-affix-wrapper {
-        background: ${colors.lightGray};
+        background: ${({ backgroundColor = colors.lightGray }) =>
+            backgroundColor};
         box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
         border-radius: 4px;
         &:focus-within {
@@ -16,7 +17,8 @@ const InputSearchStyled = styled(Input.Search)`
         }
     }
     input.ant-input {
-        background: ${colors.lightGray};
+        background: ${({ backgroundColor = colors.lightGray }) =>
+            backgroundColor};
         color: ${colors.blackSecondary};
         &::placeholder {
             color: ${colors.blackSecondary};

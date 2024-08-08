@@ -1,9 +1,12 @@
+import { Group } from "./Group";
+
 export type VerificationRequest = {
     data_hash: string;
     content: string;
     isSensitive: boolean;
     rejected: boolean;
-    group: string[];
+    group: Group;
     date: Date;
-    sources: string[];
+    sources?: string[];
+    _id?: string;
 };

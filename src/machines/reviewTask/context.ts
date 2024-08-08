@@ -41,7 +41,6 @@ const buildState = (
             reviewData: {
                 usersId: [],
                 isSensitive: false,
-                group: [],
                 rejected: false,
             },
             review,

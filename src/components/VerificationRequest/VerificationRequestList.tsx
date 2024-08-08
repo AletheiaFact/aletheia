@@ -21,14 +21,16 @@ const VerificationRequestList = () => {
                     title={t(
                         "verificationRequest:verificationRequestListHeader"
                     )}
-                    renderItem={({ content, data_hash }, index) => (
+                    renderItem={(item) => (
                         <VerificationRequestCard
-                            key={index}
-                            content={content}
+                            key={item._id}
+                            content={item}
+                            t={t}
                             expandable={false}
                             actions={[
                                 <AletheiaButton
-                                    href={`/verification-request/${data_hash}`}
+                                    key={`open|${item._id}`}
+                                    href={`/verification-request/${item.data_hash}`}
                                 >
                                     {t(
                                         "verificationRequest:openVerificationRequest"

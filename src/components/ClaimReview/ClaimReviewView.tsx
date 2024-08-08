@@ -18,6 +18,7 @@ import ReviewTaskAdminToolBar from "../Toolbar/ReviewTaskAdminToolBar";
 import { useAppSelector } from "../../store/store";
 import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import { generateReviewContentPath } from "../../utils/GetReviewContentHref";
+import SentenceReportPreviewView from "../SentenceReport/SentenceReportPreviewView";
 
 export interface ClaimReviewViewProps {
     content: Content;
@@ -31,12 +32,15 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
-    const { reviewDrawerCollapsed } = useAppSelector((state) => ({
-        reviewDrawerCollapsed:
-            state?.reviewDrawerCollapsed !== undefined
-                ? state?.reviewDrawerCollapsed
-                : true,
-    }));
+    const { vw, enableViewReportPreview, reviewDrawerCollapsed } =
+        useAppSelector((state) => ({
+            vw: state?.vw,
+            enableViewReportPreview: state?.enableViewReportPreview,
+            reviewDrawerCollapsed:
+                state?.reviewDrawerCollapsed !== undefined
+                    ? state?.reviewDrawerCollapsed
+                    : true,
+        }));
     const { review } = publishedReview || {};
     const reviewData = useSelector(machineService, reviewDataSelector);
     const [role] = useAtom(currentUserRole);
@@ -44,8 +48,6 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
     const userIsNotRegular = !(role === Roles.Regular || role === null);
     const userIsReviewer = reviewData.reviewerId === userId;
-    const userIsCrossChecker = reviewData.crossCheckerId === userId;
-    const userIsAssignee = reviewData.usersId.includes(userId);
     const hasStartedTask =
         machineService.state.value !== ReviewTaskStates.unassigned;
     const origin = window.location.origin ? window.location.origin : "";
@@ -90,25 +92,39 @@ const ClaimReviewView = (props: ClaimReviewViewProps) => {
                     )}
                 </>
             )}
-            <ClaimReviewHeader
-                classification={
-                    review?.report?.classification || reviewData?.classification
-                }
-                hideDescription={hideDescriptions}
-                userIsNotRegular={userIsNotRegular}
-                componentStyle={componentStyle}
-                {...props}
-            />
-            <SentenceReportView
-                context={review?.report || reviewData}
-                userIsNotRegular={userIsNotRegular}
-                userIsReviewer={userIsReviewer}
-                userIsAssignee={userIsAssignee}
-                userIsCrossChecker={userIsCrossChecker}
-                isHidden={review?.isHidden}
-                href={href}
-                componentStyle={componentStyle}
-            />
+            {!vw?.sm && (
+                <ClaimReviewHeader
+                    classification={
+                        review?.report?.classification ||
+                        reviewData?.classification
+                    }
+                    hideDescription={hideDescriptions}
+                    userIsNotRegular={userIsNotRegular}
+                    componentStyle={componentStyle}
+                    {...props}
+                />
+            )}
+
+            {enableViewReportPreview ? (
+                <SentenceReportPreviewView
+                    context={review?.report || reviewData}
+                    userIsNotRegular={userIsNotRegular}
+                    userIsReviewer={userIsReviewer}
+                    isHidden={review?.isHidden}
+                    href={href}
+                    componentStyle={componentStyle}
+                    {...props}
+                />
+            ) : (
+                <SentenceReportView
+                    context={review?.report || reviewData}
+                    userIsNotRegular={userIsNotRegular}
+                    userIsReviewer={userIsReviewer}
+                    isHidden={review?.isHidden}
+                    href={href}
+                    componentStyle={componentStyle}
+                />
+            )}
 
             {!review?.isPublished && (
                 <ClaimReviewForm

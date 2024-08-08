@@ -56,6 +56,26 @@ const actions = {
         type: ActionTypes.SET_WEBSOCKET_URL,
         websocketUrl,
     }),
+    setEditorEnvironment: (
+        enableCollaborativeEdit,
+        enableAddEditorSourcesWithoutSelecting,
+        enableEditorAnnotations,
+        enableCopilotChatBot,
+        autoSave,
+        enableReviewersUpdateReport,
+        enableViewReportPreview
+    ) => {
+        return {
+            type: ActionTypes.SET_VISUAL_EDITOR_ENVIRONEMNT,
+            enableCollaborativeEdit,
+            enableAddEditorSourcesWithoutSelecting,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            autoSave,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+        };
+    },
 };
 
 export default actions;

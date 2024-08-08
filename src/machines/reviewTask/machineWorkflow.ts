@@ -65,6 +65,10 @@ const factCheckingWorkflow: StatesConfig<
                 target: States.reported,
                 actions: [saveContext],
             },
+            [Events.viewPreview]: {
+                target: States.assigned,
+                actions: [saveContext],
+            },
         },
     },
     [States.reported]: {
@@ -81,6 +85,10 @@ const factCheckingWorkflow: StatesConfig<
             [Events.selectedReview]: {
                 target: States.selectReviewer,
             },
+            [Events.viewPreview]: {
+                target: States.reported,
+                actions: [saveContext],
+            },
         },
     },
     [States.selectCrossChecker]: {
@@ -93,6 +101,10 @@ const factCheckingWorkflow: StatesConfig<
             },
             [Events.sendToCrossChecking]: {
                 target: States.crossChecking,
+                actions: [saveContext],
+            },
+            [Events.viewPreview]: {
+                target: States.selectCrossChecker,
                 actions: [saveContext],
             },
         },
@@ -109,6 +121,10 @@ const factCheckingWorkflow: StatesConfig<
                 target: States.submitted,
                 actions: [saveContext],
             },
+            [Events.viewPreview]: {
+                target: States.selectReviewer,
+                actions: [saveContext],
+            },
         },
     },
     [States.crossChecking]: {
@@ -122,6 +138,10 @@ const factCheckingWorkflow: StatesConfig<
             },
             [Events.submitCrossChecking]: {
                 target: States.reported,
+                actions: [saveContext],
+            },
+            [Events.viewPreview]: {
+                target: States.crossChecking,
                 actions: [saveContext],
             },
         },
@@ -146,24 +166,14 @@ const factCheckingWorkflow: StatesConfig<
                     cond: isDifferentLabel,
                 },
             ],
-        },
-    },
-    //TODO: Investigate how to move rejected and addComment crossChecking as substates
-    [States.submitted]: {
-        on: {
-            [Events.reject]: {
-                target: States.rejected,
-            },
-            [Events.reAssignUser]: {
-                target: States.unassigned,
-            },
-            [Events.publish]: {
-                target: States.published,
+            [Events.viewPreview]: {
+                target: States.addCommentCrossChecking,
                 actions: [saveContext],
             },
         },
     },
-    [States.rejected]: {
+    //TODO: Investigate how to move rejected and addComment crossChecking as substates
+    [States.submitted]: {
         on: {
             [Events.addRejectionComment]: {
                 target: States.assigned,
@@ -172,8 +182,13 @@ const factCheckingWorkflow: StatesConfig<
             [Events.reAssignUser]: {
                 target: States.unassigned,
             },
-            [Events.goback]: {
+            [Events.publish]: {
+                target: States.published,
+                actions: [saveContext],
+            },
+            [Events.viewPreview]: {
                 target: States.submitted,
+                actions: [saveContext],
             },
         },
     },
