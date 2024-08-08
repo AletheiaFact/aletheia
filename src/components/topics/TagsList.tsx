@@ -5,7 +5,7 @@ import colors from "../../styles/colors";
 import router from "next/router";
 
 interface TagsListProps {
-    tags: string[];
+    tags: any[];
     editable?: boolean;
     handleClose?: (string) => void;
 }
@@ -24,15 +24,15 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
 
     return (
         <Col>
-            {!tags.length && <span>{t("topics:noTopics")}</span>}
+            {tags.length <= 0 && <span>{t("topics:noTopics")}</span>}
 
             {tags &&
                 tags.map((tag) => (
                     <Tag
-                        key={tag}
+                        key={tag?.value || tag}
                         color={colors.blueSecondary}
                         closable={editable}
-                        onClose={() => handleClose(tag)}
+                        onClose={() => handleClose(tag?.value || tag)}
                         style={{
                             borderRadius: 32,
                             padding: "4px 10px 2px",
@@ -40,9 +40,9 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                             marginBottom: 4,
                             cursor: "pointer",
                         }}
-                        onClick={() => handleTagClick(tag)}
+                        onClick={() => handleTagClick(tag?.label || tag)}
                     >
-                        {tag.toUpperCase()}
+                        {(tag?.label || tag).toUpperCase()}
                     </Tag>
                 ))}
         </Col>

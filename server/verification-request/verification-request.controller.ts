@@ -86,6 +86,18 @@ export class VerificationRequestController {
     }
 
     @ApiTags("verification-request")
+    @Put("api/verification-request/:data_hash/topics")
+    async updateVerificationRequestWithTopics(
+        @Param("data_hash") data_hash: string,
+        @Body() topics
+    ) {
+        return this.verificationRequestService.updateVerificationRequestWithTopics(
+            topics,
+            data_hash
+        );
+    }
+
+    @ApiTags("verification-request")
     @Put("api/verification-request/:verificationRequestId/group")
     async removeVerificationRequestFromGroup(
         @Param("verificationRequestId") verificationRequestId: string,
@@ -136,12 +148,24 @@ export class VerificationRequestController {
                 dataHash
             );
 
+        const recommendationFilter = verificationRequest.group?.content?.map(
+            (v: any) => v._id
+        ) || [verificationRequest?._id];
+
+        const recommendations =
+            await this.verificationRequestService.findSimilarRequests(
+                verificationRequest.content,
+                recommendationFilter,
+                5
+            );
+
         await this.viewService.getNextServer().render(
             req,
             res,
             "/verification-request-review-page",
             Object.assign(parsedUrl.query, {
                 reviewTask,
+                recommendations,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
                 hideDescriptions: {},
                 websocketUrl: this.configService.get<string>("websocketUrl"),

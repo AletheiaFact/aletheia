@@ -4,5 +4,6 @@
     "okButton": "Done",
     "deleteButton": "Delete",
     "cancelButton": "Cancel",
-    "crossCheckingClassification": "send the report with a different classification from the cross-checking comment"
+    "crossCheckingClassification": "send the report with a different classification from the cross-checking comment",
+    "removeVerificationRequest": "remove this verification request from group"
 }

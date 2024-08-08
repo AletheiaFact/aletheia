@@ -26,6 +26,7 @@ import { TargetModel } from "../history/schema/history.schema";
 import { HistoryService } from "../history/history.service";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 @Controller(":namespace?")
 export class SourceController {
@@ -38,6 +39,7 @@ export class SourceController {
         private claimReviewService: ClaimReviewService,
         private reviewTaskService: ReviewTaskService,
         private historyService: HistoryService,
+        private featureFlagService: FeatureFlagService,
         @Optional() private readonly unleash: UnleashService
     ) {}
 
@@ -163,12 +165,18 @@ export class SourceController {
             source.data_hash
         );
 
-        const enableCollaborativeEditor = this.isEnableCollaborativeEditor();
-        const enableCopilotChatBot = this.isEnableCopilotChatBot();
-        const enableEditorAnnotations = this.isEnableEditorAnnotations();
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
         const enableAddEditorSourcesWithoutSelecting =
-            this.isEnableAddEditorSourcesWithoutSelecting();
-
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
         const hideDescriptions = {};
 
         hideDescriptions[TargetModel.Source] =
@@ -199,42 +207,11 @@ export class SourceController {
                 enableEditorAnnotations,
                 enableCopilotChatBot,
                 enableAddEditorSourcesWithoutSelecting,
+                enableReviewersUpdateReport,
+                enableViewReportPreview,
                 websocketUrl: this.configService.get<string>("websocketUrl"),
                 nameSpace: req.params.namespace,
             })
         );
-    }
-
-    //TODO: Create service to get feature flags config
-    private isEnableCollaborativeEditor() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config
-            ? this.unleash.isEnabled("enable_collaborative_editor")
-            : false;
-    }
-
-    private isEnableCopilotChatBot() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config ? this.unleash.isEnabled("copilot_chat_bot") : false;
-    }
-
-    private isEnableEditorAnnotations() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config
-            ? this.unleash.isEnabled("enable_editor_annotations")
-            : false;
-    }
-
-    private isEnableAddEditorSourcesWithoutSelecting() {
-        const config = this.configService.get<string>("feature_flag");
-
-        return config
-            ? this.unleash.isEnabled(
-                  "enable_add_editor_sources_without_selecting"
-              )
-            : false;
     }
 }

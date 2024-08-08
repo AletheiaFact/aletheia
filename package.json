@@ -23,7 +23,7 @@
     "lint:fix": "tsc --noEmit && eslint \"**/*.{js,ts,tsx}\" --quiet --fix",
     "copy-static-assets": "ts-node scripts/copyStaticAssets.ts",
     "watch-debug": "yarn copy-static-assets && concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn watch-ts\" \"yarn serve-debug\"",
-    "watch-node": "nodemon dist/server/main.js  --signal SIGTERM",
+    "watch-node": "nodemon dist/server/main.js --signal SIGTERM",
     "serve-debug": "nodemon --inspect dist/server/main.js  --signal SIGTERM",
     "clean": "rimraf **/{node_modules,dist}",
     "compodoc": "npx compodoc -p tsconfig.json -s -d ./docs/compodoc",
@@ -46,7 +46,6 @@
     "ignore": [
       "test/**/*",
       "src/**/*",
-      "dist/**/*",
       "docs/**/*"
     ]
   },

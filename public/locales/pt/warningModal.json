@@ -4,5 +4,6 @@
     "okButton": "Pronto",
     "deleteButton": "Deletar",
     "cancelButton": "Cancelar",
-    "crossCheckingClassification": "enviar o relatório com a classificação diferente do comentário do cross-checking"
+    "crossCheckingClassification": "enviar o relatório com a classificação diferente do comentário do cross-checking",
+    "removeVerificationRequest": "remover esta denúncia do grupo"
 }

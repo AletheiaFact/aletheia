@@ -40,7 +40,6 @@ type InformativeNewsReviewData = {
 type RequestReviewData = {
     usersId: string[];
     isSensitive: boolean;
-    group: any[];
     rejected: boolean;
 };
 

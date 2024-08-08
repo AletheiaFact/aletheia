@@ -6,7 +6,11 @@ import { RemirrorContentType } from "remirror";
 import { SourceType } from "../../types/Source";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
 import { EditorConfig } from "./utils/getEditorConfig";
-import { reviewingSelector } from "../../machines/reviewTask/selectors";
+import {
+    crossCheckingSelector,
+    reportSelector,
+    reviewingSelector,
+} from "../../machines/reviewTask/selectors";
 import { useSelector } from "@xstate/react";
 
 interface ContextType {
@@ -33,12 +37,17 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     const { machineService, reportModel, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
-    const { enableCollaborativeEdit, enableEditorAnnotations, websocketUrl } =
-        useAppSelector((state) => ({
-            enableCollaborativeEdit: state?.enableCollaborativeEdit,
-            enableEditorAnnotations: state?.enableEditorAnnotations,
-            websocketUrl: state?.websocketUrl,
-        }));
+    const {
+        enableCollaborativeEdit,
+        enableEditorAnnotations,
+        websocketUrl,
+        enableReviewersUpdateReport,
+    } = useAppSelector((state) => ({
+        enableCollaborativeEdit: state?.enableCollaborativeEdit,
+        enableEditorAnnotations: state?.enableEditorAnnotations,
+        enableReviewersUpdateReport: state?.enableReviewersUpdateReport,
+        websocketUrl: state?.websocketUrl,
+    }));
 
     const [editorContentObject, setEditorContentObject] = useState(null);
     const [editorSources, setEditorSources] = useState(
@@ -46,7 +55,13 @@ export const VisualEditorProvider = (props: VisualEditorProviderProps) => {
     );
     const [isFetchingEditor, setIsFetchingEditor] = useState(false);
     const [comments, setComments] = useState(null);
-    const readonly = useSelector(machineService, reviewingSelector);
+    const isReviewing = useSelector(machineService, reviewingSelector);
+    const isReported = useSelector(machineService, reportSelector);
+    const isCrossChecking = useSelector(machineService, crossCheckingSelector);
+    const readonly =
+        isReported ||
+        isCrossChecking ||
+        (isReviewing && !enableReviewersUpdateReport);
 
     useEffect(() => {
         const params = { reportModel, reviewTaskType };
