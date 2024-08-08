@@ -34,9 +34,9 @@ export const VerificationRequestProvider = ({
     const addRecommendation = async (
         newVerificationRequest: VerificationRequest
     ): Promise<void> => {
-        const groupContent = group.content.filter(
-            (v) => v._id !== verificationRequest._id
-        );
+        const groupContent =
+            group?.content?.filter((v) => v._id !== verificationRequest._id) ||
+            [];
 
         await verificationRequestApi.updateVerificationRequest(
             verificationRequest._id,
@@ -52,10 +52,15 @@ export const VerificationRequestProvider = ({
     };
 
     const addInGroup = (newVerificationRequest: VerificationRequest): void => {
-        setGroup((prev) => ({
-            ...prev,
-            content: [...prev.content, newVerificationRequest],
-        }));
+        setGroup((prev) => {
+            if (!prev) {
+                return { content: [newVerificationRequest] };
+            }
+            return {
+                ...prev,
+                content: [...prev.content, newVerificationRequest],
+            };
+        });
     };
 
     const removeFromGroup = (verificationRequestId: string): void => {
