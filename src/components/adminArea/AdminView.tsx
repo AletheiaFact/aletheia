@@ -15,6 +15,7 @@ import { User } from "../../types/User";
 import HeaderUserStatus from "./Drawer/HeaderUserStatus";
 import HeaderTotpStatus from "./Drawer/HeaderTotpStatus";
 import { currentNameSpace } from "../../atoms/namespace";
+import PaginatedDataGrid from "../PaginetedDataGrid";
 
 const AdminView = () => {
     const { t } = useTranslation();
@@ -122,20 +123,7 @@ const AdminView = () => {
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {userList && (
-                    <DataGrid
-                        rows={userList}
-                        columns={columns}
-                        paginationModel={paginationModel}
-                        pageSizeOptions={[5, 10, 25]}
-                        onPaginationModelChange={setPaginationModel}
-                        getRowId={(row) => row._id}
-                        autoHeight
-                        sx={{
-                            "& .MuiTablePagination-toolbar p": {
-                                marginBottom: 0,
-                            },
-                        }}
-                    />
+                    <PaginatedDataGrid rows={userList} columns={columns} />
                 )}
             </Grid>
         </Grid>

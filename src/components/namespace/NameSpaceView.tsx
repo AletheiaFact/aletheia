@@ -12,6 +12,7 @@ import {
 import { isEditDrawerOpen, startEditingItem } from "../../atoms/editDrawer";
 import { atomNameSpacesList } from "../../atoms/namespace";
 import { NameSpace } from "../../types/Namespace";
+import PaginatedDataGrid from "../PaginetedDataGrid";
 
 const NameSpaceView = () => {
     const { t } = useTranslation();
@@ -76,20 +77,7 @@ const NameSpaceView = () => {
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {nameSpaces && (
-                    <DataGrid
-                        rows={nameSpaces}
-                        columns={columns}
-                        paginationModel={paginationModel}
-                        pageSizeOptions={[5, 10, 50]}
-                        onPaginationModelChange={setPaginationModel}
-                        getRowId={(row) => row._id}
-                        autoHeight
-                        sx={{
-                            "& .MuiTablePagination-toolbar p": {
-                                marginBottom: 0,
-                            },
-                        }}
-                    />
+                    <PaginatedDataGrid rows={nameSpaces} columns={columns} />
                 )}
             </Grid>
             <Grid item xs={10} mt={5} display="flex" justifyContent="end">
