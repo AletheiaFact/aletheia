@@ -12,13 +12,10 @@ import {
 import { isEditDrawerOpen, startEditingItem } from "../../atoms/editDrawer";
 import { atomBadgesList } from "../../atoms/badges";
 import { Badge } from "../../types/Badge";
+import PaginatedDataGrid from "../PaginetedDataGrid";
 
 const BadgesView = () => {
     const { t } = useTranslation();
-    const [paginationModel, setPaginationModel] = React.useState({
-        pageSize: 10,
-        page: 0,
-    });
     const [, setVisible] = useAtom(isEditDrawerOpen);
     const [badges] = useAtom(atomBadgesList);
     const [, setBadgeToEdit] = useAtom(startEditingItem);
@@ -89,20 +86,7 @@ const BadgesView = () => {
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {badges && (
-                    <DataGrid
-                        rows={badges}
-                        columns={columns}
-                        paginationModel={paginationModel}
-                        pageSizeOptions={[5, 10, 50]}
-                        onPaginationModelChange={setPaginationModel}
-                        getRowId={(row) => row._id}
-                        autoHeight
-                        sx={{
-                            "& .MuiTablePagination-toolbar p": {
-                                marginBottom: 0,
-                            },
-                        }}
-                    />
+                    <PaginatedDataGrid rows={badges} columns={columns} />
                 )}
             </Grid>
             <Grid item xs={10} mt={5} display="flex" justifyContent="end">
