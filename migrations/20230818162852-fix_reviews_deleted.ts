@@ -2,6 +2,8 @@ import { Db } from "mongodb";
 import { Types } from "mongoose";
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     await db
         .collection("claimreviews")
         .updateMany(

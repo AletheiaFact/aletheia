@@ -1,6 +1,8 @@
 import { Db } from "mongodb";
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     const sentenceHashIndexPresent = await db
         .collection("claimreviewtasks")
         .indexExists("sentence_hash_1");
