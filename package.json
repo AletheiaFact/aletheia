@@ -64,7 +64,7 @@
     }
   ],
   "dependencies": {
-    "@ant-design/icons": "^4.6.2",
+    "@ant-design/icons": "^5.4.0",
     "@ant-design/icons-svg": "^4.1.0",
     "@babel/polyfill": "^7.12.1",
     "@casl/ability": "^6.0.0",
