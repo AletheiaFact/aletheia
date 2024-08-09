@@ -15,7 +15,6 @@ import { currentUserId } from "../../../atoms/currentUser";
 import { useAppSelector } from "../../../store/store";
 
 const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
-    const { getPluginState } = useRemirrorContext({ autoUpdate: true });
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
@@ -26,11 +25,9 @@ const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
     const hasSession = !!userId;
     const [user, setUser] = useState(null);
     const { setAnnotations } = useCommands();
+    const { getPluginState } = useRemirrorContext({ autoUpdate: true });
     const { getAnnotations } = useHelpers();
     const pluginState = getPluginState("annotation");
-
-    // Safely calls getAnnotations() by first checking if pluginState exists.
-    const annotations = pluginState ? getAnnotations() : [];
 
     const crossCheckingComments = useMemo(
         () =>
@@ -53,25 +50,30 @@ const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
             const reviewComments = reviewData?.reviewComments?.filter(
                 (comment) => !comment?.resolved
             );
-            setComments([
+            const combinedComments = [
                 ...(reviewComments ? reviewComments : []),
                 ...(crossCheckingComments ? crossCheckingComments : []),
-            ]);
-        }
-    }, [comments, setComments, reviewData?.comments]);
+            ];
 
-    useEffect(() => {
-        if (enableEditorAnnotations) {
-            if (
-                (comments && annotations?.length === 0) ||
-                state.doc.content.size === annotations[0]?.from
-            ) {
-                setAnnotations(comments);
-            } else if (comments && state.doc.content.size) {
-                setComments([...annotations, ...crossCheckingComments]);
+            setComments(combinedComments);
+
+            if (enableEditorAnnotations && pluginState) {
+                const annotations = getAnnotations();
+                if (combinedComments.length > 0) {
+                    setAnnotations(combinedComments);
+                } else if (comments && state.doc.content.size) {
+                    setComments([...annotations, ...crossCheckingComments]);
+                }
             }
         }
-    }, [setAnnotations, setComments, state.doc]);
+    }, [
+        comments,
+        setComments,
+        reviewData?.reviewComments,
+        crossCheckingComments,
+        pluginState,
+        setAnnotations,
+    ]);
 
     return (
         <Row
