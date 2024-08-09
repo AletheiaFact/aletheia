@@ -205,6 +205,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ant-design/colors@npm:^7.0.0":
+  version: 7.1.0
+  resolution: "@ant-design/colors@npm:7.1.0"
+  dependencies:
+    "@ctrl/tinycolor": ^3.6.1
+  checksum: 6488b4159cea52be8a904caf541064e9f0e267c1df74ed687abd9364e6cfeb0353c64ee078878069f48aa6c381feca2af17612efe0529517c0260f989472b7ae
+  languageName: node
+  linkType: hard
+
 "@ant-design/icons-svg@npm:^4.1.0, @ant-design/icons-svg@npm:^4.3.0":
   version: 4.3.1
   resolution: "@ant-design/icons-svg@npm:4.3.1"
@@ -212,7 +221,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons@npm:^4.6.2, @ant-design/icons@npm:^4.7.0":
+"@ant-design/icons-svg@npm:^4.4.0":
+  version: 4.4.2
+  resolution: "@ant-design/icons-svg@npm:4.4.2"
+  checksum: c66cda4533ec2f86162a9adda04be2aba5674d5c758ba886bd9d8de89dc45473ef3124eb755b4cfbd09121d3bdc34e075ee931e47dd0f8a7fdc01be0cb3d6c40
+  languageName: node
+  linkType: hard
+
+"@ant-design/icons@npm:^4.7.0":
   version: 4.8.1
   resolution: "@ant-design/icons@npm:4.8.1"
   dependencies:
@@ -226,6 +242,22 @@ __metadata:
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
   checksum: abd3603ea951983a8bfa7f4c7e6fcc787ccdc4804faa8bb8641b6904a95cf5fc04753cf636a6c5b5b798f371f4075fddae29684779bb16e2a025b727ab2c8ad3
+  languageName: node
+  linkType: hard
+
+"@ant-design/icons@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "@ant-design/icons@npm:5.4.0"
+  dependencies:
+    "@ant-design/colors": ^7.0.0
+    "@ant-design/icons-svg": ^4.4.0
+    "@babel/runtime": ^7.24.8
+    classnames: ^2.2.6
+    rc-util: ^5.31.1
+  peerDependencies:
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: 4e6e1d91a7109afc05d3759e44add8b4d7432f14b5b58ce534b700eda5f86d4c8f1fa1d165ab32a0f972b23b0d3664b7bcb895ff468ea595f6f66e0863a3e8ac
   languageName: node
   linkType: hard
 
@@ -2753,7 +2785,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.23.9, @babel/runtime@npm:^7.25.0":
+"@babel/runtime@npm:^7.23.9, @babel/runtime@npm:^7.24.8, @babel/runtime@npm:^7.25.0":
   version: 7.25.0
   resolution: "@babel/runtime@npm:7.25.0"
   dependencies:
@@ -2951,7 +2983,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ctrl/tinycolor@npm:^3.4.0":
+"@ctrl/tinycolor@npm:^3.4.0, @ctrl/tinycolor@npm:^3.6.1":
   version: 3.6.1
   resolution: "@ctrl/tinycolor@npm:3.6.1"
   checksum: cefec6fcaaa3eb8ddf193f981e097dccf63b97b93b1e861cb18c645654824c831a568f444996e15ee509f255658ed82fba11c5365494a6e25b9b12ac454099e0
@@ -11716,7 +11748,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "aletheia@workspace:."
   dependencies:
-    "@ant-design/icons": ^4.6.2
+    "@ant-design/icons": ^5.4.0
     "@ant-design/icons-svg": ^4.1.0
     "@babel/core": ^7.15.0
     "@babel/polyfill": ^7.12.1
@@ -25461,6 +25493,19 @@ __metadata:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
   checksum: 0a72644f0924235044eb20bbc73081356c1fb98459f6cce0f4b75807c82cb71c050e5f36cf6d82f8a8a07b5955632e1198b8884cd96fe2d8d92f2289f9058a7e
+  languageName: node
+  linkType: hard
+
+"rc-util@npm:^5.31.1":
+  version: 5.43.0
+  resolution: "rc-util@npm:5.43.0"
+  dependencies:
+    "@babel/runtime": ^7.18.3
+    react-is: ^18.2.0
+  peerDependencies:
+    react: ">=16.9.0"
+    react-dom: ">=16.9.0"
+  checksum: 48c10afb5886aed86d1f5241883f972b2b16235b0cc4867a05d061324f107aa113260c34eeb13ad18f4b66d1264dbcb3baf725c8ea34fbdaa504410d4e71b3ce
   languageName: node
   linkType: hard
 
