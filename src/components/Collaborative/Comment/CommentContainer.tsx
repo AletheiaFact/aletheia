@@ -1,7 +1,7 @@
 import "remirror/styles/all.css";
 
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { useCommands, useHelpers } from "@remirror/react";
+import { useCommands, useHelpers, useRemirrorContext } from "@remirror/react";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import { Row } from "antd";
 import CommentsList from "./CommentsList";
@@ -15,6 +15,7 @@ import { currentUserId } from "../../../atoms/currentUser";
 import { useAppSelector } from "../../../store/store";
 
 const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
+    const { getPluginState } = useRemirrorContext({ autoUpdate: true });
     const enableEditorAnnotations = useAppSelector(
         (state) => state?.enableEditorAnnotations
     );
@@ -26,7 +27,11 @@ const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
     const [user, setUser] = useState(null);
     const { setAnnotations } = useCommands();
     const { getAnnotations } = useHelpers();
-    const annotations = enableEditorAnnotations ? getAnnotations() : null;
+    const pluginState = getPluginState("annotation");
+
+    // Safely calls getAnnotations() by first checking if pluginState exists.
+    const annotations = pluginState ? getAnnotations() : [];
+
     const crossCheckingComments = useMemo(
         () =>
             reviewData?.crossCheckingComments?.filter(
