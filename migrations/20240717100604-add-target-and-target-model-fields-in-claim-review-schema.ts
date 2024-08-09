@@ -1,6 +1,8 @@
 import { Db } from "mongodb";
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     const claimReviewCursor = await db.collection("claimreviews").find();
 
     while (await claimReviewCursor.hasNext()) {

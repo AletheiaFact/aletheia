@@ -3,6 +3,8 @@ import { Db } from "mongodb";
 const ObjectId = require("mongodb").ObjectID;
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     try {
         await db.collection("logs").insertOne({
             message: `start migration-up`,
@@ -81,17 +83,15 @@ export async function up(db: Db) {
                                     { $set: { isDeleted: true } }
                                 );
                             // We will lose the old claimId in the claimreviews collection, but we can't do anything about that, the down function won't work either
-                            await db
-                                .collection("claimreviews")
-                                .updateMany(
-                                    { claim: ObjectId(claimId) },
-                                    {
-                                        $set: {
-                                            claim: claimRevision.claimId,
-                                            isDeleted: true,
-                                        },
-                                    }
-                                );
+                            await db.collection("claimreviews").updateMany(
+                                { claim: ObjectId(claimId) },
+                                {
+                                    $set: {
+                                        claim: claimRevision.claimId,
+                                        isDeleted: true,
+                                    },
+                                }
+                            );
                         });
                     }
                 }
@@ -155,17 +155,15 @@ export async function down(db: Db) {
                                 { _id: ObjectId(claimId) },
                                 { $set: { isDeleted: false } }
                             );
-                        await db
-                            .collection("claimreviews")
-                            .updateMany(
-                                { claim: ObjectId(claimId) },
-                                {
-                                    $set: {
-                                        claim: claimRevision.claimId,
-                                        isDeleted: false,
-                                    },
-                                }
-                            );
+                        await db.collection("claimreviews").updateMany(
+                            { claim: ObjectId(claimId) },
+                            {
+                                $set: {
+                                    claim: claimRevision.claimId,
+                                    isDeleted: false,
+                                },
+                            }
+                        );
                     });
                 }
             }

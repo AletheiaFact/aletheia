@@ -2,6 +2,8 @@ import { Db } from "mongodb";
 const ObjectId = require("mongodb").ObjectID;
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     try {
         await db.collection("logs").insertOne({
             message: `start migration-up`,

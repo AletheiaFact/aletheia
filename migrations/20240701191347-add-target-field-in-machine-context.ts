@@ -1,6 +1,8 @@
 import { Db } from "mongodb";
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     const reviewTasksCursor = await db.collection("reviewtasks").find();
 
     while (await reviewTasksCursor.hasNext()) {

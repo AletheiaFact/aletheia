@@ -1,6 +1,8 @@
 import { Db } from "mongodb";
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     await db
         .collection("sources")
         .updateMany({}, { $rename: { link: "href" } });

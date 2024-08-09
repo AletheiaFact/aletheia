@@ -2,6 +2,8 @@ import { Db } from "mongodb";
 const ObjectId = require("mongodb").ObjectID;
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     const reviewTasksCursor = await db.collection("reviewtasks").find();
 
     while (await reviewTasksCursor.hasNext()) {
@@ -11,17 +13,15 @@ export async function up(db: Db) {
                 _id: ObjectId(reviewTask.machine.context.claimReview.claim),
             });
 
-            await db
-                .collection("reviewtasks")
-                .updateOne(
-                    { _id: reviewTask._id },
-                    {
-                        $set: {
-                            nameSpace: claim?.nameSpace,
-                            reviewTaskType: "Claim",
-                        },
-                    }
-                );
+            await db.collection("reviewtasks").updateOne(
+                { _id: reviewTask._id },
+                {
+                    $set: {
+                        nameSpace: claim?.nameSpace,
+                        reviewTaskType: "Claim",
+                    },
+                }
+            );
         }
 
         if (reviewTask.machine.context.claimReview.source) {
@@ -29,17 +29,15 @@ export async function up(db: Db) {
                 _id: ObjectId(reviewTask.machine.context.claimReview.source),
             });
 
-            await db
-                .collection("reviewtasks")
-                .updateOne(
-                    { _id: reviewTask._id },
-                    {
-                        $set: {
-                            nameSpace: source?.nameSpace,
-                            reviewTaskType: "Source",
-                        },
-                    }
-                );
+            await db.collection("reviewtasks").updateOne(
+                { _id: reviewTask._id },
+                {
+                    $set: {
+                        nameSpace: source?.nameSpace,
+                        reviewTaskType: "Source",
+                    },
+                }
+            );
         }
     }
 }

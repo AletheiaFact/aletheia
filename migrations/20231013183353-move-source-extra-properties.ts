@@ -1,6 +1,8 @@
 import { Db } from "mongodb";
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     const sourcesCursor = await db.collection("sources").find();
 
     while (await sourcesCursor.hasNext()) {
