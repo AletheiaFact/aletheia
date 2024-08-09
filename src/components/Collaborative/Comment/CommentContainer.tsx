@@ -26,7 +26,22 @@ const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
     const [user, setUser] = useState(null);
     const { setAnnotations } = useCommands();
     const { getAnnotations } = useHelpers();
-    const annotations = enableEditorAnnotations ? getAnnotations() : null;
+
+    // Prevents getAnnotations() from crashing during transitions by checking if the state has any
+    // annotation fields.
+    const hasAnnotationField = (editorState) => {
+        // Iterate over all properties of the editorState object
+        for (const key in editorState) {
+            // Check if the property starts with 'annotation$'
+            if (key.startsWith("annotation$")) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    const annotations = hasAnnotationField(state) ? getAnnotations() : [];
+
     const crossCheckingComments = useMemo(
         () =>
             reviewData?.crossCheckingComments?.filter(
