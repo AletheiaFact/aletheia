@@ -1,6 +1,8 @@
 import { Db } from "mongodb";
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     /*  if there was no personality field, create an empty array
      if there was a personality field, but it was not an array, make it an array
      if there was a personality field, and it was an array, rename it to personalities */

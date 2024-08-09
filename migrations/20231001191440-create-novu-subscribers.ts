@@ -3,6 +3,8 @@ import { Novu } from "@novu/node";
 import config from "../migrate-mongo-config";
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     /* Create novu subscribers */
     const novuApiKey = await config.novu_api_key;
     const novu = new Novu(novuApiKey);

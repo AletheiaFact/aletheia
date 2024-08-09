@@ -1,6 +1,7 @@
 import {
     CanActivate,
     ExecutionContext,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     Injectable,
     NotFoundException,
     UnauthorizedException,
@@ -10,6 +11,7 @@ import { Configuration, FrontendApi } from "@ory/client";
 import { NameSpaceService } from "./name-space.service";
 
 @Injectable()
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class NameSpaceGuard implements CanActivate {
     constructor(
         private configService: ConfigService,

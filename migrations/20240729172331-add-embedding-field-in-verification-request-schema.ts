@@ -2,6 +2,8 @@ import { Db } from "mongodb";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     const embeddings = new OpenAIEmbeddings();
     const verificationRequestCursor = await db
         .collection("verificationrequests")
