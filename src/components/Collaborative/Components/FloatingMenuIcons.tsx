@@ -1,9 +1,5 @@
-import {
-    CommandButton,
-    FloatingToolbar,
-    useCommands,
-    useCurrentSelection,
-} from "@remirror/react";
+import { useCommands, useCurrentSelection } from "@remirror/react";
+import { CommandButton, FloatingToolbar } from "@remirror/react-ui";
 import { useAtom } from "jotai";
 import React, { useContext } from "react";
 import { currentUserRole } from "../../../atoms/currentUser";
