@@ -4,7 +4,6 @@ import { Button, Grid } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useAtom } from "jotai";
 import {
-    DataGrid,
     GridActionsCellItem,
     GridColDef,
     GridRowParams,
@@ -16,10 +15,6 @@ import PaginatedDataGrid from "../PaginetedDataGrid";
 
 const NameSpaceView = () => {
     const { t } = useTranslation();
-    const [paginationModel, setPaginationModel] = React.useState({
-        pageSize: 10,
-        page: 0,
-    });
     const [, setVisible] = useAtom(isEditDrawerOpen);
     const [nameSpaces] = useAtom(atomNameSpacesList);
     const [, setNameSpaceToEdit] = useAtom(startEditingItem);

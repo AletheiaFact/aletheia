@@ -4,7 +4,6 @@ import { Avatar, Button, Grid } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useAtom } from "jotai";
 import {
-    DataGrid,
     GridActionsCellItem,
     GridColDef,
     GridRowParams,
