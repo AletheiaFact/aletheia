@@ -1,7 +1,6 @@
 import EditIcon from "@mui/icons-material/Edit";
 import { Avatar, AvatarGroup, Grid } from "@mui/material";
 import {
-    DataGrid,
     GridActionsCellItem,
     GridColDef,
     GridRowParams,
@@ -22,10 +21,6 @@ const AdminView = () => {
     // this is a write only atom, so we don't need to use the value
     const [, startEditing] = useAtom(startEditingItem);
     const [userList] = useAtom(atomUserList);
-    const [paginationModel, setPaginationModel] = React.useState({
-        pageSize: 10,
-        page: 0,
-    });
     const [nameSpace] = useAtom(currentNameSpace);
 
     const handleEdit = React.useCallback(
