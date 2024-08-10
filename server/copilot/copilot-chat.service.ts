@@ -106,7 +106,6 @@ export class CopilotChatService {
                 );
                 return stream;
             } catch (error) {
-                console.log(error);
                 this.logger.error(error);
                 return error;
             }
