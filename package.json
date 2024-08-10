@@ -95,10 +95,11 @@
     "@novu/notification-center": "^0.19.0",
     "@ory/client": "1.6.2",
     "@ory/integrations": "^1.1.5",
-    "@remirror/extension-yjs": "^3.0.14",
-    "@remirror/pm": "^2.0.0",
-    "@remirror/react": "^2.0.12",
-    "@remirror/react-editors": "^1.0.12",
+    "@remirror/core": "^3.0.1",
+    "@remirror/extension-yjs": "^4.0.1",
+    "@remirror/pm": "^3.0.0",
+    "@remirror/react": "^3.0.1",
+    "@remirror/react-editors": "^2.0.1",
     "@types/jest": "^27.4.0",
     "@types/multer": "1.4.7",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
@@ -155,7 +156,7 @@
     "react-social-icons": "^5.5.1",
     "reflect-metadata": "^0.1.13",
     "rehype-raw": "^6.1.1",
-    "remirror": "^2.0.11",
+    "remirror": "^3.0.1",
     "rxjs": "^7.3.0",
     "set-cookie-parser": "^2.4.8",
     "sitemap": "5",
@@ -263,7 +264,8 @@
     "ejs": "3.1.10",
     "@grpc/grpc-js": "1.10.9",
     "braces": "3.0.3",
-    "ws": "8.17.1"
+    "ws": "8.17.1",
+    "prosemirror-model": "1.9.1"
   },
   "packageManager": "yarn@3.6.3"
 }
