@@ -32,7 +32,7 @@ const VerificationRequestResultList = ({ results }) => {
                         key={verificationRequest._id}
                     >
                         <VerificationRequestCard
-                            content={verificationRequest}
+                            verificationRequest={verificationRequest}
                             expandable={false}
                             t={t}
                             style={{ minHeight: "100%" }}
