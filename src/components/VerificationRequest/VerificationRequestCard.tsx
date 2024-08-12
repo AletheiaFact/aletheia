@@ -111,7 +111,7 @@ const VerificationRequestCard = ({
                 </CustomTag>
             );
         }
-        if (content.source) {
+        if (content.source.href) {
             tags.push(
                 <CustomTag
                     color={colors.lightBlueMain}
@@ -141,7 +141,7 @@ const VerificationRequestCard = ({
                     }}
                     ellipsis={{ rows: 4, expandable }}
                 >
-                    {content}
+                    {content.content}
                 </Typography.Paragraph>
                 <TagContainer>{getTags(content)}</TagContainer>
             </ContentWrapper>

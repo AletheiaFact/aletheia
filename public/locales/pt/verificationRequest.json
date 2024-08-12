@@ -23,10 +23,18 @@
     "removeVerificationRequestError": "Erro ao remover denúncia do grupo",
     "addVerificationRequestSuccess": "Denúncia adicionada ao grupo com sucesso",
     "addVerificationRequestError": "Erro ao adicionar ao grupo",
-    "verificationRequestTagPublicationDate": "Visto Em:",
-    "verificationRequestTagDate": "Denunciado Em:",
-    "verificationRequestTagHeardFrom": "Origem:",
-    "verificationRequestTagSource": "Fonte:",
     "verificationRequestTagContent": "Conteúdo:",
-    "verificationRequestViewRequest": "Ver Denúncia"
+    "verificationRequestViewRequest": "Ver Denúncia",
+    "verificationRequestCreateContentLabel": "Detalhes da Solicitação de Verificação",
+    "verificationRequestCreatePublicationDateLabel": "Quando Você Viu Isso?",
+    "verificationRequestCreateHeardFromLabel": "Onde Você Viu ou Ouviu Isso?",
+    "verificationRequestCreateSourceLabel": "Fonte da Informação para a Solicitação de Verificação",
+    "verificationRequestCreateEmailLabel": "Se Você Gostaria de Receber a Revisão, Por Favor, Deixe Seu Email Abaixo",
+    "verificationRequestCreateContentPlaceholder": "Insira os detalhes da sua solicitação aqui...",
+    "verificationRequestCreatePublicationDatePlaceholder": "Selecione a data em que você viu isso...",
+    "verificationRequestCreateHeardFromPlaceholder": "Especifique onde você viu ou ouviu isso...",
+    "verificationRequestCreateSourcePlaceholder":  "Forneça a fonte da informação...",
+    "verificationRequestCreateEmailPlaceholder": "Insira seu endereço de email aqui...",
+    "verificationRequestCreateSuccess": "Denúncia criada com sucesso",
+    "verificationRequestCreateError": "Erro ao criar a denúncia"
 }

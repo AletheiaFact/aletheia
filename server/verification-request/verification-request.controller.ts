@@ -21,6 +21,7 @@ import { ReviewTaskService } from "../review-task/review-task.service";
 import { CreateVerificationRequestDTO } from "./dto/create-verification-request-dto";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
+import { CaptchaService } from "../captcha/captcha.service";
 
 @Controller(":namespace?")
 export class VerificationRequestController {
@@ -28,7 +29,8 @@ export class VerificationRequestController {
         private verificationRequestService: VerificationRequestService,
         private configService: ConfigService,
         private viewService: ViewService,
-        private reviewTaskService: ReviewTaskService
+        private reviewTaskService: ReviewTaskService,
+        private captchaService: CaptchaService
     ) {}
 
     @ApiTags("verification-request")
@@ -69,8 +71,35 @@ export class VerificationRequestController {
 
     @ApiTags("verification-request")
     @Post("api/verification-request")
-    create(@Body() verificationRequestBody: CreateVerificationRequestDTO) {
+    async create(
+        @Body() verificationRequestBody: CreateVerificationRequestDTO
+    ) {
+        const validateCaptcha = await this.captchaService.validate(
+            verificationRequestBody.recaptcha
+        );
+        if (!validateCaptcha) {
+            throw new Error("Error validating captcha");
+        }
         return this.verificationRequestService.create(verificationRequestBody);
+    }
+
+    @ApiTags("pages")
+    @Get("verification-request/create")
+    public async VerificationRequestCreatePage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/verification-request-create",
+            Object.assign(parsedUrl.query, {
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                nameSpace: req.params.namespace,
+            })
+        );
     }
 
     @ApiTags("verification-request")

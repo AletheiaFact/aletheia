@@ -23,10 +23,18 @@
     "removeVerificationRequestError": "Error while removing verification request from group",
     "addVerificationRequestSuccess": "Verification Request added to the group successfully",
     "addVerificationRequestError": "Error while updating group",
-    "verificationRequestTagPublicationDate": "Seen On:",
-    "verificationRequestTagDate": "Reported On:",
-    "verificationRequestTagHeardFrom": "Received On:",
-    "verificationRequestTagSource": "Source:",
     "verificationRequestTagContent": "Content:",
-    "verificationRequestViewRequest": "View Verification Request"
+    "verificationRequestViewRequest": "View Verification Request",
+    "verificationRequestCreateContentLabel": "Details of the Verification Request",
+    "verificationRequestCreatePublicationDateLabel": "When Did You See This?",
+    "verificationRequestCreateHeardFromLabel": "Where Did You See or Hear This?",
+    "verificationRequestCreateSourceLabel": "Source of Information for the Verification Request",
+    "verificationRequestCreateEmailLabel": "If You Would Like to Receive the Review, Please Provide Your Email Below",
+    "verificationRequestCreateContentPlaceholder": "Enter the details of your request here...",
+    "verificationRequestCreatePublicationDatePlaceholder": "Select the date you saw this...",
+    "verificationRequestCreateHeardFromPlaceholder": "Specify where you saw or heard this...",
+    "verificationRequestCreateSourcePlaceholder":  "Provide the source of the information...",
+    "verificationRequestCreateEmailPlaceholder": "Enter your email address here...",
+    "verificationRequestCreateSuccess": "Verification Request created successfully",
+    "verificationRequestCreateError": "Error while creating the Verification Request"
 }

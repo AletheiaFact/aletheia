@@ -251,7 +251,6 @@ export const createChatBotMachine = (
                         email: context.email || "",
                         date: new Date(),
                         heardFrom: context.heardFrom || "",
-                        data_hash: "",
                     };
 
                     verificationRequestService.create(verificationRequestBody);
