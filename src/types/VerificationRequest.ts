@@ -8,5 +8,5 @@ export type VerificationRequest = {
     group: Group;
     date: Date;
     sources?: string[];
-    _id: string;
+    _id?: string;
 };

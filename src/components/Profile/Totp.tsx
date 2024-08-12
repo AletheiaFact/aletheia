@@ -210,7 +210,7 @@ export const Totp = ({ flow, setFlow }) => {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            padding: "08px 15px",
+                            padding: "8px 15px",
                             height: "max-content",
                             whiteSpace: "normal",
                         }}
