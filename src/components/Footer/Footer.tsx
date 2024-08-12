@@ -11,6 +11,7 @@ import AletheiaInfo from "./AletheiaInfo";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import localConfig from "../../../config/localConfig";
 
 const Footer = () => {
     const { t } = useTranslation();
@@ -102,6 +103,7 @@ const Footer = () => {
                             }}
                         >
                             {t("footer:copyright", {
+                                name: localConfig.name,
                                 date: new Date().getFullYear(),
                             })}
                         </h3>

@@ -8,6 +8,7 @@ import { useAppSelector } from "../../../store/store";
 import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../../atoms/currentUser";
+import localConfig from "../../../../config/localConfig";
 
 const CTASectionButtons = () => {
     const { t } = useTranslation();
@@ -48,9 +49,9 @@ const CTASectionButtons = () => {
             )}
             {!smallDevice && (
                 <Col md={11}>
-                    <DonateButton
+                    {localConfig.header.donateButton.show ? <DonateButton
                         style={{ fontSize: mediumDevice ? "12px" : "14px" }}
-                    />
+                    /> : null}
                 </Col>
             )}
         </Col>

@@ -1,8 +1,12 @@
 export interface LocalConfig {
+    name: string,
+
     footer: {
-        organizationName: string;
         socialMedias: string[];
-        showStatuteButton: boolean;
+        showStatuteButton: {
+            show: boolean,
+            redirectUrl: string,
+        };
         address: string;
         description: string;
         platformInfoTitle: string;
@@ -13,6 +17,7 @@ export interface LocalConfig {
         donateButton: {
             show: boolean;
             redirectUrl: string;
+            text: string;
         };
         logo: string;
     };
@@ -30,33 +35,38 @@ export interface LocalConfig {
 }
 
 const localConfig: LocalConfig = {
+    name: "Federal da Paraíba",
+
     footer: {
-        socialMedias: [""],
-        organizationName: "",
-        showStatuteButton: true,
+        socialMedias: ["", "", "", ""],
+        showStatuteButton: {
+            show: true,
+            redirectUrl: "",
+        },
         address: "",
         description: "",
         platformInfoTitle: "",
         contactEmail: "",
     },
     header: {
-        languages: ["pt", "en"],
+        languages: ["pt", "en"], //pending
         donateButton: {
             show: true,
             redirectUrl: "",
+            text: "",
         },
-        logo: "",
+        logo: "", //pending
     },
     home: {
         header: {
             title: "",
             message: "",
         },
-        affixCTA: true,
+        affixCTA: true, //pending
         ctaBanner: {
             text: "",
         },
-        share: { platform: "", url: "" },
+        share: { platform: "", url: "" }, //pending
     },
 };
 

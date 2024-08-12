@@ -7,6 +7,7 @@ import { ButtonType } from "../Button";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import localConfig from "../../../config/localConfig";
 
 function CTARegistration() {
     const { t } = useTranslation();
@@ -46,7 +47,7 @@ function CTARegistration() {
                     margin: "32px 0 13px 0",
                 }}
             >
-                {t("CTARegistration:body")}
+                {localConfig.home.ctaBanner.text ? localConfig.home.ctaBanner.text : t("CTARegistration:body")}
             </p>
             <p
                 style={{

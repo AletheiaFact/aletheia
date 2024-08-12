@@ -1,6 +1,8 @@
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
+import localConfig from "../../../config/localConfig";
+import Aletheiainfoadress from "../Footer/Aletheiainfoadress";
 
 const AletheiaInfo = () => {
     const { t } = useTranslation();
@@ -18,7 +20,8 @@ const AletheiaInfo = () => {
                     textAlign: "center",
                 }}
             >
-                {t("footer:platformInfoTittle")}
+
+                {localConfig.footer.platformInfoTitle ? localConfig.footer.platformInfoTitle : t("footer:platformInfoTittle")}
             </h3>
             <span
                 style={{
@@ -27,35 +30,10 @@ const AletheiaInfo = () => {
                     textAlign: "center",
                 }}
             >
-                {t("footer:contactEmail")}
+                {localConfig.footer.contactEmail ? localConfig.footer.contactEmail : t("footer:contactEmail")}
             </span>
-            <span
-                style={{
-                    fontSize: "14px",
-                    marginTop: "0px",
-                    textAlign: "center",
-                }}
-            >
-                Av Maria Ranieri, Nº 7-50
-            </span>
-            <span
-                style={{
-                    fontSize: "14px",
-                    marginTop: "0px",
-                    textAlign: "center",
-                }}
-            >
-                17.055-175 - Parque Viaduto - Bauru/SP
-            </span>
-            <span
-                style={{
-                    fontSize: "14px",
-                    marginTop: "0px",
-                    textAlign: "center",
-                }}
-            >
-                46.428.905/0001-68
-            </span>
+            {localConfig.footer.address ? localConfig.footer.address : <Aletheiainfoadress />}
+
         </>
     );
 };
