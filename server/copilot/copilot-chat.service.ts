@@ -98,12 +98,15 @@ export class CopilotChatService {
                     await this.automatedFactCheckingService.getResponseFromAgents(
                         data
                     );
-                this.editorReport = await this.editorParseService.schema2editor(
-                    {
-                        ...json.messages,
-                        sources: [],
-                    }
-                );
+
+                if (json?.messages) {
+                    this.editorReport =
+                        await this.editorParseService.schema2editor({
+                            ...json.messages,
+                            sources: [],
+                        });
+                }
+
                 return stream;
             } catch (error) {
                 this.logger.error(error);

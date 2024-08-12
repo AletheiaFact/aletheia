@@ -25,7 +25,7 @@ export class AutomatedFactCheckingService {
                 },
             };
 
-            const response = await fetch(`${this.agenciaURL}/stream`, {
+            const response = await fetch(`${this.agenciaURL}/invoke`, {
                 method: "POST",
                 body: JSON.stringify(params),
                 headers: {
@@ -46,22 +46,14 @@ export class AutomatedFactCheckingService {
                 });
             }
 
-            const jsonEvents = streamResponse
-                .split("\n")
-                .filter((line) => line.startsWith("data:"))
-                .map((line) => JSON.parse(line.substring(5)))
-                .reduce((acc, data) => ({ ...acc, ...data }), {});
+            const jsonResponse = JSON.parse(streamResponse);
 
-            if (jsonEvents?.start_fact_checking) {
-                const report = JSON.parse(
-                    jsonEvents?.start_fact_checking?.messages
-                );
-                return { stream: streamResponse, json: { messages: report } };
+            if (jsonResponse?.detail) {
+                return { stream: jsonResponse.detail, json: {} };
             }
 
-            if (jsonEvents?.create_report.messages) {
-                const report = JSON.parse(jsonEvents?.create_report.messages);
-
+            if (jsonResponse?.message) {
+                const report = JSON.parse(jsonResponse?.message?.messages);
                 return { stream: streamResponse, json: { messages: report } };
             }
 
