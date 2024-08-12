@@ -21,6 +21,14 @@ const VerificationRequestList = () => {
         page: 0,
     });
 
+    const truncateWithEllipsis = (value, maxLength) => {
+        if (!value) return "";
+        const truncatedValue = value.substring(0, maxLength);
+        return value.length > maxLength
+            ? `${truncatedValue}...`
+            : truncatedValue;
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -52,12 +60,7 @@ const VerificationRequestList = () => {
                 flex: 1,
                 valueGetter: (value, row) => row.content,
                 renderCell: (params) => (
-                    <span>
-                        {params.value
-                            ? params.value.substring(0, 50) +
-                              (params.value.length > 50 ? "..." : "")
-                            : ""}
-                    </span>
+                    <span>{truncateWithEllipsis(params.value, 50)}</span>
                 ),
             },
             {
@@ -68,12 +71,7 @@ const VerificationRequestList = () => {
                 flex: 1,
                 valueGetter: (value, row) => row.heardFrom || "",
                 renderCell: (params) => (
-                    <span>
-                        {params.value
-                            ? params.value.substring(0, 30) +
-                              (params.value.length > 30 ? "..." : "")
-                            : ""}
-                    </span>
+                    <span>{truncateWithEllipsis(params.value, 30)}</span>
                 ),
             },
             {
@@ -95,12 +93,7 @@ const VerificationRequestList = () => {
                 flex: 1,
                 valueGetter: (value, row) => row.source?.href || "",
                 renderCell: (params) => (
-                    <span>
-                        {params.value
-                            ? params.value.substring(0, 30) +
-                              (params.value.length > 30 ? "..." : "")
-                            : ""}
-                    </span>
+                    <span>{truncateWithEllipsis(params.value, 30)}</span>
                 ),
             },
             {
