@@ -24,7 +24,7 @@ const VerificationRequestList = () => {
                     renderItem={(item) => (
                         <VerificationRequestCard
                             key={item._id}
-                            content={item}
+                            verificationRequest={item}
                             t={t}
                             expandable={false}
                             actions={[

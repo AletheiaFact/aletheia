@@ -33,7 +33,7 @@ const VerificationRequestDrawer = ({
                         <>
                             <VerificationRequestCard
                                 key={item._id}
-                                content={item}
+                                verificationRequest={item}
                                 t={t}
                                 actions={[
                                     <AletheiaButton
