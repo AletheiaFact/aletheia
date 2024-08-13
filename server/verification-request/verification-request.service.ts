@@ -374,6 +374,20 @@ export class VerificationRequestService {
                 },
             },
             {
+                $lookup: {
+                    from: "sources",
+                    localField: "source",
+                    foreignField: "_id",
+                    as: "source",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$source",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
                 $project: {
                     embedding: 0,
                 },
