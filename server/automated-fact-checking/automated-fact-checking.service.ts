@@ -1,6 +1,6 @@
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { BaseRequest } from "../types";
+import type { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
 
