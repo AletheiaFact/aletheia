@@ -1,21 +1,20 @@
+import React from "react";
+import { useTranslation } from "next-i18next";
+import { Button, Grid } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { useAtom } from "jotai";
 import {
-    DataGrid,
     GridActionsCellItem,
-    GridColumns,
+    GridColDef,
     GridRowParams,
 } from "@mui/x-data-grid";
-import { useTranslation } from "next-i18next";
-import React from "react";
-import EditIcon from "@mui/icons-material/Edit";
-import { Button, Grid } from "@mui/material";
-import { useAtom } from "jotai";
 import { isEditDrawerOpen, startEditingItem } from "../../atoms/editDrawer";
 import { atomNameSpacesList } from "../../atoms/namespace";
 import { NameSpace } from "../../types/Namespace";
+import PaginatedDataGrid from "../PaginetedDataGrid";
 
 const NameSpaceView = () => {
     const { t } = useTranslation();
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [, setVisible] = useAtom(isEditDrawerOpen);
     const [nameSpaces] = useAtom(atomNameSpacesList);
     const [, setNameSpaceToEdit] = useAtom(startEditingItem);
@@ -35,11 +34,11 @@ const NameSpaceView = () => {
         setVisible(true);
     };
 
-    const columns = React.useMemo<GridColumns<NameSpace>>(
+    const columns = React.useMemo<GridColDef<NameSpace>[]>(
         () => [
             {
                 field: "name",
-                headerName: "nome",
+                headerName: t("namespaces:nameColumn"),
                 flex: 2,
             },
             {
@@ -59,6 +58,7 @@ const NameSpaceView = () => {
         ],
         [handleEdit, t]
     );
+
     return (
         <Grid
             container
@@ -72,20 +72,7 @@ const NameSpaceView = () => {
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {nameSpaces && (
-                    <DataGrid
-                        rows={nameSpaces}
-                        columns={columns}
-                        pageSize={rowsPerPage}
-                        rowsPerPageOptions={[5, 10, 50]}
-                        onPageSizeChange={setRowsPerPage}
-                        getRowId={(row) => row._id}
-                        autoHeight
-                        sx={{
-                            "& .MuiTablePagination-toolbar p": {
-                                marginBottom: 0,
-                            },
-                        }}
-                    />
+                    <PaginatedDataGrid rows={nameSpaces} columns={columns} />
                 )}
             </Grid>
             <Grid item xs={10} mt={5} display="flex" justifyContent="end">

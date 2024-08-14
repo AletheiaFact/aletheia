@@ -1,29 +1,26 @@
 import EditIcon from "@mui/icons-material/Edit";
 import { Avatar, AvatarGroup, Grid } from "@mui/material";
 import {
-    DataGrid,
     GridActionsCellItem,
-    GridColumns,
+    GridColDef,
     GridRowParams,
-    GridValueGetterParams,
 } from "@mui/x-data-grid";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { startEditingItem } from "../../atoms/editDrawer";
-
 import { atomUserList } from "../../atoms/userEdit";
 import { User } from "../../types/User";
 import HeaderUserStatus from "./Drawer/HeaderUserStatus";
 import HeaderTotpStatus from "./Drawer/HeaderTotpStatus";
 import { currentNameSpace } from "../../atoms/namespace";
+import PaginatedDataGrid from "../PaginetedDataGrid";
 
 const AdminView = () => {
     const { t } = useTranslation();
     // this is a write only atom, so we don't need to use the value
     const [, startEditing] = useAtom(startEditingItem);
     const [userList] = useAtom(atomUserList);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [nameSpace] = useAtom(currentNameSpace);
 
     const handleEdit = React.useCallback(
@@ -33,7 +30,7 @@ const AdminView = () => {
         [startEditing]
     );
 
-    const columns = React.useMemo<GridColumns<User>>(
+    const columns = React.useMemo<GridColDef<User>[]>(
         () => [
             {
                 field: "name",
@@ -49,17 +46,14 @@ const AdminView = () => {
                 field: "role",
                 headerName: t("admin:columnRole"),
                 flex: 1,
-                valueGetter: (params: GridValueGetterParams) => {
-                    return t(`admin:role-${params.row.role[nameSpace]}`);
-                },
+                valueGetter: (value, row) =>
+                    t(`admin:role-${row.role[nameSpace]}`),
             },
             {
                 field: "badges",
                 headerName: t("admin:columnBadges"),
                 flex: 1,
-                valueGetter: (params: GridValueGetterParams) => {
-                    return params.row.badges || "";
-                },
+                valueGetter: (value, row) => row.badges || "",
                 renderCell: (params) => (
                     <AvatarGroup max={4}>
                         {params?.value &&
@@ -80,9 +74,7 @@ const AdminView = () => {
                 field: "state",
                 headerName: t("admin:columnStatus"),
                 flex: 1,
-                valueGetter: (params: GridValueGetterParams) => {
-                    return params.row.state;
-                },
+                valueGetter: (value, row) => row.state,
                 renderCell: (params) => (
                     <HeaderUserStatus status={params.value} />
                 ),
@@ -91,9 +83,7 @@ const AdminView = () => {
                 field: "totp",
                 headerName: t("admin:columnTotp"),
                 flex: 1,
-                valueGetter: (params: GridValueGetterParams) => {
-                    return params.row.totp;
-                },
+                valueGetter: (value, row) => row.totp,
                 renderCell: (params) => (
                     <HeaderTotpStatus status={params.value} />
                 ),
@@ -128,20 +118,7 @@ const AdminView = () => {
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {userList && (
-                    <DataGrid
-                        rows={userList}
-                        columns={columns}
-                        pageSize={rowsPerPage}
-                        rowsPerPageOptions={[5, 10, 50]}
-                        onPageSizeChange={setRowsPerPage}
-                        getRowId={(row) => row._id}
-                        autoHeight
-                        sx={{
-                            "& .MuiTablePagination-toolbar p": {
-                                marginBottom: 0,
-                            },
-                        }}
-                    />
+                    <PaginatedDataGrid rows={userList} columns={columns} />
                 )}
             </Grid>
         </Grid>
