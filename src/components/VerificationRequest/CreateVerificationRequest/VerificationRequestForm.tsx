@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import BaseVerificationRequestForm from "./BaseVerificationRequestForm";
 import verificationRequestApi from "../../../api/verificationRequestApi";
 
-const DynamicVerificationRequestForm = () => {
+const VerificationRequestForm = () => {
     const router = useRouter();
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
@@ -32,4 +32,4 @@ const DynamicVerificationRequestForm = () => {
     );
 };
 
-export default DynamicVerificationRequestForm;
+export default VerificationRequestForm;

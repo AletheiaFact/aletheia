@@ -21,11 +21,10 @@ const CreateVerificationRequestPage: NextPage<any> = ({
     dispatch(actions.setSitekey(sitekey));
     return (
         <>
-            //TODO: Make The SEO
-            {/* <Seo
-                title={t("seo:createSourceTitle")}
-                description={t("seo:createSourceDescription")}
-            /> */}
+            <Seo
+                title={t("seo:createVerificationRequestTitle")}
+                description={t("seo:createVerificationRequestDescription")}
+            />
             <CreateVerificationRequestView />
         </>
     );
