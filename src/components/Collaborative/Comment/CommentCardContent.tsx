@@ -1,5 +1,9 @@
 import React, { useEffect } from "react";
-import { useCurrentSelection, useHelpers } from "@remirror/react";
+import {
+    useCurrentSelection,
+    useHelpers,
+    useRemirrorContext,
+} from "@remirror/react";
 import CommentCardForm from "./CommentCardForm";
 import CommentCardHeader from "./CommentCardHeader";
 import { Divider } from "@mui/material";
@@ -31,9 +35,11 @@ const CommentCardContent = ({
     const { t } = useTranslation();
     const { from } = useCurrentSelection();
     const { getAnnotationsAt } = useHelpers();
+    const { getPluginState } = useRemirrorContext({ autoUpdate: true });
+    const pluginState = getPluginState("annotation");
 
     useEffect(() => {
-        if (enableEditorAnnotations) {
+        if (enableEditorAnnotations && pluginState) {
             const annotations = getAnnotationsAt(from);
             const hasMatchingId = annotations.some(
                 (annotation) => annotation?.id === content?._id

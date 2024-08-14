@@ -11,7 +11,8 @@ const LocalizedDate = ({
     const localizedDate = date.toLocaleDateString();
     const localizedTime = date.toLocaleTimeString();
     return (
-        <span style={{ fontWeight: 700 }}>
+        // Suppress hydration warning because currentTime varies between server and client rendering
+        <span suppressHydrationWarning style={{ fontWeight: 700 }}>
             {localizedDate}
             {showTime && ` - ${localizedTime}`}
         </span>

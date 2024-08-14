@@ -6,9 +6,9 @@ import VerificationExtension from "../Form/VerificationExtension";
 import {
     AnnotationExtension,
     LinkExtension,
-    YjsExtension,
     TrailingNodeExtension,
 } from "remirror/extensions";
+import { YjsExtension } from "@remirror/extension-yjs";
 import SourceReviewEditor from "../Components/SourceReviewEditor";
 import ClaimReviewEditor from "../Components/ClaimReviewEditor";
 import { MarkExtension, NodeExtension, PlainExtension } from "remirror";
