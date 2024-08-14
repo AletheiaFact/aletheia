@@ -4719,6 +4719,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/jwt@npm:^10.2.0":
+  version: 10.2.0
+  resolution: "@nestjs/jwt@npm:10.2.0"
+  dependencies:
+    "@types/jsonwebtoken": 9.0.5
+    jsonwebtoken: 9.0.2
+  peerDependencies:
+    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+  checksum: 00ad630809c28f2b214036459f2557393c66b42a7b93e87b3788ba8465b69b779e9c5ce5942b79f3fb38b20679703f6a12b31a116e52ffa9acb2461b53a54bec
+  languageName: node
+  linkType: hard
+
 "@nestjs/mapped-types@npm:2.0.2":
   version: 2.0.2
   resolution: "@nestjs/mapped-types@npm:2.0.2"
@@ -10160,6 +10172,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jsonwebtoken@npm:9.0.5":
+  version: 9.0.5
+  resolution: "@types/jsonwebtoken@npm:9.0.5"
+  dependencies:
+    "@types/node": "*"
+  checksum: 07ab6fee602e5bd3fb5c6dfe4ec400769dc20f1d7fce901feecb4c3af5f5f08323b03ea55de3e49b1aa41e171a59008f6f4318738a735588c5268a63eba25337
+  languageName: node
+  linkType: hard
+
 "@types/lodash@npm:^4.14.167":
   version: 4.14.199
   resolution: "@types/lodash@npm:4.14.199"
@@ -11569,6 +11590,7 @@ __metadata:
     "@nestjs/common": ^9.2.0
     "@nestjs/config": ^2.2.0
     "@nestjs/core": ^9.2.0
+    "@nestjs/jwt": ^10.2.0
     "@nestjs/mapped-types": ^1.2.0
     "@nestjs/mongoose": ^8.0.0
     "@nestjs/platform-express": ^9.2.0
@@ -20292,7 +20314,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonwebtoken@npm:^9.0.2":
+"jsonwebtoken@npm:9.0.2, jsonwebtoken@npm:^9.0.2":
   version: 9.0.2
   resolution: "jsonwebtoken@npm:9.0.2"
   dependencies:

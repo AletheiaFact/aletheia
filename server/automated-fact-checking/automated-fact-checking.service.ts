@@ -2,7 +2,7 @@ import { Inject, Injectable, Scope } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { BaseRequest } from "../types";
 import { REQUEST } from "@nestjs/core";
-const jwt = require("jsonwebtoken");
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable({ scope: Scope.REQUEST })
 export class AutomatedFactCheckingService {
@@ -10,22 +10,22 @@ export class AutomatedFactCheckingService {
 
     constructor(
         @Inject(REQUEST) private req: BaseRequest,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private jwtService: JwtService
     ) {
         this.agenciaURL = this.configService.get<string>(
             "automatedFactCheckingAPIUrl"
         );
     }
 
-    generateAccessToken() {
-        return jwt.sign(this.req.user, process.env.AGENCIA_SECRET, {
-            expiresIn: "24h",
-        });
-    }
-
     async getResponseFromAgents(data): Promise<{ stream: string; json: any }> {
         try {
-            const accessToken = this.generateAccessToken();
+            const { access_token } = this.configService.get("agencia");
+            const agenciaAccessToken = this.jwtService.sign(
+                { sub: this.req.user._id },
+                { secret: access_token, expiresIn: "15m" }
+            );
+
             const params = {
                 input: {
                     claim: data.claim,
@@ -43,7 +43,7 @@ export class AutomatedFactCheckingService {
                 body: JSON.stringify(params),
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${agenciaAccessToken}`,
                 },
                 keepalive: true,
             });
