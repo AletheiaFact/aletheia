@@ -9,6 +9,11 @@ import DebateTimelineWrapper from "./DebateTimelineWrapper";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import { currentNameSpace } from "../../atoms/namespace";
+import AletheiaButton, { ButtonType } from "../../components/Button";
+import { currentUserRole } from "../../atoms/currentUser";
+import { Roles } from "../../types/enums";
+import { EditOutlined } from "@ant-design/icons";
+import { NameSpaceEnum } from "../../types/Namespace";
 
 const DebateView = ({ claim }) => {
     const debate = claim?.content;
@@ -17,6 +22,7 @@ const DebateView = ({ claim }) => {
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
     dispatch(actions.setSelectTarget(claim));
+    const [userRole] = useAtom(currentUserRole);
 
     // the new debate data will in the callbackResult of the state
     const updateTimeline = useCallback(() => {
@@ -32,6 +38,11 @@ const DebateView = ({ claim }) => {
         interval: 10,
         callbackFunction: updateTimeline,
     };
+
+    const baseHref = `/${
+        nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""
+    }`;
+    const href = `${baseHref}claim/${claim.claimId}/debate/edit`;
 
     return (
         <>
@@ -52,6 +63,24 @@ const DebateView = ({ claim }) => {
                         title={claim?.title}
                         personalities={claim?.personalities}
                     />
+                    {userRole === Roles.Regular ? null : (
+                        <AletheiaButton
+                            type={ButtonType.blue}
+                            style={{
+                                width: "10%",
+                                margin: 10,
+                                paddingLeft: 15,
+                            }}
+                            href={href}
+                        >
+                            <span>{t("debates:openEditDebateMode")}</span>
+                            <EditOutlined
+                                style={{
+                                    color: "#ffffff",
+                                }}
+                            />
+                        </AletheiaButton>
+                    )}
                     <Row
                         style={{
                             padding: "30px 10%",
