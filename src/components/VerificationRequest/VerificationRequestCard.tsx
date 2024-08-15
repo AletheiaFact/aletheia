@@ -84,6 +84,7 @@ const VerificationRequestCard = ({
                         {t(
                             "verificationRequest:verificationRequestTagPublicationDate"
                         )}
+                        :
                     </strong>{" "}
                     {isValidDate ? (
                         <LocalizedDate date={publicationDate} />
@@ -100,7 +101,7 @@ const VerificationRequestCard = ({
                     key={`${verificationRequest._id}|date`}
                 >
                     <strong>
-                        {t("verificationRequest:verificationRequestTagDate")}
+                        {t("verificationRequest:verificationRequestTagDate")}:
                     </strong>{" "}
                     <LocalizedDate date={verificationRequest.date} />
                 </CustomTag>
@@ -116,6 +117,7 @@ const VerificationRequestCard = ({
                         {t(
                             "verificationRequest:verificationRequestTagHeardFrom"
                         )}
+                        :
                     </strong>{" "}
                     {verificationRequest.heardFrom}
                 </CustomTag>
@@ -128,7 +130,7 @@ const VerificationRequestCard = ({
                     key={`${verificationRequest._id}|source`}
                 >
                     <strong>
-                        {t("verificationRequest:verificationRequestTagSource")}
+                        {t("verificationRequest:verificationRequestTagSource")}:
                     </strong>
                     <Link href={verificationRequest.source.href} passHref>
                         <a>{truncateUrl(verificationRequest.source.href)}</a>

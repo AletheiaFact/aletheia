@@ -11,6 +11,7 @@ import {
     GridColDef,
     GridRowParams,
 } from "@mui/x-data-grid";
+import colors from "../../styles/colors";
 
 const VerificationRequestList = () => {
     const { t } = useTranslation();
@@ -151,7 +152,14 @@ const VerificationRequestList = () => {
                     onPaginationModelChange={setPaginationModel}
                     getRowId={(row) => row.data_hash}
                     autoHeight
-                    sx={{ height: "100%" }}
+                    sx={{
+                        "& .MuiDataGrid-columnHeader": {
+                            backgroundColor: colors.lightGraySecondary,
+                            color: colors.bluePrimary,
+                            fontWeight: "bold",
+                            borderBottom: `2px solid ${colors.blueSecondary}`,
+                        },
+                    }}
                 />
             </Grid>
         </Grid>

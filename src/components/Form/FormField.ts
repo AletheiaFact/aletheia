@@ -86,7 +86,6 @@ const validateSchema = (
     schema: ReviewTaskMachineContextReviewData
 ): boolean | string => {
     for (const key in schema) {
-        console.log(key, "key");
         const value = schema[key];
         if (Array.isArray(value) && value.length <= 0 && key !== "paragraph") {
             return `common:${key}RequiredFieldError`;
