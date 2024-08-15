@@ -69,6 +69,10 @@ const VerificationRequestCard = ({
     const getTags = (content) => {
         const tags = [];
         if (content.publicationDate) {
+            const publicationDate = new Date(content.publicationDate);
+
+            const isValidDate = !isNaN(publicationDate.getTime());
+
             tags.push(
                 <CustomTag
                     color={colors.blueSecondary}
@@ -79,7 +83,11 @@ const VerificationRequestCard = ({
                             "verificationRequest:verificationRequestTagPublicationDate"
                         )}
                     </strong>{" "}
-                    {content.publicationDate}
+                    {isValidDate ? (
+                        <LocalizedDate date={publicationDate} />
+                    ) : (
+                        content.publicationDate
+                    )}
                 </CustomTag>
             );
         }
