@@ -121,6 +121,17 @@ const DynamicInput = (props: DynamicInputProps) => {
                     disabledDate={props.disabledDate}
                 />
             );
+        case "email":
+            return (
+                <AletheiaInput
+                    placeholder={t(props.placeholder)}
+                    type={props.type}
+                    onChange={(value) => props.onChange(value)}
+                    defaultValue={props.defaultValue}
+                    data-cy={props["data-cy"]}
+                    white="true"
+                />
+            );
         default:
             return null;
     }

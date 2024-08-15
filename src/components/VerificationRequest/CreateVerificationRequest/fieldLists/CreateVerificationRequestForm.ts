@@ -30,7 +30,7 @@ const createVerificationRequestForm: FormField[] = [
     }),
     createFormField({
         fieldName: "email",
-        type: "text",
+        type: "email",
         defaultValue: "",
         i18nNamespace: "verificationRequest",
         required: false,
