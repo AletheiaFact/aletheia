@@ -91,6 +91,7 @@ const BaseClaimForm = ({
                 <DatePickerInput
                     placeholder={t("claimForm:dateFieldPlaceholder")}
                     onChange={setDate}
+                    data-cy={"testSelectDate"}
                     disabledDate={disabledDate}
                 />
             </Form.Item>
