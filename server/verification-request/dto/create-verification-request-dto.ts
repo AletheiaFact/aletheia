@@ -34,11 +34,6 @@ export class CreateVerificationRequestDTO {
     @IsString()
     @IsOptional()
     @ApiProperty()
-    data_hash?: string;
-
-    @IsString()
-    @IsOptional()
-    @ApiProperty()
     nameSpace?: string;
 
     @IsString()

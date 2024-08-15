@@ -76,9 +76,7 @@ export class VerificationRequestService {
      * @param verificationRequest verificationRequestBody
      * @returns the verification request document
      */
-    async create(
-        verificationRequest: CreateVerificationRequestDTO
-    ): Promise<VerificationRequestDocument> {
+    async create(verificationRequest): Promise<VerificationRequestDocument> {
         try {
             verificationRequest.data_hash = md5(verificationRequest.content);
             verificationRequest.embedding = await this.createEmbedContent(
