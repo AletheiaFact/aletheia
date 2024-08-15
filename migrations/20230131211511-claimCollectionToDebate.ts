@@ -3,6 +3,8 @@ import { Db } from "mongodb";
 const ObjectId = require("mongodb").ObjectID;
 
 export async function up(db: Db) {
+    return;
+    // migrations not needed
     try {
         const claimCollectionCursor = await db
             .collection("claimcollections")
