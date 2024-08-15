@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Col, Row } from "antd";
 import colors from "../../../styles/colors";
 import DynamicVerificationRequestForm from "./DynamicVerificationRequestForm";

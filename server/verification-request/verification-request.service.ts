@@ -7,7 +7,6 @@ import {
 } from "./schemas/verification-request.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { GroupService } from "../group/group.service";
-import { CreateVerificationRequestDTO } from "./dto/create-verification-request-dto";
 import { UpdateVerificationRequestDTO } from "./dto/update-verification-request.dto";
 import { OpenAIEmbeddings } from "@langchain/openai";
 const md5 = require("md5");
