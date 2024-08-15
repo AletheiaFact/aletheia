@@ -1,7 +1,7 @@
-import {Injectable, Logger, OnModuleInit} from "@nestjs/common";
-import createServer from "next";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { NextServer } from "next/dist/server/next";
-import {ConfigService} from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
+const createServer = require("next");
 
 @Injectable()
 export class ViewService implements OnModuleInit {

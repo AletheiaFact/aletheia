@@ -147,15 +147,15 @@ export class VerificationRequestController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/verification-request-page",
-            Object.assign(parsedUrl.query, {
-                nameSpace: req.params.namespace,
-            })
-        );
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/verification-request-page", {
+                props: JSON.stringify(queryObject),
+            });
     }
 
     @IsPublic()
@@ -188,19 +188,19 @@ export class VerificationRequestController {
                 5
             );
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/verification-request-review-page",
-            Object.assign(parsedUrl.query, {
-                reviewTask,
-                recommendations,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                hideDescriptions: {},
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                nameSpace: req.params.namespace,
-                verificationRequest,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            reviewTask,
+            recommendations,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            hideDescriptions: {},
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: req.params.namespace,
+            verificationRequest,
+        });
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/verification-request-review-page", {
+                props: JSON.stringify(queryObject),
+            });
     }
 }

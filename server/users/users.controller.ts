@@ -47,14 +47,10 @@ export class UsersController {
     public async login(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const authType = this.configService.get<string>("authentication_type");
+        const queryObject = Object.assign(parsedUrl.query, { authType });
         await this.viewService
             .getNextServer()
-            .render(
-                req,
-                res,
-                "/login",
-                Object.assign(parsedUrl.query, { authType })
-            );
+            .render(req, res, "/login", { props: JSON.stringify(queryObject) });
     }
 
     @IsPublic()
@@ -105,15 +101,15 @@ export class UsersController {
             },
             nameSpaceSlug: nameSpace,
         });
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/admin-page",
-            Object.assign(parsedUrl.query, {
-                users,
-                nameSpace,
-            })
-        );
+
+        const query = Object.assign(parsedUrl.query, {
+            users,
+            nameSpace,
+        });
+
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/admin-page", { props: JSON.stringify(query) });
     }
 
     @ApiTags("user")
@@ -179,15 +175,16 @@ export class UsersController {
         const parsedUrl = parse(req.url, true);
         const user = await this.usersService.getById(req.user._id);
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/profile-page",
-            Object.assign(parsedUrl.query, {
-                user,
-                nameSpace: req.params.namespace,
-            })
-        );
+        const query = Object.assign(parsedUrl.query, {
+            user,
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/profile-page", {
+                props: JSON.stringify(query),
+            });
     }
 
     @IsPublic()

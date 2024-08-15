@@ -146,18 +146,19 @@ export class SearchController {
                 });
             }
 
-            await this.viewService.getNextServer().render(
-                req,
-                res,
-                "/search-page",
-                Object.assign(parsedUrl.query, {
-                    searchResults,
-                    searchText,
-                    pageSize,
-                    page,
-                    filter,
-                })
-            );
+            const queryObject = Object.assign(parsedUrl.query, {
+                searchResults,
+                searchText,
+                pageSize,
+                page,
+                filter,
+            });
+
+            await this.viewService
+                .getNextServer()
+                .render(req, res, "/search-page", {
+                    props: JSON.stringify(queryObject),
+                });
         } catch (error) {
             this.logger.error(error);
             res.status(500).json({ error: "An error occurred" });

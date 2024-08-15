@@ -105,8 +105,6 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                                     <Image
                                         src={image}
                                         alt={title}
-                                        width={345} // Adjust based on your design needs
-                                        height={140} // Adjust based on your design needs
                                         layout="fill"
                                         objectFit="contain"
                                     />

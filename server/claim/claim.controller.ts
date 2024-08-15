@@ -377,29 +377,29 @@ export class ClaimController {
             );
 
         const parsedUrl = parse(req.url, true);
+        const query = Object.assign(parsedUrl.query, {
+            personality,
+            claim,
+            content,
+            reviewTask,
+            claimReview,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            hideDescriptions,
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-review",
-            Object.assign(parsedUrl.query, {
-                personality,
-                claim,
-                content,
-                reviewTask,
-                claimReview,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                hideDescriptions,
-                enableCollaborativeEditor,
-                enableEditorAnnotations,
-                enableCopilotChatBot,
-                enableAddEditorSourcesWithoutSelecting,
-                enableReviewersUpdateReport,
-                enableViewReportPreview,
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                nameSpace: req.params.namespace,
-            })
-        );
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/claim-review", {
+                props: JSON.stringify(query),
+            });
     }
 
     @IsPublic()
@@ -437,17 +437,16 @@ export class ClaimController {
         );
         const editor = await this.editorService.getByReference(claim.contentId);
         claim.editor = editor;
-
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/debate-editor",
-            Object.assign(parsedUrl.query, {
-                claim,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                nameSpace: req.params.namespace,
-            })
-        );
+        const query = Object.assign(parsedUrl.query, {
+            claim,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            nameSpace: req.params.namespace,
+        });
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/debate-editor", {
+                props: JSON.stringify(query),
+            });
     }
 
     @IsPublic()
@@ -462,18 +461,16 @@ export class ClaimController {
             claimId,
             namespace as NameSpaceEnum
         );
+        const query = Object.assign(parsedUrl.query, {
+            claim,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/debate-page",
-            Object.assign(parsedUrl.query, {
-                claim,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                nameSpace: req.params.namespace,
-            })
-        );
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/debate-page", { props: JSON.stringify(query) });
     }
 
     @IsPublic()
@@ -535,17 +532,18 @@ export class ClaimController {
               )
             : null;
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-create",
-            Object.assign(parsedUrl.query, {
-                personality,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                nameSpace: req.params.namespace,
-                verificationRequestGroup,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            personality,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            nameSpace: req.params.namespace,
+            verificationRequestGroup,
+        });
+
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/claim-create", {
+                props: JSON.stringify(queryObject),
+            });
     }
 
     @IsPublic()
@@ -557,15 +555,15 @@ export class ClaimController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-list-page",
-            Object.assign(parsedUrl.query, {
-                nameSpace: req.params.namespace,
-            })
-        );
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/claim-list-page", {
+                props: JSON.stringify(queryObject),
+            });
     }
 
     @IsPublic()
@@ -592,23 +590,22 @@ export class ClaimController {
 
         this.redirectBasedOnPersonality(res, claim, namespace);
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-page",
-            Object.assign(parsedUrl.query, {
-                claim,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                enableCollaborativeEditor,
-                enableEditorAnnotations,
-                enableCopilotChatBot,
-                enableAddEditorSourcesWithoutSelecting,
-                enableReviewersUpdateReport,
-                enableViewReportPreview,
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                nameSpace: namespace,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            claim,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: namespace,
+        });
+
+        await this.viewService.getNextServer().render(req, res, "/claim-page", {
+            props: JSON.stringify(queryObject),
+        });
     }
 
     @ApiTags("pages")
@@ -638,23 +635,22 @@ export class ClaimController {
             revisionId
         );
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-page",
-            Object.assign(parsedUrl.query, {
-                claim,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                enableCollaborativeEditor,
-                enableEditorAnnotations,
-                enableCopilotChatBot: enableCopilotChatBot,
-                enableAddEditorSourcesWithoutSelecting,
-                enableReviewersUpdateReport,
-                enableViewReportPreview,
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                nameSpace: namespace,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            claim,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot: enableCopilotChatBot,
+            enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: namespace,
+        });
+
+        await this.viewService.getNextServer().render(req, res, "/claim-page", {
+            props: JSON.stringify(queryObject),
+        });
     }
 
     @IsPublic()
@@ -701,26 +697,24 @@ export class ClaimController {
                 claim,
                 TargetModel.Claim
             );
+        const queryObject = Object.assign(parsedUrl.query, {
+            personality,
+            claim,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            hideDescriptions,
+            nameSpace: namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-page",
-            Object.assign(parsedUrl.query, {
-                personality,
-                claim,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                enableCollaborativeEditor,
-                enableEditorAnnotations,
-                enableCopilotChatBot,
-                enableAddEditorSourcesWithoutSelecting,
-                enableReviewersUpdateReport,
-                enableViewReportPreview,
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                hideDescriptions,
-                nameSpace: namespace,
-            })
-        );
+        await this.viewService.getNextServer().render(req, res, "/claim-page", {
+            props: JSON.stringify(queryObject),
+        });
     }
 
     @ApiTags("pages")
@@ -760,23 +754,22 @@ export class ClaimController {
             revisionId
         );
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-page",
-            Object.assign(parsedUrl.query, {
-                personality,
-                claim,
-                enableCollaborativeEditor,
-                enableEditorAnnotations,
-                enableCopilotChatBot: enableCopilotChatBot,
-                enableAddEditorSourcesWithoutSelecting,
-                enableReviewersUpdateReport,
-                enableViewReportPreview,
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                nameSpace: namespace,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            personality,
+            claim,
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot: enableCopilotChatBot,
+            enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: namespace,
+        });
+
+        await this.viewService.getNextServer().render(req, res, "/claim-page", {
+            props: JSON.stringify(queryObject),
+        });
     }
 
     @IsPublic()
@@ -799,15 +792,16 @@ export class ClaimController {
             false
         );
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-sources-page",
-            Object.assign(parsedUrl.query, {
-                targetId: claim._id,
-                nameSpace: namespace,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: claim._id,
+            nameSpace: namespace,
+        });
+
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/claim-sources-page", {
+                props: JSON.stringify(queryObject),
+            });
     }
 
     @IsPublic()
@@ -838,15 +832,16 @@ export class ClaimController {
             data_hash,
         });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/claim-sources-page",
-            Object.assign(parsedUrl.query, {
-                targetId: report._id,
-                nameSpace: req.params.namespace,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: report._id,
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/claim-sources-page", {
+                props: JSON.stringify(queryObject),
+            });
     }
 
     @ApiTags("pages")
@@ -859,17 +854,17 @@ export class ClaimController {
         const parsedUrl = parse(req.url, true);
 
         const claim = await this.claimService.getByClaimSlug(claimSlug);
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: claim._id,
+            targetModel: TargetModel.Claim,
+            nameSpace: namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/history-page",
-            Object.assign(parsedUrl.query, {
-                targetId: claim._id,
-                targetModel: TargetModel.Claim,
-                nameSpace: namespace,
-            })
-        );
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/history-page", {
+                props: JSON.stringify(queryObject),
+            });
     }
 
     @IsPublic()
@@ -888,16 +883,16 @@ export class ClaimController {
             undefined,
             false
         );
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: claim._id,
+            nameSpace: namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/sources-page",
-            Object.assign(parsedUrl.query, {
-                targetId: claim._id,
-                nameSpace: namespace,
-            })
-        );
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/sources-page", {
+                props: JSON.stringify(queryObject),
+            });
     }
 
     @ApiTags("pages")
@@ -916,17 +911,17 @@ export class ClaimController {
             personality._id,
             claimSlug
         );
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: claim._id,
+            targetModel: TargetModel.Claim,
+            nameSpace: namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/history-page",
-            Object.assign(parsedUrl.query, {
-                targetId: claim._id,
-                targetModel: TargetModel.Claim,
-                nameSpace: namespace,
-            })
-        );
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/history-page", {
+                props: JSON.stringify(queryObject),
+            });
     }
 
     @ApiTags("pages")
@@ -943,17 +938,17 @@ export class ClaimController {
         const reviewTask = await this.reviewTaskService.getReviewTaskByDataHash(
             data_hash
         );
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: reviewTask._id,
+            targetModel: TargetModel.ReviewTask,
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/history-page",
-            Object.assign(parsedUrl.query, {
-                targetId: reviewTask._id,
-                targetModel: TargetModel.ReviewTask,
-                nameSpace: req.params.namespace,
-            })
-        );
+        await this.viewService
+            .getNextServer()
+            .render(req, res, "/history-page", {
+                props: JSON.stringify(queryObject),
+            });
     }
 
     @IsPublic()

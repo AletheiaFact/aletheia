@@ -91,14 +91,14 @@ export class NameSpaceController {
         const nameSpaces = await this.nameSpaceService.listAll();
         const users = await this.usersService.findAll({});
         const parsedUrl = parse(req.url, true);
+
+        const query = Object.assign(parsedUrl.query, { nameSpaces, users });
+
         await this.viewService
             .getNextServer()
-            .render(
-                req,
-                res,
-                "/admin-namespaces",
-                Object.assign(parsedUrl.query, { nameSpaces, users })
-            );
+            .render(req, res, "/admin-namespaces", {
+                props: JSON.stringify(query),
+            });
     }
 
     private async updateNameSpaceUsers(users, key) {

@@ -49,6 +49,7 @@ const DonationCard = () => {
             >
                 <Image
                     src="/aletheia-pix.png"
+                    alt="Aletheia donation QR code"
                     sizes="100%"
                     width={155}
                     height={155}
