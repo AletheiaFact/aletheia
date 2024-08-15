@@ -38,7 +38,7 @@ const localConfig: LocalConfig = {
     name: "Federal da Paraíba",
 
     footer: {
-        socialMedias: ["", "", "", ""],
+        socialMedias: [],
         showStatuteButton: {
             show: true,
             redirectUrl: "",

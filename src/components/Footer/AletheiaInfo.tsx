@@ -2,7 +2,7 @@ import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
 import localConfig from "../../../config/localConfig";
-import Aletheiainfoadress from "../Footer/Aletheiainfoadress";
+import AletheiaInfoAdress from "./AletheiaInfoAdress";
 
 const AletheiaInfo = () => {
     const { t } = useTranslation();
@@ -32,7 +32,7 @@ const AletheiaInfo = () => {
             >
                 {localConfig.footer.contactEmail ? localConfig.footer.contactEmail : t("footer:contactEmail")}
             </span>
-            {localConfig.footer.address ? localConfig.footer.address : <Aletheiainfoadress />}
+            {localConfig.footer.address ? localConfig.footer.address : <AletheiaInfoAdress />}
 
         </>
     );

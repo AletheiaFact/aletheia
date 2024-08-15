@@ -1,9 +1,4 @@
-import { useTranslation } from "next-i18next";
-import { useAppSelector } from "../../store/store";
-
-const Aletheiainfoadress = () => {
-  const { t } = useTranslation();
-  const { vw } = useAppSelector((state) => state);
+const AletheiaInfoAdress = () => {
 
   return (
     <>
@@ -38,4 +33,4 @@ const Aletheiainfoadress = () => {
   );
 };
 
-export default Aletheiainfoadress;
+export default AletheiaInfoAdress;

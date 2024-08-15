@@ -1,14 +1,13 @@
 import { Col, Divider, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { SocialIcon } from "react-social-icons";
-
 import colors from "../../styles/colors";
-import { NameSpaceEnum } from "../../types/Namespace";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../atoms/namespace";
+import AletheiaSocialMediaIcons from "./AletheiaSocialMediaIcons";
 import localConfig from "../../../config/localConfig";
-import { Item } from "yjs";
+import { SocialIcon } from "react-social-icons";
+import { NameSpaceEnum } from "../../types/Namespace";
+import { currentNameSpace } from "../../atoms/namespace";
+import { useAtom } from "jotai";
 
 const AletheiaSocialMediaFooter = () => {
     const { t } = useTranslation();
@@ -26,9 +25,9 @@ const AletheiaSocialMediaFooter = () => {
                 </h3>
             </Col>
             <Col span={24}>
-                {localConfig.footer.socialMedias.map((url, index) => (
+                {localConfig.footer.socialMedias.some(url => url !== "") ? (localConfig.footer.socialMedias.map((url) => url! && (
                     <SocialIcon
-                        key={index}
+                        key={url}
                         url={url}
                         bgColor={
                             nameSpace === NameSpaceEnum.Main
@@ -39,7 +38,7 @@ const AletheiaSocialMediaFooter = () => {
                         rel="noreferrer"
                         fgColor="white"
                     />
-                ))}
+                ))) : <AletheiaSocialMediaIcons />}
             </Col>
             <Col style={{ width: "324px", margin: "10px auto" }}>
                 <Divider
