@@ -6,7 +6,13 @@ interface ChatResponse {
     editorReport?: any;
 }
 
+export enum ChatMessageType {
+    info = "info",
+    error = "error",
+}
+
 interface ChatMessage {
+    type: ChatMessageType;
     sender: string;
     content: any;
 }

@@ -44,4 +44,6 @@ services:
       zenvia:
         api_url: ZENVIA_API_URL
         api_token: ZENVIA_API_TOKEN
+      agencia:
+        access_token: AGENCIA_ACCESS_TOKEN
 

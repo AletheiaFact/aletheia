@@ -37,6 +37,11 @@ import { AutomatedFactCheckingService } from "../automated-fact-checking/automat
 import { EditorParseService } from "../editor-parse/editor-parse.service";
 import { ConfigService } from "@nestjs/config";
 
+enum SearchType {
+    online = "online",
+    gazettes = "gazettes",
+}
+
 @Injectable()
 export class CopilotChatService {
     private readonly logger = new Logger("CopilotChatService");
@@ -50,32 +55,42 @@ export class CopilotChatService {
     getFactCheckingReportTool = {
         name: "get-fact-checking-report",
         description:
-            "Use this tool to provide the information to the automated fact checking agents",
+            "Use this tool to create a fact-checking report providing the information to the automated fact checking agents",
         schema: z.object({
-            claim: z.string().describe("the claim provided"),
-            context: z.object({
-                //Bad behavior: When the user do not pass a value, the agent assumes the value from the date context
-                published_since: z
-                    .string()
-                    .describe(
-                        "the oldest date provided specifically and just by the user"
-                    ),
-                published_until: z
-                    .string()
-                    .describe(
-                        "the newest date provided or if it's not provided the date that the claim was stated"
-                    ),
-                city: z
-                    .string()
-                    .describe(
-                        "the city location provided specifically and just by the user"
-                    ),
-                sources: z
-                    .array(z.string())
-                    .describe(
-                        "the suggested sources as an array provided specifically and just by the user"
-                    ),
-            }),
+            claim: z.string().describe("The claim provided by the user"),
+            context: z
+                .object({
+                    //Bad behavior: When the user do not pass a value, the agent assumes the value from the date context
+                    published_since: z
+                        .string()
+                        .describe(
+                            "the oldest date provided specifically and just by the user"
+                        ),
+                    published_until: z
+                        .string()
+                        .describe(
+                            "the newest date provided or if it's not provided the date that the claim was stated"
+                        ),
+                    city: z
+                        .string()
+                        .describe(
+                            "the city location provided specifically and just by the user"
+                        ),
+                    sources: z
+                        .array(z.string())
+                        .describe(
+                            "the suggested sources as an array provided specifically and just by the user"
+                        ),
+                })
+                .describe(
+                    "Context provided by the user to construct the fact-checking report"
+                ),
+            searchType: z
+                .nativeEnum(SearchType)
+                .describe(
+                    "The search type provided by the user, must be a valid enum value"
+                )
+                .default(SearchType.online),
         }),
         func: async (data) => {
             try {
@@ -83,17 +98,19 @@ export class CopilotChatService {
                     await this.automatedFactCheckingService.getResponseFromAgents(
                         data
                     );
-                this.editorReport = await this.editorParseService.schema2editor(
-                    {
-                        ...json.messages,
-                        sources: [],
-                    }
-                );
+
+                if (json?.messages) {
+                    this.editorReport =
+                        await this.editorParseService.schema2editor({
+                            ...json.messages,
+                            sources: [],
+                        });
+                }
+
                 return stream;
-            } catch (e) {
-                console.log(e);
-                this.logger.error(e);
-                throw new Error(e);
+            } catch (error) {
+                this.logger.error(error);
+                return error;
             }
         },
     };
@@ -127,23 +144,25 @@ export class CopilotChatService {
                     Please follow these steps carefully
 
                     1. Confirm the claim for fact-checking:
-                    - If the user requests assistance with fact-checking, ask the user to confirm the claim that he wants to review is the claim: {claim} stated by {personality}, assure to always compose this specific question using these values {claim} and {personality}.
+                    - If the user requests assistance with fact-checking, ask the user to confirm the claim that he wants to review is the claim: {claim} stated by {personality}, assure to always compose this specific question using these values {claim} and {personality} if they exists.
 
-                    2. Analyze the {claim}:
-                    - If your analysis indicates that the claim pertains to Brazilian municipalities or states, ask the following questions sequentially:
-                        - "In which Brazilian city or state was the claim made?"
-                        - "Do you have a specific time period during which we should search in the public gazettes (e.g. January 2022 to December 2022), or should we search up to the date the claim was stated: {date}?"
+                    2. Confirm the type of research:
+                    - Ask the user how should we proceed the research by either searching on internet or searching in public gazettes
+                    
+                    3. Based on the type of research, proceed gathering the necessary information:
+                        **public gazettes**: ask the following questions sequentially:
+                             - "In which Brazilian city or state was the claim made?"
+                            - "Do you have a specific time period during which we should search in the public gazettes (e.g. January 2022 to December 2022), or should we search up to the date the claim was stated: {date}?"
 
-                    - If the claim is unrelated to Brazilian municipalities or concerns a different topic, ask:
-                        - "Do you have any specific sources you suggest we consult for verifying this claim?"
+                        **online search**: ask the following question:
+                            - "Do you have any specific sources you suggest we consult for verifying this claim?"
 
-                    If any information provided is ambiguous or incomplete, request clarification from the user without making assumptions.
+                    
                     Always pose your questions one at a time and in the specified order.
 
-                    Persist in asking all necessary questions, even if the user attempts to expedite the process.
-                    Do not advance to this tool until you have thoroughly completed all preceding steps.
+                    Persist in asking all necessary questions. Do not use the tool until you have thoroughly completed all preceding steps.
                     Maintain the use of formal language in your responses, ensuring that all communication is conducted in {language}.
-                    Only after all questions have been addressed and all relevant information has been gathered from the user should you proceed to use the get-fact-checking-report tool.`,
+                    Only after all questions have been addressed and all relevant information has been gathered from the user you should proceed to use the get-fact-checking-report tool.`,
                 ],
                 new MessagesPlaceholder({ variableName: "chat_history" }),
                 ["user", "{input}"],
