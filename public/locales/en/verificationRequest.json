@@ -36,5 +36,10 @@
     "verificationRequestCreateSourcePlaceholder":  "Provide the source of the information...",
     "verificationRequestCreateEmailPlaceholder": "Enter your email address here...",
     "verificationRequestCreateSuccess": "Verification Request created successfully",
-    "verificationRequestCreateError": "Error while creating the Verification Request"
+    "verificationRequestCreateError": "Error while creating the Verification Request",
+    "contentFieldError": "Please insert the details",
+    "dateFieldError": "Please, insert a date",
+    "heardFromExtraText": "This field is optional, but we'd appreciate knowing where you saw or heard this!",
+    "sourceExtraText": "This field is optional, but we'd appreciate knowing the source of the information for the report!",
+    "emailFromExtraText": "This field is optional, but we'd appreciate it if you could provide your email to receive the review."
 }

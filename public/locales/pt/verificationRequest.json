@@ -25,10 +25,10 @@
     "addVerificationRequestError": "Erro ao adicionar ao grupo",
     "verificationRequestTagContent": "Conteúdo:",
     "verificationRequestViewRequest": "Ver Denúncia",
-    "verificationRequestCreateContentLabel": "Detalhes da Solicitação de Verificação",
+    "verificationRequestCreateContentLabel": "Detalhes da Denúncia",
     "verificationRequestCreatePublicationDateLabel": "Quando Você Viu Isso?",
     "verificationRequestCreateHeardFromLabel": "Onde Você Viu ou Ouviu Isso?",
-    "verificationRequestCreateSourceLabel": "Fonte da Informação para a Solicitação de Verificação",
+    "verificationRequestCreateSourceLabel": "Fonte da Informação para a Denúncia",
     "verificationRequestCreateEmailLabel": "Se Você Gostaria de Receber a Revisão, Por Favor, Deixe Seu Email Abaixo",
     "verificationRequestCreateContentPlaceholder": "Insira os detalhes da sua solicitação aqui...",
     "verificationRequestCreatePublicationDatePlaceholder": "Selecione a data em que você viu isso...",
@@ -36,5 +36,10 @@
     "verificationRequestCreateSourcePlaceholder":  "Forneça a fonte da informação...",
     "verificationRequestCreateEmailPlaceholder": "Insira seu endereço de email aqui...",
     "verificationRequestCreateSuccess": "Denúncia criada com sucesso",
-    "verificationRequestCreateError": "Erro ao criar a denúncia"
+    "verificationRequestCreateError": "Erro ao criar a denúncia",
+    "contentFieldError": "Por favor, insira os detalhes",
+    "dateFieldError": "Por favor, insira uma data",
+    "heardFromExtraText": "Este campo não é obrigatório, mas agradeceríamos saber onde você viu ou ouviu isso!",
+    "sourceExtraText": "Este campo não é obrigatório, mas agradeceríamos saber a fonte da informação para a denúncia!",
+    "emailFromExtraText": "Este campo não é obrigatório, mas agradeceríamos se você deixasse seu e-mail para receber a revisão."
 }
