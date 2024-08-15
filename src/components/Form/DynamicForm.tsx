@@ -7,7 +7,13 @@ import Text from "antd/lib/typography/Text";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 
-const DynamicForm = ({ currentForm, control, errors, machineValues = {} }) => {
+const DynamicForm = ({
+    currentForm,
+    control,
+    errors,
+    machineValues = {},
+    disabledDate = {},
+}) => {
     const { t } = useTranslation();
     return (
         <div>
@@ -55,6 +61,7 @@ const DynamicForm = ({ currentForm, control, errors, machineValues = {} }) => {
                                         defaultValue={defaultValue}
                                         data-cy={`testClaimReview${fieldName}`}
                                         extraProps={extraProps}
+                                        disabledDate={disabledDate}
                                     />
                                 )}
                             />

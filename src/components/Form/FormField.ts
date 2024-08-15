@@ -36,6 +36,7 @@ interface CreateFormFieldProps extends Partial<FormField> {
     i18nKey?: string;
     i18nNamespace?: string;
     required?: boolean;
+    isURLField?: boolean;
 }
 
 const createFormField = (props: CreateFormFieldProps): FormField => {
@@ -47,7 +48,9 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         defaultValue,
         rules,
         required = true,
+        isURLField = false,
     } = props;
+
     return {
         fieldName,
         type,
@@ -58,9 +61,17 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         rules: {
             required: required && "common:requiredFieldError",
             ...rules,
-            validate: required && {
-                notBlank: (v) =>
-                    validateBlank(v) || "common:requiredFieldError",
+            validate: {
+                ...(required && {
+                    notBlank: (v) =>
+                        validateBlank(v) || "common:requiredFieldError",
+                }),
+                ...(isURLField && {
+                    validURL: (v) =>
+                        !v ||
+                        URL_PATTERN.test(v) ||
+                        "sourceForm:errorMessageValidURL",
+                }),
                 ...rules?.validate,
             },
         },
@@ -75,6 +86,7 @@ const validateSchema = (
     schema: ReviewTaskMachineContextReviewData
 ): boolean | string => {
     for (const key in schema) {
+        console.log(key, "key");
         const value = schema[key];
         if (Array.isArray(value) && value.length <= 0 && key !== "paragraph") {
             return `common:${key}RequiredFieldError`;
@@ -90,6 +102,10 @@ const validateSchema = (
 };
 
 const fieldValidation = (value, validationFunction) => {
+    if (value?._isAMomentObject) {
+        return true;
+    }
+
     if (value instanceof Node) {
         const editorParser = new EditorParser();
         const schema = editorParser.editor2schema(value.toJSON());
