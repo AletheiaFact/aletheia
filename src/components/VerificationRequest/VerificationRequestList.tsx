@@ -6,21 +6,17 @@ import verificationRequestApi from "../../api/verificationRequestApi";
 import AletheiaButton from "../Button";
 import { Grid } from "@mui/material";
 import {
-    DataGrid,
     GridActionsCellItem,
     GridColDef,
     GridRowParams,
 } from "@mui/x-data-grid";
 import colors from "../../styles/colors";
+import PaginatedDataGrid from "../PaginetedDataGrid";
 
 const VerificationRequestList = () => {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const [verificationRequests, setVerificationRequests] = useState([]);
-    const [paginationModel, setPaginationModel] = React.useState({
-        pageSize: 10,
-        page: 0,
-    });
 
     const truncateWithEllipsis = (value, maxLength) => {
         if (!value) return "";
@@ -144,14 +140,9 @@ const VerificationRequestList = () => {
                 </h2>
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
-                <DataGrid
+                <PaginatedDataGrid
                     rows={verificationRequests}
                     columns={columns}
-                    paginationModel={paginationModel}
-                    pageSizeOptions={[5, 10, 25]}
-                    onPaginationModelChange={setPaginationModel}
-                    getRowId={(row) => row.data_hash}
-                    autoHeight
                     sx={{
                         "& .MuiDataGrid-columnHeader": {
                             backgroundColor: colors.lightGraySecondary,
