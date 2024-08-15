@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { Form, Row } from "antd";
-import moment from "moment";
+import { Form } from "antd";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-
-import AletheiaCaptcha from "../../AletheiaCaptcha";
-import Input from "../../AletheiaInput";
-import Button, { ButtonType } from "../../Button";
-import DatePickerInput from "../../Form/DatePickerInput";
 import TextArea from "../../TextArea";
+import Input from "../../AletheiaInput";
+import DatePickerInput from "../../Form/DatePickerInput";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
+import BaseForm from "../../Claim/CreateClaim/BaseForm";
+import useFormManagement from "../../../utils/useFormManagement";
 
-const BaseVerificationRequestForm = ({
+const CreateVerificationRequestForm = ({
     handleSubmit,
     disableFutureDates,
     isLoading,
@@ -22,42 +20,39 @@ const BaseVerificationRequestForm = ({
     const [nameSpace] = useAtom(currentNameSpace);
     const [heardFrom, setHeardFrom] = useState("");
     const [email, setEmail] = useState("");
-    const [date, setDate] = useState("");
     const [content, setContent] = useState("");
-    const [disableSubmit, setDisableSubmit] = useState(true);
     const [source, setSource] = useState("");
-    const [recaptcha, setRecaptcha] = useState("");
-
-    const disabledDate = (current) => {
-        return disableFutureDates && current && current > moment().endOf("day");
-    };
-
-    const onChangeCaptcha = (captchaString) => {
-        setRecaptcha(captchaString);
-        const hasRecaptcha = !!captchaString;
-        setDisableSubmit(!hasRecaptcha);
-    };
+    const {
+        recaptcha,
+        disableSubmit,
+        date,
+        setDate,
+        disabledDate,
+        onChangeCaptcha,
+    } = useFormManagement(disableFutureDates);
 
     const onFinish = () => {
         const newVerificationRequest = {
             nameSpace,
-            content: content,
-            source: source,
+            content,
+            source,
             publicationDate: date,
-            email: email,
+            email,
             date: new Date(),
-            heardFrom: heardFrom,
-            recaptcha: recaptcha,
+            heardFrom,
+            recaptcha,
         };
         handleSubmit(newVerificationRequest);
     };
 
     return (
-        <Form
-            layout="vertical"
-            id="createVerificationRequest"
+        <BaseForm
             onFinish={onFinish}
-            style={{ padding: "32px 0" }}
+            isLoading={isLoading}
+            disableSubmit={disableSubmit}
+            onChangeCaptcha={onChangeCaptcha}
+            router={router}
+            t={t}
         >
             <Form.Item
                 name="content"
@@ -67,20 +62,13 @@ const BaseVerificationRequestForm = ({
                 rules={[
                     {
                         required: true,
-                        whitespace: true,
-                        //Another here
-                        message: t("claimForm:contentFieldError"),
+                        message: t("verificationRequest:contentFieldError"),
                     },
                 ]}
-                wrapperCol={{ sm: 24 }}
-                style={{
-                    width: "100%",
-                    marginBottom: "24px",
-                }}
             >
                 <TextArea
                     rows={4}
-                    value={content || ""}
+                    value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder={t(
                         "verificationRequest:verificationRequestCreateContentPlaceholder"
@@ -88,25 +76,24 @@ const BaseVerificationRequestForm = ({
                     data-cy={"testContentVerificationRequest"}
                 />
             </Form.Item>
+
             <Form.Item
                 name="heardFrom"
                 label={t(
                     "verificationRequest:verificationRequestCreateHeardFromLabel"
                 )}
-                wrapperCol={{ sm: 24 }}
-                style={{
-                    width: "100%",
-                }}
+                extra={t("verificationRequest:heardFromExtraText")}
             >
                 <Input
-                    value={heardFrom || ""}
+                    value={heardFrom}
                     onChange={(e) => setHeardFrom(e.target.value)}
                     placeholder={t(
                         "verificationRequest:verificationRequestCreateHeardFromPlaceholder"
                     )}
-                    data-cy={"testTitleClaimForm"}
+                    data-cy={"testHeardFromVerificationRequestForm"}
                 />
             </Form.Item>
+
             <Form.Item
                 name="date"
                 label={t(
@@ -115,42 +102,29 @@ const BaseVerificationRequestForm = ({
                 rules={[
                     {
                         required: true,
-                        message: t("claimForm:dateFieldError"),
+                        message: t("verificationRequest:dateFieldError"),
                     },
                 ]}
-                wrapperCol={{ sm: 24 }}
-                style={{
-                    width: "100%",
-                    marginBottom: "24px",
-                }}
             >
                 <DatePickerInput
                     placeholder={t(
                         "verificationRequest:verificationRequestCreatePublicationDatePlaceholder"
                     )}
-                    onChange={(value) => setDate(value)}
+                    onChange={setDate}
                     data-cy={"testSelectDate"}
                     disabledDate={disabledDate}
                 />
             </Form.Item>
+
             <Form.Item
                 name="source"
                 label={t(
                     "verificationRequest:verificationRequestCreateSourceLabel"
                 )}
-                wrapperCol={{ sm: 24 }}
-                style={{
-                    width: "100%",
-                }}
-                rules={[
-                    {
-                        message: t("sourceForm:errorMessageValidURL"),
-                        type: "url",
-                    },
-                ]}
+                extra={t("verificationRequest:sourceExtraText")}
             >
                 <Input
-                    value={source || ""}
+                    value={source}
                     onChange={(e) => setSource(e.target.value)}
                     placeholder={t(
                         "verificationRequest:verificationRequestCreateSourcePlaceholder"
@@ -158,18 +132,16 @@ const BaseVerificationRequestForm = ({
                     data-cy={"testSourceVerificationRequestForm"}
                 />
             </Form.Item>
+
             <Form.Item
                 name="email"
                 label={t(
                     "verificationRequest:verificationRequestCreateEmailLabel"
                 )}
-                wrapperCol={{ sm: 24 }}
-                style={{
-                    width: "100%",
-                }}
+                extra={t("verificationRequest:emailFromExtraText")}
             >
                 <Input
-                    value={email || ""}
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={t(
                         "verificationRequest:verificationRequestCreateEmailPlaceholder"
@@ -177,30 +149,8 @@ const BaseVerificationRequestForm = ({
                     data-cy={"testEmailVerificationRequestForm"}
                 />
             </Form.Item>
-            <Form.Item>
-                <AletheiaCaptcha onChange={onChangeCaptcha} />
-            </Form.Item>
-            <Row
-                style={{
-                    justifyContent: "space-evenly",
-                    marginBottom: "20px",
-                }}
-            >
-                <Button type={ButtonType.white} onClick={() => router.back()}>
-                    {t("claimForm:cancelButton")}
-                </Button>
-                <Button
-                    loading={isLoading}
-                    type={ButtonType.blue}
-                    htmlType="submit"
-                    disabled={disableSubmit || isLoading}
-                    data-cy={"testSaveButton"}
-                >
-                    {t("claimForm:saveButton")}
-                </Button>
-            </Row>
-        </Form>
+        </BaseForm>
     );
 };
 
-export default BaseVerificationRequestForm;
+export default CreateVerificationRequestForm;
