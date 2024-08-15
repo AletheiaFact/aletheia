@@ -4,7 +4,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import AletheiaButton from "../Button";
-import { Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -112,6 +112,7 @@ const VerificationRequestList = () => {
                 width: 150,
                 getActions: (params: GridRowParams) => [
                     <GridActionsCellItem
+                        key={`viewRequest-${params.id}`}
                         icon={
                             <AletheiaButton>
                                 {t(
@@ -129,13 +130,19 @@ const VerificationRequestList = () => {
     );
 
     return (
-        <Grid container my={2} sx={{ height: "70vh", width: "100%" }}>
-            <Grid item xs={12}>
-                <Typography variant="h4">
+        <Grid
+            container
+            justifyContent="center"
+            alignItems="stretch"
+            spacing={1}
+            my={2}
+        >
+            <Grid item xs={10}>
+                <h2>
                     {t("verificationRequest:verificationRequestListHeader")}
-                </Typography>
+                </h2>
             </Grid>
-            <Grid item xs={12} sx={{ flexGrow: 1 }}>
+            <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 <DataGrid
                     rows={verificationRequests}
                     columns={columns}

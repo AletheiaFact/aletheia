@@ -51,6 +51,7 @@ const BaseClaimForm = ({
 
     return (
         <BaseForm
+            id={"createClaim"}
             onFinish={onFinish}
             isLoading={isLoading}
             disableSubmit={disableSubmit}

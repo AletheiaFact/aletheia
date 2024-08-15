@@ -4,6 +4,7 @@ import AletheiaCaptcha from "../../AletheiaCaptcha";
 import Button, { ButtonType } from "../../Button";
 
 const BaseForm = ({
+    id,
     onFinish,
     children,
     isLoading,
@@ -14,6 +15,7 @@ const BaseForm = ({
 }) => {
     return (
         <Form
+            id={id}
             layout="vertical"
             onFinish={onFinish}
             style={{ padding: "32px 0" }}

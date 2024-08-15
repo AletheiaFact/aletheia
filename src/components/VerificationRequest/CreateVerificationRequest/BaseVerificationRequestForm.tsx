@@ -47,6 +47,7 @@ const CreateVerificationRequestForm = ({
 
     return (
         <BaseForm
+            id={"createVerificationRequest"}
             onFinish={onFinish}
             isLoading={isLoading}
             disableSubmit={disableSubmit}
