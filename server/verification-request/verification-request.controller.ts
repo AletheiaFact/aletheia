@@ -151,11 +151,12 @@ export class VerificationRequestController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/verification-request-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(
+            req,
+            res,
+            "/verification-request-page",
+            queryObject
+        );
     }
 
     @IsPublic()
@@ -197,10 +198,11 @@ export class VerificationRequestController {
             nameSpace: req.params.namespace,
             verificationRequest,
         });
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/verification-request-review-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(
+            req,
+            res,
+            "/verification-request-review-page",
+            queryObject
+        );
     }
 }

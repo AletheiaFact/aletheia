@@ -87,7 +87,7 @@ export class HomeController {
 
         const stats = await this.statsService.getHomeStats();
 
-        const query: NextParsedUrlQuery = Object.assign(parsedUrl.query, {
+        const queryObject: NextParsedUrlQuery = Object.assign(parsedUrl.query, {
             personalities,
             stats,
             claims,
@@ -95,8 +95,6 @@ export class HomeController {
             nameSpace: req.params.namespace || NameSpaceEnum.Main,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/home-page", { props: JSON.stringify(query) });
+        await this.viewService.render(req, res, "/home-page", queryObject);
     }
 }

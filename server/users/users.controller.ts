@@ -48,9 +48,7 @@ export class UsersController {
         const parsedUrl = parse(req.url, true);
         const authType = this.configService.get<string>("authentication_type");
         const queryObject = Object.assign(parsedUrl.query, { authType });
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/login", { props: JSON.stringify(queryObject) });
+        await this.viewService.render(req, res, "/login", queryObject);
     }
 
     @IsPublic()
@@ -58,9 +56,12 @@ export class UsersController {
     @Get("sign-up")
     public async signUp(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/sign-up", Object.assign(parsedUrl.query));
+        await this.viewService.render(
+            req,
+            res,
+            "/sign-up",
+            Object.assign(parsedUrl.query)
+        );
     }
 
     @IsPublic()
@@ -102,14 +103,12 @@ export class UsersController {
             nameSpaceSlug: nameSpace,
         });
 
-        const query = Object.assign(parsedUrl.query, {
+        const queryObject = Object.assign(parsedUrl.query, {
             users,
             nameSpace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/admin-page", { props: JSON.stringify(query) });
+        await this.viewService.render(req, res, "/admin-page", queryObject);
     }
 
     @ApiTags("user")
@@ -175,16 +174,12 @@ export class UsersController {
         const parsedUrl = parse(req.url, true);
         const user = await this.usersService.getById(req.user._id);
 
-        const query = Object.assign(parsedUrl.query, {
+        const queryObject = Object.assign(parsedUrl.query, {
             user,
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/profile-page", {
-                props: JSON.stringify(query),
-            });
+        await this.viewService.render(req, res, "/profile-page", queryObject);
     }
 
     @IsPublic()

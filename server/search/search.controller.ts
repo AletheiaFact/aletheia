@@ -154,11 +154,12 @@ export class SearchController {
                 filter,
             });
 
-            await this.viewService
-                .getNextServer()
-                .render(req, res, "/search-page", {
-                    props: JSON.stringify(queryObject),
-                });
+            await this.viewService.render(
+                req,
+                res,
+                "/search-page",
+                queryObject
+            );
         } catch (error) {
             this.logger.error(error);
             res.status(500).json({ error: "An error occurred" });

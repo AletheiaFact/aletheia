@@ -157,10 +157,6 @@ export class BadgeController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/admin-badges", {
-                props: JSON.stringify(query),
-            });
+        await this.viewService.render(req, res, "/admin-badges", query);
     }
 }

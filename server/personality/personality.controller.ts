@@ -138,11 +138,12 @@ export class PersonalityController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/personality-create-search", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(
+            req,
+            res,
+            "/personality-create-search",
+            queryObject
+        );
     }
 
     @IsPublic()
@@ -189,11 +190,12 @@ export class PersonalityController {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/personality-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(
+            req,
+            res,
+            "/personality-page",
+            queryObject
+        );
     }
 
     @IsPublic()
@@ -206,11 +208,12 @@ export class PersonalityController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/personality-list", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(
+            req,
+            res,
+            "/personality-list",
+            queryObject
+        );
     }
 
     @ApiTags("pages")
@@ -233,10 +236,6 @@ export class PersonalityController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/history-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/history-page", queryObject);
     }
 }

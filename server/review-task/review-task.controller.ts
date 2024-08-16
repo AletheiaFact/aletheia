@@ -188,10 +188,6 @@ export class ReviewTaskController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/kanban-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/kanban-page", queryObject);
     }
 }

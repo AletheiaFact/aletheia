@@ -395,11 +395,7 @@ export class ClaimController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/claim-review", {
-                props: JSON.stringify(query),
-            });
+        await this.viewService.render(req, res, "/claim-review", query);
     }
 
     @IsPublic()
@@ -442,11 +438,7 @@ export class ClaimController {
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
             nameSpace: req.params.namespace,
         });
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/debate-editor", {
-                props: JSON.stringify(query),
-            });
+        await this.viewService.render(req, res, "/debate-editor", query);
     }
 
     @IsPublic()
@@ -468,9 +460,7 @@ export class ClaimController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/debate-page", { props: JSON.stringify(query) });
+        await this.viewService.render(req, res, "/debate-page", query);
     }
 
     @IsPublic()
@@ -539,11 +529,7 @@ export class ClaimController {
             verificationRequestGroup,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/claim-create", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/claim-create", queryObject);
     }
 
     @IsPublic()
@@ -559,11 +545,12 @@ export class ClaimController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/claim-list-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(
+            req,
+            res,
+            "/claim-list-page",
+            queryObject
+        );
     }
 
     @IsPublic()
@@ -603,9 +590,7 @@ export class ClaimController {
             nameSpace: namespace,
         });
 
-        await this.viewService.getNextServer().render(req, res, "/claim-page", {
-            props: JSON.stringify(queryObject),
-        });
+        await this.viewService.render(req, res, "/claim-page", queryObject);
     }
 
     @ApiTags("pages")
@@ -648,9 +633,7 @@ export class ClaimController {
             nameSpace: namespace,
         });
 
-        await this.viewService.getNextServer().render(req, res, "/claim-page", {
-            props: JSON.stringify(queryObject),
-        });
+        await this.viewService.render(req, res, "/claim-page", queryObject);
     }
 
     @IsPublic()
@@ -712,9 +695,7 @@ export class ClaimController {
             nameSpace: namespace,
         });
 
-        await this.viewService.getNextServer().render(req, res, "/claim-page", {
-            props: JSON.stringify(queryObject),
-        });
+        await this.viewService.render(req, res, "/claim-page", queryObject);
     }
 
     @ApiTags("pages")
@@ -767,9 +748,7 @@ export class ClaimController {
             nameSpace: namespace,
         });
 
-        await this.viewService.getNextServer().render(req, res, "/claim-page", {
-            props: JSON.stringify(queryObject),
-        });
+        await this.viewService.render(req, res, "/claim-page", queryObject);
     }
 
     @IsPublic()
@@ -797,11 +776,12 @@ export class ClaimController {
             nameSpace: namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/claim-sources-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(
+            req,
+            res,
+            "/claim-sources-page",
+            queryObject
+        );
     }
 
     @IsPublic()
@@ -837,11 +817,12 @@ export class ClaimController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/claim-sources-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(
+            req,
+            res,
+            "/claim-sources-page",
+            queryObject
+        );
     }
 
     @ApiTags("pages")
@@ -860,11 +841,7 @@ export class ClaimController {
             nameSpace: namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/history-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/history-page", queryObject);
     }
 
     @IsPublic()
@@ -888,11 +865,7 @@ export class ClaimController {
             nameSpace: namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/sources-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/sources-page", queryObject);
     }
 
     @ApiTags("pages")
@@ -917,11 +890,7 @@ export class ClaimController {
             nameSpace: namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/history-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/history-page", queryObject);
     }
 
     @ApiTags("pages")
@@ -944,11 +913,7 @@ export class ClaimController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/history-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/history-page", queryObject);
     }
 
     @IsPublic()

@@ -96,11 +96,7 @@ export class SourceController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/sources-create", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/sources-create", queryObject);
     }
 
     @IsPublic()
@@ -138,11 +134,7 @@ export class SourceController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/sources-page", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/sources-page", queryObject);
     }
 
     @IsPublic()
@@ -209,10 +201,6 @@ export class SourceController {
             nameSpace: req.params.namespace,
         });
 
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/source-review", {
-                props: JSON.stringify(queryObject),
-            });
+        await this.viewService.render(req, res, "/source-review", queryObject);
     }
 }
