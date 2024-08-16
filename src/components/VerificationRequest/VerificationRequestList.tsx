@@ -109,7 +109,7 @@ const VerificationRequestList = () => {
                 width: 150,
                 getActions: (params: GridRowParams) => [
                     <GridActionsCellItem
-                        key={`viewRequest-${params.id}`}
+                        key={`viewRequest-${params.row.data_hash}`}
                         icon={
                             <AletheiaButton>
                                 {t(
@@ -117,7 +117,7 @@ const VerificationRequestList = () => {
                                 )}
                             </AletheiaButton>
                         }
-                        onClick={handleRedirect(params.id)}
+                        onClick={handleRedirect(params.row.data_hash)}
                         label={t("verificationRequest:openVerificationRequest")}
                     />,
                 ],
