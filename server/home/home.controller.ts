@@ -48,7 +48,6 @@ export class HomeController {
             },
             latest: true,
         });
-        console.log("review", reviews);
 
         const { personalities } = await this.personalityService.combinedListAll(
             {
