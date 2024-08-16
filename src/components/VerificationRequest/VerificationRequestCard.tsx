@@ -60,68 +60,68 @@ const truncateUrl = (url) => {
 };
 
 const VerificationRequestCard = ({
-    content,
+    verificationRequest,
     actions = [],
     expandable = true,
     t,
     style = {},
 }) => {
-    const getTags = (content) => {
+    const getTags = (verificationRequest) => {
         const tags = [];
-        if (content.publicationDate) {
+        if (verificationRequest.publicationDate) {
             tags.push(
                 <CustomTag
                     color={colors.blueSecondary}
-                    key={`${content._id}|publicationDate`}
+                    key={`${verificationRequest._id}|publicationDate`}
                 >
                     <strong>
                         {t(
                             "verificationRequest:verificationRequestTagPublicationDate"
                         )}
                     </strong>{" "}
-                    {content.publicationDate}
+                    {verificationRequest.publicationDate}
                 </CustomTag>
             );
         }
-        if (content.date) {
+        if (verificationRequest.date) {
             tags.push(
                 <CustomTag
                     color={colors.graySecondary}
-                    key={`${content._id}|date`}
+                    key={`${verificationRequest._id}|date`}
                 >
                     <strong>
                         {t("verificationRequest:verificationRequestTagDate")}
                     </strong>{" "}
-                    <LocalizedDate date={content.date} />
+                    <LocalizedDate date={verificationRequest.date} />
                 </CustomTag>
             );
         }
-        if (content.heardFrom) {
+        if (verificationRequest.heardFrom) {
             tags.push(
                 <CustomTag
                     color={colors.blueTertiary}
-                    key={`${content._id}|heardFrom`}
+                    key={`${verificationRequest._id}|heardFrom`}
                 >
                     <strong>
                         {t(
                             "verificationRequest:verificationRequestTagHeardFrom"
                         )}
                     </strong>{" "}
-                    {content.heardFrom}
+                    {verificationRequest.heardFrom}
                 </CustomTag>
             );
         }
-        if (content.source) {
+        if (verificationRequest.source) {
             tags.push(
                 <CustomTag
                     color={colors.lightBlueMain}
-                    key={`${content._id}|source`}
+                    key={`${verificationRequest._id}|source`}
                 >
                     <strong>
                         {t("verificationRequest:verificationRequestTagSource")}
                     </strong>
-                    <Link href={content.source.href} passHref>
-                        <a>{truncateUrl(content.source.href)}</a>
+                    <Link href={verificationRequest.source.href} passHref>
+                        <a>{truncateUrl(verificationRequest.source.href)}</a>
                     </Link>
                 </CustomTag>
             );
@@ -141,9 +141,9 @@ const VerificationRequestCard = ({
                     }}
                     ellipsis={{ rows: 4, expandable }}
                 >
-                    {content}
+                    {verificationRequest.content}
                 </Typography.Paragraph>
-                <TagContainer>{getTags(content)}</TagContainer>
+                <TagContainer>{getTags(verificationRequest)}</TagContainer>
             </ContentWrapper>
 
             <Col

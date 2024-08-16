@@ -8,7 +8,12 @@ import { SenderEnum } from "../../types/enums";
 import CopilotCollapseDrawerButton from "./CopilotCollapseDrawerButton";
 import { Claim } from "../../types/Claim";
 import { Report } from "../../types/Report";
-import { ChatMessage, ChatResponse, MessageContext } from "../../types/Copilot";
+import {
+    ChatMessage,
+    ChatMessageType,
+    ChatResponse,
+    MessageContext,
+} from "../../types/Copilot";
 import { calculatePosition } from "./utils/calculatePositions";
 import Loading from "../Loading";
 import { AnyExtension, RemirrorManager } from "remirror";
@@ -46,6 +51,7 @@ const CopilotDrawer = ({ manager, claim, sentence }: CopilotDrawerProps) => {
     );
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
+            type: ChatMessageType.info,
             content: t("copilotChatBot:chatBotGreetings"),
             sender: SenderEnum.Assistant,
         },
@@ -74,9 +80,14 @@ const CopilotDrawer = ({ manager, claim, sentence }: CopilotDrawerProps) => {
                 context: context,
             })) as { data: ChatResponse };
             setEditorReport(editorReport);
-            addNewMessage({ sender, content });
-        } catch (e) {
-            console.error({ Error: e });
+            addNewMessage({ type: ChatMessageType.info, sender, content });
+        } catch (error) {
+            addNewMessage({
+                type: ChatMessageType.error,
+                sender: SenderEnum.Assistant,
+                content: t("copilotChatBot:copilotChatBotErrorMessage"),
+            });
+            console.error({ Error: error });
         } finally {
             setIsLoading(false);
         }

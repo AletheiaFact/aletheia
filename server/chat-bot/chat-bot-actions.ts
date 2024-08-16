@@ -25,13 +25,11 @@ const MESSAGES = {
     greeting:
         "Olá! Sou o assistente virtual da AletheiaFact.org, estou aqui para ajudá-lo(a) a combater desinformações 🙂 Você gostaria de fazer uma denúncia agora?\n\nResponda SIM para continuar ou NÃO se deseja falar com uma pessoa real.",
     noTextMessageAskIfForVerificationRequest:
-        "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto.\n\nVocê gostaria de fazer uma denúncia agora? Responda SIM para continuar ou NÃO se não deseja.",
+        "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto.\n\nVocê gostaria de fazer uma denúncia agora? Responda SIM para continuar ou NÃO se deseja falar com uma pessoa real.",
     noTextMessageGreeting:
-        "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto.\n\nOlá! Sou o assistente virtual da AletheiaFact.org, estou aqui para ajudá-lo(a) a combater desinformações 🙂 Você gostaria de fazer uma denúncia agora?\n\nResponda SIM para continuar ou NÃO se não deseja denunciar.",
+        "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto.\n\nOlá! Sou o assistente virtual da AletheiaFact.org, estou aqui para ajudá-lo(a) a combater desinformações 🙂 Você gostaria de fazer uma denúncia agora?\n\nResponda SIM para continuar ou NÃO se deseja falar com uma pessoa real.",
     pausedMachineMessage:
         "Entendi. No momento, o bot não irá responder mais. Se mudar de ideia e desejar fazer uma denúncia com a assistência do chatbot, basta digitar DENÚNCIA a qualquer momento.",
-    noTextMessageNoMessage:
-        "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto.\n\nNosso trabalho é verificar informações falsas.\n\nSe quiser saber mais sobre o que fazemos, visite: https://aletheiafact.org. Se mudar de ideia e desejar fazer uma denúncia, basta digitar DENÚNCIA a qualquer momento.",
     notUnderstood:
         "Desculpe, não entendi sua resposta. Para continuar, preciso que você digite SIM se deseja fazer uma denúncia, ou NÃO se prefere falar com uma pessoa real.\n\nVocê gostaria de fazer uma denúncia agora?",
     askForVerificationRequest:
@@ -54,7 +52,7 @@ const MESSAGES = {
         "Para que possamos enviar a verificação, por favor, forneça seu e-mail abaixo. Se você prefere não deixar seu e-mail ou não deseja receber a verificação, responda 'Não'.",
     noTextMessageAskForEmail:
         "Desculpe, só podemos processar mensagens de texto. Por favor, envie sua mensagem em formato de texto para que possamos entender e verificar sua denúncia de forma eficiente.\n\nPara que possamos enviar a verificação, por favor, forneça seu e-mail abaixo. Se você prefere não deixar seu e-mail ou não deseja receber a verificação, responda 'Não'.",
-    thanks: "Muito obrigada por sua contribuição!\n\nSua informação será analisada pela nossa equipe ✅Para saber mais, visite nosso site: https://aletheiafact.org.\n\nDeseja relatar outra denúncia? Responda SIM para continuar.",
+    thanks: "Muito obrigada por sua contribuição!\n\nSua informação será analisada pela nossa equipe ✅ Para saber mais, visite nosso site: https://aletheiafact.org.\n\nSe deseja relatar outra denúncia, responda SIM para continuar. Se preferir falar com uma pessoa real, responda CONVERSA.",
 };
 
 export const sendGreeting = assign<ChatBotContext>({
@@ -73,10 +71,6 @@ export const sendNoTextMessageGreeting = assign<ChatBotContext>({
 
 export const sendPausedMachineMessage = assign<ChatBotContext>({
     responseMessage: () => MESSAGES.pausedMachineMessage,
-});
-
-export const sendNoTextMessageNoMessage = assign<ChatBotContext>({
-    responseMessage: () => MESSAGES.noTextMessageNoMessage,
 });
 
 export const sendNotUnderstoodMessage = assign<ChatBotContext>({
