@@ -63,6 +63,7 @@ const get = (options: SearchOptions, dispatch = null) => {
                     data: verificationRequests,
                     total: totalVerificationRequests,
                     totalPages,
+                    totalVerificationRequests,
                 };
             }
 
