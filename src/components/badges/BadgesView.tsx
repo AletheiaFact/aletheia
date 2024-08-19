@@ -85,7 +85,15 @@ const BadgesView = () => {
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {badges && (
-                    <PaginatedDataGrid rows={badges} columns={columns} />
+                    <PaginatedDataGrid
+                        rows={badges}
+                        columns={columns}
+                        sx={{
+                            "& .MuiTablePagination-toolbar p": {
+                                marginBottom: 0,
+                            },
+                        }}
+                    />
                 )}
             </Grid>
             <Grid item xs={10} mt={5} display="flex" justifyContent="end">

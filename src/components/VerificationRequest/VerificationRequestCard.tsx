@@ -69,6 +69,12 @@ const VerificationRequestCard = ({
     const getTags = (verificationRequest) => {
         const tags = [];
         if (verificationRequest.publicationDate) {
+            const publicationDate = new Date(
+                verificationRequest.publicationDate
+            );
+
+            const isValidDate = !isNaN(publicationDate.getTime());
+
             tags.push(
                 <CustomTag
                     color={colors.blueSecondary}
@@ -78,8 +84,13 @@ const VerificationRequestCard = ({
                         {t(
                             "verificationRequest:verificationRequestTagPublicationDate"
                         )}
+                        :
                     </strong>{" "}
-                    {verificationRequest.publicationDate}
+                    {isValidDate ? (
+                        <LocalizedDate date={publicationDate} />
+                    ) : (
+                        verificationRequest.publicationDate
+                    )}
                 </CustomTag>
             );
         }
@@ -90,7 +101,7 @@ const VerificationRequestCard = ({
                     key={`${verificationRequest._id}|date`}
                 >
                     <strong>
-                        {t("verificationRequest:verificationRequestTagDate")}
+                        {t("verificationRequest:verificationRequestTagDate")}:
                     </strong>{" "}
                     <LocalizedDate date={verificationRequest.date} />
                 </CustomTag>
@@ -106,6 +117,7 @@ const VerificationRequestCard = ({
                         {t(
                             "verificationRequest:verificationRequestTagHeardFrom"
                         )}
+                        :
                     </strong>{" "}
                     {verificationRequest.heardFrom}
                 </CustomTag>
@@ -118,7 +130,7 @@ const VerificationRequestCard = ({
                     key={`${verificationRequest._id}|source`}
                 >
                     <strong>
-                        {t("verificationRequest:verificationRequestTagSource")}
+                        {t("verificationRequest:verificationRequestTagSource")}:
                     </strong>
                     <Link href={verificationRequest.source.href} passHref>
                         <a>{truncateUrl(verificationRequest.source.href)}</a>

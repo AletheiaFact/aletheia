@@ -118,7 +118,15 @@ const AdminView = () => {
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {userList && (
-                    <PaginatedDataGrid rows={userList} columns={columns} />
+                    <PaginatedDataGrid
+                        rows={userList}
+                        columns={columns}
+                        sx={{
+                            "& .MuiTablePagination-toolbar p": {
+                                marginBottom: 0,
+                            },
+                        }}
+                    />
                 )}
             </Grid>
         </Grid>

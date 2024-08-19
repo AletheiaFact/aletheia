@@ -6,7 +6,7 @@ export class CreateVerificationRequestDTO {
     @ApiProperty()
     content: string;
 
-    @IsArray()
+    @IsString()
     @ApiProperty()
     @IsOptional()
     source: string;
@@ -34,7 +34,12 @@ export class CreateVerificationRequestDTO {
     @IsString()
     @IsOptional()
     @ApiProperty()
-    data_hash: string;
+    nameSpace?: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    recaptcha?: string;
 
     @IsOptional()
     @IsArray()

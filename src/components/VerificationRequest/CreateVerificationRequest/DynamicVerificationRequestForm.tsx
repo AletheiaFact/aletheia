@@ -4,38 +4,45 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
-import { currentUserId } from "../../../atoms/currentUser";
-import SourceApi from "../../../api/sourceApi";
+import createVerificationRequestForm from "./fieldLists/CreateVerificationRequestForm";
+import verificationRequestApi from "../../../api/verificationRequestApi";
+import moment from "moment";
 import DynamicForm from "../../Form/DynamicForm";
-import createSourceForm from "./fieldLists/createSourceForm";
 import SharedFormFooter from "../../SharedFormFooter";
 
-const DynamicSourceForm = () => {
+const DynamicVerificationRequestForm = () => {
     const {
         handleSubmit,
         control,
         formState: { errors },
     } = useForm();
+    const disabledDate = (current) =>
+        current && current > moment().endOf("day");
     const router = useRouter();
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
-    const [userId] = useAtom(currentUserId);
     const [isLoading, setIsLoading] = useState(false);
     const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
 
-    const onSubmit = ({ source }) => {
-        const newSource = {
+    const onSubmit = (data) => {
+        const newVerificationRequest = {
             nameSpace,
-            href: source,
-            user: userId,
+            content: data.content,
+            source: data.source,
+            publicationDate: data.publicationDate,
+            email: data.email,
+            date: new Date(),
+            heardFrom: data.heardFrom,
             recaptcha: recaptchaString,
         };
 
-        SourceApi.createSource(t, router, newSource).then((s) => {
-            router.push(`/source/${s.data_hash}`);
-            setIsLoading(false);
-        });
+        verificationRequestApi
+            .createVerificationRequest(t, router, newVerificationRequest)
+            .then((s) => {
+                router.push(`/verification-request/${s.data_hash}`);
+                setIsLoading(false);
+            });
     };
 
     return (
@@ -44,9 +51,10 @@ const DynamicSourceForm = () => {
             onSubmit={handleSubmit(onSubmit)}
         >
             <DynamicForm
-                currentForm={createSourceForm}
+                currentForm={createVerificationRequestForm}
                 control={control}
                 errors={errors}
+                disabledDate={disabledDate}
             />
 
             <SharedFormFooter
@@ -58,4 +66,4 @@ const DynamicSourceForm = () => {
     );
 };
 
-export default DynamicSourceForm;
+export default DynamicVerificationRequestForm;

@@ -1,7 +1,7 @@
 import { DataGrid } from "@mui/x-data-grid";
 import React from "react";
 
-const PaginatedDataGrid = ({ rows, columns }) => {
+const PaginatedDataGrid = ({ rows, columns, sx }) => {
     const [paginationModel, setPaginationModel] = React.useState({
         pageSize: 10,
         page: 0,
@@ -16,11 +16,7 @@ const PaginatedDataGrid = ({ rows, columns }) => {
             onPaginationModelChange={setPaginationModel}
             getRowId={(row) => row._id}
             autoHeight
-            sx={{
-                "& .MuiTablePagination-toolbar p": {
-                    marginBottom: 0,
-                },
-            }}
+            sx={sx}
         />
     );
 };

@@ -9,6 +9,7 @@ import { useTranslation } from "next-i18next";
 import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
 import AletheiaInput from "../AletheiaInput";
 import { Checkbox } from "antd";
+import DatePickerInput from "./DatePickerInput";
 
 const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
@@ -22,6 +23,7 @@ interface DynamicInputProps {
     defaultValue: string | [];
     "data-cy": string;
     extraProps: any;
+    disabledDate?: any;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
@@ -110,6 +112,26 @@ const DynamicInput = (props: DynamicInputProps) => {
                     </Suspense>
                 );
             }
+        case "date":
+            return (
+                <DatePickerInput
+                    placeholder={t(props.placeholder)}
+                    onChange={(value) => props.onChange(value)}
+                    data-cy={"testSelectDate"}
+                    disabledDate={props.disabledDate}
+                />
+            );
+        case "email":
+            return (
+                <AletheiaInput
+                    placeholder={t(props.placeholder)}
+                    type={props.type}
+                    onChange={(value) => props.onChange(value)}
+                    defaultValue={props.defaultValue}
+                    data-cy={props["data-cy"]}
+                    white="true"
+                />
+            );
         default:
             return null;
     }
