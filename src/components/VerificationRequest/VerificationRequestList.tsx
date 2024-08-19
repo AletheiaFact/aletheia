@@ -27,7 +27,6 @@ import TopicsApi from "../../api/topicsApi";
 import AdvancedSearch from "../Search/AdvancedSearch";
 import { useAppSelector } from "../../store/store";
 import { useDispatch } from "react-redux";
-import TagDisplay from "../topics/TagDisplay";
 
 const VerificationRequestList = () => {
     const { t } = useTranslation();
@@ -45,28 +44,27 @@ const VerificationRequestList = () => {
     const [selectedTopic, setSelectedTopic] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
 
-    const [appliedFilters, setAppliedFilters] = useState([]);
+    const [appliedFilterTopic, setAppliedFilterTopic] = useState(null);
+    const [appliedFilterValue, setAppliedFilterValue] = useState("");
 
-    const { autoCompleteTopicsResults, filtersUsed } = useAppSelector(
-        (state) => ({
+    const { autoCompleteTopicsResults, filtersUsed, totalResults } =
+        useAppSelector((state) => ({
             autoCompleteTopicsResults:
                 state?.search?.autocompleteTopicsResults || [],
             filtersUsed: state?.search?.searchFilterUsed || [],
-        })
-    );
+            totalResults: state?.search?.totalResults || 0,
+        }));
 
     useEffect(() => {
         fetchData();
-    }, [paginationModel, nameSpace, ...appliedFilters]);
+    }, [paginationModel, nameSpace, appliedFilterTopic, appliedFilterValue]);
 
     const fetchData = async () => {
         try {
             const response = await verificationRequestApi.get({
                 page: paginationModel.page + 1,
                 pageSize: paginationModel.pageSize,
-                topics:
-                    appliedFilters.find((filter) => filter.type === "topic")
-                        ?.value || null,
+                topics: appliedFilterTopic,
             });
             if (response) {
                 setTotalVerificationRequests(response.total);
@@ -99,49 +97,13 @@ const VerificationRequestList = () => {
 
     const handleFilterApply = () => {
         setAnchorEl(null);
-
-        // Update applied filters
-        const newFilters = [];
-
-        if (selectedTopic) {
-            newFilters.push({
-                type: "topic",
-                value: selectedTopic,
-            });
-        }
-
-        if (filterValue) {
-            newFilters.push({
-                type: "content",
-                value: filterValue,
-            });
-        }
-
-        setAppliedFilters(newFilters);
+        setAppliedFilterTopic(selectedTopic);
+        setAppliedFilterValue(filterValue);
         fetchData();
     };
 
     const handleTopicChange = (newTopic) => {
         setSelectedTopic(newTopic);
-    };
-
-    const handleRemoveFilter = async (removedFilter) => {
-        const updatedFilters = appliedFilters.filter(
-            (filter) => filter !== removedFilter
-        );
-        setAppliedFilters(updatedFilters);
-        const remainingFilters = updatedFilters.reduce((acc, filter) => {
-            if (filter.type === "topic") {
-                acc.selectedTopic = filter.value;
-            } else if (filter.type === "content") {
-                acc.filterValue = filter.value;
-            }
-            return acc;
-        }, {});
-
-        setSelectedTopic(remainingFilters.selectedTopic || null);
-        setFilterValue(remainingFilters.filterValue || "");
-        fetchData();
     };
 
     const columns = React.useMemo<GridColDef[]>(
@@ -315,22 +277,6 @@ const VerificationRequestList = () => {
                         </Grid>
                     </Grid>
                 </Popover>
-            </Grid>
-
-            <Grid item xs={10}>
-                <TagDisplay
-                    tags={appliedFilters.map((filter) => ({
-                        label:
-                            filter.type === "topic"
-                                ? `Topic: ${filter.value}`
-                                : `Content: ${filter.value}`,
-                        value: filter.value,
-                    }))}
-                    handleClose={handleRemoveFilter}
-                    setShowTopicsForm={(show) => {
-                        /* Implement show topics form if needed */
-                    }}
-                />
             </Grid>
 
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
