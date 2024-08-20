@@ -52,6 +52,13 @@ const VerificationRequestList = () => {
         []
     );
 
+    const formatPublicationDate = (dateString) => {
+        const publicationDate = new Date(dateString);
+        const isValidDate = !isNaN(publicationDate.getTime());
+
+        return isValidDate ? publicationDate.toLocaleDateString() : dateString;
+    };
+
     const columns = React.useMemo<GridColDef[]>(
         () => [
             {
@@ -84,7 +91,7 @@ const VerificationRequestList = () => {
                 flex: 1,
                 valueGetter: (value, row) =>
                     row.publicationDate
-                        ? new Date(row.publicationDate).toLocaleDateString()
+                        ? formatPublicationDate(row.publicationDate)
                         : "",
             },
             {
