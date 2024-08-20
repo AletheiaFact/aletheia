@@ -72,7 +72,15 @@ const NameSpaceView = () => {
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {nameSpaces && (
-                    <PaginatedDataGrid rows={nameSpaces} columns={columns} />
+                    <PaginatedDataGrid
+                        rows={nameSpaces}
+                        columns={columns}
+                        sx={{
+                            "& .MuiTablePagination-toolbar p": {
+                                marginBottom: 0,
+                            },
+                        }}
+                    />
                 )}
             </Grid>
             <Grid item xs={10} mt={5} display="flex" justifyContent="end">

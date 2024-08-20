@@ -1,6 +1,5 @@
 import { ClassificationEnum, ContentModelEnum } from "../types/enums";
 
-import { ActionTypes } from "../store/types";
 import AffixButton from "../components/AffixButton/AffixButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { GetLocale } from "../utils/GetLocale";

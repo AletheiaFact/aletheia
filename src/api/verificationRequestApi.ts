@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ActionTypes } from "../store/types";
 import { message } from "antd";
+import { NameSpaceEnum } from "../types/Namespace";
 interface SearchOptions {
     searchText?: string;
     page?: number;
@@ -12,6 +13,33 @@ const request = axios.create({
     withCredentials: true,
     baseURL: `/api/verification-request`,
 });
+
+const createVerificationRequest = (
+    t,
+    router,
+    verificationRequest: any = {}
+) => {
+    const { nameSpace = NameSpaceEnum.Main } = verificationRequest;
+    return request
+        .post("/", verificationRequest)
+        .then((response) => {
+            message.success(
+                t("verificationRequest:verificationRequestCreateSuccess")
+            );
+            router.push(
+                nameSpace === NameSpaceEnum.Main
+                    ? "/verification-request"
+                    : `/${nameSpace}/verification-request`
+            );
+            return response.data;
+        })
+        .catch((err) => {
+            console.error(err);
+            message.error(
+                t("verificationRequest:verificationRequestCreateError")
+            );
+        });
+};
 
 const get = (options: SearchOptions, dispatch = null) => {
     const params = {
@@ -35,6 +63,7 @@ const get = (options: SearchOptions, dispatch = null) => {
                     data: verificationRequests,
                     total: totalVerificationRequests,
                     totalPages,
+                    totalVerificationRequests,
                 };
             }
 
@@ -118,6 +147,7 @@ const deleteVerificationRequestTopic = (topics, data_hash) => {
 };
 
 const verificationRequestApi = {
+    createVerificationRequest,
     get,
     getVerificationRequests,
     getById,

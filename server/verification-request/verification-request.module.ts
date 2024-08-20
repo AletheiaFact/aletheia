@@ -12,6 +12,7 @@ import { ConfigModule } from "@nestjs/config";
 import { ReviewTaskModule } from "../review-task/review-task.module";
 import { HistoryModule } from "../history/history.module";
 import { GroupModule } from "../group/group.module";
+import { CaptchaModule } from "../captcha/captcha.module";
 
 const VerificationRequestModel = MongooseModule.forFeature([
     {
@@ -29,6 +30,7 @@ const VerificationRequestModel = MongooseModule.forFeature([
         ReviewTaskModule,
         HistoryModule,
         GroupModule,
+        CaptchaModule,
     ],
     exports: [VerificationRequestService],
     providers: [VerificationRequestService],
