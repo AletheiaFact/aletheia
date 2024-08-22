@@ -78,6 +78,23 @@ export class WikidataService {
             language
         );
 
+        const siteLinkName = this.getSiteLinkName(language);
+
+        if (wikidata?.sitelinks[siteLinkName]) {
+            const wikiLang = siteLinkName.match(/^(.*)wiki$/)[1];
+            const wikiTitle = wikidata.sitelinks[siteLinkName].title;
+            if (wikiLang && wikiTitle) {
+                wikidataProps.wikipedia = `https://${wikiLang.replace(
+                    "_",
+                    "-"
+                )}.wikipedia.org/wiki/${encodeURI(wikiTitle)}`;
+            }
+        }
+
+        if (!wikidata.claims) {
+            return wikidataProps;
+        }
+
         /**
          * Q5 = Human
          * Q891723 = Public Companies
@@ -89,9 +106,9 @@ export class WikidataService {
          * https://www.wikidata.org/wiki/Q21503252
          */
         const hasP31Claims =
-            wikidata.claims.P31 && wikidata.claims.P31.length > 0;
+            wikidata.claims?.P31 && wikidata.claims?.P31?.length > 0;
         if (hasP31Claims) {
-            const isAllowedProp = wikidata.claims.P31.some((claim) => {
+            const isAllowedProp = wikidata.claims?.P31?.some((claim) => {
                 const instance = claim.mainsnak.datavalue.value;
                 return allowedInstances.includes(instance.id);
             });
@@ -102,25 +119,14 @@ export class WikidataService {
         }
 
         // Extract image if it exists
-        const wikidataPropImage = wikidata.claims.P18 || wikidata.claims.P154;
+        const wikidataPropImage = wikidata.claims?.P18 || wikidata.claims?.P154;
         if (wikidataPropImage) {
             const fileName = wikidataPropImage[0].mainsnak.datavalue.value;
             wikidataProps.image = await this.getCommonsThumbURL(fileName, 400);
             wikidataProps.avatar = await this.getCommonsThumbURL(fileName, 100);
         }
-        const siteLinkName = this.getSiteLinkName(language);
-        if (wikidata.sitelinks[siteLinkName]) {
-            const wikiLang = siteLinkName.match(/^(.*)wiki$/)[1];
-            const wikiTitle = wikidata.sitelinks[siteLinkName].title;
-            if (wikiLang && wikiTitle) {
-                wikidataProps.wikipedia = `https://${wikiLang.replace(
-                    "_",
-                    "-"
-                )}.wikipedia.org/wiki/${encodeURI(wikiTitle)}`;
-            }
-        }
         // Extract Twitter accounts if they exist
-        if (wikidata.claims.P2002) {
+        if (wikidata.claims?.P2002) {
             wikidata.claims.P2002.forEach((claim) => {
                 const twitterAccount = claim.mainsnak.datavalue.value;
                 wikidataProps.twitterAccounts.push(twitterAccount);

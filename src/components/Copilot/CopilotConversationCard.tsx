@@ -7,7 +7,7 @@ import { useTranslation } from "next-i18next";
 
 const CopilotConversationCard = ({ message }) => {
     const { t } = useTranslation();
-    const { sender, content } = message;
+    const { type, sender, content } = message;
     return (
         <CopilotConversationCardStyle>
             <div className="conversation-card-header">
@@ -26,7 +26,7 @@ const CopilotConversationCard = ({ message }) => {
                 )}
                 <span>{t(`copilotChatBot:${sender}`)}</span>
             </div>
-            <p className="conversation-card-content">{content}</p>
+            <p className={`conversation-card-content ${type}`}>{content}</p>
         </CopilotConversationCardStyle>
     );
 };

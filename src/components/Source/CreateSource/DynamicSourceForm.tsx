@@ -1,8 +1,4 @@
-import AletheiaButton, { ButtonType } from "../../Button";
-import React, { useRef, useState } from "react";
-import AletheiaCaptcha from "../../AletheiaCaptcha";
-import DynamicForm from "../../Form/DynamicForm";
-import { Row } from "antd";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -10,7 +6,9 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../../atoms/namespace";
 import { currentUserId } from "../../../atoms/currentUser";
 import SourceApi from "../../../api/sourceApi";
+import DynamicForm from "../../Form/DynamicForm";
 import createSourceForm from "./fieldLists/createSourceForm";
+import SharedFormFooter from "../../SharedFormFooter";
 
 const DynamicSourceForm = () => {
     const {
@@ -25,7 +23,6 @@ const DynamicSourceForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [recaptchaString, setRecaptchaString] = useState("");
     const hasCaptcha = !!recaptchaString;
-    const recaptchaRef = useRef(null);
 
     const onSubmit = ({ source }) => {
         const newSource = {
@@ -52,29 +49,11 @@ const DynamicSourceForm = () => {
                 errors={errors}
             />
 
-            <AletheiaCaptcha onChange={setRecaptchaString} ref={recaptchaRef} />
-            <Row
-                style={{
-                    padding: "32px 0 0",
-                    justifyContent: "space-evenly",
-                }}
-            >
-                <AletheiaButton
-                    type={ButtonType.gray}
-                    onClick={() => router.back()}
-                >
-                    {t("claimForm:cancelButton")}
-                </AletheiaButton>
-                <AletheiaButton
-                    loading={isLoading}
-                    type={ButtonType.blue}
-                    htmlType="submit"
-                    disabled={!hasCaptcha || isLoading}
-                    data-cy={"testSaveButton"}
-                >
-                    {t("claimForm:saveButton")}
-                </AletheiaButton>
-            </Row>
+            <SharedFormFooter
+                isLoading={isLoading}
+                setRecaptchaString={setRecaptchaString}
+                hasCaptcha={hasCaptcha}
+            />
         </form>
     );
 };
