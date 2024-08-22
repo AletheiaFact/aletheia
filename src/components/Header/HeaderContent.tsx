@@ -65,7 +65,7 @@ const HeaderContent = () => {
                     placeContent: "center",
                 }}
             >
-                <Logo color="white" />
+                <Logo />
             </a>
             <SearchOverlay />
             <HeaderActionsStyle xs={14} sm={10} md={6}>
