@@ -62,7 +62,7 @@ const localConfig: LocalConfig = {
             title: "",
             message: "",
         },
-        affixCTA: true, //pending
+        affixCTA: true,
         ctaBanner: {
             text: "",
         },
