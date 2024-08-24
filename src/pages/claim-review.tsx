@@ -1,6 +1,6 @@
 import { ClassificationEnum, ContentModelEnum } from "../types/enums";
 
-import AffixButton from "../components/AffixButton/AffixButton";
+import AffixCopilotButton from "../components/AffixButton/AffixCopilotButton";
 import ClaimReviewView from "../components/ClaimReview/ClaimReviewView";
 import { GetLocale } from "../utils/GetLocale";
 import JsonLd from "../components/JsonLd";
@@ -138,7 +138,7 @@ const ClaimReviewPage: NextPage<ClaimReviewPageProps> = (props) => {
                     />
                 </VisualEditorProvider>
             </ReviewTaskMachineProvider>
-            <AffixButton personalitySlug={personality?.slug} />
+            <AffixCopilotButton />
         </>
     );
 };
