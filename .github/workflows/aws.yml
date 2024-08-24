@@ -21,6 +21,7 @@ env:
   NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
   IMAGE: aletheiafact-production
   ENVIRONMENT: development
+  ENV: development
   UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
   MONGODB_URI: ${{ secrets.DEVELOPMENT_MONGODB_URI }}
   MONGODB_NAME: ${{ secrets.DEVELOPMENT_MONGODB_NAME }}
@@ -41,7 +42,7 @@ env:
   ZENVIA_API_URL: ${{ secrets.DEVELOPMENT_ZENVIA_API_URL }}
   ZENVIA_API_TOKEN: ${{ secrets.DEVELOPMENT_ZENVIA_API_URL }}
   AGENCIA_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_AGENCIA_ACCESS_TOKEN }}
-
+  RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
 jobs:
   setup-build-publish:
     name: Build & Publish
@@ -57,6 +58,7 @@ jobs:
           sed -i '21{s/test.//}' deployment/app.yml
           sed -i '11{s/testws./ws./}' deployment/websocket.yml
           sed -i '11{s/test.//}' config.seed.example.yaml
+          echo "ENV=production" >> $GITHUB_ENV
           echo "ENVIRONMENT=production" >> $GITHUB_ENV
           echo "UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_UMAMI_SITE_ID=${{ secrets.PRODUCTION_UMAMI_SITE_ID }}" >> $GITHUB_ENV
@@ -90,29 +92,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Install pkl
+        uses: pkl-community/setup-pkl@v0
+        with:
+          pkl-version: 0.25.2
       # Setting up config.yaml based on environment
       - name: Set config.yaml
-        env:
-          RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRETKEY }}
         run: |
-          sed -i "s%ZENVIA_API_URL%$ZENVIA_API_URL%g" config.$ENVIRONMENT.yaml
-          sed -i "s%ZENVIA_API_TOKEN%$ZENVIA_API_TOKEN%g" config.$ENVIRONMENT.yaml
-          sed -i "s/ENV/$ENVIRONMENT/g" config.$ENVIRONMENT.yaml
-          sed -i "s%RECAPTCHA_SECRET%$RECAPTCHA_SECRET%g" config.$ENVIRONMENT.yaml
-          sed -i "s%MONGODB_URI%$MONGODB_URI%g" config.$ENVIRONMENT.yaml
-          sed -i "s%ORY_SDK_URL%$ORY_SDK_URL%g" config.$ENVIRONMENT.yaml
-          sed -i "s%GITLAB_FEATURE_FLAG_URL%$GITLAB_FEATURE_FLAG_URL%g" config.$ENVIRONMENT.yaml
-          sed -i "s%GITLAB_FEATURE_FLAG_INSTANCE_ID%$GITLAB_FEATURE_FLAG_INSTANCE_ID%g" config.$ENVIRONMENT.yaml
-          sed -i "s/ORY_ACCESS_TOKEN/$ORY_ACCESS_TOKEN/g" config.$ENVIRONMENT.yaml
-          sed -i "s/ALETHEIA_SCHEMA_ID/$ALETHEIA_SCHEMA_ID/g" config.$ENVIRONMENT.yaml
-          sed -i "s%AWS_SDK_BUCKET%$AWS_SDK_BUCKET%g" config.$ENVIRONMENT.yaml
-          sed -i "s%AWS_ACCESS_KEY_ID%$AWS_ACCESS_KEY_ID%g" config.$ENVIRONMENT.yaml
-          sed -i "s%AWS_SECRET_ACCESS_KEY%$AWS_SECRET_ACCESS_KEY%g" config.$ENVIRONMENT.yaml
-          sed -i "s%NOVU_API_KEY%$NOVU_API_KEY%g" config.$ENVIRONMENT.yaml
-          sed -i "s%NOVU_APPLICATION_IDENTIFIER%$NOVU_APPLICATION_IDENTIFIER%g" config.$ENVIRONMENT.yaml
-          sed -i "s%AGENTS_API_URL%$AGENTS_API_URL%g" config.$ENVIRONMENT.yaml
-          sed -i "s%OPENAI_API_KEY%$OPENAI_API_KEY%g" config.$ENVIRONMENT.yaml
-          sed -i "s%AGENCIA_ACCESS_TOKEN%$AGENCIA_ACCESS_TOKEN%g" config.$ENVIRONMENT.yaml
+          pkl eval -f yaml ./deployment/config/config-file/$ENVIRONMENT.pkl > config.$ENVIRONMENT.yaml
 
       - name: Set migrate-mongo-config.ts
         run: |
