@@ -40,7 +40,7 @@ const CopilotToolbar = ({ handleClearConversation }) => {
         <CopilotToolbarStyled>
             <Tooltip
                 placement="top"
-                title={t("copilot:copilotClearHistoryTooltip")}
+                title={t("copilotChatBot:copilotClearHistoryTooltip")}
             >
                 <Button
                     className="toolbar-item"
@@ -53,7 +53,7 @@ const CopilotToolbar = ({ handleClearConversation }) => {
 
             <Tooltip
                 placement="top"
-                title={t("copilot:copilotCloseSidebarTooltip")}
+                title={t("copilotChatBot:copilotCloseSidebarTooltip")}
             >
                 <Button
                     className="toolbar-item"
