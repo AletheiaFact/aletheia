@@ -1,0 +1,79 @@
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/core/v1/EnvVar.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/core/v1/ResourceRequirements.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/core/v1/PodSpec.pkl"
+
+hidden namespace = ""
+hidden imagePath = ""
+hidden podPort = ""
+
+container: PodSpec.Container = new {
+    name = ""
+    image = imagePath
+    imagePullPolicy = "Always"
+    env = new {
+        new {
+            name = "NEXT_PUBLIC_UMAMI_SITE_ID"
+            value = read("env:UMAMI_SITE_ID")
+        }
+        new {
+            name = "NEXT_PUBLIC_RECAPTCHA_SITEKEY"
+            value = read("env:RECAPTCHA_SITEKEY")
+        }
+        new {
+            name = "ORY_SDK_URL"
+            value = read("env:ORY_SDK_URL")
+        }
+        new {
+            name = "ORY_ACCESS_TOKEN"
+            value = read("env:ORY_ACCESS_TOKEN")
+        }
+        new {
+            name = "NEW_RELIC_LICENSE_KEY"
+            value = read("env:NEW_RELIC_LICENSE_KEY")
+        }
+        new {
+            name = "NEW_RELIC_APP_NAME"
+            value = "aletheia-" + namespace
+        }
+        new {
+            name = "NEXT_PUBLIC_ORY_SDK_URL"
+            value = read("env:ORY_SDK_URL")
+        }
+        new {
+            name = "OPENAI_API_KEY"
+            value = read("env:OPENAI_API_KEY")
+        }
+        new {
+            name = "ENV_NAME"
+            value = namespace
+        }
+    }
+
+    readinessProbe {
+        httpGet {
+            path = "/api/health"
+            port = podPort
+        }
+        initialDelaySeconds = 50
+        timeoutSeconds = 5
+    }
+    livenessProbe {
+        httpGet {
+            path = "/api/health"
+            port = podPort
+        }
+        initialDelaySeconds = 50
+        timeoutSeconds = 10
+        failureThreshold = 10
+    }
+    resources {
+        requests {
+            ["cpu"] = "300m"
+            ["memory"] = 512.mib
+        }
+        limits {
+            ["cpu"] = "400m"
+            ["memory"] = 1024.mib
+        }
+    }
+}

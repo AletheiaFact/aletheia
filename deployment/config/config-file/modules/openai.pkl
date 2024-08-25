@@ -1,0 +1,2 @@
+api_key = read("env:OPENAI_API_KEY")
+

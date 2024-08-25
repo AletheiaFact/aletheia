@@ -1,0 +1,25 @@
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/networking/v1/Ingress.pkl" as Ingress
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/apps/v1/Deployment.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/core/v1/Service.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/K8sResource.pkl"
+
+rule: Ingress.IngressRule = new {
+    host = "www.test.aletheiafact.org"
+    http {
+        paths {
+            new {
+                path = "/"
+                pathType = "Prefix"
+                backend {
+                    service {
+                        name = "aletheia"
+                        port {
+                            name = "aletheia"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

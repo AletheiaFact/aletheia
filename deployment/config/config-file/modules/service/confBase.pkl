@@ -1,0 +1,31 @@
+import "../database/mongodb.pkl" as mongoDbConfig
+import "../ory.pkl" as oryConfig
+import "../feature_flag.pkl" as featureFlagConfig
+import "../aws/s3.pkl" as s3Config
+import "../novu.pkl" as novuConfig
+import "../openai.pkl" as openaiConfig
+import "../zenvia.pkl" as zenviaConfig
+import "../agencia.pkl" as agenciaConfig
+
+class Throttle {
+    ttl: Number
+    limit: Number
+}
+
+port: Number
+cors: String
+websocketUrl: String
+baseUrl: String
+automatedFactCheckingAPIUrl: String
+recaptcha_secret: String
+recaptcha_sitekey: String
+throttle: Throttle
+authentication_type = "ory"
+db = (mongoDbConfig) {}
+ory = (oryConfig) {}
+feature_flag = (featureFlagConfig) {}
+aws = (s3Config) {}
+novu = (novuConfig) {}
+openai = (openaiConfig) {}
+zenvia = (zenviaConfig) {}
+agencia = (agenciaConfig) {}
