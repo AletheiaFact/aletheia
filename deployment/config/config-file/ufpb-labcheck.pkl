@@ -1,0 +1,16 @@
+amends "./modules/main.pkl"
+import "./modules/database/mongodb.pkl"
+appBaseUrl = "aletheiafact.org"
+
+var = new {
+    name = "aletheia-ufpb-labcheck"
+    conf {
+        cors = "*"
+        recaptcha_sitekey = "6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh"
+        websocketUrl = "wss://testws.\(appBaseUrl) "
+        baseUrl = "https://labcheck.\(appBaseUrl)"
+        db = (mongodb) {
+            atlas = true
+        }
+    }
+}
