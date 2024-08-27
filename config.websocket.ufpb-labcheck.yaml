@@ -1,0 +1,4 @@
+services:
+  - name: websocket-aletheia-development
+    conf:
+      port: 5051
