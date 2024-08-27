@@ -1,0 +1,12 @@
+{
+    "personalityDescription": "Veja o perfil de {{name}} na AlumiaLab.org",
+    "personalityListDescription": "Veja todos os perfis na AlumiaLab.org",
+    "claimCreateDescription": "Adicione um discurso realizado por {{name}} na AlumiaLab.org",
+    "claimDescription": "Veja o discurso {{title}} feito por {{name}} na AlumiaLab.org",
+    "claimReviewDescription": "Veja as revisões da sentença {{sentence}} na AlumiaLab.org",
+    "siteName": "AlumiaLab.org",
+    "claimListDescription": "Veja declarações na AlumiaLab.org",
+    "createSourceDescription": "Adiciona uma fonte na AlumiaLab.org",
+    "verificationRequestDescription": "Veja as denúncias na AlumiaLab.org",
+    "createVerificationRequestDescription": "Adiciona uma denúncia na AlumiaLab.org"
+}

@@ -1,21 +1,31 @@
 import { LocalConfig } from "./localConfig.schema";
 
+const showDonate = false;
+
 const localConfig: LocalConfig = {
-    theme: {},
-    Logo: false,
+    theme: {
+        colors: {
+            bluePrimary: "#EC5F2A",
+            white: "#f5f5f5",
+            blackTertiary: "#1b1b1b",
+            lightBlueSecondary: "#EC5F2A",
+            lightBlueMain: "#f5f5f5",
+        },
+    },
+    Logo: true,
     footer: {
         socialMedias: [],
         showStatuteButton: {
-            show: true,
+            show: showDonate,
         },
     },
     header: {
         donateButton: {
-            show: true,
+            show: showDonate,
         },
     },
     home: {
-        affixCTA: true,
+        affixCTA: false,
     },
 };
 
