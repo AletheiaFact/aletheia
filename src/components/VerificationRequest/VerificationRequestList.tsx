@@ -3,7 +3,11 @@ import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import verificationRequestApi from "../../api/verificationRequestApi";
-import AletheiaButton from "../Button";
+import TopicsApi from "../../api/topicsApi";
+import FilterPopover from "./FilterPopover";
+import ActiveFilters from "./ActiveFilters";
+import { Grid, IconButton, Button } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -11,22 +15,11 @@ import {
     GridRowParams,
 } from "@mui/x-data-grid";
 import colors from "../../styles/colors";
-import {
-    Grid,
-    IconButton,
-    Popover,
-    TextField,
-    Button,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-} from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import TopicsApi from "../../api/topicsApi";
-import AdvancedSearch from "../Search/AdvancedSearch";
 import { useAppSelector } from "../../store/store";
 import { useDispatch } from "react-redux";
+import { ActionTypes } from "../../store/types";
+import debounce from "lodash.debounce";
+import AletheiaButton from "../Button";
 
 const VerificationRequestList = () => {
     const { t } = useTranslation();
@@ -39,32 +32,29 @@ const VerificationRequestList = () => {
         page: 0,
     });
     const [filteredRequests, setFilteredRequests] = useState([]);
-    const [filterValue, setFilterValue] = useState("");
+    const [filterValue, setFilterValue] = useState([]);
     const [filterType, setFilterType] = useState("topics");
-    const [selectedTopic, setSelectedTopic] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [applyFilters, setApplyFilters] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [loading, setLoading] = useState(false);
 
-    const [appliedFilterTopic, setAppliedFilterTopic] = useState(null);
-    const [appliedFilterValue, setAppliedFilterValue] = useState("");
-
-    const { autoCompleteTopicsResults, filtersUsed, totalResults } =
+    const { autoCompleteTopicsResults, filtersUsed, topicFilterUsed } =
         useAppSelector((state) => ({
             autoCompleteTopicsResults:
                 state?.search?.autocompleteTopicsResults || [],
             filtersUsed: state?.search?.searchFilterUsed || [],
-            totalResults: state?.search?.totalResults || 0,
+            topicFilterUsed: state?.topicFilterUsed || [],
         }));
 
-    useEffect(() => {
-        fetchData();
-    }, [paginationModel, nameSpace, appliedFilterTopic, appliedFilterValue]);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
+        setLoading(true);
         try {
             const response = await verificationRequestApi.get({
                 page: paginationModel.page + 1,
                 pageSize: paginationModel.pageSize,
-                topics: appliedFilterTopic,
+                topics: topicFilterUsed,
+                filtersUsed: filtersUsed,
             });
             if (response) {
                 setTotalVerificationRequests(response.total);
@@ -72,38 +62,95 @@ const VerificationRequestList = () => {
             }
         } catch (error) {
             console.error("Error fetching verification requests:", error);
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [
+        paginationModel.page,
+        paginationModel.pageSize,
+        topicFilterUsed,
+        filtersUsed,
+    ]);
+
+    useEffect(() => {
+        if (isInitialLoad || applyFilters) {
+            fetchData();
+            if (isInitialLoad) setIsInitialLoad(false);
+            setApplyFilters(false);
+        }
+    }, [applyFilters, fetchData, isInitialLoad]);
 
     const fetchTopicList = async (term) => {
         try {
-            await TopicsApi.searchTopics({
-                query: term,
-                t: t,
-                dispatch: dispatch,
-            });
+            await TopicsApi.searchTopics({ query: term, dispatch });
         } catch (error) {
-            console.log(`Error: ${error.message}`);
+            console.error(`Error: ${error.message}`);
         }
     };
 
-    const handleFilterClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleFilterClose = () => {
-        setAnchorEl(null);
-    };
+    const handleFilterClick = (event) => setAnchorEl(event.currentTarget);
+    const handleFilterClose = () => setAnchorEl(null);
 
     const handleFilterApply = () => {
         setAnchorEl(null);
-        setAppliedFilterTopic(selectedTopic);
-        setAppliedFilterValue(filterValue);
-        fetchData();
+        if (filterType === "topics" && filterValue) {
+            const topicsToAdd = Array.isArray(filterValue)
+                ? filterValue
+                : [filterValue];
+            const updatedTopics = [
+                ...new Set([...topicFilterUsed, ...topicsToAdd]),
+            ];
+            dispatch({
+                type: ActionTypes.SET_TOPIC_FILTER_USED,
+                topicFilterUsed: updatedTopics,
+            });
+        }
+        if (filterType === "content" && filterValue) {
+            dispatch({
+                type: ActionTypes.SET_SEARCH_FILTER_USED,
+                filterUsed: [...filtersUsed, filterValue],
+            });
+        }
+        setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        setApplyFilters(true);
     };
 
-    const handleTopicChange = (newTopic) => {
-        setSelectedTopic(newTopic);
+    const handleRemoveFilter = (removedFilter) => {
+        if (removedFilter.type === "topic") {
+            const updatedTopics = topicFilterUsed.filter(
+                (topic) => topic !== removedFilter.value
+            );
+            dispatch({
+                type: ActionTypes.SET_TOPIC_FILTER_USED,
+                topicFilterUsed: updatedTopics,
+            });
+        } else if (removedFilter.type === "content") {
+            const updatedFilters = filtersUsed.filter(
+                (filter) => filter !== removedFilter.value
+            );
+            dispatch({
+                type: ActionTypes.SET_SEARCH_FILTER_USED,
+                filterUsed: updatedFilters,
+            });
+        }
+        setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        setApplyFilters(true);
+    };
+
+    const handlePaginationChange = (newModel) => {
+        setPaginationModel(newModel);
+        setApplyFilters(true);
+    };
+
+    const handleResetFilters = () => {
+        setFilterValue([]);
+        setPaginationModel({ pageSize: 10, page: 0 });
+        dispatch({
+            type: ActionTypes.SET_TOPIC_FILTER_USED,
+            topicFilterUsed: [],
+        });
+        dispatch({ type: ActionTypes.SET_SEARCH_FILTER_USED, filterUsed: [] });
+        setApplyFilters(true);
     };
 
     const columns = React.useMemo<GridColDef[]>(
@@ -189,107 +236,52 @@ const VerificationRequestList = () => {
 
     const truncateWithEllipsis = useCallback((value, maxLength) => {
         if (!value) return "";
-        const truncatedValue = value.substring(0, maxLength);
         return value.length > maxLength
-            ? `${truncatedValue}...`
-            : truncatedValue;
+            ? `${value.substring(0, maxLength)}...`
+            : value;
     }, []);
 
-    const open = Boolean(anchorEl);
-    const id = open ? "simple-popover" : undefined;
+    const debouncedSetFilterValue = useCallback(
+        debounce((value) => setFilterValue(value), 300),
+        []
+    );
 
     return (
-        <Grid
-            container
-            justifyContent="center"
-            alignItems="stretch"
-            spacing={1}
-            my={2}
-        >
-            <Grid
-                item
-                xs={10}
-                container
-                justifyContent="space-between"
-                alignItems="center"
-            >
-                <h2>
-                    {t("verificationRequest:verificationRequestListHeader")}
-                </h2>
+        <Grid container spacing={2} justifyContent="center">
+            <Grid item xs={10} container alignItems="center">
                 <IconButton onClick={handleFilterClick}>
                     <FilterListIcon />
                 </IconButton>
-                <Popover
-                    id={id}
-                    open={open}
+                <FilterPopover
                     anchorEl={anchorEl}
                     onClose={handleFilterClose}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    transformOrigin={{ vertical: "top", horizontal: "right" }}
-                >
-                    <Grid container spacing={2} padding={2}>
-                        <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel id="filter-type-label">
-                                    Filter By
-                                </InputLabel>
-                                <Select
-                                    labelId="filter-type-label"
-                                    value={filterType}
-                                    onChange={(e) =>
-                                        setFilterType(e.target.value)
-                                    }
-                                >
-                                    <MenuItem value="topics">Topics</MenuItem>
-                                    <MenuItem value="content">
-                                        Content or Heard From
-                                    </MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-                        {filterType === "topics" && (
-                            <Grid item xs={12}>
-                                <AdvancedSearch
-                                    defaltValue={filtersUsed}
-                                    onSearch={fetchTopicList}
-                                    options={autoCompleteTopicsResults}
-                                    handleFilter={handleTopicChange}
-                                />
-                            </Grid>
-                        )}
-
-                        {filterType === "content" && (
-                            <Grid item xs={12}>
-                                <TextField
-                                    label="Filter by Content or Heard From"
-                                    value={filterValue}
-                                    onChange={(e) =>
-                                        setFilterValue(e.target.value)
-                                    }
-                                    fullWidth
-                                />
-                            </Grid>
-                        )}
-
-                        <Grid item xs={12} container justifyContent="flex-end">
-                            <Button onClick={handleFilterApply}>Apply</Button>
-                        </Grid>
-                    </Grid>
-                </Popover>
+                    filterType={filterType}
+                    setFilterType={setFilterType}
+                    setFilterValue={debouncedSetFilterValue}
+                    fetchTopicList={fetchTopicList}
+                    autoCompleteTopicsResults={autoCompleteTopicsResults}
+                    onFilterApply={handleFilterApply}
+                    t={t}
+                />
             </Grid>
-
+            <ActiveFilters
+                topicFilterUsed={topicFilterUsed}
+                filtersUsed={filtersUsed}
+                onRemoveFilter={handleRemoveFilter}
+                t={t}
+            />
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 <DataGrid
                     rows={filteredRequests}
                     columns={columns}
                     paginationModel={paginationModel}
                     pageSizeOptions={[5, 10, 50]}
-                    onPaginationModelChange={setPaginationModel}
+                    onPaginationModelChange={handlePaginationChange}
                     getRowId={(row) => row._id}
                     autoHeight
                     rowCount={totalVerificationRequests}
                     paginationMode="server"
+                    loading={loading}
                     sx={{
                         "& .MuiDataGrid-columnHeader": {
                             backgroundColor: colors.lightGraySecondary,
@@ -297,8 +289,22 @@ const VerificationRequestList = () => {
                             fontWeight: "bold",
                             borderBottom: `2px solid ${colors.blueSecondary}`,
                         },
+                        "& .MuiIconButton-root": {
+                            color:
+                                filtersUsed.length > 0 ||
+                                topicFilterUsed.length > 0
+                                    ? colors.bluePrimary
+                                    : "default",
+                        },
                     }}
                 />
+            </Grid>
+            <Grid item xs={10} container justifyContent="flex-end">
+                {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
+                    <Button onClick={handleResetFilters}>
+                        {t("verificationRequest:resetFiltersButton")}
+                    </Button>
+                )}
             </Grid>
         </Grid>
     );

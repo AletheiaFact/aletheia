@@ -28,7 +28,7 @@ const VerificationRequestSearch = () => {
                 {
                     page: 1,
                     pageSize: 5,
-                    searchText: content,
+                    filtersUsed: [content],
                 },
                 dispatch
             );
