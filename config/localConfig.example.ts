@@ -1,27 +1,37 @@
 import { LocalConfig } from "./localConfig.schema";
 
+const showDonate = false;
+
 const localConfig: LocalConfig = {
-    theme: {},
-    Logo: false,
+    theme: {
+        colors: {
+            primary: "#EC5F2A",
+            white: "#f5f5f5",
+            blackTertiary: "#1b1b1b",
+            lightSecondary: "#EC5F2A",
+            lightPrimary: "#f5f5f5",
+        },
+    },
+    Logo: true,
     footer: {
         socialMedias: [],
         showStatuteButton: {
-            show: true,
+            show: showDonate,
         },
     },
     header: {
         donateButton: {
-            show: true,
+            show: showDonate,
         },
         ctaButton: {
             show: true,
         },
     },
     home: {
-        affixCTA: true,
+        affixCTA: false,
         folderRedirectForum: {
-            show: true,
-            ctaButton: true,
+            show: false,
+            ctaButton: false,
         },
     },
 };
