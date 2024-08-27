@@ -1,0 +1,12 @@
+{
+    "personalityDescription": "See the profile of {{name}} on AlumiaLab.org",
+    "personalityListDescription": "See all the profiles on AlumiaLab.org",
+    "claimCreateDescription": "Create claim given by {{name}} to AlumiaLab.org",
+    "claimDescription": "See the claim {{title}} made by {{name}} on AlumiaLab.org",
+    "claimReviewDescription": "See sentence reviews {{sentence}} on AlumiaLab.org",
+    "siteName": "AlumiaLab.org",
+    "claimListDescription": "See claims on AlumiaLab.org",
+    "createSourceDescription": "Create sources to AlumiaLab.org",
+    "verificationRequestDescription": "See verification requests on AlumiaLab.org",
+    "createVerificationRequestDescription": "Create verification requests to AlumiaLab.org"
+}
