@@ -19,14 +19,14 @@ jobs:
   setup-build-publish:
     name: Build & Publish
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
+    environment: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
     env:
-      ENVIRONMENT: ${{ github.ref_name }}
+      ENVIRONMENT: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
       AWS_SDK_BUCKET: ${{ secrets.AWS_SDK_BUCKET }}
       API_URL: ${{ secrets.API_URL }}
       GITHUB_SHA: ${{ github.sha }}
       IMAGE: aletheiafact-production
-      ENV: ${{ github.ref_name }}
+      ENV: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
       NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
       UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
@@ -100,9 +100,9 @@ jobs:
     name: Deploy
     needs: setup-build-publish
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
+    environment: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
     env:
-      ENVIRONMENT: ${{ github.ref_name }}
+      ENVIRONMENT: ${{ github.ref_name == 'stage' && 'development' || github.ref_name == 'master' && 'production' || github.ref_name }}
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
       UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
