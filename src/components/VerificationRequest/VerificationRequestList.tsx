@@ -264,12 +264,14 @@ const VerificationRequestList = () => {
                     t={t}
                 />
             </Grid>
-            <ActiveFilters
-                topicFilterUsed={topicFilterUsed}
-                filtersUsed={filtersUsed}
-                onRemoveFilter={handleRemoveFilter}
-                t={t}
-            />
+            {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
+                <ActiveFilters
+                    topicFilterUsed={topicFilterUsed}
+                    filtersUsed={filtersUsed}
+                    onRemoveFilter={handleRemoveFilter}
+                    t={t}
+                />
+            )}
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 <DataGrid
                     rows={filteredRequests}
