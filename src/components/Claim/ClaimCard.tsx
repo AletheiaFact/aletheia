@@ -1,4 +1,5 @@
-import { Col, Comment, Row, Typography } from "antd";
+import { Col, Row, Typography } from "antd";
+import { Comment } from "@ant-design/compatible";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "next-i18next";
 import ReviewColors from "../../constants/reviewColors";

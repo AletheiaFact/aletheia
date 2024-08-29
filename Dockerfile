@@ -10,7 +10,6 @@ ENV NEW_RELIC_NO_CONFIG_FILE=true
 ENV NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true
 ENV NEW_RELIC_LOG=stdout
 
-COPY ./.babelrc /app/.babelrc
 COPY config.$ENVIRONMENT.yaml /app/config.yaml
 COPY config.websocket.$ENVIRONMENT.yaml /app/config.websocket.yaml
 COPY config.seed.example.yaml /app/config.seed.yaml
@@ -22,6 +21,8 @@ COPY server/jest.config.json /app/jest.config.json
 COPY ./next.config.js /app/next.config.js
 COPY ./package.json /app/package.json
 COPY ./yarn.lock /app/yarn.lock
+COPY .yarn/ /app/.yarn/
+COPY .yarnrc.yml /app/.yarnrc.yml
 COPY ./scripts /app/scripts
 COPY ./tsconfig.json /app/tsconfig.json
 COPY ./server /app/server
@@ -33,7 +34,7 @@ COPY ./next-i18next.config.js /app/next-i18next.config.js
 WORKDIR /app
 
 RUN apk add --no-cache git python3 make g++
-RUN yarn install --production
+RUN yarn install
 RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
     NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT \
