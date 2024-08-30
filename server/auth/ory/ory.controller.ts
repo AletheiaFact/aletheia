@@ -21,17 +21,11 @@ export default class OryController {
                 req.cookies["ory_kratos_session"] ||
                 req.headers["authorization"];
             const data = await this.oryService.whoAmI(sessionToken);
-            res.header("Cache-Control", "max-age=300, must-revalidate");
             return res.status(200).json(data);
         } catch (error) {
             if (error.status) {
                 return res.status(error.status).json(error.json());
             }
-
-            res.header(
-                "Cache-Control",
-                "no-store, no-cache, must-revalidate, proxy-revalidate"
-            );
             return res.status(500).json({ message: "Internal server error" });
         }
     }
