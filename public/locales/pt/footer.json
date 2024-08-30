@@ -1,7 +1,10 @@
 {
-    "copyright": "{{name}} ©{{date}}",
+    "copyright": "AletheiaFact.org ©{{date}}",
     "creativeCommons": "Todo conteúdo dessa plataforma é licenciado através da licença ",
     "socialMedia": "Siga nossas redes sociais",
     "contactEmail": "contato@aletheiafact.org",
-    "platformInfoTittle": "Movimento Aletheia Fact"
+    "platformInfoTittle": "Movimento Aletheia Fact",
+    "adressStreet": "Av Maria Ranieri, Nº 7-50",
+    "adressZipcode":"17.055-175 - Parque Viaduto - Bauru/SP",
+    "legalRegistration":"46.428.905/0001-68"
 }

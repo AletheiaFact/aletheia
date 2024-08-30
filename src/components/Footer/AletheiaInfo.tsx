@@ -1,13 +1,17 @@
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
-import localConfig from "../../../config/localConfig";
-import AletheiaInfoAdress from "./AletheiaInfoAdress";
+import StyledSpan from "./AletheiaInfo.style";
 
 const AletheiaInfo = () => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
-
+    const footerInfos = [
+        "footer:contactEmail",
+        "footer:adressStreet",
+        "footer:adressZipcode",
+        "footer:legalRegistration",
+    ];
     return (
         <>
             <h3
@@ -21,18 +25,11 @@ const AletheiaInfo = () => {
                 }}
             >
 
-                {localConfig.footer.platformInfoTitle ? localConfig.footer.platformInfoTitle : t("footer:platformInfoTittle")}
+                {t("footer:platformInfoTittle")}
             </h3>
-            <span
-                style={{
-                    fontSize: "14px",
-                    marginTop: "0px",
-                    textAlign: "center",
-                }}
-            >
-                {localConfig.footer.contactEmail ? localConfig.footer.contactEmail : t("footer:contactEmail")}
-            </span>
-            {localConfig.footer.address ? localConfig.footer.address : <AletheiaInfoAdress />}
+            {footerInfos.map((i) => (
+                <StyledSpan key={i}>{t(i)}</StyledSpan>
+            ))}
 
         </>
     );

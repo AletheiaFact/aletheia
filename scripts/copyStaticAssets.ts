@@ -1,9 +1,20 @@
+/**
+ * Script to perform deep merge of JSON files, overwrite image/SVG files, and copy/merge directories.
+ *
+ * Functionality:
+ * - Loads JSON files from a specified directory.
+ * - Saves merged JSON data into the target directory.
+ * - Performs deep merge of JSON objects, ensuring that nested properties are merged correctly.
+ * - Overwrites image and SVG files in the target directory with those from the source directory.
+ * - Recursively iterates through subdirectories to apply the merge and overwrite processes.
+ * - Starts the process of copying directories and then initiates the merge and overwrite procedures.
+ */
+
 import * as fs from 'fs';
 import * as path from 'path';
 import * as _ from 'lodash';
 import * as shell from 'shelljs';
 
-// Função para carregar JSON de um arquivo
 function loadJson(filePath: string): any {
   if (fs.existsSync(filePath)) {
     return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -11,7 +22,6 @@ function loadJson(filePath: string): any {
   return null;
 }
 
-// Função para salvar JSON em um arquivo
 function saveJson(filePath: string, data: any): void {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
@@ -20,7 +30,6 @@ function saveJson(filePath: string, data: any): void {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
 }
 
-// Função para realizar o deep merge dos arquivos JSON
 function mergeJsonFiles(defaultFilePath: string, overrideFilePath: string, distFilePath: string): void {
   const defaultJson = loadJson(defaultFilePath);
   const overrideJson = loadJson(overrideFilePath);
@@ -37,7 +46,6 @@ function mergeJsonFiles(defaultFilePath: string, overrideFilePath: string, distF
   }
 }
 
-// Função para sobrescrever arquivos de imagem e SVG
 function replaceFile(defaultFilePath: string, overrideFilePath: string, distFilePath: string): void {
   const dir = path.dirname(distFilePath);
   if (!fs.existsSync(dir)) {
@@ -54,7 +62,6 @@ function replaceFile(defaultFilePath: string, overrideFilePath: string, distFile
   }
 }
 
-// Função para percorrer as pastas e realizar o merge/sobrescrição
 function processDirectory(defaultDir: string, overrideDir: string, distDir: string): void {
   if (!fs.existsSync(defaultDir)) {
     console.error(`Diretório padrão não encontrado: ${defaultDir}`);
@@ -70,7 +77,6 @@ function processDirectory(defaultDir: string, overrideDir: string, distDir: stri
     const distFilePath = path.join(distDir, file);
 
     if (fs.lstatSync(defaultFilePath).isDirectory()) {
-      // Recursão para subdiretórios
       processDirectory(defaultFilePath, overrideFilePath, distFilePath);
     } else {
       const ext = path.extname(file).toLowerCase();
@@ -85,16 +91,13 @@ function processDirectory(defaultDir: string, overrideDir: string, distDir: stri
   });
 }
 
-// Caminhos das pastas raiz
 const defaultRootDir = path.join(__dirname, '..', 'public');
 const overrideRootDir = path.join(__dirname, '..', 'config', 'public');
 const distRootDir = path.join(__dirname, '..', 'dist', 'public');
 
-// Inicia o processo de cópia
 console.log('Copiando estrutura de diretórios...');
 shell.cp('-R', path.join(__dirname, '..', 'public'), path.join(__dirname, '..', 'dist'));
 
-// Inicia o processo de merge e sobrescrição
 console.log('Mesclando e sobrescrevendo arquivos...');
 processDirectory(defaultRootDir, overrideRootDir, distRootDir);
 

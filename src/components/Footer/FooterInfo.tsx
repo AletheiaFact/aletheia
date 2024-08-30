@@ -15,7 +15,7 @@ const FooterInfo = () => {
     return (
         <Row justify={vw?.sm ? "center" : "start"}>
             <span style={{ textAlign: "justify", marginBottom: "16px" }}>
-                {localConfig.footer.description ? localConfig.footer.description : t("about:alertInfo")}
+                {t("about:alertInfo")}
                 <a
                     style={{
                         whiteSpace: "pre-wrap",

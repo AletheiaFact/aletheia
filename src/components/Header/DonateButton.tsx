@@ -21,7 +21,7 @@ const DonateButton = ({ header = false, style = {} }) => {
                 ...style,
             }}
         >
-            {localConfig.header.donateButton.text ? localConfig.header.donateButton.text : t("home:donateButton")}
+            {t("home:donateButton")}
         </AletheiaButton>
     );
 };
