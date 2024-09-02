@@ -7,8 +7,8 @@ const ActiveFilters = ({ topicFilterUsed, filtersUsed, onRemoveFilter, t }) => (
             {t("verificationRequest:activeFiltersLabel")}
         </Typography>
         <Grid container spacing={1}>
-            {topicFilterUsed.map((topic, index) => (
-                <Grid item key={index}>
+            {topicFilterUsed.map((topic) => (
+                <Grid item key={topic}>
                     <Chip
                         label={`${t(
                             "verificationRequest:topicFilterLabel"
@@ -23,8 +23,8 @@ const ActiveFilters = ({ topicFilterUsed, filtersUsed, onRemoveFilter, t }) => (
                     />
                 </Grid>
             ))}
-            {filtersUsed.map((filter, index) => (
-                <Grid item key={index}>
+            {filtersUsed.map((filter) => (
+                <Grid item key={filter}>
                     <Chip
                         label={`${t(
                             "verificationRequest:contentFilterLabel"
