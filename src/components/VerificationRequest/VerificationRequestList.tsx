@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "next-i18next";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../atoms/namespace";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import TopicsApi from "../../api/topicsApi";
 import FilterPopover from "./FilterPopover";
@@ -24,7 +22,6 @@ import AletheiaButton from "../Button";
 const VerificationRequestList = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const [nameSpace] = useAtom(currentNameSpace);
     const [totalVerificationRequests, setTotalVerificationRequests] =
         useState(0);
     const [paginationModel, setPaginationModel] = useState({
@@ -248,29 +245,46 @@ const VerificationRequestList = () => {
 
     return (
         <Grid container spacing={2} justifyContent="center">
-            <Grid item xs={10} container alignItems="center">
-                <IconButton onClick={handleFilterClick}>
-                    <FilterListIcon />
-                </IconButton>
-                <FilterPopover
-                    anchorEl={anchorEl}
-                    onClose={handleFilterClose}
-                    filterType={filterType}
-                    setFilterType={setFilterType}
-                    setFilterValue={debouncedSetFilterValue}
-                    fetchTopicList={fetchTopicList}
-                    autoCompleteTopicsResults={autoCompleteTopicsResults}
-                    onFilterApply={handleFilterApply}
-                    t={t}
-                />
+            <Grid
+                item
+                xs={10}
+                container
+                alignItems="center"
+                justifyContent="space-between"
+            >
+                <Grid item>
+                    <IconButton onClick={handleFilterClick}>
+                        <FilterListIcon />
+                    </IconButton>
+                    <FilterPopover
+                        anchorEl={anchorEl}
+                        onClose={handleFilterClose}
+                        filterType={filterType}
+                        setFilterType={setFilterType}
+                        setFilterValue={debouncedSetFilterValue}
+                        fetchTopicList={fetchTopicList}
+                        autoCompleteTopicsResults={autoCompleteTopicsResults}
+                        onFilterApply={handleFilterApply}
+                        t={t}
+                    />
+                </Grid>
+                {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
+                    <Grid item>
+                        <Button onClick={handleResetFilters}>
+                            {t("verificationRequest:resetFiltersButton")}
+                        </Button>
+                    </Grid>
+                )}
             </Grid>
             {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
-                <ActiveFilters
-                    topicFilterUsed={topicFilterUsed}
-                    filtersUsed={filtersUsed}
-                    onRemoveFilter={handleRemoveFilter}
-                    t={t}
-                />
+                <Grid item xs={10}>
+                    <ActiveFilters
+                        topicFilterUsed={topicFilterUsed}
+                        filtersUsed={filtersUsed}
+                        onRemoveFilter={handleRemoveFilter}
+                        t={t}
+                    />
+                </Grid>
             )}
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 <DataGrid
@@ -300,13 +314,6 @@ const VerificationRequestList = () => {
                         },
                     }}
                 />
-            </Grid>
-            <Grid item xs={10} container justifyContent="flex-end">
-                {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
-                    <Button onClick={handleResetFilters}>
-                        {t("verificationRequest:resetFiltersButton")}
-                    </Button>
-                )}
             </Grid>
         </Grid>
     );

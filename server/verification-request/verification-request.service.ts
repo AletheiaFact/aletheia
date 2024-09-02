@@ -317,14 +317,12 @@ export class VerificationRequestService {
     async count({ contentFilters, topics }): Promise<number> {
         const query: any = {};
 
-        // Handle multiple content filters
         if (contentFilters && contentFilters.length > 0) {
             query.$or = contentFilters.map((filter) => ({
                 content: { $regex: filter, $options: "i" },
             }));
         }
 
-        // Handle topics filtering
         if (topics && topics.length > 0) {
             query["topics.label"] = { $in: topics };
         }
