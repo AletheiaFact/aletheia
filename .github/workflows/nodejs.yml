@@ -66,7 +66,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4.1.7
       with:
         name: aletheia-dist
         path: dist
@@ -92,7 +92,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4.1.7
       with:
         name: aletheia-dist
         path: dist
