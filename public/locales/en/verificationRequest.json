@@ -41,5 +41,14 @@
     "dateFieldError": "Please, insert a date",
     "heardFromExtraText": "This field is optional, but we'd appreciate knowing where you saw or heard this!",
     "sourceExtraText": "This field is optional, but we'd appreciate knowing the source of the information for the report!",
-    "emailFromExtraText": "This field is optional, but we'd appreciate it if you could provide your email to receive the review."
+    "emailFromExtraText": "This field is optional, but we'd appreciate it if you could provide your email to receive the review.",
+    "resetFiltersButton": "Reset Filters",
+    "activeFiltersLabel": "Active Filters:",
+    "topicFilterLabel": "Topic:",
+    "contentFilterLabel": "Content:",
+    "filterByTypeLabel": "Filter by",
+    "topicsFilterOption": "Topics",
+    "contentFilterOption": "Content",
+    "filterByContentLabel": "Filter by Content",
+    "applyButtonLabel": "Apply"
 }

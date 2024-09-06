@@ -202,7 +202,7 @@ function SearchPageView({ searchText }) {
                             </Button>
                         </div>
                         <AdvancedSearch
-                            defaltValue={filtersUsed}
+                            defaultValue={filtersUsed}
                             onSearch={fetchTopicList}
                             options={autoCompleteTopicsResults}
                             handleFilter={handleFilter}

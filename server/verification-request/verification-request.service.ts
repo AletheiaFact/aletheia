@@ -21,14 +21,22 @@ export class VerificationRequestService {
     ) {}
 
     async listAll({
-        content,
+        contentFilters,
         page,
         pageSize,
         order,
+        topics,
     }): Promise<VerificationRequest[]> {
         const query: any = {};
-        if (content) {
-            query.content = { $regex: content, $options: "i" };
+
+        if (contentFilters && contentFilters.length > 0) {
+            query.$or = contentFilters.map((filter) => ({
+                content: { $regex: filter, $options: "i" },
+            }));
+        }
+
+        if (topics && topics.length > 0) {
+            query["topics.label"] = { $in: topics };
         }
 
         return this.VerificationRequestModel.find(query, { embedding: 0 })
@@ -306,8 +314,20 @@ export class VerificationRequestService {
         return groupId;
     }
 
-    count(query) {
-        return this.VerificationRequestModel.countDocuments().where(query);
+    async count({ contentFilters, topics }): Promise<number> {
+        const query: any = {};
+
+        if (contentFilters && contentFilters.length > 0) {
+            query.$or = contentFilters.map((filter) => ({
+                content: { $regex: filter, $options: "i" },
+            }));
+        }
+
+        if (topics && topics.length > 0) {
+            query["topics.label"] = { $in: topics };
+        }
+
+        return this.VerificationRequestModel.countDocuments(query);
     }
 
     /**

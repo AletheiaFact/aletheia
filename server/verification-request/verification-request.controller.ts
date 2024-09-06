@@ -37,22 +37,38 @@ export class VerificationRequestController {
     @Get("api/verification-request")
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async listAll(@Query() getVerificationRequest) {
-        const { pageSize, page } = getVerificationRequest;
+        const {
+            pageSize,
+            page,
+            contentFilters = [],
+            topics = [],
+            order,
+        } = getVerificationRequest;
 
-        return Promise.all([
-            this.verificationRequestService.listAll(getVerificationRequest),
-            this.verificationRequestService.count({}),
-        ]).then(([verificationRequests, totalVerificationRequests]) => {
-            const totalPages = Math.ceil(totalVerificationRequests / pageSize);
+        const [verificationRequests, totalVerificationRequests] =
+            await Promise.all([
+                this.verificationRequestService.listAll({
+                    contentFilters,
+                    topics,
+                    page,
+                    pageSize,
+                    order,
+                }),
+                this.verificationRequestService.count({
+                    contentFilters,
+                    topics,
+                }),
+            ]);
 
-            return {
-                verificationRequests,
-                totalVerificationRequests,
-                totalPages,
-                page: page,
-                pageSize: pageSize,
-            };
-        });
+        const totalPages = Math.ceil(totalVerificationRequests / pageSize);
+
+        return {
+            verificationRequests,
+            totalVerificationRequests,
+            totalPages,
+            page,
+            pageSize,
+        };
     }
 
     @ApiTags("verification-request")
@@ -176,7 +192,6 @@ export class VerificationRequestController {
             await this.reviewTaskService.getReviewTaskByDataHashWithUsernames(
                 dataHash
             );
-
         const recommendationFilter = verificationRequest.group?.content?.map(
             (v: any) => v._id
         ) || [verificationRequest?._id];
