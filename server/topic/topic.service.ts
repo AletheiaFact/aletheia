@@ -27,6 +27,13 @@ export class TopicService {
         );
     }
 
+    async searchTopics(query: string, language = "pt"): Promise<Topic[]> {
+        return this.TopicModel.find({
+            name: { $regex: query, $options: "i" },
+            language,
+        });
+    }
+
     /**
      *
      * @param getTopics options to fetch topics

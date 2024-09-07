@@ -119,6 +119,11 @@ const reducer = (state, action) => {
                     searchFilterUsed: action.filterUsed,
                 },
             };
+        case ActionTypes.SET_TOPIC_FILTER_USED:
+            return {
+                ...state,
+                topicFilterUsed: action.topicFilterUsed,
+            };
         case ActionTypes.SET_LOGIN_STATUS:
             return {
                 ...state,

@@ -7,6 +7,8 @@ interface SearchOptions {
     page?: number;
     pageSize?: number;
     order?: string;
+    topics?: any;
+    filtersUsed?: any;
 }
 
 const request = axios.create({
@@ -43,10 +45,11 @@ const createVerificationRequest = (
 
 const get = (options: SearchOptions, dispatch = null) => {
     const params = {
-        content: options.searchText,
+        contentFilters: options.filtersUsed || [],
         page: options.page ? options.page - 1 : 0,
         order: options.order || "asc",
         pageSize: options.pageSize ? options.pageSize : 10,
+        topics: options.topics || [],
     };
 
     return request
@@ -63,13 +66,16 @@ const get = (options: SearchOptions, dispatch = null) => {
                     data: verificationRequests,
                     total: totalVerificationRequests,
                     totalPages,
-                    totalVerificationRequests,
                 };
             }
 
             dispatch({
                 type: ActionTypes.SEARCH_RESULTS,
                 results: verificationRequests,
+            });
+            dispatch({
+                type: ActionTypes.SET_TOTAL_RESULTS,
+                results: totalVerificationRequests,
             });
             dispatch({
                 type: ActionTypes.SET_TOTAL_PAGES,
