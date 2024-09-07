@@ -194,7 +194,7 @@
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/parser": "^4.29.0",
     "concurrently": "^8.2.1",
-    "cypress": "^12.17.4",
+    "cypress": "13.14.2",
     "env-cmd": "^10.1.0",
     "eslint": "7.0.0",
     "eslint-config-next": "14.1.1",
