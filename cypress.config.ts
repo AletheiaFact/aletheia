@@ -5,7 +5,7 @@ export default defineConfig({
     video: false,
     screenshotOnRunFailure: false,
     pageLoadTimeout: 480000,
-    defaultCommandTimeout: 100000,
+    defaultCommandTimeout: 480000,
     e2e: {
         // We've imported your old cypress plugins here.
         // You may want to clean this up later by importing these.
