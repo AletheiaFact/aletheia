@@ -522,7 +522,7 @@ export class ReviewTaskService {
 
     async getReviewTasksByClaimId(targetId: string) {
         return await this.ReviewTaskModel.find({
-            "machine.context.review.target": targetId.toString(),
+            target: targetId.toString(),
             "machine.value": { $ne: "published" },
         });
     }
