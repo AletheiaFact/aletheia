@@ -4,106 +4,106 @@
 name: Aletheia CI
 
 on:
-    push:
-        branches: [stage, develop]
-    pull_request:
-        branches: [stage, develop]
+  push:
+    branches: [stage, develop]
+  pull_request:
+    branches: [stage, develop]
 
 env:
-    UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
-    ORY_SDK_URL: http://127.0.0.1:4433 #${{ secrets.DEVELOPMENT_ORY_SDK_URL }}
-    # ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
-    ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
-    CI_ORY_USERID: ${{ secrets.CI_ORY_USERID }}
-    CI_ORY_USER_PASSWORD: ${{ secrets.CI_ORY_USER_PASSWORD }}
-    CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
-    TEST_RECAPTCHA_SECRET: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe # public secret for CI tests provided by google
-    TEST_RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
-    NEXT_PUBLIC_RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
-    AWS_SDK_BUCKET: ${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}
-    AWS_ACCESS_KEY_ID: ${{ secrets.DEVELOPMENT_AWS_ACCESS_KEY_ID }}
-    AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVELOPMENT_AWS_SECRET_ACCESS_KEY }}
-    GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
-    GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
-    MONGOMS_VERSION: 6.0.17
+  UMAMI_SITE_ID: ${{ secrets.DEVELOPMENT_UMAMI_SITE_ID }}
+  ORY_SDK_URL: http://127.0.0.1:4433 #${{ secrets.DEVELOPMENT_ORY_SDK_URL }}
+  # ORY_ACCESS_TOKEN: ${{ secrets.DEVELOPMENT_ORY_ACCESS_TOKEN }}
+  ALETHEIA_SCHEMA_ID: ${{ secrets.DEVELOPMENT_ALETHEIA_SCHEMA_ID }}
+  CI_ORY_USERID: ${{ secrets.CI_ORY_USERID }}
+  CI_ORY_USER_PASSWORD: ${{ secrets.CI_ORY_USER_PASSWORD }}
+  CI_MONGODB_URI: mongodb://127.0.0.1:35025/Aletheia
+  TEST_RECAPTCHA_SECRET: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe # public secret for CI tests provided by google
+  TEST_RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
+  NEXT_PUBLIC_RECAPTCHA_SITEKEY: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI # public sitekey for CI tests provided by google
+  AWS_SDK_BUCKET: ${{ secrets.DEVELOPMENT_AWS_SDK_BUCKET }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.DEVELOPMENT_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.DEVELOPMENT_AWS_SECRET_ACCESS_KEY }}
+  GITLAB_FEATURE_FLAG_URL: ${{ secrets.GITLAB_FEATURE_FLAG_URL }}
+  GITLAB_FEATURE_FLAG_INSTANCE_ID: ${{ secrets.GITLAB_FEATURE_FLAG_INSTANCE_ID }}
+  MONGOMS_VERSION: 6.0.17
 jobs:
-    test-docker:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [18.19.1]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            - name: Test docker image build before merge
-              run: |
-                  docker build --build-arg ENVIRONMENT=development \
-                    --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
-                    --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} .
-    build:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [18.19.1]
-        steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - run: yarn install
-            - run: yarn build
-            - uses: actions/upload-artifact@v3
-              with:
-                  name: aletheia-dist
-                  path: dist/
-    test-lint:
-        needs: build
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [18.19.1]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            - uses: actions/download-artifact@v3
-              with:
-                  name: aletheia-dist
-                  path: dist
-            - run: yarn install
-            - run: yarn lint
-            - run: yarn test
-              env:
-                  NODE_OPTIONS: "--max_old_space_size=4096"
-            # sonarcloud:
-            #   runs-on: ubuntu-latest
-            #   strategy:
-            #     matrix:
-            #       node-version: [18.19.1]
-            #   steps:
-            - name: SonarCloud Scan
-              uses: SonarSource/sonarcloud-github-action@master
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    cypress-run:
-        needs: build
-        runs-on: ubuntu-22.04
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            - uses: actions/download-artifact@v3
-              with:
-                  name: aletheia-dist
-                  path: dist
-            - run: |
-                  echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
-                  yarn install
-            - run: yarn build
-            - name: Cypress run
-              uses: cypress-io/github-action@v6
-              with:
-                  start: yarn test:e2e:cy
-                  wait-on: "http://localhost:3000"
-              env:
-                  CI: true
+  test-docker:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.19.1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test docker image build before merge
+        run: |
+          docker build --build-arg ENVIRONMENT=development \
+            --build-arg NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
+            --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} .
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.19.1]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn install
+      - run: yarn build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: aletheia-dist
+          path: dist/
+  test-lint:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.19.1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v3
+        with:
+          name: aletheia-dist
+          path: dist
+      - run: yarn install
+      - run: yarn lint
+      - run: yarn test
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+      # sonarcloud:
+      #   runs-on: ubuntu-latest
+      #   strategy:
+      #     matrix:
+      #       node-version: [18.19.1]
+      #   steps:
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  cypress-run:
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v3
+        with:
+          name: aletheia-dist
+          path: dist
+      - run: |
+          echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
+          yarn install
+      - run: yarn build
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: yarn test:e2e:cy
+          wait-on: "http://localhost:3000"
+        env:
+          CI: true
