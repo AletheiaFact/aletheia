@@ -80,7 +80,7 @@ export class WikidataService {
 
         const siteLinkName = this.getSiteLinkName(language);
 
-        if (wikidata?.sitelinks[siteLinkName]) {
+        if (wikidata?.sitelinks && wikidata?.sitelinks[siteLinkName]) {
             const wikiLang = siteLinkName.match(/^(.*)wiki$/)[1];
             const wikiTitle = wikidata.sitelinks[siteLinkName].title;
             if (wikiLang && wikiTitle) {
@@ -126,7 +126,7 @@ export class WikidataService {
             wikidataProps.avatar = await this.getCommonsThumbURL(fileName, 100);
         }
         // Extract Twitter accounts if they exist
-        if (wikidata.claims?.P2002) {
+        if (wikidata?.claims?.P2002) {
             wikidata.claims.P2002.forEach((claim) => {
                 const twitterAccount = claim.mainsnak.datavalue.value;
                 wikidataProps.twitterAccounts.push(twitterAccount);
