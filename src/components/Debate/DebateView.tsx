@@ -9,6 +9,7 @@ import DebateTimelineWrapper from "./DebateTimelineWrapper";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import { currentNameSpace } from "../../atoms/namespace";
+import { currentUserRole } from "../../atoms/currentUser";
 
 const DebateView = ({ claim }) => {
     const debate = claim?.content;
@@ -17,6 +18,7 @@ const DebateView = ({ claim }) => {
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
     dispatch(actions.setSelectTarget(claim));
+    const [userRole] = useAtom(currentUserRole);
 
     // the new debate data will in the callbackResult of the state
     const updateTimeline = useCallback(() => {
@@ -52,6 +54,7 @@ const DebateView = ({ claim }) => {
                         claim={claim}
                         title={claim?.title}
                         personalities={claim?.personalities}
+                        userRole={userRole}
                     />
                     <Row
                         style={{

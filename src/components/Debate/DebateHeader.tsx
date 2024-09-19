@@ -13,15 +13,13 @@ import { currentNameSpace } from "../../atoms/namespace";
 import AletheiaButton, { ButtonType } from "../Button";
 import { EditOutlined } from "@ant-design/icons";
 import { Roles } from "../../types/enums";
-import { currentUserRole } from "../../atoms/currentUser";
 
 const { Title } = Typography;
-const DebateHeader = ({ claim, title, personalities }) => {
+const DebateHeader = ({ claim, title, personalities, userRole }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const [state] = useAtom(callbackTimerAtom);
-    const [userRole] = useAtom(currentUserRole);
 
     useLayoutEffect(() => {
         if (personalities) {
@@ -44,7 +42,7 @@ const DebateHeader = ({ claim, title, personalities }) => {
     const baseHref = `/${
         nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""
     }`;
-    const href = `${baseHref}claim/${claim.claimId}/debate/edit`;
+    const href = `${baseHref}claim/${claim?.claimId}/debate/edit`;
 
     const { vw } = useAppSelector((state) => state);
     return (
@@ -82,7 +80,7 @@ const DebateHeader = ({ claim, title, personalities }) => {
                     {title}
                 </Title>
             </div>
-            {userRole === Roles.Admin || claim?.claimId ? (
+            {userRole === Roles.Admin && claim?.claimId ? (
                 <AletheiaButton
                     type={ButtonType.blue}
                     href={href}
