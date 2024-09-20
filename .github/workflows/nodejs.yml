@@ -100,6 +100,7 @@ jobs:
       - run: |
           echo '{"CI_ORY_USER_PASSWORD": "${{ env.CI_ORY_USER_PASSWORD }}"}' > ./cypress.env.json
           yarn install
+      - run: cp config/localConfig.example.ts config/localConfig.ts
       - run: yarn build
       - name: Cypress run
         uses: cypress-io/github-action@v6
