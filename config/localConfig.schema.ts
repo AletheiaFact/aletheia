@@ -1,6 +1,8 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-const hexPattern = z.string().regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/, 'Invalid hex color code');
+const hexPattern = z
+    .string()
+    .regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/, "Invalid hex color code");
 
 const LocalConfigSchema = z.object({
     theme: z.object({
@@ -47,51 +49,4 @@ const LocalConfigSchema = z.object({
     }),
 });
 
-type LocalConfig = z.infer<typeof LocalConfigSchema>;
-
-const localConfig: LocalConfig = {
-    theme: {
-        colors: {
-            bluePrimary: "#11273a",
-            blueSecondary: "#657e8e",
-            blueTertiary: "#9bbcd1",
-            blueQuartiary: "#b1c2cd",
-            grayPrimary: "#4d4e4f",
-            graySecondary: "#979a9b",
-            grayTertiary: "#c2c8cc",
-            lightGray: "#f5f5f5",
-            lightGraySecondary: "#eeeeee",
-            lightBluePrimary: "#dae8ea",
-            lightBlueMain: "#4F8DB4",
-            lightBlueSecondary: "#67bef2",
-            white: "#ffffff",
-            blackPrimary: "#111111",
-            blackSecondary: "#515151",
-            blackTertiary: "#202222",
-            lightYellow: "#db9f0d",
-            logoWhite: "#E8E8E8",
-            redText: "#ff4d4f",
-            warning: "#DB9F0D",
-            active: "#49DE80",
-            inactive: "#FBCC13",
-        }
-    },
-    footer: {
-        socialMedias: [],
-        showStatuteButton: {
-            show: true,
-            redirectUrl: "",
-        },
-    },
-    header: {
-        donateButton: {
-            show: true,
-            redirectUrl: "",
-        },
-    },
-    home: {
-        affixCTA: true,
-    },
-};
-
-export default localConfig;
+export type LocalConfig = z.infer<typeof LocalConfigSchema>;

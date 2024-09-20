@@ -23,6 +23,6 @@ const colors = {
     warning: "#DB9F0D",
     active: "#49DE80",
     inactive: "#FBCC13",
-    ...localConfig.theme.colors,
+    ...(localConfig?.theme?.colors || {}),
 };
 export default colors;
