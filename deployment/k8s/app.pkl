@@ -1,0 +1,92 @@
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/K8sResource.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/apps/v1/Deployment.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/core/v1/Service.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/networking/v1/Ingress.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/core/v1/PodSpec.pkl"
+import "./modules/ingress.pkl" as ingress
+
+hidden appNamespace = "development"
+hidden podPort = 3000
+
+hidden IngressOptions = new {
+    rules = new {}
+}
+hidden ServiceOptions = new {
+    spec = new Service.ServiceSpec {
+        type = "NodePort"
+        selector {
+            ["app"] = "aletheia"
+        }
+        ports {
+            new {
+                name = "aletheia"
+                targetPort = trace(podPort)
+                port = 80
+            }
+        }
+    }
+}
+hidden DeploymentOptions = new {
+    replicas = 1
+    containers = new Listing<PodSpec.Container> {}
+}
+
+
+resources: Listing<K8sResource> = new {
+    new Ingress {
+        metadata {
+            name = "ingress-aletheia"
+            namespace = appNamespace
+            annotations {
+                ["kubernetes.io/ingress.class"] = "traefik"
+            }
+        }
+        spec {
+            rules = new {
+                for (_rule in IngressOptions.rules) {
+                    _rule
+                }
+            }
+        }
+    }
+
+    new Service {
+        metadata {
+            name = "aletheia"
+            namespace = appNamespace
+        }
+        spec = ServiceOptions.spec
+    }
+
+    new Deployment {
+        metadata {
+            name = "aletheia"
+            namespace = appNamespace
+        }
+        spec {
+            replicas = DeploymentOptions.replicas
+            selector {
+                matchLabels {
+                    ["app"] = "aletheia"
+                }
+            }
+            template {
+                metadata {
+                    labels {
+                        ["app"] = "aletheia"
+                    }
+                }
+                spec {
+                    containers = DeploymentOptions.containers
+                }
+            }
+        }
+    }
+}
+
+output {
+    value = resources
+    renderer = (K8sResource.output.renderer as YamlRenderer) {
+        isStream = true
+    }
+}

@@ -19,6 +19,7 @@ import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAppSelector } from "../../store/store";
 import SourceIcon from "@mui/icons-material/Source";
+import ReportIcon from "@mui/icons-material/Report";
 
 interface AffixButtonProps {
     personalitySlug?: string;
@@ -76,6 +77,15 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                         ? `/${nameSpace}/source/create`
                         : `/source/create`,
                 dataCy: "testFloatButtonAddSources",
+            },
+            {
+                icon: <ReportIcon />,
+                tooltip: t("affix:affixButtonCreateVerificationRequest"),
+                href:
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/verification-request/create`
+                        : `/verification-request/create`,
+                dataCy: "testFloatButtonAddVerificationRequest",
             }
         );
 

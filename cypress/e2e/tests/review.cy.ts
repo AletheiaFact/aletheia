@@ -76,6 +76,7 @@ describe("Test claim review", () => {
             });
         });
         goToClaimReviewPage();
+        cy.wait(8000);
         cy.get(locators.claimReview.INPUT_CLASSIFICATION)
             .should("exist")
             .click();
@@ -83,6 +84,7 @@ describe("Test claim review", () => {
             .should("be.visible")
             .click();
         cy.get(locators.claimReview.BTN_ADD_QUESTION).should("exist").click();
+        cy.wait(6000);
         cy.get(locators.claimReview.INPUT_QUESTION)
             .eq(1)
             .type(review.question2);

@@ -1,0 +1,34 @@
+import "./database/mongodb.pkl"
+import "./service/confBase.pkl"
+import "./ory.pkl" as oryConfig
+
+
+hidden appBaseUrl: String
+
+hidden var = new {
+    name = "service-aletheia"
+    conf = new {
+        port = 3000
+        recaptcha_sitekey = read("env:RECAPTCHA_SITEKEY")
+        websocketUrl = read("env:WEBSOCKET_URL")
+        baseUrl = read("env:BASE_URL")
+        automatedFactCheckingAPIUrl = read("env:AGENTS_API_URL")
+        recaptcha_secret = read("env:RECAPTCHA_SECRET")
+        throttle = new confBase.Throttle {
+            ttl = 60
+            limit = 100
+        }
+        ory = (oryConfig) {
+            admin_endpoint = "admin"
+        }
+    }
+}
+
+services = new Listing {
+    new {
+        name = var.name
+        conf = (confBase) {
+            ...var.conf
+        }
+    }
+}

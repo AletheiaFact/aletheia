@@ -7,7 +7,7 @@ import { ClassificationEnum, TargetModel } from "../../types/enums";
 import { publishedSelector } from "../../machines/reviewTask/selectors";
 import colors from "../../styles/colors";
 import SentenceReportCard from "../SentenceReport/SentenceReportCard";
-import TopicInput from "./TopicInput";
+import TopicDisplay from "../topics/TopicDisplay";
 import { Content } from "../../types/Content";
 import ReviewAlert from "./ReviewAlert";
 import { ReviewTaskTypeEnum } from "../../machines/reviewTask/enums";
@@ -40,6 +40,9 @@ const ClaimReviewHeader = ({
         publishedReview?.review;
     const isPublishedOrCanSeeHidden =
         isPublished && (!isHidden || userIsNotRegular);
+    const showTopicInput =
+        reviewTaskType === ReviewTaskTypeEnum.Claim ||
+        reviewTaskType === ReviewTaskTypeEnum.VerificationRequest;
 
     return (
         <Row
@@ -73,11 +76,12 @@ const ClaimReviewHeader = ({
                                 hideDescription?.[TargetModel.Claim]
                             }
                         />
-                        {reviewTaskType === ReviewTaskTypeEnum.Claim && (
-                            <TopicInput
+                        {showTopicInput && (
+                            <TopicDisplay
                                 contentModel={target.contentModel}
                                 data_hash={content.data_hash}
-                                topics={content.topics}
+                                reviewTaskType={reviewTaskType}
+                                topics={content?.topics || []}
                             />
                         )}
                     </Col>

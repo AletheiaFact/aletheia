@@ -1,0 +1,3 @@
+url = read("env:GITLAB_FEATURE_FLAG_URL")
+appName = read("env:ENV")
+instanceId = read("env:GITLAB_FEATURE_FLAG_INSTANCE_ID")

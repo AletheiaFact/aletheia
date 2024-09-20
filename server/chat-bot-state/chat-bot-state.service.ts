@@ -1,7 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { ChatBotState, ChatBotStateDocument } from "./chat-bot-state.schema";
+import {
+    ChatBotState,
+    ChatBotStateDocument,
+    ChatBotMachineSnapshot,
+} from "./chat-bot-state.schema";
 
 @Injectable()
 export class ChatBotStateService {
@@ -10,21 +14,21 @@ export class ChatBotStateService {
         private ChatBotStateModel: Model<ChatBotStateDocument>
     ) {}
 
-    async create(state, id: string) {
+    async create(snapshot: ChatBotMachineSnapshot, id: string) {
         const newChatBotState = new this.ChatBotStateModel({
             _id: id,
-            state: state,
+            machine: snapshot,
         });
         return await newChatBotState.save();
     }
 
-    async updateState(
+    async updateSnapshot(
         id: string,
-        state: any
+        snapshot: ChatBotMachineSnapshot
     ): Promise<ChatBotStateDocument | null> {
         return await this.ChatBotStateModel.findByIdAndUpdate(
             id,
-            { state: state },
+            { machine: snapshot },
             { new: true, useFindAndModify: false }
         ).exec();
     }

@@ -1,0 +1,11 @@
+import "./container.pkl" as containerConfig
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/core/v1/PodSpec.pkl"
+
+hidden ns = ""
+hidden p = 3000
+
+pod = (containerConfig) {
+   namespace = ns
+   imagePath = "134187360702.dkr.ecr.us-east-1.amazonaws.com/aletheiafact-production" + ":" + read("env:TAG")
+   podPort = p
+}

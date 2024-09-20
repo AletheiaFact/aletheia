@@ -15,5 +15,7 @@
     "createSourceTitle": "Create source",
     "createSourceDescription": "Create sources to AletheiaFact.org",
     "verificationRequestTitle": "Verification Requests",
-    "verificationRequestDescription": "See verification requests on AletheiaFact.org"
+    "verificationRequestDescription": "See verification requests on AletheiaFact.org",
+    "createVerificationRequestTitle": "Create verification request",
+    "createVerificationRequestDescription": "Create verification requests to AletheiaFact.org"
 }

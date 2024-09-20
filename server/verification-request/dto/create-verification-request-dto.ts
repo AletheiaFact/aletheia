@@ -6,18 +6,43 @@ export class CreateVerificationRequestDTO {
     @ApiProperty()
     content: string;
 
+    @IsString()
+    @ApiProperty()
+    @IsOptional()
+    source: string;
+
+    @IsString()
+    @ApiProperty()
+    @IsOptional()
+    publicationDate: string;
+
+    @IsString()
+    @ApiProperty()
+    @IsOptional()
+    email: string;
+
     @IsDate()
     @ApiProperty()
     @IsOptional()
     date: Date;
 
-    @IsArray()
+    @IsString()
     @ApiProperty()
     @IsOptional()
-    sources: string[];
+    heardFrom: string;
 
     @IsString()
     @IsOptional()
     @ApiProperty()
-    data_hash: string;
+    nameSpace?: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    recaptcha?: string;
+
+    @IsOptional()
+    @IsArray()
+    @ApiProperty()
+    embedding?: number[];
 }
