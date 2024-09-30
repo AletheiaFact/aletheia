@@ -37,6 +37,7 @@ const LocalConfigSchema = z.object({
             show: z.boolean(),
             redirectUrl: z.string().url().optional(),
         }),
+        repositoryLink: z.string().url().optional(),
     }),
     header: z.object({
         donateButton: z.object({

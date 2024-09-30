@@ -6,11 +6,12 @@ import { useAppSelector } from "../../store/store";
 
 import colors from "../../styles/colors";
 import AletheiaButton, { ButtonType } from "../Button";
-import localConfig from "../../../config/localConfig";
+import localConfig from "../../../config/localConfig.example";
 
 const FooterInfo = () => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
+    const href = localConfig.footer.repositoryLink ? localConfig.footer.repositoryLink : " https://github.com/AletheiaFact/aletheia"
 
     return (
         <Row justify={vw?.sm ? "center" : "start"}>
@@ -22,11 +23,11 @@ const FooterInfo = () => {
                         display: "inline",
                         color: colors.white,
                     }}
-                    href="https://github.com/AletheiaFact/aletheia"
+                    href={href}
                     target="_blank"
                     rel="noreferrer"
                 >
-                    https://github.com/AletheiaFact/aletheia
+                    {href}
                 </a>
             </span>
             {localConfig.footer.showStatuteButton.show ? (<AletheiaButton

@@ -19,7 +19,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { currentUserId } from "../../atoms/currentUser";
 import { useRouter } from "next/router";
-import localConfig from "../../../config/localConfig";
+import localConfig from "../../../config/localConfig.example";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
