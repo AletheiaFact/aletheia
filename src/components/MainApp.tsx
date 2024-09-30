@@ -11,7 +11,7 @@ import Header from "./Header/Header";
 import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
-import localConfig from "../../config/localConfig";
+import localConfig from "../../config/localConfig.example";
 
 const copilotDrawerWidth = 350;
 

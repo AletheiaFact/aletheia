@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 import AletheiaSocialMediaIcons from "./AletheiaSocialMediaIcons";
-import localConfig from "../../../config/localConfig";
+import localConfig from "../../../config/localConfig.example";
 import { SocialIcon } from "react-social-icons";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";

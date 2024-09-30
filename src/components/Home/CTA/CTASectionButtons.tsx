@@ -8,7 +8,7 @@ import { useAppSelector } from "../../../store/store";
 import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../../atoms/currentUser";
-import localConfig from "../../../../config/localConfig";
+import localConfig from "../../../../config/localConfig.example";
 
 const CTASectionButtons = () => {
     const { t } = useTranslation();
