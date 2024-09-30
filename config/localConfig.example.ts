@@ -8,7 +8,7 @@ const localConfig: LocalConfig = {
             show: true,
             redirectUrl: "",
         },
-        repositoryUrl: "",
+        repositoryLink: "",
     },
     header: {
         donateButton: {
