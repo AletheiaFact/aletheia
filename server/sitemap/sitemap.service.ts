@@ -36,6 +36,9 @@ export class SitemapService {
         );
 
         for (const personality of personalities) {
+            if (!personality) {
+                continue;
+            }
             sites.push({ url: `/personality/${personality.slug}` });
             const claims = await this.claimService.listAll(0, 0, "asc", {
                 personality: personality._id,

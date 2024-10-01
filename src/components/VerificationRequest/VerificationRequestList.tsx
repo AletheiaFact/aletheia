@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "next-i18next";
-import { useAtom } from "jotai";
-import { currentNameSpace } from "../../atoms/namespace";
 import verificationRequestApi from "../../api/verificationRequestApi";
-import AletheiaButton from "../Button";
-import { Grid } from "@mui/material";
+import TopicsApi from "../../api/topicsApi";
+import FilterPopover from "./FilterPopover";
+import ActiveFilters from "./ActiveFilters";
+import { Grid, IconButton, Button } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -12,45 +13,142 @@ import {
     GridRowParams,
 } from "@mui/x-data-grid";
 import colors from "../../styles/colors";
+import { useAppSelector } from "../../store/store";
+import { useDispatch } from "react-redux";
+import { ActionTypes } from "../../store/types";
+import debounce from "lodash.debounce";
+import AletheiaButton from "../Button";
 
 const VerificationRequestList = () => {
     const { t } = useTranslation();
-    const [nameSpace] = useAtom(currentNameSpace);
-    const [verificationRequests, setVerificationRequests] = useState([]);
+    const dispatch = useDispatch();
     const [totalVerificationRequests, setTotalVerificationRequests] =
         useState(0);
-    const [paginationModel, setPaginationModel] = React.useState({
+    const [paginationModel, setPaginationModel] = useState({
         pageSize: 10,
         page: 0,
     });
+    const [filteredRequests, setFilteredRequests] = useState([]);
+    const [filterValue, setFilterValue] = useState([]);
+    const [filterType, setFilterType] = useState("topics");
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [applyFilters, setApplyFilters] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [loading, setLoading] = useState(false);
+
+    const { autoCompleteTopicsResults, filtersUsed, topicFilterUsed } =
+        useAppSelector((state) => ({
+            autoCompleteTopicsResults:
+                state?.search?.autocompleteTopicsResults || [],
+            filtersUsed: state?.search?.searchFilterUsed || [],
+            topicFilterUsed: state?.topicFilterUsed || [],
+        }));
+
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await verificationRequestApi.get({
+                page: paginationModel.page + 1,
+                pageSize: paginationModel.pageSize,
+                topics: topicFilterUsed,
+                filtersUsed: filtersUsed,
+            });
+            if (response) {
+                setTotalVerificationRequests(response.total);
+                setFilteredRequests(response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching verification requests:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [
+        paginationModel.page,
+        paginationModel.pageSize,
+        topicFilterUsed,
+        filtersUsed,
+    ]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await verificationRequestApi.get({
-                    page: paginationModel.page + 1,
-                    pageSize: paginationModel.pageSize,
-                });
-                if (response) {
-                    setVerificationRequests(response.data);
-                    setTotalVerificationRequests(
-                        response.totalVerificationRequests
-                    );
-                }
-            } catch (error) {
-                console.error("Error fetching verification requests:", error);
-            }
-        };
+        if (isInitialLoad || applyFilters) {
+            fetchData();
+            if (isInitialLoad) setIsInitialLoad(false);
+            setApplyFilters(false);
+        }
+    }, [applyFilters, fetchData, isInitialLoad]);
 
-        fetchData();
-    }, [paginationModel, nameSpace]);
+    const fetchTopicList = async (term) => {
+        try {
+            await TopicsApi.searchTopics({ query: term, dispatch });
+        } catch (error) {
+            console.error(`Error: ${error.message}`);
+        }
+    };
 
-    const handleRedirect = useCallback(
-        (data_hash) => () => {
-            window.location.href = `/verification-request/${data_hash}`;
-        },
-        []
-    );
+    const handleFilterClick = (event) => setAnchorEl(event.currentTarget);
+    const handleFilterClose = () => setAnchorEl(null);
+
+    const handleFilterApply = () => {
+        setAnchorEl(null);
+        if (filterType === "topics" && filterValue) {
+            const topicsToAdd = Array.isArray(filterValue)
+                ? filterValue
+                : [filterValue];
+            const updatedTopics = [
+                ...new Set([...topicFilterUsed, ...topicsToAdd]),
+            ];
+            dispatch({
+                type: ActionTypes.SET_TOPIC_FILTER_USED,
+                topicFilterUsed: updatedTopics,
+            });
+        }
+        if (filterType === "content" && filterValue) {
+            dispatch({
+                type: ActionTypes.SET_SEARCH_FILTER_USED,
+                filterUsed: [...filtersUsed, filterValue],
+            });
+        }
+        setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        setApplyFilters(true);
+    };
+
+    const handleRemoveFilter = (removedFilter) => {
+        if (removedFilter.type === "topic") {
+            const updatedTopics = topicFilterUsed.filter(
+                (topic) => topic !== removedFilter.value
+            );
+            dispatch({
+                type: ActionTypes.SET_TOPIC_FILTER_USED,
+                topicFilterUsed: updatedTopics,
+            });
+        } else if (removedFilter.type === "content") {
+            const updatedFilters = filtersUsed.filter(
+                (filter) => filter !== removedFilter.value
+            );
+            dispatch({
+                type: ActionTypes.SET_SEARCH_FILTER_USED,
+                filterUsed: updatedFilters,
+            });
+        }
+        setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        setApplyFilters(true);
+    };
+
+    const handlePaginationChange = (newModel) => {
+        setPaginationModel(newModel);
+        setApplyFilters(true);
+    };
+
+    const handleResetFilters = () => {
+        setFilterValue([]);
+        setPaginationModel({ pageSize: 10, page: 0 });
+        dispatch({
+            type: ActionTypes.SET_TOPIC_FILTER_USED,
+            topicFilterUsed: [],
+        });
+        dispatch({ type: ActionTypes.SET_SEARCH_FILTER_USED, filterUsed: [] });
+        setApplyFilters(true);
+    };
 
     const formatPublicationDate = (dateString) => {
         const publicationDate = new Date(dateString);
@@ -129,53 +227,97 @@ const VerificationRequestList = () => {
                                 )}
                             </AletheiaButton>
                         }
-                        onClick={handleRedirect(params.row.data_hash)}
+                        onClick={() =>
+                            (window.location.href = `/verification-request/${params.row.data_hash}`)
+                        }
                         label={t("verificationRequest:openVerificationRequest")}
                     />,
                 ],
             },
         ],
-        [handleRedirect, t]
+        [t]
     );
 
     const truncateWithEllipsis = useCallback((value, maxLength) => {
         if (!value) return "";
-        const truncatedValue = value.substring(0, maxLength);
         return value.length > maxLength
-            ? `${truncatedValue}...`
-            : truncatedValue;
+            ? `${value.substring(0, maxLength)}...`
+            : value;
     }, []);
 
+    const debouncedSetFilterValue = useCallback(
+        debounce((value) => setFilterValue(value), 300),
+        []
+    );
+
     return (
-        <Grid
-            container
-            justifyContent="center"
-            alignItems="stretch"
-            spacing={1}
-            my={2}
-        >
-            <Grid item xs={10}>
-                <h2>
-                    {t("verificationRequest:verificationRequestListHeader")}
-                </h2>
+        <Grid container spacing={2} justifyContent="center">
+            <Grid
+                item
+                xs={10}
+                container
+                alignItems="center"
+                justifyContent="space-between"
+            >
+                <Grid item>
+                    <IconButton onClick={handleFilterClick}>
+                        <FilterListIcon />
+                    </IconButton>
+                    <FilterPopover
+                        anchorEl={anchorEl}
+                        onClose={handleFilterClose}
+                        filterType={filterType}
+                        setFilterType={setFilterType}
+                        setFilterValue={debouncedSetFilterValue}
+                        fetchTopicList={fetchTopicList}
+                        autoCompleteTopicsResults={autoCompleteTopicsResults}
+                        onFilterApply={handleFilterApply}
+                        t={t}
+                    />
+                </Grid>
+                {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
+                    <Grid item>
+                        <Button onClick={handleResetFilters}>
+                            {t("verificationRequest:resetFiltersButton")}
+                        </Button>
+                    </Grid>
+                )}
             </Grid>
+            {(topicFilterUsed.length > 0 || filtersUsed.length > 0) && (
+                <Grid item xs={10}>
+                    <ActiveFilters
+                        topicFilterUsed={topicFilterUsed}
+                        filtersUsed={filtersUsed}
+                        onRemoveFilter={handleRemoveFilter}
+                        t={t}
+                    />
+                </Grid>
+            )}
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 <DataGrid
-                    rows={verificationRequests}
+                    rows={filteredRequests}
                     columns={columns}
                     paginationModel={paginationModel}
                     pageSizeOptions={[5, 10, 50]}
-                    onPaginationModelChange={setPaginationModel}
+                    onPaginationModelChange={handlePaginationChange}
                     getRowId={(row) => row._id}
                     autoHeight
                     rowCount={totalVerificationRequests}
                     paginationMode="server"
+                    loading={loading}
                     sx={{
                         "& .MuiDataGrid-columnHeader": {
                             backgroundColor: colors.lightGraySecondary,
                             color: colors.bluePrimary,
                             fontWeight: "bold",
                             borderBottom: `2px solid ${colors.blueSecondary}`,
+                        },
+                        "& .MuiIconButton-root": {
+                            color:
+                                filtersUsed.length > 0 ||
+                                topicFilterUsed.length > 0
+                                    ? colors.bluePrimary
+                                    : "default",
                         },
                     }}
                 />

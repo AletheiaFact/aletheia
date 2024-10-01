@@ -109,9 +109,15 @@ export class PersonalityService {
             );
         }
 
-        return Promise.all(
+        return await Promise.all(
             personalities.map(async (personality) => {
-                return await this.postProcess(personality, language);
+                try {
+                    return await this.postProcess(personality, language);
+                } catch (error) {
+                    this.logger.log(
+                        `It was not possible to do postProcess the personality ${personality}`
+                    );
+                }
             })
         );
     }

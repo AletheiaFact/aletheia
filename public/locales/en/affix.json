@@ -5,5 +5,6 @@
     "affixButtonCreateVerifiedSources": "Click here to add a source",
     "affixButtonCreateVerificationRequest": "Click here to add a verification request",
     "affixCallToActionButton": "Click here",
-    "AffixCloseTooltip": "Close"
+    "AffixCloseTooltip": "Close",
+    "affixCopilotTitle": "Click here to open the Aletheia's Assistant"
 }

@@ -41,5 +41,14 @@
     "dateFieldError": "Por favor, insira uma data",
     "heardFromExtraText": "Este campo não é obrigatório, mas agradeceríamos saber onde você viu ou ouviu isso!",
     "sourceExtraText": "Este campo não é obrigatório, mas agradeceríamos saber a fonte da informação para a denúncia!",
-    "emailFromExtraText": "Este campo não é obrigatório, mas agradeceríamos se você deixasse seu e-mail para receber a revisão."
+    "emailFromExtraText": "Este campo não é obrigatório, mas agradeceríamos se você deixasse seu e-mail para receber a revisão.",
+    "resetFiltersButton": "Redefinir Filtros",
+    "activeFiltersLabel": "Filtros Ativos:",
+    "topicFilterLabel": "Tópico:",
+    "contentFilterLabel": "Conteúdo:",
+    "filterByTypeLabel": "Filtrar por",
+    "topicsFilterOption": "Tópicos",
+    "contentFilterOption": "Conteudo",
+    "filterByContentLabel": "Filtrar por Conteudo",
+    "applyButtonLabel": "Aplicar"
 }
