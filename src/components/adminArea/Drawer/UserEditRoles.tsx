@@ -24,13 +24,8 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
             ? filterObjectByKeys(currentUser?.role, [nameSpace])
             : currentUser?.role;
 
-    const getBorderColor = (key) =>
+    const getComponentColor = () =>
         nameSpace === NameSpaceEnum.Main
-    ? colors.bluePrimary 
-    : colors.blueSecondary;
- 
-    const getRadioColor = (key) => 
-        nameSpace === NameSpaceEnum.Main 
     ? colors.bluePrimary 
     : colors.blueSecondary;
 
@@ -63,7 +58,7 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
                         <fieldset
                             style={{
                                 padding: 8,
-                                border: `1px solid ${getBorderColor(role)}`,
+                                border: `1px solid ${getComponentColor()}`,
                             }}
                         >
                             <legend style={{ width: "fit-content" }}>
@@ -93,7 +88,7 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
                                             value={role}
                                             control={<Radio 
                                                 style={{
-                                                color: getRadioColor(role),
+                                                color: getComponentColor(),
                                             }}
                                             />}
                                             label={t(`admin:role-${role}`)}
