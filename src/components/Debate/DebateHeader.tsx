@@ -10,9 +10,12 @@ import colors from "../../styles/colors";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
+import AletheiaButton, { ButtonType } from "../Button";
+import { EditOutlined } from "@ant-design/icons";
+import { Roles } from "../../types/enums";
 
 const { Title } = Typography;
-const DebateHeader = ({ title, personalities }) => {
+const DebateHeader = ({ claim, title, personalities, userRole }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
@@ -35,6 +38,11 @@ const DebateHeader = ({ title, personalities }) => {
                 .catch(() => {});
         }
     }, [state, personalities]);
+
+    const baseHref = `/${
+        nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""
+    }`;
+    const href = `${baseHref}claim/${claim?.claimId}/debate/edit`;
 
     const { vw } = useAppSelector((state) => state);
     return (
@@ -72,6 +80,18 @@ const DebateHeader = ({ title, personalities }) => {
                     {title}
                 </Title>
             </div>
+            {userRole === Roles.Admin && claim?.claimId ? (
+                <AletheiaButton
+                    type={ButtonType.blue}
+                    href={href}
+                    style={{
+                        margin: 10,
+                    }}
+                >
+                    <span>{t("debates:openEditDebateMode")}</span>
+                    <EditOutlined color={colors.white} />
+                </AletheiaButton>
+            ) : null}
             <Row
                 style={{
                     justifyContent: "space-evenly",
