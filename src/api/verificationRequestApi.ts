@@ -141,13 +141,15 @@ const removeVerificationRequestFromGroup = (id, params, t) => {
         });
 };
 
-const deleteVerificationRequestTopic = (topics, data_hash) => {
+const deleteVerificationRequestTopic = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}/topics`, topics)
         .then((response) => {
+            message.success(t("verificationRequest:deleteTopics"));
             return response.data;
         })
         .catch((err) => {
+            message.error(t("verificationRequest:deleteTopicsError"));
             throw err;
         });
 };

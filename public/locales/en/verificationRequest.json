@@ -50,5 +50,7 @@
     "topicsFilterOption": "Topics",
     "contentFilterOption": "Content",
     "filterByContentLabel": "Filter by Content",
-    "applyButtonLabel": "Apply"
+    "applyButtonLabel": "Apply",
+    "deleteTopics": "Topic deleted successfully",
+    "deleteTopicsError": "Error when deleting topic"
 }

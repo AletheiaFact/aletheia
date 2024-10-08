@@ -19,6 +19,7 @@ export class EditorConfig {
         websocketProvider: any,
         enableEditorAnnotations: boolean
     ): Partial<NodeExtension | PlainExtension | MarkExtension>[] {
+        console.log(enableEditorAnnotations, 'Teste'); 
         const baseExtensions: Partial<
             NodeExtension | PlainExtension | LinkExtension
         >[] = [

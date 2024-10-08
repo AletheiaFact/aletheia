@@ -6,5 +6,7 @@
   "getTopicsFailed": "Error while fetching topics",
   "addTopicsButton": "Add topics",
   "inputRule": "Required field",
-  "noTopics": "No topics added"
+  "noTopics": "No topics added",
+  "deleteTopics": "Topic deleted successfully",
+  "deleteTopicsError": "Error when deleting topic"
 }
