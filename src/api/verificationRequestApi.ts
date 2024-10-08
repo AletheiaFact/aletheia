@@ -145,11 +145,11 @@ const deleteVerificationRequestTopic = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}/topics`, topics)
         .then((response) => {
-            message.success(t("verificationRequest:deleteTopics"));
+            message.success(t("topics:deleteTopics"));
             return response.data;
         })
         .catch((err) => {
-            message.error(t("verificationRequest:deleteTopicsError"));
+            message.error(t("topics:deleteTopicsError"));
             throw err;
         });
 };

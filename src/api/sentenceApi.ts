@@ -6,11 +6,10 @@ const request = axios.create({
     baseURL: `/api/sentence`,
 });
 
-const getSentenceTopicsByDatahash = (data_hash, t) => {
+const getSentenceTopicsByDatahash = (data_hash) => {
     return request
         .get(`/${data_hash}`)
         .then((response) => {
-            message.success(t("topics:createTopicsSuccess"));
             return response.data;
         })
         .catch((err) => {
