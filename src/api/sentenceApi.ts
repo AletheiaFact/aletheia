@@ -1,4 +1,5 @@
 import axios from "axios";
+import { message } from "antd";
 
 const request = axios.create({
     withCredentials: true,
@@ -16,13 +17,15 @@ const getSentenceTopicsByDatahash = (data_hash) => {
         });
 };
 
-const deleteSentenceTopic = (topics, data_hash) => {
+const deleteSentenceTopic = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}`, topics)
         .then((response) => {
+            message.success(t("topics:deleteTopics"));
             return response.data;
         })
         .catch((err) => {
+            message.error(t("topics:deleteTopicsError"));
             throw err;
         });
 };
