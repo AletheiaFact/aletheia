@@ -17,7 +17,7 @@ const MetricsOverview = ({ stats }) => {
                 offset={2}
                 span={18}
             >
-                {stats?.reviews && stats?.reviews.length && (
+                {stats?.reviews && stats?.reviews.length > 0 ? (
                     <div>
                         <p
                             style={{
@@ -41,6 +41,8 @@ const MetricsOverview = ({ stats }) => {
                             {t("metrics:header")}
                         </p>
                     </div>
+                ) : (
+                    t("metrics:empytOverview")
                 )}
                 <ReviewStats stats={stats} countInTitle={true} type="line" />
             </Col>
