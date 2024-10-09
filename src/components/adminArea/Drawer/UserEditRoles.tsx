@@ -24,6 +24,11 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
             ? filterObjectByKeys(currentUser?.role, [nameSpace])
             : currentUser?.role;
 
+    const getComponentColor = () =>
+        nameSpace === NameSpaceEnum.Main
+    ? colors.bluePrimary 
+    : colors.blueSecondary;
+
     const handleChangeRole = (value: Roles, key) => {
         setUserRole((role) => {
             return {
@@ -44,6 +49,7 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
 
         return filteredObject;
     }
+
     return (
         <>
             {currentUserRoles &&
@@ -52,7 +58,7 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
                         <fieldset
                             style={{
                                 padding: 8,
-                                border: `1px solid ${colors.bluePrimary}`,
+                                border: `1px solid ${getComponentColor()}`,
                             }}
                         >
                             <legend style={{ width: "fit-content" }}>
@@ -80,7 +86,11 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
                                             disabled={!shouldEdit}
                                             key={role}
                                             value={role}
-                                            control={<Radio />}
+                                            control={<Radio 
+                                                style={{
+                                                color: getComponentColor(),
+                                            }}
+                                            />}
                                             label={t(`admin:role-${role}`)}
                                         />
                                     ))}
