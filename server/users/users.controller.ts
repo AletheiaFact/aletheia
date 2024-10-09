@@ -47,14 +47,8 @@ export class UsersController {
     public async login(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
         const authType = this.configService.get<string>("authentication_type");
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/login",
-                Object.assign(parsedUrl.query, { authType })
-            );
+        const queryObject = Object.assign(parsedUrl.query, { authType });
+        await this.viewService.render(req, res, "/login", queryObject);
     }
 
     @IsPublic()
@@ -62,9 +56,12 @@ export class UsersController {
     @Get("sign-up")
     public async signUp(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/sign-up", Object.assign(parsedUrl.query));
+        await this.viewService.render(
+            req,
+            res,
+            "/sign-up",
+            Object.assign(parsedUrl.query)
+        );
     }
 
     @IsPublic()
@@ -105,15 +102,13 @@ export class UsersController {
             },
             nameSpaceSlug: nameSpace,
         });
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/admin-page",
-            Object.assign(parsedUrl.query, {
-                users,
-                nameSpace,
-            })
-        );
+
+        const queryObject = Object.assign(parsedUrl.query, {
+            users,
+            nameSpace,
+        });
+
+        await this.viewService.render(req, res, "/admin-page", queryObject);
     }
 
     @ApiTags("user")
@@ -179,15 +174,12 @@ export class UsersController {
         const parsedUrl = parse(req.url, true);
         const user = await this.usersService.getById(req.user._id);
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/profile-page",
-            Object.assign(parsedUrl.query, {
-                user,
-                nameSpace: req.params.namespace,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            user,
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService.render(req, res, "/profile-page", queryObject);
     }
 
     @IsPublic()

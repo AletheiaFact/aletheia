@@ -133,7 +133,7 @@ const VerificationRequestCard = ({
                         {t("verificationRequest:verificationRequestTagSource")}:
                     </strong>
                     <Link href={verificationRequest.source.href} passHref>
-                        <a>{truncateUrl(verificationRequest.source.href)}</a>
+                        {truncateUrl(verificationRequest.source.href)}
                     </Link>
                 </CustomTag>
             );

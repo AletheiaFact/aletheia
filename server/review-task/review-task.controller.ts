@@ -176,21 +176,18 @@ export class ReviewTaskController {
         const enableViewReportPreview =
             this.featureFlagService.isEnableViewReportPreview();
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/kanban-page",
-            Object.assign(parsedUrl.query, {
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                enableCollaborativeEditor,
-                enableEditorAnnotations,
-                enableCopilotChatBot,
-                enableAddEditorSourcesWithoutSelecting,
-                enableReviewersUpdateReport,
-                enableViewReportPreview,
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                nameSpace: req.params.namespace,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService.render(req, res, "/kanban-page", queryObject);
     }
 }

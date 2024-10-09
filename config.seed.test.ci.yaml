@@ -3,7 +3,7 @@ services:
     conf:
       disable_smtp: true
       db:
-        connection_uri: {env(CI_MONGODB_URI)}
+        connection_uri: { env(CI_MONGODB_URI) }
         options:
           useUnifiedTopology: true
           useNewUrlParser: true
@@ -12,13 +12,11 @@ services:
       users:
         - name: Test User
           email: test-cypress@aletheiafact.org
-          password: {env(CI_ORY_USER_PASSWORD)}
+          password: { env(CI_ORY_USER_PASSWORD) }
           sendAuthDetails: false
           isTestUser: true
-          # oryId: {env(CI_ORY_USERID)}
-          role: {
-            main: super-admin
-          }
+          # oryId: { env(CI_ORY_USERID) }
+          role: { main: super-admin }
       throttle:
         ttl: 60
         limit: 1000
@@ -31,11 +29,11 @@ services:
         # access_token: {env(ORY_ACCESS_TOKEN)}
         # schema_id: {env(ALETHEIA_SCHEMA_ID)}
       feature_flag:
-        url: {env(GITLAB_FEATURE_FLAG_URL)}
+        url: { env(GITLAB_FEATURE_FLAG_URL) }
         appName: Staging
-        instanceId: {env(GITLAB_FEATURE_FLAG_INSTANCE_ID)}
+        instanceId: { env(GITLAB_FEATURE_FLAG_INSTANCE_ID) }
       openai:
-        api_key: {env(OPENAI_API_KEY)}
+        api_key: { env(OPENAI_API_KEY) }
       zenvia:
-        api_url: {env(ZENVIA_API_URL)}
-        api_token: {env(ZENVIA_API_TOKEN)}
+        api_url: { env(ZENVIA_API_URL) }
+        api_token: { env(ZENVIA_API_TOKEN) }

@@ -31,11 +31,12 @@
   "include": [
     "server/**/*",
     "lib/**/*",
+    "./dist/.next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "docs",
-    "server/**/*.spec.ts",
+    "server/**/*.spec.ts"
   ]
 }

@@ -11,6 +11,7 @@ import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.ser
 import { ApiTags } from "@nestjs/swagger";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
+import { NextParsedUrlQuery } from "next/dist/server/request-meta";
 
 @Controller("/")
 export class HomeController {
@@ -85,17 +86,15 @@ export class HomeController {
         );
 
         const stats = await this.statsService.getHomeStats();
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/home-page",
-            Object.assign(parsedUrl.query, {
-                personalities,
-                stats,
-                claims,
-                reviews,
-                nameSpace: req.params.namespace,
-            })
-        );
+
+        const queryObject: NextParsedUrlQuery = Object.assign(parsedUrl.query, {
+            personalities,
+            stats,
+            claims,
+            reviews,
+            nameSpace: req.params.namespace || NameSpaceEnum.Main,
+        });
+
+        await this.viewService.render(req, res, "/home-page", queryObject);
     }
 }

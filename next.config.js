@@ -1,23 +1,27 @@
 // next.config.js
-const withAntdLess = require('next-plugin-antd-less');
+const { i18n } = require("./next-i18next.config");
 
-const { i18n } = require('./next-i18next.config');
-
-module.exports = withAntdLess({
+module.exports = {
     productionBrowserSourceMaps: true,
-    lessVarsFilePath: './src/styles/theme/_variables.less',
-    lessVarsFilePathAppendToEndOfContent: false,
-    // optional https://github.com/webpack-contrib/css-loader#object
-    cssLoaderOptions: {},
     distDir: "./dist/.next",
     i18n,
-    webpack(config) {
-        return config;
-    },
     images: {
-        domains: [
-            'i.creativecommons.org',
-            'upload.wikimedia.org'
-        ]
+        domains: ["i.creativecommons.org", "upload.wikimedia.org"],
     },
-});
+    compiler: {
+        styledComponents: {
+            displayName: true,
+            ssr: true,
+        },
+    },
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
+    transpilePackages: [
+        "@ant-design/icons",
+        "@ant-design/icons-svg",
+        "rc-pagination",
+        "rc-picker",
+        "rc-util", // this is only needed for the Docker build
+    ],
+};
