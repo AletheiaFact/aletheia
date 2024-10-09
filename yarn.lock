@@ -11204,7 +11204,7 @@ __metadata:
     copyfiles: ^2.4.1
     cypress: ^12.17.4
     domino: ^2.1.6
-    dompurify: ^3.0.5
+    dompurify: ^3.1.3
     env-cmd: ^10.1.0
     eslint: 7.0.0
     eslint-config-next: ^12.0.10
@@ -14887,10 +14887,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.0.5":
-  version: 3.0.6
-  resolution: "dompurify@npm:3.0.6"
-  checksum: e5c6cdc5fe972a9d0859d939f1d86320de275be00bbef7bd5591c80b1e538935f6ce236624459a1b0c84ecd7c6a1e248684aa4637512659fccc0ce7c353828a6
+"dompurify@npm:^3.1.3":
+  version: 3.1.6
+  resolution: "dompurify@npm:3.1.6"
+  checksum: cc4fc4ccd9261fbceb2a1627a985c70af231274a26ddd3f643fd0616a0a44099bd9e4480940ce3655612063be4a1fe9f5e9309967526f8c0a99f931602323866
   languageName: node
   linkType: hard
 
