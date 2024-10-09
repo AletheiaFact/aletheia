@@ -70,3 +70,7 @@ data
 # Auto-generated documentation
 docs/compodoc/**/*
 docs/storybook/**/*
+
+
+# config
+config/localConfig.ts
