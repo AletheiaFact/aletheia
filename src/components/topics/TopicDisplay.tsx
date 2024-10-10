@@ -22,6 +22,7 @@ const TopicDisplay = ({
     const [tags, setTags] = useState<any[]>([]);
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    let timeout: NodeJS.Timeout;
 
     useEffect(() => {
         const inputValueFormatted = inputValue.map((inputValue) =>
@@ -44,22 +45,21 @@ const TopicDisplay = ({
         setTags(topicsArray?.concat(filterValues) || []);
     }, [inputValue, topicsArray]);
 
-    const fetchTopicList = async (
-        topic: string
-    ): Promise<{ label: string; value: string }[]> => {
-        const topicSearchResults = await TopicsApi.getTopics({
-            topicName: topic,
-            t: t,
-            dispatch: dispatch,
-        });
+    const fetchTopicList = (topic: string) =>
+        new Promise<{ label: string; value: string }[]>((resolve) => {
+            if (timeout) clearTimeout(timeout);
 
-        return (
-            topicSearchResults?.map((topic) => ({
-                label: topic.name,
-                value: topic.wikidata,
-            })) || []
-        );
-    };
+            timeout = setTimeout(async () => {
+                const topicSearchResults = await TopicsApi.getTopics({
+                    topicName: topic, t, dispatch
+                });
+                resolve(
+                    topicSearchResults?.map(({ name, wikidata }) => ({
+                        label: name, value: wikidata
+                    })) || []
+                );
+            }, 1000);
+        });
 
     const handleClose = async (removedTopicValue: any) => {
         const newTopicsArray = topicsArray.filter(
