@@ -21,6 +21,7 @@ const ClaimSelectType = () => {
         [ContentModelEnum.Image]: <PictureOutlined />,
         [ContentModelEnum.Speech]: <FileOutlined />,
         [ContentModelEnum.Debate]: <VideoCameraOutlined />,
+        [ContentModelEnum.Interview]: <VideoCameraOutlined />,
         [ContentModelEnum.Unattributed]: <FileOutlined />,
     };
 

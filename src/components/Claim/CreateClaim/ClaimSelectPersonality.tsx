@@ -14,7 +14,7 @@ import PersonalityMinimalCard from "../../Personality/PersonalityMinimalCard";
 
 const ClaimSelectPersonality = () => {
     const [state, send] = useAtom(createClaimMachineAtom);
-    const isDebate = stateSelector(state, "setupDebate");
+    const isDebateInterview = stateSelector(state, "setupDebate") || stateSelector(state, "setupInterview");
     const { claimData } = state.context;
     const { personalities } = claimData;
     const { t } = useTranslation();
@@ -23,7 +23,7 @@ const ClaimSelectPersonality = () => {
 
     const disableContinueWithPersonality =
         !claimData.personalities ||
-        (isDebate && claimData.personalities.length < 2);
+        (isDebateInterview && claimData.personalities.length < 2);
 
     const selectPersonality = (personality) => {
         send({
@@ -40,7 +40,7 @@ const ClaimSelectPersonality = () => {
         send({
             type: CreateClaimEvents.addPersonality,
             claimData: {
-                personalities: isDebate
+                personalities: isDebateInterview
                     ? [...claimData.personalities, personality]
                     : [personality],
             },
@@ -93,7 +93,7 @@ const ClaimSelectPersonality = () => {
             </div>
             <PersonalityCreateSearch
                 selectPersonality={
-                    isDebate ? addPersonality : selectPersonality
+                    isDebateInterview ? addPersonality : selectPersonality
                 }
                 withSuggestions={true}
             />

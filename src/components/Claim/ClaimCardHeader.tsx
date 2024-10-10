@@ -18,6 +18,7 @@ const ClaimCardHeader = ({
         [ContentModelEnum.Speech]: t("claim:typeSpeech"),
         [ContentModelEnum.Image]: t("claim:typeImage"),
         [ContentModelEnum.Debate]: t("claim:typeDebate"),
+        [ContentModelEnum.Interview]: t("claim:typeInterview"),
         [ContentModelEnum.Unattributed]: t("claim:typeUnattributed"),
     };
 
