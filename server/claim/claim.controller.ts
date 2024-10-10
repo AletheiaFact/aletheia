@@ -36,14 +36,17 @@ import { SentenceDocument } from "./types/sentence/schemas/sentence.schema";
 import { ImageService } from "./types/image/image.service";
 import { ImageDocument } from "./types/image/schemas/image.schema";
 import { CreateDebateClaimDTO } from "./dto/create-debate-claim.dto";
+import { CreateInterviewClaimDTO } from "./dto/create-interview-claim.dto";
 import { AbilitiesGuard } from "../auth/ability/abilities.guard";
 import {
     AdminUserAbility,
     CheckAbilities,
 } from "../auth/ability/ability.decorator";
 import { DebateService } from "./types/debate/debate.service";
+import { InterviewService } from "./types/interview/interview.service";
 import { EditorService } from "../editor/editor.service";
 import { UpdateDebateDto } from "./dto/update-debate.dto";
+import { UpdateInterviewDto } from "./dto/update-interview.dto";
 import { ParserService } from "./parser/parser.service";
 import { Roles } from "../auth/ability/ability.factory";
 import { ApiTags } from "@nestjs/swagger";
@@ -68,13 +71,14 @@ export class ClaimController {
         private captchaService: CaptchaService,
         private imageService: ImageService,
         private debateService: DebateService,
+        private interviewService: InterviewService,
         private editorService: EditorService,
         private parserService: ParserService,
         private historyService: HistoryService,
         private claimRevisionService: ClaimRevisionService,
         private featureFlagService: FeatureFlagService,
         private groupService: GroupService
-    ) {}
+    ) { }
 
     _verifyInputsQuery(query) {
         const inputs: any = {
@@ -183,9 +187,36 @@ export class ClaimController {
 
             const path =
                 req.user.role[claim.nameSpace] === Roles.Admin ||
-                req.user.role[claim.nameSpace] === Roles.SuperAdmin
+                    req.user.role[claim.nameSpace] === Roles.SuperAdmin
                     ? `/claim/${claim._id}/debate/edit`
                     : `/claim/${claim._id}/debate`;
+            return {
+                title: claim.title,
+                path:
+                    claim.nameSpace !== NameSpaceEnum.Main
+                        ? `/${claim.nameSpace}${path}`
+                        : path,
+            };
+        } catch (error) {
+            return error;
+        }
+    }
+
+    // TODO: create a interview controller under types and move the endpoints to it
+    @ApiTags("claim")
+    @Post("api/claim/interview")
+    async createClaimInterview(
+        @Body() createClaimDTO: CreateInterviewClaimDTO,
+        @Req() req: BaseRequest
+    ) {
+        try {
+            const claim = await this._createClaim(createClaimDTO);
+
+            const path =
+                req.user.role[claim.nameSpace] === Roles.Admin ||
+                    req.user.role[claim.nameSpace] === Roles.SuperAdmin
+                    ? `/claim/${claim._id}/interview/edit`
+                    : `/claim/${claim._id}/interview`;
             return {
                 title: claim.title,
                 path:
@@ -242,6 +273,35 @@ export class ClaimController {
             return newSpeech;
         } else {
             return this.debateService.updateDebateStatus(debateId, isLive);
+        }
+    }
+
+    @ApiTags("claim")
+    @Put("api/claim/interview/:interviewId")
+    async updateClaimInterview(
+        @Param("interviewId") interviewId,
+        @Body() updateClaimInterviewDto: UpdateInterviewDto
+    ) {
+        const { content, personality, isLive } = updateClaimInterviewDto;
+        let newSpeech;
+
+        const claimRevision = await this.claimRevisionService.getByContentId(
+            Types.ObjectId(interviewId)
+        );
+
+        const claimRevisionId = Types.ObjectId(claimRevision._id);
+
+        if (content && personality) {
+            newSpeech = await this.parserService.parse(
+                updateClaimInterviewDto.content,
+                claimRevisionId,
+                updateClaimInterviewDto.personality
+            );
+
+            await this.interviewService.addSpeechToInterview(interviewId, newSpeech._id);
+            return newSpeech;
+        } else {
+            return this.interviewService.updateInterviewStatus(interviewId, isLive);
         }
     }
 
@@ -450,6 +510,37 @@ export class ClaimController {
         );
     }
 
+    @Get("claim/:claimId/interview/edit")
+    @ApiTags("pages")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new AdminUserAbility())
+    public async getInterviewEditor(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const parsedUrl = parse(req.url, true);
+        const { claimId, namespace } = req.params;
+
+        const claim = await this.claimService.getById(
+            claimId,
+            namespace as NameSpaceEnum
+        );
+        const editor = await this.editorService.getByReference(claim.contentId);
+        claim.editor = editor;
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/interview-editor",
+            Object.assign(parsedUrl.query, {
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                nameSpace: req.params.namespace,
+            })
+        );
+    }
+
     @IsPublic()
     @ApiTags("pages")
     @Get("claim/:claimId/debate")
@@ -467,6 +558,32 @@ export class ClaimController {
             req,
             res,
             "/debate-page",
+            Object.assign(parsedUrl.query, {
+                claim,
+                sitekey: this.configService.get<string>("recaptcha_sitekey"),
+                websocketUrl: this.configService.get<string>("websocketUrl"),
+                nameSpace: req.params.namespace,
+            })
+        );
+    }
+
+    @IsPublic()
+    @ApiTags("pages")
+    @Get("claim/:claimId/interview")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async getInterview(@Req() req: BaseRequest, @Res() res: Response) {
+        const parsedUrl = parse(req.url, true);
+        const { claimId, namespace } = req.params;
+
+        const claim = await this.claimService.getById(
+            claimId,
+            namespace as NameSpaceEnum
+        );
+
+        await this.viewService.getNextServer().render(
+            req,
+            res,
+            "/interview-page",
             Object.assign(parsedUrl.query, {
                 claim,
                 sitekey: this.configService.get<string>("recaptcha_sitekey"),
@@ -527,12 +644,12 @@ export class ClaimController {
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
-                  {
-                      slug: query.personality,
-                      isDeleted: false,
-                  },
-                  req.language
-              )
+                {
+                    slug: query.personality,
+                    isDeleted: false,
+                },
+                req.language
+            )
             : null;
 
         await this.viewService.getNextServer().render(

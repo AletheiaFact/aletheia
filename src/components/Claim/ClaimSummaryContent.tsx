@@ -38,6 +38,11 @@ const ClaimSummaryContent = ({
             title: claimTitle,
             contentHeight: "5.3em",
         },
+        [ContentModelEnum.Interview]: {
+            linkText: "claim:cardLinkToInterview",
+            title: claimTitle,
+            contentHeight: "5.3em",
+        },
         [ContentModelEnum.Unattributed]: {
             linkText: "claim:cardLinkToFullText",
             title: claimContent,
@@ -49,10 +54,10 @@ const ClaimSummaryContent = ({
 
     const elipsizedTitleProps: React.CSSProperties = isImage
         ? {
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-          }
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+        }
         : {};
 
     return (

@@ -32,7 +32,7 @@ export class ClaimReviewService {
         private imageService: ImageService,
         private editorParseService: EditorParseService,
         private wikidata: WikidataService
-    ) {}
+    ) { }
 
     async listAll({ page, pageSize, order, query, latest = false }) {
         // Currently only list claim reviews
@@ -376,6 +376,7 @@ export class ClaimReviewService {
 
         const isContentImage = claim.contentModel === ContentModelEnum.Image;
         const isContentDebate = claim.contentModel === ContentModelEnum.Debate;
+        const isContentInterview = claim.contentModel === ContentModelEnum.Interview;
         const isContentInformativeNews =
             claim.contentModel === ContentModelEnum.Unattributed;
 
@@ -410,7 +411,13 @@ export class ClaimReviewService {
                 nameSpace !== NameSpaceEnum.Main
                     ? `/${nameSpace}/claim/${review.target.latestRevision.claimId}/debate`
                     : `/claim/${review.target.latestRevision.claimId}/debate`;
-        }
+        };
+        if (isContentInterview) {
+            reviewHref =
+                nameSpace !== NameSpaceEnum.Main
+                    ? `/${nameSpace}/claim/${review.target.latestRevision.claimId}/interview`
+                    : `/claim/${review.target.latestRevision.claimId}/interview`;
+        };
 
         return {
             content,

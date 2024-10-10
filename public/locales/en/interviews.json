@@ -1,0 +1,10 @@
+{
+    "liveLabel": "Live",
+    "addClaimEditorButton": "Add claim from",
+    "addQuestionEditorButton" : "Adicionar pergunta de", 
+    "saveButtonLabel": "Save",
+    "isEnded": "Interview ended",
+    "seeInterview": "Watch the interview reviews",
+    "finishInterviewButtonLabel": "Finish interview",
+    "reopenInterviewButtonLabel": "Reopen interview"
+}

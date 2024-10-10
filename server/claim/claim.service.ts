@@ -20,11 +20,11 @@ import { GroupService } from "../group/group.service";
 type ClaimMatchParameters = (
     | { _id: string; isHidden?: boolean; nameSpace?: string }
     | {
-          personalities: string;
-          slug: string;
-          isHidden?: boolean;
-          nameSpace?: string;
-      }
+        personalities: string;
+        slug: string;
+        isHidden?: boolean;
+        nameSpace?: string;
+    }
 ) &
     FilterQuery<ClaimDocument>;
 
@@ -42,7 +42,7 @@ export class ClaimService {
         private reviewTaskService: ReviewTaskService,
         private util: UtilService,
         private groupService: GroupService
-    ) {}
+    ) { }
 
     async listAll(page, pageSize, order, query) {
         if (!query.isHidden && query.personalities) {
@@ -398,7 +398,8 @@ export class ClaimService {
             processedClaim.content = this.getClaimContent(processedClaim);
 
             if (processedClaim?.content) {
-                if (processedClaim?.contentModel === ContentModelEnum.Debate) {
+                if (processedClaim?.contentModel === ContentModelEnum.Debate ||
+                    processedClaim?.contentModel === ContentModelEnum.Interview) {
                     processedClaim.content.content =
                         processedClaim.content.content.map((speech) => {
                             const content = this.transformContentObject(

@@ -14,6 +14,7 @@ import { ParagraphModule } from "../types/paragraph/paragraph.module";
 import { SpeechModule } from "../types/speech/speech.module";
 import { ImageModule } from "../types/image/image.module";
 import { DebateModule } from "../types/debate/debate.module";
+import { InterviewModule } from "../types/interview/interview.module";
 import { ClaimRevisionController } from "./claim-revision.controller";
 import { UtilService } from "../../util";
 
@@ -33,6 +34,7 @@ const ClaimRevisionModel = MongooseModule.forFeature([
         SpeechModule,
         ImageModule,
         DebateModule,
+        InterviewModule,
         ConfigModule,
         HttpModule,
         ViewModule,
@@ -42,4 +44,4 @@ const ClaimRevisionModel = MongooseModule.forFeature([
     exports: [ClaimRevisionService],
     providers: [UtilService, ClaimRevisionService],
 })
-export class ClaimRevisionModule {}
+export class ClaimRevisionModule { }

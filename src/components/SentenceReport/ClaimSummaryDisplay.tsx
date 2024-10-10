@@ -58,6 +58,17 @@ const ClaimSummaryDisplay = ({
             title: `"(...) ${content}"`,
             speechTypeTranslation: "claim:typeDebate",
         },
+        [ContentModelEnum.Interview]: {
+            linkText: "claim:cardLinkToInterview",
+            contentPath: generateSentenceContentPath(
+                nameSpace,
+                personality,
+                claim,
+                claim?.contentModel
+            ),
+            title: `"(...) ${content}"`,
+            speechTypeTranslation: "claim:typeInterview",
+        },
         [ContentModelEnum.Unattributed]: {
             linkText: "claim:cardLinkToFullText",
             contentPath: generateSentenceContentPath(

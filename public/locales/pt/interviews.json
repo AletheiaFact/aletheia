@@ -1,0 +1,10 @@
+{
+    "liveLabel": "Ao vivo",
+    "addClaimEditorButton": "Adicionar afirmação de",
+    "addQuestionEditorButton" : "Adicionar pergunta de", 
+    "saveButtonLabel": "Salvar",
+    "isEnded": "Entrevista encerrada",
+    "seeInterview": "Acompanhe as checagens da entrevista",
+    "finishInterviewButtonLabel": "Encerrar entrevista",
+    "reopenInterviewButtonLabel": "Reabrir entrevista"
+}

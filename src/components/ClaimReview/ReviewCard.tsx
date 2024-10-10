@@ -47,6 +47,10 @@ const ReviewCard = ({ review, summarized = false }) => {
             linkText: "claim:cardLinkToDebate",
             title: `"(...) ${content.content}"`,
         },
+        [ContentModelEnum.Interview]: {
+            linkText: "claim:cardLinkToInterview",
+            title: `"(...) ${content.content}"`,
+        },
         [ContentModelEnum.Unattributed]: {
             linkText: "claim:cardLinkToFullText",
             title: `"(...) ${content.content}"`,
@@ -57,12 +61,12 @@ const ReviewCard = ({ review, summarized = false }) => {
     const href = reviewHref
         ? reviewHref
         : generateSentenceContentPath(
-              nameSpace,
-              personalityItem,
-              claimItem,
-              claimItem?.contentModel,
-              content?.data_hash
-          );
+            nameSpace,
+            personalityItem,
+            claimItem,
+            claimItem?.contentModel,
+            content?.data_hash
+        );
 
     return (
         <CardBase>
@@ -104,7 +108,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                                     borderRadius: 50,
                                     background:
                                         reviewColors[
-                                            content.props.classification
+                                        content.props.classification
                                         ],
                                     width: 10,
                                 }}

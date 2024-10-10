@@ -16,6 +16,7 @@ import { SentenceModule } from "./types/sentence/sentence.module";
 import { StateEventModule } from "../state-event/state-event.module";
 import { ImageModule } from "./types/image/image.module";
 import { DebateModule } from "./types/debate/debate.module";
+import { InterviewModule } from "./types/interview/interview.module";
 import { EditorModule } from "../editor/editor.module";
 import { AbilityModule } from "../auth/ability/ability.module";
 import { UtilService } from "../util";
@@ -45,6 +46,7 @@ const ClaimModel = MongooseModule.forFeature([
         CaptchaModule,
         ImageModule,
         DebateModule,
+        InterviewModule,
         EditorModule,
         AbilityModule,
         FeatureFlagModule,
@@ -54,4 +56,4 @@ const ClaimModel = MongooseModule.forFeature([
     providers: [UtilService, ClaimService],
     controllers: [ClaimController],
 })
-export class ClaimModule {}
+export class ClaimModule { }

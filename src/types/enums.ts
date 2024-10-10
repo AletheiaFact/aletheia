@@ -27,12 +27,14 @@ enum ContentModelEnum {
     Speech = "Speech",
     Image = "Image",
     Debate = "Debate",
+    Interview = "Interview",
     Unattributed = "Unattributed",
 }
 
 export enum TargetModel {
     Claim = "Claim",
     Debate = "Debate",
+    Interview = "Interview",
     Personality = "Personality",
     ClaimReview = "ClaimReview",
     ReviewTask = "ReviewTask",

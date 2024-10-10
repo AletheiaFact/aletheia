@@ -12,6 +12,7 @@ import {
 import { ContentModelEnum } from "../../types/enums";
 import { ImageService } from "../types/image/image.service";
 import { DebateService } from "../types/debate/debate.service";
+import { InterviewService } from "../types/interview/interview.service";
 import { FindAllOptions } from "../../personality/personality.service";
 import { UtilService } from "../../util";
 
@@ -27,6 +28,7 @@ export class ClaimRevisionService {
         private parserService: ParserService,
         private imageService: ImageService,
         private debateService: DebateService,
+        private interviewService: InterviewService,
         private util: UtilService
     ) {
         this.optionsToUpdate = {
@@ -187,6 +189,9 @@ export class ClaimRevisionService {
                 )._id;
             case ContentModelEnum.Debate:
                 return (await this.debateService.create(claim, claimRevisionId))
+                    ._id;
+            case ContentModelEnum.Interview:
+                return (await this.interviewService.create(claim, claimRevisionId))
                     ._id;
             case ContentModelEnum.Unattributed:
                 return (

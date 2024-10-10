@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { createClaimMachineAtom } from "../../../machines/createClaim/provider";
 import {
     addDebateSelector,
+    addInterviewSelector,
     addUnattributedSelector,
     addImageSelector,
     addSpeechSelector,
@@ -13,6 +14,7 @@ import {
 import Loading from "../../Loading";
 import ClaimCreate from "./ClaimCreate";
 import ClaimCreateDebate from "./ClaimCreateDebate";
+import ClaimCreateInterview from "./ClaimCreateInterview";
 import ClaimSelectPersonality from "./ClaimSelectPersonality";
 import ClaimSelectType from "./ClaimSelectType";
 import ClaimUploadImage from "./ClaimUploadImage";
@@ -30,21 +32,25 @@ const CreateClaimView = () => {
     const notStarted = stateSelector(state, "notStarted");
     const setupSpeech = stateSelector(state, "setupSpeech");
     const setupDebate = stateSelector(state, "setupDebate");
+    const setupInterview = stateSelector(state, "setupInterview");
     const addImage = addImageSelector(state);
     const addSpeech = addSpeechSelector(state);
     const addDebate = addDebateSelector(state);
+    const addInterview = addInterviewSelector(state);
     const addUnattributed = addUnattributedSelector(state);
 
-    const showPersonality = addSpeech || addImage || addDebate;
+    const showPersonality = addSpeech || addImage || addDebate || addInterview;
     const { claimData } = state.context;
     const isLoading = !(
         notStarted ||
         setupSpeech ||
         setupImage ||
         setupDebate ||
+        setupInterview ||
         addImage ||
         addSpeech ||
         addDebate ||
+        addInterview ||
         addUnattributed
     );
 
@@ -93,12 +99,13 @@ const CreateClaimView = () => {
                     <CreateClaimHeader claimData={claimData} />
                 )}
                 {notStarted && <ClaimSelectType />}
-                {(setupSpeech || setupImage || setupDebate) && (
+                {(setupSpeech || setupImage || setupDebate || setupInterview) && (
                     <ClaimSelectPersonality />
                 )}
                 {addImage && <ClaimUploadImage />}
                 {addSpeech && <ClaimCreate />}
                 {addDebate && <ClaimCreateDebate />}
+                {addInterview && <ClaimCreateInterview />}
                 {isLoading && <Loading />}
                 {addUnattributed && <ClaimCreate />}
             </Col>

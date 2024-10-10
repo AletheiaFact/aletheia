@@ -24,10 +24,11 @@ export const generateReviewContentPath = (
         case ContentModelEnum.Speech:
             return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
         case ContentModelEnum.Image:
-            return `${basePath}${
-                personality ? `/personality/${personality?.slug}` : ""
-            }/claim/${claim?.slug}/image/${data_hash}`;
+            return `${basePath}${personality ? `/personality/${personality?.slug}` : ""
+                }/claim/${claim?.slug}/image/${data_hash}`;
         case ContentModelEnum.Debate:
+            return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
+        case ContentModelEnum.Interview:
             return `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}/sentence/${data_hash}`;
         case ContentModelEnum.Unattributed:
             return `${basePath}/claim/${claim?.slug}/sentence/${data_hash}`;

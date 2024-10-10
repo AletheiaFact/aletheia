@@ -26,6 +26,13 @@ const addDebateSelector = (state) => {
     );
 };
 
+const addInterviewSelector = (state) => {
+    return (
+        state.matches(CreateClaimStates.personalityAdded) &&
+        state.context.claimData.contentModel === ContentModelEnum.Interview
+    );
+};
+
 const addUnattributedSelector = (state) => {
     return (
         state.matches(CreateClaimStates.personalityAdded) &&
@@ -38,5 +45,6 @@ export {
     addSpeechSelector,
     stateSelector,
     addDebateSelector,
+    addInterviewSelector,
     addUnattributedSelector,
 };

@@ -42,14 +42,15 @@ const ClaimCard = ({
     const [nameSpace] = useAtom(currentNameSpace);
     const isSpeech = claim?.contentModel === ContentModelEnum.Speech;
     const isDebate = claim?.contentModel === ContentModelEnum.Debate;
+    const isInterview = claim?.contentModel === ContentModelEnum.Interview;
     const isUnattributed =
         claim?.contentModel === ContentModelEnum.Unattributed;
-    const isInsideDebate =
-        selectedTarget?.contentModel === ContentModelEnum.Debate;
+    const isInsideDebateInterview =
+        selectedTarget?.contentModel === ContentModelEnum.Debate || selectedTarget?.contentModel === ContentModelEnum.Interview;
     const shouldCreateFirstParagraph = isSpeech || isUnattributed;
 
     const dispatchPersonalityAndClaim = () => {
-        if (!isInsideDebate) {
+        if (!isInsideDebateInterview) {
             // when selecting a claim from the debate page to review or to read,
             // we don't want to change the selected claim
             // se we can keep reference to the debate
@@ -79,6 +80,8 @@ const ClaimCard = ({
 
     if (isDebate) {
         href += `claim/${claim.claimId}/debate`;
+    } else if (isInterview) {
+        href += `claim/${claim.claimId}/interview`;
     } else if (personality && personality.slug) {
         href += `personality/${personality.slug}/claim/${claim.slug}`;
     } else {
@@ -181,7 +184,7 @@ const ClaimCard = ({
                     </Paragraph>
                 </Col>
                 <Col>
-                    {!isInsideDebate && (
+                    {!isInsideDebateInterview && (
                         <Button
                             type={ButtonType.blue}
                             href={href}

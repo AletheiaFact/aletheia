@@ -23,6 +23,7 @@ describe("ClaimController (e2e)", () => {
     const imageSources1: string[] = ["http://wikimedia.org"];
     const imageSources2: string[] = ["http://wikidata.org"];
     const debateSources: string[] = ["http://aletheiafact.org"];
+    const interviewSources: string[] = ["http://aletheiafact.org"];
     const date: string = "2023-11-25T14:49:30.992Z";
 
     beforeAll(async () => {
@@ -160,6 +161,23 @@ describe("ClaimController (e2e)", () => {
             .expect(201)
             .expect(({ body }) =>
                 expect(body?.title).toEqual("Debate Claim Title")
+            );
+    });
+
+    it("/api/claim/interview (POST) - Create Interview Claim", () => {
+        return request(app.getHttpServer())
+            .post("/api/claim/interview")
+            .send({
+                personalities: personalitiesId,
+                contentModel: ContentModelEnum.Interview,
+                nameSpace: NameSpaceEnum.Main,
+                title: "Interview Claim Title",
+                date,
+                interviewSources,
+            })
+            .expect(201)
+            .expect(({ body }) =>
+                expect(body?.title).toEqual("Interview Claim Title")
             );
     });
 

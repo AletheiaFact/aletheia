@@ -7,6 +7,7 @@ import { StatsService } from "../stats/stats.service";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import type { BaseRequest } from "../types";
 import { DebateService } from "../claim/types/debate/debate.service";
+import { InterviewService } from "../claim/types/interview/interview.service";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
 import { ApiTags } from "@nestjs/swagger";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
@@ -19,9 +20,10 @@ export class HomeController {
         private personalityService: PersonalityService,
         private statsService: StatsService,
         private debateService: DebateService,
+        private interviewService: InterviewService,
         private claimRevisionService: ClaimRevisionService,
         private claimReviewService: ClaimReviewService
-    ) {}
+    ) { }
 
     @ApiTags("pages")
     @Get("/home/:namespace?")
