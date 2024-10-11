@@ -6,7 +6,7 @@ O ambiente de configuração consiste em um diretório `public`, que irá sobres
 No processo de build, um script copia o diretório `public` da raiz para `dist/public`. Após isso, ele verifica se os arquivos `SVG`, `JSON`, `PNG` e `favicons` em `config/public` estão nos seus respectivos lugares, de acordo com o padrão original e nomeados corretamente. Se tudo estiver correto, os arquivos são sobrescritos na pasta `dist`.
 
 ## Logo SVG
-Colocando o `SVG` da logo em `config/public/images` com o nome padrão `logo1_white.svg`, ele irá sobrescrever o original durante o processo de build.
+Colocando o `SVG` da logo em `config/public/images` com o nome padrão `default_logo.svg`, ele irá sobrescrever o original durante o processo de build.
 
 ## Favicon 
 O favicon é composto por esses arquivos: `android-chrome-192x192.png`, `android-chrome-512x512.png`, `apple-touch-icon.png`, `favicon-16x16.png`, `favicon-32x32.png`, `favicon.ico`, `site.webmanifest`. Basta colocá-los em `config/public` com os respectivos nomes,e eles serão sobrescritos durante o processo de build

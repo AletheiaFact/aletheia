@@ -6,7 +6,7 @@ The configuration environment consists of a `public` directory, which will overw
 In the build process, a script copies the root `public` directory to `dist/public`. After that, it checks if the `SVG`, `JSON`, `PNG` files and favicons in `config/public` are in their respective places, according to the original pattern and correctly named. If everything is correct, the files are overwritten in the `dist` folder.
 
 ## SVG logo
-Placing the `SVG` logo in `config/public/images` with the standard name `logo1_white.svg` will overwrite the original during the build process.
+Placing the `SVG` logo in `config/public/images` with the standard name `default_logo.svg` will overwrite the original during the build process.
 
 ## Favicon 
 The favicon consists of the following files: `android-chrome-192x192.png`, `android-chrome-512x512.png`, `apple-touch-icon.png`, `favicon-16x16.png`, `favicon-32x32.png`, `favicon.ico`, `site.webmanifest`. Just place them in `config/public` with the respective names, and they will be overwritten during the build process.
