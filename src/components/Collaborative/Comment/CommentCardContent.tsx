@@ -1,9 +1,5 @@
 import React, { useEffect } from "react";
-import {
-    useCurrentSelection,
-    useHelpers,
-    useRemirrorContext,
-} from "@remirror/react";
+import { useCurrentSelection, useHelpers } from "@remirror/react";
 import CommentCardForm from "./CommentCardForm";
 import CommentCardHeader from "./CommentCardHeader";
 import { Divider } from "@mui/material";
@@ -11,6 +7,7 @@ import reviewColors from "../../../constants/reviewColors";
 import { useTranslation } from "next-i18next";
 import { CommentEnum } from "../../../types/enums";
 import { useAppSelector } from "../../../store/store";
+import { usePluginReady } from "../utils/usePluginReady";
 
 const CommentCardContent = ({
     user,
@@ -35,11 +32,11 @@ const CommentCardContent = ({
     const { t } = useTranslation();
     const { from } = useCurrentSelection();
     const { getAnnotationsAt } = useHelpers();
-    const { getPluginState } = useRemirrorContext({ autoUpdate: true });
-    const pluginState = getPluginState("annotation");
+
+    const isPluginReady = usePluginReady("annotation", enableEditorAnnotations);
 
     useEffect(() => {
-        if (enableEditorAnnotations && pluginState) {
+        if (enableEditorAnnotations && isPluginReady) {
             const annotations = getAnnotationsAt(from);
             const hasMatchingId = annotations.some(
                 (annotation) => annotation?.id === content?._id
@@ -52,6 +49,7 @@ const CommentCardContent = ({
         from,
         getAnnotationsAt,
         setIsSelected,
+        isPluginReady,
     ]);
 
     return (

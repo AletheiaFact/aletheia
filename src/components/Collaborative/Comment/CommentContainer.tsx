@@ -13,6 +13,7 @@ import userApi from "../../../api/userApi";
 import { useAtom } from "jotai";
 import { currentUserId } from "../../../atoms/currentUser";
 import { useAppSelector } from "../../../store/store";
+import { usePluginReady } from "../utils/usePluginReady";
 
 const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
     const enableEditorAnnotations = useAppSelector(
@@ -25,9 +26,9 @@ const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
     const hasSession = !!userId;
     const [user, setUser] = useState(null);
     const { setAnnotations } = useCommands();
-    const { getPluginState } = useRemirrorContext({ autoUpdate: true });
     const { getAnnotations } = useHelpers();
-    const pluginState = getPluginState("annotation");
+
+    const isPluginReady = usePluginReady("annotation", enableEditorAnnotations);
 
     const crossCheckingComments = useMemo(
         () =>
@@ -57,7 +58,7 @@ const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
 
             setComments(combinedComments);
 
-            if (enableEditorAnnotations && pluginState) {
+            if (enableEditorAnnotations && isPluginReady) {
                 const annotations = getAnnotations();
                 if (combinedComments.length > 0) {
                     setAnnotations(combinedComments);
@@ -71,7 +72,7 @@ const CommentContainer = ({ state, isCommentVisible, setIsCommentVisible }) => {
         setComments,
         reviewData?.reviewComments,
         crossCheckingComments,
-        pluginState,
+        isPluginReady,
         setAnnotations,
     ]);
 
