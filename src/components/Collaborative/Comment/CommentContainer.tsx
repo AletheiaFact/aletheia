@@ -1,7 +1,7 @@
 import "remirror/styles/all.css";
 
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { useCommands, useHelpers, useRemirrorContext } from "@remirror/react";
+import { useCommands, useHelpers } from "@remirror/react";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import { Row } from "antd";
 import CommentsList from "./CommentsList";
