@@ -167,7 +167,7 @@ const ClaimCard = ({
                                 <span
                                     style={{
                                         color:
-                                            ReviewColors[review?._id] || "#000",
+                                            ReviewColors[review?._id] || colors.blackPrimary,
                                         fontWeight: 900,
                                         textTransform: "uppercase",
                                         margin: "0px 3px",

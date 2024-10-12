@@ -15,6 +15,7 @@ import { isUserLoggedIn } from "../atoms/currentUser";
 import Seo from "../components/Seo";
 import { GetLocale } from "../utils/GetLocale";
 import Image from "next/image";
+import colors from "../styles/colors";
 
 const staticLinks = [
     {
@@ -99,7 +100,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                                         position: "relative",
                                         width: "100%",
                                         height: "140px",
-                                        backgroundColor: "#11273a",
+                                        backgroundColor: colors.bluePrimary,
                                     }}
                                 >
                                     <Image

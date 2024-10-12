@@ -1,9 +1,10 @@
-import {Row} from "antd";
+import { Row } from "antd";
 import styled from "styled-components";
+import colors from "../../styles/colors";
 
 const ClaimSummary = styled(Row)`
     position: relative;
-    background: #EEEEEE;
+    background: ${colors.lightGraySecondary};
     display:flex;
     padding: 12px 0px 0px 16px;
     margin: 1em auto;
@@ -17,13 +18,13 @@ const ClaimSummary = styled(Row)`
         border-top: none;
         border-right: 12px solid transparent;
         border-left: 12px solid transparent;
-        border-bottom: 12px solid #EEEEEE;
+        border-bottom: 12px solid ${colors.lightGraySecondary};
     }
 
     &.claim-review {
-        background: rgba(219, 159, 13, 0.3);
+        background: ${colors.lightYellow};
         &:after {
-            border-bottom-color: rgba(219, 159, 13, 0.3);
+            border-bottom-color: ${colors.lightYellow};
         }
     }
 `;

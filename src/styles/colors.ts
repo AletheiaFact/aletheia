@@ -12,10 +12,11 @@ const colors = {
     lightBlueMain: "rgb(79, 141, 180)", //#4F8DB4
     lightBlueSecondary: "rgb(103, 190, 242)", //#67bef2
     white: "rgb(255, 255, 255)", //#ffffff
+    colorShadow: "rgba(0, 0, 0, 0.25)", //#00000040
     blackPrimary: "rgb(17, 17, 17)", //#111111
     blackSecondary: "rgb(81, 81, 81)", //#515151
     blackTertiary: "rgb(32, 34, 34)", // #202222
-    lightYellow: "rgba(219, 159, 13, 0.3)", //#db9f0d
+    lightYellow: "rgba(219, 159, 13, 0.3)", //#db9f0d4d
     logoWhite: "#E8E8E8",
     redText: "#ff4d4f",
     warning: "#DB9F0D",

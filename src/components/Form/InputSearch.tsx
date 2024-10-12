@@ -9,16 +9,16 @@ const InputSearchStyled = styled(Input.Search)`
     }
     span.ant-input-affix-wrapper {
         background: ${({ backgroundColor = colors.lightGray }) =>
-            backgroundColor};
-        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+        backgroundColor};
+        box-shadow: 0px 2px 2px ${colors.colorShadow};
         border-radius: 4px;
         &:focus-within {
-            border-color: #d9d9d9;
+            border-color: ${colors.lightBluePrimary};
         }
     }
     input.ant-input {
         background: ${({ backgroundColor = colors.lightGray }) =>
-            backgroundColor};
+        backgroundColor};
         color: ${colors.blackSecondary};
         &::placeholder {
             color: ${colors.blackSecondary};

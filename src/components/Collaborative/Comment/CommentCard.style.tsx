@@ -4,10 +4,10 @@ import colors from "../../../styles/colors";
 const CommentCardStyle = styled.div`
     display: flex;
     flex-direction: column;
-    background: #ffffff;
-    border: 1px solid #eeeeee;
+    background: ${colors.white};
+    border: 1px solid ${colors.lightGraySecondary};
     box-sizing: border-box;
-    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 3px 3px ${colors.colorShadow};
     border-radius: 10px;
     margin-bottom: 10px;
     padding: 16px;
@@ -19,7 +19,7 @@ const CommentCardStyle = styled.div`
         props.isselected === "true" ? `translateX(-15px)` : `translateX(0)`};
 
     &:hover {
-        box-shadow: 0px 3px 3px 1px rgba(0, 0, 0, 0.2);
+        box-shadow: 0px 3px 3px 1px ${colors.lightGraySecondary};
 
         .comment-card-actions-resolve-button {
             display: block;
