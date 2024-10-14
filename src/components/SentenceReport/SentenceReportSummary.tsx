@@ -11,7 +11,7 @@ const SentenceReportSummary = styled(Row)`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: ${colors.lightYellow};
+    background-color: ${colors.warning};
     width: fit-content;
 
     // small triangle pointing to the avatar on the side
@@ -23,7 +23,7 @@ const SentenceReportSummary = styled(Row)`
         border-top: none;
         border-right: 9px solid transparent;
         border-left: 9px solid transparent;
-        border-bottom: 9px solid ${colors.lightYellow};
+        border-bottom: 9px solid ${colors.warning};
         transform: rotate(-90deg);
     }
 

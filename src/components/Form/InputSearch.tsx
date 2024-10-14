@@ -13,7 +13,7 @@ const InputSearchStyled = styled(Input.Search)`
         box-shadow: 0px 2px 2px ${colors.colorShadow};
         border-radius: 4px;
         &:focus-within {
-            border-color: ${colors.lightBluePrimary};
+            border-color: ${colors.grayTertiary};
         }
     }
     input.ant-input {

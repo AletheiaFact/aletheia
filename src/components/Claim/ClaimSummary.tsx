@@ -22,9 +22,9 @@ const ClaimSummary = styled(Row)`
     }
 
     &.claim-review {
-        background: ${colors.lightYellow};
+        background: ${colors.warning};
         &:after {
-            border-bottom-color: ${colors.lightYellow};
+            border-bottom-color: ${colors.warning};
         }
     }
 `;

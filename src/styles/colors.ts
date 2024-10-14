@@ -16,10 +16,9 @@ const colors = {
     blackPrimary: "rgb(17, 17, 17)", //#111111
     blackSecondary: "rgb(81, 81, 81)", //#515151
     blackTertiary: "rgb(32, 34, 34)", // #202222
-    lightYellow: "rgba(219, 159, 13, 0.3)", //#db9f0d4d
+    warning: "rgba(219, 159, 13, 0.3)", //#db9f0d
     logoWhite: "#E8E8E8",
     redText: "#ff4d4f",
-    warning: "#DB9F0D",
     active: "#49DE80",
     inactive: "#FBCC13",
 };
