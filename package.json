@@ -123,7 +123,6 @@
     "dompurify": "^3.0.5",
     "express": "^4.19.2",
     "express-session": "^1.17.2",
-    "glob": "^10.2.7",
     "handlebars": "^4.7.7",
     "helmet": "^6.0.0",
     "i18next": "^21.6.10",
@@ -269,7 +268,7 @@
     "braces": "3.0.3",
     "ws": "8.17.1",
     "prosemirror-model": "1.9.1",
-    "glob": "^10.2.7"
+    "glob": "^7.2.3"
   },
   "packageManager": "yarn@3.6.3"
 }
