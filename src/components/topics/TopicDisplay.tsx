@@ -74,13 +74,14 @@ const TopicDisplay = ({
         if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
             return await verificationRequestApi.deleteVerificationRequestTopic(
                 newTopicsArray,
-                data_hash
+                data_hash,
+                t
             );
         }
 
         return contentModel === ContentModelEnum.Image
             ? await ImageApi.deleteImageTopic(newTopicsArray, data_hash)
-            : await SentenceApi.deleteSentenceTopic(newTopicsArray, data_hash);
+            : await SentenceApi.deleteSentenceTopic(newTopicsArray, data_hash, t);
     };
 
     return (
