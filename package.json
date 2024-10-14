@@ -123,6 +123,7 @@
     "dompurify": "^3.0.5",
     "express": "^4.19.2",
     "express-session": "^1.17.2",
+    "glob": "^10.2.7",
     "handlebars": "^4.7.7",
     "helmet": "^6.0.0",
     "i18next": "^21.6.10",
