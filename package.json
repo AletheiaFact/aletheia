@@ -121,7 +121,7 @@
     "copyfiles": "^2.4.1",
     "domino": "^2.1.6",
     "dompurify": "^3.0.5",
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "express-session": "^1.17.2",
     "handlebars": "^4.7.7",
     "helmet": "^6.0.0",
