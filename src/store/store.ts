@@ -71,6 +71,23 @@ const reducer = (state, action) => {
                     searchResults: action.results,
                 },
             };
+        case ActionTypes.SEARCH_PERSONALITIES_RESULTS:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchPersonalitiesResults:
+                        action.searchPersonalitiesResults,
+                },
+            };
+        case ActionTypes.SEARCH_OVERLAY_RESULTS:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchOverlayResults: action.searchOverlayResults,
+                },
+            };
         case ActionTypes.SET_TOTAL_PAGES:
             return {
                 ...state,
@@ -101,6 +118,14 @@ const reducer = (state, action) => {
                 search: {
                     ...(state?.search || {}),
                     searchInput: action.searchName,
+                },
+            };
+        case ActionTypes.SET_SEARCH_OVERLAY_NAME:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchOverlayInput: action.searchOverlayName,
                 },
             };
         case ActionTypes.SET_SEARCH_FILTER:
