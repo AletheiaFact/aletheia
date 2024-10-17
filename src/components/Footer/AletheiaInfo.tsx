@@ -1,11 +1,17 @@
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../store/store";
+import StyledSpan from "./AletheiaInfo.style";
 
 const AletheiaInfo = () => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
-
+    const footerInfos = [
+        "footer:contactEmail",
+        "footer:adressStreet",
+        "footer:adressZipcode",
+        "footer:legalRegistration",
+    ];
     return (
         <>
             <h3
@@ -18,44 +24,13 @@ const AletheiaInfo = () => {
                     textAlign: "center",
                 }}
             >
+
                 {t("footer:platformInfoTittle")}
             </h3>
-            <span
-                style={{
-                    fontSize: "14px",
-                    marginTop: "0px",
-                    textAlign: "center",
-                }}
-            >
-                {t("footer:contactEmail")}
-            </span>
-            <span
-                style={{
-                    fontSize: "14px",
-                    marginTop: "0px",
-                    textAlign: "center",
-                }}
-            >
-                Av Maria Ranieri, Nº 7-50
-            </span>
-            <span
-                style={{
-                    fontSize: "14px",
-                    marginTop: "0px",
-                    textAlign: "center",
-                }}
-            >
-                17.055-175 - Parque Viaduto - Bauru/SP
-            </span>
-            <span
-                style={{
-                    fontSize: "14px",
-                    marginTop: "0px",
-                    textAlign: "center",
-                }}
-            >
-                46.428.905/0001-68
-            </span>
+            {footerInfos.map((i) => (
+                <StyledSpan key={i}>{t(i)}</StyledSpan>
+            ))}
+
         </>
     );
 };
