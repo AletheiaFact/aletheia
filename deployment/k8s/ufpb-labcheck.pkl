@@ -14,7 +14,7 @@ local newAletheia = new (aletheia) {
 IngressOptions {
     rules {
         (ingress.rule) {
-            host = "labcheck.aletheiafact.org"
+            host = "alumia.aletheiafact.org"
         }
     }
 }

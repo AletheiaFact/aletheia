@@ -8,7 +8,7 @@ var = new {
         cors = "*"
         recaptcha_sitekey = "6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh"
         websocketUrl = "wss://testws.\(appBaseUrl) "
-        baseUrl = "https://labcheck.\(appBaseUrl)"
+        baseUrl = "https://alumia.\(appBaseUrl)"
         db = (mongodb) {
             atlas = true
         }
