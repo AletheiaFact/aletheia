@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import colors from "../../styles/colors";
 import AletheiaSocialMediaIcons from "./AletheiaSocialMediaIcons";
-import localConfig from "../../../config/localConfig.example";
+import localConfig from "../../../config/localConfig";
 import { SocialIcon } from "react-social-icons";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
@@ -25,20 +25,27 @@ const AletheiaSocialMediaFooter = () => {
                 </h3>
             </Col>
             <Col span={24}>
-                {localConfig.footer.socialMedias.some(url => url !== "") ? (localConfig.footer.socialMedias.map((url) => url! && (
-                    <SocialIcon
-                        key={url}
-                        url={url}
-                        bgColor={
-                            nameSpace === NameSpaceEnum.Main
-                                ? colors.bluePrimary
-                                : colors.blueSecondary
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                        fgColor="white"
-                    />
-                ))) : <AletheiaSocialMediaIcons />}
+                {localConfig.footer.socialMedias.some((url) => url !== "") ? (
+                    localConfig.footer.socialMedias.map(
+                        (url) =>
+                            url! && (
+                                <SocialIcon
+                                    key={url}
+                                    url={url}
+                                    bgColor={
+                                        nameSpace === NameSpaceEnum.Main
+                                            ? colors.bluePrimary
+                                            : colors.blueSecondary
+                                    }
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    fgColor="white"
+                                />
+                            )
+                    )
+                ) : (
+                    <AletheiaSocialMediaIcons />
+                )}
             </Col>
             <Col style={{ width: "324px", margin: "10px auto" }}>
                 <Divider
