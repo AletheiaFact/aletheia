@@ -13,15 +13,10 @@ const Logo = ({
     lineHeight = "24px",
 }) => {
     const [nameSpace] = useAtom<string>(currentNameSpace);
-    const logoSvgPath = process.env.LOGO_SVG_PATH || '/images/logo1_white.svg';
+    const logoSvgPath = "/images/default_logo.svg";
     if (nameSpace === NameSpaceEnum.Main) {
         return (
-            <Image
-                alt="logo"
-                src={logoSvgPath}
-                height={height}
-                width={width}
-            />
+            <Image alt="logo" src={logoSvgPath} height={height} width={width} />
         );
     } else if (nameSpace) {
         return (
