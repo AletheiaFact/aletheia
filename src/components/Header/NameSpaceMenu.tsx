@@ -6,6 +6,7 @@ import { Menu } from "@mui/material";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../types/Namespace";
+import colors from "../../styles/colors";
 
 const NameSpaceMenu = ({ isLoading, userRole, anchorEl, setAnchorEl }) => {
     const [nameSpace] = useAtom(currentNameSpace);
@@ -46,7 +47,7 @@ const NameSpaceMenu = ({ isLoading, userRole, anchorEl, setAnchorEl }) => {
                             backgroundColor:
                                 nameSpace === nameSpaceSlug
                                     ? "rgba(0, 0, 0, 0.08)"
-                                    : "#fff",
+                                    : colors.white,
                             gap: 1,
                         }}
                         onClick={() => handleNameSpaceClick(nameSpaceSlug)}

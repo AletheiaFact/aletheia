@@ -5,6 +5,7 @@ import { useTranslation } from "next-i18next";
 import { LinkPreview } from "@dhaiwat10/react-link-preview";
 import Link from "next/link";
 import SourceSkeleton from "../Skeleton/SourceSkeleton";
+import colors from "../../styles/colors";
 
 const ClaimSourceList = ({ claimId }) => {
     const { i18n } = useTranslation();
@@ -20,7 +21,7 @@ const ClaimSourceList = ({ claimId }) => {
                         borderRadius="10px"
                         borderColor="transparent"
                         imageHeight="156px"
-                        secondaryTextColor="#515151"
+                        secondaryTextColor={colors.blackSecondary}
                         width="100%"
                         fallback={<Link href={source.href}>{source.href}</Link>}
                         showLoader

@@ -161,8 +161,8 @@ export const Totp = ({ flow, setFlow }) => {
                         <code
                             style={{
                                 borderRadius: "10px",
-                                backgroundColor: "#4a4c58",
-                                color: "#FFF",
+                                backgroundColor: colors.grayPrimary,
+                                color: colors.white,
                                 fontSize: "18px",
                                 display: "flex",
                                 padding: "10px",

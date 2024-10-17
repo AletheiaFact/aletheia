@@ -27,7 +27,7 @@ const Fab = ({ tooltipText, style, icon, size, ...rest }: FabProps) => {
                         nameSpaceProp === NameSpaceEnum.Main
                             ? colors.bluePrimary
                             : colors.blueSecondary,
-                    boxShadow: "rgba(0, 0, 0, 0.35) 0px 8px 24px",
+                    boxShadow: `0px 8px 24px ${colors.colorShadow}`,
                     display: "grid",
                     placeContent: "center",
                     width: size,

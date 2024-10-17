@@ -1,12 +1,13 @@
 import { Row } from "antd";
+import colors from "../styles/colors";
 
 const CardBase = ({ children, style = {} }) => {
     return (
         <Row style={{
-            background: "#FFFFFF",
-            border: "1px solid #EEEEEE",
+            background: colors.white,
+            border: `1px solid ${colors.lightGraySecondary}`,
             boxSizing: "border-box",
-            boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.2)",
+            boxShadow: `0px 3px 3px ${colors.colorShadow}`,
             borderRadius: "10px",
             marginBottom: "10px",
             ...style

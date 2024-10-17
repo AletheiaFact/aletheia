@@ -1,5 +1,6 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react"
 import BackButton from "../../../components/BackButton"
+import colors from "../../../styles/colors"
 
 export default {
     title: "Components/Buttons/BackButton",
@@ -21,7 +22,7 @@ Default.args = {}
 export const Underlined = Template.bind({})
 Underlined.args = {
     style: {
-        color: "#fff",
+        color: colors.white,
         textDecoration: "underline"
     }
 }

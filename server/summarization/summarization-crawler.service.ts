@@ -5,6 +5,7 @@ import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import { openAI } from "../copilot/openAI.constants";
 import { AgentExecutor, createOpenAIToolsAgent } from "langchain/agents";
 import { ConfigService } from "@nestjs/config";
+import colors from "../../src/styles/colors";
 import {
     ChatPromptTemplate,
     MessagesPlaceholder,
@@ -85,7 +86,7 @@ export class SummarizationCrawlerService {
                             font-weight: bold;
                         }
                         a {
-                            color: rgb(17, 39, 58);
+                            color: ${colors.bluePrimary};
                         }
                         .not-fact {
                             color: #006060;   

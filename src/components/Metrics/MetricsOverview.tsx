@@ -12,7 +12,7 @@ const MetricsOverview = ({ stats }) => {
             <Col
                 style={{
                     width: "100%",
-                    color: "#262626",
+                    color: colors.blackTertiary,
                 }}
                 offset={2}
                 span={18}
