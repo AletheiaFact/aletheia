@@ -120,6 +120,25 @@ const saveDebate = (t, debate = {}) => {
         });
 };
 
+const saveInterview = (t, interview = {}) => {
+    return request
+        .post("/interview", interview)
+        .then((response) => {
+            const { title } = response.data;
+            message.success(
+                `"${title}" ${t("claimForm:successCreateMessage")}`
+            );
+            return response.data;
+        })
+        .catch((err) => {
+            const response = err && err.response;
+            // TODO: Track errors with Sentry
+            if (!response) {
+                console.error(err);
+            }
+        });
+};
+
 const saveUnattributed = (t, unattributed = {}) => {
     return request
         .post("/unattributed", unattributed)
@@ -146,6 +165,30 @@ const updateDebate = (
 ) => {
     return request
         .put(`/debate/${debateId}`, params)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((err) => {
+            const response = err && err.response;
+            if (!response) {
+                // TODO: Track errors with Sentry
+            }
+            const { data } = response;
+            message.error(
+                data && data.message
+                    ? data.message
+                    : t("claimForm:errorUpdateMessage")
+            );
+        });
+};
+
+const updateInterview = (
+    interviewId,
+    t,
+    params: { content: string; personality: string; isLive: boolean }
+) => {
+    return request
+        .put(`/interview/${interviewId}`, params)
         .then((response) => {
             return response.data;
         })
@@ -205,8 +248,10 @@ const claimApi = {
     saveSpeech,
     saveImage,
     saveDebate,
+    saveInterview,
     saveUnattributed,
     updateDebate,
+    updateInterview,
     deleteClaim,
     updateClaimHiddenStatus,
 };

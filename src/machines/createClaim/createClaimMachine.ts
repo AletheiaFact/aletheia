@@ -10,6 +10,7 @@ import {
     removePersonality,
     saveClaimContext,
     startDebate,
+    startInterview,
     startUnattributed,
     startImage,
     startSpeech,
@@ -44,6 +45,10 @@ export const newCreateClaimMachine = ({ value, context }) => {
                     [Events.startDebate]: {
                         target: States.setupDebate,
                         actions: [startDebate],
+                    },
+                    [Events.startInterview]: {
+                        target: States.setupInterview,
+                        actions: [startInterview],
                     },
                     [Events.startUnattributed]: {
                         target: States.personalityAdded,
@@ -95,6 +100,22 @@ export const newCreateClaimMachine = ({ value, context }) => {
                     },
                     [Events.removePersonality]: {
                         target: States.setupDebate,
+                        actions: [removePersonality],
+                    },
+                    ...updateGroupEvent,
+                },
+            },
+            [States.setupInterview]: {
+                on: {
+                    [Events.addPersonality]: {
+                        target: States.setupInterview,
+                        actions: [saveClaimContext],
+                    },
+                    [Events.savePersonality]: {
+                        target: States.personalityAdded,
+                    },
+                    [Events.removePersonality]: {
+                        target: States.setupInterview,
                         actions: [removePersonality],
                     },
                     ...updateGroupEvent,

@@ -44,6 +44,7 @@ import { FileManagementModule } from "./file-management/file-management.module";
 import { UnleashModule } from "nestjs-unleash";
 import { UnauthorizedExceptionFilter } from "./filters/unauthorized.filter";
 import { DebateModule } from "./claim/types/debate/debate.module";
+import { InterviewModule } from "./claim/types/interview/interview.module";
 import { EditorModule } from "./editor/editor.module";
 import { BadgeModule } from "./badge/badge.module";
 import { EditorParseModule } from "./editor-parse/editor-parse.module";
@@ -109,6 +110,7 @@ export class AppModule implements NestModule {
             SearchModule,
             FileManagementModule,
             DebateModule,
+            InterviewModule,
             EditorModule,
             BadgeModule,
             EditorParseModule,

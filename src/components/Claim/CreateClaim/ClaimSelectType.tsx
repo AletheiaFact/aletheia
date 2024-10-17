@@ -2,6 +2,7 @@ import {
     FileOutlined,
     PictureOutlined,
     VideoCameraOutlined,
+    CommentOutlined,
 } from "@ant-design/icons";
 import { Col } from "antd";
 import { useAtom } from "jotai";
@@ -21,6 +22,7 @@ const ClaimSelectType = () => {
         [ContentModelEnum.Image]: <PictureOutlined />,
         [ContentModelEnum.Speech]: <FileOutlined />,
         [ContentModelEnum.Debate]: <VideoCameraOutlined />,
+        [ContentModelEnum.Interview]: <CommentOutlined />,
         [ContentModelEnum.Unattributed]: <FileOutlined />,
     };
 
