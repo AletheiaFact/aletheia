@@ -1,0 +1,16 @@
+name: Refactor
+description: This template should be used for development tasks that are unrelated to a specific feature or user workflow. Examples include tech debt reduction, refactors, dependency management or automated tests.
+labels: tech
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Background Information
+      description: Brief description of the issue, include relevant screenshots as appropriate
+      placeholder: Describe the feature or functionality where the issue occurs.
+  - type: textarea
+    id: how
+    attributes:
+      label: How
+      description: Describe any potential solutions or approaches to resolving the bug.
+      placeholder: "For example, 'This could be resolved by fixing the event listener on the button.'"

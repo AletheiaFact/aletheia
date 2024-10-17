@@ -13,6 +13,7 @@ const SentenceReportSummary = styled(Row)`
     justify-content: space-between;
     background-color: ${colors.lightYellow};
     width: fit-content;
+    gap: 20px;
 
     // small triangle pointing to the avatar on the side
     &.after:after {

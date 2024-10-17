@@ -23,8 +23,12 @@ const PersonalityCreateSearch = ({
     const { t, i18n } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     const dispatch = useDispatch();
-    const { searchName } = useAppSelector((state) => {
-        return { searchName: state?.search?.searchInput || null };
+
+    const { personalities, searchName } = useAppSelector((state) => {
+        return {
+            personalities: state?.search?.searchPersonalitiesResults || [],
+            searchName: state?.search?.searchInput || null,
+        };
     });
 
     const createPersonality = async (personality) => {
@@ -74,13 +78,6 @@ const PersonalityCreateSearch = ({
     const onClickSeeProfile = () => {
         setIsFormSubmitted(!isFormSubmitted);
     };
-
-    const { personalities } = useAppSelector((state) => {
-        return {
-            personalities: state?.search?.searchResults || [],
-            searchName: state?.search?.searchInput || null,
-        };
-    });
 
     const handleInputSearch = (name) => {
         const trimmedName = name.trim();

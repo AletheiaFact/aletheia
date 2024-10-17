@@ -18,13 +18,13 @@ const HeaderStatusStyle = styled(Col)`
     }
 `;
 
-const HeaderUserStatus = ({ status }) => {
+const HeaderUserStatus = ({ status, style }) => {
     const { t } = useTranslation();
     const statusColor =
         status === Status.Active ? colors.active : colors.inactive;
 
     return (
-        <HeaderStatusStyle statuscolor={statusColor}>
+        <HeaderStatusStyle statuscolor={statusColor} style={{ ...style }}>
             {t(`admin:user-status-${status}`)}
         </HeaderStatusStyle>
     );

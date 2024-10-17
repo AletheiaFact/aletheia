@@ -25,6 +25,21 @@
   ```
 - Access http://localhost:3000 in your browser.
 
+### Configuration
+
+#### Server
+TBD
+
+
+#### Platform
+
+The Platform requires a configuration file that can be used to customize aspects of the site depending on your needs.
+
+```
+cp config/localConfig.example.ts config/localConfig.ts
+```
+
+
 ## Development DB
 
 - Run seeder:

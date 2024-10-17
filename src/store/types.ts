@@ -10,6 +10,8 @@ export enum ActionTypes {
     TOGGLE_COPILOT_DRAWER,
     RESULTS_OVERLAY_VISIBLE,
     SEARCH_RESULTS,
+    SEARCH_PERSONALITIES_RESULTS,
+    SEARCH_OVERLAY_RESULTS,
     SET_TOTAL_PAGES,
     SET_CUR_PAGE,
     SET_SEARCH_NAME,
@@ -31,6 +33,7 @@ export enum ActionTypes {
     SET_SEARCH_FILTER_USED,
     SET_VISUAL_EDITOR_ENVIRONEMNT,
     SET_TOPIC_FILTER_USED,
+    SET_SEARCH_OVERLAY_NAME,
 }
 
 export enum SearchTypes {
@@ -49,9 +52,12 @@ export interface RootState {
         autocompleteTopicsResults: any;
         overlayVisible: boolean;
         searchResults: any;
+        searchPersonalitiesResults: any;
+        searchOverlayResults: any;
         searchTotalPages: any;
         searchCurPage: number;
         searchInput: string;
+        searchOverlayInput: string;
         searchFilter: any;
         searchFilterUsed: any;
         searchPageSize: number;

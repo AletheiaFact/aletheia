@@ -12,7 +12,7 @@ services:
 
   localstack:
     container_name: aletheia-localstack
-    image: localstack/localstack
+    image: localstack/localstack:3.7.2
     ports:
       - "127.0.0.1:4510-4559:4510-4559" # external service port range
       - "127.0.0.1:4566:4566" # LocalStack Edge Proxy
@@ -23,8 +23,7 @@ services:
       - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
-      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
-      - "./data/localstack:${DATA_DIR:-/data/localstack}"
+      - "${DATA_DIR:-/data/localstack}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
   kratos-migrate:
     image: oryd/kratos:v0.13.0

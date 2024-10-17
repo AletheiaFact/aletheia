@@ -5,5 +5,6 @@
     "isEnded": "Debate ended",
     "seeDebate": "Watch the debate reviews",
     "finishDebateButtonLabel": "Finish debate",
-    "reopenDebateButtonLabel": "Reopen debate"
+    "reopenDebateButtonLabel": "Reopen debate",
+    "openEditDebateMode": "Open edit debate mode"
 }

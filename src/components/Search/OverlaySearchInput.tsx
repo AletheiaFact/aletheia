@@ -3,35 +3,35 @@ import { useTranslation } from "next-i18next";
 import React from "react";
 import { useDispatch } from "react-redux";
 import SearchApi from "../../api/searchApi";
-import { useAppSelector } from "../../store/store";
 import { ActionTypes } from "../../store/types";
 import InputSearch from "../Form/InputSearch";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
+import actions from "../../store/actions";
 
 const OverlaySearchInput = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
 
-    const { page, pageSize } = useAppSelector((state) => {
-        return {
-            page: state?.search?.searchCurPage || 1,
-            pageSize: state?.search?.searchPageSize || 5,
-        };
-    });
-
-    const handleInputSearch = (name) => {
+    const handleInputSearch = async (searchText) => {
         dispatch({
-            type: ActionTypes.SET_SEARCH_NAME,
-            searchName: name,
+            type: ActionTypes.SET_SEARCH_OVERLAY_NAME,
+            searchOverlayInput: searchText,
         });
 
-        SearchApi.getResults(dispatch, {
-            page,
-            pageSize,
-            searchText: name,
-            nameSpace: nameSpace,
+        const { personalities, sentences, claims } =
+            await SearchApi.getFeedResults({
+                page: 1,
+                pageSize: 5,
+                searchText: searchText,
+                nameSpace: nameSpace,
+            });
+
+        dispatch(actions.openResultsOverlay());
+        dispatch({
+            type: ActionTypes.SEARCH_OVERLAY_RESULTS,
+            searchOverlayResults: { personalities, sentences, claims },
         });
     };
 

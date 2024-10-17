@@ -45,8 +45,8 @@ const getPersonalities = (options: FetchOptions, dispatch) => {
             }
 
             dispatch({
-                type: ActionTypes.SEARCH_RESULTS,
-                results: personalities,
+                type: ActionTypes.SEARCH_PERSONALITIES_RESULTS,
+                searchPersonalitiesResults: personalities,
             });
             dispatch({
                 type: ActionTypes.SET_TOTAL_PAGES,

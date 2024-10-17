@@ -1,3 +1,5 @@
+import localConfig from "../../config/localConfig.example";
+
 const colors = {
     bluePrimary: "rgb(17, 39, 58)", //#11273a
     blueSecondary: "rgb(101, 126, 142)", //#657e8e
@@ -21,5 +23,6 @@ const colors = {
     warning: "#DB9F0D",
     active: "#49DE80",
     inactive: "#FBCC13",
+    ...(localConfig?.theme?.colors || {}),
 };
 export default colors;

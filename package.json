@@ -1,6 +1,6 @@
 {
   "name": "aletheia",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Crowd-sourced fact-checking platform for the website AletheiaFact.org.",
   "license": "GPL-3.0",
   "main": "./dist/server/main.js",
@@ -267,7 +267,8 @@
     "@grpc/grpc-js": "1.10.9",
     "braces": "3.0.3",
     "ws": "8.17.1",
-    "prosemirror-model": "1.9.1"
+    "prosemirror-model": "1.9.1",
+    "glob": "^7.2.3"
   },
   "packageManager": "yarn@3.6.3"
 }
