@@ -52,6 +52,7 @@ const PersonalityCard = ({
     const { personalities } = claimData;
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
+    const smallDevice = vw?.sm;
 
     const baseHref = hrefBase || "";
     const nameSpaceHref =
@@ -183,7 +184,7 @@ const PersonalityCard = ({
                         )}
                     </Row>
                 </Col>
-                {enableStats && hasReview && (
+                {!smallDevice && enableStats && hasReview && (
                     <Col
                         xs={24}
                         sm={24}

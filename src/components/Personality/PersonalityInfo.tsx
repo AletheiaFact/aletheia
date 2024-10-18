@@ -24,6 +24,12 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
             style={{
                 width: "50%",
                 flex: "auto",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                height: '100%',
             }}
         >
             {summarized && (
@@ -100,9 +106,13 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                     {!summarized && (
                         <Row
                             style={{
-                                flexDirection: "column",
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
                                 color: colors.blackPrimary,
                                 fontSize: "16px",
+                                marginBottom: '25px',
                             }}
                         >
                             {personality?.claims?.length !== undefined && (
