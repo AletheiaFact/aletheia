@@ -11,7 +11,7 @@ import localConfig from "../../../config/localConfig.example";
 const FooterInfo = () => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
-    const href = localConfig.footer.repositoryLink ? localConfig.footer.repositoryLink : " https://github.com/AletheiaFact/aletheia"
+    const href = " https://github.com/AletheiaFact/aletheia"
 
     return (
         <Row justify={vw?.sm ? "center" : "start"}>
