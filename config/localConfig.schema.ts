@@ -31,6 +31,7 @@ const LocalConfigSchema = z.object({
             inactive: hexPattern,
         }),
     }),
+    Logo: z.boolean(),
     footer: z.object({
         socialMedias: z.array(z.string().url()).optional(),
         showStatuteButton: z.object({
