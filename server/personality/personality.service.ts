@@ -213,7 +213,7 @@ export class PersonalityService {
 
         try {
             // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-            const nameSpace = this.req.params.namespace;
+            const nameSpace = this.req.params.namespace || NameSpaceEnum.Main;
             const personality: any = await this.PersonalityModel.findOne(
                 queryOptions
             ).populate({
