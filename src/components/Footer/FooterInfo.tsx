@@ -32,7 +32,7 @@ const FooterInfo = () => {
             </span>
             {localConfig.footer.showStatuteButton.show ? (<AletheiaButton
                 type={ButtonType.whiteBlue}
-                href={localConfig.footer.showStatuteButton.redirectUrl ? localConfig.footer.showStatuteButton.redirectUrl : "https://docs.google.com/viewer?url=https://raw.githubusercontent.com/AletheiaFact/miscellaneous/290b19847f0da521963f74e7947d7863bf5d5624/documents/org_legal_register.pdf"}
+                href={t("footer:statuteUrlButton")}
                 target="_blank"
                 rel="noreferrer"
             >

@@ -7,14 +7,11 @@ const localConfig: LocalConfig = {
         socialMedias: [],
         showStatuteButton: {
             show: true,
-            redirectUrl: "",
         },
-        repositoryUrl: "",
     },
     header: {
         donateButton: {
             show: true,
-            redirectUrl: "",
         },
     },
     home: {
