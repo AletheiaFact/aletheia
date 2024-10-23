@@ -45,25 +45,28 @@ const TopicDisplay = ({
         setTags(topicsArray?.concat(filterValues) || []);
     }, [inputValue, topicsArray]);
 
-    const fetchTopicList = (
+    const fetchTopicList = async (
         topic: string
     ) => new Promise<{ label: string; value: string }[]>((resolve) => {
         if (timeout) clearTimeout(timeout);
-
-        timeout = setTimeout(async () => {
-            const topicSearchResults = await TopicsApi.getTopics({
-                topicName: topic,
-                t,
-                dispatch,
-            });
-            resolve(
-                topicSearchResults?.map(({ name, wikidata }) => ({
-                    label: name,
-                    value: wikidata
-                })) || []
-            );
-        }, 1000);
+        if (topic.length >= 3) {
+            timeout = setTimeout(async () => {
+                const topicSearchResults = await TopicsApi.getTopics({
+                    topicName: topic,
+                    t,
+                    dispatch,
+                });
+                resolve(
+                    topicSearchResults?.map(({ name, wikidata }) => ({
+                        label: name,
+                        value: wikidata
+                    })) || []
+                );
+            }, 1000);
+        }
+        return [];
     });
+    
 
     const handleClose = async (removedTopicValue: any) => {
         const newTopicsArray = topicsArray.filter(
@@ -85,7 +88,11 @@ const TopicDisplay = ({
 
         return contentModel === ContentModelEnum.Image
             ? await ImageApi.deleteImageTopic(newTopicsArray, data_hash)
-            : await SentenceApi.deleteSentenceTopic(newTopicsArray, data_hash, t);
+            : await SentenceApi.deleteSentenceTopic(
+                  newTopicsArray,
+                  data_hash,
+                  t
+              );
     };
 
     return (
