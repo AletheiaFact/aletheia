@@ -1,7 +1,7 @@
 import React from "react"
 import Image from "next/image"
 
-const SvgLogo = ({
+const ConfigLogo = ({
   height = "",
   width = "",
 }: {
@@ -18,4 +18,4 @@ const SvgLogo = ({
   )
 }
 
-export default SvgLogo;
+export default ConfigLogo;

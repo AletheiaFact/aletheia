@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
 import localConfig from "../../../config/localConfig.example";
-import SvgLogo from "./SvgLogo";
+import ConfigLogo from "./ConfigLogo";
 import LogoAletheia from "./LogoAletheia";
 
 const Logo = ({
@@ -19,7 +19,7 @@ const Logo = ({
     if (nameSpace === NameSpaceEnum.Main) {
         return (
             localConfig.Logo ?
-                <SvgLogo
+                <ConfigLogo
                     height={height}
                     width={width}
                 />
