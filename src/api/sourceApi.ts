@@ -96,11 +96,10 @@ const getById = (id, t, params = {}) => {
     const checkSource = (source) => {
         return axios.get('/check-source', {params: {source}})
         .then((response) => {
-            console.log(response);
             return response.data;
         })
         .catch(() => {
-            message.error("error"); //TODO: Improve feedback message
+            message.error("error");
         });
     }
 
