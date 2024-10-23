@@ -1,26 +1,31 @@
-import { Col, List } from "antd";
+import { Col, List, message } from "antd";
 import React from "react";
 import { useState } from "react";
 import SourceApi from "../../api/sourceApi";
+import { useTranslation } from "next-i18next";
 
 const ClaimSourceListItem = ({ source, index }) => {
     const { href } = source;
     const [linkValid, setLinkValid] = useState(null);
+    const { t } = useTranslation();
 
     const checkLink = async (url) => {
         
-           const request = await SourceApi.checkSource(url);
-           console.log("Resposta da API:");
+        try {
+            const request = await SourceApi.checkSource(url);
 
-           if (request?.status === 200) {
-            setLinkValid(true);
-            window.open(url, "_blank", "noopener noreferrer");
-           } else {
+            if (request?.status === 200) {
+                setLinkValid(true);
+                window.open(url, "_blank", "noopener noreferrer");
+            } else {
+                setLinkValid(false);
+                message.error(t("sources:sourceInvalid"));
+            }
+        } catch (error) {
             setLinkValid(false);
-            alert(request?.message || "Link inválido");
-           }
-
-    }
+            message.error(t("sources:sourceInvalid"));
+        }
+    };
 
     return (
         <Col className="source">
