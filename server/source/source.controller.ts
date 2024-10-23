@@ -103,6 +103,23 @@ export class SourceController {
         );
     }
 
+    @ApiTags("source")
+    @Get("/check-source")
+    async checkSpurce(@Query() query) {
+        try {
+            const result = await fetch(query.source, {
+                method: "GET",
+            });
+            if (result.ok) {
+                return { status: 200, message: "Link válido"};
+            } else {
+                return { status: 404, message: "Link inválido"};
+            }
+        } catch (error) {
+            return { status: 500, message: "Erro interno ao verificar o link"};
+        }
+     }
+
     @IsPublic()
     @ApiTags("source")
     @Get("api/source")
