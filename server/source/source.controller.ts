@@ -106,20 +106,16 @@ export class SourceController {
     @ApiTags("source")
     @Get("/check-source")
     async checkSpurce(@Query() query) {
-        console.log(query)
         try {
             const result = await fetch(query.source, {
                 method: "GET",
             });
             if (result.ok) {
-                console.log("Link válido status:", result.status);
                 return { status: 200, message: "Link válido"};
             } else {
-                console.log("Link inválido status:", result.status);
                 return { status: 404, message: "Link inválido"};
             }
         } catch (error) {
-            console.error("Link não encontrado");
             return { status: 500, message: "Erro interno ao verificar o link"};
         }
      }
