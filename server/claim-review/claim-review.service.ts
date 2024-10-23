@@ -372,6 +372,7 @@ export class ClaimReviewService {
             date: review.target.latestRevision.date,
             slug: review.target.latestRevision.slug,
             title: review.target.latestRevision.title,
+            claimId: review.target.latestRevision.claimId
         };
 
         const isContentImage = claim.contentModel === ContentModelEnum.Image;
@@ -408,8 +409,8 @@ export class ClaimReviewService {
         if (isContentDebate) {
             reviewHref =
                 nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/claim/${review.target.latestRevision.claimId}/debate`
-                    : `/claim/${review.target.latestRevision.claimId}/debate`;
+                    ? `/${nameSpace}/personality/${personality?.slug}/claim/${review.target.slug}/sentence/${data_hash}`
+                    : `/personality/${personality?.slug}/claim/${review.target.slug}/sentence/${data_hash}`;
         }
 
         return {
