@@ -26,7 +26,7 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
             Promise.all(
                 personalities.map(async (p) => {
                     if (p && p._id) {
-                        return personalityApi.getPersonality(p?._id, {}, t);
+                        return personalityApi.getPersonality(p?._id, {nameSpace}, t);
                     } else {
                         throw Error;
                     }
