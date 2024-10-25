@@ -171,7 +171,7 @@ export class PersonalityService {
         });
     }
 
-    async getById(personalityId, language = "en") {
+    async getById(personalityId, query) {
         const queryOptions = this.util.getParamsBasedOnUserRole(
             {
                 _id: personalityId,
@@ -183,10 +183,11 @@ export class PersonalityService {
             queryOptions
         ).populate({
             path: "claims",
+            match: { isHidden: false, isDeleted: false, nameSpace: query.nameSpace },
             select: "_id title content",
         });
         this.logger.log(`Found personality ${personality?._id}`);
-        return await this.postProcess(personality.toObject(), language);
+        return await this.postProcess(personality.toObject(), query.language);
     }
 
     async getPersonalityBySlug(query, language = "pt") {
