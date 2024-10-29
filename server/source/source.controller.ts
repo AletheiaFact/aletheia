@@ -111,12 +111,12 @@ export class SourceController {
                 method: "GET",
             });
             if (result.ok) {
-                return { status: 200, message: "Link válido"};
+                return { status: 200, message: "Valid Source"};
             } else {
-                return { status: 404, message: "Link inválido"};
+                return { status: 404, message: "Invalid Source"};
             }
         } catch (error) {
-            return { status: 500, message: "Erro interno ao verificar o link"};
+            return { status: 500, message: "Internal error when source verification"};
         }
      }
 
