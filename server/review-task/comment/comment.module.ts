@@ -1,9 +1,11 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { ConfigModule } from "@nestjs/config";
 import { Comment, CommentSchema } from "./schema/comment.schema";
 import { CommentService } from "./comment.service";
 import { CommentController } from "./comment.controller";
 import { UsersModule } from "../../users/users.module";
+import { AbilityModule } from "../../auth/ability/ability.module";
 
 export const CommentModel = MongooseModule.forFeature([
     {
@@ -13,7 +15,7 @@ export const CommentModel = MongooseModule.forFeature([
 ]);
 
 @Module({
-    imports: [CommentModel, UsersModule],
+    imports: [CommentModel, UsersModule, ConfigModule, AbilityModule],
     providers: [CommentService],
     exports: [CommentService],
     controllers: [CommentController],
