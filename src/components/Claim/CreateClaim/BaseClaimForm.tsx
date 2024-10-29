@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Checkbox, Form, Row } from "antd";
+import { Checkbox, Form, Row, message } from "antd";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -10,6 +10,7 @@ import Input from "../../AletheiaInput";
 import Button, { ButtonType } from "../../Button";
 import DatePickerInput from "../../Form/DatePickerInput";
 import SourceInput from "../../Source/SourceInput";
+import SourceApi from "../../../api/sourceApi";
 
 interface BaseClaimFormProps {
     content?: React.ReactNode;
@@ -46,7 +47,29 @@ const BaseClaimForm = ({
         setDisableSubmit(!hasRecaptcha);
     };
 
-    const onFinish = () => {
+    const checkLink = async (url) => {
+
+        try {
+            const request = await SourceApi.checkSource(url);
+            if (request?.status === 200) {
+                return true;
+            } else {
+                message.error(t("sources:sourceInvalid"));
+                return false;
+            }
+        } catch (error) {
+            message.error(t("sources:sourceInvalid"));
+            return false;
+        }
+    }
+
+    const onFinish = async () => {
+
+        const validSource = await Promise.all(
+            sources.map((source) => checkLink(source)));
+
+            if (validSource.includes(false)) return;
+
         const values = {
             title,
             date,
