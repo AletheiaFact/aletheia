@@ -16,8 +16,8 @@ function CTARegistration() {
             style={{
                 backgroundColor:
                     nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary,
+                        ? colors.primary
+                        : colors.secondary,
                 textAlign: "center",
                 maxWidth: "100%",
                 display: "grid",

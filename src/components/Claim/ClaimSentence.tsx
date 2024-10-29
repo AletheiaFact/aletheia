@@ -7,12 +7,12 @@ import { useDispatch } from "react-redux";
 import SentencePopover from "./SentencePopover";
 
 const Sentence = styled.a`
-    color: ${colors.bluePrimary};
+    color: ${colors.primary};
     font-size: 18px;
     line-height: 27px;
 
     :hover {
-        color: ${colors.bluePrimary};
+        color: ${colors.primary};
         text-decoration: underline;
     }
 `;

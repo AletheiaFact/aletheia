@@ -32,9 +32,9 @@ const PersonalityCardAvatarTooltip = ({
                 }
                 style={{
                     borderRadius: "100%",
-                    color: colors.bluePrimary,
+                    color: colors.primary,
                     background: colors.white,
-                    boxShadow: `1px 1px 2px ${colors.blueSecondary}`,
+                    boxShadow: `1px 1px 2px ${colors.secondary}`,
                     ...style,
                 }}
                 offset={offset}

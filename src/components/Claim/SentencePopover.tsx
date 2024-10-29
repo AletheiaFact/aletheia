@@ -10,7 +10,7 @@ const SentencePopover = () => {
     const content = (
         <span
             style={{
-                color: colors.bluePrimary,
+                color: colors.primary,
                 lineHeight: "20px",
                 fontSize: 14,
                 display: "flex",
@@ -25,7 +25,7 @@ const SentencePopover = () => {
 
     return (
         <Popover placement="top" content={content} trigger="hover">
-            <InfoCircleOutlined style={{ color: colors.graySecondary }} />
+            <InfoCircleOutlined style={{ color: colors.neutralSecondary }} />
         </Popover>
     );
 };

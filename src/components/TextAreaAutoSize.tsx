@@ -3,8 +3,8 @@ import colors from "../styles/colors";
 import { TextareaAutosize } from "@mui/material";
 
 const AletheiaTextAreaAutoSize = styled(TextareaAutosize)`
-    background: ${(props) => (props.white ? colors.white : colors.lightGray)};
-    box-shadow: 0px 2px 2px ${colors.colorShadow};
+    background: ${(props) => (props.white ? colors.white : colors.lightNeutral)};
+    box-shadow: 0px 2px 2px ${colors.Shadow};
     border-radius: 4px;
     border: none;
     height: 40px;
@@ -17,7 +17,7 @@ const AletheiaTextAreaAutoSize = styled(TextareaAutosize)`
 
     :focus {
         border: none;
-        box-shadow: 0px 2px 2px ${colors.colorShadow};
+        box-shadow: 0px 2px 2px ${colors.Shadow};
     }
 
     :active {

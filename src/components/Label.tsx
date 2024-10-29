@@ -5,7 +5,7 @@ const { Text } = Typography;
 
 const Label = ({ children, required = false }) => {
     return (
-        <span style={{ color: colors.redText }}>
+        <span style={{ color: colors.error }}>
             {required && "* "}
             <Text strong style={{ color: colors.blackSecondary }}>
                 {children}

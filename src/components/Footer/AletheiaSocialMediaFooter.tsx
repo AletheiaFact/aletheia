@@ -25,6 +25,7 @@ const AletheiaSocialMediaFooter = () => {
                 </h3>
             </Col>
             <Col span={24}>
+<<<<<<< HEAD
                 {localConfig.footer.socialMedias.some(url => url !== "") ? (localConfig.footer.socialMedias.map((url) => url! && (
                     <SocialIcon
                         key={url}
@@ -39,6 +40,52 @@ const AletheiaSocialMediaFooter = () => {
                         fgColor="white"
                     />
                 ))) : <AletheiaSocialMediaIcons />}
+=======
+                <SocialIcon
+                    url="https://www.instagram.com/aletheiafact"
+                    bgColor={
+                        nameSpace === NameSpaceEnum.Main
+                            ? colors.primary
+                            : colors.secondary
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                    fgColor="white"
+                />
+                <SocialIcon
+                    url="https://www.facebook.com/AletheiaFactorg-107521791638412"
+                    bgColor={
+                        nameSpace === NameSpaceEnum.Main
+                            ? colors.primary
+                            : colors.secondary
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                    fgColor="white"
+                />
+                <SocialIcon
+                    url="https://www.linkedin.com/company/aletheiafact-org"
+                    bgColor={
+                        nameSpace === NameSpaceEnum.Main
+                            ? colors.primary
+                            : colors.secondary
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                    fgColor="white"
+                />
+                <SocialIcon
+                    url="https://github.com/AletheiaFact/aletheia"
+                    bgColor={
+                        nameSpace === NameSpaceEnum.Main
+                            ? colors.primary
+                            : colors.secondary
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                    fgColor="white"
+                />
+>>>>>>> 4842464f (Changing names in each components)
             </Col>
             <Col style={{ width: "324px", margin: "10px auto" }}>
                 <Divider

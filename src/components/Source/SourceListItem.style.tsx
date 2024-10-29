@@ -11,7 +11,7 @@ const SourceListItemStyled = styled(Col)`
     .title {
         font-size: 18px;
         font-weight: 600;
-        color: ${colors.bluePrimary};
+        color: ${colors.primary};
         margin: 0;
     }
 

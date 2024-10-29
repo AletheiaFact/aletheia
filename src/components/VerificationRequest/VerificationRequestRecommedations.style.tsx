@@ -11,7 +11,7 @@ const VerificationRequestResultListStyled = styled.section`
     ::-webkit-scrollbar {
         height: 4px;
         width: 4px;
-        background: ${colors.grayTertiary};
+        background: ${colors.neutralTertiary};
     }
 
     ::-webkit-scrollbar-thumb {
@@ -22,13 +22,13 @@ const VerificationRequestResultListStyled = styled.section`
     ::-moz-scrollbar {
         height: 4px;
         width: 4px;
-        background: ${colors.grayTertiary};
+        background: ${colors.neutralTertiary};
     }
 
     ::-mz-scrollbar {
         height: 4px;
         width: 4px;
-        background: ${colors.grayTertiary};
+        background: ${colors.neutralTertiary};
     }
 `;
 

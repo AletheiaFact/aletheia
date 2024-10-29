@@ -4,7 +4,7 @@ import colors from "../../styles/colors";
 
 const ClaimSummary = styled(Row)`
     position: relative;
-    background: ${colors.lightGraySecondary};
+    background: ${colors.lightNeutralSecondary};
     display:flex;
     padding: 12px 0px 0px 16px;
     margin: 1em auto;
@@ -18,7 +18,7 @@ const ClaimSummary = styled(Row)`
         border-top: none;
         border-right: 12px solid transparent;
         border-left: 12px solid transparent;
-        border-bottom: 12px solid ${colors.lightGraySecondary};
+        border-bottom: 12px solid ${colors.lightNeutralSecondary};
     }
 
     &.claim-review {

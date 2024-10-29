@@ -176,7 +176,7 @@ const BadgesFormDrawer = () => {
         <LargeDrawer
             open={open}
             onClose={onCloseDrawer}
-            backgroundColor={colors.lightGraySecondary}
+            backgroundColor={colors.lightNeutralSecondary}
         >
             <Grid
                 container

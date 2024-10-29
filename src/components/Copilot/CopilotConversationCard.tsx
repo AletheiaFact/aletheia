@@ -20,7 +20,7 @@ const CopilotConversationCard = ({ message }) => {
                         style={{ borderRadius: 16 }}
                     />
                 ) : (
-                    <Avatar style={{ background: colors.blueQuartiary }}>
+                    <Avatar style={{ background: colors.quartiary }}>
                         {SenderEnum.User.slice(0, 1).toUpperCase()}
                     </Avatar>
                 )}

@@ -18,7 +18,7 @@ const colors = {
     lightNeutralSecondary: "rgb(238, 238, 238)", //#eeeeee
     white: "rgb(255, 255, 255)", //#ffffff
     warning: "rgba(219, 159, 13, 0.3)", //#db9f0d
-    Shadow: "rgba(0, 0, 0, 0.25)",
+    shadow: "rgba(0, 0, 0, 0.25)",
     logo: "#E8E8E8",
     error: "#ff4d4f",
     active: "#49DE80",

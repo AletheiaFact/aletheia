@@ -38,7 +38,7 @@ const ClaimCardHeader = ({
                             lineHeight: "20px",
                             fontWeight: 600,
                             marginBottom: 0,
-                            color: colors.blackPrimary,
+                            color: colors.black,
                         }}
                     >
                         {personality.name}

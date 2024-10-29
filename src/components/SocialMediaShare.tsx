@@ -46,7 +46,7 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
         <SocialMediaShareStyle
             className={!isLoggedIn && "logged-out"}
             style={{
-                background: colors.lightGray,
+                background: colors.lightNeutral,
                 padding: "20px 8px",
                 justifyContent: "center",
                 alignItems: "center",
@@ -98,8 +98,8 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                                 bgStyle={{
                                     fill:
                                         nameSpace === NameSpaceEnum.Main
-                                            ? colors.bluePrimary
-                                            : colors.blueSecondary,
+                                            ? colors.primary
+                                            : colors.secondary,
                                 }}
                             />
                         </FacebookShareButton>
@@ -130,8 +130,8 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                                 bgStyle={{
                                     fill:
                                         nameSpace === NameSpaceEnum.Main
-                                            ? colors.bluePrimary
-                                            : colors.blueSecondary,
+                                            ? colors.primary
+                                            : colors.secondary,
                                 }}
                             />
                         </TwitterShareButton>
@@ -153,8 +153,8 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                                 bgStyle={{
                                     fill:
                                         nameSpace === NameSpaceEnum.Main
-                                            ? colors.bluePrimary
-                                            : colors.blueSecondary,
+                                            ? colors.primary
+                                            : colors.secondary,
                                 }}
                             />
                         </WhatsappShareButton>
@@ -176,8 +176,8 @@ const SocialMediaShare = ({ quote = null, href = "", claim = null }) => {
                                 bgStyle={{
                                     fill:
                                         nameSpace === NameSpaceEnum.Main
-                                            ? colors.bluePrimary
-                                            : colors.blueSecondary,
+                                            ? colors.primary
+                                            : colors.secondary,
                                 }}
                             />
                         </TelegramShareButton>

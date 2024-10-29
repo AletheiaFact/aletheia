@@ -10,6 +10,6 @@ const highlightColors = {
     unsustainable: "#EDB5C8",
     exaggerated: "#EEDCB0",
     unverifiable: "#F4C8BA",
-    "in-progress": colors.lightGraySecondary,
+    "in-progress": colors.lightNeutralSecondary,
 };
 export default highlightColors;

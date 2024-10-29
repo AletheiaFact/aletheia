@@ -9,7 +9,7 @@ const PartialReviewWarning = () => {
     return (
         <Col offset={3} span={14}>
             <Text type="danger">* </Text>
-            <span style={{ color: colors.grayPrimary }}>
+            <span style={{ color: colors.neutral }}>
                 {t("claimReview:partialReviewWarning")}
             </span>
         </Col>

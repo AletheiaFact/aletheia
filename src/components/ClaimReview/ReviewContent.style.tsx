@@ -16,13 +16,13 @@ const ReviewContentStyled = styled.div`
     }
 
     a {
-        color: ${colors.bluePrimary};
+        color: ${colors.primary};
         font-weight: 700;
         margin-left: 10px;
     }
 
     a:hover {
-        color: ${colors.bluePrimary};
+        color: ${colors.primary};
     }
 `;
 

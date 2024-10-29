@@ -123,7 +123,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                 onKeyDown={(e) => handleKeyDown(e)}
             />
             {error && (
-                <span style={{ fontSize: 14, color: colors.redText }}>
+                <span style={{ fontSize: 14, color: colors.error }}>
                     {error}
                 </span>
             )}

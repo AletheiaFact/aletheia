@@ -31,7 +31,7 @@ const NotificationCard = ({ notification, handleNotificationClick }) => {
         <Spin
             indicator={<LoadingOutlined />}
             spinning={isLoading}
-            style={{ fontSize: 48, color: colors.bluePrimary, display: "flex" }}
+            style={{ fontSize: 48, color: colors.primary, display: "flex" }}
         >
             <NotificationCardStyle isSeen={isSeen} namespace={nameSpace}>
                 <div className="container" onClick={handleContainerClick}>

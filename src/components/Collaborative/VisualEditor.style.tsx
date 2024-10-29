@@ -3,7 +3,7 @@ import colors from "../../styles/colors";
 import styled from "styled-components";
 
 const VisualEditorStyled = styled(AllStyledComponent)`
-    background-color: ${colors.lightGray};
+    background-color: ${colors.lightNeutral};
     border-radius: 4px;
     border: none;
     width: 100%;

@@ -9,7 +9,7 @@ const EditorStyle = styled.div`
     .toolbar {
         display: flex;
         gap: 16px;
-        background-color: ${colors.lightGray};
+        background-color: ${colors.lightNeutral};
         margin-top: 0;
         justify-content: flex-end;
         flex-direction: column;
@@ -25,28 +25,28 @@ const EditorStyle = styled.div`
         width: 50px;
         gap: 8px;
         background-color: transparent;
-        color: ${colors.bluePrimary};
+        color: ${colors.primary};
     }
 
     .toolbar-item:hover {
         border: none;
-        border-color: ${colors.bluePrimary};
-        color: ${colors.bluePrimary};
+        border-color: ${colors.primary};
+        color: ${colors.primary};
         outline: none;
     }
 
     .toolbar-item:hover::after {
         content: "";
-        border: 1px solid ${colors.bluePrimary};
+        border: 1px solid ${colors.primary};
         width: 4px;
         height: 40px;
     }
 
     .toolbar-item[disabled],
     .toolbar-item[disabled]:hover {
-        background: ${colors.lightGray};
-        border-color: ${colors.lightGray};
-        color: ${colors.colorShadow};
+        background: ${colors.lightNeutral};
+        border-color: ${colors.lightNeutral};
+        color: ${colors.Shadow};
     }
 
     .toolbar-item[disabled]:hover::after {
@@ -60,7 +60,7 @@ const EditorStyle = styled.div`
     @media (max-width: 758px) {
         order: 0;
         width: 100%;
-        border: 1px solid ${colors.graySecondary};
+        border: 1px solid ${colors.neutralSecondary};
         border-radius: 4px;
 
         .toolbar {

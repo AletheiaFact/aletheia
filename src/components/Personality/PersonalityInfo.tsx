@@ -89,7 +89,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         fontWeight: "bold",
                         fontSize: "12px",
                         lineHeight: "16px",
-                        color: colors.bluePrimary,
+                        color: colors.primary,
                         textDecoration: "underline",
                     }}
                     target="_blank"
@@ -105,8 +105,13 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                     {!summarized && (
                         <Row
                             style={{
+<<<<<<< HEAD
                                 flexDirection: 'column',
                                 color: colors.blackPrimary,
+=======
+                                flexDirection: "column",
+                                color: colors.black,
+>>>>>>> 4842464f (Changing names in each components)
                                 fontSize: "16px",
                                 marginBottom: '25px',
                             }}
