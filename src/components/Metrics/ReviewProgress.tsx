@@ -18,7 +18,7 @@ const ReviewProgress = ({ reviews, statsProps }) => {
 
         return {
             ...defaultStyle,
-            strokeColor: StatsReviewColors[reviewId] || "#000",
+            strokeColor: StatsReviewColors[reviewId] || colors.blackPrimary,
         };
     };
 
@@ -30,18 +30,18 @@ const ReviewProgress = ({ reviews, statsProps }) => {
                 style={
                     statsProps.type === "circle"
                         ? {
-                              display: "flex",
-                              flexDirection: "column-reverse",
-                              alignItems: "center",
-                              paddingRight: "10px",
-                          }
+                            display: "flex",
+                            flexDirection: "column-reverse",
+                            alignItems: "center",
+                            paddingRight: "10px",
+                        }
                         : {}
                 }
                 key={review._id}
             >
                 <span
                     style={{
-                        color: ReviewColors[review._id] || "#000",
+                        color: ReviewColors[review._id] || colors.blackPrimary,
                         fontWeight: "700",
                         textTransform: "uppercase",
                         textAlign: "center",

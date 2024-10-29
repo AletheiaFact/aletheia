@@ -18,7 +18,7 @@ const CopilotConversationSuggestionStyled = styled.div`
         padding: 16px 8px;
         cursor: pointer;
         border: none;
-        border-top: 1px solid #ccc;
+        border-top: 1px solid ${colors.grayTertiary};
         background: ${colors.white};
         border-radius: 0 0 10px 10px;
         text-align: center;
