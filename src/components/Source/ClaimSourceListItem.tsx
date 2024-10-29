@@ -12,7 +12,7 @@ const ClaimSourceListItem = ({ source, index }) => {
     const checkLink = async (url) => {
         
         try {
-            const request = await SourceApi.checkSource(url);
+            const request = await SourceApi.checkSource(url, t);
 
             if (request?.status === 200) {
                 setLinkValid(true);
