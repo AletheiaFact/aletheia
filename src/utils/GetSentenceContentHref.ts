@@ -22,7 +22,7 @@ export const generateSentenceContentPath = (
     }
 
     if (isDebate) {
-        path = `${basePath}/personality/${personality?.slug}/claim/${claim?.slug}`;
+        path = `${basePath}/claim/${claim?.claimId}/debate`;
     }
 
     if (data_hash) {
