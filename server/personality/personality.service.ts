@@ -171,7 +171,7 @@ export class PersonalityService {
         });
     }
 
-    async getById(personalityId, query) {
+    async getById(personalityId, query: { language: string; nameSpace?: string} = { language: 'en', nameSpace: NameSpaceEnum.Main}) {
         const queryOptions = this.util.getParamsBasedOnUserRole(
             {
                 _id: personalityId,
@@ -288,7 +288,7 @@ export class PersonalityService {
      * @param newPersonalityBody PersonalityBody received of the client.
      * @returns Return changed personality.
      */
-    async update(personalityId, newPersonalityBody, query) {
+    async update(personalityId, newPersonalityBody) {
         // eslint-disable-next-line no-useless-catch
         if (newPersonalityBody.name) {
             newPersonalityBody.slug = slugify(newPersonalityBody.name, {
@@ -296,7 +296,7 @@ export class PersonalityService {
                 strict: true,
             });
         }
-        const personality = await this.getById(personalityId, query);
+        const personality = await this.getById(personalityId);
         const previousPersonality = { ...personality };
         const newPersonality = Object.assign(personality, newPersonalityBody);
         const personalityUpdate = await this.PersonalityModel.findByIdAndUpdate(
@@ -321,8 +321,8 @@ export class PersonalityService {
         return personalityUpdate;
     }
 
-    async hideOrUnhidePersonality(personalityId, isHidden, description, query) {
-        const personality = await this.getById(personalityId, query);
+    async hideOrUnhidePersonality(personalityId, isHidden, description) {
+        const personality = await this.getById(personalityId);
 
         const newPersonality = {
             ...personality,
@@ -355,9 +355,9 @@ export class PersonalityService {
      * @param personalityId Personality Id which wants to delete
      * @returns Returns the personality with the param isDeleted equal to true
      */
-    async delete(personalityId, query) {
+    async delete(personalityId) {
         const user = this.req.user;
-        const previousPersonality = await this.getById(personalityId, query);
+        const previousPersonality = await this.getById(personalityId);
         const history = this.history.getHistoryParams(
             personalityId,
             TargetModel.Personality,

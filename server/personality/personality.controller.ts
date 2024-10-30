@@ -82,15 +82,15 @@ export class PersonalityController {
 
     @ApiTags("personality")
     @Put("api/personality/:id")
-    async update(@Param("id") personalityId, @Body() body, query) {
-        return this.personalityService.update(personalityId, body, query);
+    async update(@Param("id") personalityId, @Body() body) {
+        return this.personalityService.update(personalityId, body);
     }
 
     @ApiTags("personality")
     @Put("api/personality/hidden/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    async updateHiddenStatus(@Param("id") personalityId, @Body() body, query) {
+    async updateHiddenStatus(@Param("id") personalityId, @Body() body) {
         const validateCaptcha = await this.captchaService.validate(
             body.recaptcha
         );
@@ -102,7 +102,6 @@ export class PersonalityController {
             personalityId,
             body.isHidden,
             body.description,
-            query,
         );
     }
 
@@ -110,8 +109,8 @@ export class PersonalityController {
     @Delete("api/personality/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    async delete(@Param("id") personalityId, query) {
-        return this.personalityService.delete(personalityId, query).catch((err) => {
+    async delete(@Param("id") personalityId) {
+        return this.personalityService.delete(personalityId).catch((err) => {
             this.logger.error(err);
         });
     }
