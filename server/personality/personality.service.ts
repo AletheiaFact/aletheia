@@ -171,7 +171,7 @@ export class PersonalityService {
         });
     }
 
-    async getById(personalityId, query: { language: string; nameSpace?: string} = { language: 'en', nameSpace: NameSpaceEnum.Main}) {
+    async getById(personalityId, query: { language?: string; nameSpace?: string} = { language: 'en', nameSpace: NameSpaceEnum.Main}) {
         const queryOptions = this.util.getParamsBasedOnUserRole(
             {
                 _id: personalityId,

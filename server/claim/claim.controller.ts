@@ -124,12 +124,11 @@ export class ClaimController {
 
     @ApiTags("claim")
     @Post("api/claim")
-    async create(@Body() createClaimDTO: CreateClaimDTO, query) {
+    async create(@Body() createClaimDTO: CreateClaimDTO) {
         try {
             const claim = await this._createClaim(createClaimDTO);
             const personality = await this.personalityService.getById(
-                claim.personalities[0], 
-                query
+                claim.personalities[0],
             );
             const path = claim.slug
                 ? `/personality/${personality.slug}/claim/${claim.slug}`
@@ -150,12 +149,12 @@ export class ClaimController {
     // TODO: create a image controller under types and move the endpoints to it
     @ApiTags("claim")
     @Post("api/claim/image")
-    async createClaimImage(@Body() createClaimDTO, query) {
+    async createClaimImage(@Body() createClaimDTO) {
         try {
             const claim = await this._createClaim(createClaimDTO);
 
             const personality = claim.personalities[0]
-                ? await this.personalityService.getById(claim.personalities[0], query)
+                ? await this.personalityService.getById(claim.personalities[0])
                 : null;
             const path = personality
                 ? `/personality/${personality.slug}/claim/${claim.slug}`
