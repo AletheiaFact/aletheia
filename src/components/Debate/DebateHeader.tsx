@@ -114,6 +114,7 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                                   header={true}
                                   fullWidth={true}
                                   hoistAvatar={true}
+                                  centralizedInfo={true}
                                   style={{
                                     display: "flex",
                                     justifyContent: "center",

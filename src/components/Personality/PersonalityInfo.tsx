@@ -10,12 +10,13 @@ interface PersonalityInfo {
     enableStats: boolean;
     personality: any;
     componentStyle: any; //adicionar tipo do componente style
+    centralized: boolean;
     titleLevel: 1 | 2 | 3 | 4 | 5;
 }
 
 export const PersonalityInfo = (props: PersonalityInfo) => {
     const { t } = useTranslation();
-    const { componentStyle, summarized, personality, titleLevel, enableStats } =
+    const { componentStyle, summarized, personality, titleLevel, enableStats, centralized } =
         props;
     return (
         <Col
@@ -26,9 +27,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                 flex: "auto",
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
+                alignItems: centralized ? 'center' : 'flex-start',
                 height: '100%',
             }}
         >
@@ -106,10 +105,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                     {!summarized && (
                         <Row
                             style={{
-                                display: 'flex',
                                 flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
                                 color: colors.blackPrimary,
                                 fontSize: "16px",
                                 marginBottom: '25px',

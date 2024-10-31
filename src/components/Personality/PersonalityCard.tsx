@@ -29,6 +29,7 @@ interface PersonalityCardProps {
     isFormSubmitted?: boolean;
     onClick?: any;
     titleLevel?: 1 | 2 | 3 | 4 | 5;
+    centralizedInfo?: boolean;
 }
 
 const PersonalityCard = ({
@@ -45,6 +46,7 @@ const PersonalityCard = ({
     titleLevel = 1,
     selectPersonality = null,
     isFormSubmitted,
+    centralizedInfo = false,
 }: PersonalityCardProps) => {
     const isCreatingClaim = selectPersonality !== null;
     const [state] = useAtom(createClaimMachineAtom);
@@ -158,6 +160,7 @@ const PersonalityCard = ({
                                 enableStats={enableStats}
                                 summarized={summarized}
                                 titleLevel={titleLevel}
+                                centralized={centralizedInfo}
                             />
                         )}
                         {summarized && (
