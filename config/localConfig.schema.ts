@@ -31,18 +31,16 @@ const LocalConfigSchema = z.object({
             inactive: hexPattern,
         }),
     }),
+    Logo: z.boolean(),
     footer: z.object({
         socialMedias: z.array(z.string().url()).optional(),
         showStatuteButton: z.object({
             show: z.boolean(),
-            redirectUrl: z.string().url().optional(),
         }),
-        repositoryUrl: z.string().url().optional(),
     }),
     header: z.object({
         donateButton: z.object({
             show: z.boolean(),
-            redirectUrl: z.string().url().optional(),
         }),
     }),
     home: z.object({

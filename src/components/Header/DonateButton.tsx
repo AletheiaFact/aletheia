@@ -9,7 +9,7 @@ const DonateButton = ({ header = false, style = {} }) => {
     return (
         <AletheiaButton
             type={ButtonType.white}
-            href={localConfig.header.donateButton.redirectUrl ? localConfig.header.donateButton.redirectUrl : "https://donate.aletheiafact.org/"}
+            href={t("home:donateUrlButton")}
             target="_blank"
             rel="noreferrer"
             onClick={() => {

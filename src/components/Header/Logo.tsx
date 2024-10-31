@@ -4,7 +4,9 @@ import colors from "../../styles/colors";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
-import Image from "next/image";
+import localConfig from "../../../config/localConfig.example";
+import ConfigLogo from "./ConfigLogo";
+import LogoAletheia from "./LogoAletheia";
 
 const Logo = ({
     color = colors.logoWhite,
@@ -13,15 +15,20 @@ const Logo = ({
     lineHeight = "24px",
 }) => {
     const [nameSpace] = useAtom<string>(currentNameSpace);
-    const logoSvgPath = process.env.LOGO_SVG_PATH || '/images/logo1_white.svg';
+
     if (nameSpace === NameSpaceEnum.Main) {
         return (
-            <Image
-                alt="logo"
-                src={logoSvgPath}
-                height={height}
-                width={width}
-            />
+            localConfig.Logo ?
+                <ConfigLogo
+                    height={height}
+                    width={width}
+                />
+                :
+                <LogoAletheia
+                    height={height}
+                    width={width}
+                    color={color}
+                />
         );
     } else if (nameSpace) {
         return (
