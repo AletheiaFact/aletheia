@@ -22,14 +22,15 @@ const TopicDisplay = ({
     const [tags, setTags] = useState<any[]>([]);
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    let timeout: NodeJS.Timeout;
 
     useEffect(() => {
         const inputValueFormatted = inputValue.map((inputValue) =>
             inputValue?.value
                 ? {
-                      label: inputValue?.label.toLowerCase().replace(" ", "-"),
-                      value: inputValue?.value,
-                  }
+                    label: inputValue?.label.toLowerCase().replace(" ", "-"),
+                    value: inputValue?.value,
+                }
                 : inputValue
         );
 
@@ -46,20 +47,26 @@ const TopicDisplay = ({
 
     const fetchTopicList = async (
         topic: string
-    ): Promise<{ label: string; value: string }[]> => {
-        const topicSearchResults = await TopicsApi.getTopics({
-            topicName: topic,
-            t: t,
-            dispatch: dispatch,
-        });
-
-        return (
-            topicSearchResults?.map((topic) => ({
-                label: topic.name,
-                value: topic.wikidata,
-            })) || []
-        );
-    };
+    ) => new Promise<{ label: string; value: string }[]>((resolve) => {
+        if (timeout) clearTimeout(timeout);
+        if (topic.length >= 3) {
+            timeout = setTimeout(async () => {
+                const topicSearchResults = await TopicsApi.getTopics({
+                    topicName: topic,
+                    t,
+                    dispatch,
+                });
+                resolve(
+                    topicSearchResults?.map(({ name, wikidata }) => ({
+                        label: name,
+                        value: wikidata
+                    })) || []
+                );
+            }, 1000);
+        }
+        return [];
+    });
+    
 
     const handleClose = async (removedTopicValue: any) => {
         const newTopicsArray = topicsArray.filter(
@@ -74,13 +81,18 @@ const TopicDisplay = ({
         if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
             return await verificationRequestApi.deleteVerificationRequestTopic(
                 newTopicsArray,
-                data_hash
+                data_hash,
+                t
             );
         }
 
         return contentModel === ContentModelEnum.Image
             ? await ImageApi.deleteImageTopic(newTopicsArray, data_hash)
-            : await SentenceApi.deleteSentenceTopic(newTopicsArray, data_hash);
+            : await SentenceApi.deleteSentenceTopic(
+                  newTopicsArray,
+                  data_hash,
+                  t
+              );
     };
 
     return (

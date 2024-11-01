@@ -14,14 +14,14 @@ const OverlaySearchResults = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
-    const { results, searchName } = useAppSelector((state) => {
+    const { results, searchOverlayName } = useAppSelector((state) => {
         return {
             results: [
-                state?.search?.searchResults?.personalities || [],
-                state?.search?.searchResults?.claims || [],
-                state?.search?.searchResults?.sentences || [],
+                state?.search?.searchOverlayResults?.personalities || [],
+                state?.search?.searchOverlayResults?.claims || [],
+                state?.search?.searchOverlayResults?.sentences || [],
             ],
-            searchName: state?.search?.searchInput || null,
+            searchOverlayName: state?.search?.searchOverlayInput || null,
         };
     });
 
@@ -77,8 +77,9 @@ const OverlaySearchResults = () => {
                 return (
                     <SearchCard
                         title={t(`search:${type}HeaderTitle`)}
+                        key={result.id || i}
                         content={result}
-                        searchName={searchName}
+                        searchName={searchOverlayName}
                         handleSearchClick={handleSearchClick}
                         type={type}
                         avatar={i !== 0 ? false : true}

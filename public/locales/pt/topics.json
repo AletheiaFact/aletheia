@@ -6,5 +6,7 @@
   "getTopicsFailed": "Erro ao buscar tópicos",
   "addTopicsButton": "Adicionar tópicos",
   "inputRule": "Campo obrigatório",
-  "noTopics": "Tópicos não adicionados"
+  "noTopics": "Tópicos não adicionados",
+  "deleteTopics": "Tópico deletado com sucesso",
+  "deleteTopicsError": "Erro ao deletar tópico"
 }

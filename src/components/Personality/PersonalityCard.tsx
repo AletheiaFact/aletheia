@@ -13,6 +13,7 @@ import PersonalityCardButton from "./PersonalityCardButton";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { PersonalityInfo } from "./PersonalityInfo";
+import colors from "../../styles/colors";
 
 interface PersonalityCardProps {
     personality: any;
@@ -64,16 +65,16 @@ const PersonalityCard = ({
 
     const personalityFoundProps = isCreatingClaim
         ? {
-              onClick: () => {
-                  if (selectPersonality) {
-                      selectPersonality(personality);
-                  }
-              },
-          }
+            onClick: () => {
+                if (selectPersonality) {
+                    selectPersonality(personality);
+                }
+            },
+        }
         : {
-              href: `${baseHref || nameSpaceHref}${personality.slug}`,
-              onClick,
-          };
+            href: `${baseHref || nameSpaceHref}${personality.slug}`,
+            onClick,
+        };
 
     const personalityIsSelected = personalities.some(
         (item) => item._id === personality._id
@@ -101,10 +102,10 @@ const PersonalityCard = ({
     let cardStyle;
     if (!header) {
         cardStyle = {
-            background: "#FFFFFF",
-            border: "1px solid #EEEEEE",
+            background: colors.white,
+            border: `1px solid ${colors.lightGraySecondary}`,
             boxSizing: "border-box",
-            boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.2)",
+            boxShadow: `0px 3px 3px ${colors.colorShadow}`,
             borderRadius: "10px",
             marginBottom: "10px",
         };
@@ -154,6 +155,7 @@ const PersonalityCard = ({
 
                         {((hoistAvatar && (!vw?.sm || !vw?.xs)) ||
                             !hoistAvatar) && (
+
                             <PersonalityInfo
                                 personality={personality}
                                 componentStyle={componentStyle}
@@ -163,6 +165,7 @@ const PersonalityCard = ({
                                 centralized={centralizedInfo}
                             />
                         )}
+                      
                         {summarized && (
                             <Col
                                 span={componentStyle.buttonSpan}

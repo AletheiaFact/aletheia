@@ -2,13 +2,14 @@ import React from "react";
 import AletheiaButton, { ButtonType } from "../Button";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useTranslation } from "next-i18next";
+import localConfig from "../../../config/localConfig.example";
 
 const DonateButton = ({ header = false, style = {} }) => {
     const { t } = useTranslation();
     return (
         <AletheiaButton
             type={ButtonType.white}
-            href="https://donate.aletheiafact.org/"
+            href={t("home:donateUrlButton")}
             target="_blank"
             rel="noreferrer"
             onClick={() => {
@@ -20,7 +21,7 @@ const DonateButton = ({ header = false, style = {} }) => {
                 ...style,
             }}
         >
-            {header ? t("header:donateButton") : t("home:donateButton")}
+            {t("home:donateButton")}
         </AletheiaButton>
     );
 };
