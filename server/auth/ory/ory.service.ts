@@ -11,7 +11,11 @@ export default class OryService {
         this.adminUrl = `${admin_url}/${admin_endpoint}`;
     }
 
-    async updateIdentity(user, password, role): Promise<any> {
+    async updateIdentity(
+        user,
+        password,
+        traits?: { role?: any; app_affiliation?: string }
+    ): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
         const credentials = password
@@ -28,7 +32,7 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
-                    role,
+                    ...traits,
                 },
                 credentials,
             }),

@@ -1,48 +1,53 @@
 {
-  "$id": "https://schemas.ory.sh/presets/kratos/identity.email.schema.json",
-  "title": "Person",
-  "type": "object",
-  "properties": {
-    "traits": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string",
-          "format": "email",
-          "title": "E-Mail",
-          "ory.sh/kratos": {
-            "credentials": {
-              "password": {
-                "identifier": true
-              },
-              "webauthn": {
-                "identifier": true
-              },
-              "totp": {
-                "account_name": true
-              }
+    "$id": "https://schemas.ory.sh/presets/kratos/identity.email.schema.json",
+    "title": "aletheia-v3",
+    "type": "object",
+    "properties": {
+        "traits": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "format": "email",
+                    "title": "E-Mail",
+                    "ory.sh/kratos": {
+                        "credentials": {
+                            "password": {
+                                "identifier": true
+                            },
+                            "webauthn": {
+                                "identifier": true
+                            },
+                            "totp": {
+                                "account_name": true
+                            }
+                        },
+                        "recovery": {
+                            "via": "email"
+                        },
+                        "verification": {
+                            "via": "email"
+                        }
+                    },
+                    "maxLength": 320
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "object"
+                },
+                "app_affiliation": {
+                    "type": "string",
+                    "description": "The application the user belongs to",
+                    "dafault": "aletheia"
+                }
             },
-            "recovery": {
-              "via": "email"
-            },
-            "verification": {
-              "via": "email"
-            }
-          },
-          "maxLength": 320
-        },
-        "user_id": {
-          "type": "string"
-        },
-        "role": {
-          "type": "object"
+            "required": [
+                "email",
+                "user_id"
+            ],
+            "additionalProperties": false
         }
-      },
-      "required": [
-        "email",
-        "user_id"
-      ],
-      "additionalProperties": false
     }
-  }
 }

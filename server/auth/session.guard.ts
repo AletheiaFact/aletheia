@@ -35,6 +35,32 @@ export class SessionGuard implements CanActivate {
                 const { data: session } = await ory.toSession({
                     cookie: request.header("Cookie"),
                 });
+
+                const expectedAffiliation =
+                    this.configService.get<string>("app_affiliation");
+                const appAffiliation =
+                    session?.identity?.traits?.app_affiliation;
+                if (appAffiliation !== expectedAffiliation) {
+                    // TODO: add logging
+                    try {
+                        const { data } = await ory.createBrowserLogoutFlow({
+                            cookie: request.header("Cookie"),
+                        });
+                        await ory.updateLogoutFlow({
+                            cookie: request.header("Cookie"),
+                            token: data.logout_token,
+                        });
+                    } catch (e) {
+                        // TODO: add logging
+                        console.log(e);
+                    }
+                    return this.checkAndRedirect(
+                        request,
+                        response,
+                        isPublic,
+                        "/unauthorized"
+                    );
+                }
                 request.user = {
                     _id: session?.identity?.traits?.user_id,
                     // Needed to enable feature flag for specific users

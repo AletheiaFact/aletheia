@@ -102,6 +102,11 @@ export class UsersService {
         return user;
     }
 
+    async getByEmail(email: string) {
+        const user = await this.UserModel.findOne({ email });
+        return user;
+    }
+
     getByOryId(oryId) {
         return this.UserModel.findOne({ oryId }, "email name oryId role");
     }
