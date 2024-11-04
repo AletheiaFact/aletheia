@@ -67,6 +67,8 @@ export default class OryService {
     async updateUserRole(user, role): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
+        const app_affiliation =
+            this.configService.get<string>("app_affiliation");
 
         return await fetch(`${this.adminUrl}/identities/${user.oryId}`, {
             method: "put",
@@ -76,6 +78,7 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
+                    app_affiliation,
                     role,
                 },
             }),
@@ -89,6 +92,9 @@ export default class OryService {
     async createIdentity(user, password, role?): Promise<any> {
         const { access_token: token, schema_id } =
             this.configService.get("ory");
+        const app_affiliation =
+            this.configService.get<string>("app_affiliation");
+
         return fetch(`${this.adminUrl}/identities`, {
             method: "post",
             body: JSON.stringify({
@@ -96,6 +102,7 @@ export default class OryService {
                 traits: {
                     email: user.email,
                     user_id: user._id,
+                    app_affiliation,
                     role: role || { main: Roles.Regular },
                 },
                 credentials: {
