@@ -3,9 +3,12 @@ import { Configuration, FrontendApi } from "@ory/client";
 import { Reflector } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { Roles } from "./ability/ability.factory";
+import { Logger } from "@nestjs/common";
 
 @Injectable()
 export class SessionGuard implements CanActivate {
+    private readonly logger = new Logger(SessionGuard.name);
+
     constructor(
         private configService: ConfigService,
         private readonly reflector: Reflector
@@ -41,7 +44,9 @@ export class SessionGuard implements CanActivate {
                 const appAffiliation =
                     session?.identity?.traits?.app_affiliation;
                 if (appAffiliation !== expectedAffiliation) {
-                    // TODO: add logging
+                    this.logger.error(
+                        `Affiliation mismatch: expected ${expectedAffiliation}, got ${appAffiliation}`
+                    );
                     try {
                         const { data } = await ory.createBrowserLogoutFlow({
                             cookie: request.header("Cookie"),
@@ -51,8 +56,7 @@ export class SessionGuard implements CanActivate {
                             token: data.logout_token,
                         });
                     } catch (e) {
-                        // TODO: add logging
-                        console.log(e);
+                        this.logger.error("Error during logout flow", e);
                     }
                     return this.checkAndRedirect(
                         request,
