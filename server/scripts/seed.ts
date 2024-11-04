@@ -1,10 +1,10 @@
 import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
+import { AppModule } from "../app.module";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ConfigService } from "@nestjs/config";
-import { UsersService } from "./users/users.service";
-import loadConfig from "./configLoader";
-import { WinstonLogger } from "./winstonLogger";
+import { UsersService } from "../users/users.service";
+import loadConfig from "../configLoader";
+import { WinstonLogger } from "../winstonLogger";
 
 async function initApp() {
     const options = loadConfig();

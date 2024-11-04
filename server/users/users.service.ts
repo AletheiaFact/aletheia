@@ -72,6 +72,20 @@ export class UsersService {
 
         return await pipeline.exec();
     }
+    /**
+     * Retrieves all users from the database.
+     */
+    async getAllUsers(): Promise<UserDocument[]> {
+        try {
+            this.logger.log("Fetching all users from the database.");
+            const users = await this.UserModel.find().exec();
+            this.logger.log(`Fetched ${users.length} users.`);
+            return users;
+        } catch (error) {
+            this.logger.error("Error fetching users:", error);
+            throw error;
+        }
+    }
 
     async register(user) {
         const newUser = new this.UserModel(user);

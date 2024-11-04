@@ -1,11 +1,11 @@
 import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
+import { AppModule } from "../app.module";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ConfigService } from "@nestjs/config";
-import { UsersService } from "./users/users.service";
-import loadConfig from "./configLoader";
-import { WinstonLogger } from "./winstonLogger";
-import OryService from "./auth/ory/ory.service";
+import { UsersService } from "../users/users.service";
+import loadConfig from "../configLoader";
+import { WinstonLogger } from "../winstonLogger";
+import OryService from "../auth/ory/ory.service";
 
 // Helper function to parse command-line arguments
 const parseArgs = () => {
@@ -23,6 +23,19 @@ const parseArgs = () => {
 
     return { command, options };
 };
+
+async function updateUserAppAffiliation(userFromDB, app) {
+    const oryService = await app.resolve(OryService);
+    const configService = app.get(ConfigService);
+
+    const app_affiliation = configService.get("app_affiliation");
+    if (userFromDB && app_affiliation) {
+        await oryService.updateIdentity(userFromDB, null, {
+            app_affiliation,
+            role: userFromDB.role,
+        });
+    }
+}
 
 async function initApp() {
     const { command, options: scriptOptions } = parseArgs();
@@ -42,21 +55,11 @@ async function initApp() {
     }
 
     const { user } = scriptOptions;
-    const configService = app.get(ConfigService);
     const userService = await app.resolve(UsersService);
-    const oryService = await app.resolve(OryService);
 
-    const app_affiliation = configService.get<string>("app_affiliation");
     const userFromDB = await userService.getByEmail(user);
 
-    if (userFromDB && app_affiliation) {
-        await oryService.updateIdentity(userFromDB, null, {
-            app_affiliation,
-            role: userFromDB.role,
-        });
-    }
-
-    console.log(userFromDB);
+    updateUserAppAffiliation(userFromDB, app);
 
     logger.log("Seed is finished");
     await app.close();
