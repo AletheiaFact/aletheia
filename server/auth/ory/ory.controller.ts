@@ -1,15 +1,36 @@
-import { Controller, Get, Post, Req, Res } from "@nestjs/common";
+import { Controller, Get, Post, Header, Req, Res } from "@nestjs/common";
+import type { Request, Response } from "express";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { parse } from "url";
 import { ViewService } from "../../view/view.service";
 import { IsPublic } from "../decorators/is-public.decorator";
+import OryService from "./ory.service";
 
-@Controller()
+@Controller("api/.ory")
 export default class OryController {
-    constructor(private viewService: ViewService) {}
+    constructor(
+        private readonly viewService: ViewService,
+        private readonly oryService: OryService
+    ) {}
+    @IsPublic()
+    @Get("sessions/whoami")
+    public async whoAmI(@Req() req: Request, @Res() res: Response) {
+        try {
+            const sessionToken =
+                req.cookies["ory_kratos_session"] ||
+                req.headers["authorization"];
+            const data = await this.oryService.whoAmI(sessionToken);
+            return res.status(200).json(data);
+        } catch (error) {
+            if (error.status) {
+                return res.status(error.status).json(error.json());
+            }
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    }
 
     @IsPublic()
-    @Get("api/.ory/*")
+    @Get("*")
     public async getOryPaths(
         @Req() req: NextApiRequest,
         @Res() res: NextApiResponse
@@ -18,7 +39,7 @@ export default class OryController {
     }
 
     @IsPublic()
-    @Post("api/.ory/*")
+    @Post("*")
     public async postOryPaths(
         @Req() req: NextApiRequest,
         @Res() res: NextApiResponse

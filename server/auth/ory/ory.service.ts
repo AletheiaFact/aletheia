@@ -5,9 +5,12 @@ import { Roles } from "../../auth/ability/ability.factory";
 @Injectable()
 export default class OryService {
     private adminUrl: string;
-    constructor(private configService: ConfigService) {
-        const { admin_url, admin_endpoint } = this.configService.get("ory");
+    private url: string;
 
+    constructor(private configService: ConfigService) {
+        const { admin_url, admin_endpoint, url } =
+            this.configService.get("ory");
+        this.url = url;
         this.adminUrl = `${admin_url}/${admin_endpoint}`;
     }
 
@@ -118,6 +121,19 @@ export default class OryService {
         return fetch(`${this.adminUrl}/identities/${identityId}`, {
             method: "delete",
             headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+
+    async whoAmI(sessionToken: string): Promise<any> {
+        return await fetch(`${this.url}/sessions/whoami`, {
+            headers: {
+                Cookie: `ory_kratos_session=${sessionToken}`,
+            },
+        }).then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
         });
     }
 }
