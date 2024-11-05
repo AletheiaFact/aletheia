@@ -74,7 +74,7 @@ export class PersonalityController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     async get(@Param("id") personalityId, @Query() query) {
         return this.personalityService
-            .getById(personalityId, query.language) // TODO: get language from request object in the future
+            .getById(personalityId, query) // TODO: get language from request object in the future
             .catch((err) => {
                 this.logger.error(err);
             });
@@ -101,7 +101,7 @@ export class PersonalityController {
         return this.personalityService.hideOrUnhidePersonality(
             personalityId,
             body.isHidden,
-            body.description
+            body.description,
         );
     }
 
