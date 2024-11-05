@@ -72,7 +72,7 @@
         "@dhaiwat10/react-link-preview": "^1.9.1",
         "@emotion/react": "^11.10.4",
         "@emotion/styled": "^11.10.4",
-        "@langchain/community": "^0.0.54",
+        "@langchain/community": "^0.3.3",
         "@langchain/openai": "^0.0.28",
         "@mui/icons-material": "^5.10.9",
         "@mui/material": "5.16.6",
