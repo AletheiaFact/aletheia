@@ -39,8 +39,7 @@
                 },
                 "app_affiliation": {
                     "type": "string",
-                    "description": "The application the user belongs to",
-                    "dafault": "aletheia"
+                    "description": "The application the user belongs to"
                 }
             },
             "required": [
