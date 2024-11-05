@@ -102,9 +102,10 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                           <Col
                               style={{
                                   display: "flex",
-                                  height: "100%",
-                                  padding: "30px 0px",
+                                  justifyContent: "center",
+                                  alignItems: "flex-start",
                                   width: "40%",
+                                  padding: "32px 0",
                               }}
                               key={p?._id || index}
                           >
@@ -113,8 +114,13 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                                   header={true}
                                   fullWidth={true}
                                   hoistAvatar={true}
+                                  centralizedInfo={true}
                                   style={{
-                                      justifyContent: "center",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    textAlign: "center",
+                                    width: "100%",
+                                    padding: "20px",
                                   }}
                               />
                           </Col>

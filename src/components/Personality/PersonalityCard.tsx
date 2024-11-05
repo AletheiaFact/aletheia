@@ -30,6 +30,7 @@ interface PersonalityCardProps {
     isFormSubmitted?: boolean;
     onClick?: any;
     titleLevel?: 1 | 2 | 3 | 4 | 5;
+    centralizedInfo?: boolean;
 }
 
 const PersonalityCard = ({
@@ -46,6 +47,7 @@ const PersonalityCard = ({
     titleLevel = 1,
     selectPersonality = null,
     isFormSubmitted,
+    centralizedInfo = false,
 }: PersonalityCardProps) => {
     const isCreatingClaim = selectPersonality !== null;
     const [state] = useAtom(createClaimMachineAtom);
@@ -53,6 +55,7 @@ const PersonalityCard = ({
     const { personalities } = claimData;
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
+    const smallDevice = vw?.sm;
 
     const baseHref = hrefBase || "";
     const nameSpaceHref =
@@ -152,14 +155,17 @@ const PersonalityCard = ({
 
                         {((hoistAvatar && (!vw?.sm || !vw?.xs)) ||
                             !hoistAvatar) && (
-                                <PersonalityInfo
-                                    personality={personality}
-                                    componentStyle={componentStyle}
-                                    enableStats={enableStats}
-                                    summarized={summarized}
-                                    titleLevel={titleLevel}
-                                />
-                            )}
+
+                            <PersonalityInfo
+                                personality={personality}
+                                componentStyle={componentStyle}
+                                enableStats={enableStats}
+                                summarized={summarized}
+                                titleLevel={titleLevel}
+                                centralized={centralizedInfo}
+                            />
+                        )}
+                      
                         {summarized && (
                             <Col
                                 span={componentStyle.buttonSpan}
@@ -184,7 +190,7 @@ const PersonalityCard = ({
                         )}
                     </Row>
                 </Col>
-                {enableStats && hasReview && (
+                {!smallDevice && enableStats && hasReview && (
                     <Col
                         xs={24}
                         sm={24}
