@@ -9,6 +9,7 @@ hidden var = new {
     name = "service-aletheia"
     conf = new {
         port = 3000
+        app_affiliation = "aletheia"
         recaptcha_sitekey = read("env:RECAPTCHA_SITEKEY")
         websocketUrl = read("env:WEBSOCKET_URL")
         baseUrl = read("env:BASE_URL")

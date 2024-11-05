@@ -1,8 +1,9 @@
 services:
   - name: service-aletheia
     conf:
+      app_affiliation: aletheia
       port: 3000
-      cors: '*'
+      cors: "*"
       debug: true
       websocketUrl: ws://localhost:5001
       baseUrl: "http://localhost:3000"
