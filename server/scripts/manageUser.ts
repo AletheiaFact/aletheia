@@ -47,7 +47,6 @@ async function initApp() {
     );
 
     logger.log(`AppModule loaded`);
-    console.log(command);
     // Check if the command is specified and is "update"
     if (command !== "update") {
         logger.log("Unsupported command. Use 'update' as the command.");
