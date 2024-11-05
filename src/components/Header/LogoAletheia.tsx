@@ -2,18 +2,15 @@ import React from "react"
 
 const LogoAletheia = ({
   height = "",
-  width = "",
   color = "",
 }: {
   height: string,
-  width: string,
   color: any,
 }) => {
   return (
     <svg
       viewBox="0 0 957 517"
       height={height}
-      width={width}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

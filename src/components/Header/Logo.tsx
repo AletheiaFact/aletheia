@@ -26,7 +26,6 @@ const Logo = ({
                 :
                 <LogoAletheia
                     height={height}
-                    width={width}
                     color={color}
                 />
         );
