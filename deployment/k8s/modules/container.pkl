@@ -47,6 +47,10 @@ container: PodSpec.Container = new {
             name = "ENV_NAME"
             value = namespace
         }
+        new {
+            name = "NEXT_PUBLIC_ORYCLOUD"
+            value = read("env:ORYCLOUD")
+        }
     }
 
     readinessProbe {
