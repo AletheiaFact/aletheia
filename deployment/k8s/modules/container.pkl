@@ -5,6 +5,7 @@ import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/api/core/v1/PodSpec.pkl"
 hidden namespace = ""
 hidden imagePath = ""
 hidden podPort = ""
+hidden oryCloud = "true"
 
 container: PodSpec.Container = new {
     name = ""
@@ -46,6 +47,10 @@ container: PodSpec.Container = new {
         new {
             name = "ENV_NAME"
             value = namespace
+        }
+        new {
+            name = "NEXT_PUBLIC_ORYCLOUD"
+            value = oryCloud
         }
     }
 

@@ -1,14 +1,9 @@
-import {
-    Configuration,
-    FrontendApi,
-    IdentityApi,
-    OAuth2Api,
-} from "@ory/client";
+import { Configuration, FrontendApi, IdentityApi } from "@ory/client";
 import { edgeConfig } from "@ory/integrations/next";
 
 let oryConfig = new Configuration(edgeConfig);
 
-if (process.env.NEXT_PUBLIC_ENVIRONMENT === "production") {
+if (process.env.NEXT_PUBLIC_ORYCLOUD === "true") {
     oryConfig = new Configuration({
         basePath: process.env.NEXT_PUBLIC_ORY_SDK_URL,
         baseOptions: {
