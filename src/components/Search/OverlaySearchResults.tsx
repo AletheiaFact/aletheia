@@ -1,7 +1,7 @@
-import { Row } from "antd";
+import { message, Row } from "antd";
 import { useTranslation } from "next-i18next";
 import router from "next/router";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import { useAppSelector } from "../../store/store";
@@ -9,12 +9,15 @@ import SearchCard from "./SearchCard";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
+import SearchApi from "../../api/searchApi";
+import Loading from "../Loading";
 
 const OverlaySearchResults = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
-    const { results, searchOverlayName } = useAppSelector((state) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const { results, searchName } = useAppSelector((state) => {
         return {
             results: [
                 state?.search?.searchOverlayResults?.personalities || [],
@@ -56,6 +59,24 @@ const OverlaySearchResults = () => {
                 break;
         }
     };
+
+    const fetchResults = async () => {
+        setIsLoading(true);
+        try {
+            await SearchApi.getResults(searchName);
+        } catch (error) {
+            message.error("Error search for personality");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (searchName) {
+            fetchResults();
+        }
+    }, [searchName]);
+
     return (
         <Row
             className="main-content"
@@ -72,20 +93,23 @@ const OverlaySearchResults = () => {
                 dispatch(actions.closeResultsOverlay());
             }}
         >
-            {results.map((result, i) => {
-                const type = ["personality", "claim", "sentence"][i];
-                return (
-                    <SearchCard
-                        title={t(`search:${type}HeaderTitle`)}
-                        key={result.id || i}
-                        content={result}
-                        searchName={searchOverlayName}
-                        handleSearchClick={handleSearchClick}
-                        type={type}
-                        avatar={i !== 0 ? false : true}
-                    />
-                );
-            })}
+            {isLoading ? (
+                <Loading />
+            ) : (
+                results.map((result, i) => {
+                    const type = ["personality", "claim", "sentence"][i];
+                    return (
+                        <SearchCard
+                            title={t(`search:${type}HeaderTitle`)}
+                            content={result}
+                            searchName={searchName}
+                            handleSearchClick={handleSearchClick}
+                            type={type}
+                            avatar={i !== 0 ? false : true}
+                        />
+                    );
+                })
+            )}
         </Row>
     );
 };
