@@ -7,9 +7,14 @@ import { useTranslation } from "next-i18next";
 const DonationBanner = () => {
   const { t } = useTranslation();
   const [isBannerVisible, setIsBannerVisible] = useState(true);
+  const enableDonationBanner = process.env.NEXT_PUBLIC_ENABLE_BANNER_DONATION === "true";
   const handleToggleBanner = () => {
     setIsBannerVisible((prev) => !prev);
   }
+
+  if (!enableDonationBanner){
+    return null
+  };
 
   return (
     <DonationBannerStyle>
