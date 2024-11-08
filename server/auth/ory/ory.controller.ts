@@ -52,10 +52,6 @@ export default class OryController {
         @Res() res: NextApiResponse
     ) {
         const parsedUrl = parse(req.url, true);
-        await this.viewService.getNextServer().getRequestHandler()(
-            req,
-            res,
-            parsedUrl
-        );
+        await this.viewService.getRequestHandler()(req, res, parsedUrl);
     }
 }
