@@ -91,7 +91,7 @@ export class HomeController {
 
         const stats = await this.statsService.getHomeStats();
 
-        const queryObject: NextParsedUrlQuery = Object.assign(parsedUrl.query, {
+        const queryObject = Object.assign(parsedUrl.query, {
             personalities,
             stats,
             claims,

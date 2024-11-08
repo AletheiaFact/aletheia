@@ -72,6 +72,7 @@ const PersonalityPage: NextPage<{
 
 export async function getServerSideProps({ query, locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
+    query = JSON.parse(query.props);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
