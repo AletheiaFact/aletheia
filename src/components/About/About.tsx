@@ -6,7 +6,7 @@ import AletheiaAlert from "../AletheiaAlert";
 import { FilePdfOutlined } from "@ant-design/icons";
 import AletheiaVideo from "../AletheiaVideo";
 
-const About = ({ enableWarningDocument }) => {
+const About = () => {
     const { t } = useTranslation();
     const paragraphStyle = {
         margin: "10px 0px",
@@ -32,7 +32,6 @@ const About = ({ enableWarningDocument }) => {
             >
                 <AletheiaVideo />
             </div>
-            {enableWarningDocument && (
                 <AletheiaAlert
                     type="info"
                     message={
@@ -67,7 +66,6 @@ const About = ({ enableWarningDocument }) => {
                         </Button>
                     }
                 />
-            )}
             <Row style={{ width: "100%", textAlign: "center" }}>
                 <Typography.Title style={{ width: "100%" }}>
                     {t("about:title")}
