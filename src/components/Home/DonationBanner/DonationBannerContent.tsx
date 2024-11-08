@@ -1,5 +1,5 @@
 import React from "react";
-import BannerButton from "./DonationBannerButton";
+import DonationBannerButton from "./DonationBannerButton";
 import { ButtonType } from "../../Button";
 import { Col } from "antd";
 import { useTranslation } from "next-i18next";
@@ -20,7 +20,7 @@ function DonationBannerContent() {
                 <p>
                     {t("donationBanner:paragraph")}
                 </p>
-                <BannerButton type={ButtonType.blue} />
+                <DonationBannerButton type={ButtonType.blue} />
             </Col>
         </DonationBannerStyle >
 
