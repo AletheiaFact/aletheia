@@ -14,6 +14,7 @@ class Throttle {
 
 port: Number
 cors: String
+app_affiliation: String
 websocketUrl: String
 baseUrl: String
 automatedFactCheckingAPIUrl: String
@@ -21,6 +22,7 @@ recaptcha_secret: String
 recaptcha_sitekey: String
 throttle: Throttle
 authentication_type = "ory"
+override_public_routes = false
 db = (mongoDbConfig) {}
 ory = (oryConfig) {}
 feature_flag = (featureFlagConfig) {}

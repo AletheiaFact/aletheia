@@ -6,7 +6,7 @@ const NotificationCardStyle = styled.div`
     background-color: ${({ isSeen }) =>
         !isSeen ? colors.lightGray : colors.white};
     padding: ${(props) => (!props.isSeen ? "16px 16px 16px 6px" : "16px")};
-    border: 1px solid rgb(238, 238, 238);
+    border: 1px solid ${colors.lightGraySecondary};
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -31,9 +31,9 @@ const NotificationCardStyle = styled.div`
 
     .notification-avatar-icon {
         color: ${({ namespace }) =>
-            namespace === NameSpaceEnum.Main
-                ? colors.bluePrimary
-                : colors.blueSecondary};
+        namespace === NameSpaceEnum.Main
+            ? colors.bluePrimary
+            : colors.blueSecondary};
         margin: 0px;
         width: 32px;
         height: 32px;

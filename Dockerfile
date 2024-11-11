@@ -4,6 +4,7 @@ ARG NEXT_PUBLIC_UMAMI_SITE_ID
 ARG NEXT_PUBLIC_RECAPTCHA_SITEKEY
 ARG NEXT_PUBLIC_ENVIRONMENT
 ARG NEXT_PUBLIC_ORY_SDK_URL
+ARG NEXT_PUBLIC_ORYCLOUD
 ARG ENVIRONMENT
 ENV PARCEL_WORKERS=1
 ENV NEW_RELIC_NO_CONFIG_FILE=true
@@ -28,16 +29,19 @@ COPY ./server /app/server
 COPY ./src /app/src
 COPY ./lib /app/lib
 COPY ./public /app/public
+COPY ./config /app/config
 COPY ./next-i18next.config.js /app/next-i18next.config.js
 
 WORKDIR /app
 
+RUN cp config/localConfig.example.ts config/localConfig.ts
 RUN apk add --no-cache git python3 make g++
 RUN yarn install --production
 RUN NEXT_PUBLIC_UMAMI_SITE_ID=$NEXT_PUBLIC_UMAMI_SITE_ID \
     NEXT_PUBLIC_RECAPTCHA_SITEKEY=$NEXT_PUBLIC_RECAPTCHA_SITEKEY \
     NEXT_PUBLIC_ENVIRONMENT=$NEXT_PUBLIC_ENVIRONMENT \
     NEXT_PUBLIC_ORY_SDK_URL=$NEXT_PUBLIC_ORY_SDK_URL \
+    NEXT_PUBLIC_ORYCLOUD=$NEXT_PUBLIC_ORYCLOUD \
     yarn build
 
 FROM node:18.19.1-alpine

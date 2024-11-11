@@ -1,4 +1,5 @@
 {
     "headerTitle": "Claims ratings",
-    "header": "Considering all reviewed claims"
+    "header": "Considering all reviewed claims",
+    "empytOverview": "The personality does not have any metric analysis avaliable"
 }

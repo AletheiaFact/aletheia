@@ -128,7 +128,7 @@ export class ClaimController {
         try {
             const claim = await this._createClaim(createClaimDTO);
             const personality = await this.personalityService.getById(
-                claim.personalities[0]
+                claim.personalities[0],
             );
             const path = claim.slug
                 ? `/personality/${personality.slug}/claim/${claim.slug}`

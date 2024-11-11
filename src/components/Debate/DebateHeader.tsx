@@ -10,9 +10,12 @@ import colors from "../../styles/colors";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
+import AletheiaButton, { ButtonType } from "../Button";
+import { EditOutlined } from "@ant-design/icons";
+import { Roles } from "../../types/enums";
 
 const { Title } = Typography;
-const DebateHeader = ({ title, personalities }) => {
+const DebateHeader = ({ claim, title, personalities, userRole }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
@@ -23,7 +26,7 @@ const DebateHeader = ({ title, personalities }) => {
             Promise.all(
                 personalities.map(async (p) => {
                     if (p && p._id) {
-                        return personalityApi.getPersonality(p?._id, {}, t);
+                        return personalityApi.getPersonality(p?._id, {nameSpace}, t);
                     } else {
                         throw Error;
                     }
@@ -35,6 +38,11 @@ const DebateHeader = ({ title, personalities }) => {
                 .catch(() => {});
         }
     }, [state, personalities]);
+
+    const baseHref = `/${
+        nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""
+    }`;
+    const href = `${baseHref}claim/${claim?.claimId}/debate/edit`;
 
     const { vw } = useAppSelector((state) => state);
     return (
@@ -72,6 +80,18 @@ const DebateHeader = ({ title, personalities }) => {
                     {title}
                 </Title>
             </div>
+            {userRole === Roles.Admin && claim?.claimId ? (
+                <AletheiaButton
+                    type={ButtonType.blue}
+                    href={href}
+                    style={{
+                        margin: 10,
+                    }}
+                >
+                    <span>{t("debates:openEditDebateMode")}</span>
+                    <EditOutlined color={colors.white} />
+                </AletheiaButton>
+            ) : null}
             <Row
                 style={{
                     justifyContent: "space-evenly",
@@ -82,9 +102,10 @@ const DebateHeader = ({ title, personalities }) => {
                           <Col
                               style={{
                                   display: "flex",
-                                  height: "100%",
-                                  padding: "30px 0px",
+                                  justifyContent: "center",
+                                  alignItems: "flex-start",
                                   width: "40%",
+                                  padding: "32px 0",
                               }}
                               key={p?._id || index}
                           >
@@ -93,8 +114,13 @@ const DebateHeader = ({ title, personalities }) => {
                                   header={true}
                                   fullWidth={true}
                                   hoistAvatar={true}
+                                  centralizedInfo={true}
                                   style={{
-                                      justifyContent: "center",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    textAlign: "center",
+                                    width: "100%",
+                                    padding: "20px",
                                   }}
                               />
                           </Col>

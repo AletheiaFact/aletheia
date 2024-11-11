@@ -6,6 +6,8 @@ var = new {
     name = "aletheia-development"
     conf {
         cors = "*"
+        override_public_routes = true
+        app_affiliation = "aletheia-development"
         recaptcha_sitekey = "6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh"
         websocketUrl = "wss://testws.\(appBaseUrl) "
         baseUrl = "https://test.\(appBaseUrl)"

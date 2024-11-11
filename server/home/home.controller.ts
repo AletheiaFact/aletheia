@@ -71,7 +71,11 @@ export class HomeController {
                         if (personality) {
                             return this.personalityService.getById(
                                 personality,
-                                req.language
+                                {
+                                    language: req.language,
+                                    nameSpace: req.params.namespace || NameSpaceEnum.Main
+                                }
+                                
                             );
                         }
                     })

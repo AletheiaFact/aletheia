@@ -1,3 +1,4 @@
+import colors from "../../styles/colors";
 import * as React from "react";
 
 const UserIcon = (props) => {
@@ -15,7 +16,7 @@ const UserIcon = (props) => {
                 fillRule="evenodd"
                 clipRule="evenodd"
                 d="M8 8a4 4 0 1 0 8 0 4 4 0 0 0-8 0Zm12 10.063C18.046 15.57 15.186 15 12 15s-6.045.571-8 3.063V20h16v-1.938Z"
-                fill="#fff"
+                fill={colors.white}
             />
         </svg>
     );

@@ -72,6 +72,20 @@ export class UsersService {
 
         return await pipeline.exec();
     }
+    /**
+     * Retrieves all users from the database.
+     */
+    async getAllUsers(): Promise<UserDocument[]> {
+        try {
+            this.logger.log("Fetching all users from the database.");
+            const users = await this.UserModel.find().exec();
+            this.logger.log(`Fetched ${users.length} users.`);
+            return users;
+        } catch (error) {
+            this.logger.error("Error fetching users:", error);
+            throw error;
+        }
+    }
 
     async register(user) {
         const newUser = new this.UserModel(user);
@@ -99,6 +113,11 @@ export class UsersService {
     async getById(userId) {
         const user = await this.UserModel.findById(userId).populate("badges");
         this.logger.log(`Found user ${user._id}`);
+        return user;
+    }
+
+    async getByEmail(email: string) {
+        const user = await this.UserModel.findOne({ email });
         return user;
     }
 
