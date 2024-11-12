@@ -3,7 +3,6 @@ import {
     Get,
     Res,
     Req,
-    Optional,
     Header,
     Query,
 } from "@nestjs/common";
@@ -11,16 +10,12 @@ import type { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "./view.service";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
-import { UnleashService } from "nestjs-unleash";
-import { ConfigService } from "@nestjs/config";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/")
 export class ViewController {
     constructor(
         private viewService: ViewService,
-        @Optional() private readonly unleash: UnleashService,
-        private configService: ConfigService
     ) {}
 
     async handler(req: Request, res: Response) {
@@ -40,13 +35,6 @@ export class ViewController {
     @Header("Cache-Control", "max-age=86400")
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-
-        const config = this.configService.get<string>("feature_flag");
-
-        const enableWarningDocument = config
-            ? this.unleash.isEnabled("enable-warning-document")
-            : true;
-
         const queryObject = Object.assign(parsedUrl.query, {
             enableWarningDocument,
         });
