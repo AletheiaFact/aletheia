@@ -22,6 +22,7 @@ recaptcha_secret: String
 recaptcha_sitekey: String
 throttle: Throttle
 authentication_type = "ory"
+override_public_routes = false
 db = (mongoDbConfig) {}
 ory = (oryConfig) {}
 feature_flag = (featureFlagConfig) {}

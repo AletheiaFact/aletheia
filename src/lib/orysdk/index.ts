@@ -3,7 +3,6 @@ import { edgeConfig } from "@ory/integrations/next";
 
 let oryConfig = new Configuration(edgeConfig);
 
-if (process.env.NEXT_PUBLIC_ORYCLOUD === "true") {
     oryConfig = new Configuration({
         basePath: process.env.NEXT_PUBLIC_ORY_SDK_URL,
         baseOptions: {
