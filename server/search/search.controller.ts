@@ -146,17 +146,19 @@ export class SearchController {
                 });
             }
 
-            await this.viewService.getNextServer().render(
+            const queryObject = Object.assign(parsedUrl.query, {
+                searchResults,
+                searchText,
+                pageSize,
+                page,
+                filter,
+            });
+
+            await this.viewService.render(
                 req,
                 res,
                 "/search-page",
-                Object.assign(parsedUrl.query, {
-                    searchResults,
-                    searchText,
-                    pageSize,
-                    page,
-                    filter,
-                })
+                queryObject
             );
         } catch (error) {
             this.logger.error(error);

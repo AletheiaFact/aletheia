@@ -19,6 +19,7 @@ const AboutPage: NextPage<{ data: string }> = () => {
 
 export async function getServerSideProps({ locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
+    query = JSON.parse(query.props);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
