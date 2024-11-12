@@ -20,7 +20,6 @@ export class ViewController {
 
     async handler(req: Request, res: Response) {
         const parsedUrl = parse(req.url, true);
-
         await this.viewService.render(
             req,
             res,
@@ -35,10 +34,7 @@ export class ViewController {
     @Header("Cache-Control", "max-age=86400")
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        const queryObject = Object.assign(parsedUrl.query, {
-            enableWarningDocument,
-        });
-        await this.viewService.render(req, res, "/about-page", queryObject);
+        await this.viewService.render(req, res, "/about-page", parsedUrl.query);
     }
 
     @IsPublic()
@@ -50,13 +46,11 @@ export class ViewController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-        const queryObject = Object.assign(parsedUrl.query, {});
-
         await this.viewService.render(
             req,
             res,
             "/supportive-materials",
-            queryObject
+            parsedUrl.query
         );
     }
 
@@ -69,12 +63,11 @@ export class ViewController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-        const queryObject = Object.assign(parsedUrl.query);
         await this.viewService.render(
             req,
             res,
             "/privacy-policy-page",
-            queryObject
+            parsedUrl.query
         );
     }
 
@@ -84,12 +77,11 @@ export class ViewController {
     @Header("Cache-Control", "max-age=86400")
     public async codeOfConductPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        const queryObject = Object.assign(parsedUrl.query);
         await this.viewService.render(
             req,
             res,
             "/code-of-conduct-page",
-            queryObject
+            parsedUrl.query
         );
     }
 
@@ -98,7 +90,6 @@ export class ViewController {
     @Header("Cache-Control", "max-age=60")
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-
         await this.viewService.render(
             req,
             res,
@@ -117,20 +108,18 @@ export class ViewController {
     @Header("Cache-Control", "max-age=86400")
     public async show404(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        const queryObject = Object.assign(parsedUrl.query);
-        await this.viewService.render(req, res, "/404-page", queryObject);
+        await this.viewService.render(req, res, "/404-page", parsedUrl.query);
     }
 
     @Get("totp")
     @Header("Cache-Control", "max-age=86400")
     public async showTotpCheck(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-        const queryObject = Object.assign(parsedUrl.query);
         await this.viewService.render(
             req,
             res,
             "/totp-check-page",
-            queryObject
+            parsedUrl.query
         );
     }
 
