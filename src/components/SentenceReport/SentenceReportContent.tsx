@@ -77,7 +77,7 @@ const SentenceReportContent = ({
                 </Col>
             )}
             {report && (
-                <Col span={24}>
+                <Col span={24} style={{ wordBreak: "break-word" }}>
                     <Paragraph className="title">
                         {t("claimReview:verificationSectionTitle")}
                     </Paragraph>
