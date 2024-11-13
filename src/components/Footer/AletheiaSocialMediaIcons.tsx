@@ -14,8 +14,8 @@ const AletheiaSocialMediaIcons = () => {
                 url="https://www.instagram.com/aletheiafact"
                 bgColor={
                     nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary
+                        ? colors.primary
+                        : colors.secondary
                 }
                 target="_blank"
                 rel="noreferrer"
@@ -25,8 +25,8 @@ const AletheiaSocialMediaIcons = () => {
                 url="https://www.facebook.com/AletheiaFactorg-107521791638412"
                 bgColor={
                     nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary
+                        ? colors.primary
+                        : colors.secondary
                 }
                 target="_blank"
                 rel="noreferrer"
@@ -36,8 +36,8 @@ const AletheiaSocialMediaIcons = () => {
                 url="https://www.linkedin.com/company/aletheiafact-org"
                 bgColor={
                     nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary
+                        ? colors.primary
+                        : colors.secondary
                 }
                 target="_blank"
                 rel="noreferrer"
@@ -47,8 +47,8 @@ const AletheiaSocialMediaIcons = () => {
                 url="https://github.com/AletheiaFact/aletheia"
                 bgColor={
                     nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary
+                        ? colors.primary
+                        : colors.secondary
                 }
                 target="_blank"
                 rel="noreferrer"

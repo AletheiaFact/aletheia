@@ -307,16 +307,16 @@ const VerificationRequestList = () => {
                     loading={loading}
                     sx={{
                         "& .MuiDataGrid-columnHeader": {
-                            backgroundColor: colors.lightGraySecondary,
-                            color: colors.bluePrimary,
+                            backgroundColor: colors.lightNeutralSecondary,
+                            color: colors.primary,
                             fontWeight: "bold",
-                            borderBottom: `2px solid ${colors.blueSecondary}`,
+                            borderBottom: `2px solid ${colors.secondary}`,
                         },
                         "& .MuiIconButton-root": {
                             color:
                                 filtersUsed.length > 0 ||
-                                topicFilterUsed.length > 0
-                                    ? colors.bluePrimary
+                                    topicFilterUsed.length > 0
+                                    ? colors.primary
                                     : "default",
                         },
                     }}

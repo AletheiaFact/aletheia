@@ -26,8 +26,8 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
 
     const getComponentColor = () =>
         nameSpace === NameSpaceEnum.Main
-            ? colors.bluePrimary
-            : colors.blueSecondary;
+            ? colors.primary
+            : colors.secondary;
 
     const handleChangeRole = (value: Roles, key) => {
         setUserRole((role) => {
@@ -58,7 +58,7 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
                         <fieldset
                             style={{
                                 padding: 8,
-                                border: `1px solid ${colors.bluePrimary}`,
+                                border: `1px solid ${getComponentColor()}`,
                             }}
                         >
                             <legend style={{ width: "fit-content" }}>

@@ -77,13 +77,8 @@ const VerificationRequestCard = ({
 
             tags.push(
                 <CustomTag
-<<<<<<< HEAD
-                    color={colors.blueSecondary}
-                    key={`${verificationRequest._id}|publicationDate`}
-=======
                     color={colors.secondary}
-                    key={`${content._id}|publicationDate`}
->>>>>>> 4842464f (Changing names in each components)
+                    key={`${verificationRequest._id}|publicationDate`}
                 >
                     <strong>
                         {t(
@@ -102,13 +97,8 @@ const VerificationRequestCard = ({
         if (verificationRequest.date) {
             tags.push(
                 <CustomTag
-<<<<<<< HEAD
-                    color={colors.graySecondary}
-                    key={`${verificationRequest._id}|date`}
-=======
                     color={colors.neutralSecondary}
-                    key={`${content._id}|date`}
->>>>>>> 4842464f (Changing names in each components)
+                    key={`${verificationRequest._id}|date`}
                 >
                     <strong>
                         {t("verificationRequest:verificationRequestTagDate")}:
@@ -120,13 +110,8 @@ const VerificationRequestCard = ({
         if (verificationRequest.heardFrom) {
             tags.push(
                 <CustomTag
-<<<<<<< HEAD
-                    color={colors.blueTertiary}
-                    key={`${verificationRequest._id}|heardFrom`}
-=======
                     color={colors.tertiary}
-                    key={`${content._id}|heardFrom`}
->>>>>>> 4842464f (Changing names in each components)
+                    key={`${verificationRequest._id}|heardFrom`}
                 >
                     <strong>
                         {t(
@@ -141,13 +126,8 @@ const VerificationRequestCard = ({
         if (verificationRequest.source) {
             tags.push(
                 <CustomTag
-<<<<<<< HEAD
-                    color={colors.lightBlueMain}
-                    key={`${verificationRequest._id}|source`}
-=======
                     color={colors.lightPrimary}
-                    key={`${content._id}|source`}
->>>>>>> 4842464f (Changing names in each components)
+                    key={`${verificationRequest._id}|source`}
                 >
                     <strong>
                         {t("verificationRequest:verificationRequestTagSource")}:
