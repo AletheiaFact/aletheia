@@ -33,7 +33,7 @@ const RadioInput = styled(Radio)`
     }
 
     span .ant-radio-inner {
-        box-shadow: 0px 0px 6px ${colors.Shadow};
+        box-shadow: 0px 0px 6px ${colors.shadow};
         width: 25px;
         height: 25px;
     }

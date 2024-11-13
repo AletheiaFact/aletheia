@@ -11,7 +11,7 @@ const { Option } = Select;
 
 export const SelectInput = styled(Select)`
     background: ${colors.white};
-    box-shadow: 0px 2px 2px ${colors.Shadow};
+    box-shadow: 0px 2px 2px ${colors.shadow};
     border-radius: 4px;
     border: none;
     height: 40px;
@@ -36,7 +36,7 @@ export const SelectInput = styled(Select)`
 
     :focus {
         border: none;
-        box-shadow: 0px 2px 2px ${colors.Shadow};
+        box-shadow: 0px 2px 2px ${colors.shadow};
     }
 
     :active {

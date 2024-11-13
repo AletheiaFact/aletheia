@@ -46,7 +46,7 @@ const EditorStyle = styled.div`
     .toolbar-item[disabled]:hover {
         background: ${colors.lightNeutral};
         border-color: ${colors.lightNeutral};
-        color: ${colors.Shadow};
+        color: ${colors.shadow};
     }
 
     .toolbar-item[disabled]:hover::after {

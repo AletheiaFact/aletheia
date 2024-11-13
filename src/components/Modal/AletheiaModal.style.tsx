@@ -14,7 +14,7 @@ const AletheiaModal = styled(Modal)`
         border-radius: 8px;
         background-color: ${(props) =>
         props.theme === "dark" ? colors.black : colors.lightNeutral};
-        box-shadow: 0px 0px 15px ${colors.Shadow};
+        box-shadow: 0px 0px 15px ${colors.shadow};
         padding: 26px 26px;
         max-width: 90vw;
     }

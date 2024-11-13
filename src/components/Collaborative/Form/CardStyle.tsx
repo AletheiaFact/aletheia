@@ -18,7 +18,7 @@ const CardStyle = styled(Row)`
 
     .card-content {
         background: ${colors.white};
-        box-shadow: 0px 2px 2px ${colors.Shadow};
+        box-shadow: 0px 2px 2px ${colors.shadow};
         border-radius: 4px;
         border: none;
         width: 100%;

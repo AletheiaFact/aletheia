@@ -7,7 +7,7 @@ const CommentCardStyle = styled.div`
     background: ${colors.white};
     border: 1px solid ${colors.lightNeutralSecondary};
     box-sizing: border-box;
-    box-shadow: 0px 3px 3px ${colors.Shadow};
+    box-shadow: 0px 3px 3px ${colors.shadow};
     border-radius: 10px;
     margin-bottom: 10px;
     padding: 16px;
@@ -19,7 +19,7 @@ const CommentCardStyle = styled.div`
         props.isselected === "true" ? `translateX(-15px)` : `translateX(0)`};
 
     &:hover {
-        box-shadow: 0px 3px 3px 1px ${colors.Shadow};
+        box-shadow: 0px 3px 3px 1px ${colors.shadow};
 
         .comment-card-actions-resolve-button {
             display: block;

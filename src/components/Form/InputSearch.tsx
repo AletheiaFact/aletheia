@@ -10,7 +10,7 @@ const InputSearchStyled = styled(Input.Search)`
     span.ant-input-affix-wrapper {
         background: ${({ backgroundColor = colors.lightNeutral }) =>
         backgroundColor};
-        box-shadow: 0px 2px 2px ${colors.Shadow};
+        box-shadow: 0px 2px 2px ${colors.shadow};
         border-radius: 4px;
         &:focus-within {
             border-color: ${colors.neutralTertiary};

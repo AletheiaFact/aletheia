@@ -16,7 +16,7 @@ export const EditorSourcesListStyle = styled.div`
         padding: 16px 32px;
         margin: 0 16px 16px 0;
         background: ${colors.white};
-        box-shadow: 0px 2px 2px ${colors.Shadow};
+        box-shadow: 0px 2px 2px ${colors.shadow};
         border-radius: 8px;
     }
 
