@@ -8,13 +8,23 @@ import InputSearch from "../Form/InputSearch";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import actions from "../../store/actions";
+import { useAppSelector } from "../../store/store";
 
 const OverlaySearchInput = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
 
+    const { page, pageSize } = useAppSelector((state) => {
+        return {
+            page: state?.search?.searchCurPage || 1,
+            pageSize: state?.search?.searchPageSize || 5,
+        };
+    });
+
     const handleInputSearch = async (searchText) => {
+        dispatch(actions.isFetchingResults());
+        dispatch(actions.openResultsOverlay());
         dispatch({
             type: ActionTypes.SET_SEARCH_OVERLAY_NAME,
             searchOverlayInput: searchText,
@@ -22,8 +32,8 @@ const OverlaySearchInput = () => {
 
         const { personalities, sentences, claims } =
             await SearchApi.getFeedResults({
-                page: 1,
-                pageSize: 5,
+                page,
+                pageSize,
                 searchText: searchText,
                 nameSpace: nameSpace,
             });
