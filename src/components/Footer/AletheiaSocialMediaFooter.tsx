@@ -25,20 +25,27 @@ const AletheiaSocialMediaFooter = () => {
                 </h3>
             </Col>
             <Col span={24}>
-                {localConfig.footer.socialMedias.some(url => url !== "") ? (localConfig.footer.socialMedias.map((url) => url! && (
-                    <SocialIcon
-                        key={url}
-                        url={url}
-                        bgColor={
-                            nameSpace === NameSpaceEnum.Main
-                                ? colors.primary
-                                : colors.secondary
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                        fgColor="white"
-                    />
-                ))) : <AletheiaSocialMediaIcons />}
+                {localConfig.footer.socialMedias.some((url) => url !== "") ? (
+                    localConfig.footer.socialMedias.map(
+                        (url) =>
+                            url! && (
+                                <SocialIcon
+                                    key={url}
+                                    url={url}
+                                    bgColor={
+                                        nameSpace === NameSpaceEnum.Main
+                                            ? colors.primary
+                                            : colors.secondary
+                                    }
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    fgColor="white"
+                                />
+                            )
+                    )
+                ) : (
+                    <AletheiaSocialMediaIcons />
+                )}
             </Col>
             <Col style={{ width: "324px", margin: "10px auto" }}>
                 <Divider
