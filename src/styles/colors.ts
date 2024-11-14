@@ -1,4 +1,4 @@
-import localConfig from "../../config/localConfig.example";
+import localConfig from "../../config/localConfig";
 
 const colors = {
     primary: "rgb(17, 39, 58)", //#11273a
