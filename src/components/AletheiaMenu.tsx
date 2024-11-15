@@ -11,6 +11,7 @@ import colors from "../styles/colors";
 import { Roles } from "../types/enums";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
+import localConfig from "../../config/localConfig";
 
 const AletheiaMenu = () => {
     const { t } = useTranslation();
@@ -163,9 +164,12 @@ const AletheiaMenu = () => {
                 {t("menu:supportiveMaterials")}
             </Menu.Item>
 
-            <Menu.Item key="/donate" onClick={handleClick}>
-                {t("header:donateButton")}
-            </Menu.Item>
+            {localConfig.header.donateButton.show
+                ?
+                <Menu.Item key="/donate" onClick={handleClick}>
+                    {t("header:donateButton")}
+                </Menu.Item>
+                : null}
         </Menu>
     );
 };
