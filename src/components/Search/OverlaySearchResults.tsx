@@ -15,17 +15,19 @@ const OverlaySearchResults = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
-    const { results, searchName, isFetching } = useAppSelector((state) => {
-        return {
-            results: [
-                state?.search?.searchOverlayResults?.personalities || [],
-                state?.search?.searchOverlayResults?.claims || [],
-                state?.search?.searchOverlayResults?.sentences || [],
-            ],
-            searchName: state?.search?.searchInput || null,
-            isFetching: state?.search.isFetching,
-        };
-    });
+    const { results, searchOverlayName, isFetching } = useAppSelector(
+        (state) => {
+            return {
+                results: [
+                    state?.search?.searchOverlayResults?.personalities || [],
+                    state?.search?.searchOverlayResults?.claims || [],
+                    state?.search?.searchOverlayResults?.sentences || [],
+                ],
+                searchOverlayName: state?.search?.searchOverlayInput || null,
+                isFetching: state?.search.isFetching,
+            };
+        }
+    );
 
     const handleSearchClick = ({
         type,
@@ -84,7 +86,7 @@ const OverlaySearchResults = () => {
                         <SearchCard
                             title={t(`search:${type}HeaderTitle`)}
                             content={result}
-                            searchName={searchName}
+                            searchName={searchOverlayName}
                             handleSearchClick={handleSearchClick}
                             type={type}
                             avatar={i !== 0 ? false : true}
