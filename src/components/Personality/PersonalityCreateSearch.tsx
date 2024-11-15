@@ -13,12 +13,14 @@ import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
+import Loading from "../Loading";
 
 const PersonalityCreateSearch = ({
     withSuggestions,
     selectPersonality = null,
 }) => {
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { t, i18n } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
@@ -32,6 +34,7 @@ const PersonalityCreateSearch = ({
     });
 
     const createPersonality = async (personality) => {
+        setIsLoading(true);
         try {
             setIsFormSubmitted(!isFormSubmitted);
             const personalityCreated = await api.createPersonality(
@@ -72,6 +75,8 @@ const PersonalityCreateSearch = ({
             );
         } catch (e) {
             console.log(e);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -79,16 +84,18 @@ const PersonalityCreateSearch = ({
         setIsFormSubmitted(!isFormSubmitted);
     };
 
-    const handleInputSearch = (name) => {
+    const handleInputSearch = async (name) => {
+        setIsLoading(true);
         const trimmedName = name.trim();
         dispatch({
             type: ActionTypes.SET_SEARCH_NAME,
             searchName: trimmedName,
         });
-        api.getPersonalities(
+        await api.getPersonalities(
             { withSuggestions, searchName: trimmedName, i18n },
             dispatch
         );
+        setIsLoading(false);
     };
 
     const personalitiesCreated = personalities.filter(
@@ -121,20 +128,26 @@ const PersonalityCreateSearch = ({
                     />
                 </Form.Item>
             </Form>
-            <PersonalitySearchResultSection
-                selectPersonality={selectPersonality}
-                personalities={personalitiesCreated}
-                label={t("personalityCTA:created")}
-                onClick={onClickSeeProfile}
-                isFormSubmitted={isFormSubmitted}
-            />
-            <PersonalitySearchResultSection
-                selectPersonality={selectPersonality}
-                personalities={personalitiesAvailable}
-                label={t("personalityCTA:available")}
-                onClick={createPersonality}
-                isFormSubmitted={isFormSubmitted}
-            />
+            {isLoading ? (
+                <Loading />
+            ) : (
+                <>
+                    <PersonalitySearchResultSection
+                        selectPersonality={selectPersonality}
+                        personalities={personalitiesCreated}
+                        label={t("personalityCTA:created")}
+                        onClick={onClickSeeProfile}
+                        isFormSubmitted={isFormSubmitted}
+                    />
+                    <PersonalitySearchResultSection
+                        selectPersonality={selectPersonality}
+                        personalities={personalitiesAvailable}
+                        label={t("personalityCTA:available")}
+                        onClick={createPersonality}
+                        isFormSubmitted={isFormSubmitted}
+                    />
+                </>
+            )}
         </Row>
     );
 };

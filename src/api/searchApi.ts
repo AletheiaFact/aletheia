@@ -35,7 +35,6 @@ const getResults = (dispatch, options: SearchOptions = {}) => {
                     results: { personalities, sentences, claims },
                 });
             } else {
-                dispatch(actions.openResultsOverlay());
                 dispatch({
                     type: ActionTypes.SEARCH_RESULTS,
                     results: { personalities, sentences, claims },

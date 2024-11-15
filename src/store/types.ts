@@ -5,6 +5,7 @@ import { WidthBreakpoints } from "../hooks/useMediaQueryBreakpoints";
 export enum ActionTypes {
     SET_WEBSOCKET_URL,
     RESULTS_AUTOCOMPLETE,
+    RESULTS_LOADING,
     TOGGLE_MENU,
     TOGGLE_REVIEW_DRAWER,
     TOGGLE_COPILOT_DRAWER,
@@ -48,6 +49,7 @@ export interface RootState {
     copilotDrawerCollapsed: boolean;
     search: {
         resultsVisible: boolean;
+        isFetching: boolean;
         autocompleteResults: any;
         autocompleteTopicsResults: any;
         overlayVisible: boolean;
