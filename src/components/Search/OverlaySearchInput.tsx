@@ -22,19 +22,19 @@ const OverlaySearchInput = () => {
         };
     });
 
-    const handleInputSearch = async (searchText) => {
+    const handleInputSearch = async (name) => {
         dispatch(actions.isFetchingResults());
         dispatch(actions.openResultsOverlay());
         dispatch({
             type: ActionTypes.SET_SEARCH_OVERLAY_NAME,
-            searchOverlayInput: searchText,
+            searchOverlayInput: name,
         });
 
         const { personalities, sentences, claims } =
             await SearchApi.getFeedResults({
                 page,
                 pageSize,
-                searchText: searchText,
+                searchText: name,
                 nameSpace: nameSpace,
             });
 

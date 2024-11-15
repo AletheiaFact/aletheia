@@ -84,18 +84,18 @@ const PersonalityCreateSearch = ({
         setIsFormSubmitted(!isFormSubmitted);
     };
 
-    const handleInputSearch = (name) => {
+    const handleInputSearch = async (name) => {
+        setIsLoading(true);
         const trimmedName = name.trim();
         dispatch({
             type: ActionTypes.SET_SEARCH_NAME,
             searchName: trimmedName,
         });
-        setIsLoading(true);
-        api.getPersonalities(
+        await api.getPersonalities(
             { withSuggestions, searchName: trimmedName, i18n },
             dispatch
-        )
-        .finally(() => setIsLoading(false));
+        );
+        setIsLoading(false);
     };
 
     const personalitiesCreated = personalities.filter(
@@ -128,21 +128,26 @@ const PersonalityCreateSearch = ({
                     />
                 </Form.Item>
             </Form>
-            {isLoading && <Loading />}
-            <PersonalitySearchResultSection
-                selectPersonality={selectPersonality}
-                personalities={personalitiesCreated}
-                label={t("personalityCTA:created")}
-                onClick={onClickSeeProfile}
-                isFormSubmitted={isFormSubmitted}
-            />
-            <PersonalitySearchResultSection
-                selectPersonality={selectPersonality}
-                personalities={personalitiesAvailable}
-                label={t("personalityCTA:available")}
-                onClick={createPersonality}
-                isFormSubmitted={isFormSubmitted}
-            />
+            {isLoading ? (
+                <Loading />
+            ) : (
+                <>
+                    <PersonalitySearchResultSection
+                        selectPersonality={selectPersonality}
+                        personalities={personalitiesCreated}
+                        label={t("personalityCTA:created")}
+                        onClick={onClickSeeProfile}
+                        isFormSubmitted={isFormSubmitted}
+                    />
+                    <PersonalitySearchResultSection
+                        selectPersonality={selectPersonality}
+                        personalities={personalitiesAvailable}
+                        label={t("personalityCTA:available")}
+                        onClick={createPersonality}
+                        isFormSubmitted={isFormSubmitted}
+                    />
+                </>
+            )}
         </Row>
     );
 };
