@@ -16,13 +16,13 @@ const Footer = () => {
     const { t } = useTranslation();
     const { vw } = useAppSelector((state) => state);
     const [nameSpace] = useAtom(currentNameSpace);
-    const [backgroundColor, setBackgroundColor] = useState(colors.bluePrimary);
+    const [backgroundColor, setBackgroundColor] = useState(colors.primary);
 
     useLayoutEffect(() => {
         setBackgroundColor(
             nameSpace === NameSpaceEnum.Main
-                ? colors.bluePrimary
-                : colors.blueSecondary
+                ? colors.primary
+                : colors.secondary
         );
     }, [nameSpace]);
 

@@ -5,9 +5,9 @@ const CardBase = ({ children, style = {} }) => {
     return (
         <Row style={{
             background: colors.white,
-            border: `1px solid ${colors.lightGraySecondary}`,
+            border: `1px solid ${colors.lightNeutralSecondary}`,
             boxSizing: "border-box",
-            boxShadow: `0px 3px 3px ${colors.colorShadow}`,
+            boxShadow: `0px 3px 3px ${colors.shadow}`,
             borderRadius: "10px",
             marginBottom: "10px",
             ...style

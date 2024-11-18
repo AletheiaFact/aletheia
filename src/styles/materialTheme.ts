@@ -13,12 +13,12 @@ export const materialTheme = createTheme({
     },
     palette: {
         primary: {
-            main: colors.bluePrimary,
-            light: colors.lightBluePrimary,
+            main: colors.primary,
+            light: colors.lightTertiary,
         },
         secondary: {
-            main: colors.blueSecondary,
-            light: colors.lightBlueSecondary,
+            main: colors.secondary,
+            light: colors.lightSecondary,
         },
     },
 });

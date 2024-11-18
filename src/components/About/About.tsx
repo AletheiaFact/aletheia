@@ -15,7 +15,7 @@ const About = () => {
     return (
         <Row
             style={{
-                color: colors.bluePrimary,
+                color: colors.primary,
                 justifyContent: "center",
                 width: "100%",
                 fontSize: "1rem",

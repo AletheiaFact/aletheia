@@ -40,7 +40,7 @@ const SentenceReportSummary = styled(Row)`
         }
 
         a {
-            color: ${colors.bluePrimary};
+            color: ${colors.primary};
             font-weight: 700;
             margin-left: 10px;
         }

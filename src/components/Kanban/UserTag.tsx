@@ -19,7 +19,7 @@ const UserTag = ({ user }) => {
         <Tooltip title={userName} placement="top">
             <Avatar
                 style={{
-                    backgroundColor: colors.blueSecondary,
+                    backgroundColor: colors.secondary,
                     verticalAlign: "middle",
                 }}
                 size="small"

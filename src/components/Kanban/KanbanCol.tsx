@@ -13,7 +13,7 @@ import styled from "styled-components";
 const StyledColumn = styled.div`
     padding: 0 10px;
     width: 400px;
-    background-color: ${colors.lightGraySecondary};
+    background-color: ${colors.lightNeutralSecondary};
     border-radius: 4px;
 
     .ant-list-item {

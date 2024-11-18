@@ -100,7 +100,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                                         position: "relative",
                                         width: "100%",
                                         height: "140px",
-                                        backgroundColor: colors.bluePrimary,
+                                        backgroundColor: colors.primary,
                                     }}
                                 >
                                     <Image

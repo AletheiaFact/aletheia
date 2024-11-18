@@ -94,7 +94,7 @@ const SentenceReportPreviewView = ({
             <Row
                 style={
                     (isCrossChecking || isReport || isReviewing) && {
-                        backgroundColor: colors.lightGray,
+                        backgroundColor: colors.lightNeutral,
                     }
                 }
             >

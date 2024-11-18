@@ -51,15 +51,15 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
             justify="center"
             style={{
                 paddingTop: "32px",
-                backgroundColor: colors.lightGray,
+                backgroundColor: colors.lightNeutral,
             }}
         >
             <div
                 style={{
                     backgroundColor:
                         nameSpace === NameSpaceEnum.Main
-                            ? colors.bluePrimary
-                            : colors.blueSecondary,
+                            ? colors.primary
+                            : colors.secondary,
                     color: colors.white,
                     width: vw?.sm ? "100%" : "55%",
                     justifyContent: "space-between",

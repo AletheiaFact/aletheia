@@ -34,8 +34,8 @@ const AletheiaSocialMediaFooter = () => {
                                     url={url}
                                     bgColor={
                                         nameSpace === NameSpaceEnum.Main
-                                            ? colors.bluePrimary
-                                            : colors.blueSecondary
+                                            ? colors.primary
+                                            : colors.secondary
                                     }
                                     target="_blank"
                                     rel="noreferrer"

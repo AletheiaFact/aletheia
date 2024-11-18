@@ -35,8 +35,8 @@ const AletheiaMenu = () => {
             mode="inline"
             theme="light"
             style={{
-                backgroundColor: colors.lightGray,
-                color: colors.blackPrimary,
+                backgroundColor: colors.lightNeutral,
+                color: colors.black,
                 fontSize: "16px",
                 padding: "0px 24px",
             }}

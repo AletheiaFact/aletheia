@@ -5,7 +5,7 @@ const TopicInputErrorMessages = ({ errors }) => {
     const { topics } = errors;
 
     return (
-        <span style={{ color: colors.redText, marginTop: 8 }}>
+        <span style={{ color: colors.error, marginTop: 8 }}>
             {topics && topics?.message}
         </span>
     );

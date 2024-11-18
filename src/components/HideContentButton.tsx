@@ -15,8 +15,8 @@ const HideContentButton = ({ hide, handleHide, handleUnhide, style = {} }) => {
         fontSize: 16,
         color:
             nameSpace === NameSpaceEnum.Main
-                ? colors.bluePrimary
-                : colors.blueSecondary,
+                ? colors.primary
+                : colors.secondary,
     };
 
     return (

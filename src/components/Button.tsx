@@ -26,12 +26,12 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
 ) => {
     const [nameSpace] = useAtom(currentNameSpace);
 
-    const [backgroundColor, setBackgroundColor] = useState(colors.bluePrimary);
+    const [backgroundColor, setBackgroundColor] = useState(colors.primary);
     useLayoutEffect(() => {
         setBackgroundColor(
             nameSpace === NameSpaceEnum.Main
-                ? colors.bluePrimary
-                : colors.blueSecondary
+                ? colors.primary
+                : colors.secondary
         );
     }, [nameSpace]);
 
@@ -57,8 +57,8 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
         case ButtonType.gray:
             buttonStyle = {
                 ...buttonStyle,
-                background: colors.lightGray,
-                borderColor: colors.lightGray,
+                background: colors.lightNeutral,
+                borderColor: colors.lightNeutral,
                 color: backgroundColor,
             };
             break;
@@ -81,8 +81,8 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
         case ButtonType.lightBlue:
             buttonStyle = {
                 ...buttonStyle,
-                background: colors.lightBlueMain,
-                borderColor: colors.lightBlueMain,
+                background: colors.lightPrimary,
+                borderColor: colors.lightPrimary,
                 color: colors.white,
             };
             break;

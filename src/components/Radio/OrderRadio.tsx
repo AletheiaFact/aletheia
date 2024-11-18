@@ -14,8 +14,8 @@ const RadioInput = styled(Radio)`
         border: 2px solid
             ${({ namespace }) =>
         namespace === NameSpaceEnum.Main
-            ? colors.bluePrimary
-            : colors.blueSecondary};
+            ? colors.primary
+            : colors.secondary};
         width: 25px;
         height: 25px;
     }
@@ -23,8 +23,8 @@ const RadioInput = styled(Radio)`
     .ant-radio-checked .ant-radio-inner:after {
         background-color: ${({ namespace }) =>
         namespace === NameSpaceEnum.Main
-            ? colors.bluePrimary
-            : colors.blueSecondary};
+            ? colors.primary
+            : colors.secondary};
         position: relative;
         top: 3px;
         left: 3px;
@@ -33,7 +33,7 @@ const RadioInput = styled(Radio)`
     }
 
     span .ant-radio-inner {
-        box-shadow: 0px 0px 6px ${colors.colorShadow};
+        box-shadow: 0px 0px 6px ${colors.shadow};
         width: 25px;
         height: 25px;
     }

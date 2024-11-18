@@ -56,8 +56,8 @@ const EditorSourceListItem = ({ node, sup, source }: EditorSouceListProps) => {
                     style={{
                         color:
                             nameSpace === NameSpaceEnum.Main
-                                ? colors.bluePrimary
-                                : colors.blueSecondary,
+                                ? colors.primary
+                                : colors.secondary,
                     }}
                 />
             }

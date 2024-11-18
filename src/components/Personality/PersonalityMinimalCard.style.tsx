@@ -16,7 +16,7 @@ const PersonalityMinimalCardStyle = styled(Row)`
     .personality-name {
         font-size: 16px;
         margin-top: 8px;
-        color: ${colors.bluePrimary};
+        color: ${colors.primary};
         font-weight: 400;
     }
 

@@ -51,7 +51,7 @@ const ClaimReviewHeader = ({
                     isPublished &&
                     reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest
                         ? "none"
-                        : colors.lightGray,
+                        : colors.lightNeutral,
             }}
         >
             <Col offset={componentStyle.offset} span={componentStyle.span}>

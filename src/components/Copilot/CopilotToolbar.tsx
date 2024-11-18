@@ -17,13 +17,13 @@ const CopilotToolbarStyled = styled.div`
     .toolbar-item:active,
     .toolbar-item:focus {
         background-color: transparent;
-        color: ${colors.bluePrimary};
+        color: ${colors.primary};
     }
 
     .toolbar-item:hover {
         border: none;
-        border-color: ${colors.bluePrimary};
-        color: ${colors.bluePrimary};
+        border-color: ${colors.primary};
+        color: ${colors.primary};
         outline: none;
     }
 `;

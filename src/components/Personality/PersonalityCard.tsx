@@ -103,9 +103,9 @@ const PersonalityCard = ({
     if (!header) {
         cardStyle = {
             background: colors.white,
-            border: `1px solid ${colors.lightGraySecondary}`,
+            border: `1px solid ${colors.lightNeutralSecondary}`,
             boxSizing: "border-box",
-            boxShadow: `0px 3px 3px ${colors.colorShadow}`,
+            boxShadow: `0px 3px 3px ${colors.shadow}`,
             borderRadius: "10px",
             marginBottom: "10px",
         };
@@ -156,16 +156,16 @@ const PersonalityCard = ({
                         {((hoistAvatar && (!vw?.sm || !vw?.xs)) ||
                             !hoistAvatar) && (
 
-                            <PersonalityInfo
-                                personality={personality}
-                                componentStyle={componentStyle}
-                                enableStats={enableStats}
-                                summarized={summarized}
-                                titleLevel={titleLevel}
-                                centralized={centralizedInfo}
-                            />
-                        )}
-                      
+                                <PersonalityInfo
+                                    personality={personality}
+                                    componentStyle={componentStyle}
+                                    enableStats={enableStats}
+                                    summarized={summarized}
+                                    titleLevel={titleLevel}
+                                    centralized={centralizedInfo}
+                                />
+                            )}
+
                         {summarized && (
                             <Col
                                 span={componentStyle.buttonSpan}

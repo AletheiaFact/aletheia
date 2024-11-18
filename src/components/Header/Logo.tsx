@@ -9,7 +9,7 @@ import ConfigLogo from "./ConfigLogo";
 import LogoAletheia from "./LogoAletheia";
 
 const Logo = ({
-    color = colors.logoWhite,
+    color = colors.logo,
     height = "42px",
     width = "80px",
     lineHeight = "24px",
