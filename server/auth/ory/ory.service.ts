@@ -135,10 +135,10 @@ export default class OryService {
         });
     }
 
-    async whoAmI(sessionToken: string): Promise<any> {
+    async whoAmI(sessionCookies: string): Promise<any> {
         return await fetch(`${this.url}/sessions/whoami`, {
             headers: {
-                Cookie: `ory_kratos_session=${sessionToken}`,
+                Cookie: sessionCookies,
             },
         }).then((response) => {
             if (response.ok) {
