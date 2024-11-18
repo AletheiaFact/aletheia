@@ -11,6 +11,7 @@ import Header from "./Header/Header";
 import OverlaySearchResults from "./Search/OverlaySearchResults";
 import Sidebar from "./Sidebar";
 import AffixCTAButton from "./AffixButton/AffixCTAButton";
+import DonationBanner from "./Home/DonationBanner";
 import localConfig from "../../config/localConfig";
 
 const copilotDrawerWidth = 350;
@@ -43,6 +44,7 @@ const MainApp = ({ children }) => {
             <Sidebar />
             <Layout style={{ background: colors.white }}>
                 <Header />
+                <DonationBanner />
                 {localConfig.home.affixCTA ? (
                     <AffixCTAButton copilotDrawerWidth={copilotDrawerWidth} />
                 ) : null}
