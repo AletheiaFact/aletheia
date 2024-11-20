@@ -46,7 +46,6 @@ const updatePassword = () => {
 const getUsers = (
     params: {
         searchName: string;
-        searchEmail: string;
         filterOutRoles?: Roles[];
         nameSpaceSlug: string;
         canAssignUsers: boolean;
