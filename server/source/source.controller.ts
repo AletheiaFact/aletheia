@@ -10,6 +10,7 @@ import {
     Query,
     Req,
     Res,
+    UseGuards,
 } from "@nestjs/common";
 import { SourceService } from "./source.service";
 import { ApiTags } from "@nestjs/swagger";
@@ -27,6 +28,8 @@ import { HistoryService } from "../history/history.service";
 import { ReviewTaskService } from "../review-task/review-task.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { FeatureFlagService } from "../feature-flag/feature-flag.service";
+import { AbilitiesGuard } from "../auth/ability/abilities.guard";
+import { CheckAbilities, RegularUserAbility } from "../auth/ability/ability.decorator";
 
 @Controller(":namespace?")
 export class SourceController {
@@ -105,20 +108,22 @@ export class SourceController {
 
     @ApiTags("source")
     @Get("/check-source")
-    async checkSpurce(@Query() query) {
+    @UseGuards(AbilitiesGuard)
+    @CheckAbilities(new RegularUserAbility())
+    async checkSource(@Query() query) {
         try {
             const result = await fetch(query.source, {
                 method: "GET",
             });
             if (result.ok) {
-                return { status: 200, message: "Link válido"};
+                return { status: 200, message: "Valid Source"};
             } else {
-                return { status: 404, message: "Link inválido"};
+                return { status: 404, message: "Invalid Source"};
             }
         } catch (error) {
-            return { status: 500, message: "Erro interno ao verificar o link"};
+            return { status: 500, message: "Internal Error"};
         }
-     }
+    }
 
     @IsPublic()
     @ApiTags("source")
