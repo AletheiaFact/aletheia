@@ -10,7 +10,7 @@ const ClaimSourceListItem = ({ source, index }) => {
     const { t } = useTranslation();
 
     const checkLink = async (url) => {
-        
+
         try {
             const request = await SourceApi.checkSource(url);
 
@@ -35,10 +35,10 @@ const ClaimSourceListItem = ({ source, index }) => {
                         {source?.props?.sup || source?.sup || index}.
                     </span>
                     <a href={"#"}
-                    onClick={(e) => { 
-                        e.preventDefault();
-                        checkLink(href);
-                    }}>
+                        onClick={(e) => {
+                            e.preventDefault();
+                            checkLink(href);
+                        }}>
                         {href}
                     </a>
                 </List.Item>
