@@ -3,9 +3,9 @@ import colors from "../../styles/colors";
 import { Col } from "antd";
 
 const DonationBannerStyle = styled(Col)`
-        background-color: ${colors.blueQuartiary};
+    background-color: ${colors.quartiary};
 
-    .show-banner { 
+    .show-banner {
         color: ${colors.white};
         font-size: 13px;
         border: none;
@@ -24,12 +24,11 @@ const DonationBannerStyle = styled(Col)`
         flex-direction: column;
         align-items: center;
         padding: 20px 0px;
-
     }
 
     .banner-content > h1 {
         width: 100%;
-        color: ${colors.blackPrimary};
+        color: ${colors.black};
         font-size: 26px;
         line-height: 34px;
         font-weight: 800;

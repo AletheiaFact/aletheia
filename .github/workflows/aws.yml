@@ -89,6 +89,7 @@ jobs:
             --build-arg NEXT_PUBLIC_ENVIRONMENT=$ENVIRONMENT \
             --build-arg NEXT_PUBLIC_ORY_SDK_URL=$ORY_SDK_URL \
             --build-arg NEXT_PUBLIC_ORYCLOUD=$ORYCLOUD \
+            --build-arg NEXT_PUBLIC_ENABLE_BANNER_DONATION=$ENABLE_BANNER_DONATION \
             --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} \
             -t "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" .
           docker tag "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$IMAGE":latest
