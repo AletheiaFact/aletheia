@@ -5,17 +5,13 @@ import { Col } from "antd";
 const DonationBannerStyle = styled(Col)`
         background-color: ${colors.quartiary};
 
-    .show-banner { 
-        color: ${colors.white};
-        font-size: 13px;
-        border: none;
-        background-color: ${colors.blackTertiary};
-        font-weight: 600;
-        cursor: pointer;
+    .close-banner { 
+        color: ${colors.black};
+        font-size: 25px;
         align-self: flex-end;
         position: absolute;
         right: 10px;
-        bottom: -25px;
+        top: 10px;
         z-index: 1;
     }
 
