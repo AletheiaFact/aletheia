@@ -1,6 +1,7 @@
 import { message } from "antd";
 import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
+import { useTranslation } from "next-i18next";
 
 const request = axios.create({
     withCredentials: true,
@@ -93,11 +94,25 @@ const getById = (id, t, params = {}) => {
         });
 };
 
+    const checkSource = (source, t) => {
+        return axios.get('/check-source', {params: {source}})
+        .then((response) => {
+            if (response.status === 404 || response.status === 500) {
+                throw new Error(t("sources:sourceInvalid"))
+            }
+            return response.data;
+        })
+        .catch(() => {
+            message.error(t("sources:sourceInvalid"));
+        });
+    }
+
 const SourceApi = {
     getByTargetId,
     createSource,
     get,
     getById,
+    checkSource,
 };
 
 export default SourceApi;

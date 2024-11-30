@@ -99,6 +99,23 @@ export class SourceController {
         await this.viewService.render(req, res, "/sources-create", queryObject);
     }
 
+    @ApiTags("source")
+    @Get("/check-source")
+    async checkSpurce(@Query() query) {
+        try {
+            const result = await fetch(query.source, {
+                method: "GET",
+            });
+            if (result.ok) {
+                return { status: 200, message: "Valid Source"};
+            } else {
+                return { status: 404, message: "Invalid Source"};
+            }
+        } catch (error) {
+            return { status: 500, message: "Internal error when source verification"};
+        }
+     }
+
     @IsPublic()
     @ApiTags("source")
     @Get("api/source")

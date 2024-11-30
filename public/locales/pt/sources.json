@@ -4,5 +4,6 @@
     "sourceCardButton": "Acesse a fonte",
     "sourceCreateCTAButton": "Incluir fonte",
     "sourcesCreateSuccess": "Fonte criado com sucesso",
-    "sourcesCreateError": "Erro ao criar a fonte"
+    "sourcesCreateError": "Erro ao criar a fonte",
+    "sourceInvalid": "A fonte não está mais disponível"
 }
