@@ -26,7 +26,7 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
             Promise.all(
                 personalities.map(async (p) => {
                     if (p && p._id) {
-                        return personalityApi.getPersonality(p?._id, {nameSpace}, t);
+                        return personalityApi.getPersonality(p?._id, { nameSpace }, t);
                     } else {
                         throw Error;
                     }
@@ -35,13 +35,12 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                 .then((newPersonalitiesArray) => {
                     setPersonalitiesArray(newPersonalitiesArray);
                 })
-                .catch(() => {});
+                .catch(() => { });
         }
     }, [state, personalities]);
 
-    const baseHref = `/${
-        nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""
-    }`;
+    const baseHref = `/${nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""
+        }`;
     const href = `${baseHref}claim/${claim?.claimId}/debate/edit`;
 
     const { vw } = useAppSelector((state) => state);
@@ -85,7 +84,8 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
                     type={ButtonType.blue}
                     href={href}
                     style={{
-                        margin: 10,
+                        margin: 20,
+                        marginRight: vw?.lg && vw?.md && vw?.sm ? 0 : 160,
                     }}
                 >
                     <span>{t("debates:openEditDebateMode")}</span>
@@ -99,32 +99,32 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
             >
                 {personalitiesArray
                     ? personalitiesArray.map((p, index) => (
-                          <Col
-                              style={{
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "flex-start",
-                                  width: "40%",
-                                  padding: "32px 0",
-                              }}
-                              key={p?._id || index}
-                          >
-                              <PersonalityCard
-                                  personality={p}
-                                  header={true}
-                                  fullWidth={true}
-                                  hoistAvatar={true}
-                                  centralizedInfo={true}
-                                  style={{
+                        <Col
+                            style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "flex-start",
+                                width: "40%",
+                                padding: "32px 0",
+                            }}
+                            key={p?._id || index}
+                        >
+                            <PersonalityCard
+                                personality={p}
+                                header={true}
+                                fullWidth={true}
+                                hoistAvatar={true}
+                                centralizedInfo={true}
+                                style={{
                                     display: "flex",
                                     justifyContent: "center",
                                     textAlign: "center",
                                     width: "100%",
                                     padding: "20px",
-                                  }}
-                              />
-                          </Col>
-                      ))
+                                }}
+                            />
+                        </Col>
+                    ))
                     : null}
             </Row>
         </Row>
