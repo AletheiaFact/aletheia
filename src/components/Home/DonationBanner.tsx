@@ -5,16 +5,9 @@ import { Col } from "antd";
 import Cookies from "js-cookie";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 
-const CloseBanner = ({ onClose }) => {
-  return (
-    <CloseOutlined
-      className="close-banner"
-      onClick={() => {
-        onClose();
-        Cookies.set("cta_donation_banner_show", "false");
-      }}
-    />
-  );
+const closeBanner = (onClose) => {
+  onClose();
+  Cookies.set("cta_donation_banner_show", "false");
 };
 
 const DonationBanner = () => {
@@ -36,8 +29,13 @@ const DonationBanner = () => {
   return showDonationBanner && (
     <DonationBannerStyle>
       <Col className="banner-container">
-        <CloseBanner onClose={() => setDonationBanner(false)} />
-        <DonationBannerContent />
+        <CloseOutlined
+          className="close-banner"
+          onClick={() => closeBanner(() => setDonationBanner(false))}
+        />
+        <DonationBannerContent
+          closeClick={() => closeBanner(() => setDonationBanner(false))}
+        />
       </Col>
     </DonationBannerStyle>
   )
