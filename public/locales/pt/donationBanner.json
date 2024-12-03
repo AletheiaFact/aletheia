@@ -1,8 +1,6 @@
 {
-  "title": "Campanha doação AletheiaFact {{date}}",
-  "paragraph": "A AletheiaFact.org trabalha para combater a desinformação e fortalecer a checagem de fatos. Com sua doação, você apoia o movimento contra FAKE NEWS e informações confiáveis cheguem a você.",
-  "donateButton": "Doe para aletheia",
-  "showButton": "Mostrar",
-  "hideButton": "Ocultar"
-
+  "title": "A AletheiaFact.org precisa de você para sobreviver",
+  "paragraph": "A AletheiaFact.org é única e depende da comunidade. Sem anúncios, sem assinaturas, somos movidos pela paixão de garantir acesso livre e confiável à informação. Com sua ajuda, continuamos sendo um referencial de confiança. <strong>Nossa força está na comunidade – e isso inclui você.</strong> Hoje, pedimos que nos apoie nesse compromisso com a verdade. Mostre ao Brasil que informações confiáveis e imparciais são essenciais e que você está ao nosso lado nessa missão. <strong>Doe agora e ajude a fortalecer o combate à desinformação.</strong> Mesmo uma doação pequena faz uma grande diferença. Este é o momento de agir para que, juntos, possamos promover um jornalismo mais democrático e combater a desinformação. <strong>Obrigado por acreditar na AletheiaFact.org.</strong>",
+  "yesDonateButton": "Quero contribuir!",
+  "noDonateButton": "Não quero doar"
 }
