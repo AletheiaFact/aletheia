@@ -12,7 +12,7 @@ const DonationBannerStyle = styled(Col)`
         align-self: flex-end;
         position: absolute;
         right: 10px;
-        top: -10px;
+        bottom: -10px;
         z-index: 1;
     }
 
@@ -63,6 +63,11 @@ const DonationBannerStyle = styled(Col)`
 
         .banner-content > p {
             font-size: 12px;
+        }
+
+        .close-banner { 
+            align-self: flex-start;
+            top: -10px;    
         }
     }
 `;
