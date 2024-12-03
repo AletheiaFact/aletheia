@@ -12,14 +12,14 @@ const closeBanner = (onClose) => {
 
 const DonationBanner = () => {
   const enableDonationBanner = process.env.NEXT_PUBLIC_ENABLE_BANNER_DONATION === "true";
-  const [showDonationBanner, setDonationBanner] = useState<boolean>(true);
+  const [showDonationBanner, setDonationBanner] = useState<boolean>(false);
 
   useEffect(() => {
-    const BannerCookies = Cookies.get("cta_donation_banner_show") || true;
-    if (BannerCookies === true || BannerCookies === "true") {
-      return setDonationBanner(true);
+    const CloseBannerCookies = Cookies.get("cta_donation_banner_show");
+    if (CloseBannerCookies) {
+      return setDonationBanner(false);
     }
-    setDonationBanner(false);
+    setDonationBanner(true);
   }, []);
 
   if (!enableDonationBanner) {
