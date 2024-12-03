@@ -1,21 +1,34 @@
-import { useTranslation } from "next-i18next";
 import Button from "../../Button";
 import { trackUmamiEvent } from "../../../lib/umami";
 
-const DonationBannerButton = ({ type }) => {
-    const { t } = useTranslation();
+interface DonationBannerButtonProps {
+    type: any;
+    closeClick: () => void;
+    href?: string;
+    text: string;
+    trackEvent: string;
+}
+
+const DonationBannerButton = ({
+    type,
+    closeClick,
+    href,
+    text,
+    trackEvent,
+}: DonationBannerButtonProps) => {
     return (
         <Button
             type={type}
-            href={t("home:donateUrlButton")}
+            href={href}
             target="_blank"
             rel="noreferrer"
             onClick={() => {
-                trackUmamiEvent("header-banner-donate-button", "Donate");
+                if (closeClick) closeClick();
+                trackUmamiEvent(trackEvent, text);
             }}
             className="banner-button"
         >
-            {t("donationBanner:donateButton")}
+            {text}
         </Button>
     );
 };

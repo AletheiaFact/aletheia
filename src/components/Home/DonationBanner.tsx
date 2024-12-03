@@ -1,33 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DonationBannerContent from "./DonationBanner/DonationBannerContent";
 import DonationBannerStyle from "./DonationBanner.style";
 import { Col } from "antd";
-import { useTranslation } from "next-i18next";
+import Cookies from "js-cookie";
+import CloseOutlined from "@mui/icons-material/CloseOutlined";
+
+const closeBanner = (onClose) => {
+  onClose();
+  Cookies.set("cta_donation_banner_show", "false");
+};
 
 const DonationBanner = () => {
-  const { t } = useTranslation();
-  const [isBannerVisible, setIsBannerVisible] = useState(true);
   const enableDonationBanner = process.env.NEXT_PUBLIC_ENABLE_BANNER_DONATION === "true";
-  const handleToggleBanner = () => {
-    setIsBannerVisible((prev) => !prev);
-  }
+  const [showDonationBanner, setDonationBanner] = useState<boolean>(true);
 
-  if (!enableDonationBanner){
+  useEffect(() => {
+    const BannerCookies = Cookies.get("cta_donation_banner_show") || true;
+    if (BannerCookies === true || BannerCookies === "true") {
+      return setDonationBanner(true);
+    }
+    setDonationBanner(false);
+  }, []);
+
+  if (!enableDonationBanner) {
     return null
   };
 
-  return (
+  return showDonationBanner && (
     <DonationBannerStyle>
       <Col className="banner-container">
-        {isBannerVisible && <DonationBannerContent />}
-        <button
-          className="show-banner"
-          onClick={handleToggleBanner}>
-          {isBannerVisible ? t("donationBanner:hideButton") : t("donationBanner:showButton")}
-        </button>
+        <CloseOutlined
+          className="close-banner"
+          onClick={() => closeBanner(() => setDonationBanner(false))}
+        />
+        <DonationBannerContent
+          closeClick={() => closeBanner(() => setDonationBanner(false))}
+        />
       </Col>
-    </DonationBannerStyle >
-  );
+    </DonationBannerStyle>
+  )
 };
 
 export default DonationBanner;
