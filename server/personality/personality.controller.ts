@@ -101,7 +101,7 @@ export class PersonalityController {
         return this.personalityService.hideOrUnhidePersonality(
             personalityId,
             body.isHidden,
-            body.description,
+            body.description
         );
     }
 
@@ -136,13 +136,15 @@ export class PersonalityController {
         const parsedUrl = parse(req.url, true);
         // @ts-ignore
 
-        await this.viewService.getNextServer().render(
+        const queryObject = Object.assign(parsedUrl.query, {
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService.render(
             req,
             res,
             "/personality-create-search",
-            Object.assign(parsedUrl.query, {
-                nameSpace: req.params.namespace,
-            })
+            queryObject
         );
     }
 
@@ -182,17 +184,19 @@ export class PersonalityController {
                 TargetModel.Personality
             );
 
-        await this.viewService.getNextServer().render(
+        const queryObject = Object.assign(parsedUrl.query, {
+            personality,
+            personalities,
+            hideDescriptions,
+            nameSpace: req.params.namespace,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+        });
+
+        await this.viewService.render(
             req,
             res,
             "/personality-page",
-            Object.assign(parsedUrl.query, {
-                personality,
-                personalities,
-                hideDescriptions,
-                nameSpace: req.params.namespace,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-            })
+            queryObject
         );
     }
 
@@ -203,13 +207,15 @@ export class PersonalityController {
     public async personalityList(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
 
-        await this.viewService.getNextServer().render(
+        const queryObject = Object.assign(parsedUrl.query, {
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService.render(
             req,
             res,
             "/personality-list",
-            Object.assign(parsedUrl.query, {
-                nameSpace: req.params.namespace,
-            })
+            queryObject
         );
     }
 
@@ -227,15 +233,12 @@ export class PersonalityController {
                 isDeleted: false,
             });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/history-page",
-            Object.assign(parsedUrl.query, {
-                targetId: personality._id,
-                targetModel: TargetModel.Personality,
-                nameSpace: req.params.namespace,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            targetId: personality._id,
+            targetModel: TargetModel.Personality,
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService.render(req, res, "/history-page", queryObject);
     }
 }

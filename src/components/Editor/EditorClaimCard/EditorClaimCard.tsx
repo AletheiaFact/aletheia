@@ -20,7 +20,7 @@ const EditorClaimCardContent = ({ children }) => {
     return (
         <div
             style={{
-                backgroundColor: colors.grayTertiary,
+                backgroundColor: colors.neutralTertiary,
                 width: "100%",
                 maxWidth: "400px",
                 height: "auto",

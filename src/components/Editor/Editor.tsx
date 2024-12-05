@@ -115,7 +115,7 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
                                     style={{
                                         display: "flex",
                                         justifyContent: "space-evenly",
-                                        backgroundColor: colors.grayPrimary,
+                                        backgroundColor: colors.neutral,
                                         padding: "10px",
                                     }}
                                 >

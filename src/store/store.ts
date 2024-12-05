@@ -31,6 +31,14 @@ const reducer = (state, action) => {
                     totalResults: action.totalResults,
                 },
             };
+        case ActionTypes.RESULTS_LOADING:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    isFetching: action.isFetching,
+                },
+            };
         case ActionTypes.RESULTS_OVERLAY_VISIBLE:
             return {
                 ...state,
@@ -45,6 +53,7 @@ const reducer = (state, action) => {
                 search: {
                     ...(state?.search || {}),
                     autocompleteResults: action.results,
+                    isFetching: false,
                 },
             };
         case ActionTypes.RESULTS_TOPICS_AUTOCOMPLETE:
@@ -69,6 +78,7 @@ const reducer = (state, action) => {
                 search: {
                     ...(state?.search || {}),
                     searchResults: action.results,
+                    isFetching: false,
                 },
             };
         case ActionTypes.SEARCH_PERSONALITIES_RESULTS:

@@ -35,7 +35,7 @@ const DebateGrid = ({ debates }) => {
                         style={{
                             width: "100%",
                             padding: "10px",
-                            backgroundColor: colors.lightGray,
+                            backgroundColor: colors.lightNeutral,
                         }}
                     >
                         <div
@@ -51,7 +51,7 @@ const DebateGrid = ({ debates }) => {
                                         lineHeight: "32px",
                                         margin: "0 0 16px 0",
                                         fontWeight: 400,
-                                        color: colors.grayPrimary,
+                                        color: colors.neutral,
                                     }}
                                 >
                                     {debateClaim.title} (

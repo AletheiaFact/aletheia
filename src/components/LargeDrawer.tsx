@@ -7,7 +7,7 @@ const LargeDrawer = ({
     children,
     open,
     onClose,
-    backgroundColor = colors.lightGray,
+    backgroundColor = colors.lightNeutral,
 }) => {
     const { vw } = useAppSelector((state) => state);
     return (

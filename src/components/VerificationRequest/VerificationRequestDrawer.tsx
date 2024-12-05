@@ -22,7 +22,7 @@ const VerificationRequestDrawer = ({
         <LargeDrawer
             open={open}
             onClose={onCloseDrawer}
-            backgroundColor={colors.lightGraySecondary}
+            backgroundColor={colors.lightNeutralSecondary}
         >
             <Col style={{ margin: "32px 64px" }}>
                 <Typography.Title level={3}>

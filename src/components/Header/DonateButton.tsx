@@ -2,7 +2,6 @@ import React from "react";
 import AletheiaButton, { ButtonType } from "../Button";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useTranslation } from "next-i18next";
-import localConfig from "../../../config/localConfig.example";
 
 const DonateButton = ({ header = false, style = {} }) => {
     const { t } = useTranslation();

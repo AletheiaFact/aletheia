@@ -49,8 +49,8 @@ const OverlayCol = styled(Col)`
     .overlay {
         background-color: ${({ namespace }) =>
             namespace === NameSpaceEnum.Main
-                ? colors.bluePrimary
-                : colors.blueSecondary};
+                ? colors.primary
+                : colors.secondary};
         position: fixed;
         z-index: 3;
         width: 100vw;

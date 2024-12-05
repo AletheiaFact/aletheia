@@ -17,7 +17,7 @@ const AdvancedSearch = ({ onSearch, options, defaultValue, handleFilter }) => {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    style={{ backgroundColor: colors.lightGray }}
+                    style={{ backgroundColor: colors.lightNeutral }}
                     label={t("search:advancedSearchLabel")}
                     placeholder={t("search:advancedSearchPlaceHolder")}
                     onChange={(event) => onSearch(event.target.value)}

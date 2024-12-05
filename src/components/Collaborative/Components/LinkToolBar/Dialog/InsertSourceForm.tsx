@@ -64,7 +64,7 @@ const InsertSourceForm = ({
                 )}
             </div>
             {error && (
-                <span style={{ fontSize: 14, color: colors.redText }}>
+                <span style={{ fontSize: 14, color: colors.error }}>
                     {error}
                 </span>
             )}

@@ -48,7 +48,7 @@ const SearchCard = ({
                 <Col
                     style={{
                         padding: "10px 0",
-                        borderTop: `1px solid ${colors.grayTertiary}`,
+                        borderTop: `1px solid ${colors.neutralTertiary}`,
                         width: "100%",
                     }}
                 >

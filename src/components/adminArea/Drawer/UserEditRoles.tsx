@@ -26,8 +26,8 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
 
     const getComponentColor = () =>
         nameSpace === NameSpaceEnum.Main
-    ? colors.bluePrimary 
-    : colors.blueSecondary;
+            ? colors.primary
+            : colors.secondary;
 
     const handleChangeRole = (value: Roles, key) => {
         setUserRole((role) => {
@@ -86,10 +86,10 @@ const UserEditRoles = ({ currentUser, role, setUserRole, shouldEdit }) => {
                                             disabled={!shouldEdit}
                                             key={role}
                                             value={role}
-                                            control={<Radio 
+                                            control={<Radio
                                                 style={{
-                                                color: getComponentColor(),
-                                            }}
+                                                    color: getComponentColor(),
+                                                }}
                                             />}
                                             label={t(`admin:role-${role}`)}
                                         />

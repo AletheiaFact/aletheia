@@ -5,7 +5,7 @@ import colors from "../../styles/colors";
 const BannerStyle = styled(Row)`
     justify-content: center;
     padding: 18px;
-    background-color: ${colors.blackPrimary};
+    background-color: ${colors.black};
 
     .text {
         color: ${colors.white};

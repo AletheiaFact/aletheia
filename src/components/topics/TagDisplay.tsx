@@ -32,7 +32,7 @@ const TagDisplay = ({ handleClose, tags, setShowTopicsForm }: ITagDisplay) => {
                         background: "none",
                         border: "none",
                         fontSize: 16,
-                        color: colors.bluePrimary,
+                        color: colors.primary,
                     }}
                 >
                     {tags.length ? <EditFilled /> : <PlusOutlined />}

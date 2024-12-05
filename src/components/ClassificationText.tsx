@@ -12,7 +12,7 @@ const ClassificationText = (props: {
     return (
         <span
             style={{
-                color: ReviewColors[props.classification] || colors.blackPrimary,
+                color: ReviewColors[props.classification] || colors.black,
                 fontWeight: "bold",
                 textTransform: "uppercase",
                 ...props.style,

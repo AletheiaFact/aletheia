@@ -25,7 +25,7 @@ const menuSlotProps = {
         elevation: 0,
         sx: {
             overflow: "visible",
-            filter: `drop-shadow(0px 2px 8px ${colors.colorShadow})`,
+            filter: `drop-shadow(0px 2px 8px ${colors.shadow})`,
             mt: 1.5,
             "& .MuiAvatar-root": {
                 width: 32,

@@ -28,7 +28,7 @@ const Sidebar = () => {
             placement="left"
             bodyStyle={{ padding: 0 }}
             drawerStyle={{
-                backgroundColor: colors.lightGray,
+                backgroundColor: colors.lightNeutral,
             }}
             closable={false}
         >
@@ -39,7 +39,7 @@ const Sidebar = () => {
                 }}
             >
                 <Logo
-                    color={colors.bluePrimary}
+                    color={colors.primary}
                     height="48px"
                     lineHeight="36px"
                 />

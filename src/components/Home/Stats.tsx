@@ -17,7 +17,7 @@ export const Stats = ({ info, title, style = {} }) => {
         >
             <h3
                 style={{
-                    color: colors.lightBlueSecondary,
+                    color: colors.lightSecondary,
                     marginRight: vw?.sm ? "5px" : "20px",
                     marginBottom: 0,
                     fontSize: vw?.sm ? "28px" : "40px",

@@ -15,7 +15,7 @@ const StyledSelect = styled(Select)`
     }
 
     .ant-select-selection-placeholder {
-        color: ${colors.graySecondary};
+        color: ${colors.neutralSecondary};
     }
 `;
 

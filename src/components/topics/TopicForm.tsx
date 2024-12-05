@@ -1,12 +1,15 @@
 import { Col } from "antd";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import Autocomplete from "../Form/Autocomplete";
+import FormControl from "@mui/joy/FormControl";
+import Autocomplete from "@mui/joy/Autocomplete";
+import CircularProgress from "@mui/joy/CircularProgress";
 import AletheiaButton from "../Button";
 import TopicInputErrorMessages from "./TopicInputErrorMessages";
 import { useTranslation } from "next-i18next";
 import TopicsApi from "../../api/topicsApi";
 import { ContentModelEnum } from "../../types/enums";
+import { CssVarsProvider } from "@mui/joy/styles";
 
 interface ITopicForm {
     contentModel: ContentModelEnum;
@@ -38,10 +41,22 @@ const TopicForm = ({
         reset,
     } = useForm();
     const [isLoading, setIsLoading] = useState(false);
+    const [options, setOptions] = useState([]);
     const { t } = useTranslation();
     const rules = {
         required: t("common:requiredFieldError"),
         validate: { duplicated: (v) => validateDuplication(v) },
+    };
+
+    const fetchOptions = async (inputValue: string) => {
+        if (inputValue.length >= 3) {
+            setIsLoading(true);
+            const fetchedOptions = await fetchTopicList(inputValue);
+            setOptions(fetchedOptions);
+            setIsLoading(false);
+        } else {
+            setOptions([]);
+        }
     };
 
     const handleOnSubmit = async () => {
@@ -77,48 +92,53 @@ const TopicForm = ({
         );
     };
 
-    const onSelect = (_value, option) => {
-        if (option?.label && option?.value) {
-            setInputValue((prev) => [...prev, option]);
-        }
-    };
-
-    const onDeselect = (_value, option) => {
-        setInputValue((prev) =>
-            prev.filter(({ value }) => value !== option.value)
-        );
-    };
-
     return (
         <form onSubmit={handleSubmit(handleOnSubmit)}>
             <Col style={{ display: "flex" }}>
                 <Controller
                     control={control}
                     name="topics"
-                    rules={rules}
-                    render={({ field }) => (
-                        <Autocomplete
-                            placeholder={t("topics:placeholder")}
-                            dataCy="testSearchTopics"
-                            onSelect={onSelect}
-                            onDeselect={onDeselect}
-                            mode="tags"
-                            dataLoader={fetchTopicList}
-                            preloadedTopics={topicsArray}
-                            {...field}
-                        />
+                    rules={{
+                        validate: validateDuplication,
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                        <CssVarsProvider>
+
+                            <FormControl sx={{ width: 655 }}>
+                                <Autocomplete
+                                    freeSolo
+                                    multiple
+                                    placeholder={t("topics:placeholder")}
+                                    options={options}
+                                    onInputChange={(_, inputValue) => fetchOptions(inputValue)}
+                                    onChange={(_, selectedValues) => {
+                                        onChange(selectedValues);
+                                        setInputValue(selectedValues);
+                                    }}
+                                    getOptionLabel={(option) => option.label || ""}
+                                    isOptionEqualToValue={(option, value) => option.value === value.value}
+                                    loading={isLoading}
+                                    endDecorator={
+                                        isLoading ? (
+                                            <CircularProgress size="sm" />
+                                        ) : null
+                                    }
+                                />
+                            </FormControl>
+                        </CssVarsProvider>
                     )}
                 />
                 <AletheiaButton
                     htmlType="submit"
                     loading={isLoading}
                     style={{
-                        height: 32,
-                        borderRadius: 0,
+                        height: 35,
+                        borderRadius: 4,
                         borderTopRightRadius: 4,
                         borderBottomRightRadius: 4,
                         padding: "0 5px",
                         fontSize: 12,
+                        marginLeft: 5,
                     }}
                 >
                     {t("topics:addTopicsButton")}

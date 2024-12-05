@@ -4,9 +4,9 @@ import { NameSpaceEnum } from "../../types/Namespace";
 
 const NotificationCardStyle = styled.div`
     background-color: ${({ isSeen }) =>
-        !isSeen ? colors.lightGray : colors.white};
+        !isSeen ? colors.lightNeutral : colors.white};
     padding: ${(props) => (!props.isSeen ? "16px 16px 16px 6px" : "16px")};
-    border: 1px solid ${colors.lightGraySecondary};
+    border: 1px solid ${colors.lightNeutralSecondary};
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -32,8 +32,8 @@ const NotificationCardStyle = styled.div`
     .notification-avatar-icon {
         color: ${({ namespace }) =>
         namespace === NameSpaceEnum.Main
-            ? colors.bluePrimary
-            : colors.blueSecondary};
+            ? colors.primary
+            : colors.secondary};
         margin: 0px;
         width: 32px;
         height: 32px;
@@ -47,7 +47,7 @@ const NotificationCardStyle = styled.div`
     }
 
     .notification-time {
-        color: ${colors.graySecondary};
+        color: ${colors.neutralSecondary};
         width: 100%;
         max-width: 40px;
         font-size: 14px;

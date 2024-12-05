@@ -73,9 +73,10 @@ export class HomeController {
                                 personality,
                                 {
                                     language: req.language,
-                                    nameSpace: req.params.namespace || NameSpaceEnum.Main
+                                    nameSpace:
+                                        req.params.namespace ||
+                                        NameSpaceEnum.Main,
                                 }
-                                
                             );
                         }
                     })
@@ -89,17 +90,15 @@ export class HomeController {
         );
 
         const stats = await this.statsService.getHomeStats();
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/home-page",
-            Object.assign(parsedUrl.query, {
-                personalities,
-                stats,
-                claims,
-                reviews,
-                nameSpace: req.params.namespace,
-            })
-        );
+
+        const queryObject = Object.assign(parsedUrl.query, {
+            personalities,
+            stats,
+            claims,
+            reviews,
+            nameSpace: req.params.namespace || NameSpaceEnum.Main,
+        });
+
+        await this.viewService.render(req, res, "/home-page", queryObject);
     }
 }

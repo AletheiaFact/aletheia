@@ -19,7 +19,7 @@ const LoginPage: NextPage<{ previousUrl: string; host: string }> = ({
     );
 };
 
-export async function getServerSideProps({ locale, locales, req, query }) {
+export async function getServerSideProps({ locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
     return {
         props: {

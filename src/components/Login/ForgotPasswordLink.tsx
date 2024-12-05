@@ -9,7 +9,7 @@ const ForgotPasswordLink = ({ t }) => {
             href={href}
             style={{
                 fontSize: 14,
-                color: colors.blackPrimary,
+                color: colors.black,
                 fontWeight: "bold",
                 textDecoration: "underline",
                 width: "180px",

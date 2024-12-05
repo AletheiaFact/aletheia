@@ -77,7 +77,7 @@ const VerificationRequestCard = ({
 
             tags.push(
                 <CustomTag
-                    color={colors.blueSecondary}
+                    color={colors.secondary}
                     key={`${verificationRequest._id}|publicationDate`}
                 >
                     <strong>
@@ -97,7 +97,7 @@ const VerificationRequestCard = ({
         if (verificationRequest.date) {
             tags.push(
                 <CustomTag
-                    color={colors.graySecondary}
+                    color={colors.neutralSecondary}
                     key={`${verificationRequest._id}|date`}
                 >
                     <strong>
@@ -110,7 +110,7 @@ const VerificationRequestCard = ({
         if (verificationRequest.heardFrom) {
             tags.push(
                 <CustomTag
-                    color={colors.blueTertiary}
+                    color={colors.tertiary}
                     key={`${verificationRequest._id}|heardFrom`}
                 >
                     <strong>
@@ -126,7 +126,7 @@ const VerificationRequestCard = ({
         if (verificationRequest.source) {
             tags.push(
                 <CustomTag
-                    color={colors.lightBlueMain}
+                    color={colors.lightPrimary}
                     key={`${verificationRequest._id}|source`}
                 >
                     <strong>
@@ -147,7 +147,7 @@ const VerificationRequestCard = ({
                 <Typography.Paragraph
                     style={{
                         marginBottom: 0,
-                        color: colors.blackPrimary,
+                        color: colors.black,
                         margin: 0,
                         lineHeight: 1.6,
                     }}

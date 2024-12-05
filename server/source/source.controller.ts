@@ -91,16 +91,12 @@ export class SourceController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/sources-create",
-            Object.assign(parsedUrl.query, {
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                nameSpace: req.params.namespace,
-            })
-        );
+        await this.viewService.render(req, res, "/sources-create", queryObject);
     }
 
     @IsPublic()
@@ -134,15 +130,11 @@ export class SourceController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async sourcesPage(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/sources-page",
-            Object.assign(parsedUrl.query, {
-                nameSpace: req.params.namespace,
-            })
-        );
+        await this.viewService.render(req, res, "/sources-page", queryObject);
     }
 
     @IsPublic()
@@ -193,25 +185,22 @@ export class SourceController {
 
         const parsedUrl = parse(req.url, true);
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/source-review",
-            Object.assign(parsedUrl.query, {
-                source,
-                reviewTask,
-                claimReview,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                hideDescriptions,
-                enableCollaborativeEditor,
-                enableEditorAnnotations,
-                enableCopilotChatBot,
-                enableAddEditorSourcesWithoutSelecting,
-                enableReviewersUpdateReport,
-                enableViewReportPreview,
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                nameSpace: req.params.namespace,
-            })
-        );
+        const queryObject = Object.assign(parsedUrl.query, {
+            source,
+            reviewTask,
+            claimReview,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            hideDescriptions,
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService.render(req, res, "/source-review", queryObject);
     }
 }

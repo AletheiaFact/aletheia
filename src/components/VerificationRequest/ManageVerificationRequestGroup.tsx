@@ -21,7 +21,7 @@ const ManageVerificationRequestGroup = ({
             tabIndex={0}
             onKeyDown={onKeyDown}
             style={{
-                color: colors.lightBlueMain,
+                color: colors.lightPrimary,
                 textDecoration: "underline",
                 cursor: "pointer",
                 textAlign: "center",

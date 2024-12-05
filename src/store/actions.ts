@@ -2,6 +2,10 @@ import { Content } from "../types/Content";
 import { ActionTypes } from "./types";
 
 const actions = {
+    isFetchingResults: () => ({
+        type: ActionTypes.RESULTS_LOADING,
+        isFetching: true,
+    }),
     openResultsOverlay: () => ({
         type: ActionTypes.RESULTS_OVERLAY_VISIBLE,
         overlayVisible: true,

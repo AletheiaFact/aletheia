@@ -51,6 +51,10 @@ container: PodSpec.Container = new {
             name = "NEXT_PUBLIC_ORYCLOUD"
             value = read("env:ORYCLOUD")
         }
+        new {
+            name = "NEXT_PUBLIC_ENABLE_BANNER_DONATION"
+            value = read("env:ENABLE_BANNER_DONATION")
+        }
     }
 
     readinessProbe {

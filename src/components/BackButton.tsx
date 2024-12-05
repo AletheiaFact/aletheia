@@ -14,7 +14,7 @@ function BackButton({ style, callback }: { style?: CSSProperties; callback?: () 
             <a
                 style={{
                     fontWeight: "bold",
-                    color: colors.blueSecondary,
+                    color: colors.secondary,
                     ...style
                 }}
                 data-cy="testBackButton"

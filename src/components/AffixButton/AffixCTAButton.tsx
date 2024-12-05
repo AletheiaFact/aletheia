@@ -20,7 +20,7 @@ const CloseIcon = () => {
             placement="topRight"
             defaultOpen
             color={colors.white}
-            overlayInnerStyle={{ color: colors.blackPrimary }}
+            overlayInnerStyle={{ color: colors.black }}
         >
             <CloseOutlined
                 style={{

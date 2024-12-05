@@ -9,21 +9,25 @@ import SearchCard from "./SearchCard";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
+import Loading from "../Loading";
 
 const OverlaySearchResults = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
-    const { results, searchOverlayName } = useAppSelector((state) => {
-        return {
-            results: [
-                state?.search?.searchOverlayResults?.personalities || [],
-                state?.search?.searchOverlayResults?.claims || [],
-                state?.search?.searchOverlayResults?.sentences || [],
-            ],
-            searchOverlayName: state?.search?.searchOverlayInput || null,
-        };
-    });
+    const { results, searchOverlayName, isFetching } = useAppSelector(
+        (state) => {
+            return {
+                results: [
+                    state?.search?.searchOverlayResults?.personalities || [],
+                    state?.search?.searchOverlayResults?.claims || [],
+                    state?.search?.searchOverlayResults?.sentences || [],
+                ],
+                searchOverlayName: state?.search?.searchOverlayInput || null,
+                isFetching: state?.search.isFetching,
+            };
+        }
+    );
 
     const handleSearchClick = ({
         type,
@@ -56,6 +60,7 @@ const OverlaySearchResults = () => {
                 break;
         }
     };
+
     return (
         <Row
             className="main-content"
@@ -72,20 +77,23 @@ const OverlaySearchResults = () => {
                 dispatch(actions.closeResultsOverlay());
             }}
         >
-            {results.map((result, i) => {
-                const type = ["personality", "claim", "sentence"][i];
-                return (
-                    <SearchCard
-                        title={t(`search:${type}HeaderTitle`)}
-                        key={result.id || i}
-                        content={result}
-                        searchName={searchOverlayName}
-                        handleSearchClick={handleSearchClick}
-                        type={type}
-                        avatar={i !== 0 ? false : true}
-                    />
-                );
-            })}
+            {isFetching ? (
+                <Loading />
+            ) : (
+                results.map((result, i) => {
+                    const type = ["personality", "claim", "sentence"][i];
+                    return (
+                        <SearchCard
+                            title={t(`search:${type}HeaderTitle`)}
+                            content={result}
+                            searchName={searchOverlayName}
+                            handleSearchClick={handleSearchClick}
+                            type={type}
+                            avatar={i !== 0 ? false : true}
+                        />
+                    );
+                })
+            )}
         </Row>
     );
 };

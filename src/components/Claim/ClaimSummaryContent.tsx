@@ -65,7 +65,7 @@ const ClaimSummaryContent = ({
                         <p
                             style={{
                                 fontSize: 16,
-                                color: colors.blackPrimary,
+                                color: colors.black,
                                 fontWeight: 400,
                                 margin: 0,
                                 lineHeight: 1.6,

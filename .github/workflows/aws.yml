@@ -34,6 +34,7 @@ jobs:
       ORY_SDK_URL: ${{ secrets.ORY_SDK_URL }}
       ORY_ACCESS_TOKEN: ${{ secrets.ORY_ACCESS_TOKEN }}
       ORYCLOUD: "enabled"
+      ENABLE_BANNER_DONATION: ${{ vars.NEXT_PUBLIC_ENABLE_BANNER_DONATION }}
       ALETHEIA_SCHEMA_ID: ${{ secrets.ALETHEIA_SCHEMA_ID }}
       RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
       NOVU_API_KEY: ${{ secrets.NOVU_API_KEY }}
@@ -88,6 +89,7 @@ jobs:
             --build-arg NEXT_PUBLIC_ENVIRONMENT=$ENVIRONMENT \
             --build-arg NEXT_PUBLIC_ORY_SDK_URL=$ORY_SDK_URL \
             --build-arg NEXT_PUBLIC_ORYCLOUD=$ORYCLOUD \
+            --build-arg NEXT_PUBLIC_ENABLE_BANNER_DONATION=$ENABLE_BANNER_DONATION \
             --build-arg NEXT_PUBLIC_RECAPTCHA_SITEKEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITEKEY }} \
             -t "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" .
           docker tag "$ECR_REGISTRY"/"$IMAGE":"$GITHUB_SHA" "$ECR_REGISTRY"/"$IMAGE":latest
@@ -113,6 +115,7 @@ jobs:
       RECAPTCHA_SITEKEY: ${{ secrets.RECAPTCHA_SITEKEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       ORYCLOUD: "enabled"
+      ENABLE_BANNER_DONATION: ${{ vars.NEXT_PUBLIC_ENABLE_BANNER_DONATION }}
       TAG: ${{ github.sha}}
     steps:
       - name: Checkout

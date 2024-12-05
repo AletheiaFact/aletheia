@@ -133,11 +133,11 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
             >
                 <PulseAnimation
                     pulse={isModalVisible}
-                    startColor={colors.blueSecondary}
+                    startColor={colors.secondary}
                     endColor={
                         nameSpace === NameSpaceEnum.Main
-                            ? colors.bluePrimary
-                            : colors.blueSecondary
+                            ? colors.primary
+                            : colors.secondary
                     }
                     startSize={0}
                     endSize={65}

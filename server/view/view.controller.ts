@@ -3,7 +3,6 @@ import {
     Get,
     Res,
     Req,
-    Optional,
     Header,
     Query,
 } from "@nestjs/common";
@@ -11,24 +10,22 @@ import type { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "./view.service";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
-import { UnleashService } from "nestjs-unleash";
-import { ConfigService } from "@nestjs/config";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/")
 export class ViewController {
     constructor(
         private viewService: ViewService,
-        @Optional() private readonly unleash: UnleashService,
-        private configService: ConfigService
     ) {}
 
     async handler(req: Request, res: Response) {
         const parsedUrl = parse(req.url, true);
-
-        await this.viewService
-            .getNextServer()
-            .render(req, res, parsedUrl.pathname, parsedUrl.query);
+        await this.viewService.render(
+            req,
+            res,
+            parsedUrl.pathname,
+            parsedUrl.query
+        );
     }
 
     @IsPublic()
@@ -37,21 +34,7 @@ export class ViewController {
     @Header("Cache-Control", "max-age=86400")
     public async showAboutPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-
-        const config = this.configService.get<string>("feature_flag");
-
-        const enableWarningDocument = config
-            ? this.unleash.isEnabled("enable-warning-document")
-            : true;
-
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/about-page",
-                Object.assign(parsedUrl.query, { enableWarningDocument })
-            );
+        await this.viewService.render(req, res, "/about-page", parsedUrl.query);
     }
 
     @IsPublic()
@@ -63,15 +46,12 @@ export class ViewController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/supportive-materials",
-                Object.assign(parsedUrl.query, {})
-            );
+        await this.viewService.render(
+            req,
+            res,
+            "/supportive-materials",
+            parsedUrl.query
+        );
     }
 
     @IsPublic()
@@ -83,15 +63,12 @@ export class ViewController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
-
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/privacy-policy-page",
-                Object.assign(parsedUrl.query)
-            );
+        await this.viewService.render(
+            req,
+            res,
+            "/privacy-policy-page",
+            parsedUrl.query
+        );
     }
 
     @IsPublic()
@@ -100,15 +77,12 @@ export class ViewController {
     @Header("Cache-Control", "max-age=86400")
     public async codeOfConductPage(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/code-of-conduct-page",
-                Object.assign(parsedUrl.query)
-            );
+        await this.viewService.render(
+            req,
+            res,
+            "/code-of-conduct-page",
+            parsedUrl.query
+        );
     }
 
     @IsPublic()
@@ -116,10 +90,12 @@ export class ViewController {
     @Header("Cache-Control", "max-age=60")
     public async assets(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-
-        await this.viewService
-            .getNextServer()
-            .render(req, res, parsedUrl.pathname, parsedUrl.query);
+        await this.viewService.render(
+            req,
+            res,
+            parsedUrl.pathname,
+            parsedUrl.query
+        );
     }
 
     /**
@@ -132,25 +108,19 @@ export class ViewController {
     @Header("Cache-Control", "max-age=86400")
     public async show404(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-
-        await this.viewService
-            .getNextServer()
-            .render(req, res, "/404-page", Object.assign(parsedUrl.query));
+        await this.viewService.render(req, res, "/404-page", parsedUrl.query);
     }
 
     @Get("totp")
     @Header("Cache-Control", "max-age=86400")
     public async showTotpCheck(@Req() req: Request, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
-
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/totp-check-page",
-                Object.assign(parsedUrl.query)
-            );
+        await this.viewService.render(
+            req,
+            res,
+            "/totp-check-page",
+            parsedUrl.query
+        );
     }
 
     @IsPublic()
@@ -163,14 +133,14 @@ export class ViewController {
     ) {
         const parsedUrl = parse(req.url, true);
         const originalUrl = query.originalUrl;
-
-        await this.viewService.getNextServer().render(
+        const queryObject = Object.assign(parsedUrl.query, {
+            originalUrl,
+        });
+        await this.viewService.render(
             req,
             res,
             "/access-denied-page",
-            Object.assign(parsedUrl.query, {
-                originalUrl,
-            })
+            queryObject
         );
     }
 }

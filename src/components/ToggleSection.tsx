@@ -10,39 +10,39 @@ const RadioGroup = styled(Radio.Group)`
         &.ant-radio-button-wrapper-checked {
             background: ${({ namespace }) =>
                 namespace === NameSpaceEnum.Main
-                    ? colors.bluePrimary
-                    : colors.blueSecondary};
+                    ? colors.primary
+                    : colors.secondary};
             border-color: ${({ namespace }) =>
                 namespace === NameSpaceEnum.Main
-                    ? colors.bluePrimary
-                    : colors.blueSecondary};
+                    ? colors.primary
+                    : colors.secondary};
             color: ${colors.white};
 
             &:not([class*=" ant-radio-button-wrapper-disabled"]) {
                 &.ant-radio-button-wrapper:first-child {
                     border-right-color: ${({ namespace }) =>
                         namespace === NameSpaceEnum.Main
-                            ? colors.bluePrimary
-                            : colors.blueSecondary};
+                            ? colors.primary
+                            : colors.secondary};
                 }
             }
 
             &:not(.ant-radio-button-wrapper-disabled)::before {
                 background: ${({ namespace }) =>
                     namespace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary};
+                        ? colors.primary
+                        : colors.secondary};
             }
         }
     }
 `;
 
 const RadioButton = styled(Radio.Button)`
-    background: ${colors.grayTertiary};
+    background: ${colors.neutralTertiary};
     color: ${({ nameSpace }) =>
         nameSpace === NameSpaceEnum.Main
-            ? colors.bluePrimary
-            : colors.blueSecondary};
+            ? colors.primary
+            : colors.secondary};
 `;
 
 interface ToggleSectionProps {

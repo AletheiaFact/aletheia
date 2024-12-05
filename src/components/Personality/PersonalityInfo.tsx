@@ -89,7 +89,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         fontWeight: "bold",
                         fontSize: "12px",
                         lineHeight: "16px",
-                        color: colors.bluePrimary,
+                        color: colors.primary,
                         textDecoration: "underline",
                     }}
                     target="_blank"
@@ -106,7 +106,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         <Row
                             style={{
                                 flexDirection: 'column',
-                                color: colors.blackPrimary,
+                                color: colors.black,
                                 fontSize: "16px",
                                 marginBottom: '25px',
                             }}

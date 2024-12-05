@@ -26,7 +26,7 @@ const SentenceReportComments = ({ context }) => {
                 <Accordion
                     key={crossCheckingComment._id}
                     style={{
-                        backgroundColor: colors.lightGraySecondary,
+                        backgroundColor: colors.lightNeutralSecondary,
                         marginBottom: "16px",
                         borderTop: `3px solid ${
                             reviewColors[crossCheckingComment.text]

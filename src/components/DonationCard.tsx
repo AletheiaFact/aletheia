@@ -10,7 +10,7 @@ const DonationCard = () => {
                 width: "clamp(120px, 76vw, 290px)",
                 display: "grid",
                 borderRadius: "8px",
-                backgroundColor: colors.lightBlueMain,
+                backgroundColor: colors.lightPrimary,
                 alignContent: "center",
             }}
         >

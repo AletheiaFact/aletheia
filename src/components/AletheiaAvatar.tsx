@@ -18,7 +18,7 @@ const AletheiaAvatar = ({ size, src, alt }: AletheiaAvatarProps) => {
             style={{
                 width: size + borderGap,
                 height: size + borderGap,
-                border: `${borderWidth}px solid ${colors.blueQuartiary}`,
+                border: `${borderWidth}px solid ${colors.quartiary}`,
                 display: "grid",
                 placeContent: "center",
                 borderRadius: "50%",

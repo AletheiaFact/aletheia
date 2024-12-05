@@ -14,7 +14,7 @@ const CopilotDrawerStyled = styled(Drawer)`
         width: ${(props) => props.width};
         height: ${(props) => props.height};
         padding: 32px 16px 16px 16px;
-        background: ${colors.lightGraySecondary};
+        background: ${colors.lightNeutralSecondary};
     }
 
     .footer {

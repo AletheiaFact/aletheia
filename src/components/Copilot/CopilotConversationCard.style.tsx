@@ -20,7 +20,7 @@ const CopilotConversationCardStyle = styled(Row)`
         background-color: ${colors.white};
         marginleft: 40px;
         wordbreak: break-word;
-        color: ${colors.bluePrimary};
+        color: ${colors.primary};
         &:after {
             border: 1px solid red;
             width: 10px;
@@ -38,7 +38,7 @@ const CopilotConversationCardStyle = styled(Row)`
     }
 
     .conversation-card-content.error {
-        color: ${colors.redText};
+        color: ${colors.error};
     }
 `;
 

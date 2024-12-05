@@ -106,15 +106,18 @@ export class VerificationRequestController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
+        await this.viewService.render(
             req,
             res,
+
             "/verification-request-create",
-            Object.assign(parsedUrl.query, {
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                nameSpace: req.params.namespace,
-            })
+
+            queryObject
         );
     }
 
@@ -163,14 +166,15 @@ export class VerificationRequestController {
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
+        await this.viewService.render(
             req,
             res,
             "/verification-request-page",
-            Object.assign(parsedUrl.query, {
-                nameSpace: req.params.namespace,
-            })
+            queryObject
         );
     }
 
@@ -203,19 +207,20 @@ export class VerificationRequestController {
                 5
             );
 
-        await this.viewService.getNextServer().render(
+        const queryObject = Object.assign(parsedUrl.query, {
+            reviewTask,
+            recommendations,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            hideDescriptions: {},
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: req.params.namespace,
+            verificationRequest,
+        });
+        await this.viewService.render(
             req,
             res,
             "/verification-request-review-page",
-            Object.assign(parsedUrl.query, {
-                reviewTask,
-                recommendations,
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                hideDescriptions: {},
-                websocketUrl: this.configService.get<string>("websocketUrl"),
-                nameSpace: req.params.namespace,
-                verificationRequest,
-            })
+            queryObject
         );
     }
 }

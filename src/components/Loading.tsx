@@ -26,16 +26,16 @@ const Loading = ({ style = {} }) => {
                     fontSize: 48,
                     color:
                         nameSpace === NameSpaceEnum.Main
-                            ? colors.bluePrimary
-                            : colors.blueSecondary,
+                            ? colors.primary
+                            : colors.secondary,
                 }}
             />
             <p
                 style={{
                     color:
                         nameSpace === NameSpaceEnum.Main
-                            ? colors.bluePrimary
-                            : colors.blueSecondary,
+                            ? colors.primary
+                            : colors.secondary,
                     marginTop: "24px",
                 }}
             >

@@ -135,7 +135,7 @@ const BaseClaimForm = ({
             {disclaimer && (
                 <Form.Item
                     style={{
-                        color: colors.redText,
+                        color: colors.error,
                     }}
                 >
                     {disclaimer}

@@ -10,6 +10,7 @@ const SentenceReportContentStyle = styled.div`
 
     .paragraph {
         font-size: 18px;
+        word-break: "break-all";
     }
 `;
 
