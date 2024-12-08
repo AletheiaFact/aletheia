@@ -93,11 +93,22 @@ const getById = (id, t, params = {}) => {
         });
 };
 
+    const checkSource = (source) => {
+        return axios.get('/check-source', {params: {source}})
+        .then((response) => {
+            return response.data;
+        })
+        .catch(() => {
+            message.error("error");
+        });
+    }
+
 const SourceApi = {
     getByTargetId,
     createSource,
     get,
     getById,
+    checkSource,
 };
 
 export default SourceApi;

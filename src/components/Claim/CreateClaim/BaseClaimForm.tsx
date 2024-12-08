@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Checkbox, Form, Row } from "antd";
+import { Checkbox, Form, Row, message } from "antd";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -46,7 +46,8 @@ const BaseClaimForm = ({
         setDisableSubmit(!hasRecaptcha);
     };
 
-    const onFinish = () => {
+    const onFinish = async () => {
+
         const values = {
             title,
             date,

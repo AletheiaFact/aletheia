@@ -30,16 +30,23 @@ export class SourceService {
     }
 
     async create(data) {
-        if (data?.targetId) {
-            data.targetId = [Types.ObjectId(data.targetId)];
+        try {
+            await this.checkSource(data.href);
+    
+            if (data?.targetId) {
+                data.targetId = [Types.ObjectId(data.targetId)];
+            }
+            if (data?.props?.date) {
+                data.props.date = new Date(data.props.date);
+            }
+            data.data_hash = md5(data.href);
+            data.user = Types.ObjectId(data.user);
+
+            return await new this.SourceModel(data).save();
+            
+        } catch (error) {
+            throw error;
         }
-        if (data?.props?.date) {
-            data.props.date = new Date(data.props.date);
-        }
-        data.data_hash = md5(data.href);
-        data.user = Types.ObjectId(data.user);
-        //TODO: don't create duplicate sources in one claim review task
-        return await new this.SourceModel(data).save();
     }
 
     async updateTargetId(sourceId, newTargetId) {
@@ -98,5 +105,16 @@ export class SourceService {
             ...query,
             "props.classification": { $exists: true },
         });
+    }
+
+    async checkSource(source) {
+        const result = await fetch(source, {
+            method: "GET"
+        });
+
+        if (!result.ok) {
+            throw new Error("Invalid Source");
+        };
+        return true;
     }
 }
