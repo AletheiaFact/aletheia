@@ -23,7 +23,7 @@ const OverlaySearchInput = () => {
     });
 
     const handleInputSearch = async (name) => {
-        dispatch(actions.isFetchingResults());
+        dispatch(actions.setResultsLoading(true));
         dispatch(actions.openResultsOverlay());
         dispatch({
             type: ActionTypes.SET_SEARCH_OVERLAY_NAME,
@@ -38,6 +38,7 @@ const OverlaySearchInput = () => {
                 nameSpace: nameSpace,
             });
 
+        dispatch(actions.setResultsLoading(false));
         dispatch(actions.openResultsOverlay());
         dispatch({
             type: ActionTypes.SEARCH_OVERLAY_RESULTS,
