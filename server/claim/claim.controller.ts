@@ -456,11 +456,30 @@ export class ClaimController {
             namespace as NameSpaceEnum
         );
 
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
+        const enableAddEditorSourcesWithoutSelecting =
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
+
         const queryObject = Object.assign(parsedUrl.query, {
             claim,
             sitekey: this.configService.get<string>("recaptcha_sitekey"),
             websocketUrl: this.configService.get<string>("websocketUrl"),
             nameSpace: req.params.namespace,
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
         });
 
         await this.viewService.render(req, res, "/debate-page", queryObject);

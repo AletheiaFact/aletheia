@@ -15,11 +15,28 @@ const DebatePage: NextPage<any> = ({
     claim,
     sitekey,
     nameSpace,
+    enableCollaborativeEditor,
+    enableCopilotChatBot,
+    enableEditorAnnotations,
+    enableAddEditorSourcesWithoutSelecting,
+    enableReviewersUpdateReport,
+    enableViewReportPreview,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): any => {
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     setCurrentNameSpace(nameSpace);
     const dispatch = useDispatch();
     dispatch(actions.setSitekey(sitekey));
+    dispatch(
+        actions.setEditorEnvironment(
+            enableCollaborativeEditor,
+            enableAddEditorSourcesWithoutSelecting,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            false,
+            enableReviewersUpdateReport,
+            enableViewReportPreview
+        )
+    );
 
     return (
         <>
@@ -38,6 +55,13 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             claim: JSON.parse(JSON.stringify(query?.claim)),
             sitekey: query.sitekey,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
+            enableCollaborativeEditor: query?.enableCollaborativeEditor,
+            enableCopilotChatBot: query?.enableCopilotChatBot,
+            enableEditorAnnotations: query?.enableEditorAnnotations,
+            enableAddEditorSourcesWithoutSelecting:
+                query?.enableAddEditorSourcesWithoutSelecting,
+            enableViewReportPreview: query?.enableViewReportPreview,
+            enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
         },
     };
 }
