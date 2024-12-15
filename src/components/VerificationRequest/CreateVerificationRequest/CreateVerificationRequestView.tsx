@@ -5,7 +5,7 @@ import DynamicVerificationRequestForm from "./DynamicVerificationRequestForm";
 
 const CreateVerificationRequestView = () => {
     return (
-        <Row justify="center" style={{ background: colors.lightGray }}>
+        <Row justify="center" style={{ background: colors.lightNeutral }}>
             <Col span={18}>
                 <DynamicVerificationRequestForm />
             </Col>

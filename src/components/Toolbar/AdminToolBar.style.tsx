@@ -11,13 +11,13 @@ const AdminToolBarStyle = styled(AppBar)`
         padding: 4px 12px;
         padding: 0;
         min-height: 33px;
-        border-bottom: 1px solid ${colors.lightGraySecondary};
+        border-bottom: 1px solid ${colors.lightNeutralSecondary};
         gap: 16px;
     }
 
     .toolbar-item {
         width: 26px;
-        border-bottom: 1px solid ${colors.bluePrimary};
+        border-bottom: 1px solid ${colors.primary};
         display: flex;
         align-items: center;
         justify-content: center;
@@ -31,8 +31,8 @@ const AdminToolBarStyle = styled(AppBar)`
         font-size: 16;
         color: ${({ namespace }) =>
             namespace === NameSpaceEnum.Main
-                ? colors.bluePrimary
-                : colors.blueSecondary};
+                ? colors.primary
+                : colors.secondary};
     }
 `;
 

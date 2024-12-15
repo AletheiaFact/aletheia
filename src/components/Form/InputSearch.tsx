@@ -8,16 +8,16 @@ const InputSearchStyled = styled(Input.Search)`
         display: none;
     }
     span.ant-input-affix-wrapper {
-        background: ${({ backgroundColor = colors.lightGray }) =>
+        background: ${({ backgroundColor = colors.lightNeutral }) =>
         backgroundColor};
-        box-shadow: 0px 2px 2px ${colors.colorShadow};
+        box-shadow: 0px 2px 2px ${colors.shadow};
         border-radius: 4px;
         &:focus-within {
-            border-color: ${colors.grayTertiary};
+            border-color: ${colors.neutralTertiary};
         }
     }
     input.ant-input {
-        background: ${({ backgroundColor = colors.lightGray }) =>
+        background: ${({ backgroundColor = colors.lightNeutral }) =>
         backgroundColor};
         color: ${colors.blackSecondary};
         &::placeholder {

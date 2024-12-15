@@ -16,10 +16,8 @@ export default class OryController {
     @Get("sessions/whoami")
     public async whoAmI(@Req() req: Request, @Res() res: Response) {
         try {
-            const sessionToken =
-                req.cookies["ory_kratos_session"] ||
-                req.headers["authorization"];
-            const data = await this.oryService.whoAmI(sessionToken);
+            // forward cookie string because the cookie names may vary between ory cloud installations
+            const data = await this.oryService.whoAmI(req.headers["cookie"]);
             return res.status(200).json(data);
         } catch (error) {
             if (error.status) {
@@ -52,10 +50,6 @@ export default class OryController {
         @Res() res: NextApiResponse
     ) {
         const parsedUrl = parse(req.url, true);
-        await this.viewService.getNextServer().getRequestHandler()(
-            req,
-            res,
-            parsedUrl
-        );
+        await this.viewService.getRequestHandler()(req, res, parsedUrl);
     }
 }

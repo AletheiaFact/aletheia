@@ -30,7 +30,7 @@ const TagsList = ({ tags, editable = false, handleClose }: TagsListProps) => {
                 tags.map((tag) => (
                     <Tag
                         key={tag?.value || tag}
-                        color={colors.blueSecondary}
+                        color={colors.secondary}
                         closable={editable}
                         onClose={() => handleClose(tag?.value || tag)}
                         style={{

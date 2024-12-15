@@ -100,7 +100,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
                                         position: "relative",
                                         width: "100%",
                                         height: "140px",
-                                        backgroundColor: colors.bluePrimary,
+                                        backgroundColor: colors.primary,
                                     }}
                                 >
                                     <Image
@@ -145,7 +145,7 @@ const SupportiveMaterialsPage: NextPage<{ data: string }> = () => {
     );
 };
 
-export async function getServerSideProps({ query, locale, locales, req }) {
+export async function getServerSideProps({ locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
     return {
         props: {

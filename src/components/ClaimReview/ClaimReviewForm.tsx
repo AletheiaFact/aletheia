@@ -74,7 +74,7 @@ const ClaimReviewForm = ({
     return (
         <Row
             style={{
-                background: colors.lightGray,
+                background: colors.lightNeutral,
                 padding: "20px 15px",
             }}
         >

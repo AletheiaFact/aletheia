@@ -13,7 +13,7 @@ const SectionTitle = (props) => {
                 lineHeight: "32px",
                 margin: "0 0 16px 0",
                 fontWeight: 400,
-                color: colors.grayPrimary,
+                color: colors.neutral,
             }}
         >
             {props.children}

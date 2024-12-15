@@ -151,15 +151,13 @@ export class BadgeController {
             },
         });
         const parsedUrl = parse(req.url, true);
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/admin-badges",
-            Object.assign(parsedUrl.query, {
-                badges,
-                users,
-                nameSpace: req.params.namespace,
-            })
-        );
+
+        const query = Object.assign(parsedUrl.query, {
+            badges,
+            users,
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService.render(req, res, "/admin-badges", query);
     }
 }

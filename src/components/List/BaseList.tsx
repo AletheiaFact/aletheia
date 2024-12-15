@@ -42,8 +42,8 @@ const BaseList = ({
                 fontSize: 48,
                 color:
                     nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary,
+                        ? colors.primary
+                        : colors.secondary,
             }}
         />
     );
@@ -133,8 +133,8 @@ const BaseList = ({
                                         fontSize: "24px",
                                         lineHeight: "32px",
                                         color: bluePrimary
-                                            ? colors.bluePrimary
-                                            : colors.blackPrimary,
+                                            ? colors.primary
+                                            : colors.black,
                                         marginBottom: 0,
                                     }}
                                 >

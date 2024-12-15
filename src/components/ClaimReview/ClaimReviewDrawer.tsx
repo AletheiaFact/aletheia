@@ -116,13 +116,13 @@ const ClaimReviewDrawer = () => {
                                     <ExclamationCircleOutlined
                                         style={{
                                             fontSize: 16,
-                                            color: colors.blueSecondary,
+                                            color: colors.secondary,
                                             paddingBottom: 4,
                                         }}
                                     />
                                     <span
                                         style={{
-                                            color: colors.blueSecondary,
+                                            color: colors.secondary,
                                             lineHeight: "16px",
                                         }}
                                     >

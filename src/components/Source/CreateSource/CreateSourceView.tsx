@@ -5,7 +5,7 @@ import DynamicSourceForm from "./DynamicSourceForm";
 
 const CreateSourceView = () => {
     return (
-        <Row justify="center" style={{ background: colors.lightGray }}>
+        <Row justify="center" style={{ background: colors.lightNeutral }}>
             <Col span={18}>
                 <DynamicSourceForm />
             </Col>

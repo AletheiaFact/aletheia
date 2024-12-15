@@ -86,7 +86,7 @@ export class SummarizationCrawlerService {
                             font-weight: bold;
                         }
                         a {
-                            color: ${colors.bluePrimary};
+                            color: ${colors.primary};
                         }
                         .not-fact {
                             color: #006060;   
