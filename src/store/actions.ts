@@ -2,9 +2,9 @@ import { Content } from "../types/Content";
 import { ActionTypes } from "./types";
 
 const actions = {
-    isFetchingResults: () => ({
+    setResultsLoading: (isFetching) => ({
         type: ActionTypes.RESULTS_LOADING,
-        isFetching: true,
+        isFetching,
     }),
     openResultsOverlay: () => ({
         type: ActionTypes.RESULTS_OVERLAY_VISIBLE,

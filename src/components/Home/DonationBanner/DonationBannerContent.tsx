@@ -8,13 +8,9 @@ import DonationBannerStyle from "../DonationBanner.style";
 function DonationBannerContent({ closeClick }) {
     const { t } = useTranslation();
     return (
-        <DonationBannerStyle >
-            <Col
-                className="banner-content"
-            >
-                <h1>
-                    {t("donationBanner:title")}
-                </h1>
+        <DonationBannerStyle>
+            <Col className="banner-content">
+                <h1>{t("donationBanner:title")}</h1>
                 <p>
                     <Trans i18nKey="donationBanner:paragraph" />
                 </p>
@@ -34,8 +30,7 @@ function DonationBannerContent({ closeClick }) {
                     />
                 </div>
             </Col>
-        </DonationBannerStyle >
-
+        </DonationBannerStyle>
     );
 }
 
