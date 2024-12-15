@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import colors from "../../styles/colors";
 import { Grid } from "@mui/material";
-import { Col } from "antd";
 import { queries } from "../../styles/mediaQueries";
 
 

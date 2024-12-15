@@ -27,10 +27,6 @@ const DonationBanner = () => {
         return null;
     }
 
-  if (!enableDonationBanner) {
-    return null
-  };
-
   return showDonationBanner && (
     <DonationBannerStyle>
       <Grid container className="banner-container">
