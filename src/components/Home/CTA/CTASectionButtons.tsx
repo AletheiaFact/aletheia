@@ -1,6 +1,5 @@
-import { Col } from "antd";
 import React from "react";
-
+import { Grid } from "@mui/material";
 import { trackUmamiEvent } from "../../../lib/umami";
 import Button, { ButtonType } from "../../Button";
 import DonateButton from "../../Header/DonateButton";
@@ -22,15 +21,13 @@ const CTASectionButtons = () => {
     };
 
     return (
-        <Col
-            offset={smallDevice ? 0 : 1}
-            md={12}
-            sm={10}
-            xs={24}
+        <Grid container
+            xs={7}
+            sm={6}
             className="CTA-button-container"
         >
             {!isLoggedIn && (
-                <Col sm={24} md={11}>
+                <Grid item xs={6}>
                     <Button
                         onClick={handleClick}
                         href={"/sign-up"}
@@ -45,18 +42,18 @@ const CTASectionButtons = () => {
                     >
                         {t("home:createAccountButton")}
                     </Button>
-                </Col>
+                </Grid>
             )}
             {!smallDevice && (
-                <Col md={11}>
+                <Grid item xs={5.5}>
                     {localConfig.header.donateButton.show ? (
                         <DonateButton
                             style={{ fontSize: mediumDevice ? "12px" : "14px" }}
                         />
                     ) : null}
-                </Col>
+                </Grid>
             )}
-        </Col>
+        </Grid>
     );
 };
 

@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useState } from "react";
 import AletheiaButton from "../../Button";
 import { Col } from "antd";
+import { Grid } from "@mui/material";
 import SummarizationApi from "../../../api/summarizationApi";
 import { useTranslation } from "next-i18next";
 import { VisualEditorContext } from "../VisualEditorProvider";
@@ -42,8 +43,9 @@ const SourceEditorButton = ({ manager, state, readonly }) => {
     }, [manager, state.doc]);
 
     return (
-        <Col
-            span={24}
+        <Grid
+        container
+            xs={12}
             style={{
                 display: "flex",
                 order: 4,
@@ -61,7 +63,7 @@ const SourceEditorButton = ({ manager, state, readonly }) => {
             >
                 {t("sourceForm:summarizeSouce")}
             </AletheiaButton>
-        </Col>
+        </Grid>
     );
 };
 

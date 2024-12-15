@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DonationBannerContent from "./DonationBanner/DonationBannerContent";
 import DonationBannerStyle from "./DonationBanner.style";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import Cookies from "js-cookie";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 
@@ -27,25 +27,23 @@ const DonationBanner = () => {
         return null;
     }
 
-    return (
-        showDonationBanner && (
-            <DonationBannerStyle>
-                <Col className="banner-container">
-                    <CloseOutlined
-                        className="close-banner"
-                        onClick={() =>
-                            closeBanner(() => setDonationBanner(false))
-                        }
-                    />
-                    <DonationBannerContent
-                        closeClick={() =>
-                            closeBanner(() => setDonationBanner(false))
-                        }
-                    />
-                </Col>
-            </DonationBannerStyle>
-        )
-    );
+  if (!enableDonationBanner) {
+    return null
+  };
+
+  return showDonationBanner && (
+    <DonationBannerStyle>
+      <Grid container className="banner-container">
+        <CloseOutlined
+          className="close-banner"
+          onClick={() => closeBanner(() => setDonationBanner(false))}
+        />
+        <DonationBannerContent
+          closeClick={() => closeBanner(() => setDonationBanner(false))}
+        />
+      </Grid>
+    </DonationBannerStyle>
+  )
 };
 
 export default DonationBanner;
