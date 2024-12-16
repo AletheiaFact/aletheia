@@ -8,7 +8,7 @@ import {
 import { isUserLoggedIn } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { PlusOutlined } from "@ant-design/icons";
+import AddIcon from '@mui/icons-material/Add';
 import { useTranslation } from "next-i18next";
 
 const ReportModelButtons = ({ setFormCollapsed }) => {
@@ -51,7 +51,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 <Button
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    icon={<PlusOutlined />}
+                                    icon={<AddIcon />}
                                     data-cy={
                                         "testAddInformativeNewsReviewButton"
                                     }
@@ -64,7 +64,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 <Button
                                     type={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    icon={<PlusOutlined />}
+                                    icon={<AddIcon />}
                                     data-cy={"testAddFactCheckReviewButton"}
                                     id={ReportModelEnum.FactChecking}
                                 >
@@ -78,7 +78,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                             <Button
                                 type={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                icon={<PlusOutlined />}
+                                icon={<AddIcon />}
                                 data-cy={"testAddFactCheckReviewButton"}
                                 id={ReportModelEnum.FactChecking}
                             >
@@ -89,7 +89,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                             <Button
                                 type={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                icon={<PlusOutlined />}
+                                icon={<AddIcon />}
                                 data-cy={
                                     "testAddVerificationRequestReviewButton"
                                 }
