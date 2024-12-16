@@ -19,7 +19,7 @@ const EditorSourcePopoverContent = ({
                     title={t("sourceForm:intertArchiveTooltip")}
                 >
                     <Button
-                        type={ButtonType.white}
+                        buttonType={ButtonType.white}
                         onClick={handleArchiveClick}
                         style={{
                             textDecoration: "underline",
@@ -36,7 +36,7 @@ const EditorSourcePopoverContent = ({
                 </Tooltip>
             )}
             <Button
-                type={ButtonType.white}
+                buttonType={ButtonType.white}
                 style={{
                     textDecoration: "underline",
                     gap: 8,

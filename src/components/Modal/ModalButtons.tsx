@@ -31,7 +31,7 @@ const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
                 disabled={!hasCaptcha}
                 loading={isLoading}
                 htmlType="submit"
-                type={ButtonType.blue}
+                buttonType={ButtonType.blue}
             >
                 {t("orderModal:okButton")}
             </AletheiaButton>

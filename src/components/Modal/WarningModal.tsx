@@ -60,7 +60,7 @@ const WarningModal = ({
                     </span>
                 </ModalCancelButton>
 
-                <AletheiaButton onClick={handleOk} type={ButtonType.blue}>
+                <AletheiaButton onClick={handleOk} buttonType={ButtonType.blue}>
                     {t("warningModal:okButton")}
                 </AletheiaButton>
             </Col>

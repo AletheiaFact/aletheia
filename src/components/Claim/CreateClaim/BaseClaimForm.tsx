@@ -10,6 +10,7 @@ import Input from "../../AletheiaInput";
 import Button, { ButtonType } from "../../Button";
 import DatePickerInput from "../../Form/DatePickerInput";
 import SourceInput from "../../Source/SourceInput";
+import { CircularProgress } from "@mui/material";
 
 interface BaseClaimFormProps {
     content?: React.ReactNode;
@@ -164,14 +165,14 @@ const BaseClaimForm = ({
                     marginBottom: "20px",
                 }}
             >
-                <Button type={ButtonType.white} onClick={() => router.back()}>
+                <Button buttonType={ButtonType.white} onClick={() => router.back()}>
                     {t("claimForm:cancelButton")}
                 </Button>
                 <Button
-                    loading={isLoading}
-                    type={ButtonType.blue}
-                    htmlType="submit"
+                    variant="contained"
+                    onClick={handleSubmit}
                     disabled={disableSubmit || isLoading}
+                    startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
                     data-cy={"testSaveButton"}
                 >
                     {t("claimForm:saveButton")}

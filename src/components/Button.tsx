@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from "antd";
+import { Button, ButtonProps } from "@mui/material";
 import colors from "../styles/colors";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
@@ -13,12 +13,14 @@ export enum ButtonType {
     whiteBlack = "whiteBlack",
     lightBlue = "lightBlue",
 }
-
-type AletheiaButtonProps = Omit<ButtonProps, "type">;
-interface IAletheiaButtonProps extends AletheiaButtonProps {
-    type?: ButtonType;
+interface IAletheiaButtonProps extends Omit<ButtonProps, "type"> {
+    buttonType?: ButtonType;
     event?: any;
     rounded?: string;
+    href?: string; 
+    target?: "_blank" | "_self" | "_parent" | "_top";
+    loading?: boolean;
+    htmlType?: "button" | "submit" | "reset";
 }
 
 const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
@@ -45,7 +47,7 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
         borderRadius: props.rounded ? "30px" : "4px",
         ...props.style,
     };
-    switch (props.type) {
+    switch (props.buttonType) {
         case ButtonType.white:
             buttonStyle = {
                 ...buttonStyle,
@@ -98,7 +100,7 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
     }
 
     return (
-        <Button {...props} type="default" style={buttonStyle}>
+        <Button {...props} variant="contained" disableElevation style={buttonStyle}>
             {props.children}
         </Button>
     );

@@ -116,7 +116,7 @@ const SignUpForm = ({ onFinish, onFinishFailed, isLoading }) => {
                     >
                         <Button
                             loading={isLoading}
-                            type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                             htmlType="submit"
                             data-cy={"loginButton"}
                         >

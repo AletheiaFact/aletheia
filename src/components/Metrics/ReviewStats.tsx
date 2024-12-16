@@ -34,7 +34,7 @@ const ReviewStats = (props) => {
                                 marginTop: "24px",
                                 paddingBottom: 0,
                             }}
-                            type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                             onClick={() => setShowAllReviews(true)}
                         >
                             <AletheiaTitle level={4}>
@@ -51,7 +51,7 @@ const ReviewStats = (props) => {
                                 marginTop: "24px",
                                 paddingBottom: 0,
                             }}
-                            type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                             onClick={() => setShowAllReviews(false)}
                         >
                             <AletheiaTitle level={4}>

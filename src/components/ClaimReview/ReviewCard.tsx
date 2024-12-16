@@ -123,7 +123,7 @@ const ReviewCard = ({ review, summarized = false }) => {
                     <Col className="review-actions">
                         <TagsList key={0} tags={content.topics || []} />
                         <AletheiaButton
-                            type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                             href={href}
                             target="_blank"
                             style={{ width: "fit-content" }}

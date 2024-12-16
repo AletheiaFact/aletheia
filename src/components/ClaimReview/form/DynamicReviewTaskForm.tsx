@@ -255,7 +255,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                             <AletheiaButton
                                 loading={isLoading[event]}
                                 key={event}
-                                type={ButtonType.blue}
+                                buttonType={ButtonType.blue}
                                 htmlType={defineButtonHtmlType(event)}
                                 onClick={() => handleOnClick(event)}
                                 event={event}

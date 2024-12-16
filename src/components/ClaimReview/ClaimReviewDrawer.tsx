@@ -73,11 +73,11 @@ const ClaimReviewDrawer = () => {
                         >
                             <Col style={{ display: "flex", gap: 32 }}>
                                 <AletheiaButton
-                                    icon={<ArrowLeftOutlined />}
+                                    startIcon={<ArrowLeftOutlined />}
                                     onClick={() =>
                                         dispatch(actions.closeReviewDrawer())
                                     }
-                                    type={ButtonType.gray}
+                                    buttonType={ButtonType.gray}
                                     data-cy="testCloseReviewDrawer"
                                 >
                                     {t("common:back_button")}
@@ -93,7 +93,7 @@ const ClaimReviewDrawer = () => {
                                             content?.reviewTaskType
                                         )}
                                         onClick={() => setIsLoading(true)}
-                                        type={ButtonType.gray}
+                                        buttonType={ButtonType.gray}
                                         style={{
                                             textDecoration: "underline",
                                             fontWeight: "bold",

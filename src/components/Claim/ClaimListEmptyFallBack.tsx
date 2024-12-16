@@ -64,7 +64,7 @@ const ClaimListEmptyFallBack = ({
                         }}
                     >
                         <AletheiaButton
-                            type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                             onClick={handleClick}
                         >
                             {t("personality:claimListEmptyFallBack")}

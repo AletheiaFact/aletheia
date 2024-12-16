@@ -18,7 +18,7 @@ const DonationBannerButton = ({
 }: DonationBannerButtonProps) => {
     return (
         <Button
-            type={type}
+            buttonType={type}
             href={href}
             target="_blank"
             rel="noreferrer"

@@ -7,7 +7,7 @@ const DonateButton = ({ header = false, style = {} }) => {
     const { t } = useTranslation();
     return (
         <AletheiaButton
-            type={ButtonType.white}
+            buttonType={ButtonType.white}
             href={t("home:donateUrlButton")}
             target="_blank"
             rel="noreferrer"

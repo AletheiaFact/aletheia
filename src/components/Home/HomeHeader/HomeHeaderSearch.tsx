@@ -60,7 +60,7 @@ const HomeHeaderSearch = () => {
 
             {!vw?.xs && (
                 <AletheiaButton
-                    type={ButtonType.lightBlue}
+                    buttonType={ButtonType.lightBlue}
                     onClick={handleInputSearch}
                     style={{ width: "180px" }}
                     disabled={name.length <= 3}

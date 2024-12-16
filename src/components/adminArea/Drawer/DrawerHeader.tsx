@@ -76,7 +76,7 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
                 </div>
                 {userId !== currentUser?._id && shouldEdit && (
                     <Button
-                        type={ButtonType.whiteBlue}
+                        buttonType={ButtonType.whiteBlue}
                         onClick={handleClickChangeStatus}
                     >
                         {t(`admin:user-status-${status}-button`)}

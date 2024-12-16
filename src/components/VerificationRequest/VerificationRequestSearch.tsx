@@ -45,7 +45,7 @@ const VerificationRequestSearch = () => {
                         placeholder={t("verificationRequest:searchPlaceholder")}
                         suffix={
                             <AletheiaButton
-                                type={ButtonType.white}
+                                buttonType={ButtonType.white}
                                 onClick={handleInputSearch}
                                 style={{ width: "100%", height: "auto" }}
                                 disabled={content.length <= 3}

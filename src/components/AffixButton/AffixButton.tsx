@@ -209,7 +209,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                     }}
                 >
                     <AletheiaButton
-                        type={ButtonType.blue}
+                        buttonType={ButtonType.blue}
                         onClick={handleHideModal}
                         data-cy={"testButtonTutorialOk"}
                     >

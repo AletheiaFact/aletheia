@@ -49,9 +49,9 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                         {isClaim && (
                             <>
                                 <Button
-                                    type={ButtonType.blue}
+                                    buttonType={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    icon={<PlusOutlined />}
+                                    startIcon={<PlusOutlined />}
                                     data-cy={
                                         "testAddInformativeNewsReviewButton"
                                     }
@@ -62,9 +62,9 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                     )}
                                 </Button>
                                 <Button
-                                    type={ButtonType.blue}
+                                    buttonType={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    icon={<PlusOutlined />}
+                                    startIcon={<PlusOutlined />}
                                     data-cy={"testAddFactCheckReviewButton"}
                                     id={ReportModelEnum.FactChecking}
                                 >
@@ -76,9 +76,9 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                         )}
                         {isSource && (
                             <Button
-                                type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                icon={<PlusOutlined />}
+                                startIcon={<PlusOutlined />}
                                 data-cy={"testAddFactCheckReviewButton"}
                                 id={ReportModelEnum.FactChecking}
                             >
@@ -87,9 +87,9 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                         )}
                         {isVerificationRequest && (
                             <Button
-                                type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                icon={<PlusOutlined />}
+                                startIcon={<PlusOutlined />}
                                 data-cy={
                                     "testAddVerificationRequestReviewButton"
                                 }

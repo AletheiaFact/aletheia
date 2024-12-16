@@ -134,7 +134,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                         Submit
                     </Button>
                     <Button
-                        type={ButtonType.whiteBlack}
+                        buttonType={ButtonType.whiteBlack}
                         onClick={handleCancel}
                         loading={isLoading}
                     >
