@@ -2,23 +2,21 @@ import React from "react";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
 import { Stats } from "./Stats";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 
 const HomeStats = ({ stats }) => {
     const { t } = useTranslation();
 
     return (
-        <Col
-            xxl={12}
-            lg={16}
-            sm={18}
-            xs={24}
+        <Grid container
+            sm={9}
+            md={8}
+            xl={6}
             style={{
                 color: colors.white,
                 width: "100%",
                 justifyContent: "space-between",
                 display: "flex",
-                gap: "2vw",
             }}
         >
             <Stats
@@ -32,7 +30,7 @@ const HomeStats = ({ stats }) => {
                 title={t("home:statsClaimReviews")}
                 style={{ justifyContent: "flex-end" }}
             />
-        </Col>
+        </Grid>
     );
 };
 

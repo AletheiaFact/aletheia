@@ -68,7 +68,7 @@ const HeaderContent = () => {
                 <Logo />
             </a>
             <SearchOverlay />
-            <HeaderActionsStyle xs={14} sm={10} md={6}>
+            <HeaderActionsStyle xs={7} sm={5} md={3}>
                 {vw?.xs && !router.pathname.includes("/home-page") && (
                     <AletheiaButton
                         onClick={handleClickSearchIcon}

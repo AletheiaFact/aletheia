@@ -16,7 +16,7 @@ const HomeHeaderStyle = styled(Col)`
         display: flex;
         flex-direction: column;
         width: 100%;
-        align-items: center;
+        align-items: start;
     }
 
     .home-header-title > h1 {
