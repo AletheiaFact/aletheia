@@ -16,8 +16,8 @@ const DashboardView = () => {
     const { t, i18n } = useTranslation();
 
     return (
-        <DashboardViewStyle justify="space-around">
-            <Grid container className="dashboard-item" sm={12} md={5} lg={3.5}>
+        <DashboardViewStyle container>
+            <Grid item className="dashboard-item" sm={12} md={5} lg={3.5}>
                 <BaseList
                     title={t("admin:dashboardHiddenPersonalities")}
                     apiCall={personalitiesApi.getPersonalities}
@@ -39,7 +39,7 @@ const DashboardView = () => {
                 />
             </Grid>
 
-            <Grid container className="dashboard-item" sm={12} md={5} lg={3.5}>
+            <Grid item className="dashboard-item" sm={12} md={5} lg={3.5}>
                 <BaseList
                     title={t("admin:dashboardHiddenClaims")}
                     apiCall={claimApi.get}
@@ -61,7 +61,7 @@ const DashboardView = () => {
                 />
             </Grid>
 
-            <Grid container className="dashboard-item" sm={12} md={5} lg={3.5}>
+            <Grid item className="dashboard-item" sm={12} md={5} lg={3.5}>
                 <BaseList
                     title={t("admin:dashboardHiddenReviews")}
                     apiCall={claimReviewApi.get}

@@ -21,7 +21,7 @@ const CTASectionButtons = () => {
     };
 
     return (
-        <Grid container
+        <Grid item
             xs={7}
             sm={6}
             className="CTA-button-container"

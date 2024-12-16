@@ -21,9 +21,9 @@ const EditorCard = ({
     inputSize = 100,
 }: EditorCardProps) => {
     return (
-        <CardStyle>
+        <CardStyle container>
             <label>{label}</label>
-            <Grid container xs={span} className="card-container">
+            <Grid item xs={span} className="card-container">
                 <div
                     className="card-content"
                     data-cy={dataCy}
