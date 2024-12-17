@@ -33,7 +33,7 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
             forwardRef={forwardRef}
             inputSize={40}
             extra={
-                <Grid container xs={1}
+                <Grid item xs={1}
                     style={{alignContent:"center"}}>
                     <Button
                         style={{ height: "40px", margin: "0 auto" }}
