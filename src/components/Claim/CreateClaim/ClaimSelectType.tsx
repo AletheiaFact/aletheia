@@ -53,8 +53,9 @@ const ClaimSelectType = () => {
                 </p>
             </div>
 
-            <Grid
+            <Grid container
                 style={{
+                    gap: "10px",
                     margin: "24px 0",
                     display: "flex",
                     justifyContent: "space-evenly",

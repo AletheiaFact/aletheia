@@ -9,7 +9,7 @@ const CTASection = () => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
-        <CTASectionStyle isloggedin={isLoggedIn.toString()}>
+        <CTASectionStyle container isloggedin={isLoggedIn.toString()}>
             <CTASectionTitle />
             <CTASectionButtons />
         </CTASectionStyle>

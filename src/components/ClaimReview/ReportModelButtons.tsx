@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material"
 import React, { useContext } from "react";
 import Button, { ButtonType } from "../Button";
 import {
@@ -28,15 +28,15 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
     };
 
     return (
-        <Row
+        <Grid container
             style={{
                 width: "100%",
                 padding: "0px 0px 15px 0px",
                 justifyContent: "center",
             }}
         >
-            <Col
-                span={24}
+            <Grid item
+                xs={12}
                 style={{
                     display: "flex",
                     justifyContent: "center",
@@ -102,8 +102,8 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                         )}
                     </>
                 )}
-            </Col>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 

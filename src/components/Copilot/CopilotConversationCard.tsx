@@ -9,7 +9,7 @@ const CopilotConversationCard = ({ message }) => {
     const { t } = useTranslation();
     const { type, sender, content } = message;
     return (
-        <CopilotConversationCardStyle>
+        <CopilotConversationCardStyle item>
             <div className="conversation-card-header">
                 {sender === SenderEnum.Assistant ? (
                     <img

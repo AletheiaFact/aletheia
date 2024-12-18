@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material"
 import { useAtom } from "jotai";
 import React, { useState } from "react";
 
@@ -77,8 +77,8 @@ const CreateClaimView = () => {
     };
 
     return (
-        <Row justify="center">
-            <Col span={18} style={{ marginTop: 32 }}>
+        <Grid container style={{justifyContent:"center"}}>
+            <Grid item xs={9} style={{ marginTop: 32 }}>
                 {!isLoading &&
                     claimData?.group &&
                     claimData?.group?.content?.length > 0 && (
@@ -101,7 +101,7 @@ const CreateClaimView = () => {
                 {addDebate && <ClaimCreateDebate />}
                 {isLoading && <Loading />}
                 {addUnattributed && <ClaimCreate />}
-            </Col>
+            </Grid>
 
             <VerificationRequestDrawer
                 groupContent={claimData.group.content}
@@ -110,7 +110,7 @@ const CreateClaimView = () => {
                 onCloseDrawer={onCloseDrawer}
                 onRemove={onRemove}
             />
-        </Row>
+        </Grid>
     );
 };
 

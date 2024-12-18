@@ -1,8 +1,8 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import styled from "styled-components";
 import colors from "../../../styles/colors";
 
-const CardStyle = styled(Row)`
+const CardStyle = styled(Grid)`
     width: 100%;
     display: flex;
     justify-content: space-between;

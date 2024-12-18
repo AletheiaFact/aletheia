@@ -1,8 +1,8 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import colors from "../../styles/colors";
 import styled from "styled-components";
 
-const CopilotConversationCardStyle = styled(Row)`
+const CopilotConversationCardStyle = styled(Grid)`
     display: flex;
     flex-direction: column;
 

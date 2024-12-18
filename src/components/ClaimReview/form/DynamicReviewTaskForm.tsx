@@ -12,7 +12,7 @@ import { VisualEditorContext } from "../../Collaborative/VisualEditorProvider";
 import DynamicForm from "../../Form/DynamicForm";
 import { ReviewTaskEvents } from "../../../machines/reviewTask/enums";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import Text from "antd/lib/typography/Text";
 import {
     isUserLoggedIn,
@@ -118,9 +118,9 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
         const isValidReviewer =
             event === ReviewTaskEvents.sendToCrossChecking
                 ? !data.crossCheckerId ||
-                  !reviewData.usersId.includes(data.crossCheckerId)
+                !reviewData.usersId.includes(data.crossCheckerId)
                 : !data.reviewerId ||
-                  !reviewData.usersId.includes(data.reviewerId);
+                !reviewData.usersId.includes(data.reviewerId);
 
         setReviewerError(!isValidReviewer);
         return isValidReviewer;
@@ -244,10 +244,11 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                 </>
             )}
             {showButtons && (
-                <Row
+                <Grid container
                     style={{
                         padding: "32px 0 0",
                         justifyContent: "space-evenly",
+                        gap: "10px"
                     }}
                 >
                     {events?.map((event) => {
@@ -266,7 +267,7 @@ const DynamicReviewTaskForm = ({ data_hash, personality, target }) => {
                             </AletheiaButton>
                         );
                     })}
-                </Row>
+                </Grid>
             )}
 
             <WarningModal

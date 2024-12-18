@@ -1,4 +1,4 @@
-import { Row, Col } from "antd";
+import { Grid } from "@mui/material"
 import React from "react";
 import ClaimList from "./ClaimList";
 import SourceList from "../Source/SourceList";
@@ -8,19 +8,19 @@ const ClaimListView = () => {
     const { t } = useTranslation();
     return (
         <>
-            <Row justify="center" style={{ marginTop: "64px" }}>
-                <Col sm={22} md={14} lg={21}>
+            <Grid container style={{ marginTop: "64px", justifyContent:"center" }}>
+                <Grid item sm={11} md={7} lg={10.5}>
                     <h1 style={{ fontSize: 32 }}>
                         {t("claim:claimListTitle")}
                     </h1>
-                </Col>
-                <Col sm={22} md={14} lg={12}>
+                </Grid>
+                <Grid item sm={11} md={7} lg={6}>
                     <SourceList />
-                </Col>
-                <Col offset={1} sm={22} md={14} lg={8}>
+                </Grid>
+                <Grid item style={{margin:"0 20px"}} sm={11} md={7} lg={4}>
                     <ClaimList columns={1} personality={{ _id: null }} />
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
         </>
     );
 };
