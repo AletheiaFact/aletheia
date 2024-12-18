@@ -73,7 +73,7 @@ const GridList = ({
                         margin: "48px 0 64px 0",
                     }}
                 >
-                    <Button href={href} type={ButtonType.blue} data-cy={dataCy}>
+                    <Button href={href} buttonType={ButtonType.blue} data-cy={dataCy}>
                         <span
                             style={{
                                 fontWeight: 400,

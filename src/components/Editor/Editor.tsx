@@ -84,7 +84,7 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
                 <Button
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={handleClickUpdateStatus}
-                    type={ButtonType.whiteBlack}
+                    buttonType={ButtonType.whiteBlack}
                 >
                     {t(
                         `debates:${

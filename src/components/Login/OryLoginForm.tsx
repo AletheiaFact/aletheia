@@ -79,7 +79,7 @@ const OryLoginForm = ({
                             >
                                 <Button
                                     loading={isLoading}
-                                    type={ButtonType.blue}
+                                    buttonType={ButtonType.blue}
                                     htmlType="submit"
                                     data-cy={"loginButton"}
                                 >
@@ -118,7 +118,7 @@ const OryLoginForm = ({
                             >
                                 <Button
                                     loading={isLoading}
-                                    type={ButtonType.blue}
+                                    buttonType={ButtonType.blue}
                                     htmlType="submit"
                                 >
                                     {t("totp:submitButton")}

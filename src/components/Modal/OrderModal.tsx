@@ -39,7 +39,7 @@ const OrderModal = ({ open, value, setValue, handleOk, handleCancel }) => {
                     </span>
                 </ModalCancelButton>
 
-                <AletheiaButton type={ButtonType.blue} onClick={handleOk}>
+                <AletheiaButton buttonType={ButtonType.blue} onClick={handleOk}>
                     {t("orderModal:okButton")}
                 </AletheiaButton>
             </div>

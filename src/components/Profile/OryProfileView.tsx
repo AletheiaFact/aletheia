@@ -159,7 +159,7 @@ const OryProfileView = ({ user }) => {
                     <Form.Item>
                         <Button
                             loading={isLoading}
-                            type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                             htmlType="submit"
                         >
                             {t("login:submitButton")}

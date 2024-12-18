@@ -102,7 +102,7 @@ const EditorAddSources = ({
                     </p>
                     {enableAddEditorSourcesWithoutSelecting && (
                         <AletheiaButton
-                            type={ButtonType.gray}
+                            buttonType={ButtonType.gray}
                             onClick={() => setShowDialog(true)}
                             data-cy="testAddEditorSources"
                         >

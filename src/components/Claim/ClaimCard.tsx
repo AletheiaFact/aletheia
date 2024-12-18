@@ -183,7 +183,7 @@ const ClaimCard = ({
                 <Col>
                     {!isInsideDebate && (
                         <Button
-                            type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                             href={href}
                             data-cy={personality?.name}
                         >

@@ -32,7 +32,7 @@ const FooterInfo = () => {
             </span>
             {localConfig.footer.showStatuteButton.show ? (
                 <AletheiaButton
-                    type={ButtonType.whiteBlue}
+                    buttonType={ButtonType.whiteBlue}
                     href={t("footer:statuteUrlButton")}
                     target="_blank"
                     rel="noreferrer"

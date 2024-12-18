@@ -23,7 +23,7 @@ function Banner() {
                             "registration"
                         );
                     }}
-                    type={ButtonType.whiteBlack}
+                    buttonType={ButtonType.whiteBlack}
                     href={"/sign-up"}
                     className="cta-registration-button"
                     style={{

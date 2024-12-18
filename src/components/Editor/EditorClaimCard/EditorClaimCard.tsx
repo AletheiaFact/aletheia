@@ -128,7 +128,7 @@ export const EditorClaimCard = ({
                         </EditorClaimCardContent>
                         <Button
                             loading={isLoading}
-                            type={ButtonType.blue}
+                            buttonType={ButtonType.blue}
                             onClick={() =>
                                 createSpeechFromEditor(t, {
                                     personality,

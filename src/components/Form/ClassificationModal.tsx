@@ -81,7 +81,7 @@ const ClassificationModal = ({
                 </ModalCancelButton>
 
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    buttonType={ButtonType.blue}
                     onClick={handleOk}
                     style={{ width: "48%", paddingTop: 0 }}
                 >
