@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "antd";
-import { EyeInvisibleFilled, EyeFilled } from "@ant-design/icons";
+import { IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import colors from "../styles/colors";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useAtom } from "jotai";
@@ -22,13 +22,13 @@ const HideContentButton = ({ hide, handleHide, handleUnhide, style = {} }) => {
     return (
         <div style={{ ...style }}>
             {hide ? (
-                <Button onClick={handleHide} style={buttonStyle}>
-                    <EyeFilled />
-                </Button>
+                <IconButton onClick={handleHide} style={buttonStyle}>
+                    <Visibility />
+                </IconButton>
             ) : (
-                <Button onClick={handleUnhide} style={buttonStyle}>
-                    <EyeInvisibleFilled />
-                </Button>
+                <IconButton onClick={handleUnhide} style={buttonStyle}>
+                    <VisibilityOff />
+                </IconButton>
             )}
         </div>
     );
