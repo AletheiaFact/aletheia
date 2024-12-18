@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from "@mui/material";
+import { Button, ButtonProps, CircularProgress } from "@mui/material";
 import colors from "../styles/colors";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
@@ -13,19 +13,18 @@ export enum ButtonType {
     whiteBlack = "whiteBlack",
     lightBlue = "lightBlue",
 }
+
 interface IAletheiaButtonProps extends Omit<ButtonProps, "type"> {
     buttonType?: ButtonType;
     event?: any;
     rounded?: string;
     href?: string; 
     target?: "_blank" | "_self" | "_parent" | "_top";
-    loading?: boolean;
-    htmlType?: "button" | "submit" | "reset";
+    loading?: boolean; 
+    htmlType?: "button" | "submit" | "reset"; 
 }
 
-const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
-    props: IAletheiaButtonProps
-) => {
+const AletheiaButton: React.FC<IAletheiaButtonProps> = (props) => {
     const [nameSpace] = useAtom(currentNameSpace);
 
     const [backgroundColor, setBackgroundColor] = useState(colors.primary);
@@ -100,8 +99,19 @@ const AletheiaButton: (props: IAletheiaButtonProps) => JSX.Element = (
     }
 
     return (
-        <Button {...props} variant="contained" disableElevation style={buttonStyle}>
-            {props.children}
+        <Button
+            {...props}
+            type={props.htmlType}
+            variant="contained"
+            disableElevation
+            style={buttonStyle}
+            disabled={props.loading || props.disabled}
+        >
+            {props.loading ? (
+                <CircularProgress size={24} style={{ color: "white" }} />
+            ) : (
+                props.children
+            )}
         </Button>
     );
 };
