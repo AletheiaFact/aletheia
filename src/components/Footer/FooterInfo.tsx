@@ -1,5 +1,5 @@
 import { FileTextOutlined } from "@ant-design/icons";
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useAppSelector } from "../../store/store";
@@ -14,7 +14,7 @@ const FooterInfo = () => {
     const href = " https://github.com/AletheiaFact/aletheia";
 
     return (
-        <Row justify={vw?.sm ? "center" : "start"}>
+        <Grid container style={{ justifyContent: vw?.sm ? "center" : "start" }}>
             <span style={{ textAlign: "justify", marginBottom: "16px" }}>
                 {t("about:alertInfo")}
                 <a
@@ -42,7 +42,7 @@ const FooterInfo = () => {
                     </>
                 </AletheiaButton>
             ) : null}
-        </Row>
+        </Grid>
     );
 };
 

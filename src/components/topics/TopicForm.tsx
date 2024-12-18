@@ -103,20 +103,25 @@ const TopicForm = ({
                     }}
                     render={({ field: { onChange, value } }) => (
                         <CssVarsProvider>
-
                             <FormControl sx={{ width: 655 }}>
                                 <Autocomplete
                                     freeSolo
                                     multiple
                                     placeholder={t("topics:placeholder")}
                                     options={options}
-                                    onInputChange={(_, inputValue) => fetchOptions(inputValue)}
+                                    onInputChange={(_, inputValue) =>
+                                        fetchOptions(inputValue)
+                                    }
                                     onChange={(_, selectedValues) => {
                                         onChange(selectedValues);
                                         setInputValue(selectedValues);
                                     }}
-                                    getOptionLabel={(option) => option.label || ""}
-                                    isOptionEqualToValue={(option, value) => option.value === value.value}
+                                    getOptionLabel={(option) =>
+                                        option.label || ""
+                                    }
+                                    isOptionEqualToValue={(option, value) =>
+                                        option.value === value.value
+                                    }
                                     loading={isLoading}
                                     endDecorator={
                                         isLoading ? (

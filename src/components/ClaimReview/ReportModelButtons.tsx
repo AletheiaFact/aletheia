@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material"
 import React, { useContext } from "react";
 import Button, { ButtonType } from "../Button";
 import {
@@ -8,7 +8,7 @@ import {
 import { isUserLoggedIn } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
-import { PlusOutlined } from "@ant-design/icons";
+import AddIcon from '@mui/icons-material/Add';
 import { useTranslation } from "next-i18next";
 
 const ReportModelButtons = ({ setFormCollapsed }) => {
@@ -28,15 +28,15 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
     };
 
     return (
-        <Row
+        <Grid container
             style={{
                 width: "100%",
                 padding: "0px 0px 15px 0px",
                 justifyContent: "center",
             }}
         >
-            <Col
-                span={24}
+            <Grid item
+                xs={12}
                 style={{
                     display: "flex",
                     justifyContent: "center",
@@ -51,7 +51,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 <Button
                                     buttonType={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    startIcon={<PlusOutlined />}
+                                    startIcon={<AddIcon />}
                                     data-cy={
                                         "testAddInformativeNewsReviewButton"
                                     }
@@ -64,7 +64,8 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                                 <Button
                                     buttonType={ButtonType.blue}
                                     onClick={toggleFormCollapse}
-                                    startIcon={<PlusOutlined />}
+                                    startIcon={<AddIcon />}
+                                    icon={<AddIcon />}
                                     data-cy={"testAddFactCheckReviewButton"}
                                     id={ReportModelEnum.FactChecking}
                                 >
@@ -78,7 +79,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                             <Button
                             buttonType={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                startIcon={<PlusOutlined />}
+                                startIcon={<AddIcon />}
                                 data-cy={"testAddFactCheckReviewButton"}
                                 id={ReportModelEnum.FactChecking}
                             >
@@ -89,7 +90,7 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                             <Button
                             buttonType={ButtonType.blue}
                                 onClick={toggleFormCollapse}
-                                startIcon={<PlusOutlined />}
+                                startIcon={<AddIcon />}
                                 data-cy={
                                     "testAddVerificationRequestReviewButton"
                                 }
@@ -102,8 +103,8 @@ const ReportModelButtons = ({ setFormCollapsed }) => {
                         )}
                     </>
                 )}
-            </Col>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 

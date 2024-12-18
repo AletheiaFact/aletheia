@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material"
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -91,7 +91,7 @@ const SentenceReportPreviewView = ({
 
     return (
         reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
-            <Row
+            <Grid container
                 style={
                     (isCrossChecking || isReport || isReviewing) && {
                         backgroundColor: colors.lightNeutral,
@@ -112,7 +112,7 @@ const SentenceReportPreviewView = ({
                         onClose={handleClickViewPreview}
                         open={viewPreview}
                     >
-                        <Col
+                        <Grid item
                             style={{
                                 height: "100%",
                                 display: "flex",
@@ -128,8 +128,7 @@ const SentenceReportPreviewView = ({
                                 hideDescription={hideDescriptions}
                                 target={target}
                                 componentStyle={{
-                                    span: 20,
-                                    offset: 2,
+                                    span: 10,
                                 }}
                             />
                             <SentenceReportPreview
@@ -137,14 +136,13 @@ const SentenceReportPreviewView = ({
                                 context={context}
                                 href={href}
                                 componentStyle={{
-                                    span: 20,
-                                    offset: 2,
+                                    span: 10,
                                 }}
                             />
-                        </Col>
+                        </Grid>
                     </LargeDrawer>
                 )}
-            </Row>
+            </Grid>
         )
     );
 };

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Row } from "antd";
+import { Grid } from "@mui/material"
 import { Provider as CallbackTimerProvider, useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import claimApi from "../../api/claim";
@@ -44,7 +44,7 @@ const DebateView = ({ claim }) => {
                     [currentNameSpace, nameSpace],
                 ]}
             >
-                <Row
+                <Grid container
                     style={{
                         width: "100%",
                         justifyContent: "center",
@@ -56,7 +56,7 @@ const DebateView = ({ claim }) => {
                         personalities={claim?.personalities}
                         userRole={userRole}
                     />
-                    <Row
+                    <Grid item
                         style={{
                             padding: "30px 10%",
                             width: "100%",
@@ -66,8 +66,8 @@ const DebateView = ({ claim }) => {
                             speeches={speeches}
                             isLive={debate.isLive}
                         />
-                    </Row>
-                </Row>
+                    </Grid>
+                </Grid>
             </CallbackTimerProvider>
         </>
     );
