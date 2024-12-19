@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material"
 
 import { Controller } from "react-hook-form";
 import DynamicInput from "./DynamicInput";
@@ -31,8 +31,8 @@ const DynamicForm = ({
                 const defaultValue = machineValues[fieldName];
 
                 return (
-                    <Row key={fieldName + index}>
-                        <Col span={24}>
+                    <Grid container key={fieldName + index}>
+                        <Grid item xs={12}>
                             <h4
                                 style={{
                                     color: colors.blackSecondary,
@@ -43,8 +43,8 @@ const DynamicForm = ({
                             >
                                 {t(label)}
                             </h4>
-                        </Col>
-                        <Col span={24} style={{ margin: "10px 0" }}>
+                        </Grid>
+                        <Grid item xs={12} style={{ margin: "10px 0" }}>
                             <Controller
                                 name={fieldName}
                                 control={control}
@@ -70,8 +70,8 @@ const DynamicForm = ({
                                     {t(errors[fieldName].message)}
                                 </Text>
                             )}
-                        </Col>
-                    </Row>
+                        </Grid>
+                    </Grid>
                 );
             })}
         </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import PersonalityMinimalCard from "../Personality/PersonalityMinimalCard";
 import CardBase from "../CardBase";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import reviewColors from "../../constants/reviewColors";
 import TagsList from "../topics/TagsList";
@@ -68,15 +68,15 @@ const ReviewCard = ({ review, summarized = false }) => {
         <CardBase>
             <ReviewCardStyled>
                 {!summarized && personalityItem && (
-                    <Col className="personality-card">
+                    <Grid className="personality-card">
                         <PersonalityMinimalCard
                             personality={personalityItem}
                             avatarSize={88}
                         />
-                    </Col>
+                    </Grid>
                 )}
-                <Col className="review-content">
-                    <Col className="review-info">
+                <Grid className="review-content">
+                    <Grid className="review-info">
                         <ClaimInfo
                             isImage={isImage}
                             date={claimItem.date}
@@ -96,8 +96,8 @@ const ReviewCard = ({ review, summarized = false }) => {
                                 classificationTextStyle={{ fontSize: 16 }}
                             />
                         )}
-                    </Col>
-                    <Col className="sentence-content">
+                    </Grid>
+                    <Grid className="sentence-content">
                         {content?.props?.classification && (
                             <div
                                 style={{
@@ -118,9 +118,9 @@ const ReviewCard = ({ review, summarized = false }) => {
                             linkText={t(linkText)}
                             style={{ fontSize: 18 }}
                         />
-                    </Col>
+                    </Grid>
 
-                    <Col className="review-actions">
+                    <Grid className="review-actions">
                         <TagsList key={0} tags={content.topics || []} />
                         <AletheiaButton
                             buttonType={ButtonType.blue}
@@ -130,8 +130,8 @@ const ReviewCard = ({ review, summarized = false }) => {
                         >
                             {t("home:reviewsCarouselOpen")}
                         </AletheiaButton>
-                    </Col>
-                </Col>
+                    </Grid>
+                </Grid>
             </ReviewCardStyled>
         </CardBase>
     );

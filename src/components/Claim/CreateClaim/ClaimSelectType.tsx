@@ -3,7 +3,7 @@ import {
     PictureOutlined,
     VideoCameraOutlined,
 } from "@ant-design/icons";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 
@@ -53,8 +53,9 @@ const ClaimSelectType = () => {
                 </p>
             </div>
 
-            <Col
+            <Grid container
                 style={{
+                    gap: "10px",
                     margin: "24px 0",
                     display: "flex",
                     justifyContent: "space-evenly",
@@ -71,7 +72,7 @@ const ClaimSelectType = () => {
                         {t(`claimForm:${key}`)}
                     </AletheiaButton>
                 ))}
-            </Col>
+            </Grid>
         </>
     );
 };

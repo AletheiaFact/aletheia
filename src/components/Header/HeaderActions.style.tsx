@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { queries } from "../../styles/mediaQueries";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 
-const HeaderActionsStyle = styled(Col)`
+const HeaderActionsStyle = styled(Grid)`
     display: flex;
     align-items: flex-end;
     justify-content: space-evenly;
