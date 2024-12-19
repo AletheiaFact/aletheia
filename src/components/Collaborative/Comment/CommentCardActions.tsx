@@ -72,7 +72,7 @@ const CommentCardActions = ({ content, setIsResolved }) => {
             <div className="comment-card-actions-resolve-button">
                 {!content.isReply && (
                     <Button
-                        type={ButtonType.white}
+                        buttonType={ButtonType.white}
                         onClick={handleResolvedClick}
                     >
                         <CheckIcon style={{ fontSize: "16px" }} />

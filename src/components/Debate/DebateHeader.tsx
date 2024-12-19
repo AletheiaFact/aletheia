@@ -81,7 +81,7 @@ const DebateHeader = ({ claim, title, personalities, userRole }) => {
             </div>
             {userRole === Roles.Admin && claim?.claimId ? (
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    buttonType={ButtonType.blue}
                     href={href}
                     style={{
                         margin: 20,

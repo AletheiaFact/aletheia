@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "antd";
+import { Button } from "@mui/material";
 import { EyeInvisibleFilled, EyeFilled } from "@ant-design/icons";
 import colors from "../styles/colors";
 import { NameSpaceEnum } from "../types/Namespace";

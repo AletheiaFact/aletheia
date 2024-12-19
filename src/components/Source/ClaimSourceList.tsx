@@ -50,7 +50,7 @@ const ClaimSourceList = ({
             )}
             {!showAllSources && sources?.length > sourcesGridColumns && (
                 <AletheiaButton
-                    type={ButtonType.blue}
+                    buttonType={ButtonType.blue}
                     href={seeMoreHref}
                     className="all-sources-link-button"
                 >

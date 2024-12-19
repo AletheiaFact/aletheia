@@ -9,7 +9,7 @@ const CommentPopoverContent = ({ handleDeleteClick }) => {
     return (
         <Grid className="source-card-popover-content">
             <Button
-                type={ButtonType.white}
+                buttonType={ButtonType.white}
                 style={{
                     gap: 8,
                     border: "none",

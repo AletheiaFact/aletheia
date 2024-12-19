@@ -22,14 +22,14 @@ const SharedFormFooter = ({ isLoading, setRecaptchaString, hasCaptcha }) => {
                 }}
             >
                 <AletheiaButton
-                    type={ButtonType.gray}
+                    buttonType={ButtonType.gray}
                     onClick={() => router.back()}
                 >
                     {t("claimForm:cancelButton")}
                 </AletheiaButton>
                 <AletheiaButton
                     loading={isLoading}
-                    type={ButtonType.blue}
+                    buttonType={ButtonType.blue}
                     htmlType="submit"
                     disabled={!hasCaptcha || isLoading}
                     data-cy={"testSaveButton"}

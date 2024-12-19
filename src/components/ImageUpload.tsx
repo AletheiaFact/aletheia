@@ -90,7 +90,7 @@ const ImageUpload = ({
     };
 
     const uploadButton = (
-        <AletheiaButton data-cy="testUploadImage" icon={<UploadOutlined />}>
+        <AletheiaButton data-cy="testUploadImage" startIcon={<UploadOutlined />}>
             {t("claimForm:fileInputButton")}
         </AletheiaButton>
     );

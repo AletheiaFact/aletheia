@@ -9,7 +9,7 @@ const CTAButton = ({ type }) => {
             onClick={() => {
                 trackUmamiEvent("cta-registration-button", "registration");
             }}
-            type={type}
+            buttonType={type}
             href={"/sign-up"}
             className="CTA-registration-button"
             style={{

@@ -197,7 +197,7 @@ function SearchPageView({ searchText }) {
                                 onSearch={handleInputSearch}
                                 t={t}
                             />
-                            <Button type={ButtonType.blue} htmlType="submit">
+                            <Button buttonType={ButtonType.blue} htmlType="submit">
                                 <SearchIcon />
                             </Button>
                         </div>

@@ -190,7 +190,7 @@ export const Totp = ({ flow, setFlow }) => {
                         <InputPassword />
                     </Form.Item>
                     <AletheiaButton
-                        type={ButtonType.blue}
+                        buttonType={ButtonType.blue}
                         htmlType="submit"
                         loading={isLoading}
                     >
@@ -214,7 +214,7 @@ export const Totp = ({ flow, setFlow }) => {
                             height: "max-content",
                             whiteSpace: "normal",
                         }}
-                        type={ButtonType.blue}
+                        buttonType={ButtonType.blue}
                     >
                         <Title
                             level={4}
