@@ -92,6 +92,7 @@ const SentenceReportPreviewView = ({
     return (
         reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
             <Grid container
+                justifyContent="center"
                 style={
                     (isCrossChecking || isReport || isReviewing) && {
                         backgroundColor: colors.lightNeutral,

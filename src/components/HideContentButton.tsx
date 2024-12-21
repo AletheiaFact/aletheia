@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "antd";
-import { EyeInvisibleFilled, EyeFilled } from "@ant-design/icons";
+import { Button } from "@mui/material";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
 import colors from "../styles/colors";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useAtom } from "jotai";
@@ -23,11 +23,11 @@ const HideContentButton = ({ hide, handleHide, handleUnhide, style = {} }) => {
         <div style={{ ...style }}>
             {hide ? (
                 <Button onClick={handleHide} style={buttonStyle}>
-                    <EyeFilled />
+                    <Visibility fontSize="small"/>
                 </Button>
             ) : (
                 <Button onClick={handleUnhide} style={buttonStyle}>
-                    <EyeInvisibleFilled />
+                    <VisibilityOff fontSize="small"/>
                 </Button>
             )}
         </div>

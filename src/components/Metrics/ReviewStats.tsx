@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
+import { ArrowDownwardOutlined, ArrowUpwardOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../Button";
 import ReviewProgress from "./ReviewProgress";
@@ -40,8 +40,8 @@ const ReviewStats = (props) => {
                             <AletheiaTitle level={4}>
                                 {t(`personality:seeAllMetricsOverviews`)}
                             </AletheiaTitle>
-                            <ArrowDownOutlined
-                                style={{ marginLeft: 5, fontSize: 14 }}
+                            <ArrowDownwardOutlined
+                                style={{ marginLeft: 5, fontSize: 16 }}
                             />
                         </AletheiaButton>
                     )}
@@ -57,8 +57,8 @@ const ReviewStats = (props) => {
                             <AletheiaTitle level={4}>
                                 {t(`personality:seeLessMetricsOverviews`)}
                             </AletheiaTitle>
-                            <ArrowUpOutlined
-                                style={{ marginLeft: 5, fontSize: 14 }}
+                            <ArrowUpwardOutlined
+                                style={{ marginLeft: 5, fontSize: 16 }}
                             />
                         </AletheiaButton>
                     )}

@@ -1,9 +1,7 @@
-import { RightOutlined } from "@ant-design/icons";
-import { Row, Col, Typography } from "antd";
+import { ArrowForwardIosOutlined } from "@mui/icons-material";
+import { Grid, Typography } from "@mui/material";
 import { useAppSelector } from "../../store/store";
 import HighlightedText from "../HighlightedSearchText";
-
-const { Paragraph } = Typography;
 
 const SearchResult = ({
     handleOnClick,
@@ -18,41 +16,41 @@ const SearchResult = ({
 
     const getTextSpan = () => {
         if (!avatar) {
-            return 22;
+            return 11;
         }
-        return vw?.xs ? 18 : 20;
+        return vw?.xs ? 9 : 10;
     };
 
     return (
-        <Row
+        <Grid container
             style={{
                 padding: "10px 5%",
                 cursor: "pointer",
                 width: "100%",
+                alignContent:"middle"
             }}
             onClick={handleOnClick}
-            align="middle"
         >
-            {avatar && <Col span={vw?.xs ? 4 : 2}>{avatar}</Col>}
-            <Col span={getTextSpan()}>
-                <Paragraph
-                    ellipsis={{
-                        rows: 1,
-                        expandable: false,
-                    }}
+            {avatar && <Grid item xs={vw?.xs ? 2 : 1}>{avatar}</Grid>}
+            <Grid item xs={getTextSpan()}>
+                <Typography
+                    variant="body1"
                     style={{
                         marginBottom: 0,
                         fontSize: "14px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",    
+                        textOverflow: "ellipsis",
                     }}
                 >
                     <HighlightedText text={name} highlight={searchName} />
-                </Paragraph>
-                <Col style={{ fontSize: 10 }}>{description}</Col>
-            </Col>
-            <Col span={2}>
-                <RightOutlined />
-            </Col>
-        </Row>
+                </Typography>
+                <Grid style={{ fontSize: 10 }}>{description}</Grid>
+            </Grid>
+            <Grid item xs={1}>
+                <ArrowForwardIosOutlined />
+            </Grid>
+        </Grid>
     );
 };
 

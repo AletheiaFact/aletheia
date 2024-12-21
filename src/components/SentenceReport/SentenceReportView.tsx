@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material";
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -58,14 +58,15 @@ const SentenceReportView = ({
     return (
         canShowReport &&
         reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
-            <Row
+            <Grid container
+                justifyContent="center"
                 style={
                     (isCrossChecking || isReport || isReviewing) && {
                         backgroundColor: colors.lightNeutral,
                     }
                 }
             >
-                <Col span={componentStyle.span} offset={componentStyle.offset}>
+                <Grid item xs={componentStyle.span}>
                     {canShowClassificationAndCrossChecking && (
                         <SentenceReportComments context={context} />
                     )}
@@ -78,8 +79,8 @@ const SentenceReportView = ({
                         href={href}
                     />
                     {!isLoggedIn && <CTARegistration />}
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
         )
     );
 };
