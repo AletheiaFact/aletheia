@@ -1,6 +1,5 @@
-import { Affix } from "antd";
-import { Grid, Typography} from "@mui/material"
-import React, { useEffect, useState } from "react";
+import { Box ,Grid , Typography} from "@mui/material"
+import React, { useEffect, useRef, useState } from "react";
 
 import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
 import MetricsOverview from "../Metrics/MetricsOverview";
@@ -19,6 +18,8 @@ import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
+    const [isAffixed, setIsAffixed] = useState(true);
+    const ref = useRef<HTMLDivElement | null>(null);
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const [role] = useAtom(currentUserRole);
@@ -41,6 +42,22 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
             dispatch(actions.setSelectContent(claimContent));
         }
     }, [claim, claimContent, dispatch, isImage, personality, t]);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        if (!ref.current) return;
+
+        const { bottom } = ref.current.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+  
+        if (bottom > windowHeight) {
+          setIsAffixed(true);
+        } else {
+          setIsAffixed(false);
+        }
+      };  
+      window.addEventListener("scroll", handleScroll);
+    }, []);
 
     return (
         <>
@@ -71,7 +88,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                 style={{ paddingBottom: "15px" }}
                                 justifyContent="center"
                             >
-                                <Grid item xs={12} md={11} lg={10}>
+                                <Grid ref={ref} item xs={12} md={11} lg={10}>
                                     <Typography
                                         variant="h1"
                                         style={{
@@ -94,10 +111,10 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                         }
                                     />
                                 </Grid>
-
-                                <Affix
-                                    offsetBottom={15}
+                                <Box
                                     style={{
+                                        position: isAffixed ? "fixed" : "relative",
+                                        bottom: isAffixed ? 15 : "auto",
                                         textAlign: "center",
                                         width: "100%",
                                     }}
@@ -114,7 +131,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                             "claim:hideHighlightsButton"
                                         )}
                                     />
-                                </Affix>
+                                </Box>
                             </Grid>
                             {sources.length > 0 && (
                                 <>
