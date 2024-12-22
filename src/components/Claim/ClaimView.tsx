@@ -1,4 +1,5 @@
-import { Affix, Col, Row, Typography } from "antd";
+import { Affix } from "antd";
+import { Grid, Typography} from "@mui/material"
 import React, { useEffect, useState } from "react";
 
 import { ContentModelEnum, Roles, TargetModel } from "../../types/enums";
@@ -16,8 +17,6 @@ import AdminToolBar from "../Toolbar/AdminToolBar";
 import claimApi from "../../api/claim";
 import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
-
-const { Title } = Typography;
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     const dispatch = useDispatch();
@@ -55,8 +54,8 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                 />
             )}
 
-            <Row justify="center">
-                <Col xs={22} sm={22} md={18}>
+            <Grid container justifyContent="center">
+                <Grid item xs={11} sm={11} md={9}>
                     <article>
                         {personality && (
                             <PersonalityCard
@@ -68,21 +67,23 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                         )}
                         <section>
                             <ClaimInfo isImage={isImage} date={claim?.date} />
-                            <Row
+                            <Grid container
                                 style={{ paddingBottom: "15px" }}
-                                justify="center"
+                                justifyContent="center"
                             >
-                                <Col xs={24} md={22} lg={20}>
-                                    <Title
-                                        level={1}
+                                <Grid item xs={12} md={11} lg={10}>
+                                    <Typography
+                                        variant="h1"
                                         style={{
+                                            fontFamily:"initial",
+                                            fontWeight: 700,
                                             margin: "20px 0",
                                             fontSize: 20,
                                             lineHeight: 1.4,
                                         }}
                                     >
                                         {title}
-                                    </Title>
+                                    </Typography>
                                     <ClaimContentDisplay
                                         isImage={isImage}
                                         title={title}
@@ -92,7 +93,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                             dispatchPersonalityAndClaim
                                         }
                                     />
-                                </Col>
+                                </Grid>
 
                                 <Affix
                                     offsetBottom={15}
@@ -114,12 +115,12 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                         )}
                                     />
                                 </Affix>
-                            </Row>
+                            </Grid>
                             {sources.length > 0 && (
                                 <>
-                                    <Typography.Title level={4}>
+                                    <Typography variant="h6" style={{fontFamily:"initial", fontWeight: 700}}>
                                         {t("claim:sourceSectionTitle")}
-                                    </Typography.Title>
+                                    </Typography>
                                     <ClaimSourceList
                                         sources={sources}
                                         seeMoreHref={`${href}/sources`}
@@ -129,8 +130,8 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                         </section>
                         {stats.total !== 0 && <MetricsOverview stats={stats} />}
                     </article>
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
             <SocialMediaShare
                 quote={personality?.name}
                 href={href}

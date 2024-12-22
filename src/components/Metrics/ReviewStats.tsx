@@ -37,7 +37,7 @@ const ReviewStats = (props) => {
                             type={ButtonType.blue}
                             onClick={() => setShowAllReviews(true)}
                         >
-                            <AletheiaTitle level={4}>
+                            <AletheiaTitle variant="h4">
                                 {t(`personality:seeAllMetricsOverviews`)}
                             </AletheiaTitle>
                             <ArrowDownwardOutlined
@@ -54,7 +54,7 @@ const ReviewStats = (props) => {
                             type={ButtonType.blue}
                             onClick={() => setShowAllReviews(false)}
                         >
-                            <AletheiaTitle level={4}>
+                            <AletheiaTitle variant="h4">
                                 {t(`personality:seeLessMetricsOverviews`)}
                             </AletheiaTitle>
                             <ArrowUpwardOutlined

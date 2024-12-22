@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col } from "antd";
+import Grid from "@mui/material/Grid"
 import SocialMediaShare from "../SocialMediaShare";
 import { useTranslation } from "next-i18next";
 import SectionTitle from "../SectionTitle";
@@ -15,23 +15,23 @@ const MorePersonalities = ({ personalities, href, title }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
-        <Row
+        <Grid container
             style={{
                 width: "100%",
                 paddingTop: "32px",
                 justifyContent: "center",
             }}
         >
-            <Col span={isLoggedIn || vw?.md ? 18 : 12}>
+            <Grid item xs={isLoggedIn || vw?.md ? 9 : 6}>
                 <PersonalitiesGrid
                     personalities={personalities}
                     title={title}
                 />
-            </Col>
+            </Grid>
 
-            <Col
-                span={isLoggedIn || vw?.md ? 24 : 6}
-                style={{ paddingLeft: vw?.md ? 0 : 20 }}
+            <Grid item
+                xs={isLoggedIn || vw?.md ? 12 : 3}
+                style={{    paddingLeft: vw?.md ? 0 : 20}} 
             >
                 {!isLoggedIn && (
                     <>
@@ -41,14 +41,14 @@ const MorePersonalities = ({ personalities, href, title }) => {
                             </SectionTitle>
                         )}
 
-                        <Row id="create_account">
+                        <Grid container id="create_account">
                             <CTARegistration />
-                        </Row>
+                        </Grid>
                     </>
                 )}
                 <SocialMediaShare href={href} />
-            </Col>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 
