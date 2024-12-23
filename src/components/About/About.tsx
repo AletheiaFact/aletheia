@@ -87,9 +87,9 @@ const About = () => {
             </Box>
             <Box sx={paragraphStyle}>
                 <ul>
-                    <li>{t("about:valueAccessibility")}</li>
-                    <li>{t("about:valueCredibility")}</li>
-                    <li>{t("about:valueAutonomy")}</li>
+                    <li key={1}>{t("about:valueAccessibility")}</li>
+                    <li key={2}>{t("about:valueCredibility")}</li>
+                    <li key={3}>{t("about:valueAutonomy")}</li>
                 </ul>
             </Box>
             <Box sx={{ textAlign: "center", width: "100%" }}>
