@@ -65,25 +65,25 @@ const About = () => {
                 }
             />
             <Box sx={{ textAlign: "center", width: "100%" }}>
-                <Typography variant="h4">{t("about:title")}</Typography>
+                <Typography variant="h3">{t("about:title")}</Typography>
             </Box>
             <Box sx={paragraphStyle}>
                 <Typography>{t("about:intro")}</Typography>
             </Box>
             <Box sx={{ textAlign: "center", width: "100%" }}>
-                <Typography variant="h5">{t("about:visionTitle")}</Typography>
+                <Typography variant="h3">{t("about:visionTitle")}</Typography>
             </Box>
             <Box sx={paragraphStyle}>
                 <Typography>{t("about:visionContent")}</Typography>
             </Box>
             <Box sx={{ textAlign: "center", width: "100%" }}>
-                <Typography variant="h5">{t("about:missionTitle")}</Typography>
+                <Typography variant="h3">{t("about:missionTitle")}</Typography>
             </Box>
             <Box sx={paragraphStyle}>
                 <Typography>{t("about:missionContent")}</Typography>
             </Box>
             <Box sx={{ textAlign: "center", width: "100%" }}>
-                <Typography variant="h5">{t("about:valuesTitle")}</Typography>
+                <Typography variant="h3">{t("about:valuesTitle")}</Typography>
             </Box>
             <Box sx={paragraphStyle}>
                 <ul>
@@ -93,7 +93,7 @@ const About = () => {
                 </ul>
             </Box>
             <Box sx={{ textAlign: "center", width: "100%" }}>
-                <Typography variant="h5">{t("about:fullTextTitle")}</Typography>
+                <Typography variant="h3">{t("about:fullTextTitle")}</Typography>
             </Box>
             <Box sx={paragraphStyle}>
                 <Typography>
