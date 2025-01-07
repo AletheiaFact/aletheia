@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import InputSearch from "../Form/InputSearch";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../store/store";
 import AletheiaButton, { ButtonType } from "../Button";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
-import { Col, Typography } from "antd";
+import { Grid, Typography } from "@mui/material";
 import verificationRequestApi from "../../api/verificationRequestApi";
 import { useDispatch } from "react-redux";
 import VerificationRequestResultList from "./VerificationRequestResultList";
@@ -40,7 +40,7 @@ const VerificationRequestSearch = () => {
     return (
         <div style={{ width: "100%" }}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
-                <Col span={24}>
+                <Grid item xs={12}>
                     <InputSearch
                         placeholder={t("verificationRequest:searchPlaceholder")}
                         suffix={
@@ -63,13 +63,13 @@ const VerificationRequestSearch = () => {
                             }
                         }}
                     />
-                </Col>
+                </Grid>
             </div>
             {verificationRequests && (
-                <Col style={{ marginTop: 32 }}>
-                    <Typography.Title level={4}>
+                <Grid item style={{ marginTop: 32 }}>
+                    <Typography variant="h4">
                         {t("verificationRequest:searchResultsTitle")}
-                    </Typography.Title>
+                    </Typography>
                     {isLoading && <Loading />}
                     {verificationRequests.length > 0 ? (
                         <VerificationRequestResultList
@@ -78,7 +78,7 @@ const VerificationRequestSearch = () => {
                     ) : (
                         <span>{t("verificationRequest:noResultsMessage")}</span>
                     )}
-                </Col>
+                </Grid>
             )}
         </div>
     );

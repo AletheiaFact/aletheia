@@ -1,7 +1,4 @@
-import {
-    ArrowLeftOutlined,
-    ExclamationCircleOutlined,
-} from "@ant-design/icons";
+import { ArrowBackOutlined, ErrorOutlineOutlined } from "@mui/icons-material";
 import { Grid } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
@@ -73,7 +70,7 @@ const ClaimReviewDrawer = () => {
                         >
                             <Grid item style={{ display: "flex", gap: 32 }}>
                                 <AletheiaButton
-                                    icon={<ArrowLeftOutlined />}
+                                    icon={<ArrowBackOutlined style={{marginRight:"10px"}} fontSize="small"/>}
                                     onClick={() =>
                                         dispatch(actions.closeReviewDrawer())
                                     }
@@ -111,9 +108,10 @@ const ClaimReviewDrawer = () => {
                                         justifyContent: "center",
                                         gap: 8,
                                         alignItems: "center",
+                                        marginTop:"10px"
                                     }}
                                 >
-                                    <ExclamationCircleOutlined
+                                    <ErrorOutlineOutlined
                                         style={{
                                             fontSize: 16,
                                             color: colors.secondary,

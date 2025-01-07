@@ -1,4 +1,4 @@
-import { FileTextOutlined } from "@ant-design/icons";
+import { DescriptionOutlined } from "@mui/icons-material";
 import { Grid } from "@mui/material"
 import { useTranslation } from "next-i18next";
 import React from "react";
@@ -32,14 +32,13 @@ const FooterInfo = () => {
             </span>
             {localConfig.footer.showStatuteButton.show ? (
                 <AletheiaButton
+                    style={{gap:"5px"}}
                     type={ButtonType.whiteBlue}
                     href={t("footer:statuteUrlButton")}
                     target="_blank"
                     rel="noreferrer"
                 >
-                    <>
-                        {t("about:labelButton")} <FileTextOutlined />
-                    </>
+                        {t("about:labelButton")} <DescriptionOutlined fontSize="small"/>
                 </AletheiaButton>
             ) : null}
         </Grid>

@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@mui/icons-material";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
@@ -77,7 +77,7 @@ const HeaderContent = () => {
                     >
                         <SearchOutlined
                             style={{
-                                fontSize: "18px",
+                                fontSize: "25px",
                                 color: "white",
                             }}
                         />

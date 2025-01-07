@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import InputSearch from "../../Form/InputSearch";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import { useAppSelector } from "../../../store/store";
 import SearchApi from "../../../api/searchApi";
@@ -47,7 +47,7 @@ const HomeHeaderSearch = () => {
             <InputSearch
                 placeholder={t("header:search_placeholder")}
                 prefix={
-                    <SearchOutlined style={{ fontSize: 24, marginRight: 16 }} />
+                    <SearchOutlined style={{ fontSize: 25, marginRight: 16 }} />
                 }
                 data-cy={"testInputSearchOverlay"}
                 onChange={({ target }) => setName(target.value)}

@@ -1,6 +1,6 @@
 import { useTranslation } from "next-i18next";
 import React, { CSSProperties } from "react";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import  { ArrowBackOutlined }  from "@mui/icons-material";
 import { useRouter } from "next/router";
 import colors from "../styles/colors";
 
@@ -13,6 +13,8 @@ function BackButton({ style, callback }: { style?: CSSProperties; callback?: () 
         return (
             <a
                 style={{
+                    display:"flex",
+                    alignContent:"center",
                     fontWeight: "bold",
                     color: colors.secondary,
                     ...style
@@ -28,7 +30,7 @@ function BackButton({ style, callback }: { style?: CSSProperties; callback?: () 
                     }
                 }}
             >
-                <ArrowLeftOutlined /> {t("common:back_button")}
+                <ArrowBackOutlined fontSize="small"/> {t("common:back_button")}
             </a>
         );
     } else {
