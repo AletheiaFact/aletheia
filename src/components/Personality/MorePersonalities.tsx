@@ -22,7 +22,7 @@ const MorePersonalities = ({ personalities, href, title }) => {
                 justifyContent: "center",
             }}
         >
-            <Grid item xs={isLoggedIn || vw?.md ? 9 : 6}>
+            <Grid item xs={isLoggedIn || vw?.lg ? 9 : 6}>
                 <PersonalitiesGrid
                     personalities={personalities}
                     title={title}
@@ -30,8 +30,8 @@ const MorePersonalities = ({ personalities, href, title }) => {
             </Grid>
 
             <Grid item
-                xs={isLoggedIn || vw?.md ? 12 : 3}
-                style={{    paddingLeft: vw?.md ? 0 : 20}} 
+                xs={isLoggedIn || vw?.lg ? 11 : 3}
+                style={{    paddingLeft: vw?.lg ? 0 : 20}} 
             >
                 {!isLoggedIn && (
                     <>

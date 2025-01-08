@@ -135,7 +135,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                             </Grid>
                             {sources.length > 0 && (
                                 <>
-                                    <Typography variant="h6" style={{fontFamily:"initial", fontWeight: 700}}>
+                                    <Typography variant="h4" style={{fontSize: 24, fontFamily:"initial", fontWeight: 700}}>
                                         {t("claim:sourceSectionTitle")}
                                     </Typography>
                                     <ClaimSourceList
