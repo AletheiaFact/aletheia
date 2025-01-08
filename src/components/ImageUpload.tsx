@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import { FileUploadOutlined } from "@mui/icons-material";
-import { Col, message, Upload } from "antd";
+import { Upload } from "antd";
+import { Grid, Typography } from "@mui/material";
+import global from "../components/Messages";
 import { RcFile, UploadChangeParam, UploadProps } from "antd/lib/upload";
 import { useTranslation } from "next-i18next";
 import React, { useState } from "react";
@@ -9,7 +11,6 @@ import AletheiaButton from "./Button";
 import { AletheiaModal } from "./Modal/AletheiaModal.style";
 
 import type { UploadFile } from "antd/lib/upload/interface";
-import Text from "antd/lib/typography/Text";
 
 interface ImageUploadProps {
     onChange: (fileList: UploadFile[]) => void;
@@ -64,7 +65,7 @@ const ImageUpload = ({
         );
 
         if (!isAllowedFormat) {
-            message.error(
+            global.showMessage("error",
                 t("claimForm:fileTypeError", {
                     types: ALLOWED_FORMATS.join("/"),
                 })
@@ -72,7 +73,7 @@ const ImageUpload = ({
         }
         const isAllowedSize = file.size < MAX_SIZE;
         if (!isAllowedSize) {
-            message.error(
+            global.showMessage("error",
                 t("claimForm:fileSizeError", { size: `${ALLOWED_MB}MB` })
             );
         }
@@ -96,7 +97,7 @@ const ImageUpload = ({
     );
 
     return (
-        <Col span={24}>
+        <Grid item xs={12}>
             <Upload
                 listType="picture"
                 fileList={fileList}
@@ -108,9 +109,9 @@ const ImageUpload = ({
                 {fileList.length >= UPLOAD_LIMIT ? null : uploadButton}
             </Upload>
             {error && (
-                <Text type="danger" style={{ display: "block" }}>
+                <Typography variant="body2" color="error" style={{ display: "block" }}>
                     {t("common:requiredFieldError")}
-                </Text>
+                </Typography>
             )}
             <AletheiaModal
                 open={previewOpen}
@@ -126,7 +127,7 @@ const ImageUpload = ({
                     src={previewImage}
                 />
             </AletheiaModal>
-        </Col>
+        </Grid>
     );
 };
 

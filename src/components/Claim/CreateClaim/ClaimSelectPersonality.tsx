@@ -1,5 +1,5 @@
-import { Card, CardActions, CardContent } from "@mui/material";
-import { Col, message, Row } from "antd";
+import { Grid, Card, CardActions, CardContent } from "@mui/material";
+import global from "../../../components/Messages";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 
@@ -34,7 +34,7 @@ const ClaimSelectPersonality = () => {
 
     const addPersonality = (personality) => {
         if (claimData.personalities.some((p) => p._id === personality._id)) {
-            message.info(t("claimForm:personalityAlreadyAdded"));
+            global.showMessage("info", t("claimForm:personalityAlreadyAdded"));
             return;
         }
         send({
@@ -50,7 +50,7 @@ const ClaimSelectPersonality = () => {
     const continueWithPersonality = () => {
         if (claimData.personalities.length !== 0) {
             send(CreateClaimEvents.savePersonality);
-        } else message.warning(t("claimForm:selectPersonalityText"));
+        } else global.showMessage("warning", t("claimForm:selectPersonalityText"));
     };
 
     const continueWithoutPersonality = () => {
@@ -107,11 +107,11 @@ const ClaimSelectPersonality = () => {
             >
                 {t("claimForm:selectedPersonalities")}
             </h3>
-            <Row>
+            <Grid container>
                 {personalities &&
                     personalities.length > 0 &&
                     personalities.map((personality) => (
-                        <Col span={12} key={personality._id}>
+                        <Grid item xs={12} sm={6} key={personality._id}>
                             <Card variant="elevation" style={{ margin: "8px" }}>
                                 <CardContent
                                     style={{
@@ -133,10 +133,10 @@ const ClaimSelectPersonality = () => {
                                     </AletheiaButton>
                                 </CardActions>
                             </Card>
-                        </Col>
+                        </Grid>
                     ))}
-            </Row>
-            <Col
+            </Grid>
+            <Grid item
                 style={{
                     margin: "24px 0",
                     display: "flex",
@@ -160,7 +160,7 @@ const ClaimSelectPersonality = () => {
                         {t("claimForm:noPersonalityButton")}
                     </AletheiaButton>
                 )}
-            </Col>
+            </Grid>
         </>
     );
 };

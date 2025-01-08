@@ -1,7 +1,9 @@
 /* eslint-disable @next/next/no-img-element  */
 /* eslint-disable jsx-a11y/anchor-has-content */
 import { UpdateSettingsFlowWithTotpMethod as ValuesType } from "@ory/client";
-import { Form, message, Row, Typography } from "antd";
+import { Form } from "antd";
+import global from "../Messages";
+import { Grid, Typography } from "@mui/material"
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import { orySubmitTotp } from "../../api/ory";
@@ -14,7 +16,6 @@ import userApi from "../../api/userApi";
 
 export const Totp = ({ flow, setFlow }) => {
     const [imgSource, setImgSource] = useState("");
-    const { Title } = Typography;
     const [textSource, setTextSource] = useState("");
     const [showForm, setShowForm] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +68,7 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                message.error(t("profile:totpIncorectCodeMessage"));
+                global.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
                 setIsLoading(false);
             });
     };
@@ -83,7 +84,7 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                message.error(t("prifile:totpUnLinkErrorMessage"));
+                global.showMessage("error", `${t("profile:totpUnLinkErrorMessage")}`);
                 setIsLoading(false);
             });
     };
@@ -112,11 +113,11 @@ export const Totp = ({ flow, setFlow }) => {
 
     return (
         <>
-            <Row>
-                <Typography.Title level={4}>
+            <Grid container>
+                <Typography variant="h4" fontSize={20} fontWeight={600}>
                     {t("profile:totpSectionTittle")}
-                </Typography.Title>
-            </Row>
+                </Typography>
+            </Grid>
             {showForm && (
                 <Form onFinish={onFinish} style={{ marginBottom: "20px" }}>
                     <Form.Item>
@@ -216,8 +217,8 @@ export const Totp = ({ flow, setFlow }) => {
                         }}
                         type={ButtonType.blue}
                     >
-                        <Title
-                            level={4}
+                        <Typography
+                            variant="h4"
                             style={{
                                 fontSize: 14,
                                 color: colors.white,
@@ -226,7 +227,7 @@ export const Totp = ({ flow, setFlow }) => {
                             }}
                         >
                             {t("profile:totpUnLinkSubmit")}
-                        </Title>
+                        </Typography>
                     </AletheiaButton>
                 </Form>
             )}

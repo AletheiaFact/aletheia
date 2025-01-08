@@ -3,7 +3,8 @@ import {
     UpdateLoginFlowBody,
     UpdateLoginFlowWithPasswordMethod as ValuesType,
 } from "@ory/client";
-import { Col, message, Row } from "antd";
+import Grid from "@mui/material/Grid";
+import global from "../Messages";
 import { AxiosError } from "axios";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -73,7 +74,7 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                 if (err.response?.status === 400) {
                     // Yup, it is!
                     setFlow(err.response?.data);
-                    return message.error(t("profile:totpIncorectCodeMessage"));
+                    return global.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
                 }
 
                 return Promise.reject(err);
@@ -142,19 +143,19 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
 
     const onFinishFailed = (errorInfo) => {
         if (typeof errorInfo === "string") {
-            message.error(errorInfo);
+            global.showMessage("error", errorInfo)
         } else {
-            message.error(t("login:loginFailedMessage"));
+            global.showMessage("error", `${t("login:loginFailedMessage")}`);
         }
         setIsLoading(false);
     };
 
     return (
-        <Row
-            justify="center"
+        <Grid container
+            justifyContent="center"
             style={{ marginTop: 45, height: "100%", padding: "24px" }}
         >
-            <Col xs={22} sm={12}>
+            <Grid item xs={11} sm={6}>
                 {isSignUp ? (
                     <SignUpForm
                         onFinish={onFinish}
@@ -170,14 +171,14 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                             isLoading={isLoading}
                             onFinishTotp={onFinishTotp}
                         />
-                        <Row className="typo-grey typo-center">
+                        <Grid container className="typo-grey typo-center">
                             <h2>{t("login:signUpHeader")}</h2>
-                        </Row>
+                        </Grid>
                         <CTAButton type={ButtonType.blue} />
                     </>
                 )}
-            </Col>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 
