@@ -1,5 +1,5 @@
 import axios from "axios";
-import { message } from "antd";
+import global from "../components/Messages";
 
 const request = axios.create({
     withCredentials: true,
@@ -10,11 +10,11 @@ const createBadge = (badge, users, t) => {
     return request
         .post(`/`, { ...badge, users })
         .then((response) => {
-            message.success(t("badges:badgeSaved"));
+            global.showMessage("success", `${t("badges:badgeSaved")}`);
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            global.showMessage("error", err.response.data?.message);
             throw err;
         });
 };
@@ -23,11 +23,11 @@ const updateBadge = (badge, users, t) => {
     return request
         .put(`/${badge._id}`, { ...badge, users })
         .then((response) => {
-            message.success(t("badges:badgeSaved"));
+            global.showMessage("success", `${t("badges:badgeSaved")}`);
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            global.showMessage("error", err.response.data?.message);
             throw err;
         });
 };
@@ -39,7 +39,7 @@ const getBadges = () => {
             return response.data;
         })
         .catch((err) => {
-            message.error(err.response.data?.message);
+            global.showMessage("error", err.response.data?.message);
             throw err;
         });
 };

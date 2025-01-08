@@ -1,4 +1,4 @@
-import { message } from "antd";
+import global from "../components/Messages";
 import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
 
@@ -50,13 +50,13 @@ const updateClaimReviewHiddenStatus = (
     return request
         .put(`/review/${id}`, { isHidden, description, recaptcha })
         .then((response) => {
-            message.success(
+            global.showMessage("success", 
                 t(`claimReview:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
             return response.data;
         })
         .catch((err) => {
-            message.error(
+           global.showMessage("error",
                 t(`claimReview:${isHidden ? "hideError" : "unhideError"}`)
             );
             throw err;
@@ -67,11 +67,11 @@ const deleteClaimReview = (id: string, t: any) => {
     return request
         .delete(`/review/${id}`)
         .then(() => {
-            message.success(t("claim:deleteSuccess"));
+            global.showMessage("success", t("claim:deleteSuccess"));
         })
         .catch((err) => {
             console.error(err);
-            message.error(t("claim:deleteError"));
+           global.showMessage("error",t("claim:deleteError"));
         });
 };
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { message } from "antd";
+import global from "../components/Messages";
 
 const request = axios.create({
     withCredentials: true,
@@ -13,7 +13,7 @@ const update = (reference, editorContentObject, t) => {
             return response;
         })
         .catch((err) => {
-            message.error(t(`claim:${err.response.data?.message}`));
+            global.showMessage("error", t(`claim:${err.response.data?.message}`));
             throw err;
         });
 };

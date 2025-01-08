@@ -1,5 +1,5 @@
 import axios from "axios";
-import { message } from "antd";
+import global from "../components/Messages";
 
 const request = axios.create({
     withCredentials: true,
@@ -21,11 +21,11 @@ const deleteSentenceTopic = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}`, topics)
         .then((response) => {
-            message.success(t("topics:deleteTopics"));
+            global.showMessage("success", t("topics:deleteTopics"));
             return response.data;
         })
         .catch((err) => {
-            message.error(t("topics:deleteTopicsError"));
+            global.showMessage("error", t("topics:deleteTopicsError"));
             throw err;
         });
 };

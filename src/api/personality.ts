@@ -1,5 +1,5 @@
 import axios from "axios";
-import { message } from "antd";
+import global from "../components/Messages";
 import { ActionTypes } from "../store/types";
 import { NameSpaceEnum } from "../types/Namespace";
 
@@ -67,7 +67,7 @@ const getPersonality = (id, params, t) => {
             return response.data;
         })
         .catch(() => {
-            message.error(t("personality:errorWhileFetching"));
+            global.showMessage("error", t("personality:errorWhileFetching"));
         });
 };
 
@@ -78,7 +78,7 @@ const createPersonality = (personality, t) => {
         })
         .then((response) => {
             const { name } = response.data;
-            message.success(
+            global.showMessage("success", 
                 `"${name}" ${t("personalityCreateForm:successMessage")}`
             );
             return response.data;
@@ -91,7 +91,7 @@ const createPersonality = (personality, t) => {
                 // console.log(err);
             }
             const { data } = response;
-            message.error(
+            global.showMessage("error",
                 data && data.message
                     ? data.message
                     : t("personalityCreateForm:errorMessage")
@@ -103,11 +103,11 @@ const deletePersonality = (id: string, t: any) => {
     return axios
         .delete(`${baseUrl}/${id}`)
         .then(() => {
-            message.success(t("personality:deleteSuccess"));
+            global.showMessage("success", t("personality:deleteSuccess"));
         })
         .catch((err) => {
             console.error(err);
-            message.error(t("personality:deleteError"));
+            global.showMessage("error", t("personality:deleteError"));
         });
 };
 
@@ -125,13 +125,13 @@ const updatePersonalityHiddenStatus = (
             description,
         })
         .then(() => {
-            message.success(
+            global.showMessage("success", 
                 t(`personality:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
         })
         .catch((err) => {
             console.error(err);
-            message.error(
+            global.showMessage("error",
                 t(`personality:${isHidden ? "hideError" : "unhideError"}`)
             );
         });

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { message } from "antd";
+import global from "../components/Messages";
 import { Roles, Status } from "../types/enums";
 import { Badge } from "../types/Badge";
 
@@ -17,7 +17,7 @@ const getById = (id, params = {}) => {
             return response.data;
         })
         .catch(() => {
-            message.error("Error while fetching User");
+            global.showMessage("error", "Error while fetching User");
         });
 };
 
@@ -28,7 +28,7 @@ const getByOryId = (id) => {
             return response.data;
         })
         .catch(() => {
-            message.error("Error while fetching User");
+            global.showMessage("error", "Error while fetching User");
         });
 };
 
@@ -70,14 +70,14 @@ const register = (params, t) => {
     return request
         .post(`/register`, { ...params })
         .then((response) => {
-            message.success(t("login:signupSuccessfulMessage"));
+            global.showMessage("success", t("login:signupSuccessfulMessage"));
             return response?.data;
         })
         .catch((e) => {
             if (e.response?.status === 409) {
-                message.error(t("login:userAlreadyExists"));
+                global.showMessage("error", t("login:userAlreadyExists"));
             } else {
-                message.error(t("login:signupFailedMessage"));
+                global.showMessage("error", t("login:signupFailedMessage"));
             }
             return e?.response?.data;
         });
@@ -111,11 +111,11 @@ const update = (
     return request
         .put(`/${userId}`, params)
         .then((response) => {
-            message.success(t("admin:roleUpdated"));
+            global.showMessage("success", t("admin:roleUpdated"));
             return response?.data;
         })
         .catch((e) => {
-            message.error(t("admin:roleUpdateFailed"));
+            global.showMessage("error", t("admin:roleUpdateFailed"));
             return e?.response?.data;
         });
 };
