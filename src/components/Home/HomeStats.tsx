@@ -8,7 +8,7 @@ const HomeStats = ({ stats }) => {
     const { t } = useTranslation();
 
     return (
-        <Grid container
+        <Grid container item
             sm={9}
             md={8}
             xl={6}
