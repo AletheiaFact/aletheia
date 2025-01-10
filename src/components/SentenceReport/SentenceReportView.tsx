@@ -61,9 +61,9 @@ const SentenceReportView = ({
             <Grid container
                 justifyContent="center"
                 style={
-                    (isCrossChecking || isReport || isReviewing) && {
-                        backgroundColor: colors.lightNeutral,
-                    }
+                    (isCrossChecking || isReport || isReviewing)
+                        ? { backgroundColor: colors.lightNeutral }
+                        : undefined
                 }
             >
                 <Grid item xs={componentStyle.span}>
