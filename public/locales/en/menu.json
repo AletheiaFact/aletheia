@@ -12,5 +12,6 @@
     "kanbanItem": "Kanban",
     "nameSpaceItem": "Namespace",
     "supportiveMaterials": "Supportive Materials",
-    "sourcesItem": "Sources"
+    "sourcesItem": "Sources",
+    "verificationRequestItem": "Verification Requests"
 }

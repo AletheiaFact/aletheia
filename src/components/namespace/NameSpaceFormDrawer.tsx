@@ -157,7 +157,7 @@ const NameSpacesFormDrawer = () => {
         <LargeDrawer
             open={open}
             onClose={onCloseDrawer}
-            backgroundColor={colors.lightGraySecondary}
+            backgroundColor={colors.lightNeutralSecondary}
         >
             <Grid
                 container
@@ -196,6 +196,7 @@ const NameSpacesFormDrawer = () => {
                                 id="namespaces-users"
                                 options={userListFiltered}
                                 getOptionLabel={(option: User) => option.name}
+                                getOptionKey={(option) => option._id}
                                 disableCloseOnSelect
                                 limitTags={3}
                                 renderInput={(params) => (

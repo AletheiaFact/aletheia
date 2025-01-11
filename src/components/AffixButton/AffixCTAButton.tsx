@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-import { CloseOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { CloseOutlined, HelpOutlineOutlined } from "@mui/icons-material";
 import Fab from "../AffixButton/Fab";
 import { AletheiaModal } from "../Modal/AletheiaModal.style";
 import Banner from "../SentenceReport/Banner";
@@ -9,26 +8,20 @@ import Cookies from "js-cookie";
 import CtaAnimation from "../CtaAnimation";
 import { Tooltip } from "antd";
 import colors from "../../styles/colors";
-import { t } from "i18next";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useAppSelector } from "../../store/store";
 
 const CloseIcon = () => {
+    const { t } = useTranslation();
     return (
         <Tooltip
             title={t("affix:AffixCloseTooltip")}
             placement="topRight"
             defaultOpen
             color={colors.white}
-            overlayInnerStyle={{ color: colors.blackPrimary }}
+            overlayInnerStyle={{ color: colors.black }}
         >
-            <CloseOutlined
-                style={{
-                    marginTop: 20,
-                    paddingBottom: 20,
-                    height: 20,
-                }}
-            />
+            <CloseOutlined style={{ margin: "10px", color: colors.white }} />
         </Tooltip>
     );
 };
@@ -84,13 +77,7 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
                             size="60px"
                             onClick={handleCTAClick}
                             data-cy={"testCTAFloatButton"}
-                            icon={
-                                <QuestionCircleOutlined
-                                    style={{
-                                        fontSize: "24px",
-                                    }}
-                                />
-                            }
+                            icon={<HelpOutlineOutlined fontSize="medium" />}
                         />
                     </CtaAnimation>
                 </div>

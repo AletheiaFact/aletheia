@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Popover } from "antd";
 import EditorSourcePopoverContent from "./EditorSourcePopoverContent";
 import { useCommands } from "@remirror/react";
-import { CollaborativeEditorContext } from "../../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../../VisualEditorProvider";
 import { ProsemirrorNode } from "remirror";
 
 /**
@@ -25,7 +25,7 @@ const EditorSourcePopover = ({
     children: React.ReactNode;
 }) => {
     const command = useCommands();
-    const { setEditorSources } = useContext(CollaborativeEditorContext);
+    const { setEditorSources } = useContext(VisualEditorContext);
     const { props, href } = source;
 
     function findMarkPositions(

@@ -1,20 +1,18 @@
 import React from "react";
 import CTARegistration from "./CTARegistration";
-import { Row, Col } from "antd";
+import { Grid } from "@mui/material";
 import SocialMediaShare from "../SocialMediaShare";
 import { isUserLoggedIn } from "../../atoms/currentUser";
-import SectionTitle from "../SectionTitle";
 import { useAtom } from "jotai";
 import PersonalitiesGrid from "../Personality/PersonalitiesGrid";
 import { useAppSelector } from "../../store/store";
-import ReviewsCarousel from "../ClaimReview/ReviewsCarousel";
 import { useTranslation } from "next-i18next";
 import DebateGrid from "../Debate/DebateGrid";
 import HomeFeed from "./HomeFeed";
+import ReviewsGrid from "../ClaimReview/ReviewsGrid";
 
-const HomeContent = ({ personalities, href, title, debateClaims }) => {
-    const { vw, results } = useAppSelector((state) => ({
-        vw: state.vw,
+const HomeContent = ({ personalities, href, title, debateClaims, reviews }) => {
+    const { results } = useAppSelector((state) => ({
         results: [
             state?.search?.searchResults?.personalities || [],
             state?.search?.searchResults?.claims || [],
@@ -28,21 +26,30 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
 
     return (
         <>
-            <Row
+            <Grid
+                container
                 style={{
                     width: "100%",
                     paddingTop: "32px",
                     justifyContent: "center",
                 }}
             >
-                <Col xs={22} sm={22} md={18}>
+                <Grid item xs={11} sm={11} md={9}>
                     <HomeFeed searchResults={results} />
-                </Col>
+                </Grid>
+                <Grid item xs={11} sm={11} md={9} style={{ marginBottom: 32 }}>
+                    <ReviewsGrid
+                        reviews={reviews}
+                        title={t("home:latestReviewsTitle")}
+                    />
+                </Grid>
                 {Array.isArray(debateClaims) && debateClaims.length > 0 && (
-                    <Col
-                        xs={{ span: 20, order: 1 }}
-                        sm={{ span: 20, order: 1 }}
-                        md={{ span: 18, order: 1 }}
+                    <Grid
+                        item
+                        order={1}
+                        xs={10}
+                        sm={10}
+                        md={9}
                         style={{
                             width: "100%",
                             paddingBottom: "32px",
@@ -50,37 +57,24 @@ const HomeContent = ({ personalities, href, title, debateClaims }) => {
                         }}
                     >
                         <DebateGrid debates={debateClaims} />
-                    </Col>
+                    </Grid>
                 )}
-                <Col
-                    xs={{ span: 22, order: 2 }}
-                    sm={{ span: 22, order: 2 }}
-                    md={{ span: 12, order: 1 }}
-                >
+                <Grid item xs={11} sm={11} md={9}>
                     <PersonalitiesGrid
                         personalities={personalities}
                         title={title}
                     />
-                </Col>
-                <Col
-                    xs={{ span: 22, order: 1 }}
-                    sm={{ span: 22, order: 1 }}
-                    md={{ span: 6, order: 2 }}
-                    style={{ paddingLeft: vw?.sm ? 0 : 20 }}
-                >
-                    <SectionTitle>{t("home:latestReviewsTitle")}</SectionTitle>
-                    <ReviewsCarousel />
-                </Col>
+                </Grid>
 
                 {!isLoggedIn && (
-                    <Col xs={24} lg={18} order={3}>
+                    <Grid item xs={12} lg={9} order={3}>
                         <CTARegistration />
-                    </Col>
+                    </Grid>
                 )}
-                <Col span={24} order={4}>
+                <Grid item xs={12} order={4}>
                     <SocialMediaShare href={href} />
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
         </>
     );
 };

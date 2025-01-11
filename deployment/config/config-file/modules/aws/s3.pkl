@@ -1,0 +1,3 @@
+bucket = read("env:AWS_SDK_BUCKET")
+accessKeyId = read("env:AWS_ACCESS_KEY_ID")
+secretAccessKey = read("env:AWS_SECRET_ACCESS_KEY")

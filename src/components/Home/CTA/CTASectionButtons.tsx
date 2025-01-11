@@ -1,6 +1,5 @@
-import { Col } from "antd";
 import React from "react";
-
+import { Grid } from "@mui/material";
 import { trackUmamiEvent } from "../../../lib/umami";
 import Button, { ButtonType } from "../../Button";
 import DonateButton from "../../Header/DonateButton";
@@ -8,6 +7,7 @@ import { useAppSelector } from "../../../store/store";
 import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import { isUserLoggedIn } from "../../../atoms/currentUser";
+import localConfig from "../../../../config/localConfig";
 
 const CTASectionButtons = () => {
     const { t } = useTranslation();
@@ -21,15 +21,9 @@ const CTASectionButtons = () => {
     };
 
     return (
-        <Col
-            offset={smallDevice ? 0 : 1}
-            md={12}
-            sm={10}
-            xs={24}
-            className="CTA-button-container"
-        >
+        <Grid item xs={7} sm={6} className="CTA-button-container">
             {!isLoggedIn && (
-                <Col sm={24} md={11}>
+                <Grid item xs={6}>
                     <Button
                         onClick={handleClick}
                         href={"/sign-up"}
@@ -44,16 +38,18 @@ const CTASectionButtons = () => {
                     >
                         {t("home:createAccountButton")}
                     </Button>
-                </Col>
+                </Grid>
             )}
             {!smallDevice && (
-                <Col md={11}>
-                    <DonateButton
-                        style={{ fontSize: mediumDevice ? "12px" : "14px" }}
-                    />
-                </Col>
+                <Grid item xs={5.5}>
+                    {localConfig.header.donateButton.show ? (
+                        <DonateButton
+                            style={{ fontSize: mediumDevice ? "12px" : "14px" }}
+                        />
+                    ) : null}
+                </Grid>
             )}
-        </Col>
+        </Grid>
     );
 };
 

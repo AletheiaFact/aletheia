@@ -2,8 +2,9 @@
     "liveLabel": "Ao vivo",
     "addClaimEditorButton": "Adicionar afirmação de",
     "saveButtonLabel": "Salvar",
-    "isEnded": "Debate ended",
+    "isEnded": "Debate encerrado",
     "seeDebate": "Acompanhe as checagens do debate",
     "finishDebateButtonLabel": "Encerrar debate",
-    "reopenDebateButtonLabel": "Reabrir debate"
+    "reopenDebateButtonLabel": "Reabrir debate",
+    "openEditDebateMode": "Abrir modo de edição"
 }

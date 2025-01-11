@@ -22,13 +22,18 @@ import {
     CheckAbilities,
 } from "../../auth/ability/ability.decorator";
 import { AbilitiesGuard } from "../../auth/ability/abilities.guard";
+import { Types } from "mongoose";
+import { Roles } from "../../auth/ability/ability.factory";
+import { NotificationService } from "../../notifications/notifications.service";
+import slugify from "slugify";
 
 @Controller()
 export class NameSpaceController {
     constructor(
         private nameSpaceService: NameSpaceService,
         private usersService: UsersService,
-        private viewService: ViewService
+        private viewService: ViewService,
+        private notificationService: NotificationService
     ) {}
 
     @ApiTags("name-space")
@@ -36,6 +41,16 @@ export class NameSpaceController {
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
     async create(@Body() namespace: CreateNameSpaceDTO) {
+        namespace.slug = slugify(namespace.name, {
+            lower: true,
+            strict: true,
+        });
+
+        namespace.users = await this.updateNameSpaceUsers(
+            namespace.users,
+            namespace.slug
+        );
+
         return await this.nameSpaceService.create(namespace);
     }
 
@@ -43,8 +58,31 @@ export class NameSpaceController {
     @Put("api/name-space/:id")
     @UseGuards(AbilitiesGuard)
     @CheckAbilities(new AdminUserAbility())
-    async update(@Param("id") id, @Body() namespace: UpdateNameSpaceDTO) {
-        return await this.nameSpaceService.update(id, namespace);
+    async update(@Param("id") id, @Body() namespaceBody: UpdateNameSpaceDTO) {
+        const nameSpace = await this.nameSpaceService.getById(id);
+        const newNameSpace = {
+            ...nameSpace.toObject(),
+            ...namespaceBody,
+        };
+
+        newNameSpace.slug = slugify(nameSpace.name, {
+            lower: true,
+            strict: true,
+        });
+
+        newNameSpace.users = await this.updateNameSpaceUsers(
+            newNameSpace.users,
+            nameSpace.slug
+        );
+
+        await this.findNameSpaceUsersAndDelete(
+            id,
+            nameSpace.slug,
+            newNameSpace.users,
+            nameSpace.users
+        );
+
+        return await this.nameSpaceService.update(id, newNameSpace);
     }
 
     @ApiTags("name-space")
@@ -53,13 +91,63 @@ export class NameSpaceController {
         const nameSpaces = await this.nameSpaceService.listAll();
         const users = await this.usersService.findAll({});
         const parsedUrl = parse(req.url, true);
-        await this.viewService
-            .getNextServer()
-            .render(
-                req,
-                res,
-                "/admin-namespaces",
-                Object.assign(parsedUrl.query, { nameSpaces, users })
+
+        const query = Object.assign(parsedUrl.query, { nameSpaces, users });
+
+        await this.viewService.render(req, res, "/admin-namespaces", query);
+    }
+
+    private async updateNameSpaceUsers(users, key) {
+        const promises = users.map(async (user) => {
+            const userId = Types.ObjectId(user._id);
+            const existingUser = await this.usersService.getById(userId);
+
+            if (!existingUser.role[key]) {
+                await this.usersService.updateUser(existingUser._id, {
+                    role: {
+                        ...existingUser.role,
+                        [key]: Roles.Regular,
+                    },
+                });
+            }
+
+            return userId;
+        });
+
+        return await Promise.all(promises);
+    }
+
+    private async findNameSpaceUsersAndDelete(
+        id,
+        nameSpaceSlug,
+        users,
+        previousUsersId
+    ) {
+        const usersIdSet = new Set(users.map((user) => user.toString()));
+        const nameSpaceUsersTodelete = previousUsersId.filter(
+            (previousUserId) => !usersIdSet.has(previousUserId.toString())
+        );
+
+        if (nameSpaceUsersTodelete.length > 0) {
+            this.notificationService.removeTopicSubscriber(
+                id,
+                nameSpaceUsersTodelete
             );
+            return await this.deleteUsersNameSpace(
+                nameSpaceUsersTodelete,
+                nameSpaceSlug
+            );
+        }
+    }
+
+    private async deleteUsersNameSpace(usersId, key) {
+        const updatePromises = usersId.map(async (userId) => {
+            const id = Types.ObjectId(userId);
+            const user = await this.usersService.getById(id);
+            delete user.role[key];
+            return this.usersService.updateUser(user._id, { role: user.role });
+        });
+
+        await Promise.all(updatePromises);
     }
 }

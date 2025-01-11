@@ -59,10 +59,18 @@ const DrawerHeader = ({ currentUser, setIsLoading }) => {
             >
                 <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                     {userId !== currentUser?._id && (
-                        <HeaderUserStatus status={status} />
+                        <HeaderUserStatus
+                            status={status}
+                            style={{
+                                display: "flex",
+                                flexWrap: "nowrap",
+                                flexDirection: "row",
+                                alignItems: "center",
+                            }}
+                        />
                     )}
                     {" | "}
-                    <h3 style={{ marginBottom: 0 }}>
+                    <h3 style={{ marginBottom: 0, wordBreak: "break-all" }}>
                         {currentUser?.name} - {currentUser?.email}
                     </h3>
                 </div>

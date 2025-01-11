@@ -13,6 +13,7 @@ import PersonalityCardButton from "./PersonalityCardButton";
 import { currentNameSpace } from "../../atoms/namespace";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { PersonalityInfo } from "./PersonalityInfo";
+import colors from "../../styles/colors";
 
 interface PersonalityCardProps {
     personality: any;
@@ -29,6 +30,7 @@ interface PersonalityCardProps {
     isFormSubmitted?: boolean;
     onClick?: any;
     titleLevel?: 1 | 2 | 3 | 4 | 5;
+    centralizedInfo?: boolean;
 }
 
 const PersonalityCard = ({
@@ -45,6 +47,7 @@ const PersonalityCard = ({
     titleLevel = 1,
     selectPersonality = null,
     isFormSubmitted,
+    centralizedInfo = false,
 }: PersonalityCardProps) => {
     const isCreatingClaim = selectPersonality !== null;
     const [state] = useAtom(createClaimMachineAtom);
@@ -52,6 +55,7 @@ const PersonalityCard = ({
     const { personalities } = claimData;
     const [nameSpace] = useAtom(currentNameSpace);
     const { vw } = useAppSelector((state) => state);
+    const smallDevice = vw?.sm;
 
     const baseHref = hrefBase || "";
     const nameSpaceHref =
@@ -98,10 +102,10 @@ const PersonalityCard = ({
     let cardStyle;
     if (!header) {
         cardStyle = {
-            background: "#FFFFFF",
-            border: "1px solid #EEEEEE",
+            background: colors.white,
+            border: `1px solid ${colors.lightNeutralSecondary}`,
             boxSizing: "border-box",
-            boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.2)",
+            boxShadow: `0px 3px 3px ${colors.shadow}`,
             borderRadius: "10px",
             marginBottom: "10px",
         };
@@ -157,8 +161,10 @@ const PersonalityCard = ({
                                 enableStats={enableStats}
                                 summarized={summarized}
                                 titleLevel={titleLevel}
+                                centralized={centralizedInfo}
                             />
                         )}
+
                         {summarized && (
                             <Col
                                 span={componentStyle.buttonSpan}
@@ -183,7 +189,7 @@ const PersonalityCard = ({
                         )}
                     </Row>
                 </Col>
-                {enableStats && hasReview && (
+                {!smallDevice && enableStats && hasReview && (
                     <Col
                         xs={24}
                         sm={24}

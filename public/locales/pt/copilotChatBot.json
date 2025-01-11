@@ -10,5 +10,8 @@
     "footer": "Assistente Aletheia pode cometer erros. Considere checar informações importantes.",
     "agentLoadingThoughts": "Pensando",
     "rateQuestion": "Como você avaliaria esta conversa ?",
-    "copilotWarning": "Assistente apenas disponivel na página completa."
+    "copilotWarning": "Assistente apenas disponivel na página completa.",
+    "copilotChatBotErrorMessage": "Ocorreu um erro inesperado ao criar o relatório. Atualize a página e tente novamente.",
+    "copilotClearHistoryTooltip": "Limpar histórico de conversa",
+    "copilotCloseSidebarTooltip": "Fechar menu lateral"
 }

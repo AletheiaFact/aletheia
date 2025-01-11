@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Button } from "antd";
-import { SortAscendingOutlined } from "@ant-design/icons";
+import { Button } from "@mui/material";
+import { SortByAlphaOutlined } from "@mui/icons-material";
 import OrderModal from "../Modal/OrderModal";
 import { useTranslation } from "next-i18next";
 import colors from "../../styles/colors";
@@ -13,19 +13,20 @@ const SortByButton = ({ refreshListItems }) => {
     return (
         <>
             <Button
-                shape="round"
-                icon={
-                    <SortAscendingOutlined
+                startIcon={
+                    <SortByAlphaOutlined
+                        fontSize="small"
                         style={{
-                            fontSize: "16px",
                             color: colors.blackSecondary,
                         }}
                     />
                 }
                 onClick={() => setOpen(!open)}
                 style={{
+                    border: "1px solid",
                     borderWidth: "2px",
                     borderColor: colors.blackSecondary,
+                    borderRadius: "20px",
                     height: "40px",
                     paddingLeft: 10,
                     paddingRight: 10,

@@ -13,8 +13,8 @@ const AletheiaModal = styled(Modal)`
         margin: 0 auto;
         border-radius: 8px;
         background-color: ${(props) =>
-            props.theme === "dark" ? colors.blackPrimary : colors.lightGray};
-        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
+            props.theme === "dark" ? colors.black : colors.lightNeutral};
+        box-shadow: 0px 0px 15px ${colors.shadow};
         padding: 26px 26px;
         max-width: 90vw;
     }
@@ -31,7 +31,7 @@ const AletheiaModal = styled(Modal)`
 
     .ant-modal-title {
         color: ${(props) =>
-            props.theme === "dark" ? colors.white : colors.blackPrimary};
+            props.theme === "dark" ? colors.white : colors.black};
         font-weight: 700;
         font-size: 14px;
         text-align: center;
@@ -44,7 +44,7 @@ const AletheiaModal = styled(Modal)`
         width: 14px;
         height: 14px;
         color: ${(props) =>
-            props.theme === "dark" ? colors.white : colors.bluePrimary};
+            props.theme === "dark" ? colors.white : colors.primary};
         margin-right: 20px;
     }
 
@@ -57,7 +57,7 @@ const AletheiaModal = styled(Modal)`
     }
 
     .hide-modal {
-        color: #db9f0d;
+        color: ${colors.warning};
     }
 
     .delete-modal {
@@ -69,9 +69,7 @@ const ModalCancelButton = styled(Button)`
     height: 40px;
     width: 120px;
     color: ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main
-            ? colors.bluePrimary
-            : colors.blueSecondary};
+        namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
     text-align: "center";
     font-weight: 700;
     font-size: 14;

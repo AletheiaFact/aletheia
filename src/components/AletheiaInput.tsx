@@ -2,8 +2,9 @@ import styled from "styled-components";
 import colors from "../styles/colors";
 
 const AletheiaInput = styled.input`
-    background: ${(props) => (props.white ? colors.white : colors.lightGray)};
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    background: ${(props) =>
+        props.white ? colors.white : colors.lightNeutral};
+    box-shadow: 0px 2px 2px ${colors.shadow};
     border-radius: 4px;
     border: none;
     height: 40px;
@@ -11,12 +12,12 @@ const AletheiaInput = styled.input`
     padding: 10px;
 
     ::placeholder {
-        color: #515151;
+        color: ${colors.blackSecondary};
     }
 
     :focus {
         border: none;
-        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+        box-shadow: 0px 2px 2px ${colors.shadow};
     }
 
     :active {

@@ -18,13 +18,14 @@ import { currentNameSpace } from "../../atoms/namespace";
 import { useAtom } from "jotai";
 import { NameSpaceEnum } from "../../types/Namespace";
 import UserMenuHeader from "./UserMenuHeader";
+import colors from "../../styles/colors";
 
 const menuSlotProps = {
     paper: {
         elevation: 0,
         sx: {
             overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            filter: `drop-shadow(0px 2px 8px ${colors.shadow})`,
             mt: 1.5,
             "& .MuiAvatar-root": {
                 width: 32,

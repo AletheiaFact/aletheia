@@ -1,8 +1,8 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../../styles/colors";
 
-const CardStyle = styled(Row)`
+const CardStyle = styled(Grid)`
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -18,7 +18,7 @@ const CardStyle = styled(Row)`
 
     .card-content {
         background: ${colors.white};
-        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+        box-shadow: 0px 2px 2px ${colors.shadow};
         border-radius: 4px;
         border: none;
         width: 100%;

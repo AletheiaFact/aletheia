@@ -7,7 +7,7 @@ const CopilotConversationLoadingStyle = styled.span`
 
     .loading {
         font-size: 16px;
-        color: ${colors.bluePrimary};
+        color: ${colors.primary};
         display: flex;
     }
 

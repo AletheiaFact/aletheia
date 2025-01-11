@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@mui/icons-material";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
@@ -19,6 +19,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { currentUserId } from "../../atoms/currentUser";
 import { useRouter } from "next/router";
+import localConfig from "../../../config/localConfig";
 
 const HeaderContent = () => {
     const dispatch = useDispatch();
@@ -64,10 +65,10 @@ const HeaderContent = () => {
                     placeContent: "center",
                 }}
             >
-                <Logo color="white" />
+                <Logo />
             </a>
             <SearchOverlay />
-            <HeaderActionsStyle xs={14} sm={10} md={6}>
+            <HeaderActionsStyle xs={7} sm={5} md={3}>
                 {vw?.xs && !router.pathname.includes("/home-page") && (
                     <AletheiaButton
                         onClick={handleClickSearchIcon}
@@ -76,13 +77,15 @@ const HeaderContent = () => {
                     >
                         <SearchOutlined
                             style={{
-                                fontSize: "18px",
+                                fontSize: "25px",
                                 color: "white",
                             }}
                         />
                     </AletheiaButton>
                 )}
-                {!hasSession && <DonateButton header={true} />}
+                {localConfig.header.donateButton.show
+                    ? !hasSession && <DonateButton header={true} />
+                    : null}
 
                 <NotificationMenu hasSession={hasSession} user={user} />
                 <UserMenu hasSession={hasSession} user={user} />

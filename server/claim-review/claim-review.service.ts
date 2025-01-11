@@ -14,11 +14,10 @@ import { SentenceService } from "../claim/types/sentence/sentence.service";
 import { REQUEST } from "@nestjs/core";
 import type { BaseRequest } from "../types";
 import { ImageService } from "../claim/types/image/image.service";
-import { ContentModelEnum } from "../types/enums";
-import lookUpPersonalityties from "../mongo-pipelines/lookUpPersonalityties";
-import lookupClaims from "../mongo-pipelines/lookupClaims";
+import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 import { EditorParseService } from "../editor-parse/editor-parse.service";
+import { WikidataService } from "../wikidata/wikidata.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClaimReviewService {
@@ -31,14 +30,19 @@ export class ClaimReviewService {
         private util: UtilService,
         private sentenceService: SentenceService,
         private imageService: ImageService,
-        private editorParseService: EditorParseService
+        private editorParseService: EditorParseService,
+        private wikidata: WikidataService
     ) {}
 
-    async listAll(page, pageSize, order, query, latest = false) {
-        const pipeline = this.ClaimReviewModel.find(query)
+    async listAll({ page, pageSize, order, query, latest = false }) {
+        // Currently only list claim reviews
+        const pipeline = this.ClaimReviewModel.find({
+            ...query,
+            targetModel: ReviewTaskTypeEnum.Claim,
+        })
             .sort(latest ? { date: -1 } : { _id: order === "asc" ? 1 : -1 })
             .populate({
-                path: "claim",
+                path: "target",
                 model: "Claim",
                 populate: {
                     path: "latestRevision",
@@ -78,10 +82,13 @@ export class ClaimReviewService {
     }
 
     async listDailyClaimReviews(query) {
-        const pipeline = this.ClaimReviewModel.find(query)
+        const pipeline = this.ClaimReviewModel.find({
+            ...query,
+            targetModel: ReviewTaskTypeEnum.Claim,
+        })
             .sort({ _id: 1 })
             .populate({
-                path: "claim",
+                path: "target",
                 model: "Claim",
                 populate: {
                     path: "latestRevision",
@@ -127,7 +134,7 @@ export class ClaimReviewService {
 
     async agreggateClassification(match: any) {
         const claimReviews = await this.ClaimReviewModel.find(match).populate({
-            path: "claim",
+            path: "target",
             model: "Claim",
             match: {
                 "claim.isHidden": false,
@@ -143,14 +150,28 @@ export class ClaimReviewService {
 
         aggregation.push(
             { $match: query },
-            lookUpPersonalityties(TargetModel.ClaimReview),
-            lookupClaims(TargetModel.ClaimReview),
-            { $unwind: "$claim" },
+            {
+                $lookup: {
+                    from: "personalities",
+                    localField: "personality",
+                    foreignField: "_id",
+                    as: "personality",
+                },
+            },
+            {
+                $lookup: {
+                    from: "claims",
+                    localField: "target",
+                    foreignField: "_id",
+                    as: "target",
+                },
+            },
+            { $unwind: "$target" },
             {
                 $match: {
                     "personality.isDeleted": false,
-                    "claim.isHidden": query.isHidden,
-                    "claim.isDeleted": false,
+                    "target.isHidden": query.isHidden,
+                    "target.isDeleted": false,
                 },
             }
         );
@@ -174,7 +195,7 @@ export class ClaimReviewService {
 
     async getReviewStatsByClaimId(claimId) {
         const reviews = await this.ClaimReviewModel.find({
-            claim: claimId,
+            target: claimId,
             isDeleted: false,
             isPublished: true,
             isHidden: false,
@@ -192,7 +213,7 @@ export class ClaimReviewService {
     async getReviewsByClaimId(claimId) {
         const classificationCounts = {};
         const claimReviews = await this.ClaimReviewModel.find({
-            claim: claimId,
+            target: claimId,
             isDeleted: false,
             isPublished: true,
             isHidden: false,
@@ -220,44 +241,41 @@ export class ClaimReviewService {
      * This function creates a new claim review.
      * Also creates a History Module that tracks creation of claim reviews.
      * @param claimReview ClaimReviewBody received of the client.
+     * @param data_hash unique claim review task hash
+     * @param reportModel FactChecking or InformativeNews
      * @returns Return a new claim review object.
      */
     async create(claimReview, data_hash, reportModel) {
-        // This line may cause a false positive in sonarCloud because if we remove the await, we cannot iterate through the results
-        const review = await this.getReviewByDataHash(data_hash);
-
-        if (review) {
-            throw new Error("This Claim already has a review");
-            //TODO: verify if already start a review and isn't published
-        } else {
-            // Cast ObjectId
-            claimReview.personality = claimReview.personality
-                ? Types.ObjectId(claimReview.personality)
-                : null;
-            claimReview.claim = Types.ObjectId(claimReview.claim);
-            claimReview.usersId = claimReview.report.usersId.map((userId) => {
-                return Types.ObjectId(userId);
-            });
-            claimReview.report = Types.ObjectId(claimReview.report._id);
-            claimReview.data_hash = data_hash;
-            claimReview.reportModel = reportModel;
-            claimReview.date = new Date();
-            const newClaimReview = new this.ClaimReviewModel(claimReview);
-            newClaimReview.isPublished = true;
-            newClaimReview.isPartialReview = claimReview.isPartialReview;
-
-            const history = this.historyService.getHistoryParams(
-                newClaimReview._id,
-                TargetModel.ClaimReview,
-                claimReview.usersId,
-                HistoryType.Create,
-                newClaimReview
-            );
-
-            this.historyService.createHistory(history);
-
-            return newClaimReview.save();
+        if (claimReview.personality) {
+            claimReview.personality = Types.ObjectId(claimReview.personality);
         }
+
+        if (claimReview.target) {
+            claimReview.target = Types.ObjectId(claimReview.target);
+        }
+
+        claimReview.usersId = claimReview.report.usersId.map((userId) => {
+            return Types.ObjectId(userId);
+        });
+        claimReview.report = Types.ObjectId(claimReview.report._id);
+        claimReview.data_hash = data_hash;
+        claimReview.reportModel = reportModel;
+        claimReview.date = new Date();
+        const newClaimReview = new this.ClaimReviewModel(claimReview);
+        newClaimReview.isPublished = true;
+        newClaimReview.isPartialReview = claimReview.isPartialReview;
+
+        const history = this.historyService.getHistoryParams(
+            newClaimReview._id,
+            TargetModel.ClaimReview,
+            claimReview.usersId,
+            HistoryType.Create,
+            newClaimReview
+        );
+
+        this.historyService.createHistory(history);
+
+        return newClaimReview.save();
     }
 
     getById(claimReviewId) {
@@ -340,14 +358,21 @@ export class ClaimReviewService {
     }
 
     private async postProcess(review) {
-        const { personality, data_hash, report } = review;
+        const { data_hash, report } = review;
+        const personality = await this.personalityPostProcess(
+            review.personality
+        );
+
         const nameSpace =
             this.req.params.namespace ||
             this.req.query.nameSpace ||
             NameSpaceEnum.Main;
         const claim = {
-            contentModel: review.claim.latestRevision.contentModel,
-            date: review.claim.latestRevision.date,
+            contentModel: review.target.latestRevision.contentModel,
+            date: review.target.latestRevision.date,
+            slug: review.target.latestRevision.slug,
+            title: review.target.latestRevision.title,
+            claimId: review.target.latestRevision.claimId,
         };
 
         const isContentImage = claim.contentModel === ContentModelEnum.Image;
@@ -361,21 +386,21 @@ export class ClaimReviewService {
 
         let reviewHref =
             nameSpace !== NameSpaceEnum.Main
-                ? `/${nameSpace}/claim/${review.claim.latestRevision.claimId}`
-                : `/claim/${review.claim.latestRevision.claimId}`;
+                ? `/${nameSpace}/claim/${review.target.latestRevision.claimId}`
+                : `/claim/${review.target.latestRevision.claimId}`;
 
         if (isContentInformativeNews) {
             reviewHref =
                 nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/claim/${review.claim.slug}`
-                    : `/claim/${review.claim.slug}`;
+                    ? `/${nameSpace}/claim/${review.target.slug}`
+                    : `/claim/${review.target.slug}`;
         }
 
         if (personality) {
             reviewHref =
                 nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/personality/${personality?.slug}/claim/${review.claim.slug}`
-                    : `/personality/${personality?.slug}/claim/${review.claim.slug}`;
+                    ? `/${nameSpace}/personality/${personality?.slug}/claim/${review.target.slug}`
+                    : `/personality/${personality?.slug}/claim/${review.target.slug}`;
         }
 
         reviewHref += isContentImage
@@ -384,8 +409,8 @@ export class ClaimReviewService {
         if (isContentDebate) {
             reviewHref =
                 nameSpace !== NameSpaceEnum.Main
-                    ? `/${nameSpace}/claim/${review.claim.latestRevision.claimId}/debate`
-                    : `/claim/${review.claim.latestRevision.claimId}/debate`;
+                    ? `/${nameSpace}/personality/${personality?.slug}/claim/${review.target.slug}/sentence/${data_hash}`
+                    : `/personality/${personality?.slug}/claim/${review.target.slug}/sentence/${data_hash}`;
         }
 
         return {
@@ -420,5 +445,24 @@ export class ClaimReviewService {
             ...schema,
             ...htmlContent,
         };
+    }
+
+    async personalityPostProcess(personality) {
+        if (personality) {
+            const wikidataExtract = await this.wikidata.fetchProperties({
+                wikidataId: personality.wikidata,
+                language: this.req.language || "en",
+            });
+
+            if (wikidataExtract.isAllowedProp === false) {
+                return;
+            }
+
+            return {
+                ...personality.toObject(),
+                ...wikidataExtract,
+            };
+        }
+        return personality;
     }
 }

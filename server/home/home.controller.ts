@@ -17,6 +17,8 @@ import { DebateService } from "../claim/types/debate/debate.service";
 import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.service";
 import { ApiTags } from "@nestjs/swagger";
 import type { IPersonalityService } from "../interfaces/personality.service.interface";
+import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
 
 @Controller("/")
 export class HomeController {
@@ -26,7 +28,8 @@ export class HomeController {
         private personalityService: IPersonalityService,
         private statsService: StatsService,
         private debateService: DebateService,
-        private claimRevisionService: ClaimRevisionService
+        private claimRevisionService: ClaimRevisionService,
+        private claimReviewService: ClaimReviewService
     ) {}
 
     @ApiTags("pages")
@@ -42,6 +45,18 @@ export class HomeController {
     @Header("Cache-Control", "max-age=60, must-revalidate")
     public async showHome(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const reviews = await this.claimReviewService.listAll({
+            page: 0,
+            pageSize: 6,
+            order: "asc",
+            query: {
+                isHidden: false,
+                isDeleted: false,
+                nameSpace: req.params.namespace || NameSpaceEnum.Main,
+            },
+            latest: true,
+        });
+
         const { personalities } = await this.personalityService.combinedListAll(
             {
                 language: req.language,
@@ -65,7 +80,12 @@ export class HomeController {
                         if (personality) {
                             return this.personalityService.getById(
                                 personality,
-                                req.language
+                                {
+                                    language: req.language,
+                                    nameSpace:
+                                        req.params.namespace ||
+                                        NameSpaceEnum.Main,
+                                }
                             );
                         }
                     })
@@ -79,16 +99,15 @@ export class HomeController {
         );
 
         const stats = await this.statsService.getHomeStats();
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/home-page",
-            Object.assign(parsedUrl.query, {
-                personalities,
-                stats,
-                claims,
-                nameSpace: req.params.namespace,
-            })
-        );
+
+        const queryObject = Object.assign(parsedUrl.query, {
+            personalities,
+            stats,
+            claims,
+            reviews,
+            nameSpace: req.params.namespace || NameSpaceEnum.Main,
+        });
+
+        await this.viewService.render(req, res, "/home-page", queryObject);
     }
 }

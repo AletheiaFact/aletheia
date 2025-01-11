@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { EditorParseModule } from "./editor-parse.module";
 import { EditorParseService } from "./editor-parse.service";
-import { ReviewTaskMachineContextReviewData } from "../claim-review-task/dto/create-claim-review-task.dto";
+import { ReviewTaskMachineContextReviewData } from "../review-task/dto/create-review-task.dto";
 import { RemirrorJSON } from "remirror";
 
 describe("ParserService", () => {

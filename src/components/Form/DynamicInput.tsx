@@ -4,14 +4,14 @@ import ClaimReviewSelect from "./ClaimReviewSelect";
 import InputTextList from "../InputTextList";
 import Loading from "../Loading";
 import TextArea from "../TextArea";
-import UserInput from "./UserInput";
+import FetchInput from "./FetchInput";
 import { useTranslation } from "next-i18next";
-import { CollaborativeEditorContext } from "../Collaborative/CollaborativeEditorProvider";
-import SourceEditor from "../Claim/CreateSource/SourceEditor";
+import { VisualEditorContext } from "../Collaborative/VisualEditorProvider";
+import AletheiaInput from "../AletheiaInput";
+import { Checkbox } from "antd";
+import DatePickerInput from "./DatePickerInput";
 
-const CollaborativeEditor = lazy(
-    () => import("../Collaborative/CollaborativeEditor")
-);
+const VisualEditor = lazy(() => import("../Collaborative/VisualEditor"));
 
 interface DynamicInputProps {
     fieldName: string;
@@ -23,10 +23,11 @@ interface DynamicInputProps {
     defaultValue: string | [];
     "data-cy": string;
     extraProps: any;
+    disabledDate?: any;
 }
 
 const DynamicInput = (props: DynamicInputProps) => {
-    const { isFetchingEditor } = useContext(CollaborativeEditorContext);
+    const { isFetchingEditor } = useContext(VisualEditorContext);
 
     const { t } = useTranslation();
     switch (props.type) {
@@ -43,7 +44,7 @@ const DynamicInput = (props: DynamicInputProps) => {
             );
         case "inputSearch":
             return (
-                <UserInput
+                <FetchInput
                     fieldName={props.fieldName}
                     placeholder={t(props.placeholder)}
                     onChange={props.onChange}
@@ -52,6 +53,16 @@ const DynamicInput = (props: DynamicInputProps) => {
                     value={props.value}
                     mode={props.extraProps.mode}
                     preloadedOptions={props.extraProps.preloadedOptions}
+                />
+            );
+        case "text":
+            return (
+                <AletheiaInput
+                    placeholder={t(props.placeholder)}
+                    onChange={(value) => props.onChange(value)}
+                    defaultValue={props.defaultValue}
+                    data-cy={props["data-cy"]}
+                    white="true"
                 />
             );
         case "textList":
@@ -75,26 +86,51 @@ const DynamicInput = (props: DynamicInputProps) => {
                     placeholder={t(props.placeholder)}
                 />
             );
-        case "collaborative":
+        case "textbox":
+            return (
+                <Checkbox
+                    data-cy={props["data-cy"]}
+                    defaultChecked={!!props.defaultValue}
+                    onChange={(value) => props.onChange(value)}
+                    checked={!!props.value}
+                >
+                    {t(`claimReviewForm:${props.fieldName}`)}
+                </Checkbox>
+            );
+        case "visualEditor":
             if (isFetchingEditor) {
                 return <Loading />;
             } else {
                 return (
                     <Suspense fallback={<Loading />}>
-                        <CollaborativeEditor
-                            placeholder={t(props.placeholder)}
-                            onContentChange={({ doc }) => props.onChange(doc)}
+                        <VisualEditor
+                            onContentChange={({ doc }, reviewTaskType) => {
+                                doc.attrs = { reviewTaskType };
+                                props.onChange(doc);
+                            }}
                         />
                     </Suspense>
                 );
             }
-        case "sourceEditor":
+        case "date":
             return (
-                <Suspense fallback={<Loading />}>
-                    <SourceEditor
-                        onContentChange={({ doc }) => props.onChange(doc)}
-                    />
-                </Suspense>
+                <DatePickerInput
+                    placeholder={t(props.placeholder)}
+                    onChange={(value) => props.onChange(value)}
+                    data-cy={"testSelectDate"}
+                    disabledDate={props.disabledDate}
+                />
+            );
+        case "email":
+            return (
+                <AletheiaInput
+                    placeholder={t(props.placeholder)}
+                    type={props.type}
+                    onChange={(value) => props.onChange(value)}
+                    defaultValue={props.defaultValue}
+                    data-cy={props["data-cy"]}
+                    white="true"
+                />
             );
         default:
             return null;

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import { Provider as CallbackTimerProvider, useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import claimApi from "../../api/claim";
@@ -9,6 +9,7 @@ import DebateTimelineWrapper from "./DebateTimelineWrapper";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
 import { currentNameSpace } from "../../atoms/namespace";
+import { currentUserRole } from "../../atoms/currentUser";
 
 const DebateView = ({ claim }) => {
     const debate = claim?.content;
@@ -16,7 +17,8 @@ const DebateView = ({ claim }) => {
     const speeches = debate.content;
     const dispatch = useDispatch();
     const [nameSpace] = useAtom(currentNameSpace);
-    dispatch(actions.setSelectClaim(claim));
+    dispatch(actions.setSelectTarget(claim));
+    const [userRole] = useAtom(currentUserRole);
 
     // the new debate data will in the callbackResult of the state
     const updateTimeline = useCallback(() => {
@@ -42,17 +44,21 @@ const DebateView = ({ claim }) => {
                     [currentNameSpace, nameSpace],
                 ]}
             >
-                <Row
+                <Grid
+                    container
                     style={{
                         width: "100%",
                         justifyContent: "center",
                     }}
                 >
                     <DebateHeader
+                        claim={claim}
                         title={claim?.title}
                         personalities={claim?.personalities}
+                        userRole={userRole}
                     />
-                    <Row
+                    <Grid
+                        item
                         style={{
                             padding: "30px 10%",
                             width: "100%",
@@ -62,8 +68,8 @@ const DebateView = ({ claim }) => {
                             speeches={speeches}
                             isLive={debate.isLive}
                         />
-                    </Row>
-                </Row>
+                    </Grid>
+                </Grid>
             </CallbackTimerProvider>
         </>
     );

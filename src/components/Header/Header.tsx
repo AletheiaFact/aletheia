@@ -9,13 +9,11 @@ import { NameSpaceEnum } from "../../types/Namespace";
 const AletheiaHeader = () => {
     const [nameSpace] = useAtom(currentNameSpace);
     const [headerBackgroundColor, setHeaderBackgroundColor] = useState(
-        colors.bluePrimary
+        colors.primary
     );
     useLayoutEffect(() => {
         setHeaderBackgroundColor(
-            nameSpace === NameSpaceEnum.Main
-                ? colors.bluePrimary
-                : colors.blueSecondary
+            nameSpace === NameSpaceEnum.Main ? colors.primary : colors.secondary
         );
     }, [nameSpace]);
 

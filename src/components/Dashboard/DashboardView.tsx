@@ -4,21 +4,20 @@ import personalitiesApi from "../../api/personality";
 import { useTranslation } from "next-i18next";
 import PersonalityCard from "../Personality/PersonalityCard";
 import PersonalitySkeleton from "../Skeleton/PersonalitySkeleton";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import ClaimSkeleton from "../Skeleton/ClaimSkeleton";
 import claimApi from "../../api/claim";
 import ClaimCard from "../Claim/ClaimCard";
 import claimReviewApi from "../../api/claimReviewApi";
-import CardBase from "../CardBase";
-import ReviewCardComment from "../ClaimReview/ReviewCardComment";
 import DashboardViewStyle from "./DashboardView.style";
+import ReviewCard from "../ClaimReview/ReviewCard";
 
 const DashboardView = () => {
     const { t, i18n } = useTranslation();
 
     return (
-        <DashboardViewStyle justify="space-around">
-            <Col className="dashboard-item" sm={24} md={11} lg={7}>
+        <DashboardViewStyle container>
+            <Grid item className="dashboard-item" sm={12} md={5} lg={3.5}>
                 <BaseList
                     title={t("admin:dashboardHiddenPersonalities")}
                     apiCall={personalitiesApi.getPersonalities}
@@ -38,9 +37,9 @@ const DashboardView = () => {
                     }
                     skeleton={<PersonalitySkeleton />}
                 />
-            </Col>
+            </Grid>
 
-            <Col className="dashboard-item" sm={24} md={11} lg={7}>
+            <Grid item className="dashboard-item" sm={12} md={5} lg={3.5}>
                 <BaseList
                     title={t("admin:dashboardHiddenClaims")}
                     apiCall={claimApi.get}
@@ -60,9 +59,9 @@ const DashboardView = () => {
                     }
                     skeleton={<ClaimSkeleton />}
                 />
-            </Col>
+            </Grid>
 
-            <Col className="dashboard-item" sm={24} md={11} lg={7}>
+            <Grid item className="dashboard-item" sm={12} md={5} lg={3.5}>
                 <BaseList
                     title={t("admin:dashboardHiddenReviews")}
                     apiCall={claimReviewApi.get}
@@ -70,19 +69,16 @@ const DashboardView = () => {
                     emptyFallback={<></>}
                     renderItem={(review) =>
                         review && (
-                            <CardBase
-                                style={{ width: "fit-content", padding: 12 }}
-                            >
-                                <ReviewCardComment
-                                    key={review._id}
-                                    review={review}
-                                />
-                            </CardBase>
+                            <ReviewCard
+                                key={review._id}
+                                review={review}
+                                summarized={true}
+                            />
                         )
                     }
                     skeleton={<ClaimSkeleton />}
                 />
-            </Col>
+            </Grid>
         </DashboardViewStyle>
     );
 };

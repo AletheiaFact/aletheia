@@ -8,7 +8,7 @@ import actions from "../store/actions";
 import { GetLocale } from "../utils/GetLocale";
 import { NameSpaceEnum } from "../types/Namespace";
 import { currentNameSpace } from "../atoms/namespace";
-import CreateSourceView from "../components/Claim/CreateSource/CreateSourceView";
+import CreateSourceView from "../components/Source/CreateSource/CreateSourceView";
 
 const CreateSourcesPage: NextPage<any> = ({ sitekey, nameSpace }) => {
     const { t } = useTranslation();
@@ -29,6 +29,7 @@ const CreateSourcesPage: NextPage<any> = ({ sitekey, nameSpace }) => {
 
 export async function getServerSideProps({ query, locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
+    query = JSON.parse(query.props);
     return {
         props: {
             ...(await serverSideTranslations(locale)),

@@ -6,7 +6,7 @@ const AletheiaVideo = () => {
             frameBorder="0"
             allowFullScreen
             title="video"
-            src={`https://www.youtube.com/embed/cWDqrdv-O6k`}
+            src={`https://www.youtube.com/embed/o_AoJq3F40I`}
         />
     );
 };

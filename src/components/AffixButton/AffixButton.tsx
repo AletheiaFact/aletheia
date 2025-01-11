@@ -1,9 +1,11 @@
 import {
-    FileAddFilled,
-    PlusCircleFilled,
-    PlusOutlined,
-    UserAddOutlined,
-} from "@ant-design/icons";
+    NoteAdd,
+    AddCircle,
+    AddOutlined,
+    PersonAddAlt1Outlined,
+    Source,
+    Report,
+} from "@mui/icons-material";
 import { useAtom } from "jotai";
 import Cookies from "js-cookie";
 import { Trans, useTranslation } from "next-i18next";
@@ -18,7 +20,6 @@ import Fab from "./Fab";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useAppSelector } from "../../store/store";
-import SourceIcon from "@mui/icons-material/Source";
 
 interface AffixButtonProps {
     personalitySlug?: string;
@@ -43,7 +44,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     const { t } = useTranslation();
     const actions = [
         {
-            icon: <UserAddOutlined />,
+            icon: <PersonAddAlt1Outlined />,
             tooltip: t("affix:affixButtonCreatePersonality"),
             href:
                 nameSpace !== NameSpaceEnum.Main
@@ -60,7 +61,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
     userRole !== "regular" &&
         actions.push(
             {
-                icon: <FileAddFilled />,
+                icon: <NoteAdd />,
                 tooltip: t("affix:affixButtonCreateClaim"),
                 href:
                     nameSpace !== NameSpaceEnum.Main
@@ -69,13 +70,22 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 dataCy: "testFloatButtonAddClaim",
             },
             {
-                icon: <SourceIcon />,
+                icon: <Source />,
                 tooltip: t("affix:affixButtonCreateVerifiedSources"),
                 href:
                     nameSpace !== NameSpaceEnum.Main
-                        ? `/${nameSpace}/sources/create`
-                        : `/sources/create`,
-                dataCy: "testFloatButtonAddVerifiedSources",
+                        ? `/${nameSpace}/source/create`
+                        : `/source/create`,
+                dataCy: "testFloatButtonAddSources",
+            },
+            {
+                icon: <Report />,
+                tooltip: t("affix:affixButtonCreateVerificationRequest"),
+                href:
+                    nameSpace !== NameSpaceEnum.Main
+                        ? `/${nameSpace}/verification-request/create`
+                        : `/verification-request/create`,
+                dataCy: "testFloatButtonAddVerificationRequest",
             }
         );
 
@@ -123,11 +133,11 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
             >
                 <PulseAnimation
                     pulse={isModalVisible}
-                    startColor={colors.blueSecondary}
+                    startColor={colors.secondary}
                     endColor={
                         nameSpace === NameSpaceEnum.Main
-                            ? colors.bluePrimary
-                            : colors.blueSecondary
+                            ? colors.primary
+                            : colors.secondary
                     }
                     startSize={0}
                     endSize={65}
@@ -146,13 +156,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                         size="70px"
                         onClick={handleClick}
                         data-cy={"testFloatButton"}
-                        icon={
-                            <PlusOutlined
-                                style={{
-                                    fontSize: "27px",
-                                }}
-                            />
-                        }
+                        icon={<AddOutlined fontSize="large" />}
                     />
                 </PulseAnimation>
 
@@ -186,7 +190,15 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 >
                     <Trans
                         i18nKey={"tutorial:modalContent"}
-                        components={[<PlusCircleFilled key={"icon"} />]}
+                        components={[
+                            <AddCircle
+                                style={{
+                                    marginBottom: "-5px",
+                                    fontSize: "18px",
+                                }}
+                                key={"icon"}
+                            />,
+                        ]}
                     />
                 </p>
 

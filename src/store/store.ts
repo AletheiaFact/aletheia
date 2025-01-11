@@ -31,6 +31,14 @@ const reducer = (state, action) => {
                     totalResults: action.totalResults,
                 },
             };
+        case ActionTypes.RESULTS_LOADING:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    isFetching: action.isFetching,
+                },
+            };
         case ActionTypes.RESULTS_OVERLAY_VISIBLE:
             return {
                 ...state,
@@ -45,6 +53,7 @@ const reducer = (state, action) => {
                 search: {
                     ...(state?.search || {}),
                     autocompleteResults: action.results,
+                    isFetching: false,
                 },
             };
         case ActionTypes.RESULTS_TOPICS_AUTOCOMPLETE:
@@ -69,6 +78,24 @@ const reducer = (state, action) => {
                 search: {
                     ...(state?.search || {}),
                     searchResults: action.results,
+                    isFetching: false,
+                },
+            };
+        case ActionTypes.SEARCH_PERSONALITIES_RESULTS:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchPersonalitiesResults:
+                        action.searchPersonalitiesResults,
+                },
+            };
+        case ActionTypes.SEARCH_OVERLAY_RESULTS:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchOverlayResults: action.searchOverlayResults,
                 },
             };
         case ActionTypes.SET_TOTAL_PAGES:
@@ -103,6 +130,14 @@ const reducer = (state, action) => {
                     searchInput: action.searchName,
                 },
             };
+        case ActionTypes.SET_SEARCH_OVERLAY_NAME:
+            return {
+                ...state,
+                search: {
+                    ...(state?.search || {}),
+                    searchOverlayInput: action.searchOverlayName,
+                },
+            };
         case ActionTypes.SET_SEARCH_FILTER:
             return {
                 ...state,
@@ -119,41 +154,32 @@ const reducer = (state, action) => {
                     searchFilterUsed: action.filterUsed,
                 },
             };
+        case ActionTypes.SET_TOPIC_FILTER_USED:
+            return {
+                ...state,
+                topicFilterUsed: action.topicFilterUsed,
+            };
         case ActionTypes.SET_LOGIN_STATUS:
             return {
                 ...state,
                 login: action.login,
-            };
-        case ActionTypes.SET_AUTO_SAVE:
-            return {
-                ...state,
-                autoSave: action.autoSave,
             };
         case ActionTypes.SET_WEBSOCKET_URL:
             return {
                 ...state,
                 websocketUrl: action.websocketUrl,
             };
-        case ActionTypes.SET_COLLABORATIVE_EDIT:
-            return {
-                ...state,
-                enableCollaborativeEdit: action.enableCollaborativeEdit,
-            };
-        case ActionTypes.SET_COPILOT_CHAT_BOT:
-            return {
-                ...state,
-                enableCopilotChatBot: action.enableCopilotChatBot,
-            };
-        case ActionTypes.SET_EDITOR_ANNOTATION:
-            return {
-                ...state,
-                enableEditorAnnotations: action.enableEditorAnnotations,
-            };
-        case ActionTypes.SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING:
+        case ActionTypes.SET_VISUAL_EDITOR_ENVIRONEMNT:
             return {
                 ...state,
                 enableAddEditorSourcesWithoutSelecting:
                     action.enableAddEditorSourcesWithoutSelecting,
+                enableEditorAnnotations: action.enableEditorAnnotations,
+                enableCopilotChatBot: action.enableCopilotChatBot,
+                enableCollaborativeEdit: action.enableCollaborativeEdit,
+                autoSave: action.autoSave,
+                enableReviewersUpdateReport: action.enableReviewersUpdateReport,
+                enableViewReportPreview: action.enableViewReportPreview,
             };
         case ActionTypes.SET_USER_ROLE:
             return {
@@ -180,10 +206,10 @@ const reducer = (state, action) => {
                 ...state,
                 selectedPersonality: action.selectedPersonality,
             };
-        case ActionTypes.SET_SELECTED_CLAIM:
+        case ActionTypes.SET_SELECTED_TARGET:
             return {
                 ...state,
-                selectedClaim: action.selectedClaim,
+                selectedTarget: action.selectedTarget,
             };
         case ActionTypes.SET_SELECTED_CONTENT:
             return {

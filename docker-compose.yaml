@@ -2,7 +2,7 @@ version: "3"
 services:
   mongodb:
     container_name: mongodb
-    image: mongo:5.0.8
+    image: mongo:6.0.17
     restart: unless-stopped
     volumes:
       - ${DATA_PATH}/mongodb:/data:delegated
@@ -12,10 +12,10 @@ services:
 
   localstack:
     container_name: aletheia-localstack
-    image: localstack/localstack
+    image: localstack/localstack:3.7.2
     ports:
-      - "127.0.0.1:4510-4559:4510-4559"  # external service port range
-      - "127.0.0.1:4566:4566"            # LocalStack Edge Proxy
+      - "127.0.0.1:4510-4559:4510-4559" # external service port range
+      - "127.0.0.1:4566:4566" # LocalStack Edge Proxy
     environment:
       - SERVICES=s3,iam
       - DEBUG=1
@@ -23,8 +23,7 @@ services:
       - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
-      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
-      - "./data/localstack:${DATA_DIR:-/data/localstack}"
+      - "${DATA_DIR:-/data/localstack}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
   kratos-migrate:
     image: oryd/kratos:v0.13.0
@@ -58,8 +57,8 @@ services:
       - kratos-migrate
     image: oryd/kratos:v0.13.0
     ports:
-      - '4433:4433' # public
-      - '4434:4434' # admin
+      - "4433:4433" # public
+      - "4434:4434" # admin
     restart: unless-stopped
     environment:
       - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
@@ -78,8 +77,8 @@ services:
   mailslurper:
     image: oryd/mailslurper:latest-smtps
     ports:
-      - '4436:4436'
-      - '4437:4437'
+      - "4436:4436"
+      - "4437:4437"
     networks:
       - intranet
 networks:

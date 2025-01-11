@@ -7,9 +7,9 @@ import { useTranslation } from "next-i18next";
 
 const CopilotConversationCard = ({ message }) => {
     const { t } = useTranslation();
-    const { sender, content } = message;
+    const { type, sender, content } = message;
     return (
-        <CopilotConversationCardStyle>
+        <CopilotConversationCardStyle item>
             <div className="conversation-card-header">
                 {sender === SenderEnum.Assistant ? (
                     <img
@@ -20,13 +20,13 @@ const CopilotConversationCard = ({ message }) => {
                         style={{ borderRadius: 16 }}
                     />
                 ) : (
-                    <Avatar style={{ background: colors.blueQuartiary }}>
+                    <Avatar style={{ background: colors.quartiary }}>
                         {SenderEnum.User.slice(0, 1).toUpperCase()}
                     </Avatar>
                 )}
                 <span>{t(`copilotChatBot:${sender}`)}</span>
             </div>
-            <p className="conversation-card-content">{content}</p>
+            <p className={`conversation-card-content ${type}`}>{content}</p>
         </CopilotConversationCardStyle>
     );
 };

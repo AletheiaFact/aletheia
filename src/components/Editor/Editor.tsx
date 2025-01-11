@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { Remirror, ThemeProvider, useRemirror } from "@remirror/react";
 import { AllStyledComponent } from "@remirror/styles/emotion";
-import { Affix, Col, Row } from "antd";
 import { useAtom } from "jotai";
-
+import { Grid, Box } from "@mui/material";
 import { debateAtom } from "../../atoms/debate";
 import colors from "../../styles/colors";
 import AddPersonalityEditorButton from "./AddPersonalityEditorButton";
@@ -36,8 +35,8 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
     });
 
     dispatch({
-        type: ActionTypes.SET_SELECTED_CLAIM,
-        selectedClaim: claim,
+        type: ActionTypes.SET_SELECTED_TARGET,
+        selectedTarget: claim,
     });
     dispatch({
         type: ActionTypes.SET_SITEKEY,
@@ -73,14 +72,19 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
     };
 
     return (
-        <Row
+        <Grid
+            container
             style={{
                 width: "100%",
                 paddingTop: "32px",
                 justifyContent: "center",
             }}
         >
-            <Col span={21} style={{ display: "flex", justifyContent: "end" }}>
+            <Grid
+                item
+                sm={11}
+                style={{ display: "flex", justifyContent: "end" }}
+            >
                 <Button
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={handleClickUpdateStatus}
@@ -94,7 +98,7 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
                         }`
                     )}
                 </Button>
-            </Col>
+            </Grid>
             <AllStyledComponent
                 style={{
                     padding: "10px",
@@ -110,29 +114,26 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
                         <EditorAutoSaveTimerProvider
                             reference={claim.editor.reference}
                         >
-                            <Affix>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-evenly",
-                                        backgroundColor: colors.grayPrimary,
-                                        padding: "10px",
-                                    }}
-                                >
-                                    {personalities.map((personality) => {
-                                        return (
-                                            <AddPersonalityEditorButton
-                                                key={personality._id}
-                                                personalityId={personality._id}
-                                                personalityName={
-                                                    personality.name
-                                                }
-                                                disabled={!isLive}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            </Affix>
+                            <Box
+                                sx={{
+                                    position: "sticky",
+                                    top: 0,
+                                    zIndex: 10,
+                                    display: "flex",
+                                    justifyContent: "space-evenly",
+                                    backgroundColor: colors.neutral,
+                                    padding: "10px",
+                                }}
+                            >
+                                {personalities.map((personality) => (
+                                    <AddPersonalityEditorButton
+                                        key={personality._id}
+                                        personalityId={personality._id}
+                                        personalityName={personality.name}
+                                        disabled={!isLive}
+                                    />
+                                ))}
+                            </Box>
                             <EditorContent
                                 reference={claim.editor.reference}
                                 isLive={isLive}
@@ -141,7 +142,7 @@ const Editor = ({ claim, sitekey }: IEditorProps) => {
                     </Remirror>
                 </ThemeProvider>
             </AllStyledComponent>
-        </Row>
+        </Grid>
     );
 };
 

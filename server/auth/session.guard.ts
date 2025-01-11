@@ -3,9 +3,12 @@ import { Configuration, FrontendApi } from "@ory/client";
 import { Reflector } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { Roles } from "./ability/ability.factory";
+import { Logger } from "@nestjs/common";
 
 @Injectable()
 export class SessionGuard implements CanActivate {
+    private readonly logger = new Logger(SessionGuard.name);
+
     constructor(
         private configService: ConfigService,
         private readonly reflector: Reflector
@@ -35,6 +38,33 @@ export class SessionGuard implements CanActivate {
                 const { data: session } = await ory.toSession({
                     cookie: request.header("Cookie"),
                 });
+
+                const expectedAffiliation =
+                    this.configService.get<string>("app_affiliation");
+                const appAffiliation =
+                    session?.identity?.traits?.app_affiliation;
+                if (appAffiliation !== expectedAffiliation) {
+                    this.logger.error(
+                        `Affiliation mismatch: expected ${expectedAffiliation}, got ${appAffiliation}`
+                    );
+                    try {
+                        const { data } = await ory.createBrowserLogoutFlow({
+                            cookie: request.header("Cookie"),
+                        });
+                        await ory.updateLogoutFlow({
+                            cookie: request.header("Cookie"),
+                            token: data.logout_token,
+                        });
+                    } catch (e) {
+                        this.logger.error("Error during logout flow", e);
+                    }
+                    return this.checkAndRedirect(
+                        request,
+                        response,
+                        isPublic,
+                        "/unauthorized"
+                    );
+                }
                 request.user = {
                     _id: session?.identity?.traits?.user_id,
                     // Needed to enable feature flag for specific users
@@ -73,6 +103,7 @@ export class SessionGuard implements CanActivate {
             "/api/health",
             "/sign-up",
             "/api/user/register",
+            "/api/claim", // Allow this route to be public temporarily for testing
         ].some((route) => request.url.startsWith(route));
 
         const overridePublicRoutes =

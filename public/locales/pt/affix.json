@@ -1,8 +1,10 @@
 {
-    "affixButtonTitle": "Clique aqui para adicionar um discurso ou personalidade",
-    "affixButtonCreateClaim": "Clique aqui para adicionar um discurso",
+    "affixButtonTitle": "Clique aqui para adicionar uma afirmação ou personalidade",
+    "affixButtonCreateClaim": "Clique aqui para adicionar uma afirmação",
     "affixButtonCreatePersonality": "Clique aqui para adicionar uma personalidade",
     "affixButtonCreateVerifiedSources": "Clique aqui para adicionar uma informação checada",
+    "affixButtonCreateVerificationRequest": "Clique aqui para adicionar uma denúncia",
     "affixCallToActionButton": "Clique aqui",
-    "AffixCloseTooltip": "Fechar"
+    "AffixCloseTooltip": "Fechar",
+    "affixCopilotTitle": "Clique aqui para abrir o Assistente Aletheia"
 }

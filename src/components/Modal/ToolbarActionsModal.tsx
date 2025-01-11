@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form } from "antd";
-import { ExclamationCircleOutlined, WarningOutlined } from "@ant-design/icons";
+import {
+    ErrorOutlineOutlined,
+    WarningAmberOutlined,
+} from "@mui/icons-material";
 import { AletheiaModal } from "./AletheiaModal.style";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import { useAppSelector } from "../../store/store";
@@ -43,9 +46,9 @@ const UnhideContentModal = ({
                 }`}
             >
                 {updatingHideStatus ? (
-                    <WarningOutlined />
+                    <WarningAmberOutlined />
                 ) : (
-                    <ExclamationCircleOutlined />
+                    <ErrorOutlineOutlined />
                 )}
                 {contentTitle}
             </h2>

@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@mui/icons-material";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import InputSearch from "../../../components/Form/InputSearch";
 
@@ -11,7 +11,7 @@ export default {
     },
     decorators: [
         (Story) => (
-            <div style={{ width: '500px' }}>
+            <div style={{ width: "500px" }}>
                 <Story />
             </div>
         ),
@@ -26,5 +26,5 @@ export const Default = Template.bind({});
 
 export const WithSuffix = Template.bind({});
 WithSuffix.args = {
-    suffix: <SearchOutlined />
-}
+    suffix: <SearchOutlined />,
+};

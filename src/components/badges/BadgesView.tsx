@@ -1,21 +1,20 @@
+import React from "react";
+import { useTranslation } from "next-i18next";
+import { Avatar, Button, Grid } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { useAtom } from "jotai";
 import {
-    DataGrid,
     GridActionsCellItem,
-    GridColumns,
+    GridColDef,
     GridRowParams,
 } from "@mui/x-data-grid";
-import { useTranslation } from "next-i18next";
-import React from "react";
-import { Badge } from "../../types/Badge";
-import EditIcon from "@mui/icons-material/Edit";
-import { Avatar, Button, Grid } from "@mui/material";
-import { useAtom } from "jotai";
 import { isEditDrawerOpen, startEditingItem } from "../../atoms/editDrawer";
 import { atomBadgesList } from "../../atoms/badges";
+import { Badge } from "../../types/Badge";
+import PaginatedDataGrid from "../PaginetedDataGrid";
 
 const BadgesView = () => {
     const { t } = useTranslation();
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [, setVisible] = useAtom(isEditDrawerOpen);
     const [badges] = useAtom(atomBadgesList);
     const [, setBadgeToEdit] = useAtom(startEditingItem);
@@ -32,7 +31,7 @@ const BadgesView = () => {
         setVisible(true);
     };
 
-    const columns = React.useMemo<GridColumns<Badge>>(
+    const columns = React.useMemo<GridColDef<Badge>[]>(
         () => [
             {
                 field: "image",
@@ -72,6 +71,7 @@ const BadgesView = () => {
         ],
         [handleEdit, t]
     );
+
     return (
         <Grid
             container
@@ -85,14 +85,9 @@ const BadgesView = () => {
             </Grid>
             <Grid item xs={10} sx={{ height: "auto", overflow: "auto" }}>
                 {badges && (
-                    <DataGrid
+                    <PaginatedDataGrid
                         rows={badges}
                         columns={columns}
-                        pageSize={rowsPerPage}
-                        rowsPerPageOptions={[5, 10, 50]}
-                        onPageSizeChange={setRowsPerPage}
-                        getRowId={(row) => row._id}
-                        autoHeight
                         sx={{
                             "& .MuiTablePagination-toolbar p": {
                                 marginBottom: 0,

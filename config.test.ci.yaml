@@ -36,3 +36,8 @@ services:
         secretAccessKey: {env(AWS_SECRET_ACCESS_KEY)}
       openai:
         api_key: {env(OPENAI_API_KEY)}
+      zenvia:
+        api_url: {env(ZENVIA_API_URL)}
+        api_token: {env(ZENVIA_API_TOKEN)}
+      agencia:
+        access_token: {env(AGENCIA_ACCESS_TOKEN)}

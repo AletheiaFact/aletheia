@@ -22,6 +22,8 @@ export interface ClaimPageProps {
     enableCopilotChatBot: boolean;
     enableEditorAnnotations: boolean;
     enableAddEditorSourcesWithoutSelecting: boolean;
+    enableReviewersUpdateReport: boolean;
+    enableViewReportPreview: boolean;
     hideDescriptions: object;
     websocketUrl: string;
     nameSpace: NameSpaceEnum;
@@ -35,6 +37,9 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
         enableCollaborativeEditor,
         enableCopilotChatBot,
         enableEditorAnnotations,
+        enableAddEditorSourcesWithoutSelecting,
+        enableReviewersUpdateReport,
+        enableViewReportPreview,
     } = props;
     const setCurrentNameSpace = useSetAtom(currentNameSpace);
     const { t } = useTranslation();
@@ -44,23 +49,17 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
     dispatch(actions.setWebsocketUrl(props.websocketUrl));
     dispatch(actions.setSitekey(sitekey));
     dispatch(actions.closeCopilotDrawer());
-    dispatch({
-        type: ActionTypes.SET_COLLABORATIVE_EDIT,
-        enableCollaborativeEdit: enableCollaborativeEditor,
-    });
-    dispatch({
-        type: ActionTypes.SET_COPILOT_CHAT_BOT,
-        enableCopilotChatBot: enableCopilotChatBot,
-    });
-    dispatch({
-        type: ActionTypes.SET_EDITOR_ANNOTATION,
-        enableEditorAnnotations: enableEditorAnnotations,
-    });
-    dispatch({
-        type: ActionTypes.SET_ADD_EDITOR_SOURCES_WITHOUT_SELECTING,
-        enableAddEditorSourcesWithoutSelecting:
-            props.enableAddEditorSourcesWithoutSelecting,
-    });
+    dispatch(
+        actions.setEditorEnvironment(
+            enableCollaborativeEditor,
+            enableAddEditorSourcesWithoutSelecting,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            false,
+            enableReviewersUpdateReport,
+            enableViewReportPreview
+        )
+    );
 
     const jsonld = {
         "@context": "https://schema.org",
@@ -93,6 +92,7 @@ const ClaimPage: NextPage<ClaimPageProps> = (props) => {
 
 export async function getServerSideProps({ query, locale, locales, req }) {
     locale = GetLocale(req, locale, locales);
+    query = JSON.parse(query.props);
     return {
         props: {
             ...(await serverSideTranslations(locale)),
@@ -112,6 +112,8 @@ export async function getServerSideProps({ query, locale, locales, req }) {
             enableEditorAnnotations: query?.enableEditorAnnotations,
             enableAddEditorSourcesWithoutSelecting:
                 query?.enableAddEditorSourcesWithoutSelecting,
+            enableViewReportPreview: query?.enableViewReportPreview,
+            enableReviewersUpdateReport: query?.enableReviewersUpdateReport,
             websocketUrl: query.websocketUrl,
             nameSpace: query.nameSpace ? query.nameSpace : NameSpaceEnum.Main,
         },

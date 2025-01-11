@@ -39,7 +39,7 @@ const UserMenuHeader = ({ isLoading, user }) => {
                             marginTop: 4,
                         }}
                     >
-                        <strong style={{ color: colors.bluePrimary }}>
+                        <strong style={{ color: colors.primary }}>
                             {nameSpaceName.replace("-", " ")}
                         </strong>
                         <span

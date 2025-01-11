@@ -28,7 +28,7 @@ const Sidebar = () => {
             placement="left"
             bodyStyle={{ padding: 0 }}
             drawerStyle={{
-                backgroundColor: colors.lightGray,
+                backgroundColor: colors.lightNeutral,
             }}
             closable={false}
         >
@@ -38,11 +38,7 @@ const Sidebar = () => {
                     paddingLeft: "48px",
                 }}
             >
-                <Logo
-                    color={colors.bluePrimary}
-                    height="48px"
-                    lineHeight="36px"
-                />
+                <Logo color={colors.primary} height="48px" lineHeight="36px" />
             </div>
             <AletheiaMenu />
         </Drawer>

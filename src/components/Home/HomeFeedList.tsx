@@ -1,9 +1,9 @@
 import React from "react";
 import { Col, List } from "antd";
 import PersonalityCard from "../Personality/PersonalityCard";
-import SentenceCard from "../Sentence/SentenceCard";
 import ClaimCard from "../Claim/ClaimCard";
 import styled from "styled-components";
+import ReviewCard from "../ClaimReview/ReviewCard";
 
 const HomeFeedListStyled = styled(List)`
     .ant-spin-nested-loading {
@@ -45,7 +45,17 @@ const HomeFeedList = ({ results }) => {
                     )}
 
                     {item && item.type === "sentence" && (
-                        <SentenceCard sentence={item} />
+                        <ReviewCard
+                            review={{
+                                personality: item?.personality,
+                                claim: item?.claim,
+                                content: {
+                                    content: item.content,
+                                    ...item,
+                                },
+                            }}
+                            summarized={true}
+                        />
                     )}
                 </Col>
             )}

@@ -1,5 +1,5 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import { Button, Col, List, Row } from "antd";
+import { CircularProgress, Button, Grid } from "@mui/material";
+import { List } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import colors from "../../styles/colors";
@@ -36,14 +36,13 @@ const BaseList = ({
     const [nameSpace] = useAtom(currentNameSpace);
 
     const loadingIcon = (
-        <LoadingOutlined
-            spin
+        <CircularProgress
             style={{
                 fontSize: 48,
                 color:
                     nameSpace === NameSpaceEnum.Main
-                        ? colors.bluePrimary
-                        : colors.blueSecondary,
+                        ? colors.primary
+                        : colors.secondary,
             }}
         />
     );
@@ -57,13 +56,14 @@ const BaseList = ({
         pageSize: 10,
         fetchOnly: true,
         order: sortByOrder,
-        ...filter,
     });
 
     // TODO: use TimerCallback to refresh the list
 
     useEffect(() => {
-        apiCall(query).then((newItems) => {
+        setLoading(true);
+        setExecLoadMore(false);
+        apiCall({ ...query, ...filter }).then((newItems) => {
             setInitLoading(false);
             setLoading(false);
             setTotalPages(newItems.totalPages);
@@ -72,17 +72,7 @@ const BaseList = ({
                 execLoadMore ? [...items, ...newItems.data] : newItems.data
             );
         });
-    }, [query]);
-
-    useEffect(() => {
-        setLoading(true);
-        setExecLoadMore(false);
-        setQuery({
-            ...query,
-            ...filter,
-            page: 1,
-        });
-    }, [filter]);
+    }, [query, filter]);
 
     const loadMoreData = () => {
         if (execLoadMore !== true) {
@@ -135,15 +125,21 @@ const BaseList = ({
                     grid={grid}
                     split={showDividers}
                     header={
-                        <Row align="middle" justify="space-between">
-                            <Col>
+                        <Grid
+                            container
+                            style={{
+                                alignContent: "middle",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Grid item>
                                 <h2
                                     style={{
                                         fontSize: "24px",
                                         lineHeight: "32px",
                                         color: bluePrimary
-                                            ? colors.bluePrimary
-                                            : colors.blackPrimary,
+                                            ? colors.primary
+                                            : colors.black,
                                         marginBottom: 0,
                                     }}
                                 >
@@ -153,13 +149,13 @@ const BaseList = ({
                                 {t("list:totalItems", {
                                     total: totalItems,
                                 })}
-                            </Col>
-                            <Col>
+                            </Grid>
+                            <Grid item>
                                 <SortByButton
                                     refreshListItems={refreshListItems}
                                 />
-                            </Col>
-                        </Row>
+                            </Grid>
+                        </Grid>
                     }
                     style={style || {}}
                     loadMore={loadMoreButton}
@@ -169,7 +165,8 @@ const BaseList = ({
                         return <List.Item>{renderItem(item)}</List.Item>;
                     }}
                 />
-                <Row
+                <Grid
+                    container
                     style={{
                         textAlign: "center",
                         display: "block",
@@ -182,7 +179,7 @@ const BaseList = ({
                     {t("list:totalItems", {
                         total: totalItems,
                     })}
-                </Row>
+                </Grid>
                 {footer}
             </>
         );

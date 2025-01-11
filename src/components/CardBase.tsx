@@ -1,19 +1,23 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
+import colors from "../styles/colors";
 
 const CardBase = ({ children, style = {} }) => {
     return (
-        <Row style={{
-            background: "#FFFFFF",
-            border: "1px solid #EEEEEE",
-            boxSizing: "border-box",
-            boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.2)",
-            borderRadius: "10px",
-            marginBottom: "10px",
-            ...style
-        }}>
+        <Grid
+            container
+            style={{
+                background: colors.white,
+                border: `1px solid ${colors.lightNeutralSecondary}`,
+                boxSizing: "border-box",
+                boxShadow: `0px 3px 3px ${colors.shadow}`,
+                borderRadius: "10px",
+                marginBottom: "10px",
+                ...style,
+            }}
+        >
             {children}
-        </Row>
-    )
-}
+        </Grid>
+    );
+};
 
 export default CardBase;

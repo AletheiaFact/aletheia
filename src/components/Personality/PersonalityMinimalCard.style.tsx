@@ -4,26 +4,26 @@ import colors from "../../styles/colors";
 import { queries } from "../../styles/mediaQueries";
 
 const PersonalityMinimalCardStyle = styled(Row)`
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+
     .personality {
         text-align: center;
         width: 150px;
     }
     .personality-name {
         font-size: 16px;
-        margin-top: 16px;
-        color: ${colors.bluePrimary};
+        margin-top: 8px;
+        color: ${colors.primary};
         font-weight: 400;
     }
 
-    .personality-card {
-        text-align: center;
-        max-width: 167px;
-        justify-content: center;
-    }
-
     .personality-description-content {
-        font-size: 10px;
+        font-size: 12px;
         color: ${colors.blackSecondary};
+        margin: 0;
     }
 
     .personality-description {
@@ -37,17 +37,14 @@ const PersonalityMinimalCardStyle = styled(Row)`
     }
 
     @media ${queries.sm} {
-        .personality-card {
-            max-width: 100%;
-            justify-content: start;
-            align-items: start;
-            padding-bottom: 10px;
-        }
+        max-width: 100%;
+        justify-content: start;
+        align-items: center;
+        padding-bottom: 10px;
 
         .personality {
-            text-align: left;
-            padding-left: 15px;
-            width: calc(100% - 130px);
+            gap: 32px;
+            justify-content: flex-start;
         }
 
         .personality .ant-col {
@@ -55,7 +52,6 @@ const PersonalityMinimalCardStyle = styled(Row)`
         }
 
         .personality-name {
-            font-size: 26px;
             margin-top: 0;
         }
 
@@ -63,10 +59,9 @@ const PersonalityMinimalCardStyle = styled(Row)`
             text-align: center;
             flex-wrap: wrap;
             width: 100%;
-            margin-top: 16px;
-            font-size: 14px;
+            margin-top: 8px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
         }
 
         .personality-description {
@@ -75,14 +70,12 @@ const PersonalityMinimalCardStyle = styled(Row)`
     }
 
     @media ${queries.xs} {
-        .personality-card {
-            justify-content: space-around;
-            align-items: center;
-        }
+        justify-content: space-around;
+        align-items: center;
 
         .personality-description-content {
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
         }
     }
 `;

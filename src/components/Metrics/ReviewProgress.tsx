@@ -13,12 +13,12 @@ const ReviewProgress = ({ reviews, statsProps }) => {
             strokeWidth: statsProps.strokeWidth || 18,
             width: statsProps.width || 80,
             strokeLinecap: statsProps.type === "circle" ? "square" : "round",
-            trailColor: colors.grayTertiary,
+            trailColor: colors.neutralTertiary,
         };
 
         return {
             ...defaultStyle,
-            strokeColor: StatsReviewColors[reviewId] || "#000",
+            strokeColor: StatsReviewColors[reviewId] || colors.black,
         };
     };
 
@@ -41,7 +41,7 @@ const ReviewProgress = ({ reviews, statsProps }) => {
             >
                 <span
                     style={{
-                        color: ReviewColors[review._id] || "#000",
+                        color: ReviewColors[review._id] || colors.black,
                         fontWeight: "700",
                         textTransform: "uppercase",
                         textAlign: "center",

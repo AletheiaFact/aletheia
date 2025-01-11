@@ -1,9 +1,9 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import styled from "styled-components";
 import { queries } from "../../../styles/mediaQueries";
 import colors from "../../../styles/colors";
 
-const CTASectionStyle = styled(Row)`
+const CTASectionStyle = styled(Grid)`
     display: flex;
     width: 100%;
     margin-top: 24px;

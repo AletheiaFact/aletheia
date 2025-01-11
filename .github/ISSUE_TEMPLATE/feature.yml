@@ -1,0 +1,28 @@
+name: Feature Request
+title: 'Enhancement: [Brief description of the issue]'
+description: Write something like "Write an api endpoint that does "..." in the "..." file"
+labels: tech
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Background Information
+      description: Brief description of the issue, include relevant screenshots as appropriate
+      placeholder: Describe the feature or functionality where the issue occurs.
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Provide the steps needed to reproduce the issue.
+      placeholder: "For example, '1. Go to... 2. Click on... 3. Observe.."
+  - type: textarea
+    id: how
+    attributes:
+      label: How
+      description: Describe any potential solutions or approaches to resolving the bug.
+      placeholder: "For example, 'This could be resolved by fixing the event listener on the button.'"
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behavior
+      description: Details on what should be the proper behavior if the bug didn't exist

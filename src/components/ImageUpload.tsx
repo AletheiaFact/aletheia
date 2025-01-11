@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { UploadOutlined } from "@ant-design/icons";
+import { FileUploadOutlined } from "@mui/icons-material";
 import { Col, message, Upload } from "antd";
 import { RcFile, UploadChangeParam, UploadProps } from "antd/lib/upload";
 import { useTranslation } from "next-i18next";
@@ -90,7 +90,14 @@ const ImageUpload = ({
     };
 
     const uploadButton = (
-        <AletheiaButton data-cy="testUploadImage" icon={<UploadOutlined />}>
+        <AletheiaButton
+            data-cy="testUploadImage"
+            icon={
+                <FileUploadOutlined
+                    style={{ fontSize: "17px", margin: "0 5 4 0" }}
+                />
+            }
+        >
             {t("claimForm:fileInputButton")}
         </AletheiaButton>
     );

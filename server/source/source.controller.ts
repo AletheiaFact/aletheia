@@ -4,6 +4,7 @@ import {
     Get,
     Header,
     Logger,
+    Optional,
     Param,
     Post,
     Query,
@@ -20,6 +21,12 @@ import type { Response } from "express";
 import { IsPublic } from "../auth/decorators/is-public.decorator";
 import { CreateSourceDTO } from "./dto/create-source.dto";
 import { CaptchaService } from "../captcha/captcha.service";
+import { UnleashService } from "nestjs-unleash";
+import { TargetModel } from "../history/schema/history.schema";
+import { HistoryService } from "../history/history.service";
+import { ReviewTaskService } from "../review-task/review-task.service";
+import { ClaimReviewService } from "../claim-review/claim-review.service";
+import { FeatureFlagService } from "../feature-flag/feature-flag.service";
 
 @Controller(":namespace?")
 export class SourceController {
@@ -28,12 +35,26 @@ export class SourceController {
         private sourceService: SourceService,
         private viewService: ViewService,
         private configService: ConfigService,
-        private captchaService: CaptchaService
+        private captchaService: CaptchaService,
+        private claimReviewService: ClaimReviewService,
+        private reviewTaskService: ReviewTaskService,
+        private historyService: HistoryService,
+        private featureFlagService: FeatureFlagService,
+        @Optional() private readonly unleash: UnleashService
     ) {}
 
     @ApiTags("source")
-    @Get("api/source/:targetId")
-    public async getSourcesClaim(@Param() params, @Query() getSources: any) {
+    @Get("api/source/:id")
+    async getById(@Param("id") sourceId: string) {
+        return this.sourceService.getById(sourceId);
+    }
+
+    @ApiTags("source")
+    @Get("api/source/target/:targetId")
+    public async getSourcesByTargetId(
+        @Param() params,
+        @Query() getSources: any
+    ) {
         const { targetId } = params;
         const { page, order } = getSources;
         const pageSize = parseInt(getSources.pageSize, 10);
@@ -64,22 +85,18 @@ export class SourceController {
     }
 
     @ApiTags("pages")
-    @Get("sources/create")
+    @Get("source/create")
     public async sourceCreatePage(
         @Req() req: BaseRequest,
         @Res() res: Response
     ) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/sources-create",
-            Object.assign(parsedUrl.query, {
-                sitekey: this.configService.get<string>("recaptcha_sitekey"),
-                nameSpace: req.params.namespace,
-            })
-        );
+        await this.viewService.render(req, res, "/sources-create", queryObject);
     }
 
     @IsPublic()
@@ -109,17 +126,81 @@ export class SourceController {
 
     @IsPublic()
     @ApiTags("pages")
-    @Get("sources")
+    @Get("source")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
     public async sourcesPage(@Req() req: BaseRequest, @Res() res: Response) {
         const parsedUrl = parse(req.url, true);
+        const queryObject = Object.assign(parsedUrl.query, {
+            nameSpace: req.params.namespace,
+        });
 
-        await this.viewService.getNextServer().render(
-            req,
-            res,
-            "/sources-page",
-            Object.assign(parsedUrl.query, {
-                nameSpace: req.params.namespace,
-            })
+        await this.viewService.render(req, res, "/sources-page", queryObject);
+    }
+
+    @IsPublic()
+    @ApiTags("pages")
+    @Get("source/:dataHash")
+    @Header("Cache-Control", "max-age=60, must-revalidate")
+    public async sourceReviewPage(
+        @Req() req: BaseRequest,
+        @Res() res: Response
+    ) {
+        const source = await this.sourceService.getByDataHash(
+            req.params.dataHash
         );
+
+        const reviewTask =
+            await this.reviewTaskService.getReviewTaskByDataHashWithUsernames(
+                source.data_hash
+            );
+        const claimReview = await this.claimReviewService.getReviewByDataHash(
+            source.data_hash
+        );
+
+        const enableCollaborativeEditor =
+            this.featureFlagService.isEnableCollaborativeEditor();
+        const enableCopilotChatBot =
+            this.featureFlagService.isEnableCopilotChatBot();
+        const enableEditorAnnotations =
+            this.featureFlagService.isEnableEditorAnnotations();
+        const enableAddEditorSourcesWithoutSelecting =
+            this.featureFlagService.isEnableAddEditorSourcesWithoutSelecting();
+        const enableReviewersUpdateReport =
+            this.featureFlagService.isEnableReviewersUpdateReport();
+        const enableViewReportPreview =
+            this.featureFlagService.isEnableViewReportPreview();
+        const hideDescriptions = {};
+
+        hideDescriptions[TargetModel.Source] =
+            await this.historyService.getDescriptionForHide(
+                source,
+                TargetModel.Claim
+            );
+
+        hideDescriptions[TargetModel.ClaimReview] =
+            await this.historyService.getDescriptionForHide(
+                claimReview,
+                TargetModel.ClaimReview
+            );
+
+        const parsedUrl = parse(req.url, true);
+
+        const queryObject = Object.assign(parsedUrl.query, {
+            source,
+            reviewTask,
+            claimReview,
+            sitekey: this.configService.get<string>("recaptcha_sitekey"),
+            hideDescriptions,
+            enableCollaborativeEditor,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            enableAddEditorSourcesWithoutSelecting,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+            websocketUrl: this.configService.get<string>("websocketUrl"),
+            nameSpace: req.params.namespace,
+        });
+
+        await this.viewService.render(req, res, "/source-review", queryObject);
     }
 }

@@ -7,12 +7,19 @@ import { ReviewTaskEvents } from "./enums";
 const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
     (context, event) => {
         const editorParser = new EditorParser();
+        const supportedEvents = [
+            ReviewTaskEvents.finishReport,
+            ReviewTaskEvents.draft,
+            ReviewTaskEvents.addRejectionComment,
+            ReviewTaskEvents.viewPreview,
+        ];
+
         if (
-            event.type === ReviewTaskEvents.finishReport ||
-            event.type === ReviewTaskEvents.draft
+            supportedEvents.includes(event.type as ReviewTaskEvents) &&
+            "visualEditor" in event.reviewData
         ) {
             const schema = editorParser.editor2schema(
-                event.reviewData.collaborativeEditor
+                event.reviewData.visualEditor.toJSON()
             );
             const reviewDataHtml = editorParser.schema2html(schema);
             event.reviewData = {
@@ -26,38 +33,26 @@ const saveContext = assign<ReviewTaskMachineContextType, SaveEvent>(
                 ...context.reviewData,
                 ...event.reviewData,
             },
-            claimReview: {
-                ...context.claimReview,
-                ...event.claimReview,
+            review: {
+                ...context.review,
+                ...event.review,
                 isPartialReview: false,
             },
         };
     }
 );
 
-const savePartialReviewContext = assign<
+const rejectVerificationRequest = assign<
     ReviewTaskMachineContextType,
     SaveEvent
->((context, event) => {
-    const editorParser = new EditorParser();
-    const reviewData = editorParser.editor2schema(
-        event.reviewData.collaborativeEditor
-    );
-    event.reviewData = {
-        ...event.reviewData,
-        ...reviewData,
-    };
+>((context) => {
     return {
         reviewData: {
             ...context.reviewData,
-            ...event.reviewData,
+            rejected: true,
         },
-        claimReview: {
-            ...context.claimReview,
-            ...event.claimReview,
-            isPartialReview: true,
-        },
+        review: context.review,
     };
 });
 
-export { saveContext, savePartialReviewContext };
+export { saveContext, rejectVerificationRequest };

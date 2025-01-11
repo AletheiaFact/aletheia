@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material";
 
 import { Controller } from "react-hook-form";
 import DynamicInput from "./DynamicInput";
@@ -7,7 +7,13 @@ import Text from "antd/lib/typography/Text";
 import colors from "../../styles/colors";
 import { useTranslation } from "next-i18next";
 
-const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
+const DynamicForm = ({
+    currentForm,
+    control,
+    errors,
+    machineValues = {},
+    disabledDate = {},
+}) => {
     const { t } = useTranslation();
     return (
         <div>
@@ -25,8 +31,8 @@ const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
                 const defaultValue = machineValues[fieldName];
 
                 return (
-                    <Row key={fieldName + index}>
-                        <Col span={24}>
+                    <Grid container key={fieldName + index}>
+                        <Grid item xs={12}>
                             <h4
                                 style={{
                                     color: colors.blackSecondary,
@@ -37,8 +43,8 @@ const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
                             >
                                 {t(label)}
                             </h4>
-                        </Col>
-                        <Col span={24} style={{ margin: "10px 0" }}>
+                        </Grid>
+                        <Grid item xs={12} style={{ margin: "10px 0" }}>
                             <Controller
                                 name={fieldName}
                                 control={control}
@@ -55,6 +61,7 @@ const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
                                         defaultValue={defaultValue}
                                         data-cy={`testClaimReview${fieldName}`}
                                         extraProps={extraProps}
+                                        disabledDate={disabledDate}
                                     />
                                 )}
                             />
@@ -63,8 +70,8 @@ const DynamicForm = ({ currentForm, machineValues, control, errors }) => {
                                     {t(errors[fieldName].message)}
                                 </Text>
                             )}
-                        </Col>
-                    </Row>
+                        </Grid>
+                    </Grid>
                 );
             })}
         </div>

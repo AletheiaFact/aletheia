@@ -5,7 +5,7 @@ const review = {
     question2: "Question 2 content",
     report: "Verification Report content",
     process: "Verification process content",
-    source1: "https://wikipedia.org",
+    source1: "https://wikidata.org",
     source2: "https://google.com",
     classification: "arguable",
     editorContent: {
@@ -32,7 +32,7 @@ const review = {
                                     {
                                         type: "link",
                                         attrs: {
-                                            href: "https://wikipedia.org",
+                                            href: "https://wikidata.org",
                                             target: null,
                                             auto: false,
                                             id: "lovjnfw8",

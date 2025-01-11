@@ -1,4 +1,4 @@
-import { InfoCircleOutlined, SecurityScanOutlined } from "@ant-design/icons";
+import { InfoOutlined, SecurityOutlined } from "@mui/icons-material";
 import { Popover } from "antd";
 import React from "react";
 import colors from "../../styles/colors";
@@ -10,7 +10,7 @@ const SentencePopover = () => {
     const content = (
         <span
             style={{
-                color: colors.bluePrimary,
+                color: colors.primary,
                 lineHeight: "20px",
                 fontSize: 14,
                 display: "flex",
@@ -18,14 +18,16 @@ const SentencePopover = () => {
                 gap: 4,
             }}
         >
-            <SecurityScanOutlined style={{ fontSize: 20 }} />
-            {t("claimReviewTask:sentenceInfo")}
+            <SecurityOutlined fontSize="small" />
+            {t("reviewTask:sentenceInfo")}
         </span>
     );
 
     return (
         <Popover placement="top" content={content} trigger="hover">
-            <InfoCircleOutlined style={{ color: colors.graySecondary }} />
+            <InfoOutlined
+                style={{ fontSize: "18px", color: colors.neutralSecondary }}
+            />
         </Popover>
     );
 };

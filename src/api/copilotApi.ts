@@ -12,7 +12,11 @@ const agentChat = (params) => {
             return response.data;
         })
         .catch((err) => {
-            throw err;
+            console.error(
+                "Error while chatting with Aletheia's Assistant: ",
+                err
+            );
+            return err;
         });
 };
 

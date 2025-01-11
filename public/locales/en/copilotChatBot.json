@@ -10,5 +10,8 @@
     "footer": "Aletheia assistant can make mistakes. Consider checking important information.",
     "agentLoadingThoughts": "Thinking",
     "rateQuestion": "How would you rate this conversation ?",
-    "copilotWarning": "Assistant visible only in full page."
+    "copilotWarning": "Assistant visible only in full page.",
+    "copilotChatBotErrorMessage": "An unexpected error occured while creating the report. Refresh the page and try again.",
+    "copilotClearHistoryTooltip": "Clear conversation history",
+    "copilotCloseSidebarTooltip": "Close sidebar"
 }

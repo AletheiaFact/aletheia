@@ -2,6 +2,10 @@ import { Content } from "../types/Content";
 import { ActionTypes } from "./types";
 
 const actions = {
+    setResultsLoading: (isFetching) => ({
+        type: ActionTypes.RESULTS_LOADING,
+        isFetching,
+    }),
     openResultsOverlay: () => ({
         type: ActionTypes.RESULTS_OVERLAY_VISIBLE,
         overlayVisible: true,
@@ -38,14 +42,15 @@ const actions = {
         type: ActionTypes.SET_SELECTED_PERSONALITY,
         selectedPersonality: personality,
     }),
-    setSelectClaim: (claim) => ({
-        type: ActionTypes.SET_SELECTED_CLAIM,
-        selectedClaim: claim,
+    setSelectTarget: (target) => ({
+        type: ActionTypes.SET_SELECTED_TARGET,
+        selectedTarget: target,
     }),
     setSelectContent: (content: Content) => ({
         type: ActionTypes.SET_SELECTED_CONTENT,
         selectedContent: content,
         selectedDataHash: content?.data_hash || "",
+        selectedReviewTaskType: content?.reviewTaskType,
     }),
     setSitekey: (sitekey) => ({
         type: ActionTypes.SET_SITEKEY,
@@ -55,6 +60,26 @@ const actions = {
         type: ActionTypes.SET_WEBSOCKET_URL,
         websocketUrl,
     }),
+    setEditorEnvironment: (
+        enableCollaborativeEdit,
+        enableAddEditorSourcesWithoutSelecting,
+        enableEditorAnnotations,
+        enableCopilotChatBot,
+        autoSave,
+        enableReviewersUpdateReport,
+        enableViewReportPreview
+    ) => {
+        return {
+            type: ActionTypes.SET_VISUAL_EDITOR_ENVIRONEMNT,
+            enableCollaborativeEdit,
+            enableAddEditorSourcesWithoutSelecting,
+            enableEditorAnnotations,
+            enableCopilotChatBot,
+            autoSave,
+            enableReviewersUpdateReport,
+            enableViewReportPreview,
+        };
+    },
 };
 
 export default actions;

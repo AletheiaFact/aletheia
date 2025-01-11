@@ -1,0 +1,2 @@
+api_url = read("env:ZENVIA_API_URL")
+api_token = read("env:ZENVIA_API_TOKEN")

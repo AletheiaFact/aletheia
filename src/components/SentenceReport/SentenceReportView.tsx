@@ -1,5 +1,5 @@
 import { useSelector } from "@xstate/react";
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material";
 import React, { useContext } from "react";
 
 import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -14,24 +14,30 @@ import colors from "../../styles/colors";
 import CTARegistration from "../Home/CTARegistration";
 import SentenceReportContent from "./SentenceReportContent";
 import { useAtom } from "jotai";
-import { currentUserRole, isUserLoggedIn } from "../../atoms/currentUser";
+import {
+    currentUserId,
+    currentUserRole,
+    isUserLoggedIn,
+} from "../../atoms/currentUser";
 import SentenceReportComments from "./SentenceReportComments";
+import { ReviewTaskTypeEnum } from "../../../server/types/enums";
 
 const SentenceReportView = ({
     context,
     userIsNotRegular,
     userIsReviewer,
     isHidden,
-    userIsAssignee,
-    userIsCrossChecker,
     href,
     componentStyle,
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
     const [role] = useAtom(currentUserRole);
-    const { machineService, publishedReview } = useContext(
+    const [userId] = useAtom(currentUserId);
+    const { machineService, publishedReview, reviewTaskType } = useContext(
         ReviewTaskMachineContext
     );
+    const userIsCrossChecker = context.crossCheckerId === userId;
+    const userIsAssignee = context.usersId.includes(userId);
     const isReport = useSelector(machineService, reportSelector);
     const isCrossChecking = useSelector(machineService, crossCheckingSelector);
     const isReviewing = useSelector(machineService, reviewingSelector);
@@ -50,15 +56,18 @@ const SentenceReportView = ({
         canShowClassificationAndCrossChecking;
 
     return (
-        canShowReport && (
-            <Row
+        canShowReport &&
+        reviewTaskType !== ReviewTaskTypeEnum.VerificationRequest && (
+            <Grid
+                container
+                justifyContent="center"
                 style={
                     (isCrossChecking || isReport || isReviewing) && {
-                        backgroundColor: colors.lightGray,
+                        backgroundColor: colors.lightNeutral,
                     }
                 }
             >
-                <Col span={componentStyle.span} offset={componentStyle.offset}>
+                <Grid item xs={componentStyle.span}>
                     {canShowClassificationAndCrossChecking && (
                         <SentenceReportComments context={context} />
                     )}
@@ -71,8 +80,8 @@ const SentenceReportView = ({
                         href={href}
                     />
                     {!isLoggedIn && <CTARegistration />}
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
         )
     );
 };

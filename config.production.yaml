@@ -24,7 +24,7 @@ services:
       ory:
         url: ORY_SDK_URL
         admin_url: ORY_SDK_URL
-        admin_endpoint: api/kratos/admin 
+        admin_endpoint: admin 
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
       feature_flag:
@@ -40,3 +40,8 @@ services:
         application_identifier: NOVU_APPLICATION_IDENTIFIER
       openai:
         api_key: OPENAI_API_KEY
+      zenvia:
+        api_url: ZENVIA_API_URL
+        api_token: ZENVIA_API_TOKEN
+      agencia:
+        access_token: AGENCIA_ACCESS_TOKEN

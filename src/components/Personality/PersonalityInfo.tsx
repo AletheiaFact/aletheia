@@ -10,13 +10,20 @@ interface PersonalityInfo {
     enableStats: boolean;
     personality: any;
     componentStyle: any; //adicionar tipo do componente style
+    centralized: boolean;
     titleLevel: 1 | 2 | 3 | 4 | 5;
 }
 
 export const PersonalityInfo = (props: PersonalityInfo) => {
     const { t } = useTranslation();
-    const { componentStyle, summarized, personality, titleLevel, enableStats } =
-        props;
+    const {
+        componentStyle,
+        summarized,
+        personality,
+        titleLevel,
+        enableStats,
+        centralized,
+    } = props;
     return (
         <Col
             span={componentStyle.titleSpan}
@@ -24,6 +31,10 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
             style={{
                 width: "50%",
                 flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: centralized ? "center" : "flex-start",
+                height: "100%",
             }}
         >
             {summarized && (
@@ -84,7 +95,7 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         fontWeight: "bold",
                         fontSize: "12px",
                         lineHeight: "16px",
-                        color: colors.bluePrimary,
+                        color: colors.primary,
                         textDecoration: "underline",
                     }}
                     target="_blank"
@@ -101,8 +112,9 @@ export const PersonalityInfo = (props: PersonalityInfo) => {
                         <Row
                             style={{
                                 flexDirection: "column",
-                                color: colors.blackPrimary,
+                                color: colors.black,
                                 fontSize: "16px",
+                                marginBottom: "25px",
                             }}
                         >
                             {personality?.claims?.length !== undefined && (

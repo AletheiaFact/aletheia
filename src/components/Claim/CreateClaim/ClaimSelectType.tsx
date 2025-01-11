@@ -1,9 +1,9 @@
 import {
-    FileOutlined,
-    PictureOutlined,
-    VideoCameraOutlined,
-} from "@ant-design/icons";
-import { Col } from "antd";
+    InsertDriveFileOutlined,
+    PhotoSizeSelectActualOutlined,
+    VideocamOutlined,
+} from "@mui/icons-material";
+import { Grid } from "@mui/material";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 
@@ -16,12 +16,17 @@ import AletheiaButton from "../../Button";
 const ClaimSelectType = () => {
     const [, send] = useAtom(createClaimMachineAtom);
     const { t } = useTranslation();
+    const Sizeicon = { fontSize: "22px", margin: "0 5 5 0" };
 
     const icons = {
-        [ContentModelEnum.Image]: <PictureOutlined />,
-        [ContentModelEnum.Speech]: <FileOutlined />,
-        [ContentModelEnum.Debate]: <VideoCameraOutlined />,
-        [ContentModelEnum.Unattributed]: <FileOutlined />,
+        [ContentModelEnum.Image]: (
+            <PhotoSizeSelectActualOutlined style={Sizeicon} />
+        ),
+        [ContentModelEnum.Speech]: <InsertDriveFileOutlined style={Sizeicon} />,
+        [ContentModelEnum.Debate]: <VideocamOutlined style={Sizeicon} />,
+        [ContentModelEnum.Unattributed]: (
+            <InsertDriveFileOutlined style={Sizeicon} />
+        ),
     };
 
     const handleClickStart = (event) => {
@@ -53,8 +58,10 @@ const ClaimSelectType = () => {
                 </p>
             </div>
 
-            <Col
+            <Grid
+                container
                 style={{
+                    gap: "10px",
                     margin: "24px 0",
                     display: "flex",
                     justifyContent: "space-evenly",
@@ -63,7 +70,7 @@ const ClaimSelectType = () => {
                 {Object.keys(ContentModelEnum).map((key) => (
                     <AletheiaButton
                         onClick={() => handleClickStart(key)}
-                        style={{ textTransform: "uppercase" }}
+                        style={{ gap: "10px", textTransform: "uppercase" }}
                         data-cy={`testSelectType${key}`}
                         key={key}
                     >
@@ -71,7 +78,7 @@ const ClaimSelectType = () => {
                         {t(`claimForm:${key}`)}
                     </AletheiaButton>
                 ))}
-            </Col>
+            </Grid>
         </>
     );
 };

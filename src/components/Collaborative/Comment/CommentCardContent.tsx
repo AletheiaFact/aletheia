@@ -7,6 +7,7 @@ import reviewColors from "../../../constants/reviewColors";
 import { useTranslation } from "next-i18next";
 import { CommentEnum } from "../../../types/enums";
 import { useAppSelector } from "../../../store/store";
+import { usePluginReady } from "../utils/usePluginReady";
 
 const CommentCardContent = ({
     user,
@@ -32,8 +33,10 @@ const CommentCardContent = ({
     const { from } = useCurrentSelection();
     const { getAnnotationsAt } = useHelpers();
 
+    const isPluginReady = usePluginReady("annotation", enableEditorAnnotations);
+
     useEffect(() => {
-        if (enableEditorAnnotations) {
+        if (enableEditorAnnotations && isPluginReady) {
             const annotations = getAnnotationsAt(from);
             const hasMatchingId = annotations.some(
                 (annotation) => annotation?.id === content?._id
@@ -46,6 +49,7 @@ const CommentCardContent = ({
         from,
         getAnnotationsAt,
         setIsSelected,
+        isPluginReady,
     ]);
 
     return (

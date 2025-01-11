@@ -6,7 +6,8 @@ import { useTranslation } from "next-i18next";
 import EditorApi from "../../api/editor";
 import { callbackTimerAtom } from "../../machines/callbackTimer/provider";
 import Button from "../Button";
-import { Row } from "antd";
+import { Grid } from "@mui/material";
+
 export const EditorContent = ({ reference, isLive }) => {
     const { t } = useTranslation();
     // this needs to be called inside the scope of the provider
@@ -20,7 +21,7 @@ export const EditorContent = ({ reference, isLive }) => {
     return (
         <>
             <EditorComponent />
-            <Row justify="space-between" style={{ marginTop: 16 }}>
+            <Grid container style={{ marginTop: 16 }}>
                 {isLive && (
                     <Button
                         onMouseDown={(event) => event.preventDefault()}
@@ -29,7 +30,7 @@ export const EditorContent = ({ reference, isLive }) => {
                         {t("debates:saveButtonLabel")}
                     </Button>
                 )}
-            </Row>
+            </Grid>
         </>
     );
 };

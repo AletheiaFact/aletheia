@@ -1,13 +1,14 @@
-import {Row} from "antd";
+import { Grid } from "@mui/material";
 import styled from "styled-components";
+import colors from "../../styles/colors";
 
-const ClaimSummary = styled(Row)`
+const ClaimSummary = styled(Grid)`
     position: relative;
-    background: #EEEEEE;
-    display:flex;
+    background: ${colors.lightNeutralSecondary};
+    display: flex;
     padding: 12px 0px 0px 16px;
     margin: 1em auto;
-    border-radius:10px;
+    border-radius: 10px;
 
     &:after {
         content: " ";
@@ -17,13 +18,13 @@ const ClaimSummary = styled(Row)`
         border-top: none;
         border-right: 12px solid transparent;
         border-left: 12px solid transparent;
-        border-bottom: 12px solid #EEEEEE;
+        border-bottom: 12px solid ${colors.lightNeutralSecondary};
     }
 
     &.claim-review {
-        background: rgba(219, 159, 13, 0.3);
+        background: ${colors.warning};
         &:after {
-            border-bottom-color: rgba(219, 159, 13, 0.3);
+            border-bottom-color: ${colors.warning};
         }
     }
 `;

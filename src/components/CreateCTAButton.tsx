@@ -1,4 +1,4 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "next-i18next";
 
@@ -6,7 +6,8 @@ const CreateCTAButton = ({ children }) => {
     const { t } = useTranslation();
 
     return (
-        <Row
+        <Grid
+            container
             style={{
                 flexDirection: "column",
                 alignItems: "center",
@@ -19,7 +20,7 @@ const CreateCTAButton = ({ children }) => {
             </p>
             <p>{children}</p>
             <p>{t("personalityCTA:footer")}</p>
-        </Row>
+        </Grid>
     );
 };
 

@@ -8,7 +8,7 @@ const DonateButton = ({ header = false, style = {} }) => {
     return (
         <AletheiaButton
             type={ButtonType.white}
-            href="https://donate.aletheiafact.org/"
+            href={t("home:donateUrlButton")}
             target="_blank"
             rel="noreferrer"
             onClick={() => {
@@ -20,7 +20,7 @@ const DonateButton = ({ header = false, style = {} }) => {
                 ...style,
             }}
         >
-            {header ? t("header:donateButton") : t("home:donateButton")}
+            {t("home:donateButton")}
         </AletheiaButton>
     );
 };

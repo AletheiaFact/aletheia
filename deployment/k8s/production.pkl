@@ -1,0 +1,32 @@
+amends "./app.pkl"
+import "package://pkg.pkl-lang.org/pkl-k8s/k8s@1.0.1#/K8sResource.pkl"
+import "./modules/ingress.pkl" as ingress
+import "./modules/aletheia.pkl"
+
+appNamespace = "production"
+podPort = 3000
+
+local newAletheia = new (aletheia) {
+    ns = appNamespace
+    p = podPort
+}
+
+IngressOptions {
+    rules {
+        (ingress.rule) {
+            host = "aletheiafact.org"
+        }
+
+        (ingress.rule) {
+            host = "www.aletheiafact.org"
+        }
+    }
+}
+
+DeploymentOptions {
+    containers  {
+        (newAletheia.pod.container) {
+            name = "aletheia"
+        }
+    }
+}

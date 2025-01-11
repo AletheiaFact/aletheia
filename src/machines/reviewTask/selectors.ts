@@ -4,6 +4,10 @@ const publishedSelector = (state) => {
     return state.matches(ReviewTaskStates.published);
 };
 
+const assignedSelector = (state) => {
+    return state.matches(ReviewTaskStates.assigned);
+};
+
 const reportSelector = (state) => {
     return (
         state.matches(ReviewTaskStates.reported) ||
@@ -27,10 +31,7 @@ const reviewingSelector = (state) => {
 };
 
 const reviewNotStartedSelector = (state) => {
-    return (
-        state.matches(ReviewTaskStates.unassigned) &&
-        state.context.claimReview.claim === ""
-    );
+    return state.matches(ReviewTaskStates.unassigned);
 };
 
 const reviewDataSelector = (state) => {
@@ -44,4 +45,5 @@ export {
     reviewNotStartedSelector,
     reviewDataSelector,
     reportSelector,
+    assignedSelector,
 };

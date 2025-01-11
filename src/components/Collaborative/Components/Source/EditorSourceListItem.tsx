@@ -1,6 +1,6 @@
 import { Col, Spin } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
-import { LoadingOutlined } from "@ant-design/icons";
+import { CircularProgress } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditorSourcePopover from "./EditorSourcePopover";
 import colors from "../../../../styles/colors";
@@ -52,12 +52,12 @@ const EditorSourceListItem = ({ node, sup, source }: EditorSouceListProps) => {
         <Spin
             spinning={isLoading}
             indicator={
-                <LoadingOutlined
+                <CircularProgress
                     style={{
                         color:
                             nameSpace === NameSpaceEnum.Main
-                                ? colors.bluePrimary
-                                : colors.blueSecondary,
+                                ? colors.primary
+                                : colors.secondary,
                     }}
                 />
             }

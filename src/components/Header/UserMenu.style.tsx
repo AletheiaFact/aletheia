@@ -13,7 +13,7 @@ const UserMenuStyle = styled(Menu)`
     }
 
     .menu-header-avatar {
-        background: ${colors.blueQuartiary};
+        background: ${colors.quartiary};
         margin: 0px;
     }
 
@@ -32,8 +32,8 @@ const UserMenuStyle = styled(Menu)`
         background: transparent;
         color: ${({ namespace }) =>
             namespace === NameSpaceEnum.Main
-                ? colors.bluePrimary
-                : colors.blueSecondary};
+                ? colors.primary
+                : colors.secondary};
     }
 
     .select-menu-item {

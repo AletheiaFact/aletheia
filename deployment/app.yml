@@ -8,8 +8,18 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: test.aletheiafact.org
-      http:
+   - host: www.test.aletheiafact.org
+     http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: aletheia
+              port:
+                name: aletheia
+   - host: test.aletheiafact.org
+     http:
         paths:
         - path: /
           pathType: Prefix
@@ -89,7 +99,7 @@ spec:
             - name: NEW_RELIC_LICENSE_KEY
               value: NEW_RELIC_LICENSE_KEY_STUB
             - name: NEW_RELIC_APP_NAME
-              value: aletheia-ENVIRONMENT 
+              value: aletheia-ENVIRONMENT
             - name: NEXT_PUBLIC_ORY_SDK_URL
               value: NEXT_PUBLIC_ORYSDKURL_STUB
             - name: OPENAI_API_KEY

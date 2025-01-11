@@ -23,12 +23,15 @@ const ReviewTaskAdminToolBar = () => {
     };
 
     return (
-        <Row justify="center" style={{ background: colors.lightGray }}>
+        <Row justify="center" style={{ background: colors.lightNeutral }}>
             <Col xs={22} lg={18}>
                 <AdminToolBarStyle
                     namespace={nameSpace}
                     position="static"
-                    style={{ boxShadow: "none", background: colors.lightGray }}
+                    style={{
+                        boxShadow: "none",
+                        background: colors.lightNeutral,
+                    }}
                 >
                     <Toolbar className="toolbar">
                         <div className="toolbar-item">

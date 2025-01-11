@@ -1,7 +1,7 @@
 import { Node } from "@remirror/pm/model";
 import { RegisterOptions } from "react-hook-form";
 import { EditorParser } from "../../../lib/editor-parser";
-import { ReviewTaskMachineContextReviewData } from "../../../server/claim-review-task/dto/create-claim-review-task.dto";
+import { ReviewTaskMachineContextReviewData } from "../../../server/review-task/dto/create-review-task.dto";
 import { Roles } from "../../types/enums";
 import { URL_PATTERN } from "../Collaborative/hooks/useFloatingLinkState";
 
@@ -36,6 +36,7 @@ interface CreateFormFieldProps extends Partial<FormField> {
     i18nKey?: string;
     i18nNamespace?: string;
     required?: boolean;
+    isURLField?: boolean;
 }
 
 const createFormField = (props: CreateFormFieldProps): FormField => {
@@ -47,7 +48,9 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
         defaultValue,
         rules,
         required = true,
+        isURLField = false,
     } = props;
+
     return {
         fieldName,
         type,
@@ -59,8 +62,16 @@ const createFormField = (props: CreateFormFieldProps): FormField => {
             required: required && "common:requiredFieldError",
             ...rules,
             validate: {
-                notBlank: (v) =>
-                    validateBlank(v) || "common:requiredFieldError",
+                ...(required && {
+                    notBlank: (v) =>
+                        validateBlank(v) || "common:requiredFieldError",
+                }),
+                ...(isURLField && {
+                    validURL: (v) =>
+                        !v ||
+                        URL_PATTERN.test(v) ||
+                        "sourceForm:errorMessageValidURL",
+                }),
                 ...rules?.validate,
             },
         },
@@ -90,6 +101,10 @@ const validateSchema = (
 };
 
 const fieldValidation = (value, validationFunction) => {
+    if (value?._isAMomentObject) {
+        return true;
+    }
+
     if (value instanceof Node) {
         const editorParser = new EditorParser();
         const schema = editorParser.editor2schema(value.toJSON());

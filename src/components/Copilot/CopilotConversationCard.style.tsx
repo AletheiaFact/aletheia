@@ -1,8 +1,8 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import colors from "../../styles/colors";
 import styled from "styled-components";
 
-const CopilotConversationCardStyle = styled(Row)`
+const CopilotConversationCardStyle = styled(Grid)`
     display: flex;
     flex-direction: column;
 
@@ -20,6 +20,7 @@ const CopilotConversationCardStyle = styled(Row)`
         background-color: ${colors.white};
         marginleft: 40px;
         wordbreak: break-word;
+        color: ${colors.primary};
         &:after {
             border: 1px solid red;
             width: 10px;
@@ -34,6 +35,10 @@ const CopilotConversationCardStyle = styled(Row)`
             top: -8px;
             transform: rotate(0deg);
         }
+    }
+
+    .conversation-card-content.error {
+        color: ${colors.error};
     }
 `;
 

@@ -2,24 +2,22 @@ import SectionTitle from "./SectionTitle";
 import { Col, List, Row } from "antd";
 import React from "react";
 import Button, { ButtonType } from "./Button";
-import { ArrowRightOutlined } from "@ant-design/icons";
+import { ArrowForwardOutlined } from "@mui/icons-material";
 import { isUserLoggedIn } from "../atoms/currentUser";
 import { useAtom } from "jotai";
-import { currentNameSpace } from "../atoms/namespace";
-import { NameSpaceEnum } from "../types/Namespace";
 
 const GridList = ({
     renderItem,
     loggedInMaxColumns = 3,
     dataSource,
     title,
+    href = "",
+    dataCy = "",
     seeMoreButtonLabel = "",
     disableSeeMoreButton = false,
     gridLayout = {},
 }) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
-    const [nameSpace] = useAtom(currentNameSpace);
-
     const overrideGridLayout = isLoggedIn
         ? {
               xl: loggedInMaxColumns,
@@ -75,23 +73,19 @@ const GridList = ({
                         margin: "48px 0 64px 0",
                     }}
                 >
-                    <Button
-                        href={
-                            nameSpace !== NameSpaceEnum.Main
-                                ? `/${nameSpace}/personality`
-                                : "/personality"
-                        }
-                        type={ButtonType.blue}
-                        data-cy="testSeeMorePersonality"
-                    >
+                    <Button href={href} type={ButtonType.blue} data-cy={dataCy}>
                         <span
                             style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "5px",
                                 fontWeight: 400,
                                 fontSize: "16px",
                                 lineHeight: "24px",
                             }}
                         >
-                            {seeMoreButtonLabel} <ArrowRightOutlined />
+                            {seeMoreButtonLabel}{" "}
+                            <ArrowForwardOutlined fontSize="small" />
                         </span>
                     </Button>
                 </Col>

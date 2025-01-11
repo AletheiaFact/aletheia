@@ -11,12 +11,19 @@ const getNextEvents = (
 ) => {
     const defaultEvents = [Events.goback, Events.draft];
     const eventsMap = {
-        [States.unassigned]: [Events.assignUser],
+        [States.unassigned]: [
+            reportModel === ReportModelEnum.Request
+                ? Events.assignRequest
+                : Events.assignUser,
+        ],
         [Events.assignUser]: [...defaultEvents, Events.finishReport],
         [States.assigned]:
             reportModel === ReportModelEnum.FactChecking
                 ? [...defaultEvents, Events.finishReport]
                 : [Events.draft, Events.finishReport],
+
+        [Events.assignRequest]: [Events.rejectRequest, Events.publish],
+        [States.assignedRequest]: [Events.rejectRequest, Events.publish],
 
         [Events.finishReport]: [
             Events.goback,
@@ -69,17 +76,22 @@ const getNextEvents = (
             ? [Events.goback, Events.sendToCrossChecking, Events.selectedReview]
             : [...defaultEvents, Events.finishReport],
 
-        [States.submitted]: [Events.reject, Events.publish],
-        [Events.sendToReview]: [Events.reject, Events.publish],
+        [States.submitted]: [Events.addRejectionComment, Events.publish],
+        [Events.sendToReview]: [Events.addRejectionComment, Events.publish],
 
-        [States.rejected]: [Events.goback, Events.addRejectionComment],
         [Events.addRejectionComment]:
             reportModel === ReportModelEnum.FactChecking
                 ? [...defaultEvents, Events.finishReport]
                 : [Events.draft, Events.finishReport],
 
-        [States.published]: [],
-        [Events.publish]: [],
+        [States.published]:
+            reportModel === ReportModelEnum.Request ? [Events.reset] : [],
+        [Events.publish]:
+            reportModel === ReportModelEnum.Request ? [Events.reset] : [],
+
+        [Events.reset]: [Events.rejectRequest, Events.publish],
+        [States.rejectedRequest]: [],
+        [Events.rejectRequest]: [],
     };
 
     return eventsMap[param];

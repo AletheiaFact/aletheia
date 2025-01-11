@@ -1,9 +1,9 @@
 import React, { useCallback, useContext, useState } from "react";
 import Button, { ButtonType } from "../../Button";
 import AletheiaInput from "../../AletheiaInput";
-import ClaimReviewTaskApi from "../../../api/ClaimReviewTaskApi";
+import ReviewTaskApi from "../../../api/reviewTaskApi";
 import { useCommands, useCurrentSelection } from "@remirror/react";
-import { CollaborativeEditorContext } from "../CollaborativeEditorProvider";
+import { VisualEditorContext } from "../VisualEditorProvider";
 import CommentApi from "../../../api/comment";
 import { useTranslation } from "next-i18next";
 import colors from "../../../styles/colors";
@@ -16,7 +16,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
     const { t } = useTranslation();
     const { from, to, $to } = useCurrentSelection();
     const { addAnnotation } = useCommands();
-    const { data_hash, setComments } = useContext(CollaborativeEditorContext);
+    const { data_hash, setComments } = useContext(VisualEditorContext);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showButtons, setShowButtons] = useState<boolean>(false);
     const [commentValue, setCommentValue] = useState("");
@@ -70,7 +70,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                 );
             } else {
                 const { comment: createdComment } =
-                    await ClaimReviewTaskApi.addComment(data_hash, newComment);
+                    await ReviewTaskApi.addComment(data_hash, newComment);
 
                 if (
                     enableEditorAnnotations &&
@@ -123,7 +123,7 @@ const CommentCardForm = ({ user, setIsCommentVisible, isEditing, content }) => {
                 onKeyDown={(e) => handleKeyDown(e)}
             />
             {error && (
-                <span style={{ fontSize: 14, color: colors.redText }}>
+                <span style={{ fontSize: 14, color: colors.error }}>
                     {error}
                 </span>
             )}

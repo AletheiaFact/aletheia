@@ -1,11 +1,11 @@
 name: Deploy docs to aws s3 bucket
 on:
   push:
-    branches: [ stage ]
+    branches: [stage]
 permissions:
-      id-token: write # This is required for aws oidc connection
-      contents: read # This is required for actions/checkout
-      pull-requests: write # This is required for gh bot to comment PR
+  id-token: write # This is required for aws oidc connection
+  contents: read # This is required for actions/checkout
+  pull-requests: write # This is required for gh bot to comment PR
 
 jobs:
   build-and-deploy:
@@ -17,31 +17,32 @@ jobs:
       REGION: eu-north-1
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.ALETHEIA_DOCS_AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.ALETHEIA_DOCS_AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.REGION }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Dependencies
-      run: |
-        node --version
-        yarn install
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ALETHEIA_DOCS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ALETHEIA_DOCS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.REGION }}
 
-    - name: Build Static Website
-      run: |
-        yarn run build-storybook
-        npx compodoc -p tsconfig.json -d ./docs/compodoc
+      - name: Install Dependencies
+        run: |
+          node --version
+          yarn install
 
-    - name: Copy files to the production website with the AWS CLI
-      run: |
-        aws s3 sync --delete ${{ env.DIST }} s3://${{ env.BUCKET }}
+      - name: Build Static Website
+        run: |
+          yarn run build-storybook
+          npx compodoc -p tsconfig.json -d ./docs/compodoc
+
+      - name: Copy files to the production website with the AWS CLI
+        run: |
+          aws s3 sync --delete ${{ env.DIST }} s3://${{ env.BUCKET }}
+

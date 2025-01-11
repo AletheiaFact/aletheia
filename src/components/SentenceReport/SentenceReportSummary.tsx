@@ -8,7 +8,12 @@ const SentenceReportSummary = styled(Row)`
     margin: 8px 0 16px 4px;
     padding: 16px 24px;
     border-radius: 10px;
-    background-color: ${colors.lightYellow};
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: ${colors.warning};
+    width: fit-content;
+    gap: 20px;
 
     // small triangle pointing to the avatar on the side
     &.after:after {
@@ -19,7 +24,7 @@ const SentenceReportSummary = styled(Row)`
         border-top: none;
         border-right: 9px solid transparent;
         border-left: 9px solid transparent;
-        border-bottom: 9px solid ${colors.lightYellow};
+        border-bottom: 9px solid ${colors.warning};
         transform: rotate(-90deg);
     }
 
@@ -35,7 +40,7 @@ const SentenceReportSummary = styled(Row)`
         }
 
         a {
-            color: ${colors.bluePrimary};
+            color: ${colors.primary};
             font-weight: 700;
             margin-left: 10px;
         }

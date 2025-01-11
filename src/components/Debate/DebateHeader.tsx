@@ -1,4 +1,4 @@
-import { Col, Row, Typography } from "antd";
+import { Grid, Typography } from "@mui/material";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 import React, { useLayoutEffect, useState } from "react";
@@ -10,9 +10,11 @@ import colors from "../../styles/colors";
 import PersonalityCard from "../Personality/PersonalityCard";
 import { NameSpaceEnum } from "../../types/Namespace";
 import { currentNameSpace } from "../../atoms/namespace";
+import AletheiaButton, { ButtonType } from "../Button";
+import { EditOutlined } from "@mui/icons-material";
+import { Roles } from "../../types/enums";
 
-const { Title } = Typography;
-const DebateHeader = ({ title, personalities }) => {
+const DebateHeader = ({ claim, title, personalities, userRole }) => {
     const [personalitiesArray, setPersonalitiesArray] = useState(personalities);
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
@@ -23,7 +25,11 @@ const DebateHeader = ({ title, personalities }) => {
             Promise.all(
                 personalities.map(async (p) => {
                     if (p && p._id) {
-                        return personalityApi.getPersonality(p?._id, {}, t);
+                        return personalityApi.getPersonality(
+                            p?._id,
+                            { nameSpace },
+                            t
+                        );
                     } else {
                         throw Error;
                     }
@@ -36,22 +42,28 @@ const DebateHeader = ({ title, personalities }) => {
         }
     }, [state, personalities]);
 
+    const baseHref = `/${
+        nameSpace !== NameSpaceEnum.Main ? `${nameSpace}/` : ""
+    }`;
+    const href = `${baseHref}claim/${claim?.claimId}/debate/edit`;
+
     const { vw } = useAppSelector((state) => state);
     return (
-        <Row
+        <Grid
+            container
             className="home-header-container"
-            justify="center"
             style={{
                 paddingTop: "32px",
-                backgroundColor: colors.lightGray,
+                backgroundColor: colors.lightNeutral,
+                justifyContent: "center",
             }}
         >
             <div
                 style={{
                     backgroundColor:
                         nameSpace === NameSpaceEnum.Main
-                            ? colors.bluePrimary
-                            : colors.blueSecondary,
+                            ? colors.primary
+                            : colors.secondary,
                     color: colors.white,
                     width: vw?.sm ? "100%" : "55%",
                     justifyContent: "space-between",
@@ -62,29 +74,49 @@ const DebateHeader = ({ title, personalities }) => {
                     gap: "2vw",
                 }}
             >
-                <Title
+                <Typography
                     style={{
                         color: colors.white,
                         margin: 0,
+                        fontWeight: 700,
                         fontSize: vw?.sm || vw?.xs ? "25px" : "38px",
                     }}
                 >
                     {title}
-                </Title>
+                </Typography>
             </div>
-            <Row
+            {userRole === Roles.Admin && claim?.claimId ? (
+                <AletheiaButton
+                    type={ButtonType.blue}
+                    href={href}
+                    style={{
+                        margin: 20,
+                        marginRight: vw?.lg && vw?.md && vw?.sm ? 0 : 160,
+                    }}
+                >
+                    {t("debates:openEditDebateMode")}{" "}
+                    <EditOutlined
+                        fontSize="small"
+                        style={{ margin: "0 0 5 5" }}
+                    />
+                </AletheiaButton>
+            ) : null}
+            <Grid
+                container
                 style={{
                     justifyContent: "space-evenly",
                 }}
             >
                 {personalitiesArray
                     ? personalitiesArray.map((p, index) => (
-                          <Col
+                          <Grid
+                              item
                               style={{
                                   display: "flex",
-                                  height: "100%",
-                                  padding: "30px 0px",
+                                  justifyContent: "center",
+                                  alignItems: "flex-start",
                                   width: "40%",
+                                  padding: "32px 0",
                               }}
                               key={p?._id || index}
                           >
@@ -93,15 +125,20 @@ const DebateHeader = ({ title, personalities }) => {
                                   header={true}
                                   fullWidth={true}
                                   hoistAvatar={true}
+                                  centralizedInfo={true}
                                   style={{
+                                      display: "flex",
                                       justifyContent: "center",
+                                      textAlign: "center",
+                                      width: "100%",
+                                      padding: "20px",
                                   }}
                               />
-                          </Col>
+                          </Grid>
                       ))
                     : null}
-            </Row>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 

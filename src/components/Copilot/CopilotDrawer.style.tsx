@@ -8,12 +8,13 @@ const CopilotDrawerStyled = styled(Drawer)`
     zindex: 999999;
     max-height: 100vh;
     overflow: hidden;
+    position: absolute;
 
     & .MuiDrawer-paper {
         width: ${(props) => props.width};
         height: ${(props) => props.height};
         padding: 32px 16px 16px 16px;
-        background: ${colors.lightGraySecondary};
+        background: ${colors.lightNeutralSecondary};
     }
 
     .footer {

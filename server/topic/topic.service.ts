@@ -4,8 +4,10 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Topic, TopicDocument } from "./schemas/topic.schema";
 import slugify from "slugify";
 import { SentenceService } from "../claim/types/sentence/sentence.service";
-import { ContentModelEnum } from "../types/enums";
+import { ContentModelEnum, ReviewTaskTypeEnum } from "../types/enums";
 import { ImageService } from "../claim/types/image/image.service";
+import { VerificationRequestService } from "../verification-request/verification-request.service";
+import { WikidataService } from "../wikidata/wikidata.service";
 
 @Injectable()
 export class TopicService {
@@ -13,20 +15,32 @@ export class TopicService {
         @InjectModel(Topic.name)
         private TopicModel: Model<TopicDocument>,
         private sentenceService: SentenceService,
-        private imageService: ImageService
+        private imageService: ImageService,
+        private verificationRequestService: VerificationRequestService,
+        private wikidataService: WikidataService
     ) {}
+
+    async getWikidataEntities(regex, language) {
+        return await this.wikidataService.queryWikibaseEntities(
+            regex,
+            language
+        );
+    }
+
+    async searchTopics(query: string, language = "pt"): Promise<Topic[]> {
+        return this.TopicModel.find({
+            name: { $regex: query, $options: "i" },
+            language,
+        });
+    }
 
     /**
      *
      * @param getTopics options to fetch topics
-     * @returns return all topics that match to topicName from input
+     * @returns return all topics from wikidata database that match to topicName from input
      */
-    async findAll(getTopics): Promise<Topic[]> {
-        const { topicName } = getTopics;
-        return this.TopicModel.aggregate([
-            { $match: { name: { $regex: topicName, $options: "i" } } },
-            { $project: { _id: 1, name: 1 } },
-        ]);
+    async findAll(getTopics, language = "pt"): Promise<Topic[]> {
+        return this.getWikidataEntities(getTopics.topicName, language);
     }
 
     /**
@@ -41,30 +55,55 @@ export class TopicService {
             contentModel,
             topics,
             data_hash,
+            reviewTaskType,
         }: {
             contentModel: ContentModelEnum;
-            topics: string[];
+            topics: { label: string; value: string }[] | string[];
             data_hash: string;
+            reviewTaskType: ReviewTaskTypeEnum;
         },
         language: string = "pt"
     ) {
         const createdTopics = await Promise.all(
             topics.map(async (topic) => {
-                const slug = slugify(topic, { lower: true, strict: true });
+                const slug = slugify(topic?.label || topic, {
+                    lower: true,
+                    strict: true,
+                });
                 const findedTopic = await this.getBySlug(slug);
 
                 if (findedTopic) {
-                    return findedTopic.slug;
+                    return findedTopic?.wikidataId
+                        ? {
+                              label: findedTopic?.name,
+                              value: findedTopic?.wikidataId,
+                          }
+                        : findedTopic.slug;
                 } else {
                     const newTopic = {
-                        name: topic,
+                        name: topic?.label || topic,
+                        wikidataId: topic?.value,
                         slug,
                         language,
                     };
-                    return (await new this.TopicModel(newTopic).save()).slug;
+                    const createdTopic = await new this.TopicModel(
+                        newTopic
+                    ).save();
+
+                    return {
+                        label: createdTopic.name,
+                        value: createdTopic?.wikidataId,
+                    };
                 }
             })
         );
+
+        if (reviewTaskType === ReviewTaskTypeEnum.VerificationRequest) {
+            return this.verificationRequestService.updateVerificationRequestWithTopics(
+                createdTopics,
+                data_hash
+            );
+        }
 
         return contentModel === ContentModelEnum.Image
             ? this.imageService.updateImageWithTopics(createdTopics, data_hash)

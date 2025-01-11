@@ -1,11 +1,11 @@
 import React from "react";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import { Status } from "../../../types/enums";
 import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import colors from "../../../styles/colors";
 
-const HeaderStatusStyle = styled(Col)`
+const HeaderStatusStyle = styled(Grid)`
     ::before {
         content: "";
         display: inline-block;
@@ -18,13 +18,13 @@ const HeaderStatusStyle = styled(Col)`
     }
 `;
 
-const HeaderUserStatus = ({ status }) => {
+const HeaderUserStatus = ({ status, style }) => {
     const { t } = useTranslation();
     const statusColor =
         status === Status.Active ? colors.active : colors.inactive;
 
     return (
-        <HeaderStatusStyle statuscolor={statusColor}>
+        <HeaderStatusStyle statuscolor={statusColor} style={{ ...style }}>
             {t(`admin:user-status-${status}`)}
         </HeaderStatusStyle>
     );

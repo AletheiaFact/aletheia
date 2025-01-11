@@ -5,12 +5,19 @@ import { useTranslation } from "next-i18next";
 import CopilotDrawerStyled from "./CopilotDrawer.style";
 import copilotApi from "../../api/copilotApi";
 import { SenderEnum } from "../../types/enums";
-import CopilotCollapseDrawerButton from "./CopilotCollapseDrawerButton";
 import { Claim } from "../../types/Claim";
 import { Report } from "../../types/Report";
-import { ChatMessage, ChatResponse, MessageContext } from "../../types/Copilot";
+import {
+    ChatMessage,
+    ChatMessageType,
+    ChatResponse,
+    MessageContext,
+} from "../../types/Copilot";
 import { calculatePosition } from "./utils/calculatePositions";
 import Loading from "../Loading";
+import { AnyExtension, RemirrorManager } from "remirror";
+import { ReactExtensions } from "@remirror/react";
+import CopilotToolbar from "./CopilotToolbar";
 const CopilotConversation = React.lazy(() => import("./CopilotConversation"));
 
 interface Size {
@@ -21,9 +28,10 @@ interface Size {
 interface CopilotDrawerProps {
     claim: Claim;
     sentence: string;
+    manager: RemirrorManager<ReactExtensions<AnyExtension>>;
 }
 
-const CopilotDrawer = ({ claim, sentence }: CopilotDrawerProps) => {
+const CopilotDrawer = ({ manager, claim, sentence }: CopilotDrawerProps) => {
     const { t } = useTranslation();
     const { vw, copilotDrawerCollapsed } = useAppSelector((state) => ({
         vw: state?.vw,
@@ -33,27 +41,36 @@ const CopilotDrawer = ({ claim, sentence }: CopilotDrawerProps) => {
                 : true,
     }));
 
+    const CHAT_DEFAULT_CONVERSATION = [
+        {
+            type: ChatMessageType.info,
+            content: t("copilotChatBot:chatBotGreetings"),
+            sender: SenderEnum.Assistant,
+        },
+    ];
+
     const [open, setOpen] = useState<boolean>(!copilotDrawerCollapsed);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [editorReport, setEditorReport] = useState<Report | null>(null);
     const [size, setSize] = useState<Size>({ width: "350px", height: "100%" });
+    const [messages, setMessages] = useState<ChatMessage[]>(
+        CHAT_DEFAULT_CONVERSATION
+    );
     const { topPosition, rightPosition, rotate } = useMemo(
         () => calculatePosition(open, vw),
         [open, vw.sm, vw.md]
     );
-    const [messages, setMessages] = useState<ChatMessage[]>([
-        {
-            content: t("copilotChatBot:chatBotGreetings"),
-            sender: SenderEnum.Assistant,
-        },
-    ]);
+
+    const handleClearConversation = () => {
+        setMessages(CHAT_DEFAULT_CONVERSATION);
+    };
 
     const context: MessageContext = useMemo(
         () => ({
-            claimDate: claim.date,
+            claimDate: claim?.date,
             sentence: sentence,
             personalityName: claim?.personalities[0]?.name || null,
-            claimTitle: claim.title,
+            claimTitle: claim?.title,
         }),
         [claim, sentence]
     );
@@ -71,9 +88,14 @@ const CopilotDrawer = ({ claim, sentence }: CopilotDrawerProps) => {
                 context: context,
             })) as { data: ChatResponse };
             setEditorReport(editorReport);
-            addNewMessage({ sender, content });
-        } catch (e) {
-            console.error({ Error: e });
+            addNewMessage({ type: ChatMessageType.info, sender, content });
+        } catch (error) {
+            addNewMessage({
+                type: ChatMessageType.error,
+                sender: SenderEnum.Assistant,
+                content: t("copilotChatBot:copilotChatBotErrorMessage"),
+            });
+            console.error({ Error: error });
         } finally {
             setIsLoading(false);
         }
@@ -91,42 +113,31 @@ const CopilotDrawer = ({ claim, sentence }: CopilotDrawerProps) => {
     }, [open, vw?.sm]);
 
     useEffect(() => {
-        if (!copilotDrawerCollapsed) {
-            setOpen(true);
-        }
-    }, [vw?.md, copilotDrawerCollapsed]);
+        setOpen(!copilotDrawerCollapsed);
+    }, [copilotDrawerCollapsed]);
 
     return (
-        <>
-            {vw?.md && (
-                <CopilotCollapseDrawerButton
-                    handleClick={() => setOpen(!open)}
-                    rightPosition={rightPosition}
-                    rotate={rotate}
-                    topPosition={topPosition}
-                    aria-expanded={open}
+        <CopilotDrawerStyled
+            variant="persistent"
+            anchor={vw?.sm ? "bottom" : "right"}
+            open={open}
+            width={size.width}
+            height={size.height}
+            aria-hidden={!open}
+        >
+            <CopilotToolbar handleClearConversation={handleClearConversation} />
+            <Suspense fallback={<Loading />}>
+                <CopilotConversation
+                    manager={manager}
+                    handleSendMessage={handleSendMessage}
+                    messages={messages}
+                    isLoading={isLoading}
+                    editorReport={editorReport}
                 />
-            )}
-            <CopilotDrawerStyled
-                variant="persistent"
-                anchor={vw?.sm ? "bottom" : "right"}
-                open={open}
-                width={size.width}
-                height={size.height}
-                aria-hidden={!open}
-            >
-                <Suspense fallback={<Loading />}>
-                    <CopilotConversation
-                        handleSendMessage={handleSendMessage}
-                        messages={messages}
-                        isLoading={isLoading}
-                        editorReport={editorReport}
-                    />
-                </Suspense>
-                <CopilotForm handleSendMessage={handleSendMessage} />
-                <span className="footer">{t("copilotChatBot:footer")}</span>
-            </CopilotDrawerStyled>
-        </>
+            </Suspense>
+            <CopilotForm handleSendMessage={handleSendMessage} />
+            <span className="footer">{t("copilotChatBot:footer")}</span>
+        </CopilotDrawerStyled>
     );
 };
 

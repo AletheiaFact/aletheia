@@ -25,9 +25,7 @@ const SelectInput = styled(Select)`
 
 const SwitchInputStyle = styled(Switch)`
     background-color: ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main
-            ? colors.bluePrimary
-            : colors.blueSecondary};
+        namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
 `;
 
 const SelectLanguage = (props: { defaultLanguage; dataCy }) => {

@@ -33,10 +33,10 @@ const SourceDialog = ({
     return (
         <div
             style={{
-                background: colors.lightGray,
+                background: colors.lightNeutral,
                 padding: "10px",
                 borderRadius: "8px",
-                boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.25)",
+                boxShadow: `0px 0px 15px ${colors.shadow}`,
             }}
         >
             <SourceDialogHeader onCloseModal={onCloseModal} />

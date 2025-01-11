@@ -4,6 +4,7 @@ import { Personality } from "../../personality/mongo/schemas/personality.schema"
 import { ClaimRevision } from "../claim-revision/schema/claim-revision.schema";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import { Group } from "../../group/schemas/group.schema";
 
 export type ClaimDocument = Claim & mongoose.Document & { revisions: any };
 
@@ -35,6 +36,13 @@ export class Claim {
 
     @Prop({ default: NameSpaceEnum.Main, required: true })
     nameSpace: string;
+
+    @Prop({
+        type: mongoose.Types.ObjectId,
+        required: false,
+        ref: "Group",
+    })
+    group: Group;
 }
 const ClaimSchemaRaw = SchemaFactory.createForClass(Claim);
 

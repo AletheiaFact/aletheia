@@ -18,11 +18,11 @@ const CopilotConversationSuggestionStyled = styled.div`
         padding: 16px 8px;
         cursor: pointer;
         border: none;
-        border-top: 1px solid #ccc;
+        border-top: 1px solid ${colors.neutralTertiary};
         background: ${colors.white};
         border-radius: 0 0 10px 10px;
         text-align: center;
-        color: ${colors.lightBlueMain};
+        color: ${colors.lightPrimary};
         font-weight: bold;
         font-size: 14px;
     }

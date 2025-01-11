@@ -8,7 +8,7 @@ const ClaimParagraph = ({ paragraph, showHighlights, handleSentenceClick }) => {
     const dispatch = useDispatch();
     const sentences = paragraph.content;
     return (
-        <p id={paragraph.props.id}>
+        <p id={paragraph.props.id} style={{ wordBreak: "break-all" }}>
             {sentences.map((sentence) => (
                 <ClaimSentence
                     handleSentenceClick={() => {

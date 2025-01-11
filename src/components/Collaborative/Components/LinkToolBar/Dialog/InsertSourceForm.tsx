@@ -1,7 +1,7 @@
 import React from "react";
 import AletheiaInput from "../../../../AletheiaInput";
 import AletheiaButton from "../../../../Button";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
 import colors from "../../../../../styles/colors";
 
 const InsertSourceForm = ({
@@ -44,7 +44,7 @@ const InsertSourceForm = ({
                     }}
                     data-cy="testClaimReviewSourcesButton"
                 >
-                    <PlusOutlined />
+                    <AddOutlined fontSize="small" />
                 </AletheiaButton>
                 {activeLink && (
                     <AletheiaButton
@@ -59,12 +59,12 @@ const InsertSourceForm = ({
                             boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.4)",
                         }}
                     >
-                        <DeleteOutlined />
+                        <DeleteOutlined fontSize="small" />
                     </AletheiaButton>
                 )}
             </div>
             {error && (
-                <span style={{ fontSize: 14, color: colors.redText }}>
+                <span style={{ fontSize: 14, color: colors.error }}>
                     {error}
                 </span>
             )}

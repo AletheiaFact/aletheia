@@ -1,5 +1,5 @@
-import { LeftCircleFilled } from "@ant-design/icons";
-import { Col } from "antd";
+import { ArrowCircleLeft } from "@mui/icons-material";
+import { Grid } from "@mui/material";
 import React, { useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -15,7 +15,7 @@ import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import { useRouter } from "next/router";
 
-const OverlayCol = styled(Col)`
+const OverlayGrid = styled(Grid)`
     .ant-input-lg {
         font-weight: 600;
     }
@@ -49,8 +49,8 @@ const OverlayCol = styled(Col)`
     .overlay {
         background-color: ${({ namespace }) =>
             namespace === NameSpaceEnum.Main
-                ? colors.bluePrimary
-                : colors.blueSecondary};
+                ? colors.primary
+                : colors.secondary};
         position: fixed;
         z-index: 3;
         width: 100vw;
@@ -78,7 +78,7 @@ const SearchOverlay = () => {
     }, [nameSpace]);
 
     return (
-        <OverlayCol namespace={nameSpaceProp} xs={1} sm={8} md={10}>
+        <OverlayGrid container namespace={nameSpaceProp} xs={0.5} sm={4} md={5}>
             {!router.pathname.includes("/home-page") && (
                 <div
                     className={`input-container ${
@@ -91,7 +91,7 @@ const SearchOverlay = () => {
                                 dispatch(actions.closeResultsOverlay());
                             }}
                         >
-                            <LeftCircleFilled
+                            <ArrowCircleLeft
                                 style={{
                                     fontSize: "24px",
                                 }}
@@ -101,7 +101,7 @@ const SearchOverlay = () => {
                     {(isOpen || !vw?.xs) && <OverlaySearchInput />}
                 </div>
             )}
-        </OverlayCol>
+        </OverlayGrid>
     );
 };
 

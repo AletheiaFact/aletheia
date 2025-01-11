@@ -1,4 +1,4 @@
-import api from "../../api/ClaimReviewTaskApi";
+import api from "../../api/reviewTaskApi";
 import { createMachine, interpret } from "xstate";
 import { ReviewTaskMachineContextType } from "./context";
 import { ReviewTaskMachineEvents } from "./events";
@@ -33,60 +33,66 @@ export const transitionHandler = (state) => {
         resetIsLoading,
         currentUserId,
         nameSpace,
+        reviewTaskType,
+        target,
     } = state.event;
     const event = state.event.type;
+    const { value } = state;
+    const { reviewData, review } = state.context;
+    const nextState = typeof value !== "string" ? Object.keys(value)[0] : value;
 
-    const nextState =
-        typeof state.value !== "string"
-            ? Object.keys(state.value)[0]
-            : state.value;
-
-    if (
+    const shouldNotUpdateReviewTask =
         event === Events.reject ||
         event === Events.selectedCrossChecking ||
         event === Events.selectedReview ||
-        event === Events.reAssignUser
-    ) {
-        setFormAndEvents(nextState);
-    } else if (event !== Events.init) {
-        api.createClaimReviewTask(
-            {
-                data_hash,
-                reportModel,
-                machine: {
-                    context: {
-                        reviewData: state.context.reviewData,
-                        claimReview: state.context.claimReview,
-                    },
-                    value: state.value,
-                },
-                recaptcha: recaptchaString,
-                nameSpace,
-            },
-            t,
-            event
-        )
-            .then(() => {
-                return event === Events.goback
-                    ? setFormAndEvents(nextState)
-                    : setFormAndEvents(
-                          event,
-                          isSameLabel(state.context, state.event)
-                      );
-            })
-            .catch((e) => {
-                // TODO: Track errors with Sentry
-            })
-            .finally(() => resetIsLoading());
+        event === Events.reAssignUser;
+
+    if (event === Events.init || event === Events.viewPreview) {
+        return;
     }
 
-    sendReviewNotifications(
+    if (shouldNotUpdateReviewTask) {
+        return setFormAndEvents(nextState);
+    }
+
+    const reviewTask = {
         data_hash,
-        event,
-        state.context.reviewData,
-        currentUserId,
-        t
-    );
+        reportModel,
+        machine: {
+            context: {
+                reviewData,
+                review,
+            },
+            value: value,
+        },
+        recaptcha: recaptchaString,
+        nameSpace,
+        reviewTaskType,
+        target,
+    };
+
+    api.createReviewTask(reviewTask, t, event)
+        .then(() => {
+            if (
+                reportModel === ReportModelEnum.Request &&
+                value === "published"
+            ) {
+                window.location.href = `/claim/create?verificationRequest=${target}`;
+            }
+
+            return event === Events.goback
+                ? setFormAndEvents(nextState)
+                : setFormAndEvents(
+                      event,
+                      isSameLabel(state.context, state.event)
+                  );
+        })
+        .catch((e) => {
+            // TODO: Track errors with Sentry
+        })
+        .finally(() => resetIsLoading());
+
+    sendReviewNotifications(data_hash, event, reviewData, currentUserId, t);
 };
 
 export const createNewMachineService = (

@@ -1,6 +1,7 @@
 import ReviewColors from "../constants/reviewColors";
 import React from "react";
 import { useTranslation } from "next-i18next";
+import colors from "../styles/colors";
 
 const ClassificationText = (props: {
     classification: string;
@@ -11,7 +12,7 @@ const ClassificationText = (props: {
     return (
         <span
             style={{
-                color: ReviewColors[props.classification] || "#000",
+                color: ReviewColors[props.classification] || colors.black,
                 fontWeight: "bold",
                 textTransform: "uppercase",
                 ...props.style,
