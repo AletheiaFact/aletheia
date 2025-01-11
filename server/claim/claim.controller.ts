@@ -142,7 +142,7 @@ export class ClaimController {
                         : path,
             };
         } catch (error) {
-            return error;
+            throw error;
         }
     }
 
