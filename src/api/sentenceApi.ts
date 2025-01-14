@@ -1,5 +1,5 @@
 import axios from "axios";
-import global from "../components/Messages";
+import { MessageManager } from "../components/Messages";
 
 const request = axios.create({
     withCredentials: true,
@@ -21,11 +21,11 @@ const deleteSentenceTopic = (topics, data_hash, t) => {
     return request
         .put(`/${data_hash}`, topics)
         .then((response) => {
-            global.showMessage("success", t("topics:deleteTopics"));
+            MessageManager.showMessage("success", t("topics:deleteTopics"));
             return response.data;
         })
         .catch((err) => {
-            global.showMessage("error", t("topics:deleteTopicsError"));
+            MessageManager.showMessage("error", t("topics:deleteTopicsError"));
             throw err;
         });
 };

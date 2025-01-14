@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import { UpdateSettingsFlowWithTotpMethod as ValuesType } from "@ory/client";
 import { Form } from "antd";
-import global from "../Messages";
+import { MessageManager } from "../Messages";
 import { Grid, Typography } from "@mui/material"
 import { Trans, useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
@@ -68,7 +68,7 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                global.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
+                MessageManager.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
                 setIsLoading(false);
             });
     };
@@ -84,7 +84,7 @@ export const Totp = ({ flow, setFlow }) => {
             })
             .then(() => setIsLoading(false))
             .catch(() => {
-                global.showMessage("error", `${t("profile:totpUnLinkErrorMessage")}`);
+                MessageManager.showMessage("error", `${t("profile:totpUnLinkErrorMessage")}`);
                 setIsLoading(false);
             });
     };

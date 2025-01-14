@@ -4,7 +4,7 @@ import {
     UpdateLoginFlowWithPasswordMethod as ValuesType,
 } from "@ory/client";
 import Grid from "@mui/material/Grid";
-import global from "../Messages";
+import { MessageManager } from "../Messages";
 import { AxiosError } from "axios";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -74,7 +74,7 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
                 if (err.response?.status === 400) {
                     // Yup, it is!
                     setFlow(err.response?.data);
-                    return global.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
+                    return MessageManager.showMessage("error", `${t("profile:totpIncorectCodeMessage")}`);
                 }
 
                 return Promise.reject(err);
@@ -143,9 +143,9 @@ const LoginView = ({ isSignUp = false, shouldGoBack = false }) => {
 
     const onFinishFailed = (errorInfo) => {
         if (typeof errorInfo === "string") {
-            global.showMessage("error", errorInfo)
+            MessageManager.showMessage("error", errorInfo)
         } else {
-            global.showMessage("error", `${t("login:loginFailedMessage")}`);
+            MessageManager.showMessage("error", `${t("login:loginFailedMessage")}`);
         }
         setIsLoading(false);
     };

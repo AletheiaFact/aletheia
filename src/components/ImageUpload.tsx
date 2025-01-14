@@ -2,7 +2,7 @@
 import { FileUploadOutlined } from "@mui/icons-material";
 import { Upload } from "antd";
 import { Grid, Typography } from "@mui/material";
-import global from "../components/Messages";
+import { MessageManager } from "../components/Messages";
 import { RcFile, UploadChangeParam, UploadProps } from "antd/lib/upload";
 import { useTranslation } from "next-i18next";
 import React, { useState } from "react";
@@ -65,7 +65,7 @@ const ImageUpload = ({
         );
 
         if (!isAllowedFormat) {
-            global.showMessage("error",
+            MessageManager.showMessage("error",
                 t("claimForm:fileTypeError", {
                     types: ALLOWED_FORMATS.join("/"),
                 })
@@ -73,7 +73,7 @@ const ImageUpload = ({
         }
         const isAllowedSize = file.size < MAX_SIZE;
         if (!isAllowedSize) {
-            global.showMessage("error",
+            MessageManager.showMessage("error",
                 t("claimForm:fileSizeError", { size: `${ALLOWED_MB}MB` })
             );
         }

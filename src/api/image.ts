@@ -1,5 +1,5 @@
 import axios from "axios";
-import global from "../components/Messages";
+import { MessageManager } from "../components/Messages";
 
 const request = axios.create({
     withCredentials: true,
@@ -24,7 +24,7 @@ const uploadImage = (files, t) => {
             return response.data;
         })
         .catch((err) => {
-            global.showMessage("error", t(`claim:${err.response.data.message}`));
+            MessageManager.showMessage("error", t(`claim:${err.response.data.message}`));
             throw err;
         });
 };
@@ -33,11 +33,11 @@ const createClaimTypeImage = (file) => {
     return request
         .post("/create", file)
         .then((response) => {
-            global.showMessage("success", "upload success");
+            MessageManager.showMessage("success", "upload success");
             return response.data;
         })
         .catch((err) => {
-            global.showMessage("error", "upload failed");
+            MessageManager.showMessage("error", "upload failed");
             throw err;
         });
 };

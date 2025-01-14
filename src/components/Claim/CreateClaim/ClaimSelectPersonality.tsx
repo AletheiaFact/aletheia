@@ -1,5 +1,5 @@
 import { Grid, Card, CardActions, CardContent } from "@mui/material";
-import global from "../../../components/Messages";
+import { MessageManager } from "../../../components/Messages";
 import { useAtom } from "jotai";
 import { useTranslation } from "next-i18next";
 
@@ -34,7 +34,7 @@ const ClaimSelectPersonality = () => {
 
     const addPersonality = (personality) => {
         if (claimData.personalities.some((p) => p._id === personality._id)) {
-            global.showMessage("info", t("claimForm:personalityAlreadyAdded"));
+            MessageManager.showMessage("info", t("claimForm:personalityAlreadyAdded"));
             return;
         }
         send({
@@ -50,7 +50,7 @@ const ClaimSelectPersonality = () => {
     const continueWithPersonality = () => {
         if (claimData.personalities.length !== 0) {
             send(CreateClaimEvents.savePersonality);
-        } else global.showMessage("warning", t("claimForm:selectPersonalityText"));
+        } else MessageManager.showMessage("warning", t("claimForm:selectPersonalityText"));
     };
 
     const continueWithoutPersonality = () => {

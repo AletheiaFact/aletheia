@@ -1,5 +1,5 @@
 import axios from "axios";
-import global from "../components/Messages";
+import { MessageManager } from "../components/Messages";
 import { NameSpaceEnum } from "../types/Namespace";
 
 const request = axios.create({
@@ -53,7 +53,7 @@ const getById = (id, t, params = {}) => {
             return response.data;
         })
         .catch(() => {
-            global.showMessage("error", `${t("claim:errorWhileFetching")}`)
+            MessageManager.showMessage("error", `${t("claim:errorWhileFetching")}`)
         });
 };
 
@@ -62,7 +62,7 @@ const saveSpeech = (t, claim = {}) => {
         .post("/", claim)
         .then((response) => {
             const { title } = response.data;
-            global.showMessage("success", 
+            MessageManager.showMessage("success", 
                 `"${title}" ${t("claimForm:successCreateMessage")}`
             );
             return response.data;
@@ -73,7 +73,7 @@ const saveSpeech = (t, claim = {}) => {
                 // TODO: Track errors with Sentry
             }
             const { data } = response;
-            global.showMessage("error", 
+            MessageManager.showMessage("error", 
                 data && data.message
                     ? data.message
                     : t("claimForm:errorCreateMessage")
@@ -86,14 +86,14 @@ const saveImage = (t, claimImage = {}) => {
         .post("/image", claimImage)
         .then((response) => {
             const { title } = response.data;
-            global.showMessage("success",
+            MessageManager.showMessage("success",
                 `"${title}" ${t("claimForm:successCreateMessage")}`
             );
             return response.data;
         })
         .catch((err) => {
             const response = err && err.response;
-            global.showMessage("error",
+            MessageManager.showMessage("error",
                 response?.data && response?.data.message
                     ? response?.data.message
                     : t("claimForm:errorCreateMessage")
@@ -106,7 +106,7 @@ const saveDebate = (t, debate = {}) => {
         .post("/debate", debate)
         .then((response) => {
             const { title } = response.data;
-            global.showMessage("success",
+            MessageManager.showMessage("success",
                 `"${title}" ${t("claimForm:successCreateMessage")}`
             );
             return response.data;
@@ -125,7 +125,7 @@ const saveUnattributed = (t, unattributed = {}) => {
         .post("/unattributed", unattributed)
         .then((response) => {
             const { title } = response.data;
-            global.showMessage("success",
+            MessageManager.showMessage("success",
                 `"${title}" ${t("claimForm:successCreateMessage")}`
             );
             return response.data;
@@ -155,7 +155,7 @@ const updateDebate = (
                 // TODO: Track errors with Sentry
             }
             const { data } = response;
-            global.showMessage("error",
+            MessageManager.showMessage("error",
                 data && data.message
                     ? data.message
                     : t("claimForm:errorUpdateMessage")
@@ -167,11 +167,11 @@ const deleteClaim = (id: string, t: any) => {
     return request
         .delete(`/${id}`)
         .then(() => {
-            global.showMessage("success", t("claim:deleteSuccess"));
+            MessageManager.showMessage("success", t("claim:deleteSuccess"));
         })
         .catch((err) => {
             console.error(err);
-            global.showMessage("error", t("claim:deleteError"));
+            MessageManager.showMessage("error", t("claim:deleteError"));
         });
 };
 
@@ -189,13 +189,13 @@ const updateClaimHiddenStatus = (
             description,
         })
         .then(() => {
-            global.showMessage("success",
+            MessageManager.showMessage("success",
                 t(`claim:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
         })
         .catch((err) => {
             console.error(err);
-            global.showMessage("error", t(`claim:${isHidden ? "hideError" : "unhideError"}`));
+            MessageManager.showMessage("error", t(`claim:${isHidden ? "hideError" : "unhideError"}`));
         });
 };
 

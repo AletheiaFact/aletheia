@@ -13,7 +13,7 @@ class GlobalMessageManager extends EventEmitter {
   }
 }
 
-const global = new GlobalMessageManager();
+export const MessageManager = new GlobalMessageManager();
 
 export const GlobalMessage: React.FC = () => {
   const [message, setMessage] = useState<MessageType | null>(null);
@@ -24,10 +24,10 @@ export const GlobalMessage: React.FC = () => {
       setTimeout(() => setMessage(null), 3000);
     };
 
-    global.on("showMessage", handleShowMessage);
+    MessageManager.on("showMessage", handleShowMessage);
 
     return () => {
-      global.off("showMessage", handleShowMessage);
+      MessageManager.off("showMessage", handleShowMessage);
     };
   }, []);
 
@@ -46,5 +46,3 @@ export const GlobalMessage: React.FC = () => {
   );
 };
 
-
-export default global;

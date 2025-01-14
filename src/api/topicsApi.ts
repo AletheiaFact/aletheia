@@ -1,5 +1,5 @@
 import axios from "axios";
-import global from "../components/Messages";
+import { MessageManager } from "../components/Messages";
 import { ActionTypes } from "../store/types";
 
 interface IGetTopicsOptions {
@@ -26,7 +26,7 @@ const searchTopics = ({ query, dispatch, t }) => {
             return topicResults;
         })
         .catch((e) => {
-            global.showMessage("error", t("topics:getTopicsFailed"));
+            MessageManager.showMessage("error", t("topics:getTopicsFailed"));
             return [];
         });
 };
@@ -58,11 +58,11 @@ const createTopics = (params, t) => {
     return request
         .post("/", { ...params })
         .then((response) => {
-            global.showMessage("success", t("topics:createTopicsSuccess"));
+            MessageManager.showMessage("success", t("topics:createTopicsSuccess"));
             return response.data;
         })
         .catch((err) => {
-            global.showMessage("error", t("topics:createTopicsError"));
+            MessageManager.showMessage("error", t("topics:createTopicsError"));
             throw err;
         });
 };

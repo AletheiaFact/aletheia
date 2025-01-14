@@ -1,4 +1,4 @@
-import global from "../components/Messages";
+import { MessageManager } from "../components/Messages";
 import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
 
@@ -50,13 +50,13 @@ const updateClaimReviewHiddenStatus = (
     return request
         .put(`/review/${id}`, { isHidden, description, recaptcha })
         .then((response) => {
-            global.showMessage("success", 
+            MessageManager.showMessage("success", 
                 t(`claimReview:${isHidden ? "hideSuccess" : "unhideSuccess"}`)
             );
             return response.data;
         })
         .catch((err) => {
-           global.showMessage("error",
+           MessageManager.showMessage("error",
                 t(`claimReview:${isHidden ? "hideError" : "unhideError"}`)
             );
             throw err;
@@ -67,11 +67,11 @@ const deleteClaimReview = (id: string, t: any) => {
     return request
         .delete(`/review/${id}`)
         .then(() => {
-            global.showMessage("success", t("claim:deleteSuccess"));
+            MessageManager.showMessage("success", t("claim:deleteSuccess"));
         })
         .catch((err) => {
             console.error(err);
-           global.showMessage("error",t("claim:deleteError"));
+           MessageManager.showMessage("error",t("claim:deleteError"));
         });
 };
 
