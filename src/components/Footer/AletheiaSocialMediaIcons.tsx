@@ -9,7 +9,7 @@ import { Grid } from "@mui/material";
 const AletheiaSocialMediaIcons = () => {
     const [nameSpace] = useAtom(currentNameSpace);
     return (
-        <Grid container xs={12}
+        <Grid container item xs={12}
             style={{justifyContent:"center"}}>
             <SocialIcon
                 url="https://www.instagram.com/aletheiafact"
