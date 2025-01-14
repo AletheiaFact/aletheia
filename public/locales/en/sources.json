@@ -4,5 +4,6 @@
     "sourceCardButton": "Access the source",
     "sourceCreateCTAButton": "Create source",
     "sourcesCreateSuccess": "Source created successfully",
-    "sourcesCreateError": "Error while creating the source"
+    "sourcesCreateError": "Error while creating the source",
+    "sourcesErrorFetching": "Error fetching source"
 }

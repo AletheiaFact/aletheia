@@ -1,4 +1,4 @@
-import { message } from "antd";
+import { MessageManager } from "../components/Messages";
 import axios from "axios";
 import { NameSpaceEnum } from "../types/Namespace";
 
@@ -48,11 +48,11 @@ const createReviewTask = (params, t, type) => {
     return request
         .post("/", { ...params })
         .then((response) => {
-            message.success(t(`reviewTask:${type}_SUCCESS`));
+            MessageManager.showMessage("success", t(`reviewTask:${type}_SUCCESS`));
             return response.data;
         })
         .catch((err) => {
-            message.error(t(`reviewTask:${type}_ERROR`));
+            MessageManager.showMessage("error", t(`reviewTask:${type}_ERROR`));
             throw err;
         });
 };
@@ -61,7 +61,7 @@ const autoSaveDraft = (params, t) => {
     return request
         .put(`/${params.data_hash}`, { ...params })
         .then((response) => {
-            message.success(t(`reviewTask:SAVE_DRAFT_SUCCESS`));
+            MessageManager.showMessage("success", t(`reviewTask:SAVE_DRAFT_SUCCESS`));
             return response.data;
         })
         .catch((err) => {
