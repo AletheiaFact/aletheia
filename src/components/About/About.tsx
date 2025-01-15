@@ -68,19 +68,19 @@ const About = () => {
                 <Typography variant="h3">{t("about:title")}</Typography>
             </Box>
             <Box sx={paragraphStyle}>
-                <Typography>{t("about:intro")}</Typography>
+                <p>{t("about:intro")}</p>
             </Box>
             <Box sx={{ textAlign: "center", width: "100%" }}>
                 <Typography variant="h3">{t("about:visionTitle")}</Typography>
             </Box>
             <Box sx={paragraphStyle}>
-                <Typography>{t("about:visionContent")}</Typography>
+                <p>{t("about:visionContent")}</p>
             </Box>
             <Box sx={{ textAlign: "center", width: "100%" }}>
                 <Typography variant="h3">{t("about:missionTitle")}</Typography>
             </Box>
             <Box sx={paragraphStyle}>
-                <Typography>{t("about:missionContent")}</Typography>
+                <p>{t("about:missionContent")}</p>
             </Box>
             <Box sx={{ textAlign: "center", width: "100%" }}>
                 <Typography variant="h3">{t("about:valuesTitle")}</Typography>
@@ -96,7 +96,7 @@ const About = () => {
                 <Typography variant="h3">{t("about:fullTextTitle")}</Typography>
             </Box>
             <Box sx={paragraphStyle}>
-                <Typography>
+                <p>
                     <Trans
                         i18nKey="about:firstParagraph"
                         components={[
@@ -114,10 +114,10 @@ const About = () => {
                             />,
                         ]}
                     />
-                </Typography>
+                </p>
             </Box>
             <Box sx={paragraphStyle}>
-                <Typography>
+                <p>
                     <Trans
                         i18nKey="about:secondParagraph"
                         components={[
@@ -135,17 +135,17 @@ const About = () => {
                             />,
                         ]}
                     />
-                </Typography>
+                </p>
             </Box>
             <Box sx={paragraphStyle}>
-                <Typography>
+                <p>
                     <Trans i18nKey="about:thirdParagraph" />
-                </Typography>
+                </p>
             </Box>
             <Box sx={paragraphStyle}>
-                <Typography>
+                <p>
                     <Trans i18nKey="about:forthParagraph" />
-                </Typography>
+                </p>
             </Box>
         </Box>
     );
