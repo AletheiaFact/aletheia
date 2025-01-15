@@ -1,4 +1,5 @@
-import { Avatar, Tooltip } from "antd";
+import { Avatar } from "@mui/material";
+import InfoTooltip from "../Claim/InfoTooltip";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useAtom } from "jotai";
@@ -16,17 +17,23 @@ const UserTag = ({ user }) => {
             : t("userTag:anonymousFactChecker");
     const firstLetter = userName[0];
     return (
-        <Tooltip title={userName} placement="top">
-            <Avatar
-                style={{
-                    backgroundColor: colors.secondary,
-                    verticalAlign: "middle",
-                }}
-                size="small"
-            >
-                {firstLetter}
-            </Avatar>
-        </Tooltip>
+        <InfoTooltip
+            useCustomStyle={false}
+            content={userName}
+            children={
+                <Avatar
+                    style={{
+                        backgroundColor: colors.secondary,
+                        verticalAlign: "middle",
+                        width: 24,
+                        height: 24,
+                        fontSize: 15
+                    }}
+                >
+                    {firstLetter}
+                </Avatar>
+            }
+        />
     );
 };
 

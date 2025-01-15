@@ -4,7 +4,9 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 import actions from "../../store/actions";
 import { useDispatch } from "react-redux";
-import SentencePopover from "./SentencePopover";
+import InfoTooltip from "./InfoTooltip";
+import { InfoOutlined, SecurityOutlined } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 const Sentence = styled.a`
     color: ${colors.primary};
@@ -25,6 +27,7 @@ const ClaimSentence = ({
     handleSentenceClick,
 }) => {
     let style = {};
+    const { t } = useTranslation();
     if (properties.classification && showHighlights) {
         style = {
             ...style,
@@ -37,6 +40,24 @@ const ClaimSentence = ({
         handleSentenceClick();
         dispatch(actions.openReviewDrawer());
     };
+
+    const tooltipContent = (
+        <span
+            style={{
+                color: colors.primary,
+                lineHeight: "20px",
+                fontSize: 14,
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                padding: 5
+            }}
+        >
+            <SecurityOutlined fontSize="small" />
+            {t("reviewTask:sentenceInfo")}
+        </span>
+    );
+
     return (
         <>
             <Sentence
@@ -59,7 +80,10 @@ const ClaimSentence = ({
                         padding: "0 4px 0 1px",
                     }}
                 >
-                    <SentencePopover />
+                    <InfoTooltip
+                        children={<InfoOutlined style={{ fontSize: "18px", color: colors.neutralSecondary }} />}
+                        content={tooltipContent}
+                    />
                 </sup>
             )}
         </>
