@@ -6,7 +6,7 @@ import Banner from "../SentenceReport/Banner";
 import { useTranslation } from "next-i18next";
 import Cookies from "js-cookie";
 import CtaAnimation from "../CtaAnimation";
-import { Tooltip } from "antd";
+import InfoTooltip from "../Claim/InfoTooltip";
 import colors from "../../styles/colors";
 import { trackUmamiEvent } from "../../lib/umami";
 import { useAppSelector } from "../../store/store";
@@ -14,15 +14,16 @@ import { useAppSelector } from "../../store/store";
 const CloseIcon = () => {
     const { t } = useTranslation();
     return (
-        <Tooltip
-            title={t("affix:AffixCloseTooltip")}
-            placement="topRight"
-            defaultOpen
-            color={colors.white}
-            overlayInnerStyle={{ color: colors.black }}
-        >
-            <CloseOutlined style={{margin:"10px", color:colors.white}} />
-        </Tooltip>
+        <InfoTooltip
+            children={
+                <CloseOutlined style={{ margin: "10px", color: colors.white }} />
+            }
+            content={
+                <span style={{ color: colors.black, fontSize: 15 }}>
+                    {t("affix:AffixCloseTooltip")}
+                </span>
+            }
+        />
     );
 };
 

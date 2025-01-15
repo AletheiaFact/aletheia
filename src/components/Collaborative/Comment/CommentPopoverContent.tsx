@@ -15,7 +15,7 @@ const CommentPopoverContent = ({ handleDeleteClick }) => {
                     border: "none",
                     display: "flex",
                     justifyContent: "start",
-                    padding: 0,
+                    margin: "5px 0px",
                 }}
                 onClick={handleDeleteClick}
             >
