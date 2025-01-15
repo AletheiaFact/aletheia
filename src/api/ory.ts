@@ -2,7 +2,7 @@
 import { ory } from "../lib/orysdk";
 import { handleFlowError } from "../lib/orysdk/errors";
 import { AxiosError } from "axios";
-import { message } from "antd";
+import { MessageManager } from "../components/Messages";
 
 const oryGetLoginFlow = ({ router, setFlow, t }) => {
     const { return_to: returnTo, flow: flowId, refresh, aal } = router.query;
@@ -59,10 +59,10 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
                 });
         })
         .then(() => {
-            message.success(`${t("login:loginSuccessfulMessage")}`);
+            MessageManager.showMessage("success", `${t("login:loginSuccessfulMessage")}`);
             if (flow?.return_to) {
                 window.location.href = flow?.return_to;
-                message.success(t("profile:changesSaved"));
+                MessageManager.showMessage("success", t("profile:changesSaved"));
                 return;
             }
             if (shouldGoBack) {
@@ -73,7 +73,7 @@ const orySubmitLogin = ({ router, flow, setFlow, t, values, shouldGoBack }) => {
         })
         .catch(handleFlowError(router, "login", setFlow, t))
         .catch(() => {
-            message.error(`${t("login:loginFailedMessage")}`);
+            MessageManager.showMessage("error", `${t("login:loginFailedMessage")}`);
         });
 };
 
@@ -94,7 +94,7 @@ const orySubmitSettings = ({ router, flow, setFlow, t, values }) => {
         })
         .then(() => {
             router.push("/");
-            message.success(t("profile:changesSaved"));
+            MessageManager.showMessage("success", `${t("profile:changesSaved")}`);
         })
         .catch(handleFlowError(router, "settings", setFlow, t));
 };
@@ -107,7 +107,7 @@ const orySubmitTotp = ({ router, flow, setFlow, t, values }) => {
         })
         .then(({ data }) => {
             setFlow(data);
-            message.success(t("profile:changesSaved"));
+            MessageManager.showMessage("success", `${t("profile:changesSaved")}`);
         })
         .catch(handleFlowError(router, "settings", setFlow, t));
 };

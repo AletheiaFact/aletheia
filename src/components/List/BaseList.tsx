@@ -1,5 +1,5 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import { Button, Col, List, Row } from "antd";
+import { CircularProgress, Button, Grid } from "@mui/material";
+import { List } from "antd";
 import { useTranslation } from "next-i18next";
 import React, { useEffect, useState } from "react";
 import colors from "../../styles/colors";
@@ -36,8 +36,7 @@ const BaseList = ({
     const [nameSpace] = useAtom(currentNameSpace);
 
     const loadingIcon = (
-        <LoadingOutlined
-            spin
+        <CircularProgress
             style={{
                 fontSize: 48,
                 color:
@@ -126,8 +125,8 @@ const BaseList = ({
                     grid={grid}
                     split={showDividers}
                     header={
-                        <Row align="middle" justify="space-between">
-                            <Col>
+                        <Grid container style={{alignContent:"middle", justifyContent:"space-between"}}>
+                            <Grid item>
                                 <h2
                                     style={{
                                         fontSize: "24px",
@@ -144,13 +143,13 @@ const BaseList = ({
                                 {t("list:totalItems", {
                                     total: totalItems,
                                 })}
-                            </Col>
-                            <Col>
+                            </Grid>
+                            <Grid item>
                                 <SortByButton
                                     refreshListItems={refreshListItems}
                                 />
-                            </Col>
-                        </Row>
+                            </Grid>
+                        </Grid>
                     }
                     style={style || {}}
                     loadMore={loadMoreButton}
@@ -160,7 +159,7 @@ const BaseList = ({
                         return <List.Item>{renderItem(item)}</List.Item>;
                     }}
                 />
-                <Row
+                <Grid container
                     style={{
                         textAlign: "center",
                         display: "block",
@@ -173,7 +172,7 @@ const BaseList = ({
                     {t("list:totalItems", {
                         total: totalItems,
                     })}
-                </Row>
+                </Grid>
                 {footer}
             </>
         );

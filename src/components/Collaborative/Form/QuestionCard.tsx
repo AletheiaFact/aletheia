@@ -2,7 +2,7 @@ import React, { useCallback, useContext } from "react";
 import { Grid } from "@mui/material";
 import Button from "../../Button";
 import { useCommands } from "@remirror/react";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@mui/icons-material";
 import { useTranslation } from "next-i18next";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
 import { reviewingSelector } from "../../../machines/reviewTask/selectors";
@@ -41,7 +41,7 @@ const QuestionCard = ({ forwardRef, node, initialPosition }) => {
                         disabled={editable}
                         data-cy="testClaimReviewquestionsRemove1"
                     >
-                        <DeleteOutlined />
+                        <DeleteOutlined fontSize="small"/>
                     </Button>
                 </Grid>
             }

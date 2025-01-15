@@ -2,7 +2,7 @@ import SectionTitle from "./SectionTitle";
 import { Col, List, Row } from "antd";
 import React from "react";
 import Button, { ButtonType } from "./Button";
-import { ArrowRightOutlined } from "@ant-design/icons";
+import { ArrowForwardOutlined } from "@mui/icons-material";
 import { isUserLoggedIn } from "../atoms/currentUser";
 import { useAtom } from "jotai";
 
@@ -76,12 +76,15 @@ const GridList = ({
                     <Button href={href} type={ButtonType.blue} data-cy={dataCy}>
                         <span
                             style={{
+                                display:"flex",
+                                alignItems:"center",
+                                gap:"5px",
                                 fontWeight: 400,
                                 fontSize: "16px",
                                 lineHeight: "24px",
                             }}
                         >
-                            {seeMoreButtonLabel} <ArrowRightOutlined />
+                            {seeMoreButtonLabel} <ArrowForwardOutlined fontSize="small"/>
                         </span>
                     </Button>
                 </Col>

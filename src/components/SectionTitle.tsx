@@ -1,23 +1,22 @@
 import React from "react";
 import colors from "../styles/colors";
-import { Typography } from "antd";
-
-const { Title } = Typography;
+import Typography from "@mui/material/Typography"
 
 const SectionTitle = (props) => {
     return (
-        <Title
-            level={2}
+        <Typography 
+            variant="h2"
             style={{
-                fontSize: "22px",
+                fontFamily:"initial",
+                fontSize: "24px",
                 lineHeight: "32px",
                 margin: "0 0 16px 0",
-                fontWeight: 400,
+                fontWeight: 500,
                 color: colors.neutral,
             }}
         >
             {props.children}
-        </Title>
+        </Typography >
     );
 };
 

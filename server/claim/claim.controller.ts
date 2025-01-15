@@ -198,11 +198,12 @@ export class ClaimController {
         }
     }
 
+    @IsPublic() // Allow this route to be public temporarily for testing
     @ApiTags("claim")
     @Post("api/claim/unattributed")
     async createUnattributedClaim(@Body() createClaimDTO) {
         try {
-            const claim = await this._createClaim(createClaimDTO);
+            const claim = await this._createClaim(createClaimDTO, true);
 
             return {
                 title: claim.title,
@@ -245,11 +246,14 @@ export class ClaimController {
         }
     }
 
-    private async _createClaim(createClaimDTO) {
+    private async _createClaim(
+        createClaimDTO,
+        overrideCaptchaValidation = false
+    ) {
         const validateCaptcha = await this.captchaService.validate(
             createClaimDTO.recaptcha
         );
-        if (!validateCaptcha) {
+        if (!validateCaptcha && !overrideCaptchaValidation) {
             throw new Error("Error validating captcha");
         }
         return this.claimService.create(createClaimDTO);

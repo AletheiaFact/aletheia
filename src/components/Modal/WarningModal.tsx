@@ -1,6 +1,6 @@
 import React from "react";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Col } from "antd";
+import { ErrorOutlineOutlined } from "@mui/icons-material";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import AletheiaButton, { ButtonType } from "../Button";
 import { AletheiaModal, ModalCancelButton } from "./AletheiaModal.style";
@@ -26,9 +26,9 @@ const WarningModal = ({
             width={width}
             {...props}
         >
-            <Col style={{ display: "flex", marginTop: "-4px" }}>
-                <ExclamationCircleOutlined
-                    style={{ fontSize: 24, color: colors.warning }}
+            <Grid item style={{ display: "flex", marginTop: "-4px" }}>
+                <ErrorOutlineOutlined
+                    style={{ fontSize: 26, color: colors.warning }}
                 />
                 <span
                     style={{
@@ -41,8 +41,8 @@ const WarningModal = ({
                 >
                     {t(title)}
                 </span>
-            </Col>
-            <Col
+            </Grid>
+            <Grid item
                 style={{
                     marginTop: 16,
                     display: "flex",
@@ -63,7 +63,7 @@ const WarningModal = ({
                 <AletheiaButton onClick={handleOk} type={ButtonType.blue}>
                     {t("warningModal:okButton")}
                 </AletheiaButton>
-            </Col>
+            </Grid>
         </AletheiaModal>
     );
 };

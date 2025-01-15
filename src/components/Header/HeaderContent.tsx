@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@mui/icons-material";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import actions from "../../store/actions";
@@ -68,7 +68,7 @@ const HeaderContent = () => {
                 <Logo />
             </a>
             <SearchOverlay />
-            <HeaderActionsStyle xs={7} sm={5} md={3}>
+            <HeaderActionsStyle item xs={7} sm={5} md={3}>
                 {vw?.xs && !router.pathname.includes("/home-page") && (
                     <AletheiaButton
                         onClick={handleClickSearchIcon}
@@ -77,7 +77,7 @@ const HeaderContent = () => {
                     >
                         <SearchOutlined
                             style={{
-                                fontSize: "18px",
+                                fontSize: "25px",
                                 color: "white",
                             }}
                         />

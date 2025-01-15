@@ -54,7 +54,7 @@ jobs:
             - run: yarn install
             - run: cp config/localConfig.example.ts config/localConfig.ts
             - run: yarn build
-            - uses: actions/upload-artifact@v3
+            - uses: actions/upload-artifact@v4
               with:
                   name: aletheia-dist
                   path: dist/
@@ -67,7 +67,7 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-            - uses: actions/download-artifact@v3
+            - uses: actions/download-artifact@v4
               with:
                   name: aletheia-dist
                   path: dist
@@ -94,7 +94,7 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-            - uses: actions/download-artifact@v3
+            - uses: actions/download-artifact@v4
               with:
                   name: aletheia-dist
                   path: dist

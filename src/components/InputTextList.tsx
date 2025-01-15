@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Grid } from "@mui/material"
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, AddOutlined } from "@mui/icons-material";
 import { useFieldArray, useForm } from "react-hook-form";
 
 import AletheiaInput from "./AletheiaInput";
@@ -90,7 +90,7 @@ export default function InputTextList({
                                     }}
                                     data-cy={`${dataCy}Remove${index}`}
                                 >
-                                    <DeleteOutlined />
+                                    <DeleteOutlined fontSize="small" />
                                 </Button>
                             </Grid>
                         )}
@@ -120,7 +120,7 @@ export default function InputTextList({
                     }}
                     data-cy={`${dataCy}Add`}
                 >
-                    <PlusOutlined /> {addInputLabel}
+                    <AddOutlined fontSize="small" /> {addInputLabel}
                 </a>
             </div>
         </div>
