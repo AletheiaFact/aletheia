@@ -9,6 +9,20 @@ type InfoTooltipProps = {
     useCustomStyle?: boolean;
 };
 
+const DefaultTooltip = ({ className, ...props }: TooltipProps) => {
+    return (
+        <Tooltip {...props} arrow
+            title={
+                <span style={{ fontSize: 15 }}>
+                    {props.title}
+                </span>
+            }
+        >
+            {props.children}
+        </Tooltip>
+    );
+};
+
 const InfoTooltip: React.FC<InfoTooltipProps> = ({
     placement = "top",
     content,
@@ -29,19 +43,6 @@ const InfoTooltip: React.FC<InfoTooltipProps> = ({
         },
     }));
 
-    const DefaultTooltip = ({ className, ...props }: TooltipProps) => {
-        return (
-            <Tooltip {...props} arrow
-                title={
-                    <span style={{ fontSize: 15 }}>
-                        {props.title}
-                    </span>
-                }
-            >
-                {props.children}
-            </Tooltip>
-        );
-    };
 
     const TooltipComponent = useCustomStyle ? CustomTooltip : DefaultTooltip;
 

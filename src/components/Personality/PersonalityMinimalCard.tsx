@@ -16,13 +16,11 @@ const PersonalityMinimalCard = ({ personality, avatarSize = 117 }) => {
                 <PersonalityCardAvatar
                     hoistAvatar={false}
                     personality={personality}
-                    header={true}
                     componentStyle={{
                         avatarSize: avatarSize,
                         avatarSpan: 4,
                         hiddenIconSize: 16,
                     }}
-                    offset={[-18, 18]}
                 />
             </Grid>
             <Grid item className="personality">
