@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React, { CSSProperties } from "react";
 
@@ -29,7 +29,7 @@ interface PersonalityCardProps {
     selectPersonality?: any;
     isFormSubmitted?: boolean;
     onClick?: any;
-    titleLevel?: 1 | 2 | 3 | 4 | 5;
+    titleLevel?: "h1" | "h2" | "h3" | "h4" | "h5";
     centralizedInfo?: boolean;
 }
 
@@ -44,7 +44,7 @@ const PersonalityCard = ({
     hoistAvatar = false,
     style,
     onClick,
-    titleLevel = 1,
+    titleLevel = "h1",
     selectPersonality = null,
     isFormSubmitted,
     centralizedInfo = false,
@@ -82,21 +82,21 @@ const PersonalityCard = ({
     const hasReview = personality?.stats?.reviews?.length > 0;
     const { t } = useTranslation();
     const componentStyle = {
-        titleSpan: !fullWidth ? 14 : 24,
-        avatarSpan: !fullWidth ? 8 : 24,
-        buttonSpan: !fullWidth ? 5 : 24,
+        titleSpan: !fullWidth ? 7 : 12,
+        avatarSpan: !fullWidth ? 4 : 12,
+        buttonSpan: !fullWidth ? 2.5 : 12,
         avatarSize: 90,
         hiddenIconSize: 12,
     };
     if (summarized) {
-        componentStyle.titleSpan = 10;
-        componentStyle.avatarSpan = 5;
-        componentStyle.buttonSpan = 9;
+        componentStyle.titleSpan = 5;
+        componentStyle.avatarSpan = 2.5;
+        componentStyle.buttonSpan = 4.5;
         componentStyle.avatarSize = 43;
     }
     if (header) {
         componentStyle.avatarSize = 144;
-        componentStyle.hiddenIconSize = 18;
+        componentStyle.hiddenIconSize = 22;
     }
 
     let cardStyle;
@@ -113,7 +113,7 @@ const PersonalityCard = ({
 
     if (personality) {
         return (
-            <Row
+            <Grid container
                 style={{
                     width: "100%",
                     ...cardStyle,
@@ -129,17 +129,16 @@ const PersonalityCard = ({
                         })}
                     />
                 )}
-                <Col
-                    md={24}
-                    lg={header && !mobile && !fullWidth ? 12 : 24}
+                <Grid item
+                    md={12}
+                    lg={header && !mobile && !fullWidth ? 6 : 12}
                     style={{
                         width: "100%",
                         textAlign: hoistAvatar ? "center" : "inherit",
                     }}
                 >
-                    <Row
-                        gutter={summarized ? 0 : 20}
-                        align={header ? "middle" : "top"}
+                    <Grid container
+                        columnSpacing={summarized ? 0 : 1.5}
                         style={{
                             width: "100%",
                             padding: "15px",
@@ -150,7 +149,6 @@ const PersonalityCard = ({
                             hoistAvatar={hoistAvatar}
                             personality={personality}
                             componentStyle={componentStyle}
-                            header={header}
                         />
 
                         {((hoistAvatar && (!vw?.sm || !vw?.xs)) ||
@@ -167,11 +165,12 @@ const PersonalityCard = ({
                             )}
 
                         {summarized && (
-                            <Col
-                                span={componentStyle.buttonSpan}
+                            <Grid item
+                                xs={componentStyle.buttonSpan}
                                 style={{
                                     display: "flex",
                                     justifyContent: "flex-end",
+                                    maxHeight: 40,
                                 }}
                             >
                                 <PersonalityCardButton
@@ -186,23 +185,21 @@ const PersonalityCard = ({
                                     isCreatingClaim={isCreatingClaim}
                                     onClick={onClick}
                                 />
-                            </Col>
+                            </Grid>
                         )}
-                    </Row>
-                </Col>
+                    </Grid>
+                </Grid>
                 {!smallDevice && enableStats && hasReview && (
-                    <Col
-                        xs={24}
-                        sm={24}
-                        md={24}
-                        lg={header && !mobile ? 12 : 24}
+                    <Grid item
+                        xs={12}
+                        lg={header && !mobile ? 6 : 12}
                         style={{
                             padding: "5px 15px",
                             display: "flex",
                             alignItems: "center",
                         }}
                     >
-                        <Row
+                        <Grid container
                             style={{
                                 width: "100%",
                                 justifyContent: "space-evenly",
@@ -216,10 +213,10 @@ const PersonalityCard = ({
                                 showInfo={!summarized}
                                 strokeWidth="16"
                             />
-                        </Row>
-                    </Col>
+                        </Grid>
+                    </Grid>
                 )}
-            </Row>
+            </Grid>
         );
     } else {
         return <PersonalitySkeleton />;

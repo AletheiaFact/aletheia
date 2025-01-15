@@ -79,7 +79,7 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                 personality={personality}
                                 header={true}
                                 mobile={true}
-                                titleLevel={2}
+                                titleLevel="h2"
                             />
                         )}
                         <section>

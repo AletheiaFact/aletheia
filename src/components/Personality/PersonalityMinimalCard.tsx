@@ -1,5 +1,4 @@
-import { Col } from "antd";
-import Title from "antd/lib/typography/Title";
+import { Grid, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import PersonalityMinimalCardStyle from "./PersonalityMinimalCard.style";
@@ -12,24 +11,24 @@ const PersonalityMinimalCard = ({ personality, avatarSize = 117 }) => {
     const { t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
     return (
-        <PersonalityMinimalCardStyle className="personality-card">
-            <Col>
+        <PersonalityMinimalCardStyle container className="personality-card">
+            <Grid item>
                 <PersonalityCardAvatar
                     hoistAvatar={false}
                     personality={personality}
                     header={true}
                     componentStyle={{
                         avatarSize: avatarSize,
-                        avatarSpan: 8,
+                        avatarSpan: 4,
                         hiddenIconSize: 16,
                     }}
                     offset={[-18, 18]}
                 />
-            </Col>
-            <Col className="personality">
-                <Title level={2} className="personality-name">
+            </Grid>
+            <Grid item className="personality">
+                <Typography variant="h2" className="personality-name">
                     {personality.name}
-                </Title>
+                </Typography>
                 <p className="personality-description-content">
                     <span className="personality-description">
                         {personality.description}
@@ -45,7 +44,7 @@ const PersonalityMinimalCard = ({ personality, avatarSize = 117 }) => {
                         {t("personality:profile_button")}
                     </a>
                 </p>
-            </Col>
+            </Grid>
         </PersonalityMinimalCardStyle>
     );
 };
