@@ -124,12 +124,8 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                         onChange={(e) => {
                                             setShowHighlights(e.target.value);
                                         }}
-                                        labelTrue={t(
-                                            "claim:showHighlightsButton"
-                                        )}
-                                        labelFalse={t(
-                                            "claim:hideHighlightsButton"
-                                        )}
+                                        labelTrue={t("claim:showHighlightsButton")}
+                                        labelFalse={t("claim:hideHighlightsButton")}
                                     />
                                 </Box>
                             </Grid>
