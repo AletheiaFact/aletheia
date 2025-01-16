@@ -122,14 +122,10 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
                                     <ToggleSection
                                         defaultValue={showHighlights}
                                         onChange={(e) => {
-                                            setShowHighlights(e.target.value);
+                                        setShowHighlights(e.target.value);
                                         }}
-                                        labelTrue={t(
-                                            "claim:showHighlightsButton"
-                                        )}
-                                        labelFalse={t(
-                                            "claim:hideHighlightsButton"
-                                        )}
+                                        labelTrue={t("claim:showHighlightsButton")}
+                                        labelFalse={t("claim:hideHighlightsButton")}
                                     />
                                 </Box>
                             </Grid>
