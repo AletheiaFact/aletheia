@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material"
+import { Grid } from "@mui/material";
 
 import { Controller } from "react-hook-form";
 import DynamicInput from "./DynamicInput";
@@ -44,7 +44,14 @@ const DynamicForm = ({
                                 {t(label)}
                             </h4>
                         </Grid>
-                        <Grid item xs={12} style={{ margin: "10px 0" }}>
+                        <Grid
+                            item
+                            xs={12}
+                            style={{
+                                margin: "10px 0",
+                                wordBreak: "break-word",
+                            }}
+                        >
                             <Controller
                                 name={fieldName}
                                 control={control}

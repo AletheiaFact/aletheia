@@ -2,6 +2,8 @@ import styled from "styled-components";
 
 const SentenceReportContentStyle = styled.div`
     margin: 10px 0;
+    word-break: break-word;
+
     .title {
         font-size: 16px;
         font-weight: 700;
@@ -10,7 +12,6 @@ const SentenceReportContentStyle = styled.div`
 
     .paragraph {
         font-size: 18px;
-        word-break: "break-all";
     }
 `;
 
