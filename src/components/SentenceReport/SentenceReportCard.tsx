@@ -1,4 +1,4 @@
-import { Col, Typography } from "antd";
+import { Grid, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React, { useContext } from "react";
 
@@ -12,8 +12,6 @@ import { ReviewTaskMachineContext } from "../../machines/reviewTask/ReviewTaskMa
 import ClaimSummaryDisplay from "./ClaimSummaryDisplay";
 import SourceSummaryDisplay from "./SourceSummaryDisplay";
 import VerificationRequestDisplay from "../VerificationRequest/VerificationRequestDisplay";
-
-const { Title } = Typography;
 
 const SentenceReportCard = ({
     target,
@@ -39,24 +37,23 @@ const SentenceReportCard = ({
         reviewTaskType === ReviewTaskTypeEnum.VerificationRequest;
 
     return (
-        <SentenceReportCardStyle>
+        <SentenceReportCardStyle container>
             {personality && (
-                <Col md={6} sm={24}>
+                <Grid item md={3} sm={12}>
                     <PersonalityMinimalCard
                         personality={personality}
                         avatarSize={80}
                     />
-                </Col>
+                </Grid>
             )}
-            <Col
-                lg={personality ? 18 : 24}
-                md={personality ? (md && !sm ? 17 : 18) : 24}
-                offset={personality && md && !sm ? 1 : 0}
-                sm={24}
+            <Grid item
+                lg={personality ? 9 : 12}
+                md={personality ? (md && !sm ? 8.5 : 9) : 12}
+                sm={12}
                 className="sentence-card"
             >
                 {classification && (
-                    <Title className="classification" level={1}>
+                    <Typography variant="h1" className="classification">
                         <ReviewClassification
                             // TODO: Create a more meaningful h1 for this page
                             label={t(
@@ -64,7 +61,7 @@ const SentenceReportCard = ({
                             )}
                             classification={classification}
                         />
-                    </Title>
+                    </Typography>
                 )}
                 {isClaim && (
                     <ClaimSummaryDisplay
@@ -86,7 +83,7 @@ const SentenceReportCard = ({
                         style={{ padding: "10px" }}
                     />
                 )}
-            </Col>
+            </Grid>
         </SentenceReportCardStyle>
     );
 };
