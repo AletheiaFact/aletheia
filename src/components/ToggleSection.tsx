@@ -1,48 +1,42 @@
-import { Radio } from "antd";
+import { ButtonGroup, Button } from "@mui/material";
 import styled from "styled-components";
 import colors from "../styles/colors";
 import { NameSpaceEnum } from "../types/Namespace";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../atoms/namespace";
+import { useState } from "react";
 
-const RadioGroup = styled(Radio.Group)`
-    .ant-radio-button-wrapper {
-        &.ant-radio-button-wrapper-checked {
-            background: ${({ namespace }) =>
-                namespace === NameSpaceEnum.Main
-                    ? colors.primary
-                    : colors.secondary};
-            border-color: ${({ namespace }) =>
-                namespace === NameSpaceEnum.Main
-                    ? colors.primary
-                    : colors.secondary};
-            color: ${colors.white};
-
-            &:not([class*=" ant-radio-button-wrapper-disabled"]) {
-                &.ant-radio-button-wrapper:first-child {
-                    border-right-color: ${({ namespace }) =>
-                        namespace === NameSpaceEnum.Main
-                            ? colors.primary
-                            : colors.secondary};
-                }
-            }
-
-            &:not(.ant-radio-button-wrapper-disabled)::before {
-                background: ${({ namespace }) =>
-                    namespace === NameSpaceEnum.Main
-                        ? colors.primary
-                        : colors.secondary};
-            }
-        }
-    }
+const StyledButton = styled(Button)<{ namespace: NameSpaceEnum; selected: boolean }>`
+  background: ${({ namespace, selected }) =>
+    selected
+      ? namespace === NameSpaceEnum.Main
+        ? colors.primary
+        : colors.secondary
+      : colors.neutralTertiary};
+  color: ${({ selected }) => ( selected )};
+  border-radius: 30px;
+  &:hover {
+    background: ${({ namespace }) =>
+      namespace === NameSpaceEnum.Main ? colors.primary : colors.secondary};
+    color: ${colors.white};
+  }
+    &:not(:hover) {
+    background: ${({ namespace, selected }) =>
+      selected
+        ? namespace === NameSpaceEnum.Main
+          ? colors.primary
+          : colors.secondary
+        : colors.neutralTertiary};
+  }
 `;
 
-const RadioButton = styled(Radio.Button)`
-    background: ${colors.neutralTertiary};
-    color: ${({ nameSpace }) =>
-        nameSpace === NameSpaceEnum.Main
-            ? colors.primary
-            : colors.secondary};
+const StyledButtonGroup = styled(ButtonGroup)`
+    visibility: hidden;
+    position: relative;
+  > * {
+    visibility: visible;
+    position: relative;
+  }
 `;
 
 interface ToggleSectionProps {
@@ -54,32 +48,34 @@ interface ToggleSectionProps {
 
 const ToggleSection = (props: ToggleSectionProps) => {
     const [nameSpace] = useAtom(currentNameSpace);
+    const [selectedValue, setSelectedValue] = useState<boolean>(props.defaultValue);
+
+    const handleChange = (value: boolean) => {
+    setSelectedValue(value);
+    const event = { target: { value } };
+    props.onChange(event as any);
+  };
+
     return (
-        <RadioGroup
-            defaultValue={props.defaultValue}
-            buttonStyle="solid"
-            namespace={nameSpace}
-            onChange={props.onChange}
+        <StyledButtonGroup variant="contained" aria-label="toggle section">
+        <StyledButton
+        selected={selectedValue === true}
+        onClick={() => handleChange(true)}
+        namespace={nameSpace}
+        style={{ borderRadius: "30px 0px 0px 30px" }}
         >
-            <RadioButton
-                className="radio-button"
-                value={true}
-                style={{
-                    borderRadius: "30px 0px 0px 30px",
-                }}
-            >
-                {props.labelTrue}
-            </RadioButton>
-            <RadioButton
-                value={false}
-                style={{
-                    borderRadius: "0px 30px 30px 0px",
-                }}
-            >
-                {props.labelFalse}
-            </RadioButton>
-        </RadioGroup>
-    );
+        {props.labelTrue}
+        </StyledButton>
+         <StyledButton
+        selected={selectedValue === false}
+        onClick={() => handleChange(false)}
+        namespace={nameSpace}
+        style={{ borderRadius: "0px 30px 30px 0px" }}
+        >
+       {props.labelFalse}
+      </StyledButton>
+      </StyledButtonGroup>
+  );
 };
 
 export default ToggleSection;
