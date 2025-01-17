@@ -36,7 +36,7 @@ const KanbanView = ({ reviewTaskType }) => {
                 filterUserTasks={filterUserTasks}
                 setFilterUserTasks={setFilterUserTasks}
             />
-            <Grid container xs={11.5} justifyContent="center" className="kanban-board">
+            <Grid container item xs={11.5} justifyContent="center" className="kanban-board">
                 {states.map((state) => (
                     <KanbanGrid
                         key={state}

@@ -1,8 +1,7 @@
-import { Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "next-i18next";
 
-import { FormControlLabel, Switch } from "@mui/material";
+import { FormControlLabel, Switch, Grid } from "@mui/material";
 
 const KanbanToolbar = ({ filterUserTasks, setFilterUserTasks }) => {
     const { t } = useTranslation();
