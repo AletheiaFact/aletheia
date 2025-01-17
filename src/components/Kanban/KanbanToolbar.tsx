@@ -1,4 +1,4 @@
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import React from "react";
 import { useTranslation } from "next-i18next";
 
@@ -18,7 +18,7 @@ const KanbanToolbar = ({ filterUserTasks, setFilterUserTasks }) => {
     };
 
     return (
-        <Col span={24} className="kanban-toolbar">
+        <Grid item xs={12} className="kanban-toolbar">
             {Object.keys(filterUserTasks).map((task) => (
                 <FormControlLabel
                     key={task}
@@ -35,7 +35,7 @@ const KanbanToolbar = ({ filterUserTasks, setFilterUserTasks }) => {
                     )}
                 />
             ))}
-        </Col>
+        </Grid>
     );
 };
 

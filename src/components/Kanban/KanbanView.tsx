@@ -1,5 +1,5 @@
-import { Col } from "antd";
-import React, { useMemo, useState } from "react";
+import { Grid } from "@mui/material";
+import React, { useState } from "react";
 
 import {
     KanbanClaimState,
@@ -8,7 +8,7 @@ import {
     ReviewTaskStates,
     ReviewTaskTypeEnum,
 } from "../../machines/reviewTask/enums";
-import KanbanCol from "./KanbanCol";
+import KanbanGrid from "./KanbanGrid";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
 import KanbanViewStyled from "./KanbanView.style";
@@ -36,9 +36,9 @@ const KanbanView = ({ reviewTaskType }) => {
                 filterUserTasks={filterUserTasks}
                 setFilterUserTasks={setFilterUserTasks}
             />
-            <Col span={23} className="kanban-board">
+            <Grid container xs={11.5} justifyContent="center" className="kanban-board">
                 {states.map((state) => (
-                    <KanbanCol
+                    <KanbanGrid
                         key={state}
                         nameSpace={nameSpace}
                         state={ReviewTaskStates[state]}
@@ -46,7 +46,7 @@ const KanbanView = ({ reviewTaskType }) => {
                         reviewTaskType={reviewTaskType}
                     />
                 ))}
-            </Col>
+            </Grid>
         </KanbanViewStyled>
     );
 };
