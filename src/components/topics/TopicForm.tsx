@@ -1,4 +1,4 @@
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import FormControl from "@mui/joy/FormControl";
@@ -94,7 +94,7 @@ const TopicForm = ({
 
     return (
         <form onSubmit={handleSubmit(handleOnSubmit)}>
-            <Col style={{ display: "flex" }}>
+            <Grid item style={{ display: "flex" }}>
                 <Controller
                     control={control}
                     name="topics"
@@ -103,7 +103,7 @@ const TopicForm = ({
                     }}
                     render={({ field: { onChange, value } }) => (
                         <CssVarsProvider>
-                            <FormControl sx={{ width: 655 }}>
+                            <FormControl sx={{ width: "100%" }}>
                                 <Autocomplete
                                     freeSolo
                                     multiple
@@ -148,7 +148,7 @@ const TopicForm = ({
                 >
                     {t("topics:addTopicsButton")}
                 </AletheiaButton>
-            </Col>
+            </Grid>
 
             <TopicInputErrorMessages errors={errors} />
         </form>
