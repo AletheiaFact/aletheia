@@ -17,7 +17,7 @@ const TagDisplay = ({ handleClose, tags, setShowTopicsForm }: ITagDisplay) => {
     const [isLoggedIn] = useAtom(isUserLoggedIn);
 
     return (
-        <TagDisplayStyled>
+        <TagDisplayStyled item>
             <TagsList
                 tags={tags}
                 editable={isLoggedIn}

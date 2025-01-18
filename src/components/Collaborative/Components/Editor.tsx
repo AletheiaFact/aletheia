@@ -1,11 +1,13 @@
 import React, { useCallback, useContext } from "react";
 
 import { useHelpers, useCommands } from "@remirror/react";
-import SummarizeIcon from "@mui/icons-material/Summarize";
-import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import FactCheckIcon from "@mui/icons-material/FactCheck";
-import { Button } from "antd";
+import {
+    Summarize,
+    QuestionMark,
+    ReportProblem,
+    FactCheck
+} from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 import EditorStyle from "./Editor.style";
 import useCardPresence from "../hooks/useCardPresence";
 import { ReviewTaskMachineContext } from "../../../machines/reviewTask/ReviewTaskMachineProvider";
@@ -59,7 +61,7 @@ const Editor = ({
             onClick: () => handleInsertNode(getContentHtml("data-summary-id")),
             disabled: editable || summaryDisabled,
             "data-cy": "testClaimReviewsummarizeAdd",
-            icon: <SummarizeIcon className="toolbar-item-icon" />,
+            icon: <Summarize className="toolbar-item-icon" />,
         },
     ];
 
@@ -70,21 +72,21 @@ const Editor = ({
                     handleInsertNode(getContentHtml("data-verification-id")),
                 disabled: editable || verificationDisabled,
                 "data-cy": "testClaimReviewverificationAdd",
-                icon: <FactCheckIcon className="toolbar-item-icon" />,
+                icon: <FactCheck className="toolbar-item-icon" />,
             },
             {
                 onClick: () =>
                     handleInsertNode(getContentHtml("data-report-id")),
                 disabled: editable || reportDisabled,
                 "data-cy": "testClaimReviewreportAdd",
-                icon: <ReportProblemIcon className="toolbar-item-icon" />,
+                icon: <ReportProblem className="toolbar-item-icon" />,
             },
             {
                 onClick: () =>
                     handleInsertNode(getContentHtml("data-question-id")),
                 disabled: editable,
                 "data-cy": "testClaimReviewquestionsAdd",
-                icon: <QuestionMarkIcon className="toolbar-item-icon" />,
+                icon: <QuestionMark className="toolbar-item-icon" />,
             }
         );
     }
@@ -98,14 +100,14 @@ const Editor = ({
             <div className="toolbar">
                 {actions ? (
                     actions.map(({ icon, ...props }) => (
-                        <Button
+                        <IconButton
                             key={props["data-cy"]}
                             className="toolbar-item"
                             style={{ outline: "none", border: "none" }}
                             {...props}
                         >
                             {icon}
-                        </Button>
+                        </IconButton>
                     ))
                 ) : (
                     <></>
