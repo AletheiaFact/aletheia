@@ -3,7 +3,7 @@ import SourceApi from "../../api/sourceApi";
 import BaseList from "../List/BaseList";
 import SourceSkeleton from "../Skeleton/SourceSkeleton";
 import SourceListItem from "./SourceListItem";
-import { Col, Row } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { useAtom } from "jotai";
 import { currentNameSpace } from "../../atoms/namespace";
@@ -14,8 +14,8 @@ const SourceList = ({ footer = false }) => {
     const [nameSpace] = useAtom(currentNameSpace);
 
     return (
-        <Row justify="center">
-            <Col span={18}>
+        <Grid container justifyContent="center">
+            <Grid item xs={9} sm={12} lg={10}>
                 <BaseList
                     apiCall={SourceApi.get}
                     filter={{ nameSpace }}
@@ -34,8 +34,8 @@ const SourceList = ({ footer = false }) => {
                     emptyFallback={<SourceCreateCTA />}
                     footer={footer && <SourceCreateCTA />}
                 />
-            </Col>
-        </Row>
+            </Grid>
+        </Grid>
     );
 };
 export default SourceList;

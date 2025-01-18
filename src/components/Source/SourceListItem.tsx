@@ -1,11 +1,10 @@
 import React, { useMemo } from "react";
-import { Col, Typography } from "antd";
+import { Grid, Typography } from "@mui/material";
 import CardBase from "../CardBase";
 import AletheiaButton from "../Button";
 import { useTranslation } from "next-i18next";
 import SourceListItemStyled from "./SourceListItem.style";
 import ReviewClassification from "../ClaimReview/ReviewClassification";
-const { Paragraph } = Typography;
 const DOMAIN_PROTOCOL_REGEX = /^(https?:\/\/)?(www\.)?/;
 
 const SourceListItem = ({ source }) => {
@@ -22,25 +21,28 @@ const SourceListItem = ({ source }) => {
 
     return (
         <CardBase style={{ padding: "32px" }}>
-            <SourceListItemStyled
-                span={24}
+            <SourceListItemStyled container item
+                xs={12}
                 classification={source.props.classification}
             >
                 <h4 className="title">{title}</h4>
 
-                <Paragraph
-                    style={{ marginBottom: 0 }}
-                    ellipsis={{
-                        rows: 4,
-                        expandable: false,
+                <Typography
+                    variant="body1"
+                    sx={{
+                        display: "-webkit-box",
+                        overflow: "hidden",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 4,
+                        textOverflow: "ellipsis",
                     }}
                 >
                     <cite style={{ fontStyle: "normal" }}>
                         <p className="summary">{source.props.summary}</p>
                     </cite>
-                </Paragraph>
+                </Typography>
 
-                <Col className="footer">
+                <Grid item className="footer">
                     <ReviewClassification
                         label={t("sources:sourceReview")}
                         classification={source.props.classification}
@@ -53,7 +55,7 @@ const SourceListItem = ({ source }) => {
                     >
                         {t("sources:sourceCardButton")}
                     </AletheiaButton>
-                </Col>
+                </Grid>
             </SourceListItemStyled>
         </CardBase>
     );

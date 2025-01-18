@@ -1,9 +1,9 @@
 import colors from "../../styles/colors";
 import styled from "styled-components";
 import reviewColors from "../../constants/reviewColors";
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 
-const SourceListItemStyled = styled(Col)`
+const SourceListItemStyled = styled(Grid)`
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -13,6 +13,7 @@ const SourceListItemStyled = styled(Col)`
         font-weight: 600;
         color: ${colors.primary};
         margin: 0;
+        width: 100%;
     }
 
     .title ::before {
