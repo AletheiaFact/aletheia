@@ -37,8 +37,8 @@ const EditorStyle = styled.div`
 
     .toolbar-item:hover::after {
         content: "";
-        border: 1px solid ${colors.primary};
-        width: 4px;
+        background-color: ${colors.primary};
+        width: 3px;
         height: 40px;
     }
 
