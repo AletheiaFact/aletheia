@@ -41,7 +41,7 @@ const HomeHeaderSearch = () => {
     };
 
     return (
-        <HomeHeaderSearchStyled xxl={12} lg={16} sm={18} xs={24}>
+        <HomeHeaderSearchStyled container item xl={6} lg={8} sm={9} xs={12}>
             <h2 className="title">{t("home:homeHeaderSearchTitle")}</h2>
 
             <InputSearch

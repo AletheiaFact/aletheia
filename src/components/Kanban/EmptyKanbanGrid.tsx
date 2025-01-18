@@ -1,8 +1,8 @@
-import { Divider } from "antd";
+import { Divider } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 
-const EmptyKanbanCol = ({ title }) => {
+const EmptyKanbanGrid = ({ title }) => {
     const { t } = useTranslation();
     return (
         <div
@@ -16,9 +16,9 @@ const EmptyKanbanCol = ({ title }) => {
             <span style={{ fontSize: 24 }}>{title}</span>
 
             <span>{t("list:totalItems", { total: 0 })}</span>
-            <Divider style={{ marginTop: 12 }} />
+            <Divider flexItem variant="middle" style={{ marginTop: 12 }} />
         </div>
     );
 };
 
-export default EmptyKanbanCol;
+export default EmptyKanbanGrid;

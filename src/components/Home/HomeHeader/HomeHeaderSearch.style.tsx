@@ -1,9 +1,9 @@
-import { Col } from "antd";
+import Grid from "@mui/material/Grid";
 import styled from "styled-components";
 import { queries } from "../../../styles/mediaQueries";
 import colors from "../../../styles/colors";
 
-const HomeHeaderSearchStyled = styled(Col)`
+const HomeHeaderSearchStyled = styled(Grid)`
     display: flex;
     flex-direction: column;
     justify-content: center;

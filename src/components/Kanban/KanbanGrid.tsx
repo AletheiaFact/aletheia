@@ -6,7 +6,7 @@ import { ReviewTaskStates } from "../../machines/reviewTask/enums";
 import KanbanSkeleton from "../Skeleton/KanbanSkeleton";
 import colors from "../../styles/colors";
 import BaseList from "../List/BaseList";
-import EmptyKanbanCol from "./EmptyKanbanCol";
+import EmptyKanbanGrid from "./EmptyKanbanGrid";
 import KanbanCard from "./KanbanCard";
 import styled from "styled-components";
 
@@ -32,7 +32,7 @@ interface KanbanColProps {
     };
 }
 
-const KanbanCol = ({
+const KanbanGrid = ({
     nameSpace,
     state,
     filterUser,
@@ -58,7 +58,7 @@ const KanbanCol = ({
                     />
                 )}
                 emptyFallback={
-                    <EmptyKanbanCol title={t(`reviewTask:${state}`)} />
+                    <EmptyKanbanGrid title={t(`reviewTask:${state}`)} />
                 }
                 showDividers={false}
                 skeleton={<KanbanSkeleton />}
@@ -68,4 +68,4 @@ const KanbanCol = ({
     );
 };
 
-export default KanbanCol;
+export default KanbanGrid;
