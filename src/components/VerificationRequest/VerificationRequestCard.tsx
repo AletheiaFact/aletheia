@@ -1,5 +1,5 @@
-import { Grid, Chip, Typography } from "@mui/material";
-import React from "react";
+import { Grid, Chip, Typography, Button } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import CardBase from "../CardBase";
 import Link from "next/link";
@@ -62,9 +62,25 @@ const truncateUrl = (url) => {
 const VerificationRequestCard = ({
     verificationRequest,
     actions = [],
+    expandable = true,
     t,
     style = {},
 }) => {
+    const [visible, setVisible] = useState(false);
+    const [isOverflowing, setIsOverflowing] = useState(false);
+    const textRef = useRef(null);
+
+    const handleToggle = () => {
+        setVisible(true);
+    };
+
+    useEffect(() => {
+        if (textRef.current) {
+            const isOverflow = textRef.current.scrollHeight > textRef.current.clientHeight;
+            setIsOverflowing(isOverflow);
+        }
+    }, [verificationRequest.content]);
+
     const getTags = (verificationRequest) => {
         const tags = [];
         if (verificationRequest.publicationDate) {
@@ -156,15 +172,31 @@ const VerificationRequestCard = ({
         <CardBase style={{ padding: 32, ...style }}>
             <ContentWrapper>
                 <Typography
+                    ref={textRef}
                     variant="body1"
                     style={{
                         color: colors.black,
                         margin: 0,
                         lineHeight: 1.6,
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        WebkitLineClamp: visible ? "none" : 3,
                     }}
+
                 >
                     {verificationRequest.content}
                 </Typography>
+                {expandable && !visible && isOverflowing && (
+                    <Button
+                        variant="text"
+                        style={{ marginLeft: "auto", color: colors.lightPrimary, textDecoration: 'underline', padding: 0 }}
+                        onClick={handleToggle}
+                    >
+                        {t("verificationRequest:showText")}
+                    </Button>
+                )}
                 <TagContainer>{getTags(verificationRequest)}</TagContainer>
             </ContentWrapper>
 

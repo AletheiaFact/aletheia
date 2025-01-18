@@ -33,6 +33,7 @@ const VerificationRequestResultList = ({ results }) => {
                     >
                         <VerificationRequestCard
                             verificationRequest={verificationRequest}
+                            expandable={false}
                             t={t}
                             style={{ minHeight: "100%" }}
                             actions={[
