@@ -18,7 +18,7 @@ import { currentUserRole } from "../../atoms/currentUser";
 import { useAtom } from "jotai";
 
 const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
-    const [isAffixed, setIsAffixed] = useState(true);
+    const [isAffixed, setIsAffixed] = useState(false);
     const ref = useRef<HTMLDivElement | null>(null);
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -44,19 +44,24 @@ const ClaimView = ({ personality, claim, href, hideDescriptions }) => {
     }, [claim, claimContent, dispatch, isImage, personality, t]);
 
     useEffect(() => {
-      const handleScroll = () => {
         if (!ref.current) return;
-
-        const { bottom } = ref.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-  
-        if (bottom > windowHeight) {
-          setIsAffixed(true);
-        } else {
-          setIsAffixed(false);
+        
+        const scrollableSpeech = ref.current.scrollHeight > window.innerHeight;
+        if (scrollableSpeech) {
+            setIsAffixed(true);
         }
-      };  
-      window.addEventListener("scroll", handleScroll);
+
+        const handleScroll = () => {
+            const { bottom } = ref.current.getBoundingClientRect();
+            const isFixed = bottom > window.innerHeight;
+
+            if (isFixed) {
+                setIsAffixed(true);
+            } else {
+                setIsAffixed(false);
+            }
+        };
+        window.addEventListener("scroll", handleScroll);
     }, []);
 
     return (
