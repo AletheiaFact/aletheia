@@ -1,9 +1,10 @@
-import { Radio } from "antd";
+// import { Radio } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import AletheiaButton, { ButtonType } from "../Button";
 import ClassificationText from "../ClassificationText";
 import { AletheiaModal, ModalCancelButton } from "../Modal/AletheiaModal.style";
+import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
 
 const ClassificationModal = ({
     open,
@@ -29,7 +30,7 @@ const ClassificationModal = ({
                 alingItens: "center",
             }}
         >
-            <Radio.Group
+            <RadioGroup
                 onChange={onChangeRadio}
                 value={value}
                 style={{
@@ -38,34 +39,52 @@ const ClassificationModal = ({
                     flexDirection: "column",
                 }}
             >
-                <Radio value="not-fact">
-                    <ClassificationText classification="not-fact" />
-                </Radio>
-                <Radio value="trustworthy">
-                    <ClassificationText classification="trustworthy" />
-                </Radio>
-                <Radio value="trustworthy-but">
-                    <ClassificationText classification="trustworthy-but" />
-                </Radio>
-                <Radio value="arguable">
-                    <ClassificationText classification="arguable" />
-                </Radio>
-                <Radio value="misleading">
-                    <ClassificationText classification="misleading" />
-                </Radio>
-                <Radio value="false">
-                    <ClassificationText classification="false" />
-                </Radio>
-                <Radio value="unsustainable">
-                    <ClassificationText classification="unsustainable" />
-                </Radio>
-                <Radio value="exaggerated">
-                    <ClassificationText classification="exaggerated" />
-                </Radio>
-                <Radio value="unverifiable">
-                    <ClassificationText classification="unverifiable" />
-                </Radio>
-            </Radio.Group>
+                <FormControlLabel
+                    value="not-fact"
+                    control={<Radio />}
+                    label={<ClassificationText classification="not-fact" />}
+                />
+                <FormControlLabel
+                    value="trustworthy"
+                    control={<Radio />}
+                    label={<ClassificationText classification="trustworthy" />}
+                />
+                <FormControlLabel
+                    value="trustworthy-but"
+                    control={<Radio />}
+                    label={<ClassificationText classification="trustworthy-but" />}
+                />
+                <FormControlLabel
+                    value="arguable"
+                    control={<Radio />}
+                    label={<ClassificationText classification="arguable" />}
+                />
+                <FormControlLabel
+                    value="misleading"
+                    control={<Radio />}
+                    label={<ClassificationText classification="misleading" />}
+                />
+                <FormControlLabel
+                    value="false"
+                    control={<Radio />}
+                    label={<ClassificationText classification="false" />}
+                />
+                <FormControlLabel
+                    value="unsustainable"
+                    control={<Radio />}
+                    label={<ClassificationText classification="unsustainable" />}
+                />
+                <FormControlLabel
+                    value="exaggerated"
+                    control={<Radio />}
+                    label={<ClassificationText classification="exaggerated" />}
+                />
+                <FormControlLabel
+                    value="unverifiable"
+                    control={<Radio />}
+                    label={<ClassificationText classification="unverifiable" />}
+                />
+            </RadioGroup>
             <div
                 style={{
                     marginTop: 30,
