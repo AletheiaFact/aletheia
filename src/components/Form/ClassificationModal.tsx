@@ -1,4 +1,3 @@
-// import { Radio } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import AletheiaButton, { ButtonType } from "../Button";
