@@ -4,6 +4,7 @@ import AletheiaButton, { ButtonType } from "../Button";
 import ClassificationText from "../ClassificationText";
 import { AletheiaModal, ModalCancelButton } from "../Modal/AletheiaModal.style";
 import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
+import styled from "styled-components";
 
 const ClassificationModal = ({
     open,
@@ -15,6 +16,17 @@ const ClassificationModal = ({
     const { t } = useTranslation();
     const onChangeRadio = (e) => {
         setValue(e.target.value);
+    };
+
+    const StyledRadio = styled(Radio)`
+    padding: 4px;
+    transform: scale(0.8);
+`;
+
+    const classificationTextStyle = {
+        fontFamily: 'Open Sans, sans-serif',
+        fontWeight: "bold",
+        fontSize: "14px",
     };
 
     return (
@@ -40,48 +52,48 @@ const ClassificationModal = ({
             >
                 <FormControlLabel
                     value="not-fact"
-                    control={<Radio />}
-                    label={<ClassificationText classification="not-fact" />}
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="not-fact" style={classificationTextStyle} />}
                 />
                 <FormControlLabel
                     value="trustworthy"
-                    control={<Radio />}
-                    label={<ClassificationText classification="trustworthy" />}
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="trustworthy" style={classificationTextStyle} />}
                 />
                 <FormControlLabel
                     value="trustworthy-but"
-                    control={<Radio />}
-                    label={<ClassificationText classification="trustworthy-but" />}
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="trustworthy-but" style={classificationTextStyle} />}
                 />
                 <FormControlLabel
                     value="arguable"
-                    control={<Radio />}
-                    label={<ClassificationText classification="arguable" />}
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="arguable" style={classificationTextStyle} />}
                 />
                 <FormControlLabel
                     value="misleading"
-                    control={<Radio />}
-                    label={<ClassificationText classification="misleading" />}
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="misleading" style={classificationTextStyle} />}
                 />
                 <FormControlLabel
                     value="false"
-                    control={<Radio />}
-                    label={<ClassificationText classification="false" />}
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="false" style={classificationTextStyle} />}
                 />
                 <FormControlLabel
                     value="unsustainable"
-                    control={<Radio />}
-                    label={<ClassificationText classification="unsustainable" />}
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="unsustainable" style={classificationTextStyle} />}
                 />
                 <FormControlLabel
                     value="exaggerated"
-                    control={<Radio />}
-                    label={<ClassificationText classification="exaggerated" />}
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="exaggerated" style={classificationTextStyle} />}
                 />
                 <FormControlLabel
                     value="unverifiable"
-                    control={<Radio />}
-                    label={<ClassificationText classification="unverifiable" />}
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="unverifiable" style={classificationTextStyle} />}
                 />
             </RadioGroup>
             <div
