@@ -1,9 +1,10 @@
-import { Radio } from "antd";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import AletheiaButton, { ButtonType } from "../Button";
 import ClassificationText from "../ClassificationText";
 import { AletheiaModal, ModalCancelButton } from "../Modal/AletheiaModal.style";
+import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
+import styled from "styled-components";
 
 const ClassificationModal = ({
     open,
@@ -15,6 +16,17 @@ const ClassificationModal = ({
     const { t } = useTranslation();
     const onChangeRadio = (e) => {
         setValue(e.target.value);
+    };
+
+    const StyledRadio = styled(Radio)`
+    padding: 4px;
+    transform: scale(0.8);
+`;
+
+    const classificationTextStyle = {
+        fontFamily: 'Open Sans, sans-serif',
+        fontWeight: "bold",
+        fontSize: "14px",
     };
 
     return (
@@ -29,7 +41,7 @@ const ClassificationModal = ({
                 alingItens: "center",
             }}
         >
-            <Radio.Group
+            <RadioGroup
                 onChange={onChangeRadio}
                 value={value}
                 style={{
@@ -38,34 +50,52 @@ const ClassificationModal = ({
                     flexDirection: "column",
                 }}
             >
-                <Radio value="not-fact">
-                    <ClassificationText classification="not-fact" />
-                </Radio>
-                <Radio value="trustworthy">
-                    <ClassificationText classification="trustworthy" />
-                </Radio>
-                <Radio value="trustworthy-but">
-                    <ClassificationText classification="trustworthy-but" />
-                </Radio>
-                <Radio value="arguable">
-                    <ClassificationText classification="arguable" />
-                </Radio>
-                <Radio value="misleading">
-                    <ClassificationText classification="misleading" />
-                </Radio>
-                <Radio value="false">
-                    <ClassificationText classification="false" />
-                </Radio>
-                <Radio value="unsustainable">
-                    <ClassificationText classification="unsustainable" />
-                </Radio>
-                <Radio value="exaggerated">
-                    <ClassificationText classification="exaggerated" />
-                </Radio>
-                <Radio value="unverifiable">
-                    <ClassificationText classification="unverifiable" />
-                </Radio>
-            </Radio.Group>
+                <FormControlLabel
+                    value="not-fact"
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="not-fact" style={classificationTextStyle} />}
+                />
+                <FormControlLabel
+                    value="trustworthy"
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="trustworthy" style={classificationTextStyle} />}
+                />
+                <FormControlLabel
+                    value="trustworthy-but"
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="trustworthy-but" style={classificationTextStyle} />}
+                />
+                <FormControlLabel
+                    value="arguable"
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="arguable" style={classificationTextStyle} />}
+                />
+                <FormControlLabel
+                    value="misleading"
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="misleading" style={classificationTextStyle} />}
+                />
+                <FormControlLabel
+                    value="false"
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="false" style={classificationTextStyle} />}
+                />
+                <FormControlLabel
+                    value="unsustainable"
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="unsustainable" style={classificationTextStyle} />}
+                />
+                <FormControlLabel
+                    value="exaggerated"
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="exaggerated" style={classificationTextStyle} />}
+                />
+                <FormControlLabel
+                    value="unverifiable"
+                    control={<StyledRadio />}
+                    label={<ClassificationText classification="unverifiable" style={classificationTextStyle} />}
+                />
+            </RadioGroup>
             <div
                 style={{
                     marginTop: 30,
