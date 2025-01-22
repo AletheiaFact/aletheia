@@ -140,9 +140,9 @@ const PersonalityCard = ({
                     <Grid container
                         columnSpacing={summarized ? 0 : 1.5}
                         style={{
+                            alignContent: summarized ? "center": undefined,
                             width: "100%",
-                            padding: "15px",
-                            paddingBottom: 0,
+                            padding: "12px",
                         }}
                     >
                         <PersonalityCardAvatar
