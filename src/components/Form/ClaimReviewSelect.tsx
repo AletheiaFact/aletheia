@@ -94,31 +94,31 @@ const ClaimReviewSelect = ({
                     <MenuItem value="" disabled>
                         {placeholder}
                     </MenuItem>
-                    <MenuItem value="not-fact">
+                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="not-fact">
                         <ClassificationText classification="not-fact" />
                     </MenuItem>
-                    <MenuItem value="trustworthy">
+                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="trustworthy">
                         <ClassificationText classification="trustworthy" />
                     </MenuItem>
-                    <MenuItem value="trustworthy-but">
+                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="trustworthy-but">
                         <ClassificationText classification="trustworthy-but" />
                     </MenuItem>
-                    <MenuItem value="arguable">
+                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="arguable">
                         <ClassificationText classification="arguable" />
                     </MenuItem>
-                    <MenuItem value="misleading">
+                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="misleading">
                         <ClassificationText classification="misleading" />
                     </MenuItem>
-                    <MenuItem value="false">
+                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="false">
                         <ClassificationText classification="false" />
                     </MenuItem>
-                    <MenuItem value="unsustainable">
+                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="unsustainable">
                         <ClassificationText classification="unsustainable" />
                     </MenuItem>
-                    <MenuItem value="exaggerated">
+                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="exaggerated">
                         <ClassificationText classification="exaggerated" />
                     </MenuItem>
-                    <MenuItem value="unverifiable">
+                    <MenuItem sx={{ fontFamily: "open-sans, sans-serif" }} value="unverifiable">
                         <ClassificationText classification="unverifiable" />
                     </MenuItem>
                 </SelectInput>
