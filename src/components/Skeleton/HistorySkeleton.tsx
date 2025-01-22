@@ -1,13 +1,13 @@
-import { Skeleton } from "antd";
+import { Skeleton } from "@mui/material";
 import React from "react";
 
 const HistorySkeleton = () => {
     return (
         <Skeleton
-            style={{ marginTop: 16 }}
-            title={false}
-            paragraph={{ rows: 1, width: "100%" }}
-            active
+            variant="text"
+            width="100%"
+            animation="wave"
+            style={{ marginBottom: 15 }}
         />
     );
 };
