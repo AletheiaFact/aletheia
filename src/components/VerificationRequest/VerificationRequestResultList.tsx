@@ -1,4 +1,4 @@
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import React, { useContext, useState } from "react";
 import VerificationRequestCard from "./VerificationRequestCard";
 import AletheiaButton from "../Button";
@@ -27,7 +27,7 @@ const VerificationRequestResultList = ({ results }) => {
         <VerificationRequestResultListStyled>
             {results?.length > 0 &&
                 results.map((verificationRequest) => (
-                    <Col
+                    <Grid item
                         style={{ width: "300px" }}
                         key={verificationRequest._id}
                     >
@@ -61,7 +61,7 @@ const VerificationRequestResultList = ({ results }) => {
                                 </AletheiaButton>,
                             ]}
                         />
-                    </Col>
+                    </Grid>
                 ))}
         </VerificationRequestResultListStyled>
     );

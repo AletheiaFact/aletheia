@@ -28,7 +28,7 @@ const VerificationRequestDisplay = ({ content }) => {
     };
 
     return (
-        <VerificationRequestDisplayStyle>
+        <VerificationRequestDisplayStyle container>
             <VerificationRequestAlert
                 targetId={content?.group?.targetId}
                 verificationRequestId={content._id}
