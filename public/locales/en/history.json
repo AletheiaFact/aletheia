@@ -3,6 +3,8 @@
     "create": "created",
     "update": "updated",
     "delete": "deleted",
+    "hide": "hide",
+    "unhide": "unhide",
     "personality": "profile",
     "claim": "claim",
     "historyItem": "{{username}} {{type}} {{title}} {{targetModel}}"

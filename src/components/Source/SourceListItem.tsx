@@ -35,6 +35,7 @@ const SourceListItem = ({ source }) => {
                         WebkitBoxOrient: "vertical",
                         WebkitLineClamp: 4,
                         textOverflow: "ellipsis",
+                        width: "100%"
                     }}
                 >
                     <cite style={{ fontStyle: "normal" }}>
