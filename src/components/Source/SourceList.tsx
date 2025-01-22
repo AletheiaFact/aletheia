@@ -14,27 +14,24 @@ const SourceList = ({ footer = false }) => {
     const [nameSpace] = useAtom(currentNameSpace);
 
     return (
-        <Grid container justifyContent="center">
-            <Grid item xs={9} sm={12} lg={10}>
-                <BaseList
-                    apiCall={SourceApi.get}
-                    filter={{ nameSpace }}
-                    title={t("sources:sourceListHeader")}
-                    renderItem={(source, index) =>
-                        source && <SourceListItem key={index} source={source} />
-                    }
-                    grid={{
-                        gutter: 20,
-                        md: 2,
-                        lg: 2,
-                        xl: 2,
-                        xxl: 2,
-                    }}
-                    skeleton={<SourceSkeleton />}
-                    emptyFallback={<SourceCreateCTA />}
-                    footer={footer && <SourceCreateCTA />}
-                />
-            </Grid>
+        <Grid container item xs={11} lg={10} justifySelf="center">
+            <BaseList
+                apiCall={SourceApi.get}
+                filter={{ nameSpace }}
+                title={t("sources:sourceListHeader")}
+                renderItem={(source, index) =>
+                    source && <SourceListItem key={index} source={source} />
+                }
+                style={{ alignItems: "flex-start" }}
+                showDividers={false}
+                grid={{
+                    xs: 12,
+                    lg: 6
+                }}
+                skeleton={<SourceSkeleton />}
+                emptyFallback={<SourceCreateCTA />}
+                footer={footer && <SourceCreateCTA />}
+            />
         </Grid>
     );
 };

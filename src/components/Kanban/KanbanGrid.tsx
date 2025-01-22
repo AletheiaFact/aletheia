@@ -62,7 +62,7 @@ const KanbanGrid = ({
                 }
                 showDividers={false}
                 skeleton={<KanbanSkeleton />}
-                style={{ textTransform: "capitalize" }}
+                style={{ textTransform: "capitalize", padding: "4px 0" }}
             />
         </StyledColumn>
     );

@@ -9,6 +9,7 @@ const HistoryView = ({ targetId, targetModel }) => {
         <BaseList
             apiCall={HistoryApi.getByTargetId}
             filter={{ targetId, targetModel }}
+            style={{ padding: 5 }}
             renderItem={(history) =>
                 history && <HistoryListItem history={history} />
             }

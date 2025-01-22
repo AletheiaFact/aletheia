@@ -9,7 +9,7 @@ import { currentNameSpace } from "../../atoms/namespace";
 import { useAtom } from "jotai";
 import ClaimListEmptyFallBack from "./ClaimListEmptyFallBack";
 
-const ClaimList = ({ personality, columns = 2 }) => {
+const ClaimList = ({ personality, columns = 6 }) => {
     const { i18n, t } = useTranslation();
     const [nameSpace] = useAtom(currentNameSpace);
 
@@ -21,12 +21,8 @@ const ClaimList = ({ personality, columns = 2 }) => {
             showDividers={false}
             bluePrimary={true}
             grid={{
-                gutter: 20,
-                // sizes not declared will show 1 column (xs and sm)
-                md: columns,
-                lg: columns,
-                xl: columns,
-                xxl: columns,
+                xs: 12,
+                sm: columns,
             }}
             emptyFallback={<ClaimListEmptyFallBack personality={personality} />}
             renderItem={(claim) =>
