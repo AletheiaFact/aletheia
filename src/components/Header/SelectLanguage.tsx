@@ -27,24 +27,25 @@ const SelectInput = styled(Select)`
 `;
 
 const StyledSwitch = styled(Switch)`
-.MuiSwitch-track {
-    background-color: ${({ namespace }) =>
-        namespace === NameSpaceEnum.Main
-            ? colors.primary
-            : colors.secondary};
-}
+  .MuiSwitch-switchBase {
+    padding: 6px;
+  }
 
-.MuiSwitch-thumb {
-   display: flex;
+  MuiSwitch-thumb {
+    display: flex;
     align-items: center;
     justify-content: center;
     background-color: ${colors.white};
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    }
   }
 
+  .MuiSwitch-track {
+    border-radius: 22px;
+    background-color: ${({ namespace }) =>
+        namespace === NameSpaceEnum.Main ? colors.secondary : colors.secondary};
+    opacity: 1;
+    height: 18px;
+  }
 `;
 
 const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
@@ -85,13 +86,13 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                     <MenuItem value="pt" data-cy="testLanguagePt">
                         <ReactCountryFlag
                             countryCode="BR"
-                            style={{ fontSize: "20px", paddingTop: "6px" }}
+                            style={{ fontSize: "18px", borderRadius: "50%" }}
                         />
                     </MenuItem>
                     <MenuItem value="en" data-cy="testLanguageEn">
                         <ReactCountryFlag
                             countryCode="GB"
-                            style={{ fontSize: "20px", paddingTop: "6px" }}
+                            style={{ fontSize: "18px", borderRadius: "50%" }}
                         />
                     </MenuItem>
                 </SelectInput>
@@ -115,13 +116,35 @@ const SelectLanguage = (props: { defaultLanguage; dataCy }) => {
                         icon={
                             <ReactCountryFlag
                                 countryCode="GB"
-                                style={{ fontSize: "14px", paddingTop: "4px" }}
+                                style={{
+                                    fontSize: "16px",
+                                    paddingTop: "6px",
+                                    borderRadius: "50%",
+                                    backgroundColor: colors.white,
+                                    width: "24px",
+                                    height: "24px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                }}
                             />
                         }
                         checkedIcon={
                             <ReactCountryFlag
                                 countryCode="BR"
-                                style={{ fontSize: "14px", paddingTop: "4px" }}
+                                style={{
+                                    fontSize: "16px",
+                                    paddingTop: "6px",
+                                    borderRadius: "50%",
+                                    backgroundColor: colors.white,
+                                    width: "24px",
+                                    height: "24px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                }}
                             />
                         }
                     />
