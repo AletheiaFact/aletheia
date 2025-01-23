@@ -63,6 +63,10 @@ export class SourceService {
         return this.SourceModel.find({ match }, { _id: 1, href: 1 });
     }
 
+    findHref(href: string) {
+        return this.SourceModel.find({ href: { $eq: href } }).exec();
+    }
+
     getById(_id) {
         return this.SourceModel.findById(_id);
     }

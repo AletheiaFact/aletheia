@@ -204,17 +204,17 @@ export class ClaimRevisionService {
         if (sources && Array.isArray(sources)) {
             for (let source of sources) {
                 try {
-                    if (typeof source === "string") {
+                    const existingSource = await this.sourceService.findHref(source);
+                    if (existingSource && existingSource.length > 0) {
+                        for (let source of existingSource) {
+                            await this.sourceService.updateTargetId(source._id, claimId);
+                        }
+                    } else {
                         await this.sourceService.create({
                             href: source,
                             targetId: claimId,
                             targetModel: SourceTargetModel.Claim,
                         });
-                    } else {
-                        await this.sourceService.updateTargetId(
-                            source._id,
-                            claimId
-                        );
                     }
                 } catch (e) {
                     this.logger.error(e);
