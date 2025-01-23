@@ -204,11 +204,9 @@ export class ClaimRevisionService {
         if (sources && Array.isArray(sources)) {
             for (let source of sources) {
                 try {
-                    const existingSource = await this.sourceService.findHref(source);
-                    if (existingSource && existingSource.length > 0) {
-                        for (let source of existingSource) {
-                            await this.sourceService.updateTargetId(source._id, claimId);
-                        }
+                    const existingSources = await this.sourceService.getSourceByHref(source);
+                    if (existingSources) {
+                            this.sourceService.updateTargetId(existingSources._id, claimId)
                     } else {
                         await this.sourceService.create({
                             href: source,
