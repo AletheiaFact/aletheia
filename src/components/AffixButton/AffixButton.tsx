@@ -1,7 +1,7 @@
-import { 
-    NoteAdd, 
-    AddCircle, 
-    AddOutlined, 
+import {
+    NoteAdd,
+    AddCircle,
+    AddOutlined,
     PersonAddAlt1Outlined,
     Source,
     Report
@@ -177,12 +177,21 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                     ))}
             </div>
             <AletheiaModal
-                className="ant-modal-content"
                 open={isModalVisible}
-                footer={false}
                 onCancel={handleHideModal}
-                centered
-                title={t("tutorial:modalTitle")}
+                title={
+                    <h2
+                        style={{
+                            fontFamily: "open sans, sans-serif",
+                            fontWeight: 700,
+                            fontSize: 14,
+                            textAlign: "center",
+                            textTransform: "uppercase",
+                            padding: "0 34px"
+                        }}>
+                        {t("tutorial:modalTitle")}
+                    </h2>
+                }
             >
                 <p
                     style={{
@@ -197,7 +206,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                         components={[<AddCircle style={{marginBottom:"-5px",fontSize:"18px"}} key={"icon"} />]}
                     />
                 </p>
-
+                
                 <div
                     style={{
                         marginTop: 24,

@@ -16,7 +16,7 @@ const CloseIcon = () => {
     return (
         <InfoTooltip
             children={
-                <CloseOutlined style={{ margin: "10px", color: colors.white }} />
+                <CloseOutlined style={{ margin: "10px", color: colors.white, position: "absolute", top: 5, right: 5 }} />
             }
             content={
                 <span style={{ color: colors.black, fontSize: 15 }}>
@@ -90,13 +90,28 @@ const AffixCTAButton = ({ copilotDrawerWidth }) => {
 
             <AletheiaModal
                 open={modalVisible}
-                footer={null}
-                title={t("NewCTARegistration:body")}
                 onCancel={() => setModalVisible(false)}
-                maskClosable={false}
                 theme="dark"
-                width={"75%"}
+                width={vw?.xs ? "100%" : "60%"}
                 closeIcon={<CloseIcon />}
+                style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
+                title={
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <h2
+                            style={{
+                                color: colors.white,
+                                fontFamily: "open sans, sans-serif",
+                                fontWeight: 700,
+                                fontSize: 14,
+                                textAlign: "center",
+                                textTransform: "uppercase",
+                                padding: "0 30px",
+                            }}
+                        >
+                            {t("NewCTARegistration:body")}
+                        </h2>
+                    </div>
+                }
             >
                 <Banner />
             </AletheiaModal>

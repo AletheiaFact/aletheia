@@ -32,14 +32,24 @@ const ClassificationModal = ({
     return (
         <AletheiaModal
             open={open}
-            footer={false}
             onCancel={handleCancel}
-            setValue={setValue}
-            title={t("claimReviewForm:classificationLabel")}
             style={{
                 display: "flex",
-                alingItens: "center",
+                alignItems: "center",
             }}
+            title={
+                <h2
+                    style={{
+                        fontFamily: "open sans, sans-serif",
+                        fontWeight: 700,
+                        fontSize: 14,
+                        textAlign: "center",
+                        textTransform: "uppercase",
+                    }}
+                >
+                    {t("claimReviewForm:classificationLabel")}
+                </h2>
+            }
         >
             <RadioGroup
                 onChange={onChangeRadio}
@@ -103,7 +113,7 @@ const ClassificationModal = ({
                 }}
             >
                 <ModalCancelButton
-                    type="text"
+                    type="button"
                     onClick={handleCancel}
                     style={{ width: "62%" }}
                 >
