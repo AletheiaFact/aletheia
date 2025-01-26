@@ -22,7 +22,7 @@ export type IPersonalityService = {
     getDeletedPersonalityByWikidata(wikidata: string);
     getById(
         personalityId: string | LeanDocument<IPersonality>,
-        language?: string
+        options?: { language?: string; nameSpace?: string }
     ): Promise<IPersonality>;
     getPersonalityBySlug(query: any, language?: string): Promise<IPersonality>;
     getClaimsByPersonalitySlug(query: any, language?: string): Promise<any>;
