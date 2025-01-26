@@ -18,7 +18,7 @@ import { ClaimRevisionService } from "../claim/claim-revision/claim-revision.ser
 import { ApiTags } from "@nestjs/swagger";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
 import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-import { IPersonalityService } from "../interfaces/personality.service.interface";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 
 @Controller("/")
 export class HomeController {
