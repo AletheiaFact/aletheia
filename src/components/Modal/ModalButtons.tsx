@@ -1,4 +1,4 @@
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import React from "react";
 import { ModalCancelButton } from "./AletheiaModal.style";
 import AletheiaButton, { ButtonType } from "../Button";
@@ -8,7 +8,7 @@ const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
     const { t } = useTranslation();
 
     return (
-        <Col
+        <Grid item
             style={{
                 marginTop: 32,
                 display: "flex",
@@ -16,7 +16,7 @@ const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
             }}
         >
             {handleCancel && (
-                <ModalCancelButton type="text" onClick={() => handleCancel()}>
+                <ModalCancelButton type="button" onClick={() => handleCancel()}>
                     <span
                         style={{
                             textDecorationLine: "underline",
@@ -35,7 +35,7 @@ const ModalButtons = ({ isLoading, hasCaptcha, handleCancel = null }) => {
             >
                 {t("orderModal:okButton")}
             </AletheiaButton>
-        </Col>
+        </Grid>
     );
 };
 

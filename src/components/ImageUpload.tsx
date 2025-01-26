@@ -115,10 +115,23 @@ const ImageUpload = ({
             )}
             <AletheiaModal
                 open={previewOpen}
-                title={previewTitle}
-                footer={null}
                 onCancel={handleCancel}
                 width={"fit-content"}
+                style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
+                title={
+                    <h2
+                        style={{
+                            fontFamily: "open sans, sans-serif",
+                            fontWeight: 700,
+                            fontSize: 14,
+                            textAlign: "center",
+                            textTransform: "uppercase",
+                            padding: "0 34px",
+                        }}
+                    >
+                        {previewTitle}
+                    </h2>
+                }
             >
                 <img
                     alt={`preview uploaded file ${previewTitle}`}

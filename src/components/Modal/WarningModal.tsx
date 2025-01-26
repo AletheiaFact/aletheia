@@ -12,36 +12,36 @@ const WarningModal = ({
     width,
     handleOk,
     handleCancel,
-    footer = false,
     ...props
 }) => {
     const { t } = useTranslation();
 
     return (
         <AletheiaModal
-            className="ant-modal-content"
             open={open}
-            footer={footer}
             onCancel={handleCancel}
             width={width}
             {...props}
+            style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
+            title={
+                <Grid item style={{ display: "flex", marginTop: "-4px" }}>
+                    <ErrorOutlineOutlined
+                        style={{ fontSize: 26, color: colors.warning }}
+                    />
+                    <span
+                        style={{
+                            marginLeft: 10,
+                            paddingRight: 28,
+                            fontSize: 16,
+                            fontWeight: 600,
+                            lineHeight: "18px",
+                        }}
+                    >
+                        {t(title)}
+                    </span>
+                </Grid>
+            }
         >
-            <Grid item style={{ display: "flex", marginTop: "-4px" }}>
-                <ErrorOutlineOutlined
-                    style={{ fontSize: 26, color: colors.warning }}
-                />
-                <span
-                    style={{
-                        marginLeft: 10,
-                        paddingRight: 28,
-                        fontSize: 16,
-                        fontWeight: 600,
-                        lineHeight: "18px",
-                    }}
-                >
-                    {t(title)}
-                </span>
-            </Grid>
             <Grid item
                 style={{
                     marginTop: 16,
@@ -49,7 +49,7 @@ const WarningModal = ({
                     justifyContent: "space-around",
                 }}
             >
-                <ModalCancelButton type="text" onClick={() => handleCancel()}>
+                <ModalCancelButton type="button" onClick={() => handleCancel()}>
                     <span
                         style={{
                             width: "auto",

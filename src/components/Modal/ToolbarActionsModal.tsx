@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form } from "antd";
 import { ErrorOutlineOutlined, WarningAmberOutlined} from "@mui/icons-material";
+import { Grid } from "@mui/material";
 import { AletheiaModal } from "./AletheiaModal.style";
 import AletheiaCaptcha from "../AletheiaCaptcha";
 import { useAppSelector } from "../../store/store";
@@ -31,64 +32,77 @@ const UnhideContentModal = ({
 
     return (
         <AletheiaModal
-            className="ant-modal-content"
             open={open}
-            footer={false}
             onCancel={handleCancel}
-            width={vw?.sm ? "100%" : "70%"}
-        >
-            <h2
-                className={`modal-title ${
-                    updatingHideStatus ? "hide-modal" : "delete-modal"
-                }`}
-            >
-                {updatingHideStatus ? (
-                    <WarningAmberOutlined />
-                ) : (
-                    <ErrorOutlineOutlined />
-                )}
-                {contentTitle}
-            </h2>
-            <p style={{ marginTop: 8 }}>{contentBody}</p>
-
-            <Form
-                style={{ marginTop: 16, justifyContent: "space-around" }}
-                name="basic"
-                onFinish={handleOk}
-            >
-                {hasDescription && (
-                    <Form.Item
-                        name="description"
-                        rules={[
-                            {
-                                required: true,
-                                message: t("claimReview:descriptionInputError"),
-                            },
-                        ]}
-                        style={{ marginBottom: 16 }}
+            width={vw?.xs || vw?.xl ? "100%" : "70%"}
+            style={{
+                alignSelf: "flex-start",
+                paddingTop: "10vh"
+            }}
+            title={
+                <Grid item xs={12}>
+                    <h2
+                        className={`${updatingHideStatus ? "hide-modal" : "delete-modal"
+                            }`}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                            fontSize: 24
+                        }}
                     >
-                        <TextArea
-                            white="white"
-                            placeholder={t(
-                                "claimReview:descriptionInputPlaceholder"
-                            )}
+                        {updatingHideStatus ? (
+                            <WarningAmberOutlined />
+                        ) : (
+                            <ErrorOutlineOutlined />
+                        )}
+                        {contentTitle}
+                    </h2>
+                    <p style={{ marginTop: 8 }}>{contentBody}</p>
+
+                </Grid>
+            }
+        >
+            <Grid item xs={12}>
+                <Form
+                    style={{ marginTop: 16, justifyContent: "space-around" }}
+                    name="basic"
+                    onFinish={handleOk}
+                >
+                    {hasDescription && (
+                        <Form.Item
+                            name="description"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: t("claimReview:descriptionInputError"),
+                                },
+                            ]}
+                            style={{ marginBottom: 16 }}
+                        >
+                            <TextArea
+                                white="white"
+                                placeholder={t(
+                                    "claimReview:descriptionInputPlaceholder"
+                                )}
+                            />
+                        </Form.Item>
+                    )}
+
+                    <Form.Item name="recaptcha">
+                        <AletheiaCaptcha
+                            onChange={setRecaptcha}
+                            ref={recaptchaRef}
                         />
                     </Form.Item>
-                )}
 
-                <Form.Item name="recaptcha">
-                    <AletheiaCaptcha
-                        onChange={setRecaptcha}
-                        ref={recaptchaRef}
+                    <ModalButtons
+                        isLoading={isLoading}
+                        hasCaptcha={hasCaptcha}
+                        handleCancel={handleCancel}
                     />
-                </Form.Item>
-
-                <ModalButtons
-                    isLoading={isLoading}
-                    hasCaptcha={hasCaptcha}
-                    handleCancel={handleCancel}
-                />
-            </Form>
+                </Form>
+            </Grid>
         </AletheiaModal>
     );
 };
