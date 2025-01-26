@@ -60,6 +60,8 @@ import { ChatbotModule } from "./chat-bot/chat-bot.module";
 import { VerificationRequestModule } from "./verification-request/verification-request.module";
 import { FeatureFlagModule } from "./feature-flag/feature-flag.module";
 import { GroupModule } from "./group/group.module";
+import { SessionOrM2MGuard } from "./auth/m2m-or-session.guard";
+import { M2MGuard } from "./auth/m2m.guard";
 
 @Module({})
 export class AppModule implements NestModule {
@@ -158,14 +160,16 @@ export class AppModule implements NestModule {
                 },
                 {
                     provide: APP_GUARD,
-                    useExisting: SessionGuard,
+                    useExisting: SessionOrM2MGuard,
                 },
                 {
                     provide: APP_GUARD,
                     useExisting: NameSpaceGuard,
                 },
                 NameSpaceGuard,
+                SessionOrM2MGuard,
                 SessionGuard,
+                M2MGuard,
             ],
         };
     }

@@ -29,6 +29,10 @@ services:
         admin_endpoint:
         access_token: ORY_ACCESS_TOKEN
         schema_id: ALETHEIA_SCHEMA_ID
+        hydra:
+          url: ORY_SDK_URL
+          # When using the cloud, the endpoint should be "api/hydra/admin".
+          admin_endpoint:
       feature_flag:
         url: GITLAB_FEATURE_FLAG_URL
         appName: ENV
