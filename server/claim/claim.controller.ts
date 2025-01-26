@@ -62,7 +62,7 @@ export class ClaimController {
         private claimReviewService: ClaimReviewService,
         private reviewTaskService: ReviewTaskService,
         @Inject("PersonalityService")
-        private personalityService: IPersonalityService,
+        private readonly personalityService: IPersonalityService,
         private claimService: ClaimService,
         private sentenceService: SentenceService,
         private configService: ConfigService,

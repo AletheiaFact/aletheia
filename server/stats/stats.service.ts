@@ -12,7 +12,7 @@ export class StatsService {
         @Inject(REQUEST) private req: BaseRequest,
         private claimReviewService: ClaimReviewService,
         @Inject("PersonalityService")
-        private personalityService: IPersonalityService,
+        private readonly personalityService: IPersonalityService,
         private claimService: ClaimService
     ) {}
 

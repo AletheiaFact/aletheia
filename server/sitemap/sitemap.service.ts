@@ -9,7 +9,7 @@ const axios = require("axios");
 export class SitemapService {
     constructor(
         @Inject("PersonalityService")
-        private personalityService: IPersonalityService,
+        private readonly personalityService: IPersonalityService,
         private claimService: ClaimService,
         private claimReviewService: ClaimReviewService
     ) {}

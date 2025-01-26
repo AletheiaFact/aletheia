@@ -25,7 +25,7 @@ export class SearchController {
     constructor(
         private viewService: ViewService,
         @Inject("PersonalityService")
-        private personalityService: IPersonalityService,
+        private readonly personalityService: IPersonalityService,
         private sentenceService: SentenceService,
         private claimRevisionService: ClaimRevisionService,
         private configService: ConfigService

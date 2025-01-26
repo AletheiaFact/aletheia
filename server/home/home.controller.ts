@@ -25,7 +25,7 @@ export class HomeController {
     constructor(
         private viewService: ViewService,
         @Inject("PersonalityService")
-        private personalityService: IPersonalityService,
+        private readonly personalityService: IPersonalityService,
         private statsService: StatsService,
         private debateService: DebateService,
         private claimRevisionService: ClaimRevisionService,

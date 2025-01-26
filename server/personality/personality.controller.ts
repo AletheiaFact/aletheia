@@ -38,7 +38,7 @@ export class PersonalityController {
     private readonly logger = new Logger("PersonalityController");
     constructor(
         @Inject("PersonalityService")
-        private personalityService: IPersonalityService,
+        private readonly personalityService: IPersonalityService,
         private viewService: ViewService,
         private configService: ConfigService,
         private captchaService: CaptchaService,
