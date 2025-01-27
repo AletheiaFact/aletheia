@@ -33,15 +33,15 @@ export class MongoPersonalityService {
     };
 
     constructor(
-        @Inject(REQUEST) private req: BaseRequest,
+        @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(Personality.name)
-        private PersonalityModel: ISoftDeletedModel<PersonalityDocument> &
+        private readonly PersonalityModel: ISoftDeletedModel<PersonalityDocument> &
             Model<PersonalityDocument>,
-        private claimReview: ClaimReviewService,
-        private history: HistoryService,
-        private wikidata: WikidataService,
-        private util: UtilService,
-        private historyService: HistoryService
+        private readonly claimReview: ClaimReviewService,
+        private readonly history: HistoryService,
+        private readonly wikidata: WikidataService,
+        private readonly util: UtilService,
+        private readonly historyService: HistoryService
     ) {}
 
     async getWikidataEntities(regex, language) {
