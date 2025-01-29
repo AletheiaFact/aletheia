@@ -4,7 +4,6 @@ services:
       disable_smtp: true
       db:
         connection_uri: {env(CI_MONGODB_URI)}
-        type: mongodb
         options:
           useUnifiedTopology: true
           useNewUrlParser: true

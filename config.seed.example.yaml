@@ -8,7 +8,6 @@ services:
       smtp_email_user: {env(SMTP_EMAIL_USER)}
       db:
         connection_uri: MONGODB_URI
-        type: mongodb
         options:
           useUnifiedTopology: true
           useNewUrlParser: true

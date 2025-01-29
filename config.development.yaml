@@ -12,7 +12,6 @@ services:
       recaptcha_sitekey: 6Lc2BtYUAAAAAOUBI-9r1sDJUIfG2nt6C43noOXh
       db:
         connection_uri: MONGODB_URI
-        type: mongodb
         atlas: true
         options:
           useUnifiedTopology: true

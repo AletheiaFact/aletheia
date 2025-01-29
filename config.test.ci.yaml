@@ -9,7 +9,6 @@ services:
       recaptcha_sitekey: {env(TEST_RECAPTCHA_SITEKEY)}
       db:
         connection_uri: {env(CI_MONGODB_URI)}
-        type: mongodb
         options:
           useUnifiedTopology: true
           useNewUrlParser: true
