@@ -9,26 +9,23 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import slugify from "slugify";
 import { Personality, PersonalityDocument } from "./schemas/personality.schema";
-import { WikidataService } from "../wikidata/wikidata.service";
-import { UtilService } from "../util";
-import { ClaimReviewService } from "../claim-review/claim-review.service";
-import { HistoryService } from "../history/history.service";
-import { HistoryType, TargetModel } from "../history/schema/history.schema";
+import { WikidataService } from "../../wikidata/wikidata.service";
+import { UtilService } from "../../util";
+import { ClaimReviewService } from "../../claim-review/claim-review.service";
+import { HistoryService } from "../../history/history.service";
+import { HistoryType, TargetModel } from "../../history/schema/history.schema";
 import { ISoftDeletedModel } from "mongoose-softdelete-typescript";
 import { REQUEST } from "@nestjs/core";
-import type { BaseRequest } from "../types";
-import { NameSpaceEnum } from "../auth/name-space/schemas/name-space.schema";
-
-export interface FindAllOptions {
-    searchText: string;
-    pageSize: number;
-    language?: string;
-    skipedDocuments?: number;
-    nameSpace?: string;
-}
+import type { BaseRequest } from "../../types";
+import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";
+import {
+    ICombinedListResult,
+    IFindAllOptions,
+    IFindAllResult,
+} from "../../interfaces/personality.interface";
 
 @Injectable({ scope: Scope.REQUEST })
-export class PersonalityService {
+export class MongoPersonalityService {
     private readonly logger = new Logger("PersonalityService");
     private readonly optionsToUpdate = {
         new: true,
@@ -36,15 +33,15 @@ export class PersonalityService {
     };
 
     constructor(
-        @Inject(REQUEST) private req: BaseRequest,
+        @Inject(REQUEST) private readonly req: BaseRequest,
         @InjectModel(Personality.name)
-        private PersonalityModel: ISoftDeletedModel<PersonalityDocument> &
+        private readonly PersonalityModel: ISoftDeletedModel<PersonalityDocument> &
             Model<PersonalityDocument>,
-        private claimReview: ClaimReviewService,
-        private history: HistoryService,
-        private wikidata: WikidataService,
-        private util: UtilService,
-        private historyService: HistoryService
+        private readonly claimReview: ClaimReviewService,
+        private readonly history: HistoryService,
+        private readonly wikidata: WikidataService,
+        private readonly util: UtilService,
+        private readonly historyService: HistoryService
     ) {}
 
     async getWikidataEntities(regex, language) {
@@ -80,7 +77,6 @@ export class PersonalityService {
                 query?.name.$regex,
                 language
             );
-
             personalities = await this.PersonalityModel.find({
                 $or: [{ wikidata: { $in: wikidataList } }, { query }],
             })
@@ -171,7 +167,13 @@ export class PersonalityService {
         });
     }
 
-    async getById(personalityId, query: { language?: string; nameSpace?: string} = { language: 'en', nameSpace: NameSpaceEnum.Main}) {
+    async getById(
+        personalityId,
+        query: { language?: string; nameSpace?: string } = {
+            language: "en",
+            nameSpace: NameSpaceEnum.Main,
+        }
+    ) {
         const queryOptions = this.util.getParamsBasedOnUserRole(
             {
                 _id: personalityId,
@@ -183,7 +185,11 @@ export class PersonalityService {
             queryOptions
         ).populate({
             path: "claims",
-            match: { isHidden: false, isDeleted: false, nameSpace: query.nameSpace },
+            match: {
+                isHidden: false,
+                isDeleted: false,
+                nameSpace: query.nameSpace,
+            },
             select: "_id title content",
         });
         this.logger.log(`Found personality ${personality?._id}`);
@@ -402,7 +408,7 @@ export class PersonalityService {
         return queryInputs;
     }
 
-    combinedListAll(query): any {
+    combinedListAll(query): Promise<ICombinedListResult> {
         const { page = 0, pageSize = 10, order = "asc" } = query;
         const queryInputs = this.verifyInputsQuery(query);
 
@@ -435,15 +441,18 @@ export class PersonalityService {
                     pageSize,
                 };
             })
-            .catch((error) => this.logger.error(error));
+            .catch((error) => {
+                this.logger.error(error);
+                return error;
+            });
     }
 
     async findAll({
         searchText,
         pageSize,
         language,
-        skipedDocuments,
-    }: FindAllOptions) {
+        skippedDocuments,
+    }: IFindAllOptions): Promise<IFindAllResult> {
         const personalities = await this.PersonalityModel.aggregate([
             {
                 $search: {
@@ -462,7 +471,7 @@ export class PersonalityService {
                 $facet: {
                     rows: [
                         {
-                            $skip: skipedDocuments || 0,
+                            $skip: skippedDocuments || 0,
                         },
                         {
                             $limit: pageSize,

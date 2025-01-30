@@ -9,7 +9,7 @@ interface FindAllOptionsFilters {
     searchText: string;
     pageSize: number;
     language?: string;
-    skipedDocuments?: number;
+    skippedDocuments?: number;
     filter?: string | string[];
     nameSpace?: string;
 }
@@ -55,7 +55,7 @@ export class SentenceService {
     async findAll({
         searchText,
         pageSize,
-        skipedDocuments,
+        skippedDocuments,
         filter,
         nameSpace,
     }: FindAllOptionsFilters) {
@@ -140,7 +140,7 @@ export class SentenceService {
                 $facet: {
                     rows: [
                         {
-                            $skip: skipedDocuments || 0,
+                            $skip: skippedDocuments || 0,
                         },
                         {
                             $limit: pageSize,

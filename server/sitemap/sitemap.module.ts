@@ -6,7 +6,7 @@ import { ClaimReviewModule } from "../claim-review/claim-review.module";
 import { SitemapService } from "./sitemap.service";
 
 @Module({
-    imports: [PersonalityModule, ClaimModule, ClaimReviewModule],
+    imports: [PersonalityModule.register(), ClaimModule, ClaimReviewModule],
     controllers: [SitemapController],
     providers: [SitemapService],
     exports: [SitemapService],

@@ -9,7 +9,7 @@ import { ClaimReviewModule } from "../claim-review/claim-review.module";
 
 @Module({
     imports: [
-        PersonalityModule,
+        PersonalityModule.register(),
         StatsModule,
         ViewModule,
         DebateModule,
