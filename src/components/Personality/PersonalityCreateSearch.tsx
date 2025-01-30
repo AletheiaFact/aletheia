@@ -58,8 +58,7 @@ const PersonalityCreateSearch = ({
             } else {
                 router
                     .push(
-                        `/${
-                            nameSpace === NameSpaceEnum.Main ? "" : nameSpace
+                        `/${nameSpace === NameSpaceEnum.Main ? "" : nameSpace
                         }${path}`
                     )
                     .catch((e) => e);
