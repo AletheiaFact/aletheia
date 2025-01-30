@@ -13,7 +13,6 @@ const SourceListItemStyled = styled(Grid)`
         font-weight: 600;
         color: ${colors.primary};
         margin: 0;
-        width: 100%;
     }
 
     .title ::before {

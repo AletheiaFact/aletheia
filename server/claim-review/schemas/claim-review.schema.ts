@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Personality } from "../../personality/schemas/personality.schema";
+import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import * as mongoose from "mongoose";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";

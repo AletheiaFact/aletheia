@@ -1,4 +1,4 @@
-import { Col } from "antd";
+import { Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { trackUmamiEvent } from "../../lib/umami";
@@ -11,11 +11,11 @@ function Banner() {
     const { t } = useTranslation();
 
     return (
-        <BannerStyle>
-            <Col className="video-container">
+        <BannerStyle container>
+            <Grid item xs={11} sm={10} xl={7} className="video-container">
                 <AletheiaVideo />
-            </Col>
-            <Col span={20}>
+            </Grid>
+            <Grid item xs={10}>
                 <Button
                     onClick={() => {
                         trackUmamiEvent(
@@ -33,7 +33,7 @@ function Banner() {
                 >
                     <span>{t("CTARegistration:button")}</span>
                 </Button>
-            </Col>
+            </Grid>
         </BannerStyle>
     );
 }

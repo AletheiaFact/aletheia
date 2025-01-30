@@ -25,6 +25,7 @@ const DashboardView = () => {
                         i18n,
                         isHidden: true,
                     }}
+                    showDividers={false}
                     emptyFallback={<></>}
                     renderItem={(p) =>
                         p && (
@@ -47,6 +48,7 @@ const DashboardView = () => {
                         i18n,
                         isHidden: true,
                     }}
+                    showDividers={false}
                     emptyFallback={<></>}
                     renderItem={(claim) =>
                         claim && (
@@ -66,6 +68,7 @@ const DashboardView = () => {
                     title={t("admin:dashboardHiddenReviews")}
                     apiCall={claimReviewApi.get}
                     filter={{ isHidden: true }}
+                    showDividers={false}
                     emptyFallback={<></>}
                     renderItem={(review) =>
                         review && (

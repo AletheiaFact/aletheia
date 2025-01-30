@@ -1,14 +1,15 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { SitemapStream, streamToPromise } from "sitemap";
-import { PersonalityService } from "../personality/personality.service";
 import { ClaimService } from "../claim/claim.service";
 import { ClaimReviewService } from "../claim-review/claim-review.service";
+import type { IPersonalityService } from "../interfaces/personality.service.interface";
 const axios = require("axios");
 
 @Injectable()
 export class SitemapService {
     constructor(
-        private personalityService: PersonalityService,
+        @Inject("PersonalityService")
+        private readonly personalityService: IPersonalityService,
         private claimService: ClaimService,
         private claimReviewService: ClaimReviewService
     ) {}

@@ -1,10 +1,10 @@
-import { 
-    NoteAdd, 
-    AddCircle, 
-    AddOutlined, 
+import {
+    NoteAdd,
+    AddCircle,
+    AddOutlined,
     PersonAddAlt1Outlined,
     Source,
-    Report
+    Report,
 } from "@mui/icons-material";
 import { useAtom } from "jotai";
 import Cookies from "js-cookie";
@@ -156,11 +156,7 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                         size="70px"
                         onClick={handleClick}
                         data-cy={"testFloatButton"}
-                        icon={
-                            <AddOutlined
-                                fontSize="large"
-                            />
-                        }
+                        icon={<AddOutlined fontSize="large" />}
                     />
                 </PulseAnimation>
 
@@ -177,12 +173,22 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                     ))}
             </div>
             <AletheiaModal
-                className="ant-modal-content"
                 open={isModalVisible}
-                footer={false}
                 onCancel={handleHideModal}
-                centered
-                title={t("tutorial:modalTitle")}
+                title={
+                    <h2
+                        style={{
+                            fontFamily: "open sans, sans-serif",
+                            fontWeight: 700,
+                            fontSize: 14,
+                            textAlign: "center",
+                            textTransform: "uppercase",
+                            padding: "0 34px",
+                        }}
+                    >
+                        {t("tutorial:modalTitle")}
+                    </h2>
+                }
             >
                 <p
                     style={{
@@ -194,7 +200,15 @@ const AffixButton = ({ personalitySlug }: AffixButtonProps) => {
                 >
                     <Trans
                         i18nKey={"tutorial:modalContent"}
-                        components={[<AddCircle style={{marginBottom:"-5px",fontSize:"18px"}} key={"icon"} />]}
+                        components={[
+                            <AddCircle
+                                style={{
+                                    marginBottom: "-5px",
+                                    fontSize: "18px",
+                                }}
+                                key={"icon"}
+                            />,
+                        ]}
                     />
                 </p>
 

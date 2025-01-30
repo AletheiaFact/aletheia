@@ -50,5 +50,6 @@
     "topicsFilterOption": "Tópicos",
     "contentFilterOption": "Conteudo",
     "filterByContentLabel": "Filtrar por Conteudo",
-    "applyButtonLabel": "Aplicar"
+    "applyButtonLabel": "Aplicar",
+    "showText": "Mostrar"
 }

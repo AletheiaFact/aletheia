@@ -65,7 +65,8 @@ const ImageUpload = ({
         );
 
         if (!isAllowedFormat) {
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t("claimForm:fileTypeError", {
                     types: ALLOWED_FORMATS.join("/"),
                 })
@@ -73,7 +74,8 @@ const ImageUpload = ({
         }
         const isAllowedSize = file.size < MAX_SIZE;
         if (!isAllowedSize) {
-            MessageManager.showMessage("error",
+            MessageManager.showMessage(
+                "error",
                 t("claimForm:fileSizeError", { size: `${ALLOWED_MB}MB` })
             );
         }
@@ -91,7 +93,14 @@ const ImageUpload = ({
     };
 
     const uploadButton = (
-        <AletheiaButton data-cy="testUploadImage" icon={<FileUploadOutlined style={{fontSize:"17px", margin:"0 5 4 0"}} />}>
+        <AletheiaButton
+            data-cy="testUploadImage"
+            icon={
+                <FileUploadOutlined
+                    style={{ fontSize: "17px", margin: "0 5 4 0" }}
+                />
+            }
+        >
             {t("claimForm:fileInputButton")}
         </AletheiaButton>
     );
@@ -109,16 +118,33 @@ const ImageUpload = ({
                 {fileList.length >= UPLOAD_LIMIT ? null : uploadButton}
             </Upload>
             {error && (
-                <Typography variant="body2" color="error" style={{ display: "block" }}>
+                <Typography
+                    variant="body2"
+                    color="error"
+                    style={{ display: "block" }}
+                >
                     {t("common:requiredFieldError")}
                 </Typography>
             )}
             <AletheiaModal
                 open={previewOpen}
-                title={previewTitle}
-                footer={null}
                 onCancel={handleCancel}
                 width={"fit-content"}
+                style={{ alignSelf: "flex-start", paddingTop: "10vh" }}
+                title={
+                    <h2
+                        style={{
+                            fontFamily: "open sans, sans-serif",
+                            fontWeight: 700,
+                            fontSize: 14,
+                            textAlign: "center",
+                            textTransform: "uppercase",
+                            padding: "0 34px",
+                        }}
+                    >
+                        {previewTitle}
+                    </h2>
+                }
             >
                 <img
                     alt={`preview uploaded file ${previewTitle}`}
