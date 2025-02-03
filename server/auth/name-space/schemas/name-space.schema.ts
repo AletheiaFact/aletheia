@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import { User } from "../../../users/schemas/user.schema";
 
 export type NameSpaceDocument = NameSpace & mongoose.Document;

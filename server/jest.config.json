@@ -3,9 +3,10 @@
     "moduleFileExtensions": [
         "js",
         "json",
-        "ts"
+        "ts",
+        "tsx"
     ],
-    "rootDir": "./",
+    "rootDir": "../",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
         "^.+\\.(t|j)s$": "ts-jest"

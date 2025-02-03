@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import { Paragraph } from "../../paragraph/schemas/paragraph.schema";
 
 export type UnattributedDocument = Unattributed & mongoose.Document;

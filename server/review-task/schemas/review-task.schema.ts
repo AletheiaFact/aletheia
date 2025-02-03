@@ -1,4 +1,4 @@
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import type { Machine } from "../dto/create-review-task.dto";
 import { ReportModelEnum, ReviewTaskTypeEnum } from "../../types/enums";

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 
 export type PersonalityDocument = Personality & mongoose.Document;
 

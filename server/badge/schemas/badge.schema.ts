@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Image } from "../../claim/types/image/schemas/image.schema";
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 
 export type BadgeDocument = Badge & mongoose.Document;
 

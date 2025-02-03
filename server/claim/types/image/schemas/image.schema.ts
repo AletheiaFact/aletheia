@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ContentModelEnum } from "../../../../types/enums";
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import { Topic } from "../../../../topic/schemas/topic.schema";
 import { ClaimRevision } from "../../../../claim/claim-revision/schema/claim-revision.schema";
 
