@@ -1,8 +1,8 @@
-import { Row } from "antd";
+import { Grid } from "@mui/material";
 import styled from "styled-components";
 import colors from "../../styles/colors";
 
-const BannerStyle = styled(Row)`
+const BannerStyle = styled(Grid)`
     justify-content: center;
     padding: 18px;
     background-color: ${colors.black};

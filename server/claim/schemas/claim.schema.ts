@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
-import { Personality } from "../../personality/schemas/personality.schema";
+import { Personality } from "../../personality/mongo/schemas/personality.schema";
 import { ClaimRevision } from "../claim-revision/schema/claim-revision.schema";
 import { softDeletePlugin } from "mongoose-softdelete-typescript";
 import { NameSpaceEnum } from "../../auth/name-space/schemas/name-space.schema";

@@ -1,4 +1,4 @@
-import { Layout } from "antd";
+import { Box } from "@mui/material";
 import React from "react";
 
 import { useMediaQueryBreakpoints } from "../hooks/useMediaQueryBreakpoints";
@@ -31,9 +31,14 @@ const MainApp = ({ children }) => {
     // Setup to provide breakpoints object on redux
     useMediaQueryBreakpoints();
 
+    const renderCTAButton = () =>
+        localConfig.home.affixCTA ? (
+            <AffixCTAButton copilotDrawerWidth={copilotDrawerWidth} />
+        ) : null;
+
     return (
-        <Layout
-            style={{
+        <Box
+            sx={{
                 minHeight: "100vh",
                 width:
                     copilotDrawerCollapsed || vw?.md
@@ -42,18 +47,16 @@ const MainApp = ({ children }) => {
             }}
         >
             <Sidebar />
-            <Layout style={{ background: colors.white }}>
+            <Box sx={{ background: colors.white }}>
                 <Header />
                 <DonationBanner />
-                {localConfig.home.affixCTA ? (
-                    <AffixCTAButton copilotDrawerWidth={copilotDrawerWidth} />
-                ) : null}
+                {renderCTAButton()}
                 <ContentWrapper>{children}</ContentWrapper>
                 <Footer />
                 {enableOverlay && <OverlaySearchResults />}
-            </Layout>
+            </Box>
             <ClaimReviewDrawer />
-        </Layout>
+        </Box>
     );
 };
 

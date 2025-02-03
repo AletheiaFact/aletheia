@@ -78,7 +78,7 @@ const SearchOverlay = () => {
     }, [nameSpace]);
 
     return (
-        <OverlayGrid container namespace={nameSpaceProp} xs={0.5} sm={4} md={5}>
+        <OverlayGrid container item namespace={nameSpaceProp} xs={0.5} sm={4} md={5}>
             {!router.pathname.includes("/home-page") && (
                 <div
                     className={`input-container ${
