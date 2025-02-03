@@ -5,7 +5,7 @@ import SourceDialog from "../LinkToolBar/Dialog/SourceDialog";
 import { VisualEditorContext } from "../../VisualEditorProvider";
 import { useTranslation } from "next-i18next";
 import AddIcon from '@mui/icons-material/Add';
-import { URL_PATTERN } from "../../hooks/useFloatingLinkState";
+import { URL_PATTERN } from "../../../../utils/ValidateFloatingLink";
 import { HTTP_PROTOCOL_REGEX } from "../LinkToolBar/FloatingLinkToolbar";
 import { useCommands } from "@remirror/react";
 import { Node } from "@remirror/pm/model";
@@ -93,10 +93,9 @@ const EditorAddSources = ({
                 <>
                     <p className="empty-text">
                         {t(
-                            `sourceForm:${
-                                enableAddEditorSourcesWithoutSelecting
-                                    ? "editorEmptySourcesWithButton"
-                                    : "editorEmptySources"
+                            `sourceForm:${enableAddEditorSourcesWithoutSelecting
+                                ? "editorEmptySourcesWithButton"
+                                : "editorEmptySources"
                             }`
                         )}
                     </p>
