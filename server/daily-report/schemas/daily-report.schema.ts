@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import * as mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 export type DailyReportDocument = DailyReport & mongoose.Document;

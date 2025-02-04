@@ -93,9 +93,10 @@ const EditorAddSources = ({
                 <>
                     <p className="empty-text">
                         {t(
-                            `sourceForm:${enableAddEditorSourcesWithoutSelecting
-                                ? "editorEmptySourcesWithButton"
-                                : "editorEmptySources"
+                            `sourceForm:${
+                                enableAddEditorSourcesWithoutSelecting
+                                    ? "editorEmptySourcesWithButton"
+                                    : "editorEmptySources"
                             }`
                         )}
                     </p>

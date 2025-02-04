@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose from "mongoose";
+import * as mongoose from "mongoose";
 import { Claim } from "../../claim/schemas/claim.schema";
 import { ReviewTask } from "../../review-task/schemas/review-task.schema";
 

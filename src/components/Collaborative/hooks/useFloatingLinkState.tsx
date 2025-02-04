@@ -14,14 +14,12 @@ import {
     useCurrentSelection,
     useUpdateReason,
 } from "@remirror/react";
-import { useTranslation } from "next-i18next";
 import { VisualEditorContext } from "../VisualEditorProvider";
 import useLinkShortcut from "./useLinkShortcut";
 import { uniqueId } from "remirror";
 import { validateFloatingLink } from "../../../utils/ValidateFloatingLink";
 
 function useFloatingLinkState() {
-    const { t } = useTranslation();
     const { editorSources, setEditorSources } = useContext(VisualEditorContext);
 
     const [error, setError] = useState(null);

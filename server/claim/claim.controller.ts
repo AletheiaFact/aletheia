@@ -21,7 +21,7 @@ import { ConfigService } from "@nestjs/config";
 import type { Request, Response } from "express";
 import { parse } from "url";
 import { ViewService } from "../view/view.service";
-import mongoose from "mongoose";
+import * as mongoose from "mongoose";
 import { CreateClaimDTO } from "./dto/create-claim.dto";
 import { GetClaimsDTO } from "./dto/get-claims.dto";
 import { UpdateClaimDTO } from "./dto/update-claim.dto";
@@ -76,7 +76,7 @@ export class ClaimController {
         private claimRevisionService: ClaimRevisionService,
         private featureFlagService: FeatureFlagService,
         private groupService: GroupService
-    ) { }
+    ) {}
 
     _verifyInputsQuery(query) {
         const inputs: any = {
@@ -185,7 +185,7 @@ export class ClaimController {
 
             const path =
                 req.user.role[claim.nameSpace] === Roles.Admin ||
-                    req.user.role[claim.nameSpace] === Roles.SuperAdmin
+                req.user.role[claim.nameSpace] === Roles.SuperAdmin
                     ? `/claim/${claim._id}/debate/edit`
                     : `/claim/${claim._id}/debate`;
             return {
@@ -542,12 +542,12 @@ export class ClaimController {
 
         const personality = query.personality
             ? await this.personalityService.getClaimsByPersonalitySlug(
-                {
-                    slug: query.personality,
-                    isDeleted: false,
-                },
-                req.language
-            )
+                  {
+                      slug: query.personality,
+                      isDeleted: false,
+                  },
+                  req.language
+              )
             : null;
 
         const queryObject = Object.assign(parsedUrl.query, {
