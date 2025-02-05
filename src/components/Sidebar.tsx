@@ -1,4 +1,4 @@
-import { Drawer } from "antd";
+import { Drawer } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
 import actions from "../store/actions";
@@ -24,13 +24,15 @@ const Sidebar = () => {
         <Drawer
             open={!menuCollapsed}
             onClose={() => dispatch(actions.closeSideMenu())}
-            width="17rem"
-            placement="left"
-            bodyStyle={{ padding: 0 }}
-            drawerStyle={{
-                backgroundColor: colors.lightNeutral,
+            anchor="left"
+            variant="temporary"
+            sx={{
+                "& .MuiDrawer-paper": {
+                    width: "17rem",
+                    padding: "0",
+                    backgroundColor: colors.lightNeutral,
+                }
             }}
-            closable={false}
         >
             <div
                 style={{
